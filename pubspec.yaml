@@ -17,6 +17,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   get: ^4.6.6
+  image_cropper: ^5.0.0
   internet_connection_checker: ^1.0.0+1
   livekit_client: ^1.2.1
   mqtt_client: ^9.7.3

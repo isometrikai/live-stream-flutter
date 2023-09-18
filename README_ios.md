@@ -1,4 +1,4 @@
-# Appscrip Chat Component
+# Appscrip LiveStream Component
 
 ## iOS
 
@@ -19,6 +19,7 @@ Path: `ios` > `Runner` > `info.plist`
   <array>
     <string>audio</string>
   </array>
+</dict>
 ```
 
 If background mode is enabled, your application can still run the voice call when it is shifted to the background.

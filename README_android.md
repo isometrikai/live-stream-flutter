@@ -1,4 +1,4 @@
-# Appscrip Chat Component
+# Appscrip LiveStream Component
 
 ## Android
 
