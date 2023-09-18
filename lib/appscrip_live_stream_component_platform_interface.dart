@@ -1,6 +1,5 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
-import 'appscrip_live_stream_component_method_channel.dart';
 
 abstract class AppscripLiveStreamComponentPlatform extends PlatformInterface {
   /// Constructs a AppscripLiveStreamComponentPlatform.
@@ -8,7 +7,8 @@ abstract class AppscripLiveStreamComponentPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static AppscripLiveStreamComponentPlatform _instance = MethodChannelAppscripLiveStreamComponent();
+  static AppscripLiveStreamComponentPlatform _instance =
+      MethodChannelAppscripLiveStreamComponent();
 
   /// The default instance of [AppscripLiveStreamComponentPlatform] to use.
   ///

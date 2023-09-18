@@ -30,3 +30,29 @@ enum IsmLiveImageType {
   file,
   network;
 }
+
+enum IsmLiveCustomType {
+  videCall('VideoCall');
+
+  factory IsmLiveCustomType.fromValue(String data) =>
+      {
+        IsmLiveCustomType.videCall.value: IsmLiveCustomType.videCall,
+      }[data] ??
+      IsmLiveCustomType.videCall;
+
+  const IsmLiveCustomType(this.value);
+  final String value;
+}
+
+enum IsmLiveMeetingType {
+  videCall(0);
+
+  factory IsmLiveMeetingType.fromValue(int data) =>
+      {
+        IsmLiveMeetingType.videCall.value: IsmLiveMeetingType.videCall,
+      }[data] ??
+      IsmLiveMeetingType.videCall;
+
+  const IsmLiveMeetingType(this.value);
+  final int value;
+}

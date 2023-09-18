@@ -51,8 +51,6 @@ class IsmLiveImage extends StatelessWidget {
   final IsmLiveImageType _imageType;
   final bool fromPackage;
 
-  double get _height => height ?? IsmLiveConstants.imageHeight;
-
   @override
   Widget build(BuildContext context) => Container(
         height: height,

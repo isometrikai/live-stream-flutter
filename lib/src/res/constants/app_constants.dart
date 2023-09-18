@@ -4,7 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 ///
 /// It contains all constants that are to be used within the project
 ///
-/// If need to check the translated strings that are used in UI (Views) of the app, check [TranslationKeys]
+/// If need to check the translated strings that are used in UI (Views) of the app, check TranslationKeys
 class IsmLiveConstants {
   const IsmLiveConstants._();
 
