@@ -27,7 +27,7 @@ class LoginView extends StatelessWidget {
           body: Form(
             key: controller.loginFormKey,
             child: Padding(
-              padding: Dimens.edgeInsets16,
+              padding: IsmLiveDimens.edgeInsets16,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -37,28 +37,28 @@ class LoginView extends StatelessWidget {
                       tag: const ValueKey('logo_isometrik'),
                       child: Center(
                         child: Image.asset(
-                          IsmLiveAssetConstants.isometrik,
+                          IsmLiveAssetConstants.logos.isometrik,
                           package: 'appscrip_live_stream_component',
                         ),
                       ),
                     ),
-                    Dimens.boxHeight32,
+                    IsmLiveDimens.boxHeight32,
                     Hero(
                       tag: const ValueKey('email_label'),
                       child: IsmLiveAnimatedText(TranslationKeys.email.tr),
                     ),
-                    Dimens.boxHeight8,
+                    IsmLiveDimens.boxHeight8,
                     Hero(
                       tag: const ValueKey('email_field'),
                       child: InputField.email(
                           controller: controller.emailController),
                     ),
-                    Dimens.boxHeight16,
+                    IsmLiveDimens.boxHeight16,
                     Hero(
                       tag: const ValueKey('password_label'),
                       child: IsmLiveAnimatedText(TranslationKeys.password.tr),
                     ),
-                    Dimens.boxHeight8,
+                    IsmLiveDimens.boxHeight8,
                     Hero(
                       tag: const ValueKey('password_field'),
                       child: InputField.password(
@@ -75,7 +75,7 @@ class LoginView extends StatelessWidget {
                           obscureCharacter: '*',
                           controller: controller.passwordController),
                     ),
-                    Dimens.boxHeight32,
+                    IsmLiveDimens.boxHeight32,
                     Hero(
                       tag: const ValueKey('login-signup'),
                       child: IsmLiveButton(
@@ -83,7 +83,7 @@ class LoginView extends StatelessWidget {
                         label: TranslationKeys.login.tr,
                       ),
                     ),
-                    Dimens.boxHeight20,
+                    IsmLiveDimens.boxHeight20,
                     Hero(
                       tag: const ValueKey('login-signup-change'),
                       child: IsmLiveButton.text(

@@ -6,22 +6,33 @@
 class IsmLiveAssetConstants {
   const IsmLiveAssetConstants._();
 
-  static const String _path = 'assets';
+  static const String $path = 'assets';
 
-  static const String noImage = _Images.noImage;
-  static const String isometrik = _Logos.isometrik;
+  static $Images get images => const $Images._();
+
+  static $Logos get logos => const $Logos._();
+
+  static $Icons get icons => const $Icons._();
 }
 
-class _Images {
-  const _Images();
+class $Images {
+  const $Images._();
 
-  static const String _path = '${IsmLiveAssetConstants._path}/images';
+  static const String _path = '${IsmLiveAssetConstants.$path}/images';
 
-  static const String noImage = '$_path/noperson.png';
+  String get noImage => '$_path/noperson.png';
 }
 
-class _Logos {
-  static const String _path = '${IsmLiveAssetConstants._path}/logo';
+class $Logos {
+  const $Logos._();
 
-  static const String isometrik = '$_path/isometric.png';
+  static const String _path = '${IsmLiveAssetConstants.$path}/logo';
+
+  String get isometrik => '$_path/isometric.png';
+}
+
+class $Icons {
+  const $Icons._();
+
+  static const String _path = '${IsmLiveAssetConstants.$path}/icons';
 }

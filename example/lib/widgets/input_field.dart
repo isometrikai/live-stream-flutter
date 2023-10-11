@@ -1,3 +1,4 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/validator.dart';
 import 'package:flutter/material.dart';
@@ -68,28 +69,28 @@ class InputField extends StatelessWidget {
           decoration: InputDecoration(
             isDense: true,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Dimens.sixteen),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
               borderSide: const BorderSide(
                 color: ColorsValue.primary,
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Dimens.sixteen),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
               borderSide: const BorderSide(
                 color: ColorsValue.primary,
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Dimens.sixteen),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
               borderSide: const BorderSide(
                 color: ColorsValue.primary,
                 width: 1,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(Dimens.sixteen),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
               borderSide: const BorderSide(
                 color: ColorsValue.primary,
                 width: 1,

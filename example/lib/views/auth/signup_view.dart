@@ -47,7 +47,7 @@ class SignupView extends StatelessWidget {
                             tag: const ValueKey('logo_isometrik'),
                             child: Center(
                               child: Image.asset(
-                                IsmLiveAssetConstants.isometrik,
+                                IsmLiveAssetConstants.logos.isometrik,
                                 package: 'appscrip_live_stream_component',
                               ),
                             ),
@@ -71,10 +71,11 @@ class SignupView extends StatelessWidget {
                                 () => Stack(
                                   children: [
                                     controller.profileImage.trim().isEmpty
-                                        ? const AppImage.asset(
+                                        ? AppImage.asset(
                                             width: 100,
                                             height: 100,
-                                            IsmLiveAssetConstants.noImage,
+                                            IsmLiveAssetConstants
+                                                .images.noImage,
                                             isProfileImage: true,
                                           )
                                         : AppImage.network(
@@ -115,17 +116,17 @@ class SignupView extends StatelessWidget {
                             height: 20,
                           ),
                           Text(TranslationKeys.userName.tr),
-                          Dimens.boxHeight8,
+                          IsmLiveDimens.boxHeight8,
                           InputField.userName(
                               controller: controller.userNameController),
-                          Dimens.boxHeight16,
+                          IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('email_label'),
                             child: IsmLiveAnimatedText(
                               TranslationKeys.email.tr,
                             ),
                           ),
-                          Dimens.boxHeight8,
+                          IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('email_field'),
                             child: InputField.email(
@@ -139,13 +140,13 @@ class SignupView extends StatelessWidget {
                               },
                             ),
                           ),
-                          Dimens.boxHeight16,
+                          IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('password_label'),
                             child: IsmLiveAnimatedText(
                                 TranslationKeys.password.tr),
                           ),
-                          Dimens.boxHeight8,
+                          IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('password_field'),
                             child: InputField.password(
@@ -162,9 +163,9 @@ class SignupView extends StatelessWidget {
                                 obscureCharacter: '*',
                                 controller: controller.passwordController),
                           ),
-                          Dimens.boxHeight16,
+                          IsmLiveDimens.boxHeight16,
                           Text(TranslationKeys.confirmPassword.tr),
-                          Dimens.boxHeight8,
+                          IsmLiveDimens.boxHeight8,
                           InputField.password(
                               suffixIcon: IconButton(
                                 icon: Icon(!controller.showConfirmPasswared
@@ -185,7 +186,7 @@ class SignupView extends StatelessWidget {
                                 return 'Should be same with Password';
                               },
                               controller: controller.confirmPasswordController),
-                          Dimens.boxHeight32,
+                          IsmLiveDimens.boxHeight32,
                           Hero(
                             tag: const ValueKey('login-signup'),
                             child: IsmLiveButton(
@@ -227,7 +228,7 @@ class SignupView extends StatelessWidget {
                               label: TranslationKeys.login.tr,
                             ),
                           ),
-                          Dimens.boxHeight16
+                          IsmLiveDimens.boxHeight16
                         ],
                       ),
                     ),
@@ -257,7 +258,7 @@ class _PickImageBottomSheet extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      // padding: IsmDimens.edgeInsets8,
+                      // padding: IsmIsmLiveDimens.edgeInsets8,
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                           color: Colors.blueAccent),

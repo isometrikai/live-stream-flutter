@@ -1,1 +1,1 @@
-export 'home_view_model.dart';
+export 'stream_view_model.dart';

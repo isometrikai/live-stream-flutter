@@ -2,4 +2,4 @@ export 'enums.dart';
 export 'extensions.dart';
 export 'log.dart';
 export 'typedef.dart';
-export 'utilities.dart';
+export 'utility.dart';

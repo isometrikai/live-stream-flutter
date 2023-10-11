@@ -6,7 +6,7 @@ class UserBinding implements Bindings {
   void dependencies() {
     Get.put<UserController>(
       UserController(),
-      permanent: true,
+      // permanent: true,
     );
   }
 }

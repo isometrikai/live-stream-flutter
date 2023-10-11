@@ -1,7 +1,7 @@
 name: appscrip_live_stream_component
 description: A new Flutter plugin project.
 version: 0.0.1
-homepage: null
+homepage: https://isometrik.io/
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -10,6 +10,7 @@ environment:
 dependencies:
   agora_rtc_engine: ^5.3.0
   cached_network_image: ^3.2.3
+  connectivity_plus: ^4.0.2
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.0
@@ -17,12 +18,14 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   get: ^4.6.6
+  http: ^1.1.0
   image_cropper: ^5.0.0
   internet_connection_checker: ^1.0.0+1
   livekit_client: ^1.2.1
   mqtt_client: ^9.7.3
   plugin_platform_interface: ^2.0.2
   shared_preferences: ^2.2.1
+  uuid: ^4.1.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

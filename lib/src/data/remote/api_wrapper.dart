@@ -1,19 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:appscrip_live_stream_component_example/data/data.dart';
-import 'package:appscrip_live_stream_component_example/models/models.dart';
-import 'package:appscrip_live_stream_component_example/res/res.dart';
-import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:http/http.dart' as http;
 
-/// API WRAPPER to call all the APIs and handle the status codes
-class ApiWrapper {
+/// API WRAPPER to call all the IsmLiveApis and handle the status codes
+class IsmLiveApiWrapper {
   /// Method to make all the requests inside the app like GET, POST, PUT, Delete
-  Future<ResponseModel> makeRequest(
+  Future<IsmLiveResponseModel> makeRequest(
     String api, {
     String? baseUrl,
-    required RequestType type,
+    required IsmLiveRequestType type,
     required Map<String, String> headers,
     dynamic payload,
     String field = '',
@@ -23,24 +20,25 @@ class ApiWrapper {
     bool shouldEncodePayload = true,
   }) async {
     assert(
-      type != RequestType.upload ||
-          (type == RequestType.upload &&
+      type != IsmLiveRequestType.upload ||
+          (type == IsmLiveRequestType.upload &&
               payload is! Map<String, String> &&
               field.isNotEmpty &&
               filePath.isNotEmpty),
       'if type is passed as [RequestType.upload] then payload must be of type Map<String, String> and field & filePath must not be empty',
     );
     assert(
-      type != RequestType.get || (type == RequestType.get && payload == null),
+      type != IsmLiveRequestType.get ||
+          (type == IsmLiveRequestType.get && payload == null),
       'if type is passed as [RequestType.get] then payload must not be passed',
     );
 
     /// To see whether the network is available or not
-    var uri = (baseUrl ?? Apis.baseUrl) + api;
-    AppLog.info('[Request] - $type - $uri\n$payload');
+    var uri = (baseUrl ?? IsmLiveApis.baseUrl) + api;
+    IsmLiveLog.info('[Request] - $type - $uri\n$payload');
 
-    if (showLoader) Utility.showLoader();
-    if (await Utility.isNetworkAvailable) {
+    if (showLoader) IsmLiveUtility.showLoader();
+    if (await IsmLiveUtility.isNetworkAvailable) {
       try {
         // Handles API call
         var start = DateTime.now();
@@ -60,7 +58,7 @@ class ApiWrapper {
           startTime: start,
         );
         if (showLoader) {
-          Utility.closeLoader();
+          IsmLiveUtility.closeLoader();
         }
         if (res.statusCode != 406) {
           return res;
@@ -78,14 +76,15 @@ class ApiWrapper {
           shouldEncodePayload: shouldEncodePayload,
         );
       } on TimeoutException catch (e, st) {
-        AppLog.error('TimeOutException - $e', st);
+        IsmLiveLog.error('TimeOutException - $e', st);
         if (showLoader) {
-          Utility.closeLoader();
+          IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res = ResponseModel.message(StringConstants.timeoutError);
+        var res =
+            IsmLiveResponseModel.message(IsmLiveStringConstants.timeoutError);
         if (showDialog) {
-          await Utility.showInfoDialog(
+          await IsmLiveUtility.showInfoDialog(
             res,
             title: 'Timeout Error',
             onRetry: () => makeRequest(
@@ -104,44 +103,46 @@ class ApiWrapper {
         }
         return res;
       } on ArgumentError catch (e, st) {
-        AppLog.error(e, st);
+        IsmLiveLog.error(e, st);
         if (showLoader) {
-          Utility.closeLoader();
+          IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res = ResponseModel.message(StringConstants.somethingWentWrong);
+        var res = IsmLiveResponseModel.message(
+            IsmLiveStringConstants.somethingWentWrong);
 
         if (showDialog) {
-          await Utility.showInfoDialog(
+          await IsmLiveUtility.showInfoDialog(
             res,
             title: 'Argument Error',
           );
         }
         return res;
       } catch (e, st) {
-        AppLog.info(e.runtimeType);
-        AppLog.error(e, st);
+        IsmLiveLog.info(e.runtimeType);
+        IsmLiveLog.error(e, st);
         if (showLoader) {
-          Utility.closeLoader();
+          IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res = ResponseModel.message(StringConstants.somethingWentWrong);
+        var res = IsmLiveResponseModel.message(
+            IsmLiveStringConstants.somethingWentWrong);
 
         if (showDialog) {
-          await Utility.showInfoDialog(res);
+          await IsmLiveUtility.showInfoDialog(res);
         }
         return res;
       }
     } else {
-      AppLog.error('No Internet Connection', StackTrace.current);
+      IsmLiveLog.error('No Internet Connection', StackTrace.current);
       if (showLoader) {
-        Utility.closeLoader();
+        IsmLiveUtility.closeLoader();
       }
       await Future.delayed(const Duration(milliseconds: 100));
-      var res = ResponseModel.message(StringConstants.noInternet);
+      var res = IsmLiveResponseModel.message(IsmLiveStringConstants.noInternet);
 
       if (showDialog) {
-        await Utility.showInfoDialog(
+        await IsmLiveUtility.showInfoDialog(
           res,
           title: 'Internet Error',
           onRetry: () => makeRequest(
@@ -164,24 +165,24 @@ class ApiWrapper {
 
   Future<http.Response> _handleRequest(
     Uri api, {
-    required RequestType type,
+    required IsmLiveRequestType type,
     required Map<String, String> headers,
     required String field,
     required String filePath,
     dynamic payload,
   }) async {
     switch (type) {
-      case RequestType.get:
+      case IsmLiveRequestType.get:
         return _get(api, headers: headers);
-      case RequestType.post:
+      case IsmLiveRequestType.post:
         return _post(api, payload: payload, headers: headers);
-      case RequestType.put:
+      case IsmLiveRequestType.put:
         return _put(api, payload: payload, headers: headers);
-      case RequestType.patch:
+      case IsmLiveRequestType.patch:
         return _patch(api, payload: payload, headers: headers);
-      case RequestType.delete:
+      case IsmLiveRequestType.delete:
         return _delete(api, payload: payload, headers: headers);
-      case RequestType.upload:
+      case IsmLiveRequestType.upload:
         return _upload(
           api,
           payload: payload,
@@ -201,7 +202,7 @@ class ApiWrapper {
             api,
             headers: headers,
           )
-          .timeout(AppConstants.timeOutDuration);
+          .timeout(IsmLiveConstants.timeOutDuration);
 
   Future<http.Response> _post(
     Uri api, {
@@ -214,7 +215,7 @@ class ApiWrapper {
             body: payload,
             headers: headers,
           )
-          .timeout(AppConstants.timeOutDuration);
+          .timeout(IsmLiveConstants.timeOutDuration);
 
   Future<http.Response> _put(
     Uri api, {
@@ -227,7 +228,7 @@ class ApiWrapper {
             body: payload,
             headers: headers,
           )
-          .timeout(AppConstants.timeOutDuration);
+          .timeout(IsmLiveConstants.timeOutDuration);
 
   Future<http.Response> _patch(
     Uri api, {
@@ -240,7 +241,7 @@ class ApiWrapper {
             body: payload,
             headers: headers,
           )
-          .timeout(AppConstants.timeOutDuration);
+          .timeout(IsmLiveConstants.timeOutDuration);
 
   Future<http.Response> _delete(
     Uri api, {
@@ -253,7 +254,7 @@ class ApiWrapper {
             body: payload,
             headers: headers,
           )
-          .timeout(AppConstants.timeOutDuration);
+          .timeout(IsmLiveConstants.timeOutDuration);
 
   /// Method to make all the requests inside the app like GET, POST, PUT, Delete
   Future<http.Response> _upload(
@@ -279,13 +280,13 @@ class ApiWrapper {
   }
 
   /// Method to return the API response based upon the status code of the server
-  Future<ResponseModel> _processResponse(
+  Future<IsmLiveResponseModel> _processResponse(
     http.Response response, {
     required bool showDialog,
     required DateTime startTime,
   }) async {
     var diff = DateTime.now().difference(startTime).inMilliseconds / 1000;
-    AppLog(
+    IsmLiveLog(
         '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}\n${response.body}');
 
     switch (response.statusCode) {
@@ -296,7 +297,7 @@ class ApiWrapper {
       case 204:
       case 205:
       case 208:
-        return ResponseModel(
+        return IsmLiveResponseModel(
           data: utf8.decode(response.bodyBytes),
           hasError: false,
           statusCode: response.statusCode,
@@ -322,27 +323,27 @@ class ApiWrapper {
           // Logic to refresh the token the API will be called again automatically from the makeRequest function
           // ex: await Get.find<AuthController>().refreshToken();
         }
-        var res = ResponseModel(
+        var res = IsmLiveResponseModel(
           data: utf8.decode(response.bodyBytes),
           hasError: true,
           statusCode: response.statusCode,
         );
         if (![401, 404, 406, 410].contains(response.statusCode) && showDialog) {
-          await Utility.showInfoDialog(res);
+          await IsmLiveUtility.showInfoDialog(res);
         }
         return res;
       case 500:
-        var res = ResponseModel.message(
+        var res = IsmLiveResponseModel.message(
           'Server error',
           statusCode: response.statusCode,
         );
         if (showDialog) {
-          await Utility.showInfoDialog(res);
+          await IsmLiveUtility.showInfoDialog(res);
         }
         return res;
 
       default:
-        return ResponseModel(
+        return IsmLiveResponseModel(
           data: utf8.decode(response.bodyBytes),
           hasError: true,
           statusCode: response.statusCode,

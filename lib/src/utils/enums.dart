@@ -10,6 +10,21 @@ enum IsmLiveStreamType {
   final String label;
 }
 
+enum IsmLiveRequestType {
+  get,
+  post,
+  put,
+  patch,
+  delete,
+  upload;
+}
+
+enum IsmLiveMessageType {
+  error,
+  success,
+  information;
+}
+
 enum IsmLiveNavItemType {
   streams,
   reels,

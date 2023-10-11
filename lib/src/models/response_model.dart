@@ -1,42 +1,51 @@
 import 'dart:convert';
 
-class ResponseModel {
-  const ResponseModel({
-    required this.data,
-    required this.hasError,
-    this.statusCode = 1000,
-  });
+class IsmLiveResponseModel {
+  factory IsmLiveResponseModel.error() => const IsmLiveResponseModel(
+        data: '',
+        statusCode: 1000,
+        hasError: true,
+      );
 
-  factory ResponseModel.message(
+  factory IsmLiveResponseModel.message(
     String message, {
     bool isSuccess = false,
     int statusCode = 1000,
   }) =>
-      ResponseModel(
+      IsmLiveResponseModel(
         data: jsonEncode({'error': message}),
         hasError: !isSuccess,
         statusCode: statusCode,
       );
 
-  factory ResponseModel.fromMap(Map<String, dynamic> map) => ResponseModel(
+  factory IsmLiveResponseModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveResponseModel(
         data: map['data'] as String,
         hasError: map['hasError'] as bool,
         statusCode: map['statusCode'] != null ? map['statusCode'] as int : 1000,
       );
 
-  factory ResponseModel.fromJson(String source) =>
-      ResponseModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveResponseModel.fromJson(String source) =>
+      IsmLiveResponseModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  const IsmLiveResponseModel({
+    required this.data,
+    required this.hasError,
+    this.statusCode = 1000,
+  });
+
+  Map<String, dynamic> decode() => jsonDecode(data) as Map<String, dynamic>;
 
   final String data;
   final bool hasError;
   final int statusCode;
 
-  ResponseModel copyWith({
+  IsmLiveResponseModel copyWith({
     String? data,
     bool? hasError,
     int? statusCode,
   }) =>
-      ResponseModel(
+      IsmLiveResponseModel(
         data: data ?? this.data,
         hasError: hasError ?? this.hasError,
         statusCode: statusCode ?? this.statusCode,
@@ -52,10 +61,10 @@ class ResponseModel {
 
   @override
   String toString() =>
-      'ResponseModel(data: $data, hasError: $hasError, statusCode: $statusCode)';
+      'IsmLiveResponseModel(data: $data, hasError: $hasError, statusCode: $statusCode)';
 
   @override
-  bool operator ==(covariant ResponseModel other) {
+  bool operator ==(covariant IsmLiveResponseModel other) {
     if (identical(this, other)) return true;
 
     return other.data == data &&

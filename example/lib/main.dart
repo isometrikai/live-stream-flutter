@@ -14,7 +14,6 @@ void main() async {
 
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put<ApiWrapper>(ApiWrapper());
   Get.put(DeviceConfig()).init();
   Get.lazyPut(SharedPreferencesManager.new);
   await Future.wait([

@@ -68,16 +68,17 @@ class AuthController extends GetxController {
   }
 
   Future<void> login() async {
-    var response = await _viewModel.login(
+    var res = await _viewModel.login(
       userName: userNameController.text.trim(),
       email: emailController.text.trim(),
       password: passwordController.text.trim(),
     );
-
-    if (response.data != null) {
-      await userController.getUserData();
-      RouteManagement.goToHome();
+    if (res == null) {
+      return;
     }
+
+    await userController.getUserData();
+    RouteManagement.goToHome();
   }
 
   Future<void> signup() async {
@@ -88,12 +89,12 @@ class AuthController extends GetxController {
       'password': confirmPasswordController.text.trim(),
       'metaData': {'country': 'India'}
     };
-    var response =
-        await _viewModel.signup(isLoading: true, createUser: creatUser);
-    if (response.data != null) {
-      await userController.getUserData();
-      RouteManagement.goToHome();
+    var res = await _viewModel.signup(isLoading: true, createUser: creatUser);
+    if (res == null) {
+      return;
     }
+    await userController.getUserData();
+    RouteManagement.goToHome();
   }
 
   void uploadImage(ImageSource imageSource) async {
@@ -134,17 +135,17 @@ class AuthController extends GetxController {
   // / get Api for presigned Url.....
   Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
     AppLog(emailController.text.trim());
-    var response = await _viewModel.getPresignedUrl(
+    var res = await _viewModel.getPresignedUrl(
       showLoader: false,
       userIdentifier: DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
-    if (!response.hasError) {
-      var urlResponse =
-          await updatePresignedUrl(response.data?.presignedUrl ?? '', bytes);
-      if (urlResponse == 200) {
-        profileImage = response.data?.mediaUrl ?? '';
-      }
+    if (res == null) {
+      return;
+    }
+    var urlResponse = await updatePresignedUrl(res.presignedUrl ?? '', bytes);
+    if (urlResponse == 200) {
+      profileImage = res.mediaUrl ?? '';
     }
   }
 
