@@ -8,5 +8,5 @@ class HomeView extends StatelessWidget {
   static const String route = AppRoutes.home;
 
   @override
-  Widget build(BuildContext context) => const IsmLiveStreamView();
+  Widget build(BuildContext context) => const SearchUserScreen();
 }

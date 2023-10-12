@@ -47,27 +47,41 @@ enum IsmLiveImageType {
 }
 
 enum IsmLiveCustomType {
-  videCall('VideoCall');
+  videoCall('VideoCall'),
+  audioCall('AudioCall');
 
   factory IsmLiveCustomType.fromValue(String data) =>
       {
-        IsmLiveCustomType.videCall.value: IsmLiveCustomType.videCall,
+        IsmLiveCustomType.videoCall.value: IsmLiveCustomType.videoCall,
+        IsmLiveCustomType.audioCall.value: IsmLiveCustomType.audioCall,
       }[data] ??
-      IsmLiveCustomType.videCall;
+      IsmLiveCustomType.videoCall;
 
   const IsmLiveCustomType(this.value);
   final String value;
 }
 
 enum IsmLiveMeetingType {
-  videCall(0);
+  videoCall(0),
+  audioCall(1);
 
   factory IsmLiveMeetingType.fromValue(int data) =>
       {
-        IsmLiveMeetingType.videCall.value: IsmLiveMeetingType.videCall,
+        IsmLiveMeetingType.videoCall.value: IsmLiveMeetingType.videoCall,
+        IsmLiveMeetingType.audioCall.value: IsmLiveMeetingType.audioCall,
       }[data] ??
-      IsmLiveMeetingType.videCall;
+      IsmLiveMeetingType.videoCall;
 
   const IsmLiveMeetingType(this.value);
   final int value;
+}
+
+enum IsmLiveCallType {
+  one2one,
+  liveStream;
+}
+
+enum IsmLiveEngineType {
+  agora,
+  livekit,
 }
