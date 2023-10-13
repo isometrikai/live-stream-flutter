@@ -21,7 +21,7 @@ dependencies:
   http: ^1.1.0
   image_cropper: ^5.0.0
   internet_connection_checker: ^1.0.0+1
-  livekit_client: ^1.2.1
+  livekit_client: ^1.5.2
   mqtt_client: ^9.7.3
   plugin_platform_interface: ^2.0.2
   shared_preferences: ^2.2.1

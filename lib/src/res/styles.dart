@@ -10,7 +10,13 @@ class IsmLiveStyles {
   );
 
   static TextStyle white16 = TextStyle(
-    color: Colors.black,
+    color: Colors.white,
     fontSize: IsmLiveDimens.sixteen,
+  );
+
+  static TextStyle whiteBold16 = TextStyle(
+    color: Colors.white,
+    fontSize: IsmLiveDimens.sixteen,
+    fontWeight: FontWeight.bold,
   );
 }

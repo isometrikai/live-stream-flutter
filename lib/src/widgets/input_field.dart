@@ -12,6 +12,9 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     TextInputType? textInputType,
+    this.readOnly = false,
+    this.onTap,
+    this.hintText,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -22,6 +25,9 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
+    this.readOnly = false,
+    this.onTap,
+    this.hintText,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -34,6 +40,9 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
+    this.readOnly = false,
+    this.onTap,
+    this.hintText,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -45,6 +54,9 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
+    this.readOnly = false,
+    this.onTap,
+    this.hintText,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -55,12 +67,18 @@ class IsmLiveInputField extends StatelessWidget {
   final String obscureCharacter;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final bool readOnly;
+  final void Function()? onTap;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) => Material(
         child: TextFormField(
+          onTap: onTap,
+          readOnly: readOnly,
           controller: controller,
           decoration: InputDecoration(
+            hintText: hintText,
             isDense: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
