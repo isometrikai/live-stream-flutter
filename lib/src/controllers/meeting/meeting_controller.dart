@@ -1,8 +1,12 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class MeetingController extends GetxController {
-  void connecting(
+  MeetingController(this.viewModel);
+
+  final MeetingViewModel viewModel;
+  void meetingRoomConnection(
     String url,
     String token,
   ) async {
@@ -11,6 +15,6 @@ class MeetingController extends GetxController {
       dynacast: true,
     );
 
-    await Room().connect(url, token, roomOptions: roomOptions);
+    var room = await Room().connect(url, token, roomOptions: roomOptions);
   }
 }

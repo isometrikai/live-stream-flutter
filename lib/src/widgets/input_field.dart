@@ -12,7 +12,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     TextInputType? textInputType,
-    this.readOnly,
+    this.readOnly = false,
     this.onTap,
     this.hintText,
   }) : _textInputType = textInputType ?? TextInputType.text;
@@ -25,7 +25,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
-    this.readOnly,
+    this.readOnly = false,
     this.onTap,
     this.hintText,
   })  : _textInputType = TextInputType.name,
@@ -40,7 +40,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
-    this.readOnly,
+    this.readOnly = false,
     this.onTap,
     this.hintText,
   }) : _textInputType = TextInputType.emailAddress;
@@ -54,7 +54,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.validator,
-    this.readOnly,
+    this.readOnly = false,
     this.onTap,
     this.hintText,
   }) : _textInputType = TextInputType.visiblePassword;
@@ -67,7 +67,7 @@ class IsmLiveInputField extends StatelessWidget {
   final String obscureCharacter;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
-  final bool? readOnly;
+  final bool readOnly;
   final void Function()? onTap;
   final String? hintText;
 
@@ -75,7 +75,7 @@ class IsmLiveInputField extends StatelessWidget {
   Widget build(BuildContext context) => Material(
         child: TextFormField(
           onTap: onTap,
-          readOnly: readOnly ?? false,
+          readOnly: readOnly,
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
