@@ -6,15 +6,16 @@ class MeetingController extends GetxController {
   MeetingController(this.viewModel);
 
   final MeetingViewModel viewModel;
-  void meetingRoomConnection(
+  void connectMeeting(
     String url,
     String token,
   ) async {
+    var room = Room();
     const roomOptions = RoomOptions(
       adaptiveStream: true,
       dynacast: true,
     );
 
-    var room = await Room().connect(url, token, roomOptions: roomOptions);
+    await room.connect(url, token, roomOptions: roomOptions);
   }
 }
