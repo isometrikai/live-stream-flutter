@@ -8,7 +8,9 @@ class MeetingBinding implements Bindings {
     Get.lazyPut<MeetingController>(
       () => MeetingController(
         MeetingViewModel(
-          MeetingRepository(),
+          MeetingRepository(
+            IsmLiveApiWrapper(),
+          ),
         ),
       ),
     );
