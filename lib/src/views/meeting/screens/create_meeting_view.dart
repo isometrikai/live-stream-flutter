@@ -24,7 +24,11 @@ class CreateMeetingScreen extends StatelessWidget {
             IsmLiveInputField(
               controller: TextEditingController(),
               onTap: () {
-                //nevigation
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SearchUserScreen(),
+                    ));
               },
               readOnly: true,
               hintText: 'Add A Member',
