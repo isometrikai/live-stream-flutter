@@ -2,11 +2,27 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   static const String route = AppRoutes.home;
 
   @override
-  Widget build(BuildContext context) => const SearchUserScreen();
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  @override
+  Widget build(BuildContext context) => const IsmLiveStream(
+        configuration: IsmLiveStreamConfig(
+            communicationConfig:
+                IsmLiveCommunicationConfig(appId: '', rtcToken: ''),
+            userConfig: IsmLiveUserConfig(
+                userToken: '',
+                userId: '',
+                firstName: '',
+                lastName: '',
+                userEmail: '',
+                userProfile: '')),
+      );
 }

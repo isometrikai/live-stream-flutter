@@ -11,6 +11,16 @@ class IsmLiveUtility {
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
+  static Map<String, String> commonHeader(
+          {required String token,
+          required String licenseKey,
+          required String appSecret}) =>
+      {
+        'userToken': token,
+        'licenseKey': licenseKey,
+        'appSecret': appSecret,
+      };
+
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {
     final result = await Connectivity().checkConnectivity();
