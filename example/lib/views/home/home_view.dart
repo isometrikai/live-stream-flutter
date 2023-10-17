@@ -13,5 +13,16 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   @override
-  Widget build(BuildContext context) => Scaffold(body: MyMeetingsView());
+  Widget build(BuildContext context) => const IsmLiveStream(
+        configuration: IsmLiveStreamConfig(
+            communicationConfig:
+                IsmLiveCommunicationConfig(appId: '', rtcToken: ''),
+            userConfig: IsmLiveUserConfig(
+                userToken: '',
+                userId: '',
+                firstName: '',
+                lastName: '',
+                userEmail: '',
+                userProfile: '')),
+      );
 }

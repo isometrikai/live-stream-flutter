@@ -10,12 +10,15 @@ class MeetingRepository {
       required String appSecret}) async {
     try {
       var url = '/meetings/v1/meetings';
-      var res = await _apiWrapper
-          .makeRequest(url, type: IsmLiveRequestType.get, headers: {
-        'userToken': token,
-        'licenseKey': licenseKey,
-        'appSecret': appSecret,
-      });
+      var res = await _apiWrapper.makeRequest(
+        url,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.commonHeader(
+          token: token,
+          licenseKey: licenseKey,
+          appSecret: appSecret,
+        ),
+      );
 
       return res;
     } catch (_) {
@@ -30,14 +33,14 @@ class MeetingRepository {
       required String meetingId}) async {
     try {
       var url = '/meetings/v1/join';
-      var res = await _apiWrapper
-          .makeRequest(url, type: IsmLiveRequestType.post, headers: {
-        'userToken': token,
-        'licenseKey': licenseKey,
-        'appSecret': appSecret,
-      }, payload: {
-        'meetingId': meetingId
-      });
+      var res = await _apiWrapper.makeRequest(url,
+          type: IsmLiveRequestType.post,
+          headers: IsmLiveUtility.commonHeader(
+            token: token,
+            licenseKey: licenseKey,
+            appSecret: appSecret,
+          ),
+          payload: {'meetingId': meetingId});
 
       return res;
     } catch (_) {
