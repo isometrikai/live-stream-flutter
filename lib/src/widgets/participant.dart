@@ -9,7 +9,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     this.quality = VideoQuality.MEDIUM,
     Key? key,
   }) : super(key: key);
-  // Convenience method to return relevant widget for participant
+
   static ParticipantWidget widgetFor(ParticipantTrack participantTrack,
       {bool showStatsLayer = false}) {
     if (participantTrack.participant is LocalParticipant) {
@@ -107,11 +107,8 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
     super.didUpdateWidget(oldWidget);
   }
 
-  // Notify Flutter that UI re-build is required, but we don't set anything here
-  // since the updated values are computed properties.
   void _onParticipantChanged() => setState(() {});
 
-  // Widgets to show above the info bar
   List<Widget> extraWidgets(bool isScreenShare) => [];
 
   @override
@@ -135,7 +132,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
               child: activeVideoTrack != null && !activeVideoTrack!.muted
                   ? VideoTrackRenderer(
                       activeVideoTrack!,
-                      fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                      fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                     )
                   : const NoVideoWidget(),
             ),

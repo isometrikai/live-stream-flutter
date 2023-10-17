@@ -19,6 +19,16 @@ enum IsmLiveRequestType {
   upload;
 }
 
+enum SimulateScenarioResult {
+  signalReconnect,
+  nodeFailure,
+  migration,
+  serverLeave,
+  switchCandidate,
+  clear,
+  e2eeKeyRatchet,
+}
+
 enum IsmLiveMessageType {
   error,
   success,

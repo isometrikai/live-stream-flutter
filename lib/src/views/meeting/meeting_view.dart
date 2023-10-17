@@ -50,6 +50,7 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -64,16 +65,10 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
             style: IsmLiveStyles.black16,
           ),
           centerTitle: true,
-          actions: [
+          actions: const [
             IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CreateMeetingScreen(),
-                    ));
-              },
-              icon: const Icon(
+              onPressed: IsLiveRouteManagement.goToCreateMeetingScreen,
+              icon: Icon(
                 Icons.add,
                 color: Colors.blue,
               ),
@@ -81,46 +76,48 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
           ],
         ),
         body: GetBuilder<MeetingController>(
-          builder: (controller) =>
-
-              //  Padding(
-              //       padding: IsmLiveDimens.edgeInsets8_4,
-              //       child: controller.myMeetingList.isEmpty
-              //           ? const Center(
-              //               child: Text('No meetings found'),
-              //             )
-              //           :
-
-              ListView.separated(
-                  itemBuilder: (context, index) => Container(
-                        padding: IsmLiveDimens.edgeInsets4,
-                        color: IsmLiveColors.white,
-                        height: IsmLiveDimens.fifty,
-                        child: Row(
-                          children: [
-                            // Text(controller
-                            //     .myMeetingList[index].meetingDescription),
-                            const Text('scjhdscksdch'),
-                            const Spacer(),
-                            SizedBox(
-                              width: IsmLiveDimens.hundred,
-                              child: IsmLiveButton(
-                                onTap: () {
-                                  log('###################################');
-                                  controller.connectMeeting(
-                                      context,
-                                      'wss://streaming.isometrik.io',
-                                      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJBUElnOWhCU050S0NxOVgiLCJleHAiOjE2OTc0ODE5NzEsImlhdCI6MTY5NzQ2MDM3MSwiaXNzIjoiQVBJZzloQlNOdEtDcTlYIiwianRpIjoiOTg5Y2MxMjItYjA3Yi00MmJlLTk1N2YtYjcyYTQzY2M4NzdmIiwibmFtZSI6InJhbmRvbVVzZXIyIiwibmJmIjoxNjk3NDYwMzcwLCJzdWIiOiI2NGY4NzU4MTQyMjlkNDAwMDFjMWM2NGEiLCJ0eXAiOiJhY2Nlc3MiLCJ2aWRlbyI6eyJjYW5QdWJsaXNoIjp0cnVlLCJjYW5QdWJsaXNoRGF0YSI6ZmFsc2UsImNhblN1YnNjcmliZSI6dHJ1ZSwiaGlkZGVuIjpmYWxzZSwicmVjb3JkZXIiOmZhbHNlLCJyb29tIjoiNjUyZDMwOTNkOGRkZTkwMDAxYzFlNGFmIiwicm9vbUFkbWluIjpmYWxzZSwicm9vbUNyZWF0ZSI6ZmFsc2UsInJvb21Kb2luIjp0cnVlLCJyb29tTGlzdCI6ZmFsc2UsInJvb21SZWNvcmQiOmZhbHNlfX0.Q-YoSFWnyUU2aO_ZpuhwKzyp80ae6emFj7x4qeAruT4');
-                                },
-                                label: 'Join',
-                              ),
+          builder: (controller) => Padding(
+            padding: IsmLiveDimens.edgeInsets16_15,
+            child: controller.myMeetingList.isEmpty
+                ? const Center(
+                    child: Text('No meetings found'),
+                  )
+                : ListView.separated(
+                    itemBuilder: (context, index) => Container(
+                      padding: IsmLiveDimens.edgeInsets4,
+                      color: IsmLiveColors.white,
+                      height: IsmLiveDimens.fifty,
+                      child: Row(
+                        children: [
+                          Text(controller
+                              .myMeetingList[index].meetingDescription),
+                          const Text('meeting '),
+                          const Spacer(),
+                          SizedBox(
+                            width: IsmLiveDimens.hundred,
+                            child: IsmLiveButton(
+                              onTap: () async {
+                                var rtcTocken = await controller.joinMeeting(
+                                    token: '',
+                                    licenseKey: '',
+                                    appSecret: '',
+                                    meetingId: controller
+                                        .myMeetingList[index].meetingId);
+                                if (rtcTocken != null) {
+                                  await controller.connectMeeting(
+                                      context, '', rtcTocken);
+                                }
+                              },
+                              label: 'Join',
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemCount: 5 // controller.myMeetingList.length,
+                    ),
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: controller.myMeetingList.length,
                   ),
+          ),
         ),
       );
 }

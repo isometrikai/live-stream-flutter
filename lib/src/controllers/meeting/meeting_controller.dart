@@ -8,6 +8,7 @@ class MeetingController extends GetxController {
   MeetingController(this.viewModel);
   List<MyMeetingModel> myMeetingList = [];
   final MeetingViewModel viewModel;
+
   Future<void> connectMeeting(
     BuildContext context,
     String url,
@@ -49,11 +50,27 @@ class MeetingController extends GetxController {
         url,
         token,
       );
-      // await room.localParticipant!.setCameraEnabled(true);
-      // await room.localParticipant!.setMicrophoneEnabled(true);
-      // await room.localParticipant!.setScreenShareEnabled(true);
+      room.localParticipant!.setTrackSubscriptionPermissions(
+        allParticipantsAllowed: false,
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
+      );
+
+      var localVideo =
+          await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
+        cameraPosition: CameraPosition.front,
+        params: VideoParametersPresets.h720_169,
+      ));
+      await room.localParticipant!.publishVideoTrack(localVideo);
+      var localAudio = await LocalAudioTrack.create();
+      await room.localParticipant!.publishAudioTrack(localAudio);
       await Navigator.push<void>(
-          context, MaterialPageRoute(builder: (_) => RoomPage(room, listener)));
+        context,
+        MaterialPageRoute(
+          builder: (_) => RoomPage(room, listener),
+        ),
+      );
     } catch (e, st) {
       print('*************** $e');
       print('#####     $st');
