@@ -11,7 +11,7 @@ class SearchUserScreen extends StatelessWidget {
           backgroundColor: IsmLiveColors.white,
           title: Text(
             'Search User',
-            style: IsmLiveStyles.whiteBold16,
+            style: IsmLiveStyles.black16,
           ),
           centerTitle: true,
         ),
@@ -26,7 +26,7 @@ class SearchUserScreen extends StatelessWidget {
             ListView.separated(
                 padding: IsmLiveDimens.edgeInsets8_4,
                 shrinkWrap: true,
-                itemBuilder: (context, index) => const Text('hhhhh'),
+                itemBuilder: (context, index) => const Text('search'),
                 separatorBuilder: (context, index) => const Divider(),
                 itemCount: 10)
           ],

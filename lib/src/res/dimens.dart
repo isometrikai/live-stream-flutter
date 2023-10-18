@@ -84,7 +84,9 @@ class IsmLiveDimens {
   static final EdgeInsets edgeInsetsL2 = EdgeInsets.only(left: two);
 
   static final EdgeInsets edgeInsetsL4 = EdgeInsets.only(left: four);
+  static final EdgeInsets edgeInsetsL5 = EdgeInsets.only(left: five);
   static final EdgeInsets edgeInsetsR4 = EdgeInsets.only(right: four);
+  static final EdgeInsets edgeInsetsB10 = EdgeInsets.only(bottom: ten);
 
   static final EdgeInsets edgeInsets2_0 = EdgeInsets.symmetric(horizontal: two);
   static final EdgeInsets edgeInsets4_0 =
@@ -98,6 +100,8 @@ class IsmLiveDimens {
 
   static final EdgeInsets edgeInsets4_8 =
       EdgeInsets.symmetric(horizontal: four, vertical: eight);
+  static final EdgeInsets edgeInsets16_10 =
+      EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
   static final EdgeInsets edgeInsets8_4 =
       EdgeInsets.symmetric(horizontal: eight, vertical: four);
 }

@@ -12,13 +12,69 @@ class MeetingController extends GetxController {
     String url,
     String token,
   ) async {
-    var room = Room();
-    const roomOptions = RoomOptions(
-      adaptiveStream: true,
-      dynacast: true,
-    );
+    try {
+      var room = Room(
+        roomOptions: RoomOptions(
+            defaultCameraCaptureOptions: const CameraCaptureOptions(
+              deviceId: '',
+              cameraPosition: CameraPosition.front,
+              params: VideoParametersPresets.h720_169,
+            ),
+            defaultAudioCaptureOptions: const AudioCaptureOptions(
+              deviceId: '',
+              noiseSuppression: true,
+              echoCancellation: true,
+              autoGainControl: true,
+              highPassFilter: true,
+              typingNoiseDetection: true,
+            ),
+            defaultVideoPublishOptions: VideoPublishOptions(
+              videoEncoding: VideoParametersPresets.h720_169.encoding,
+              videoSimulcastLayers: [
+                VideoParametersPresets.h180_169,
+                VideoParametersPresets.h360_169,
+              ],
+            ),
+            defaultAudioPublishOptions: const AudioPublishOptions(
+              dtx: true,
+            )),
+      );
 
-    await room.connect(url, token, roomOptions: roomOptions);
+      // Create a Listener before connecting
+      final listener = room.createListener();
+
+      // Try to connect to the room
+      await room.connect(
+        url,
+        token,
+      );
+      room.localParticipant!.setTrackSubscriptionPermissions(
+        allParticipantsAllowed: false,
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
+      );
+
+      var localVideo =
+          await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
+        cameraPosition: CameraPosition.front,
+        params: VideoParametersPresets.h720_169,
+      ));
+      await room.localParticipant!.publishVideoTrack(localVideo);
+      var localAudio = await LocalAudioTrack.create();
+      await room.localParticipant!.publishAudioTrack(localAudio);
+
+      await IsLiveRouteManagement.goToRoomPage(room, listener);
+      // await Navigator.push<void>(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => RoomPage(room, listener),
+      //   ),
+      // );
+    } catch (e, st) {
+      print('*************** $e');
+      print('#####     $st');
+    }
   }
 
   Future<void> getMeetingList(

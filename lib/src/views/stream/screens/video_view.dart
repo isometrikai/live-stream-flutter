@@ -12,54 +12,57 @@
 // class _VideoViewState extends State<VideoView> {
 //   TrackPublication? videoPub;
 
-//   // @override
-//   // void initState() {
-//   //   super.initState();
-//   //   widget.participant.addListener(_onParticipantChanged);
-//   //   // trigger initial change
-//   //   _onParticipantChanged();
-//   // }
+//   @override
+//   void initState() {
+//     super.initState();
+//     widget.participant.addListener(_onParticipantChanged);
+//     // trigger initial change
+//     _onParticipantChanged();
+//   }
 
-//   // @override
-//   // void dispose() {
-//   //   widget.participant.removeListener(_onParticipantChanged);
-//   //   super.dispose();
-//   // }
+//   @override
+//   void dispose() {
+//     widget.participant.removeListener(_onParticipantChanged);
+//     super.dispose();
+//   }
 
-//   // @override
-//   // void didUpdateWidget(covariant VideoView oldWidget) {
-//   //   oldWidget.participant.removeListener(_onParticipantChanged);
-//   //   widget.participant.addListener(_onParticipantChanged);
-//   //   _onParticipantChanged();
-//   //   super.didUpdateWidget(oldWidget);
-//   // }
+//   @override
+//   void didUpdateWidget(covariant VideoView oldWidget) {
+//     oldWidget.participant.removeListener(_onParticipantChanged);
+//     widget.participant.addListener(_onParticipantChanged);
+//     _onParticipantChanged();
+//     super.didUpdateWidget(oldWidget);
+//   }
 
-//   // void _onParticipantChanged() {
-//   //   var subscribedVideos = widget.participant.videoTracks.where((pub) =>
-//   //       pub.kind == TrackType.VIDEO && !pub.isScreenShare && pub.subscribed);
+//   void _onParticipantChanged() {
+//     var subscribedVideos = widget.participant.videoTracks.where((pub) =>
+//         pub.kind == TrackType.VIDEO && !pub.isScreenShare && pub.subscribed);
 
-//   //   setState(() {
-//   //     if (subscribedVideos.isNotEmpty) {
-//   //       var videoPub = subscribedVideos.first;
-//   //       // when muted, show placeholder
-//   //       if (!videoPub.muted) {
-//   //         this.videoPub = videoPub;
-//   //         return;
-//   //       }
-//   //     }
-//   //     videoPub = null;
-//   //   });
-//   // }
+//     setState(() {
+//       if (subscribedVideos.isNotEmpty) {
+//         var videoPub = subscribedVideos.first;
+//         // when muted, show placeholder
+//         if (!videoPub.muted) {
+//           this.videoPub = videoPub;
+//           return;
+//         }
+//       }
+//       videoPub = null;
+//     });
+//   }
 
-//   // @override
-//   // Widget build(BuildContext context) {
-//   //
-//   //   if (videoPub != null) {
-//   //     return VideoTrackRenderer(videoPub.track as VideoTrack);
-//   //   } else {
-//   //     return Container(
-//   //       color: Colors.grey,
-//   //     );
-//   //   }
-//   // }
+//   @override
+//   Widget build(BuildContext context) {
+//     if (videoPub != null) {
+//       return Container(
+//           color: Colors.amber,
+//           height: 300,
+//           width: double.infinity,
+//           child: VideoTrackRenderer(videoPub!.track as VideoTrack));
+//     } else {
+//       return Container(
+//         color: Colors.grey,
+//       );
+//     }
+//   }
 // }
