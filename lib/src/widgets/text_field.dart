@@ -1,33 +1,25 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 
 class LKTextField extends StatelessWidget {
-  final String label;
-  final TextEditingController? ctrl;
   const LKTextField({
     required this.label,
     this.ctrl,
     Key? key,
   }) : super(key: key);
+  final String label;
+  final TextEditingController? ctrl;
 
   @override
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            padding: IsmLiveDimens.edgeInsetsB10,
+            child: Text(label, style: IsmLiveStyles.blackBold16),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-              horizontal: 15,
-            ),
+            padding: IsmLiveDimens.edgeInsets16,
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1,

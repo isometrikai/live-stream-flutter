@@ -4,16 +4,16 @@ import 'dart:math' as math;
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class RoomPage extends StatefulWidget {
-  const RoomPage(
-    this.room,
-    this.listener, {
+  RoomPage({
     Key? key,
   }) : super(key: key);
-  final Room room;
-  final EventsListener<RoomEvent> listener;
+  final Room room = Get.arguments['room'];
+  final EventsListener<RoomEvent> listener = Get.arguments['listener'];
+
   @override
   State<StatefulWidget> createState() => _RoomPageState();
 }

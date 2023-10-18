@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
@@ -10,7 +9,6 @@ class MeetingController extends GetxController {
   final MeetingViewModel viewModel;
 
   Future<void> connectMeeting(
-    BuildContext context,
     String url,
     String token,
   ) async {
@@ -65,12 +63,14 @@ class MeetingController extends GetxController {
       await room.localParticipant!.publishVideoTrack(localVideo);
       var localAudio = await LocalAudioTrack.create();
       await room.localParticipant!.publishAudioTrack(localAudio);
-      await Navigator.push<void>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => RoomPage(room, listener),
-        ),
-      );
+
+      await IsLiveRouteManagement.goToRoomPage(room, listener);
+      // await Navigator.push<void>(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => RoomPage(room, listener),
+      //   ),
+      // );
     } catch (e, st) {
       print('*************** $e');
       print('#####     $st');

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 enum StatsType {
-  kUnknown,
-  kLocalAudioSender,
-  kLocalVideoSender,
-  kRemoteAudioReceiver,
-  kRemoteVideoReceiver,
+  isUnknown,
+  isLocalAudioSender,
+  isLocalVideoSender,
+  isRemoteAudioReceiver,
+  isRemoteVideoReceiver,
 }
 
 class ParticipantStatsWidget extends StatefulWidget {
@@ -19,14 +19,14 @@ class ParticipantStatsWidget extends StatefulWidget {
 
 class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
   List<EventsListener<TrackEvent>> listeners = [];
-  StatsType statsType = StatsType.kUnknown;
+  StatsType statsType = StatsType.isUnknown;
   Map<String, String> stats = {};
 
   void _setUpListener(Track track) {
     var listener = track.createListener();
     listeners.add(listener);
     if (track is LocalVideoTrack) {
-      statsType = StatsType.kLocalVideoSender;
+      statsType = StatsType.isLocalVideoSender;
       listener.on<VideoSenderStatsEvent>((event) {
         setState(() {
           stats['video tx'] = 'total sent ${event.currentBitrate.toInt()} kpbs';
@@ -46,7 +46,7 @@ class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
         });
       });
     } else if (track is RemoteVideoTrack) {
-      statsType = StatsType.kRemoteVideoReceiver;
+      statsType = StatsType.isRemoteVideoReceiver;
       listener.on<VideoReceiverStatsEvent>((event) {
         setState(() {
           stats['video rx'] = '${event.currentBitrate.toInt()} kpbs';
@@ -64,7 +64,7 @@ class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
         });
       });
     } else if (track is LocalAudioTrack) {
-      statsType = StatsType.kLocalAudioSender;
+      statsType = StatsType.isLocalAudioSender;
       listener.on<AudioSenderStatsEvent>((event) {
         setState(() {
           stats['audio tx'] = '${event.currentBitrate.toInt()} kpbs';
@@ -73,7 +73,7 @@ class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
         });
       });
     } else if (track is RemoteAudioTrack) {
-      statsType = StatsType.kRemoteAudioReceiver;
+      statsType = StatsType.isRemoteAudioReceiver;
       listener.on<AudioReceiverStatsEvent>((event) {
         setState(() {
           stats['audio rx'] = '${event.currentBitrate.toInt()} kpbs';

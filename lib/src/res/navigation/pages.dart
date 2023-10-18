@@ -30,5 +30,12 @@ class IsLivePages {
       binding: MeetingBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage<RoomPage>(
+      name: IsLiveRoutes.roomPage,
+      transitionDuration: transitionDuration,
+      page: RoomPage.new,
+      binding: MeetingBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 }

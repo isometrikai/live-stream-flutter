@@ -19,4 +19,8 @@ class IsmLiveStyles {
     fontSize: IsmLiveDimens.sixteen,
     fontWeight: FontWeight.bold,
   );
+  static TextStyle blackBold16 = TextStyle(
+    fontSize: IsmLiveDimens.sixteen,
+    fontWeight: FontWeight.bold,
+  );
 }

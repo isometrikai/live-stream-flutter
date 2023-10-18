@@ -77,7 +77,7 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
         ),
         body: GetBuilder<MeetingController>(
           builder: (controller) => Padding(
-            padding: IsmLiveDimens.edgeInsets16_15,
+            padding: IsmLiveDimens.edgeInsets16_10,
             child: controller.myMeetingList.isEmpty
                 ? const Center(
                     child: Text('No meetings found'),
@@ -105,7 +105,7 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
                                         .myMeetingList[index].meetingId);
                                 if (rtcTocken != null) {
                                   await controller.connectMeeting(
-                                      context, '', rtcTocken);
+                                      '', rtcTocken);
                                 }
                               },
                               label: 'Join',
