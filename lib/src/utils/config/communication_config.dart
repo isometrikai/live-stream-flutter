@@ -1,9 +1,11 @@
 class IsmLiveCommunicationConfig {
   const IsmLiveCommunicationConfig({
-    required this.appId,
-    required this.rtcToken,
+    required this.licenseKey,
+    required this.appSecret,
+    required this.userSecret,
   });
 
-  final String appId;
-  final String rtcToken;
+  final String licenseKey;
+  final String appSecret;
+  final String userSecret;
 }

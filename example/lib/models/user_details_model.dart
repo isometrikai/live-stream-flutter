@@ -1,30 +1,32 @@
 import 'dart:convert';
 
 class UserDetailsModel {
-  UserDetailsModel({
-    this.userId,
-    this.userToken,
-    this.email,
-    this.userName,
+  const UserDetailsModel({
+    this.userId = '',
+    this.userToken = '',
+    this.email = '',
+    this.userName = '',
   });
 
   factory UserDetailsModel.fromMap(Map<String, dynamic> map) =>
       UserDetailsModel(
-        userId: map['userId'] != null ? map['userId'] as String : null,
-        userToken: map['userToken'] != null ? map['userToken'] as String : null,
-        email: map['email'] != null ? map['email'] as String : null,
-        userName: map['userName'] != null ? map['userName'] as String : null,
+        userId: map['userId'] != null ? map['userId'] as String : '',
+        userToken: map['userToken'] != null ? map['userToken'] as String : '',
+        email: map['email'] != null ? map['email'] as String : '',
+        userName: map['userName'] != null ? map['userName'] as String : '',
       );
 
   factory UserDetailsModel.fromJson(String source) =>
       UserDetailsModel.fromMap(json.decode(source) as Map<String, dynamic>);
-  String? userId;
 
-  String? userToken;
+  final String userId;
+  final String userToken;
+  final String email;
+  final String userName;
 
-  String? email;
+  String get firstName => userName.split(' ').first;
 
-  String? userName;
+  String get lastName => userName.split(' ').sublist(1).join(' ');
 
   UserDetailsModel copyWith({
     String? userId,

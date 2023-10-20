@@ -20,6 +20,15 @@ class IsmLiveUtility {
         'licenseKey': licenseKey,
         'appSecret': appSecret,
       };
+  static Map<String, String> header(
+          {required String userSecret,
+          required String licenseKey,
+          required String appSecret}) =>
+      {
+        'userSecret': userSecret,
+        'licenseKey': licenseKey,
+        'appSecret': appSecret,
+      };
 
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {

@@ -9,6 +9,7 @@ class IsmLiveConstants {
   const IsmLiveConstants._();
 
   static const String name = 'Appscrip Live Stream';
+  static const String wsUrl = 'wss://streaming.isometrik.io';
 
   static const Duration timeOutDuration = Duration(seconds: 60);
 

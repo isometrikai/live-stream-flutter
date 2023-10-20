@@ -1,6 +1,6 @@
 import 'package:appscrip_live_stream_component/src/repositories/repositories.dart';
 
-class StreamViewModel {
-  const StreamViewModel(this._repository);
-  final StreamRepository _repository;
+class IsmLiveStreamViewModel {
+  const IsmLiveStreamViewModel(this._repository);
+  final IsmLiveStreamRepository _repository;
 }

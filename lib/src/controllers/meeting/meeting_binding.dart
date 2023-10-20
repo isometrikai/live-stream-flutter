@@ -1,6 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/repositories/meeting_repository.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' show Client;
 
 class MeetingBinding implements Bindings {
   @override
@@ -9,7 +9,7 @@ class MeetingBinding implements Bindings {
       () => MeetingController(
         MeetingViewModel(
           MeetingRepository(
-            IsmLiveApiWrapper(),
+            Client(),
           ),
         ),
       ),

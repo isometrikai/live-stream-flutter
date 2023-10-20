@@ -3,16 +3,12 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 abstract class IsLiveRouteManagement {
-  /// Go to the SignIn Screen
-  static void goToMyMeetingsView() {
-    Get.toNamed<void>(
-      IsLiveRoutes.myMeetingsView,
-    );
-  }
+  // static void goToMyMeetingsView(IsmLiveStreamConfig configuration) {
+  //   Get.toNamed<void>(IsLiveRoutes.myMeetingsView, arguments: configuration);
+  // }
 
   static void goToCreateMeetingScreen() {
     Get.toNamed(IsLiveRoutes.createMeetingScreen);
-    // Get.offNamed(AppRoutes.signup);
   }
 
   static Future<void> goToRoomPage(

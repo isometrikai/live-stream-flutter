@@ -2,10 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart'
+    show Client, Response, MultipartRequest, MultipartFile;
 
 /// API WRAPPER to call all the IsmLiveApis and handle the status codes
 class IsmLiveApiWrapper {
+  const IsmLiveApiWrapper(this.client);
+
+  final Client client;
+
   /// Method to make all the requests inside the app like GET, POST, PUT, Delete
   Future<IsmLiveResponseModel> makeRequest(
     String api, {
@@ -163,7 +168,7 @@ class IsmLiveApiWrapper {
     }
   }
 
-  Future<http.Response> _handleRequest(
+  Future<Response> _handleRequest(
     Uri api, {
     required IsmLiveRequestType type,
     required Map<String, String> headers,
@@ -193,23 +198,23 @@ class IsmLiveApiWrapper {
     }
   }
 
-  Future<http.Response> _get(
+  Future<Response> _get(
     Uri api, {
     required Map<String, String> headers,
   }) async =>
-      await http
+      await client
           .get(
             api,
             headers: headers,
           )
           .timeout(IsmLiveConstants.timeOutDuration);
 
-  Future<http.Response> _post(
+  Future<Response> _post(
     Uri api, {
     required dynamic payload,
     required Map<String, String> headers,
   }) async =>
-      await http
+      await client
           .post(
             api,
             body: payload,
@@ -217,12 +222,12 @@ class IsmLiveApiWrapper {
           )
           .timeout(IsmLiveConstants.timeOutDuration);
 
-  Future<http.Response> _put(
+  Future<Response> _put(
     Uri api, {
     required dynamic payload,
     required Map<String, String> headers,
   }) async =>
-      await http
+      await client
           .put(
             api,
             body: payload,
@@ -230,12 +235,12 @@ class IsmLiveApiWrapper {
           )
           .timeout(IsmLiveConstants.timeOutDuration);
 
-  Future<http.Response> _patch(
+  Future<Response> _patch(
     Uri api, {
     required dynamic payload,
     required Map<String, String> headers,
   }) async =>
-      await http
+      await client
           .patch(
             api,
             body: payload,
@@ -243,12 +248,12 @@ class IsmLiveApiWrapper {
           )
           .timeout(IsmLiveConstants.timeOutDuration);
 
-  Future<http.Response> _delete(
+  Future<Response> _delete(
     Uri api, {
     required dynamic payload,
     required Map<String, String> headers,
   }) async =>
-      await http
+      await client
           .delete(
             api,
             body: payload,
@@ -257,31 +262,31 @@ class IsmLiveApiWrapper {
           .timeout(IsmLiveConstants.timeOutDuration);
 
   /// Method to make all the requests inside the app like GET, POST, PUT, Delete
-  Future<http.Response> _upload(
+  Future<Response> _upload(
     Uri api, {
     required Map<String, String> payload,
     required Map<String, String> headers,
     required String field,
     required String filePath,
   }) async {
-    var request = http.MultipartRequest(
+    var request = MultipartRequest(
       'POST',
       api,
     )
       ..headers.addAll(headers)
       ..fields.addAll(payload)
       ..files.add(
-        await http.MultipartFile.fromPath(field, filePath),
+        await MultipartFile.fromPath(field, filePath),
       );
 
     var response = await request.send();
 
-    return await http.Response.fromStream(response);
+    return await Response.fromStream(response);
   }
 
   /// Method to return the API response based upon the status code of the server
   Future<IsmLiveResponseModel> _processResponse(
-    http.Response response, {
+    Response response, {
     required bool showDialog,
     required DateTime startTime,
   }) async {

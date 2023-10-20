@@ -14,9 +14,7 @@ class IsmLiveStream extends StatelessWidget {
   final VoidCallback? onCallEnd;
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        body: Center(
-          child: Text('IsmLive Home View'),
-        ),
+  Widget build(BuildContext context) => MyMeetingsView(
+        configuration: configuration,
       );
 }

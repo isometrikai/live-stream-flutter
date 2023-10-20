@@ -835,6 +835,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  smartrefresh:
+    dependency: transitive
+    description:
+      name: smartrefresh
+      sha256: "7227ad1e1b1f3e8022940df341963f16ee6c59d1fe67c920995a3ce075927a3a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   source_span:
     dependency: transitive
     description:

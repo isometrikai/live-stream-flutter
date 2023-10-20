@@ -23,8 +23,8 @@ class MeetingModel {
   factory MeetingModel.fromMap(Map<String, dynamic> map) => MeetingModel(
         selfHosted: map['selfHosted'] as bool,
         pushNotifications: map['pushNotifications'] as bool,
-        metaData: IsmLiveMetaDataModel.fromMap(
-            map['metaData'] as Map<String, dynamic>),
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         members: List<String>.from(map['members'] as List<dynamic>),
         meetingImageUrl: map['meetingImageUrl'] as String,
         meetingDescription: map['meetingDescription'] as String,
@@ -42,7 +42,7 @@ class MeetingModel {
 
   final bool selfHosted;
   final bool pushNotifications;
-  final IsmLiveMetaDataModel metaData;
+  final IsmLiveMetaData metaData;
   final List<String> members;
   final String meetingImageUrl;
   final String meetingDescription;
@@ -57,7 +57,7 @@ class MeetingModel {
   MeetingModel copyWith({
     bool? selfHosted,
     bool? pushNotifications,
-    IsmLiveMetaDataModel? metaData,
+    IsmLiveMetaData? metaData,
     List<String>? members,
     String? meetingImageUrl,
     String? meetingDescription,

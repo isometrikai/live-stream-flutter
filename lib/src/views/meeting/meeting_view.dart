@@ -1,53 +1,23 @@
-import 'dart:developer';
-
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:livekit_client/livekit_client.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart';
 
-class MyMeetingsView extends StatefulWidget {
-  const MyMeetingsView({super.key});
-
-  @override
-  State<MyMeetingsView> createState() => _MyMeetingsViewState();
-}
-
-class _MyMeetingsViewState extends State<MyMeetingsView> {
-  @override
-  void initState() {
-    super.initState();
-
-    if (lkPlatformIs(PlatformType.android)) {
-      _checkPremissions();
-    }
-  }
-
-  var controller = Get.put(MeetingController(
-      MeetingViewModel(MeetingRepository(IsmLiveApiWrapper()))));
-
-  Future<void> _checkPremissions() async {
-    var status = await Permission.bluetooth.request();
-    if (status.isPermanentlyDenied) {
-      log('Bluetooth Permission disabled');
-    }
-
-    status = await Permission.bluetoothConnect.request();
-    if (status.isPermanentlyDenied) {
-      log('Bluetooth Connect Permission disabled');
-    }
-
-    status = await Permission.camera.request();
-    if (status.isPermanentlyDenied) {
-      log('Camera Permission disabled');
-    }
-
-    status = await Permission.microphone.request();
-    if (status.isPermanentlyDenied) {
-      log('Microphone Permission disabled');
-    }
-  }
-
+class MyMeetingsView extends StatelessWidget {
+  MyMeetingsView({
+    super.key,
+    required this.configuration,
+  });
+  final IsmLiveStreamConfig configuration;
+  var cont = Get.put(
+      MeetingController(
+        MeetingViewModel(
+          MeetingRepository(
+            Client(),
+          ),
+        ),
+      ),
+      permanent: true);
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.white,
@@ -76,6 +46,10 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
           ],
         ),
         body: GetBuilder<MeetingController>(
+          initState: (_) async {
+            cont.configuration = configuration;
+            await cont.getMeetingList();
+          },
           builder: (controller) => Padding(
             padding: IsmLiveDimens.edgeInsets16_10,
             child: controller.myMeetingList.isEmpty
@@ -98,14 +72,10 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
                             child: IsmLiveButton(
                               onTap: () async {
                                 var rtcTocken = await controller.joinMeeting(
-                                    token: '',
-                                    licenseKey: '',
-                                    appSecret: '',
                                     meetingId: controller
                                         .myMeetingList[index].meetingId);
                                 if (rtcTocken != null) {
-                                  await controller.connectMeeting(
-                                      '', rtcTocken);
+                                  await controller.connectMeeting(rtcTocken);
                                 }
                               },
                               label: 'Join',

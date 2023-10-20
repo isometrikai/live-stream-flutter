@@ -1,34 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/config_model.dart';
 import 'package:flutter/foundation.dart';
 
 class MyMeetingModel {
-  final bool selfHosted;
-  final List searchableTags;
-  final IsmLiveMetaDataModel metaData;
-  final num membersPublishingCount;
-  final num membersCount;
-  final IsmLiveMeetingType meetingType;
-  final String meetingImageUrl;
-  final String meetingId;
-  final String meetingDescription;
-  final String initiatorName;
-  final String initiatorImageUrl;
-  final String initiatorIdentifier;
-  final bool hdMeeting;
-  final bool enableRecording;
-  final String customType;
-  final num creationTime;
-  final String createdBy;
-  final String conversationId;
-  final IsmLiveMeetingConfig config;
-  final bool autoTerminate;
-  final bool audioOnly;
-  final num adminCount;
-  final dynamic privateOneToOne;
   MyMeetingModel({
     required this.selfHosted,
     required this.searchableTags,
@@ -55,10 +30,64 @@ class MyMeetingModel {
     required this.privateOneToOne,
   });
 
+  factory MyMeetingModel.fromMap(Map<String, dynamic> map) => MyMeetingModel(
+        selfHosted: map['selfHosted'] as bool,
+        searchableTags: List.from(map['searchableTags']),
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        membersPublishingCount: map['membersPublishingCount'] as num,
+        membersCount: map['membersCount'] as num,
+        meetingType: IsmLiveMeetingType.fromValue(map['meetingType'] as int),
+        meetingImageUrl: map['meetingImageUrl'] as String,
+        meetingId: map['meetingId'] as String,
+        meetingDescription: map['meetingDescription'] as String,
+        initiatorName: map['initiatorName'] as String,
+        initiatorImageUrl: map['initiatorImageUrl'] as String,
+        initiatorIdentifier: map['initiatorIdentifier'] as String,
+        hdMeeting: map['hdMeeting'] as bool,
+        enableRecording: map['enableRecording'] as bool,
+        customType: map['customType'] as String,
+        creationTime: map['creationTime'] as num,
+        createdBy: map['createdBy'] as String,
+        conversationId: map['conversationId'] as String? ?? '',
+        config:
+            IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
+        autoTerminate: map['autoTerminate'] as bool,
+        audioOnly: map['audioOnly'] as bool,
+        adminCount: map['adminCount'] as num,
+        privateOneToOne: map['privateOneToOne'] as dynamic,
+      );
+
+  factory MyMeetingModel.fromJson(String source) =>
+      MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  final bool selfHosted;
+  final List searchableTags;
+  final IsmLiveMetaData metaData;
+  final num membersPublishingCount;
+  final num membersCount;
+  final IsmLiveMeetingType meetingType;
+  final String meetingImageUrl;
+  final String meetingId;
+  final String meetingDescription;
+  final String initiatorName;
+  final String initiatorImageUrl;
+  final String initiatorIdentifier;
+  final bool hdMeeting;
+  final bool enableRecording;
+  final String customType;
+  final num creationTime;
+  final String createdBy;
+  final String conversationId;
+  final IsmLiveMeetingConfig config;
+  final bool autoTerminate;
+  final bool audioOnly;
+  final num adminCount;
+  final dynamic privateOneToOne;
+
   MyMeetingModel copyWith({
     bool? selfHosted,
     List? searchableTags,
-    IsmLiveMetaDataModel? metaData,
+    IsmLiveMetaData? metaData,
     num? membersPublishingCount,
     num? membersCount,
     IsmLiveMeetingType? meetingType,
@@ -133,38 +162,7 @@ class MyMeetingModel {
         'privateOneToOne': privateOneToOne,
       };
 
-  factory MyMeetingModel.fromMap(Map<String, dynamic> map) => MyMeetingModel(
-        selfHosted: map['selfHosted'] as bool,
-        searchableTags: List.from(map['searchableTags']),
-        metaData: IsmLiveMetaDataModel.fromMap(
-            map['metaData'] as Map<String, dynamic>),
-        membersPublishingCount: map['membersPublishingCount'] as num,
-        membersCount: map['membersCount'] as num,
-        meetingType: IsmLiveMeetingType.fromValue(map['meetingType'] as int),
-        meetingImageUrl: map['meetingImageUrl'] as String,
-        meetingId: map['meetingId'] as String,
-        meetingDescription: map['meetingDescription'] as String,
-        initiatorName: map['initiatorName'] as String,
-        initiatorImageUrl: map['initiatorImageUrl'] as String,
-        initiatorIdentifier: map['initiatorIdentifier'] as String,
-        hdMeeting: map['hdMeeting'] as bool,
-        enableRecording: map['enableRecording'] as bool,
-        customType: map['customType'] as String,
-        creationTime: map['creationTime'] as num,
-        createdBy: map['createdBy'] as String,
-        conversationId: map['conversationId'] as String? ?? '',
-        config:
-            IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
-        autoTerminate: map['autoTerminate'] as bool,
-        audioOnly: map['audioOnly'] as bool,
-        adminCount: map['adminCount'] as num,
-        privateOneToOne: map['privateOneToOne'] as dynamic,
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory MyMeetingModel.fromJson(String source) =>
-      MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>

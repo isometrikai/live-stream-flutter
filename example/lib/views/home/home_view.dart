@@ -1,31 +1,32 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
+import 'package:appscrip_live_stream_component_example/res/constants/app_constants.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   static const String route = AppRoutes.home;
 
   @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  @override
-  Widget build(BuildContext context) => //const MyMeetingsView();
-
-      const IsmLiveStream(
-        configuration: IsmLiveStreamConfig(
-          communicationConfig:
-              IsmLiveCommunicationConfig(appId: '', rtcToken: ''),
-          userConfig: IsmLiveUserConfig(
-              userToken: '',
-              userId: '',
-              firstName: '',
-              lastName: '',
-              userEmail: '',
-              userProfile: ''),
+  Widget build(BuildContext context) => GetBuilder<HomeController>(
+        builder: (controller) => IsmLiveStream(
+          configuration: IsmLiveStreamConfig(
+            communicationConfig: const IsmLiveCommunicationConfig(
+                appSecret: AppConstants.appSecret,
+                licenseKey: AppConstants.licenseKey,
+                userSecret: AppConstants.userSecret),
+            userConfig: IsmLiveUserConfig(
+              userToken: controller.user.userToken,
+              userId: controller.user.userId,
+              firstName: controller.user.firstName,
+              lastName: controller.user.lastName,
+              userEmail: controller.user.email,
+              userProfile: '',
+            ),
+          ),
         ),
       );
 }
