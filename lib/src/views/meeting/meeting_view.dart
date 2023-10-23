@@ -16,7 +16,7 @@ class MyMeetingsView extends StatelessWidget {
             Client(),
           ),
         ),
-      ),
+    ),
       permanent: true);
   @override
   Widget build(BuildContext context) => Scaffold(

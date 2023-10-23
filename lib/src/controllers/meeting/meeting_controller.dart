@@ -12,7 +12,7 @@ class MeetingController extends GetxController {
   List<String> membersSelectedList = [];
   final MeetingViewModel viewModel;
   IsmLiveStreamConfig? configuration;
-  final String wsUrl = IsmLiveConstants.wsUrl;
+  final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
 
   @override
