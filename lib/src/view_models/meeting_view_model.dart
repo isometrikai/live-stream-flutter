@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/create_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 
 class MeetingViewModel {
@@ -52,6 +53,34 @@ class MeetingViewModel {
       var rtcToken = data['rtcToken'];
 
       return rtcToken;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
+  Future<CreateMeetingModel?> createMeeting({
+    required String token,
+    required String licenseKey,
+    required String appSecret,
+    required String meetingDescription,
+    required List<String> members,
+  }) async {
+    try {
+      var res = await repository.createMeeting(
+          token: token,
+          licenseKey: licenseKey,
+          appSecret: appSecret,
+          meetingDescription: meetingDescription,
+          members: members);
+      if (res?.hasError ?? true) {
+        return null;
+      }
+      var data = jsonDecode(res!.data);
+
+      var meeting = CreateMeetingModel.fromMap(data);
+
+      return meeting;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;

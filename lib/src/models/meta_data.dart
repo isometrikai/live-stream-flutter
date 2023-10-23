@@ -8,7 +8,7 @@ class IsmLiveMetaData {
   });
 
   factory IsmLiveMetaData.fromMap(Map<String, dynamic> map) => IsmLiveMetaData(
-        country: map['country'] as String,
+        country: map['country'] as String? ?? '',
         openMeeting: map['open meeting'] as bool? ?? false,
         profilePic: map['profilePic'] as String?,
       );

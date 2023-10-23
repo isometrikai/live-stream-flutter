@@ -19,6 +19,7 @@ class IsmLiveUtility {
         'userToken': token,
         'licenseKey': licenseKey,
         'appSecret': appSecret,
+        'Content-Type': 'application/json'
       };
   static Map<String, String> header(
           {required String userSecret,
