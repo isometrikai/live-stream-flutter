@@ -60,7 +60,7 @@ class MeetingRepository {
       required String appSecret,
       required String meetingId}) async {
     try {
-      var url = '/meetings/v1/join';
+      var url = '/meetings/v1/publish/start';
       var res = await _apiWrapper.makeRequest(url,
           type: IsmLiveRequestType.post,
           headers: IsmLiveUtility.commonHeader(
@@ -68,7 +68,10 @@ class MeetingRepository {
             licenseKey: licenseKey,
             appSecret: appSecret,
           ),
-          payload: {'meetingId': meetingId});
+          payload: {
+            'meetingId': meetingId,
+            'deviceId': 'Xc45fk',
+          });
 
       return res;
     } catch (_) {

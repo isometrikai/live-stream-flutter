@@ -17,6 +17,7 @@ class MeetingController extends GetxController {
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
+  RefreshController userRefreshController = RefreshController();
   TextEditingController meetingTitleController = TextEditingController();
 
   @override
@@ -116,7 +117,7 @@ class MeetingController extends GetxController {
         token,
       );
       room.localParticipant!.setTrackSubscriptionPermissions(
-        allParticipantsAllowed: false,
+        allParticipantsAllowed: true,
         trackPermissions: [
           const ParticipantTrackPermission('allowed-identity', true, null)
         ],
