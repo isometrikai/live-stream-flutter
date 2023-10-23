@@ -108,7 +108,7 @@ class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
   void initState() {
     super.initState();
     widget.participant.addListener(_onParticipantChanged);
-    // trigger initial change
+
     _onParticipantChanged();
   }
 
@@ -125,7 +125,7 @@ class _ParticipantStatsWidgetState extends State<ParticipantStatsWidget> {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.purple.withOpacity(0.3),
         padding: const EdgeInsets.symmetric(
           vertical: 8,
           horizontal: 8,

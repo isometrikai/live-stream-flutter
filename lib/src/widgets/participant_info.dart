@@ -46,23 +46,14 @@ class ParticipantInfoWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            isScreenShare
-                ? Padding(
-                    padding: IsmLiveDimens.edgeInsetsL5,
-                    child: const Icon(
-                      Icons.monitor,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  )
-                : Padding(
-                    padding: IsmLiveDimens.edgeInsetsL5,
-                    child: Icon(
-                      audioAvailable ? Icons.mic : Icons.mic_off,
-                      color: audioAvailable ? Colors.white : Colors.red,
-                      size: 16,
-                    ),
-                  ),
+            Padding(
+              padding: IsmLiveDimens.edgeInsetsL5,
+              child: Icon(
+                audioAvailable ? Icons.mic : Icons.mic_off,
+                color: audioAvailable ? Colors.white : Colors.red,
+                size: 16,
+              ),
+            ),
             if (connectionQuality != ConnectionQuality.unknown)
               Padding(
                 padding: IsmLiveDimens.edgeInsetsL5,
