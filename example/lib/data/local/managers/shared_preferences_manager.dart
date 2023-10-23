@@ -19,12 +19,12 @@ class SharedPreferencesManager {
 
   /// store the data
   void saveSharedValue<T>(String key, T value) async {
-    if (T is bool) {
-      await sharedPreferences?.setBool(key, value as bool);
-    } else if (T is String) {
-      await sharedPreferences?.setString(key, value as String);
-    } else if (T is int) {
-      await sharedPreferences?.setInt(key, value as int);
+    if (value is bool) {
+      await sharedPreferences?.setBool(key, value);
+    } else if (value is String) {
+      await sharedPreferences?.setString(key, value);
+    } else if (value is int) {
+      await sharedPreferences?.setInt(key, value);
     }
   }
 

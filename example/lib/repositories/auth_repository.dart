@@ -4,9 +4,12 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' show Client;
 
 class AuthRepository {
-  AuthRepository(this._apiWrapper);
+  AuthRepository(this.$client) : _apiWrapper = IsmLiveApiWrapper($client);
+
+  final Client $client;
   final IsmLiveApiWrapper _apiWrapper;
 
   var dbWrapper = Get.find<DBWrapper>();

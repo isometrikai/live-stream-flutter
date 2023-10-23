@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SearchUserScreen extends StatelessWidget {
   const SearchUserScreen({super.key});
@@ -15,21 +16,47 @@ class SearchUserScreen extends StatelessWidget {
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            IsmLiveInputField(
-              prefixIcon: const Icon(Icons.search),
-              controller: TextEditingController(),
-              onchange: (value) {},
-            ),
-            const Divider(),
-            ListView.separated(
-                padding: IsmLiveDimens.edgeInsets8_4,
-                shrinkWrap: true,
-                itemBuilder: (context, index) => const Text('search'),
-                separatorBuilder: (context, index) => const Divider(),
-                itemCount: 10)
-          ],
+        body: GetBuilder<MeetingController>(
+          builder: (controller) => Column(
+            children: [
+              IsmLiveInputField(
+                prefixIcon: const Icon(Icons.search),
+                controller: TextEditingController(),
+                onchange: (value) async {
+                  await controller.getMembersList(
+                      skip: 0, limit: 30, searchTag: '');
+                },
+              ),
+              const Divider(),
+              controller.userDetailsList.isEmpty
+                  ? const Center(
+                      child: Text('No User found'),
+                    )
+                  : Expanded(
+                      child: ListView.separated(
+                        controller: controller.userListController,
+                        padding: IsmLiveDimens.edgeInsets8_4,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => CheckboxListTile(
+                          title:
+                              Text(controller.userDetailsList[index].userName),
+                          value: controller.membersSelectedList.contains(
+                              controller.userDetailsList[index].userId),
+                          onChanged: (value) {
+                            IsmLiveLog(
+                                'length ${controller.userDetailsList.length}');
+                            if (value != null) {
+                              controller.onMemberSelected(value,
+                                  controller.userDetailsList[index].userId);
+                            }
+                          },
+                        ),
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemCount: controller.userDetailsList.length,
+                      ),
+                    ),
+            ],
+          ),
         ),
       );
 }

@@ -10,10 +10,10 @@ analyzer:
     parameter_assignments: warning
     missing_return: error
     todo: warning
+    avoid_print: error
 
 linter:
   rules:
-    - avoid_print
     - annotate_overrides
     - avoid_empty_else
     - avoid_function_literals_in_foreach_calls

@@ -9,13 +9,13 @@ class IsLivePages {
   );
 
   static final pages = [
-    GetPage<MyMeetingsView>(
-      name: IsLiveRoutes.myMeetingsView,
-      transitionDuration: transitionDuration,
-      page: MyMeetingsView.new,
-      binding: MeetingBinding(),
-      transition: Transition.rightToLeft,
-    ),
+    // GetPage<MyMeetingsView>(
+    //   name: IsLiveRoutes.myMeetingsView,
+    //   transitionDuration: transitionDuration,
+    //   page: MyMeetingsView.new,
+    //   binding: MeetingBinding(),
+    //   transition: Transition.rightToLeft,
+    // ),
     GetPage<CreateMeetingScreen>(
       name: IsLiveRoutes.createMeetingScreen,
       transitionDuration: transitionDuration,
