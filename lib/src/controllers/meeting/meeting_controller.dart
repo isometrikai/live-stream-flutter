@@ -12,6 +12,7 @@ class MeetingController extends GetxController {
   List<MyMeetingModel> myMeetingList = [];
   List<UserDetails> userDetailsList = [];
   List<String> membersSelectedList = [];
+  List<String> membersNameSelectedList = [];
   final MeetingViewModel viewModel;
   IsmLiveStreamConfig? configuration;
   final String wsUrl = IsmLiveApis.wsUrl;
@@ -19,6 +20,7 @@ class MeetingController extends GetxController {
   RefreshController refreshController = RefreshController();
   RefreshController userRefreshController = RefreshController();
   TextEditingController meetingTitleController = TextEditingController();
+  TextEditingController selecteMemberController = TextEditingController();
 
   @override
   void onInit() async {
@@ -41,16 +43,20 @@ class MeetingController extends GetxController {
     }
   }
 
-  void onMemberSelected(bool value, String id) {
-    if (membersSelectedList.isEmpty) {
-      membersSelectedList.add(configuration!.userConfig.userId);
-    }
+  void onMemberSelected(bool value, String id, String name) {
     if (value) {
       membersSelectedList.add(id);
+      membersNameSelectedList.add(name);
     } else {
       membersSelectedList.remove(id);
+      membersNameSelectedList.remove(name);
     }
 
+    var membersNames = '';
+    for (var i in membersNameSelectedList) {
+      membersNames = '$i, $membersNames';
+    }
+    selecteMemberController.text = membersNames;
     IsmLiveLog.info('-------------> $membersSelectedList');
     update();
   }
@@ -116,7 +122,7 @@ class MeetingController extends GetxController {
         wsUrl,
         token,
       );
-      room.localParticipant!.setTrackSubscriptionPermissions(
+      room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
         trackPermissions: [
           const ParticipantTrackPermission('allowed-identity', true, null)

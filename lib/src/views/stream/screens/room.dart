@@ -180,11 +180,10 @@ class _RoomPageState extends State<RoomPage> {
           width: double.infinity,
           child: Stack(
             children: [
-              Expanded(
-                  child: participantTracks.isNotEmpty
-                      ? ParticipantWidget.widgetFor(participantTracks.first,
-                          showStatsLayer: false)
-                      : const NoVideoWidget()),
+              participantTracks.isNotEmpty
+                  ? ParticipantWidget.widgetFor(participantTracks.first,
+                      showStatsLayer: false)
+                  : const NoVideoWidget(),
               Positioned(
                 bottom: 20,
                 child: widget.room.localParticipant != null
@@ -192,9 +191,9 @@ class _RoomPageState extends State<RoomPage> {
                     : IsmLiveDimens.box0,
               ),
               Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
+                  left: 10,
+                  right: 10,
+                  top: 20,
                   child: SizedBox(
                     height: 120,
                     child: ListView.builder(

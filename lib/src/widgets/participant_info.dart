@@ -41,9 +41,12 @@ class ParticipantInfoWidget extends StatelessWidget {
           children: [
             if (title != null)
               Flexible(
-                child: Text(
-                  title!,
-                  overflow: TextOverflow.ellipsis,
+                child: Center(
+                  child: Text(
+                    title!,
+                    overflow: TextOverflow.ellipsis,
+                    style: IsmLiveStyles.black16,
+                  ),
                 ),
               ),
             Padding(

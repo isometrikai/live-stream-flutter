@@ -7,6 +7,12 @@ class CreateMeetingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: GetBuilder<MeetingController>(
           builder: (controller) => Padding(
                 padding: IsmLiveDimens.edgeInsets8,
@@ -24,7 +30,7 @@ class CreateMeetingScreen extends StatelessWidget {
                     const IsmLiveAnimatedText('Select Member :'),
                     IsmLiveDimens.boxHeight8,
                     IsmLiveInputField(
-                      controller: TextEditingController(),
+                      controller: controller.selecteMemberController,
                       onTap: IsLiveRouteManagement.goToSearchUserScreen,
                       readOnly: true,
                       hintText: 'Add A Member',
