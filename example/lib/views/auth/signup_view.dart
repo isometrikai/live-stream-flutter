@@ -157,6 +157,7 @@ class SignupView extends StatelessWidget {
                                   onPressed: () {
                                     controller.showPassward =
                                         !controller.showPassward;
+                                    controller.update();
                                   },
                                 ),
                                 obscureText: controller.showPassward,
@@ -174,6 +175,7 @@ class SignupView extends StatelessWidget {
                                 onPressed: () {
                                   controller.showConfirmPasswared =
                                       !controller.showConfirmPasswared;
+                                  controller.update();
                                 },
                               ),
                               obscureText: controller.showConfirmPasswared,

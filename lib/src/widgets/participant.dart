@@ -128,7 +128,11 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
           children: [
             // Video
             InkWell(
-              onTap: () => setState(() => _visible = !_visible),
+              onTap: () {
+                setState(() {
+                  _visible = !_visible;
+                });
+              },
               child: activeVideoTrack != null && !activeVideoTrack!.muted
                   ? VideoTrackRenderer(
                       activeVideoTrack!,
@@ -150,10 +154,9 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ...extraWidgets(widget.isScreenShare),
                   ParticipantInfoWidget(
                     title: widget.participant.name.isNotEmpty
-                        ? '${widget.participant.name} (${widget.participant.identity})'
+                        ? widget.participant.name
                         : widget.participant.identity,
                     audioAvailable: firstAudioPublication?.muted == false &&
                         firstAudioPublication?.subscribed == true,

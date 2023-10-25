@@ -1,19 +1,26 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/create_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MeetingController extends GetxController {
   MeetingController(this.viewModel);
   List<MyMeetingModel> myMeetingList = [];
   List<UserDetails> userDetailsList = [];
   List<String> membersSelectedList = [];
+  List<String> membersNameSelectedList = [];
   final MeetingViewModel viewModel;
   IsmLiveStreamConfig? configuration;
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
+  RefreshController refreshController = RefreshController();
+  RefreshController userRefreshController = RefreshController();
+  TextEditingController meetingTitleController = TextEditingController();
+  TextEditingController selecteMemberController = TextEditingController();
 
   @override
   void onInit() async {
@@ -26,13 +33,30 @@ class MeetingController extends GetxController {
     await getMembersList(limit: 10, skip: 0, searchTag: '');
   }
 
-  void onMemberSelected(bool value, String id) {
+  void createMeetingOnTap() async {
+    if (membersSelectedList.isNotEmpty &&
+        meetingTitleController.text.isNotEmpty) {
+      var data = await createMeeting(
+          meetingDescription: meetingTitleController.text,
+          members: membersSelectedList);
+      IsmLiveLog('${data?.msg}');
+    }
+  }
+
+  void onMemberSelected(bool value, String id, String name) {
     if (value) {
       membersSelectedList.add(id);
+      membersNameSelectedList.add(name);
     } else {
       membersSelectedList.remove(id);
+      membersNameSelectedList.remove(name);
     }
 
+    var membersNames = '';
+    for (var i in membersNameSelectedList) {
+      membersNames = '$i, $membersNames';
+    }
+    selecteMemberController.text = membersNames;
     IsmLiveLog.info('-------------> $membersSelectedList');
     update();
   }
@@ -98,8 +122,8 @@ class MeetingController extends GetxController {
         wsUrl,
         token,
       );
-      room.localParticipant!.setTrackSubscriptionPermissions(
-        allParticipantsAllowed: false,
+      room.localParticipant?.setTrackSubscriptionPermissions(
+        allParticipantsAllowed: true,
         trackPermissions: [
           const ParticipantTrackPermission('allowed-identity', true, null)
         ],
@@ -141,6 +165,23 @@ class MeetingController extends GetxController {
       if (res != null) {
         return res;
       }
+    }
+    return null;
+  }
+
+  Future<CreateMeetingModel?> createMeeting({
+    required String meetingDescription,
+    required List<String> members,
+  }) async {
+    var res = await viewModel.createMeeting(
+        token: configuration!.userConfig.userToken,
+        licenseKey: configuration!.communicationConfig.licenseKey,
+        appSecret: configuration!.communicationConfig.appSecret,
+        meetingDescription: meetingDescription,
+        members: members);
+    if (res != null) {
+      await connectMeeting(res.rtcToken);
+      return res;
     }
     return null;
   }

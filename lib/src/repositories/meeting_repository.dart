@@ -60,7 +60,7 @@ class MeetingRepository {
       required String appSecret,
       required String meetingId}) async {
     try {
-      var url = '/meetings/v1/join';
+      var url = '/meetings/v1/publish/start';
       var res = await _apiWrapper.makeRequest(url,
           type: IsmLiveRequestType.post,
           headers: IsmLiveUtility.commonHeader(
@@ -68,7 +68,49 @@ class MeetingRepository {
             licenseKey: licenseKey,
             appSecret: appSecret,
           ),
-          payload: {'meetingId': meetingId});
+          payload: {
+            'meetingId': meetingId,
+            'deviceId': 'Xc45fk',
+          });
+
+      return res;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<IsmLiveResponseModel?> createMeeting({
+    required String token,
+    required String licenseKey,
+    required String appSecret,
+    required String meetingDescription,
+    required List<String> members,
+  }) async {
+    try {
+      var url = '/meetings/v1/meeting';
+      var res = await _apiWrapper.makeRequest(url,
+          type: IsmLiveRequestType.post,
+          headers: IsmLiveUtility.commonHeader(
+            token: token,
+            licenseKey: licenseKey,
+            appSecret: appSecret,
+          ),
+          payload: {
+            'selfHosted': true,
+            'pushNotifications': true,
+            'metaData': {'open meeting': true},
+            'members': members,
+            'meetingImageUrl':
+                'https://d1q6f0aelx0por.cloudfront.net/product-logos/cb773227-1c2c-42a4-a527-12e6f827c1d2-elixir.png',
+            'meetingDescription': meetingDescription,
+            'hdMeeting': false,
+            'enableRecording': false,
+            'deviceId': 'Xc45ft',
+            'customType': 'VideoCall',
+            'meetingType': 0,
+            'autoTerminate': true,
+            'audioOnly': false
+          });
 
       return res;
     } catch (_) {
