@@ -56,6 +56,14 @@ enum IsmLiveImageType {
   network;
 }
 
+enum IsmLiveStatsType {
+  unknown,
+  audioSender,
+  videoSender,
+  audioReceiver,
+  videoReceiver,
+}
+
 enum IsmLiveCustomType {
   videoCall('VideoCall'),
   audioCall('AudioCall');

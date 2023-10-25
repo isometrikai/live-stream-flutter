@@ -19,6 +19,8 @@ class RoomPage extends StatefulWidget {
 }
 
 class _RoomPageState extends State<RoomPage> {
+  double positionX = 0;
+  double positionY = 0;
   List<ParticipantTrack> participantTracks = [];
   EventsListener<RoomEvent> get _listener => widget.listener;
   bool get fastConnection => widget.room.engine.fastConnectOptions != null;
@@ -191,20 +193,30 @@ class _RoomPageState extends State<RoomPage> {
                     : IsmLiveDimens.box0,
               ),
               Positioned(
-                  left: 10,
-                  right: 10,
-                  top: 20,
+                  left: positionX,
+                  top: positionY,
                   child: SizedBox(
-                    height: 120,
+                    height: 200,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: math.max(0, participantTracks.length - 1),
                       itemBuilder: (BuildContext context, int index) =>
-                          SizedBox(
-                        width: 180,
-                        height: 120,
-                        child: ParticipantWidget.widgetFor(
-                            participantTracks[index + 1]),
+                          GestureDetector(
+                        onPanUpdate: (details) {
+                          setState(() {
+                            positionX += details.delta.dx;
+                            positionY += details.delta.dy;
+                          });
+                        },
+                        child: SizedBox(
+                          width: 180,
+                          height: 200,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: ParticipantWidget.widgetFor(
+                                participantTracks[index + 1]),
+                          ),
+                        ),
                       ),
                     ),
                   )),
