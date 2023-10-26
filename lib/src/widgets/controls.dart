@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:appscrip_live_stream_component/src/res/res.dart';
 import 'package:appscrip_live_stream_component/src/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class ControlsWidget extends StatefulWidget {
@@ -69,7 +71,9 @@ class _ControlsWidgetState extends State<ControlsWidget> {
 
   void _setSpeakerphoneOn() {
     _speakerphoneOn = !_speakerphoneOn;
-    Hardware.instance.setSpeakerphoneOn(_speakerphoneOn);
+
+    widget.room.setSpeakerOn(_speakerphoneOn);
+    // Hardware.instance.setSpeakerphoneOn(_speakerphoneOn);
     setState(() {});
   }
 
@@ -95,15 +99,11 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 50,
-          horizontal: 40,
-        ),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 20,
-          runSpacing: 5,
+  Widget build(BuildContext context) => Container(
+        margin: IsmLiveDimens.edgeInsetsB20,
+        width: Get.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CustomIconButton(
               icon: const Icon(

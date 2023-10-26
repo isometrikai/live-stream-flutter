@@ -134,9 +134,7 @@ class MeetingController extends GetxController {
         cameraPosition: CameraPosition.front,
         params: VideoParametersPresets.h720_169,
       ));
-      await room.localParticipant!.publishVideoTrack(localVideo);
-      var localAudio = await LocalAudioTrack.create();
-      await room.localParticipant!.publishAudioTrack(localAudio);
+      await room.localParticipant?.publishVideoTrack(localVideo);
 
       await IsLiveRouteManagement.goToRoomPage(room, listener);
     } catch (e, st) {
