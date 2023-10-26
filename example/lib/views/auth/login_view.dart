@@ -24,74 +24,76 @@ class LoginView extends StatelessWidget {
             centerTitle: true,
             elevation: 0,
           ),
-          body: Form(
-            key: controller.loginFormKey,
-            child: Padding(
-              padding: IsmLiveDimens.edgeInsets16,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Hero(
-                      tag: const ValueKey('logo_isometrik'),
-                      child: Center(
-                        child: Image.asset(
-                          IsmLiveAssetConstants.logos.isometrik,
-                          package: 'appscrip_live_stream_component',
+          body: SingleChildScrollView(
+            child: Form(
+              key: controller.loginFormKey,
+              child: Padding(
+                padding: IsmLiveDimens.edgeInsets16,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Hero(
+                        tag: const ValueKey('logo_isometrik'),
+                        child: Center(
+                          child: Image.asset(
+                            IsmLiveAssetConstants.logos.isometrik,
+                            package: 'appscrip_live_stream_component',
+                          ),
                         ),
                       ),
-                    ),
-                    IsmLiveDimens.boxHeight32,
-                    Hero(
-                      tag: const ValueKey('email_label'),
-                      child: IsmLiveAnimatedText(TranslationKeys.email.tr),
-                    ),
-                    IsmLiveDimens.boxHeight8,
-                    Hero(
-                      tag: const ValueKey('email_field'),
-                      child: InputField.email(
-                          controller: controller.emailController),
-                    ),
-                    IsmLiveDimens.boxHeight16,
-                    Hero(
-                      tag: const ValueKey('password_label'),
-                      child: IsmLiveAnimatedText(TranslationKeys.password.tr),
-                    ),
-                    IsmLiveDimens.boxHeight8,
-                    Hero(
-                      tag: const ValueKey('password_field'),
-                      child: InputField.password(
-                          suffixIcon: IconButton(
-                            icon: Icon(!controller.showPassward
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined),
-                            onPressed: () {
-                              controller.showPassward =
-                                  !controller.showPassward;
-                            },
-                          ),
-                          obscureText: controller.showPassward,
-                          obscureCharacter: '*',
-                          controller: controller.passwordController),
-                    ),
-                    IsmLiveDimens.boxHeight32,
-                    Hero(
-                      tag: const ValueKey('login-signup'),
-                      child: IsmLiveButton(
-                        onTap: controller.validateLogin,
-                        label: TranslationKeys.login.tr,
+                      IsmLiveDimens.boxHeight32,
+                      Hero(
+                        tag: const ValueKey('email_label'),
+                        child: IsmLiveAnimatedText(TranslationKeys.email.tr),
                       ),
-                    ),
-                    IsmLiveDimens.boxHeight20,
-                    Hero(
-                      tag: const ValueKey('login-signup-change'),
-                      child: IsmLiveButton.text(
-                        onTap: RouteManagement.goToSignUp,
-                        label: TranslationKeys.signup.tr,
+                      IsmLiveDimens.boxHeight8,
+                      Hero(
+                        tag: const ValueKey('email_field'),
+                        child: InputField.email(
+                            controller: controller.emailController),
                       ),
-                    ),
-                  ],
+                      IsmLiveDimens.boxHeight16,
+                      Hero(
+                        tag: const ValueKey('password_label'),
+                        child: IsmLiveAnimatedText(TranslationKeys.password.tr),
+                      ),
+                      IsmLiveDimens.boxHeight8,
+                      Hero(
+                        tag: const ValueKey('password_field'),
+                        child: InputField.password(
+                            suffixIcon: IconButton(
+                              icon: Icon(!controller.showPassward
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined),
+                              onPressed: () {
+                                controller.showPassward =
+                                    !controller.showPassward;
+                              },
+                            ),
+                            obscureText: controller.showPassward,
+                            obscureCharacter: '*',
+                            controller: controller.passwordController),
+                      ),
+                      IsmLiveDimens.boxHeight32,
+                      Hero(
+                        tag: const ValueKey('login-signup'),
+                        child: IsmLiveButton(
+                          onTap: controller.validateLogin,
+                          label: TranslationKeys.login.tr,
+                        ),
+                      ),
+                      IsmLiveDimens.boxHeight20,
+                      Hero(
+                        tag: const ValueKey('login-signup-change'),
+                        child: IsmLiveButton.text(
+                          onTap: RouteManagement.goToSignUp,
+                          label: TranslationKeys.signup.tr,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

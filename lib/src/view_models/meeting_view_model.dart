@@ -14,7 +14,10 @@ class MeetingViewModel {
       required String appSecret}) async {
     try {
       var res = await repository.getMeetingsList(
-          token: token, licenseKey: licenseKey, appSecret: appSecret);
+          isLoading: true,
+          token: token,
+          licenseKey: licenseKey,
+          appSecret: appSecret);
       if (res?.hasError ?? true) {
         return null;
       }
@@ -41,6 +44,7 @@ class MeetingViewModel {
       required String meetingId}) async {
     try {
       var res = await repository.joinMeeting(
+          isLoading: true,
           token: token,
           licenseKey: licenseKey,
           appSecret: appSecret,
@@ -68,6 +72,7 @@ class MeetingViewModel {
   }) async {
     try {
       var res = await repository.createMeeting(
+          isLoading: true,
           token: token,
           licenseKey: licenseKey,
           appSecret: appSecret,
@@ -96,6 +101,7 @@ class MeetingViewModel {
       required String searchTag}) async {
     try {
       var res = await repository.getMembersList(
+          isLoading: true,
           userSecret: userSecret,
           licenseKey: licenseKey,
           appSecret: appSecret,

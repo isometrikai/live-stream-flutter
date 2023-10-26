@@ -19,8 +19,8 @@ class RoomPage extends StatefulWidget {
 }
 
 class _RoomPageState extends State<RoomPage> {
-  double positionX = 0;
-  double positionY = 0;
+  double positionX = 20;
+  double positionY = 20;
   List<ParticipantTrack> participantTracks = [];
   EventsListener<RoomEvent> get _listener => widget.listener;
   bool get fastConnection => widget.room.engine.fastConnectOptions != null;
@@ -176,6 +176,7 @@ class _RoomPageState extends State<RoomPage> {
     });
   }
 
+  bool onTab = true;
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SizedBox(
@@ -183,7 +184,8 @@ class _RoomPageState extends State<RoomPage> {
           child: Stack(
             children: [
               participantTracks.isNotEmpty
-                  ? ParticipantWidget.widgetFor(participantTracks.first,
+                  ? ParticipantWidget.widgetFor(
+                      onTab ? participantTracks.first : participantTracks.last,
                       showStatsLayer: false)
                   : const NoVideoWidget(),
               Positioned(
@@ -195,26 +197,34 @@ class _RoomPageState extends State<RoomPage> {
               Positioned(
                   left: positionX,
                   top: positionY,
-                  child: SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: math.max(0, participantTracks.length - 1),
-                      itemBuilder: (BuildContext context, int index) =>
-                          GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            positionX += details.delta.dx;
-                            positionY += details.delta.dy;
-                          });
-                        },
-                        child: SizedBox(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        onTab = !onTab;
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        positionX += details.delta.dx;
+                        positionY += details.delta.dy;
+                      });
+                    },
+                    child: SizedBox(
+                      width: Get.width * 0.9,
+                      height: 200,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: math.max(0, participantTracks.length - 1),
+                        itemBuilder: (BuildContext context, int index) =>
+                            SizedBox(
                           width: 180,
-                          height: 200,
+                          height: 190,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: ParticipantWidget.widgetFor(
-                                participantTracks[index + 1]),
+                            child: ParticipantWidget.widgetFor(onTab
+                                ? participantTracks[index + 1]
+                                : participantTracks.first),
                           ),
                         ),
                       ),
