@@ -80,8 +80,6 @@ class RemoteParticipantWidget extends ParticipantWidget {
 
 abstract class _ParticipantWidgetState<T extends ParticipantWidget>
     extends State<T> {
-  //
-  bool _visible = true;
   VideoTrack? get activeVideoTrack;
   TrackPublication? get videoPublication;
   TrackPublication? get firstAudioPublication;
@@ -114,7 +112,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
   @override
   Widget build(BuildContext ctx) => Container(
         foregroundDecoration: BoxDecoration(
-          border: widget.participant.isSpeaking && !widget.isScreenShare
+          border: widget.participant.isSpeaking
               ? Border.all(
                   width: IsmLiveDimens.five,
                   color: Colors.blue,
@@ -126,28 +124,12 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         ),
         child: Stack(
           children: [
-            // Video
-            InkWell(
-              onTap: () {
-                setState(() {
-                  _visible = !_visible;
-                });
-              },
-              child: activeVideoTrack != null && !activeVideoTrack!.muted
-                  ? VideoTrackRenderer(
-                      activeVideoTrack!,
-                      fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                    )
-                  : const NoVideoWidget(),
-            ),
-            if (widget.showStatsLayer)
-              Positioned(
-                  top: 30,
-                  right: 30,
-                  child: ParticipantStatsWidget(
-                    participant: widget.participant,
-                  )),
-            // Bottom bar
+            activeVideoTrack != null && !activeVideoTrack!.muted
+                ? VideoTrackRenderer(
+                    activeVideoTrack!,
+                    fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                  )
+                : const NoVideoWidget(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Column(
@@ -202,146 +184,4 @@ class _RemoteParticipantWidgetState
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
-
-  @override
-  List<Widget> extraWidgets(bool isScreenShare) => [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            // Menu for RemoteTrackPublication<RemoteAudioTrack>
-            if (firstAudioPublication != null && !isScreenShare)
-              RemoteTrackPublicationMenuWidget(
-                pub: firstAudioPublication!,
-                icon: Icons.volume_up,
-              ),
-            // Menu for RemoteTrackPublication<RemoteVideoTrack>
-            if (videoPublication != null)
-              RemoteTrackPublicationMenuWidget(
-                pub: videoPublication!,
-                icon: isScreenShare ? Icons.monitor : Icons.videocam,
-              ),
-            if (videoPublication != null)
-              RemoteTrackFPSMenuWidget(
-                pub: videoPublication!,
-                icon: Icons.menu,
-              ),
-            if (videoPublication != null)
-              RemoteTrackQualityMenuWidget(
-                pub: videoPublication!,
-                icon: Icons.monitor_outlined,
-              ),
-          ],
-        ),
-      ];
-}
-
-class RemoteTrackPublicationMenuWidget extends StatelessWidget {
-  const RemoteTrackPublicationMenuWidget({
-    required this.pub,
-    required this.icon,
-    Key? key,
-  }) : super(key: key);
-  final IconData icon;
-  final RemoteTrackPublication pub;
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.black.withOpacity(0.3),
-        child: PopupMenuButton<Function>(
-          tooltip: 'Subscribe menu',
-          icon: Icon(icon,
-              color: {
-                TrackSubscriptionState.notAllowed: Colors.red,
-                TrackSubscriptionState.unsubscribed: Colors.grey,
-                TrackSubscriptionState.subscribed: Colors.green,
-              }[pub.subscriptionState]),
-          onSelected: (value) => value(),
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<Function>>[
-            // Subscribe/Unsubscribe
-            if (pub.subscribed == false)
-              PopupMenuItem(
-                value: pub.subscribe,
-                child: const Text('Subscribe'),
-              )
-            else if (pub.subscribed == true)
-              PopupMenuItem(
-                value: pub.unsubscribe,
-                child: const Text('Un-subscribe'),
-              ),
-          ],
-        ),
-      );
-}
-
-class RemoteTrackFPSMenuWidget extends StatelessWidget {
-  const RemoteTrackFPSMenuWidget({
-    required this.pub,
-    required this.icon,
-    Key? key,
-  }) : super(key: key);
-  final IconData icon;
-  final RemoteTrackPublication pub;
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.black.withOpacity(0.3),
-        child: PopupMenuButton<Function>(
-          tooltip: 'Preferred FPS',
-          icon: Icon(icon, color: Colors.white),
-          onSelected: (value) => value(),
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<Function>>[
-            PopupMenuItem(
-              child: const Text('30'),
-              value: () => pub.setVideoFPS(30),
-            ),
-            PopupMenuItem(
-              child: const Text('15'),
-              value: () => pub.setVideoFPS(15),
-            ),
-            PopupMenuItem(
-              child: const Text('8'),
-              value: () => pub.setVideoFPS(8),
-            ),
-          ],
-        ),
-      );
-}
-
-class RemoteTrackQualityMenuWidget extends StatelessWidget {
-  const RemoteTrackQualityMenuWidget({
-    required this.pub,
-    required this.icon,
-    Key? key,
-  }) : super(key: key);
-  final IconData icon;
-  final RemoteTrackPublication pub;
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.black.withOpacity(0.3),
-        child: PopupMenuButton<Function>(
-          tooltip: 'Preferred Quality',
-          icon: Icon(icon, color: Colors.white),
-          onSelected: (value) => value(),
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<Function>>[
-            PopupMenuItem(
-              child: const Text('HIGH'),
-              value: () => pub.setVideoQuality(VideoQuality.HIGH),
-            ),
-            PopupMenuItem(
-              child: const Text('MEDIUM'),
-              value: () => pub.setVideoQuality(VideoQuality.MEDIUM),
-            ),
-            PopupMenuItem(
-              child: const Text('LOW'),
-              value: () => pub.setVideoQuality(VideoQuality.LOW),
-            ),
-            PopupMenuItem(
-              child: const Text('OFF'),
-              value: () => pub.setVideoQuality(VideoQuality.OFF),
-            ),
-          ],
-        ),
-      );
 }
