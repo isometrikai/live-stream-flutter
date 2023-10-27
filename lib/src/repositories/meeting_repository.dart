@@ -10,11 +10,13 @@ class MeetingRepository {
   Future<IsmLiveResponseModel?> getMeetingsList(
       {required String token,
       required String licenseKey,
+      required bool isLoading,
       required String appSecret}) async {
     try {
       var url = '/meetings/v1/meetings';
       var res = await _apiWrapper.makeRequest(
         url,
+        showLoader: isLoading,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.commonHeader(
           token: token,
@@ -33,6 +35,7 @@ class MeetingRepository {
       {required String userSecret,
       required String licenseKey,
       required String appSecret,
+      required bool isLoading,
       required int skip,
       required int limit,
       required String searchTag}) async {
@@ -41,6 +44,7 @@ class MeetingRepository {
       var res = await _apiWrapper.makeRequest(
         url,
         type: IsmLiveRequestType.get,
+        showLoader: isLoading,
         headers: IsmLiveUtility.header(
           userSecret: userSecret,
           licenseKey: licenseKey,
@@ -58,10 +62,12 @@ class MeetingRepository {
       {required String token,
       required String licenseKey,
       required String appSecret,
+      required bool isLoading,
       required String meetingId}) async {
     try {
       var url = '/meetings/v1/publish/start';
       var res = await _apiWrapper.makeRequest(url,
+          showLoader: isLoading,
           type: IsmLiveRequestType.post,
           headers: IsmLiveUtility.commonHeader(
             token: token,
@@ -83,12 +89,14 @@ class MeetingRepository {
     required String token,
     required String licenseKey,
     required String appSecret,
+    required bool isLoading,
     required String meetingDescription,
     required List<String> members,
   }) async {
     try {
       var url = '/meetings/v1/meeting';
       var res = await _apiWrapper.makeRequest(url,
+          showLoader: isLoading,
           type: IsmLiveRequestType.post,
           headers: IsmLiveUtility.commonHeader(
             token: token,

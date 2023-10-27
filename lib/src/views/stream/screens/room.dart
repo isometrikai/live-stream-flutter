@@ -19,8 +19,8 @@ class RoomPage extends StatefulWidget {
 }
 
 class _RoomPageState extends State<RoomPage> {
-  double positionX = 0;
-  double positionY = 0;
+  double positionX = 20;
+  double positionY = 20;
   List<ParticipantTrack> participantTracks = [];
   EventsListener<RoomEvent> get _listener => widget.listener;
   bool get fastConnection => widget.room.engine.fastConnectOptions != null;
@@ -110,22 +110,14 @@ class _RoomPageState extends State<RoomPage> {
 
   void _sortParticipants() {
     var userMediaTracks = <ParticipantTrack>[];
-    var screenTracks = <ParticipantTrack>[];
+
     for (var participant in widget.room.participants.values) {
       for (var t in participant.videoTracks) {
-        if (t.isScreenShare) {
-          screenTracks.add(ParticipantTrack(
-            participant: participant,
-            videoTrack: t.track,
-            isScreenShare: true,
-          ));
-        } else {
-          userMediaTracks.add(ParticipantTrack(
-            participant: participant,
-            videoTrack: t.track,
-            isScreenShare: false,
-          ));
-        }
+        userMediaTracks.add(ParticipantTrack(
+          participant: participant,
+          videoTrack: t.track,
+          isScreenShare: false,
+        ));
       }
     }
 
@@ -156,72 +148,72 @@ class _RoomPageState extends State<RoomPage> {
     final localParticipantTracks = widget.room.localParticipant?.videoTracks;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
-        if (t.isScreenShare) {
-          screenTracks.add(ParticipantTrack(
-            participant: widget.room.localParticipant!,
-            videoTrack: t.track,
-            isScreenShare: true,
-          ));
-        } else {
-          userMediaTracks.add(ParticipantTrack(
-            participant: widget.room.localParticipant!,
-            videoTrack: t.track,
-            isScreenShare: false,
-          ));
-        }
+        userMediaTracks.add(ParticipantTrack(
+          participant: widget.room.localParticipant!,
+          videoTrack: t.track,
+          isScreenShare: false,
+        ));
       }
     }
     setState(() {
-      participantTracks = [...screenTracks, ...userMediaTracks];
+      participantTracks = [...userMediaTracks];
     });
   }
 
+  bool onTab = true;
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SizedBox(
-          width: double.infinity,
-          child: Stack(
-            children: [
-              participantTracks.isNotEmpty
-                  ? ParticipantWidget.widgetFor(participantTracks.first,
-                      showStatsLayer: false)
-                  : const NoVideoWidget(),
-              Positioned(
-                bottom: 20,
-                child: widget.room.localParticipant != null
-                    ? ControlsWidget(widget.room, widget.room.localParticipant!)
-                    : IsmLiveDimens.box0,
-              ),
-              Positioned(
-                  left: positionX,
-                  top: positionY,
+        body: Stack(
+          children: [
+            participantTracks.isNotEmpty
+                ? ParticipantWidget.widgetFor(
+                    onTab ? participantTracks.first : participantTracks.last,
+                    showStatsLayer: false)
+                : const NoVideoWidget(),
+            Positioned(
+              bottom: IsmLiveDimens.twenty,
+              child: widget.room.localParticipant != null
+                  ? ControlsWidget(widget.room, widget.room.localParticipant!)
+                  : IsmLiveDimens.box0,
+            ),
+            Positioned(
+                left: positionX,
+                top: positionY,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      onTab = !onTab;
+                    });
+                  },
+                  onPanUpdate: (details) {
+                    setState(() {
+                      positionX += details.delta.dx;
+                      positionY += details.delta.dy;
+                    });
+                  },
                   child: SizedBox(
-                    height: 200,
+                    width: Get.width * 0.9,
+                    height: IsmLiveDimens.twoHundred,
                     child: ListView.builder(
+                      shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
                       itemCount: math.max(0, participantTracks.length - 1),
                       itemBuilder: (BuildContext context, int index) =>
-                          GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            positionX += details.delta.dx;
-                            positionY += details.delta.dy;
-                          });
-                        },
-                        child: SizedBox(
-                          width: 180,
-                          height: 200,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: ParticipantWidget.widgetFor(
-                                participantTracks[index + 1]),
-                          ),
+                          SizedBox(
+                        width: IsmLiveDimens.twoHundred - IsmLiveDimens.twenty,
+                        height: IsmLiveDimens.twoHundred,
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(IsmLiveDimens.twenty),
+                          child: ParticipantWidget.widgetFor(onTab
+                              ? participantTracks[index + 1]
+                              : participantTracks.first),
                         ),
                       ),
                     ),
-                  )),
-            ],
-          ),
+                  ),
+                )),
+          ],
         ),
       );
 }
