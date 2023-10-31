@@ -62,6 +62,7 @@ class MyMeetingsView extends StatelessWidget {
                     child: Text('No meetings found'),
                   )
                 : ListView.separated(
+                    padding: IsmLiveDimens.edgeInsets16,
                     itemBuilder: (context, index) => Container(
                       padding: IsmLiveDimens.edgeInsets4,
                       color: IsmLiveColors.white,

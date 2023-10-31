@@ -20,34 +20,51 @@ class SearchUserScreen extends StatelessWidget {
           centerTitle: true,
         ),
         body: GetBuilder<MeetingController>(
-          builder: (controller) => SmartRefresher(
-            controller: controller.userRefreshController,
-            onRefresh: () async {
-              await controller.getMembersList(
-                  skip: 0, limit: 30, searchTag: '');
-              controller.userRefreshController.refreshCompleted();
-            },
-            child: Padding(
-              padding: IsmLiveDimens.edgeInsets16,
-              child: Column(
-                children: [
-                  IsmLiveInputField(
-                    prefixIcon: const Icon(Icons.search),
-                    controller: TextEditingController(),
-                    onchange: (value) async {
+          builder: (controller) => Column(
+            children: [
+              Padding(
+                padding: IsmLiveDimens.edgeInsets16,
+                child: IsmLiveInputField(
+                  prefixIcon: const Icon(Icons.search),
+                  controller: TextEditingController(),
+                  onchange: (value) async {
+                    controller.debouncer.run(() async {
+                      controller.userDetailsList.clear();
                       await controller.getMembersList(
-                          skip: 0, limit: 30, searchTag: '');
-                    },
-                  ),
-                  const Divider(),
-                  controller.userDetailsList.isEmpty
-                      ? const Center(
-                          child: Text('No User found'),
-                        )
-                      : Expanded(
+                          skip: 0, limit: 30, searchTag: value);
+                    });
+                  },
+                ),
+              ),
+              const Divider(),
+              controller.userDetailsList.isEmpty
+                  ? const Center(
+                      child: Text('No User found'),
+                    )
+                  : Expanded(
+                      child: SmartRefresher(
+                        enablePullUp: true,
+                        enablePullDown: true,
+                        controller: controller.userRefreshController,
+                        onRefresh: () async {
+                          controller.userDetailsList.clear();
+                          await controller.getMembersList(
+                              skip: 0, limit: 30, searchTag: '');
+                          controller.userRefreshController.refreshCompleted();
+                        },
+                        onLoading: () async {
+                          await controller.getMembersList(
+                              skip: controller.userDetailsList.length,
+                              limit: 30,
+                              searchTag: '');
+                          controller.userRefreshController.refreshCompleted();
+                          controller.userRefreshController.loadComplete();
+                        },
+                        child: Container(
+                          color: Colors.white,
                           child: ListView.separated(
                             controller: controller.userListController,
-                            padding: IsmLiveDimens.edgeInsets8_4,
+                            padding: IsmLiveDimens.edgeInsets16,
                             shrinkWrap: true,
                             itemBuilder: (context, index) => CheckboxListTile(
                               title: Text(
@@ -71,9 +88,9 @@ class SearchUserScreen extends StatelessWidget {
                             itemCount: controller.userDetailsList.length,
                           ),
                         ),
-                ],
-              ),
-            ),
+                      ),
+                    ),
+            ],
           ),
         ),
       );

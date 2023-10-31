@@ -1,6 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/create_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
+import 'package:appscrip_live_stream_component/src/utils/debouncer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -18,9 +19,11 @@ class MeetingController extends GetxController {
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
-  RefreshController userRefreshController = RefreshController();
+  RefreshController userRefreshController =
+      RefreshController(initialRefresh: true);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
+  final Debouncer debouncer = Debouncer();
 
   @override
   void onInit() async {
@@ -29,8 +32,6 @@ class MeetingController extends GetxController {
     if (lkPlatformIs(PlatformType.android)) {
       await _checkPremissions();
     }
-
-    await getMembersList(limit: 10, skip: 0, searchTag: '');
   }
 
   void createMeetingOnTap() async {
@@ -184,10 +185,15 @@ class MeetingController extends GetxController {
     return null;
   }
 
+  bool isApicalling = false;
   Future<void> getMembersList(
       {required int skip,
       required int limit,
       required String searchTag}) async {
+    if (isApicalling) {
+      return;
+    }
+    isApicalling = true;
     var res = await viewModel.getMembersList(
         userSecret: configuration!.communicationConfig.userSecret,
         licenseKey: configuration!.communicationConfig.licenseKey,
@@ -197,8 +203,9 @@ class MeetingController extends GetxController {
         searchTag: searchTag);
 
     if (res != null) {
-      userDetailsList = res;
+      userDetailsList.addAll(res);
     }
+    isApicalling = false;
     update();
   }
 }

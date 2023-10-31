@@ -114,7 +114,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         foregroundDecoration: BoxDecoration(
           border: widget.participant.isSpeaking
               ? Border.all(
-                  width: IsmLiveDimens.five,
+                  width: IsmLiveDimens.one,
                   color: Colors.blue,
                 )
               : null,
