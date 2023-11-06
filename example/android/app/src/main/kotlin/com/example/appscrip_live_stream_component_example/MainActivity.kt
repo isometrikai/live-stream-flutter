@@ -1,4 +1,4 @@
-package com.appscrip.live_stream
+package com.flutterISMStream.com
 
 import io.flutter.embedding.android.FlutterActivity
 
