@@ -20,6 +20,12 @@ class SearchUserScreen extends StatelessWidget {
           centerTitle: true,
         ),
         body: GetBuilder<MeetingController>(
+          initState: (_) {
+            Get.find<MeetingController>().userDetailsList.clear();
+            WidgetsBinding.instance.addPostFrameCallback((_) async =>
+                await Get.find<MeetingController>()
+                    .getMembersList(skip: 0, limit: 30, searchTag: ''));
+          },
           builder: (controller) => Column(
             children: [
               Padding(

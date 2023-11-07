@@ -20,7 +20,7 @@ class MeetingController extends GetxController {
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
   RefreshController userRefreshController =
-      RefreshController(initialRefresh: true);
+      RefreshController(initialRefresh: false);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
   final Debouncer debouncer = Debouncer();
