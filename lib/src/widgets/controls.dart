@@ -27,14 +27,10 @@ class _ControlsWidgetState extends State<ControlsWidget> {
 
   StreamSubscription? _subscription;
 
-  bool _speakerphoneOn = false;
-
   @override
   void initState() {
     super.initState();
     participant.addListener(_onChange);
-
-    _speakerphoneOn = Hardware.instance.speakerOn ?? false;
   }
 
   @override
@@ -69,14 +65,6 @@ class _ControlsWidgetState extends State<ControlsWidget> {
     await participant.setCameraEnabled(true);
   }
 
-  void _setSpeakerphoneOn() {
-    _speakerphoneOn = !_speakerphoneOn;
-
-    widget.room.setSpeakerOn(_speakerphoneOn);
-    // Hardware.instance.setSpeakerphoneOn(_speakerphoneOn);
-    setState(() {});
-  }
-
   void _toggleCamera() async {
     //
     final track = participant.videoTracks.firstOrNull?.track;
@@ -102,75 +90,59 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   Widget build(BuildContext context) => Container(
         margin: IsmLiveDimens.edgeInsetsB20,
         width: Get.width,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: IsmLiveDimens.thirty,
           children: [
             CustomIconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.phone,
                 color: Colors.white,
-                size: 25,
+                size: IsmLiveDimens.twentyFive,
               ),
               onTap: _onTapDisconnect,
               color: Colors.red,
-              radius: 50,
+              radius: IsmLiveDimens.fifty,
             ),
             participant.isMicrophoneEnabled()
                 ? CustomIconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.mic,
                       color: Colors.white,
-                      size: 25,
+                      size: IsmLiveDimens.twentyFive,
                     ),
                     onTap: _disableAudio,
                   )
                 : CustomIconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.mic_off,
                       color: Colors.white,
-                      size: 25,
+                      size: IsmLiveDimens.twentyFive,
                     ),
                     onTap: _enableAudio,
                   ),
             participant.isCameraEnabled()
                 ? CustomIconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.videocam_sharp,
                       color: Colors.white,
-                      size: 25,
+                      size: IsmLiveDimens.twentyFive,
                     ),
                     onTap: _disableVideo,
                   )
                 : CustomIconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.videocam_off,
                       color: Colors.white,
-                      size: 25,
+                      size: IsmLiveDimens.twentyFive,
                     ),
                     onTap: _enableVideo,
                   ),
-            !_speakerphoneOn
-                ? CustomIconButton(
-                    icon: const Icon(
-                      Icons.volume_off,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    onTap: _setSpeakerphoneOn,
-                  )
-                : CustomIconButton(
-                    icon: const Icon(
-                      Icons.volume_up,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    onTap: _setSpeakerphoneOn,
-                  ),
             CustomIconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.flip_camera_ios,
                 color: Colors.white,
-                size: 25,
+                size: IsmLiveDimens.twentyFive,
               ),
               onTap: _toggleCamera,
             ),

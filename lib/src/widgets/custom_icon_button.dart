@@ -16,8 +16,8 @@ class CustomIconButton extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: Container(
-          height: 50,
-          width: 50,
+          height: IsmLiveDimens.fifty,
+          width: IsmLiveDimens.fifty,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.five),
               color: color ?? IsmLiveColors.black.withOpacity(0.4)),

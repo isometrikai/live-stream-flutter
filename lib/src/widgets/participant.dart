@@ -140,11 +140,6 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     title: widget.participant.name.isNotEmpty
                         ? widget.participant.name
                         : widget.participant.identity,
-                    audioAvailable: firstAudioPublication?.muted == false &&
-                        firstAudioPublication?.subscribed == true,
-                    connectionQuality: widget.participant.connectionQuality,
-                    isScreenShare: widget.isScreenShare,
-                    enabledE2EE: widget.participant.isEncrypted,
                   ),
                 ],
               ),

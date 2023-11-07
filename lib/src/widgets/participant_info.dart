@@ -15,18 +15,10 @@ class ParticipantTrack {
 class ParticipantInfoWidget extends StatelessWidget {
   const ParticipantInfoWidget({
     this.title,
-    this.audioAvailable = true,
-    this.connectionQuality = ConnectionQuality.unknown,
-    this.isScreenShare = false,
-    this.enabledE2EE = false,
     Key? key,
   }) : super(key: key);
   //
   final String? title;
-  final bool audioAvailable;
-  final ConnectionQuality connectionQuality;
-  final bool isScreenShare;
-  final bool enabledE2EE;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -35,52 +27,14 @@ class ParticipantInfoWidget extends StatelessWidget {
           vertical: 7,
           horizontal: 10,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (title != null)
-              Flexible(
-                child: Center(
-                  child: Text(
-                    title!,
-                    overflow: TextOverflow.ellipsis,
-                    style: IsmLiveStyles.black16,
-                  ),
-                ),
-              ),
-            Padding(
-              padding: IsmLiveDimens.edgeInsetsL5,
-              child: Icon(
-                audioAvailable ? Icons.mic : Icons.mic_off,
-                color: audioAvailable ? Colors.white : Colors.red,
-                size: 16,
-              ),
+        child: Flexible(
+          child: Center(
+            child: Text(
+              title!,
+              overflow: TextOverflow.ellipsis,
+              style: IsmLiveStyles.whiteBold16,
             ),
-            if (connectionQuality != ConnectionQuality.unknown)
-              Padding(
-                padding: IsmLiveDimens.edgeInsetsL5,
-                child: Icon(
-                  connectionQuality == ConnectionQuality.poor
-                      ? Icons.wifi_off_outlined
-                      : Icons.wifi,
-                  color: {
-                    ConnectionQuality.excellent: Colors.green,
-                    ConnectionQuality.good: Colors.orange,
-                    ConnectionQuality.poor: Colors.red,
-                  }[connectionQuality],
-                  size: 16,
-                ),
-              ),
-            Padding(
-              padding: IsmLiveDimens.edgeInsetsL5,
-              child: Icon(
-                enabledE2EE ? Icons.lock : Icons.lock_open,
-                color: enabledE2EE ? Colors.green : Colors.red,
-                size: 16,
-              ),
-            ),
-          ],
+          ),
         ),
       );
 }
