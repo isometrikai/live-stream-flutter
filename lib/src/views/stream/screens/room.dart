@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -18,9 +19,10 @@ class RoomPage extends StatefulWidget {
   State<StatefulWidget> createState() => _RoomPageState();
 }
 
-class _RoomPageState extends State<RoomPage> {
+class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
   double positionX = 20;
   double positionY = 20;
+  final floating = Floating();
   List<ParticipantTrack> participantTracks = [];
   EventsListener<RoomEvent> get _listener => widget.listener;
   bool get fastConnection => widget.room.engine.fastConnectOptions != null;
@@ -28,6 +30,7 @@ class _RoomPageState extends State<RoomPage> {
   void initState() {
     super.initState();
     widget.room.addListener(_onRoomDidUpdate);
+    WidgetsBinding.instance.addObserver(this);
     _setUpListeners();
 
     _sortParticipants();
@@ -44,12 +47,21 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.inactive) {
+      floating.enable(aspectRatio: const Rational.square());
+    }
+  }
+
+  @override
   void dispose() {
     (() async {
       widget.room.removeListener(_onRoomDidUpdate);
       await _listener.dispose();
       await widget.room.dispose();
     })();
+    WidgetsBinding.instance.removeObserver(this);
+    floating.dispose();
     super.dispose();
   }
 
@@ -160,60 +172,98 @@ class _RoomPageState extends State<RoomPage> {
     });
   }
 
+  Future<void> enablePip(BuildContext context) async {
+    await floating.enable(aspectRatio: const Rational.vertical());
+  }
+
   bool onTab = true;
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: Stack(
-          children: [
-            participantTracks.isNotEmpty
-                ? ParticipantWidget.widgetFor(
-                    onTab ? participantTracks.first : participantTracks.last,
-                    showStatsLayer: false)
-                : const NoVideoWidget(),
-            Positioned(
-              bottom: IsmLiveDimens.twenty,
-              child: widget.room.localParticipant != null
-                  ? ControlsWidget(widget.room, widget.room.localParticipant!)
-                  : IsmLiveDimens.box0,
-            ),
-            Positioned(
-                left: positionX,
-                top: positionY,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      onTab = !onTab;
-                    });
-                  },
-                  onPanUpdate: (details) {
-                    setState(() {
-                      positionX += details.delta.dx;
-                      positionY += details.delta.dy;
-                    });
-                  },
+  Widget build(BuildContext context) => WillPopScope(
+        onWillPop: () async {
+          await enablePip(context);
+          return false;
+        },
+        child: Scaffold(
+          body: PiPSwitcher(
+            childWhenEnabled: Stack(
+              children: [
+                participantTracks.isNotEmpty
+                    ? ParticipantWidget.widgetFor(participantTracks.first,
+                        showStatsLayer: false)
+                    : const NoVideoWidget(),
+                Positioned(
+                  right: IsmLiveDimens.eight,
+                  bottom: IsmLiveDimens.fifty,
                   child: SizedBox(
-                    width: Get.width * 0.9,
-                    height: IsmLiveDimens.twoHundred,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: math.max(0, participantTracks.length - 1),
-                      itemBuilder: (BuildContext context, int index) =>
-                          SizedBox(
-                        width: IsmLiveDimens.twoHundred - IsmLiveDimens.twenty,
-                        height: IsmLiveDimens.twoHundred,
-                        child: ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(IsmLiveDimens.twenty),
-                          child: ParticipantWidget.widgetFor(onTab
-                              ? participantTracks[index + 1]
-                              : participantTracks.first),
+                    width: IsmLiveDimens.fifty,
+                    height: 70,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                      child:
+                          ParticipantWidget.widgetFor(participantTracks.last),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            childWhenDisabled: Stack(
+              children: [
+                participantTracks.isNotEmpty
+                    ? ParticipantWidget.widgetFor(
+                        onTab
+                            ? participantTracks.first
+                            : participantTracks.last,
+                        showStatsLayer: false)
+                    : const NoVideoWidget(),
+                Positioned(
+                  bottom: IsmLiveDimens.twenty,
+                  child: widget.room.localParticipant != null
+                      ? ControlsWidget(
+                          widget.room, widget.room.localParticipant!)
+                      : IsmLiveDimens.box0,
+                ),
+                Positioned(
+                  left: positionX,
+                  top: positionY,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        onTab = !onTab;
+                      });
+                    },
+                    onPanUpdate: (details) {
+                      setState(() {
+                        positionX += details.delta.dx;
+                        positionY += details.delta.dy;
+                      });
+                    },
+                    child: SizedBox(
+                      width: Get.width * 0.9,
+                      height: IsmLiveDimens.twoHundred,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: math.max(0, participantTracks.length - 1),
+                        itemBuilder: (BuildContext context, int index) =>
+                            SizedBox(
+                          width:
+                              IsmLiveDimens.twoHundred - IsmLiveDimens.twenty,
+                          height: IsmLiveDimens.twoHundred,
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(IsmLiveDimens.twenty),
+                            child: ParticipantWidget.widgetFor(onTab
+                                ? participantTracks[index + 1]
+                                : participantTracks.first),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                )),
-          ],
+                ),
+              ],
+            ),
+          ),
         ),
       );
 }

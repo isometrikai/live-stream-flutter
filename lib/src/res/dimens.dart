@@ -36,6 +36,7 @@ class IsmLiveDimens {
   static final double fiftyFive = 55.sp;
   static final double sixty = 60.sp;
   static final double seventyEight = 78.sp;
+  static final double seventy = 70.sp;
 
   static final double eighty = 80.sp;
   static final double ninty = 90.sp;
