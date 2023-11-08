@@ -129,7 +129,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     activeVideoTrack!,
                     fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
-                : const NoVideoWidget(),
+                : NoVideoWidget(name: widget.participant.name),
             Align(
               alignment: Alignment.bottomCenter,
               child: Column(

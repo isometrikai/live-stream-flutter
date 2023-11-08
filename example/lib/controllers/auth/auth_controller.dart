@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:appscrip_live_stream_component_example/view_models/view_models.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -11,8 +12,15 @@ import 'package:image_picker/image_picker.dart';
 
 class AuthController extends GetxController {
   AuthController(this._viewModel);
-
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   final AuthViewModel _viewModel;
+  late String id;
+  @override
+  void onInit() async {
+    id = await getDeviceId;
+
+    super.onInit();
+  }
 
   UserController get userController {
     if (!Get.isRegistered<UserController>()) {
@@ -61,6 +69,15 @@ class AuthController extends GetxController {
     }
   }
 
+  static Future<String> get getDeviceId async {
+    try {
+      var build = await deviceInfoPlugin.androidInfo;
+      return build.id;
+    } catch (e) {
+      return '';
+    }
+  }
+
   void validateSignUp() {
     if (signFormKey.currentState!.validate()) {
       signup();
@@ -69,10 +86,10 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     var res = await _viewModel.login(
-      userName: userNameController.text.trim(),
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+        userName: userNameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        deviceId: id);
     if (res == null) {
       return;
     }
@@ -89,7 +106,11 @@ class AuthController extends GetxController {
       'password': confirmPasswordController.text.trim(),
       'metaData': {'country': 'India'}
     };
-    var res = await _viewModel.signup(isLoading: true, createUser: creatUser);
+    var res = await _viewModel.signup(
+      deviceId: id,
+      isLoading: true,
+      createUser: creatUser,
+    );
     if (res == null) {
       return;
     }

@@ -1,19 +1,24 @@
-import 'dart:math' as math;
-
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 
 class NoVideoWidget extends StatelessWidget {
-  //
-  const NoVideoWidget({Key? key}) : super(key: key);
-
+  const NoVideoWidget({Key? key, this.name}) : super(key: key);
+  final String? name;
   @override
-  Widget build(BuildContext context) => Container(
-        alignment: Alignment.center,
-        child: LayoutBuilder(
-          builder: (ctx, constraints) => Icon(
-            Icons.videocam_off_outlined,
+  Widget build(BuildContext context) => Center(
+        child: Container(
+          height: IsmLiveDimens.hundred,
+          width: IsmLiveDimens.hundred,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
             color: Colors.blue,
-            size: math.min(constraints.maxHeight, constraints.maxWidth) * 0.3,
+          ),
+          alignment: Alignment.center,
+          child: LayoutBuilder(
+            builder: (ctx, constraints) => Text(
+              name?[0] ?? 'U',
+              style: IsmLiveStyles.whiteBold25,
+            ),
           ),
         ),
       );

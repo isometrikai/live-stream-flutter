@@ -90,7 +90,7 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
       try {
         decoded = utf8.decode(event.data);
       } catch (_) {
-        log('Failed to decode: $_');
+        log('$decoded: $_');
       }
     })
     ..on<AudioPlaybackStatusChanged>((event) async {
@@ -190,7 +190,7 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                 participantTracks.isNotEmpty
                     ? ParticipantWidget.widgetFor(participantTracks.first,
                         showStatsLayer: false)
-                    : const NoVideoWidget(),
+                    : const NoVideoWidget(name: null),
                 Positioned(
                   right: IsmLiveDimens.eight,
                   bottom: IsmLiveDimens.fifty,
@@ -199,8 +199,9 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                     height: 70,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                      child:
-                          ParticipantWidget.widgetFor(participantTracks.last),
+                      child: participantTracks.length > 1
+                          ? ParticipantWidget.widgetFor(participantTracks.last)
+                          : null,
                     ),
                   ),
                 ),
@@ -214,7 +215,9 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                             ? participantTracks.first
                             : participantTracks.last,
                         showStatsLayer: false)
-                    : const NoVideoWidget(),
+                    : const NoVideoWidget(
+                        name: null,
+                      ),
                 Positioned(
                   bottom: IsmLiveDimens.twenty,
                   child: widget.room.localParticipant != null

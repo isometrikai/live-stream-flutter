@@ -16,7 +16,6 @@ class MeetingRepository {
       var url = '/meetings/v1/meetings';
       var res = await _apiWrapper.makeRequest(
         url,
-        showLoader: isLoading,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.commonHeader(
           token: token,
@@ -63,6 +62,7 @@ class MeetingRepository {
       required String licenseKey,
       required String appSecret,
       required bool isLoading,
+      required String deviceId,
       required String meetingId}) async {
     try {
       var url = '/meetings/v1/publish/start';
@@ -76,7 +76,7 @@ class MeetingRepository {
           ),
           payload: {
             'meetingId': meetingId,
-            'deviceId': 'Xc45fk',
+            'deviceId': deviceId,
           });
 
       return res;
@@ -90,6 +90,7 @@ class MeetingRepository {
     required String licenseKey,
     required String appSecret,
     required bool isLoading,
+    required String deviceId,
     required String meetingDescription,
     required List<String> members,
   }) async {
@@ -113,7 +114,7 @@ class MeetingRepository {
             'meetingDescription': meetingDescription,
             'hdMeeting': false,
             'enableRecording': false,
-            'deviceId': 'Xc45ft',
+            'deviceId': deviceId,
             'customType': 'VideoCall',
             'meetingType': 0,
             'autoTerminate': true,

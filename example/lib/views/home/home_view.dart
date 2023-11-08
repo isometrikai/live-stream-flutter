@@ -14,7 +14,8 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<HomeController>(
         builder: (controller) => IsmLiveStream(
           configuration: IsmLiveStreamConfig(
-            communicationConfig: const IsmLiveCommunicationConfig(
+            communicationConfig: IsmLiveCommunicationConfig(
+                deviceId: controller.user.deviceId,
                 appSecret: AppConstants.appSecret,
                 licenseKey: AppConstants.licenseKey,
                 userSecret: AppConstants.userSecret),

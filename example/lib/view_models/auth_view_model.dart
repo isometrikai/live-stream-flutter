@@ -18,6 +18,7 @@ class AuthViewModel {
     required String userName,
     required String email,
     required String password,
+    required String deviceId,
   }) async {
     try {
       var res = await _repository.login(
@@ -37,6 +38,7 @@ class AuthViewModel {
         userId: data['userId'],
         userToken: data['userToken'],
         email: email,
+        deviceId: deviceId,
         userName: userName,
       );
 
@@ -51,6 +53,7 @@ class AuthViewModel {
 
   Future<UserDetailsModel?> signup({
     required bool isLoading,
+    required String deviceId,
     required Map<String, dynamic> createUser,
   }) async {
     try {
@@ -65,10 +68,10 @@ class AuthViewModel {
       var data = res.decode();
 
       var userDetails = UserDetailsModel(
-        userId: data['userId'],
-        userToken: data['userToken'],
-        email: createUser['userIdentifier'],
-      );
+          userId: data['userId'],
+          userToken: data['userToken'],
+          email: createUser['userIdentifier'],
+          deviceId: deviceId);
 
       dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
 
