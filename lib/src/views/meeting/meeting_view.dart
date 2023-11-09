@@ -10,7 +10,7 @@ class MyMeetingsView extends StatelessWidget {
     required this.configuration,
   });
   final IsmLiveStreamConfig configuration;
-  var cont = Get.put(
+  final cont = Get.put(
       MeetingController(
         MeetingViewModel(
           MeetingRepository(
@@ -63,33 +63,49 @@ class MyMeetingsView extends StatelessWidget {
                   )
                 : ListView.separated(
                     padding: IsmLiveDimens.edgeInsets16,
-                    itemBuilder: (context, index) => Container(
-                      padding: IsmLiveDimens.edgeInsets4,
-                      color: IsmLiveColors.white,
-                      height: IsmLiveDimens.fifty,
-                      child: Row(
-                        children: [
-                          Text(controller
-                              .myMeetingList[index].meetingDescription),
-                          const Text('meeting '),
-                          const Spacer(),
-                          SizedBox(
-                            width: IsmLiveDimens.hundred,
-                            child: IsmLiveButton(
-                              onTap: () async {
-                                var rtcTocken = await controller.joinMeeting(
-                                    meetingId: controller
-                                        .myMeetingList[index].meetingId);
-                                if (rtcTocken != null) {
-                                  await controller.connectMeeting(rtcTocken);
-                                }
-                              },
-                              label: 'Join',
-                            ),
+                    itemBuilder: (context, index) {
+                      final item = controller.myMeetingList[index].meetingId;
+                      return Dismissible(
+                        background: Container(
+                          color: Colors.red,
+                          child: const Center(child: Text('Delete')),
+                        ),
+                        key: Key(item),
+                        onDismissed: (direction) {
+                          controller.myMeetingList.removeAt(index);
+                          controller.update();
+                        },
+                        child: Container(
+                          padding: IsmLiveDimens.edgeInsets4,
+                          color: IsmLiveColors.white,
+                          height: IsmLiveDimens.fifty,
+                          child: Row(
+                            children: [
+                              Text(controller
+                                  .myMeetingList[index].meetingDescription),
+                              const Spacer(),
+                              SizedBox(
+                                width: IsmLiveDimens.hundred,
+                                child: IsmLiveButton(
+                                  onTap: () async {
+                                    var rtcTocken =
+                                        await controller.joinMeeting(
+                                            meetingId: controller
+                                                .myMeetingList[index]
+                                                .meetingId);
+                                    if (rtcTocken != null) {
+                                      await controller
+                                          .connectMeeting(rtcTocken);
+                                    }
+                                  },
+                                  label: 'Join',
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                     separatorBuilder: (context, index) => const Divider(),
                     itemCount: controller.myMeetingList.length,
                   ),

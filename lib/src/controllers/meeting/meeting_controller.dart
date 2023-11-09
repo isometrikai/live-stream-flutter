@@ -157,6 +157,7 @@ class MeetingController extends GetxController {
   Future<String?> joinMeeting({required String meetingId}) async {
     if (configuration != null) {
       var res = await viewModel.joinMeeting(
+          deviceId: configuration!.communicationConfig.deviceId,
           token: configuration!.userConfig.userToken,
           licenseKey: configuration!.communicationConfig.licenseKey,
           appSecret: configuration!.communicationConfig.appSecret,
@@ -173,6 +174,7 @@ class MeetingController extends GetxController {
     required List<String> members,
   }) async {
     var res = await viewModel.createMeeting(
+        deviceId: configuration!.communicationConfig.deviceId,
         token: configuration!.userConfig.userToken,
         licenseKey: configuration!.communicationConfig.licenseKey,
         appSecret: configuration!.communicationConfig.appSecret,

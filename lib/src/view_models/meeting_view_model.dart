@@ -41,9 +41,11 @@ class MeetingViewModel {
       {required String token,
       required String licenseKey,
       required String appSecret,
+      required String deviceId,
       required String meetingId}) async {
     try {
       var res = await repository.joinMeeting(
+          deviceId: deviceId,
           isLoading: true,
           token: token,
           licenseKey: licenseKey,
@@ -67,11 +69,13 @@ class MeetingViewModel {
     required String token,
     required String licenseKey,
     required String appSecret,
+    required String deviceId,
     required String meetingDescription,
     required List<String> members,
   }) async {
     try {
       var res = await repository.createMeeting(
+          deviceId: deviceId,
           isLoading: true,
           token: token,
           licenseKey: licenseKey,

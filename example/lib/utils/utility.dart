@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component_example/res/res.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class Utility {
   const Utility._();

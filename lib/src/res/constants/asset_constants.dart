@@ -34,5 +34,5 @@ class $Logos {
 class $Icons {
   const $Icons._();
 
-  static const String _path = '${IsmLiveAssetConstants.$path}/icons';
+  // static const String _path = '${IsmLiveAssetConstants.$path}/icons';
 }

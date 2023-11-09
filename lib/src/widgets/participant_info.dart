@@ -23,17 +23,15 @@ class ParticipantInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         color: Colors.black.withOpacity(0.3),
-        padding: const EdgeInsets.symmetric(
-          vertical: 7,
-          horizontal: 10,
+        padding: EdgeInsets.symmetric(
+          vertical: IsmLiveDimens.eight,
+          horizontal: IsmLiveDimens.ten,
         ),
-        child: Flexible(
-          child: Center(
-            child: Text(
-              title!,
-              overflow: TextOverflow.ellipsis,
-              style: IsmLiveStyles.whiteBold16,
-            ),
+        child: Center(
+          child: Text(
+            title!,
+            overflow: TextOverflow.ellipsis,
+            style: IsmLiveStyles.whiteBold16,
           ),
         ),
       );
