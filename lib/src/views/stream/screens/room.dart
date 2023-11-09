@@ -14,6 +14,7 @@ class RoomPage extends StatefulWidget {
   }) : super(key: key);
   final Room room = Get.arguments['room'];
   final EventsListener<RoomEvent> listener = Get.arguments['listener'];
+  final String meetingId = Get.arguments['meetingId'];
 
   @override
   State<StatefulWidget> createState() => _RoomPageState();
@@ -55,13 +56,14 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    floating.dispose();
     (() async {
       widget.room.removeListener(_onRoomDidUpdate);
       await _listener.dispose();
       await widget.room.dispose();
     })();
     WidgetsBinding.instance.removeObserver(this);
-    floating.dispose();
+
     super.dispose();
   }
 
@@ -222,7 +224,10 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   bottom: IsmLiveDimens.twenty,
                   child: widget.room.localParticipant != null
                       ? ControlsWidget(
-                          widget.room, widget.room.localParticipant!)
+                          widget.room,
+                          widget.room.localParticipant!,
+                          meetingId: widget.meetingId,
+                        )
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(

@@ -66,14 +66,21 @@ class MyMeetingsView extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final item = controller.myMeetingList[index].meetingId;
                       return Dismissible(
+                        direction: DismissDirection.endToStart,
                         background: Container(
                           color: Colors.red,
                           child: const Center(child: Text('Delete')),
                         ),
-                        key: Key(item),
-                        onDismissed: (direction) {
-                          controller.myMeetingList.removeAt(index);
-                          controller.update();
+                        key: UniqueKey(),
+                        onDismissed: (direction) async {
+                          var isDeleted = await controller.deleteMeeting(
+                              isLoading: false, meetingId: item);
+                          if (isDeleted) {
+                            controller.myMeetingList.removeAt(index);
+                            controller.update();
+                          } else {
+                            controller.update();
+                          }
                         },
                         child: Container(
                           padding: IsmLiveDimens.edgeInsets4,
@@ -94,8 +101,10 @@ class MyMeetingsView extends StatelessWidget {
                                                 .myMeetingList[index]
                                                 .meetingId);
                                     if (rtcTocken != null) {
-                                      await controller
-                                          .connectMeeting(rtcTocken);
+                                      await controller.connectMeeting(
+                                          rtcTocken,
+                                          controller
+                                              .myMeetingList[index].meetingId);
                                     }
                                   },
                                   label: 'Join',

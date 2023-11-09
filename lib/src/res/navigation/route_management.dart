@@ -14,10 +14,12 @@ abstract class IsLiveRouteManagement {
   static Future<void> goToRoomPage(
     Room room,
     EventsListener<RoomEvent> listener,
+    String meetingId,
   ) async {
     await Get.toNamed(IsLiveRoutes.roomPage, arguments: {
       'room': room,
       'listener': listener,
+      'meetingId': meetingId,
     });
   }
 

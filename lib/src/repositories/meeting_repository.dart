@@ -57,6 +57,32 @@ class MeetingRepository {
     }
   }
 
+  Future<IsmLiveResponseModel?> deleteMeeting({
+    required String licenseKey,
+    required String appSecret,
+    required String userToken,
+    required String meetingId,
+    required bool isLoading,
+  }) async {
+    try {
+      var url = '/meetings/v1/leave?meetingId=$meetingId';
+      var res = await _apiWrapper.makeRequest(
+        url,
+        type: IsmLiveRequestType.delete,
+        showLoader: isLoading,
+        headers: IsmLiveUtility.commonHeader(
+          token: userToken,
+          licenseKey: licenseKey,
+          appSecret: appSecret,
+        ),
+      );
+
+      return res;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<IsmLiveResponseModel?> joinMeeting(
       {required String token,
       required String licenseKey,
