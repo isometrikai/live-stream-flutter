@@ -16,9 +16,11 @@ class ParticipantInfoWidget extends StatelessWidget {
   const ParticipantInfoWidget({
     this.title,
     Key? key,
+    required this.isMute,
   }) : super(key: key);
   //
   final String? title;
+  final bool isMute;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -27,12 +29,22 @@ class ParticipantInfoWidget extends StatelessWidget {
           vertical: IsmLiveDimens.eight,
           horizontal: IsmLiveDimens.ten,
         ),
-        child: Center(
-          child: Text(
-            title!,
-            overflow: TextOverflow.ellipsis,
-            style: IsmLiveStyles.whiteBold16,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title!,
+              overflow: TextOverflow.ellipsis,
+              style: IsmLiveStyles.whiteBold16,
+            ),
+            IsmLiveDimens.boxWidth10,
+            if (isMute)
+              Icon(
+                Icons.mic_off,
+                color: Colors.white,
+                size: IsmLiveDimens.twentyFive,
+              ),
+          ],
         ),
       );
 }

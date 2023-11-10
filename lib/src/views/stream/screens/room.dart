@@ -212,10 +212,7 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
             childWhenDisabled: Stack(
               children: [
                 participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(
-                        onTab
-                            ? participantTracks.first
-                            : participantTracks.last,
+                    ? ParticipantWidget.widgetFor(participantTracks.first,
                         showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
@@ -234,11 +231,6 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   left: positionX,
                   top: positionY,
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        onTab = !onTab;
-                      });
-                    },
                     onPanUpdate: (details) {
                       setState(() {
                         positionX += details.delta.dx;
@@ -253,16 +245,28 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                         scrollDirection: Axis.horizontal,
                         itemCount: math.max(0, participantTracks.length - 1),
                         itemBuilder: (BuildContext context, int index) =>
-                            SizedBox(
-                          width:
-                              IsmLiveDimens.twoHundred - IsmLiveDimens.twenty,
+                            Container(
+                          margin: IsmLiveDimens.edgeInsets4_8,
+                          width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
                           height: IsmLiveDimens.twoHundred,
                           child: ClipRRect(
                             borderRadius:
                                 BorderRadius.circular(IsmLiveDimens.twenty),
-                            child: ParticipantWidget.widgetFor(onTab
-                                ? participantTracks[index + 1]
-                                : participantTracks.first),
+                            child: GestureDetector(
+                              onTap: () {
+                                var member1 = participantTracks.elementAt(0);
+                                var member2 =
+                                    participantTracks.elementAt(index + 1);
+                                participantTracks.removeAt(index + 1);
+                                participantTracks.removeAt(0);
+                                participantTracks.insert(0, member2);
+
+                                participantTracks.insert(1, member1);
+                                setState(() {});
+                              },
+                              child: ParticipantWidget.widgetFor(
+                                  participantTracks[index + 1]),
+                            ),
                           ),
                         ),
                       ),
