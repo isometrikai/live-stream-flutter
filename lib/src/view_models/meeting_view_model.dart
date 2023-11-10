@@ -11,10 +11,11 @@ class MeetingViewModel {
   Future<List<MyMeetingModel>?> getMeetingsList(
       {required String token,
       required String licenseKey,
+      required bool isLoading,
       required String appSecret}) async {
     try {
       var res = await repository.getMeetingsList(
-          isLoading: true,
+          isLoading: isLoading,
           token: token,
           licenseKey: licenseKey,
           appSecret: appSecret);
@@ -131,5 +132,25 @@ class MeetingViewModel {
       IsmLiveLog.error(e, st);
       return null;
     }
+  }
+
+  Future<bool> deleteMeeting({
+    required String licenseKey,
+    required String appSecret,
+    required String userToken,
+    required String meetingId,
+    required bool isLoading,
+  }) async {
+    var res = await repository.deleteMeeting(
+        licenseKey: licenseKey,
+        appSecret: appSecret,
+        userToken: userToken,
+        meetingId: meetingId,
+        isLoading: isLoading);
+
+    if (res?.hasError ?? true) {
+      return false;
+    }
+    return true;
   }
 }

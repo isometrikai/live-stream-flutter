@@ -137,6 +137,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ParticipantInfoWidget(
+                    isMute: widget.participant.isMuted,
                     title: widget.participant.name.isNotEmpty
                         ? widget.participant.name
                         : widget.participant.identity,

@@ -14,6 +14,7 @@ class RoomPage extends StatefulWidget {
   }) : super(key: key);
   final Room room = Get.arguments['room'];
   final EventsListener<RoomEvent> listener = Get.arguments['listener'];
+  final String meetingId = Get.arguments['meetingId'];
 
   @override
   State<StatefulWidget> createState() => _RoomPageState();
@@ -55,13 +56,14 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    floating.dispose();
     (() async {
       widget.room.removeListener(_onRoomDidUpdate);
       await _listener.dispose();
       await widget.room.dispose();
     })();
     WidgetsBinding.instance.removeObserver(this);
-    floating.dispose();
+
     super.dispose();
   }
 
@@ -210,10 +212,7 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
             childWhenDisabled: Stack(
               children: [
                 participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(
-                        onTab
-                            ? participantTracks.first
-                            : participantTracks.last,
+                    ? ParticipantWidget.widgetFor(participantTracks.first,
                         showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
@@ -222,18 +221,16 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   bottom: IsmLiveDimens.twenty,
                   child: widget.room.localParticipant != null
                       ? ControlsWidget(
-                          widget.room, widget.room.localParticipant!)
+                          widget.room,
+                          widget.room.localParticipant!,
+                          meetingId: widget.meetingId,
+                        )
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(
                   left: positionX,
                   top: positionY,
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        onTab = !onTab;
-                      });
-                    },
                     onPanUpdate: (details) {
                       setState(() {
                         positionX += details.delta.dx;
@@ -248,16 +245,28 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                         scrollDirection: Axis.horizontal,
                         itemCount: math.max(0, participantTracks.length - 1),
                         itemBuilder: (BuildContext context, int index) =>
-                            SizedBox(
-                          width:
-                              IsmLiveDimens.twoHundred - IsmLiveDimens.twenty,
+                            Container(
+                          margin: IsmLiveDimens.edgeInsets4_8,
+                          width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
                           height: IsmLiveDimens.twoHundred,
                           child: ClipRRect(
                             borderRadius:
                                 BorderRadius.circular(IsmLiveDimens.twenty),
-                            child: ParticipantWidget.widgetFor(onTab
-                                ? participantTracks[index + 1]
-                                : participantTracks.first),
+                            child: GestureDetector(
+                              onTap: () {
+                                var member1 = participantTracks.elementAt(0);
+                                var member2 =
+                                    participantTracks.elementAt(index + 1);
+                                participantTracks.removeAt(index + 1);
+                                participantTracks.removeAt(0);
+                                participantTracks.insert(0, member2);
+
+                                participantTracks.insert(1, member1);
+                                setState(() {});
+                              },
+                              child: ParticipantWidget.widgetFor(
+                                  participantTracks[index + 1]),
+                            ),
                           ),
                         ),
                       ),

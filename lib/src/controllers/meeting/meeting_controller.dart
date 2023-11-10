@@ -37,10 +37,9 @@ class MeetingController extends GetxController {
   void createMeetingOnTap() async {
     if (membersSelectedList.isNotEmpty &&
         meetingTitleController.text.isNotEmpty) {
-      var data = await createMeeting(
+      await createMeeting(
           meetingDescription: meetingTitleController.text,
           members: membersSelectedList);
-      IsmLiveLog('${data?.msg}');
     }
   }
 
@@ -84,19 +83,17 @@ class MeetingController extends GetxController {
     }
   }
 
-  Future<void> connectMeeting(
-    String token,
-  ) async {
+  Future<void> connectMeeting(String token, String meetingId) async {
     try {
       var room = Room(
         roomOptions: RoomOptions(
-            defaultCameraCaptureOptions: const CameraCaptureOptions(
-              deviceId: '',
+            defaultCameraCaptureOptions: CameraCaptureOptions(
+              deviceId: configuration?.communicationConfig.deviceId,
               cameraPosition: CameraPosition.front,
               params: VideoParametersPresets.h720_169,
             ),
-            defaultAudioCaptureOptions: const AudioCaptureOptions(
-              deviceId: '',
+            defaultAudioCaptureOptions: AudioCaptureOptions(
+              deviceId: configuration?.communicationConfig.deviceId,
               noiseSuppression: true,
               echoCancellation: true,
               autoGainControl: true,
@@ -137,15 +134,18 @@ class MeetingController extends GetxController {
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsLiveRouteManagement.goToRoomPage(room, listener);
+      await IsLiveRouteManagement.goToRoomPage(room, listener, meetingId);
+      // await refreshController.requestRefresh();
+      await getMeetingList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
     }
   }
 
-  Future<void> getMeetingList() async {
+  Future<void> getMeetingList([bool isLoading = true]) async {
     if (configuration != null) {
       var res = await viewModel.getMeetingsList(
+          isLoading: isLoading,
           token: configuration!.userConfig.userToken,
           licenseKey: configuration!.communicationConfig.licenseKey,
           appSecret: configuration!.communicationConfig.appSecret);
@@ -181,7 +181,7 @@ class MeetingController extends GetxController {
         meetingDescription: meetingDescription,
         members: members);
     if (res != null) {
-      await connectMeeting(res.rtcToken);
+      await connectMeeting(res.rtcToken, res.meetingId);
       return res;
     }
     return null;
@@ -209,5 +209,18 @@ class MeetingController extends GetxController {
     }
     isApicalling = false;
     update();
+  }
+
+  Future<bool> deleteMeeting({
+    required String meetingId,
+    required bool isLoading,
+  }) async {
+    var res = await viewModel.deleteMeeting(
+        userToken: configuration!.userConfig.userToken,
+        licenseKey: configuration!.communicationConfig.licenseKey,
+        appSecret: configuration!.communicationConfig.appSecret,
+        meetingId: meetingId,
+        isLoading: isLoading);
+    return res;
   }
 }

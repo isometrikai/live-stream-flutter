@@ -1,28 +1,29 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:appscrip_live_stream_component/src/res/res.dart';
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class ControlsWidget extends StatefulWidget {
-  const ControlsWidget(
+  ControlsWidget(
     this.room,
     this.participant, {
     Key? key,
+    required this.meetingId,
   }) : super(key: key);
-  //
+  final streamController = Get.find<IsmLiveStreamController>();
   final Room room;
   final LocalParticipant participant;
+  final String meetingId;
 
   @override
   State<StatefulWidget> createState() => _ControlsWidgetState();
 }
 
 class _ControlsWidgetState extends State<ControlsWidget> {
-  //
   CameraPosition position = CameraPosition.front;
 
   StreamSubscription? _subscription;
@@ -43,7 +44,6 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   LocalParticipant get participant => widget.participant;
 
   void _onChange() {
-    // trigger refresh
     setState(() {});
   }
 
@@ -66,7 +66,6 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   }
 
   void _toggleCamera() async {
-    //
     final track = participant.videoTracks.firstOrNull?.track;
     if (track == null) return;
 
@@ -83,7 +82,12 @@ class _ControlsWidgetState extends State<ControlsWidget> {
   }
 
   void _onTapDisconnect() async {
-    await widget.room.disconnect();
+    var res = await widget.streamController
+        .stopMeeting(isLoading: true, meetingId: widget.meetingId);
+
+    if (res ?? false) {
+      await widget.room.disconnect();
+    }
   }
 
   @override

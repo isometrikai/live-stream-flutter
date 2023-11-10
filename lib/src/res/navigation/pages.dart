@@ -34,7 +34,7 @@ class IsLivePages {
       name: IsLiveRoutes.roomPage,
       transitionDuration: transitionDuration,
       page: RoomPage.new,
-      // binding: MeetingBinding(),
+      binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),
   ];
