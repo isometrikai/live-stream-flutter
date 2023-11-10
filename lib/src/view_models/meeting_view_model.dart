@@ -72,10 +72,12 @@ class MeetingViewModel {
     required String appSecret,
     required String deviceId,
     required String meetingDescription,
+    required bool audioOnly,
     required List<String> members,
   }) async {
     try {
       var res = await repository.createMeeting(
+          audioOnly: audioOnly,
           deviceId: deviceId,
           isLoading: true,
           token: token,

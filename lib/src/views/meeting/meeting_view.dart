@@ -47,7 +47,9 @@ class MyMeetingsView extends StatelessWidget {
           ],
         ),
         body: GetBuilder<MeetingController>(
-          initState: (_) async {
+          // initState: (_) async {
+          // },
+          initState: (state) async {
             cont.configuration = configuration;
             await cont.getMeetingList();
           },
@@ -100,11 +102,16 @@ class MyMeetingsView extends StatelessWidget {
                                             meetingId: controller
                                                 .myMeetingList[index]
                                                 .meetingId);
+
+                                    IsmLiveLog(controller
+                                        .myMeetingList[index].audioOnly);
                                     if (rtcTocken != null) {
                                       await controller.connectMeeting(
                                           rtcTocken,
                                           controller
-                                              .myMeetingList[index].meetingId);
+                                              .myMeetingList[index].meetingId,
+                                          controller
+                                              .myMeetingList[index].audioOnly);
                                     }
                                   },
                                   label: 'Join',

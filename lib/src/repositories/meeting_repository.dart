@@ -116,6 +116,7 @@ class MeetingRepository {
     required String licenseKey,
     required String appSecret,
     required bool isLoading,
+    required bool audioOnly,
     required String deviceId,
     required String meetingDescription,
     required List<String> members,
@@ -141,10 +142,10 @@ class MeetingRepository {
             'hdMeeting': false,
             'enableRecording': false,
             'deviceId': deviceId,
-            'customType': 'VideoCall',
+            'customType': audioOnly ? 'AudioCall' : 'VideoCall',
             'meetingType': 0,
             'autoTerminate': true,
-            'audioOnly': false
+            'audioOnly': audioOnly
           });
 
       return res;

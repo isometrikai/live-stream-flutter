@@ -15,11 +15,13 @@ abstract class IsLiveRouteManagement {
     Room room,
     EventsListener<RoomEvent> listener,
     String meetingId,
+    bool audioCallOnly,
   ) async {
     await Get.toNamed(IsLiveRoutes.roomPage, arguments: {
       'room': room,
       'listener': listener,
       'meetingId': meetingId,
+      'audioCallOnly': audioCallOnly,
     });
   }
 

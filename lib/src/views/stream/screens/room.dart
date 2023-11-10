@@ -15,6 +15,7 @@ class RoomPage extends StatefulWidget {
   final Room room = Get.arguments['room'];
   final EventsListener<RoomEvent> listener = Get.arguments['listener'];
   final String meetingId = Get.arguments['meetingId'];
+  final bool audioCallOnly = Get.arguments['audioCallOnly'];
 
   @override
   State<StatefulWidget> createState() => _RoomPageState();
@@ -30,6 +31,9 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    if (widget.audioCallOnly) {
+      widget.room.localParticipant!.setCameraEnabled(false);
+    }
     widget.room.addListener(_onRoomDidUpdate);
     WidgetsBinding.instance.addObserver(this);
     _setUpListeners();
@@ -221,10 +225,9 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   bottom: IsmLiveDimens.twenty,
                   child: widget.room.localParticipant != null
                       ? ControlsWidget(
-                          widget.room,
-                          widget.room.localParticipant!,
+                          widget.room, widget.room.localParticipant!,
                           meetingId: widget.meetingId,
-                        )
+                          audioCallOnly: widget.audioCallOnly)
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(
@@ -254,14 +257,11 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                                 BorderRadius.circular(IsmLiveDimens.twenty),
                             child: GestureDetector(
                               onTap: () {
-                                var member1 = participantTracks.elementAt(0);
                                 var member2 =
                                     participantTracks.elementAt(index + 1);
-                                participantTracks.removeAt(index + 1);
-                                participantTracks.removeAt(0);
-                                participantTracks.insert(0, member2);
-
-                                participantTracks.insert(1, member1);
+                                participantTracks[index + 1] =
+                                    participantTracks.elementAt(0);
+                                participantTracks[0] = member2;
                                 setState(() {});
                               },
                               child: ParticipantWidget.widgetFor(

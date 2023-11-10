@@ -13,11 +13,13 @@ class ControlsWidget extends StatefulWidget {
     this.participant, {
     Key? key,
     required this.meetingId,
+    required this.audioCallOnly,
   }) : super(key: key);
   final streamController = Get.find<IsmLiveStreamController>();
   final Room room;
   final LocalParticipant participant;
   final String meetingId;
+  final bool audioCallOnly;
 
   @override
   State<StatefulWidget> createState() => _ControlsWidgetState();
@@ -125,31 +127,33 @@ class _ControlsWidgetState extends State<ControlsWidget> {
                     ),
                     onTap: _enableAudio,
                   ),
-            participant.isCameraEnabled()
-                ? CustomIconButton(
-                    icon: Icon(
-                      Icons.videocam_sharp,
-                      color: Colors.white,
-                      size: IsmLiveDimens.twentyFive,
+            if (!widget.audioCallOnly)
+              participant.isCameraEnabled()
+                  ? CustomIconButton(
+                      icon: Icon(
+                        Icons.videocam_sharp,
+                        color: Colors.white,
+                        size: IsmLiveDimens.twentyFive,
+                      ),
+                      onTap: _disableVideo,
+                    )
+                  : CustomIconButton(
+                      icon: Icon(
+                        Icons.videocam_off,
+                        color: Colors.white,
+                        size: IsmLiveDimens.twentyFive,
+                      ),
+                      onTap: _enableVideo,
                     ),
-                    onTap: _disableVideo,
-                  )
-                : CustomIconButton(
-                    icon: Icon(
-                      Icons.videocam_off,
-                      color: Colors.white,
-                      size: IsmLiveDimens.twentyFive,
-                    ),
-                    onTap: _enableVideo,
-                  ),
-            CustomIconButton(
-              icon: Icon(
-                Icons.flip_camera_ios,
-                color: Colors.white,
-                size: IsmLiveDimens.twentyFive,
+            if (!widget.audioCallOnly)
+              CustomIconButton(
+                icon: Icon(
+                  Icons.flip_camera_ios,
+                  color: Colors.white,
+                  size: IsmLiveDimens.twentyFive,
+                ),
+                onTap: _toggleCamera,
               ),
-              onTap: _toggleCamera,
-            ),
           ],
         ),
       );
