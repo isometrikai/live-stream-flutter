@@ -92,8 +92,13 @@ class MeetingController extends GetxController {
     }
   }
 
+  bool isMeetingOn = false;
   Future<void> connectMeeting(
       String token, String meetingId, bool audioCallOnly) async {
+    if (isMeetingOn) {
+      return;
+    }
+    isMeetingOn = true;
     try {
       var room = Room(
         roomOptions: RoomOptions(
@@ -146,7 +151,10 @@ class MeetingController extends GetxController {
 
       await IsLiveRouteManagement.goToRoomPage(
           room, listener, meetingId, audioCallOnly);
+      isMeetingOn = false;
+      await refreshController.requestRefresh();
     } catch (e, st) {
+      isMeetingOn = false;
       IsmLiveLog.error(e, st);
     }
   }
