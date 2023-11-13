@@ -61,8 +61,11 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
       case AppLifecycleState.detached:
         floating.enable(aspectRatio: const Rational.vertical());
         break;
+
       case AppLifecycleState.hidden:
+        floating.enable(aspectRatio: const Rational.vertical());
         break;
+      default:
         break;
     }
     super.didChangeAppLifecycleState(state);
