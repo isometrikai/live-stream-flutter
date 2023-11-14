@@ -42,7 +42,7 @@ class ParticipantInfoWidget extends StatelessWidget {
               Icon(
                 Icons.mic_off,
                 color: Colors.white,
-                size: IsmLiveDimens.twentyFive,
+                size: IsmLiveDimens.fifteen,
               ),
           ],
         ),
