@@ -15,21 +15,23 @@ class RoomPage extends StatefulWidget {
   final Room room = Get.arguments['room'];
   final EventsListener<RoomEvent> listener = Get.arguments['listener'];
   final String meetingId = Get.arguments['meetingId'];
+  final bool audioCallOnly = Get.arguments['audioCallOnly'];
 
   @override
   State<StatefulWidget> createState() => _RoomPageState();
 }
 
 class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
-  double positionX = 20;
-  double positionY = 20;
-  final floating = Floating();
   List<ParticipantTrack> participantTracks = [];
   EventsListener<RoomEvent> get _listener => widget.listener;
   bool get fastConnection => widget.room.engine.fastConnectOptions != null;
+  final floating = Floating();
   @override
   void initState() {
     super.initState();
+    if (widget.audioCallOnly) {
+      widget.room.localParticipant!.setCameraEnabled(false);
+    }
     widget.room.addListener(_onRoomDidUpdate);
     WidgetsBinding.instance.addObserver(this);
     _setUpListeners();
@@ -48,22 +50,44 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
-    if (lifecycleState == AppLifecycleState.inactive) {
-      floating.enable(aspectRatio: const Rational.square());
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.inactive:
+        floating.enable(aspectRatio: const Rational.vertical());
+        break;
+      case AppLifecycleState.paused:
+        floating.enable(aspectRatio: const Rational.vertical());
+        break;
+      case AppLifecycleState.detached:
+        floating.enable(aspectRatio: const Rational.vertical());
+        break;
+
+      case AppLifecycleState.hidden:
+        floating.enable(aspectRatio: const Rational.vertical());
+        break;
+      default:
+        break;
     }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  Future<void> enablePip(BuildContext context) async {
+    await floating.enable(aspectRatio: const Rational.vertical());
   }
 
   @override
   void dispose() {
-    floating.dispose();
-    (() async {
-      widget.room.removeListener(_onRoomDidUpdate);
-      await _listener.dispose();
-      await widget.room.dispose();
-    })();
-    WidgetsBinding.instance.removeObserver(this);
+    () async {
+      await floating.pipStatus$.drain();
 
+      widget.room.removeListener(_onRoomDidUpdate);
+
+      await _listener.dispose();
+
+      await widget.room.dispose();
+    }();
+    WidgetsBinding.instance.removeObserver(this);
+    floating.dispose();
     super.dispose();
   }
 
@@ -174,42 +198,44 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
     });
   }
 
-  Future<void> enablePip(BuildContext context) async {
-    await floating.enable(aspectRatio: const Rational.vertical());
-  }
-
   bool onTab = true;
   @override
-  Widget build(BuildContext context) => WillPopScope(
-        onWillPop: () async {
-          await enablePip(context);
-          return false;
-        },
-        child: Scaffold(
-          body: PiPSwitcher(
-            childWhenEnabled: Stack(
-              children: [
-                participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(participantTracks.first,
-                        showStatsLayer: false)
-                    : const NoVideoWidget(name: null),
-                Positioned(
-                  right: IsmLiveDimens.eight,
-                  bottom: IsmLiveDimens.fifty,
-                  child: SizedBox(
-                    width: IsmLiveDimens.fifty,
-                    height: 70,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                      child: participantTracks.length > 1
-                          ? ParticipantWidget.widgetFor(participantTracks.last)
-                          : null,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            childWhenDisabled: Stack(
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        builder: (controller) => WillPopScope(
+          onWillPop: () async {
+            await enablePip(context);
+
+            return false;
+          },
+          child: Scaffold(
+            body:
+                //  PiPSwitcher(
+                //   childWhenEnabled: Stack(
+                //     children: [
+                //       participantTracks.isNotEmpty
+                //           ? ParticipantWidget.widgetFor(participantTracks.first,
+                //               showStatsLayer: false)
+                //           : const NoVideoWidget(name: null),
+                //       Positioned(
+                //         right: IsmLiveDimens.eight,
+                //         bottom: IsmLiveDimens.fifty,
+                //         child: SizedBox(
+                //           width: IsmLiveDimens.fifty,
+                //           height: 70,
+                //           child: ClipRRect(
+                //             borderRadius:
+                //                 BorderRadius.circular(IsmLiveDimens.eight),
+                //             child: participantTracks.length > 1
+                //                 ? ParticipantWidget.widgetFor(
+                //                     participantTracks.last)
+                //                 : null,
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // childWhenDisabled:
+                Stack(
               children: [
                 participantTracks.isNotEmpty
                     ? ParticipantWidget.widgetFor(participantTracks.first,
@@ -221,22 +247,16 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   bottom: IsmLiveDimens.twenty,
                   child: widget.room.localParticipant != null
                       ? ControlsWidget(
-                          widget.room,
-                          widget.room.localParticipant!,
+                          widget.room, widget.room.localParticipant!,
                           meetingId: widget.meetingId,
-                        )
+                          audioCallOnly: widget.audioCallOnly)
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(
-                  left: positionX,
-                  top: positionY,
+                  left: controller.positionX,
+                  top: controller.positionY,
                   child: GestureDetector(
-                    onPanUpdate: (details) {
-                      setState(() {
-                        positionX += details.delta.dx;
-                        positionY += details.delta.dy;
-                      });
-                    },
+                    onPanUpdate: controller.onPan,
                     child: SizedBox(
                       width: Get.width * 0.9,
                       height: IsmLiveDimens.twoHundred,
@@ -254,14 +274,11 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                                 BorderRadius.circular(IsmLiveDimens.twenty),
                             child: GestureDetector(
                               onTap: () {
-                                var member1 = participantTracks.elementAt(0);
                                 var member2 =
                                     participantTracks.elementAt(index + 1);
-                                participantTracks.removeAt(index + 1);
-                                participantTracks.removeAt(0);
-                                participantTracks.insert(0, member2);
-
-                                participantTracks.insert(1, member1);
+                                participantTracks[index + 1] =
+                                    participantTracks.elementAt(0);
+                                participantTracks[0] = member2;
                                 setState(() {});
                               },
                               child: ParticipantWidget.widgetFor(
@@ -277,5 +294,6 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
             ),
           ),
         ),
+        // ),
       );
 }

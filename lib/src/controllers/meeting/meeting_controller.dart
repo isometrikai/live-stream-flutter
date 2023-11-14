@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/create_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/utils/debouncer.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class MeetingController extends GetxController {
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
   final Debouncer debouncer = Debouncer();
-
+  final List<bool> selectedCallType = <bool>[true, false];
   @override
   void onInit() async {
     super.onInit();
@@ -39,8 +38,18 @@ class MeetingController extends GetxController {
         meetingTitleController.text.isNotEmpty) {
       await createMeeting(
           meetingDescription: meetingTitleController.text,
-          members: membersSelectedList);
+          members: membersSelectedList,
+          audioOnly: selectedCallType.last);
     }
+  }
+
+  void toggleAction(int index) {
+    for (var i = 0; i < selectedCallType.length; i++) {
+      selectedCallType[i] = i == index;
+    }
+
+    IsmLiveLog(selectedCallType);
+    update();
   }
 
   void onMemberSelected(bool value, String id, String name) {
@@ -83,7 +92,13 @@ class MeetingController extends GetxController {
     }
   }
 
-  Future<void> connectMeeting(String token, String meetingId) async {
+  bool isMeetingOn = false;
+  Future<void> connectMeeting(
+      String token, String meetingId, bool audioCallOnly) async {
+    if (isMeetingOn) {
+      return;
+    }
+    isMeetingOn = true;
     try {
       var room = Room(
         roomOptions: RoomOptions(
@@ -134,10 +149,12 @@ class MeetingController extends GetxController {
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsLiveRouteManagement.goToRoomPage(room, listener, meetingId);
-      // await refreshController.requestRefresh();
-      await getMeetingList();
+      await IsLiveRouteManagement.goToRoomPage(
+          room, listener, meetingId, audioCallOnly);
+      isMeetingOn = false;
+      await refreshController.requestRefresh();
     } catch (e, st) {
+      isMeetingOn = false;
       IsmLiveLog.error(e, st);
     }
   }
@@ -169,11 +186,13 @@ class MeetingController extends GetxController {
     return null;
   }
 
-  Future<CreateMeetingModel?> createMeeting({
+  Future<void> createMeeting({
     required String meetingDescription,
     required List<String> members,
+    bool audioOnly = false,
   }) async {
     var res = await viewModel.createMeeting(
+        audioOnly: audioOnly,
         deviceId: configuration!.communicationConfig.deviceId,
         token: configuration!.userConfig.userToken,
         licenseKey: configuration!.communicationConfig.licenseKey,
@@ -181,10 +200,8 @@ class MeetingController extends GetxController {
         meetingDescription: meetingDescription,
         members: members);
     if (res != null) {
-      await connectMeeting(res.rtcToken, res.meetingId);
-      return res;
+      await connectMeeting(res.rtcToken, res.meetingId, selectedCallType.last);
     }
-    return null;
   }
 
   bool isApicalling = false;
