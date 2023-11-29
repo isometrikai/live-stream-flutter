@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreateMeetingScreen extends StatelessWidget {
-  CreateMeetingScreen({super.key});
-  final List<Widget> fruits = <Widget>[
-    const Text('VideoCall'),
-    const Text('AudioCall'),
-  ];
+  const CreateMeetingScreen({super.key});
+
   @override
   Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.white,
@@ -54,11 +51,14 @@ class CreateMeetingScreen extends StatelessWidget {
                         minWidth: 80.0,
                       ),
                       isSelected: controller.selectedCallType,
-                      children: fruits,
+                      children: controller.fruits,
                     ),
                     IsmLiveDimens.boxHeight32,
                     IsmLiveButton(
-                      onTap: controller.createMeetingOnTap,
+                      onTap: () {
+                        controller.incomingCall('123');
+                        // controller.createMeetingOnTap();
+                      },
                       label: 'Create',
                     ),
                   ],
