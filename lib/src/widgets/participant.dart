@@ -130,21 +130,16 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
                 : NoVideoWidget(name: widget.participant.name),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ParticipantInfoWidget(
-                    isMute: widget.participant.isMuted,
-                    title: widget.participant.name.isNotEmpty
-                        ? widget.participant.name
-                        : widget.participant.identity,
-                  ),
-                ],
+            if (widget.showStatsLayer)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ParticipantInfoWidget(
+                  isMute: widget.participant.isMuted,
+                  title: widget.participant.name.isNotEmpty
+                      ? widget.participant.name
+                      : widget.participant.identity,
+                ),
               ),
-            ),
           ],
         ),
       );
