@@ -29,8 +29,7 @@ class IsmLiveStreamController extends GetxController {
           if (event.reason != null) {
             IsmLiveLog('Room disconnected: reason => ${event.reason}');
           }
-          WidgetsBindingCompatible.instance
-              ?.addPostFrameCallback((timeStamp) => Get.back());
+          Get.back();
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog('Participant event');

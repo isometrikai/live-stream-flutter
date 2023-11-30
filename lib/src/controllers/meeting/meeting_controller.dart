@@ -45,28 +45,41 @@ class MeetingController extends GetxController {
   }
 
   void callLisner() async {
-    FlutterCallkitIncoming.onEvent.listen((CallEvent? event) {
-      switch (event!.event) {
+    FlutterCallkitIncoming.onEvent.listen((CallEvent? event) async {
+      IsmLiveLog('event===================   $event');
+
+      switch (event?.event ?? '') {
         case Event.actionCallIncoming:
-          IsmLiveLog('11111111111111111111111111');
           break;
         case Event.actionCallStart:
-          IsmLiveLog('222222222222222222222222222');
-
           break;
         case Event.actionCallAccept:
-          IsmLiveLog('333333333333');
+          var data = event?.body['extra'];
+
+          var meetingId = data['meetingId'];
+          var isAudioCall = data['isAudioCall'];
+
+          var tocken = await joinMeeting(meetingId: meetingId);
+          if (tocken != null) {
+            await connectMeeting(tocken, meetingId, isAudioCall);
+          }
           break;
         case Event.actionCallDecline:
           break;
         case Event.actionCallEnded:
-          IsmLiveLog('44444444444444444444444');
           break;
         case Event.actionCallTimeout:
-          IsmLiveLog('5555555555555');
           break;
         case Event.actionCallCallback:
-          IsmLiveLog('6666666666666666666666');
+          var data = event?.body['extra'];
+          var meetingDescription = data['meetingDescription'];
+          var createdBy = data['createdBy'];
+          var isAudioCall = data['isAudioCall'];
+          await createMeeting(
+              meetingDescription: meetingDescription,
+              members: ['$createdBy'],
+              audioOnly: isAudioCall);
+
           break;
         case Event.actionCallToggleHold:
           break;
@@ -92,14 +105,24 @@ class MeetingController extends GetxController {
     });
   }
 
-  void incomingCall(String id) async {
+  void incomingCall({
+    required String id,
+    required String name,
+    required String imageUrl,
+    required String number,
+    required String userId,
+    required String meetingId,
+    required bool isAudioCall,
+    required String createdBy,
+    required String meetingDescription,
+  }) async {
     try {
       var callKitParams = CallKitParams(
         id: id,
-        nameCaller: 'Hien Nguyen',
-        appName: 'Callkit',
-        avatar: 'https://i.pravatar.cc/100',
-        handle: '0123456789',
+        nameCaller: name,
+        appName: 'LiveKit call',
+        avatar: imageUrl,
+        handle: number,
         type: 0,
         textAccept: 'Accept',
         textDecline: 'Decline',
@@ -110,17 +133,23 @@ class MeetingController extends GetxController {
           callbackText: 'Call back',
         ),
         duration: 30000,
-        extra: <String, dynamic>{'userId': '1a2b3c4d'},
-        headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+        extra: <String, dynamic>{
+          'userId': userId,
+          'meetingId': meetingId,
+          'isAudioCall': isAudioCall,
+          'createdBy': createdBy,
+          'meetingDescription': meetingDescription,
+        },
         android: const AndroidParams(
-            isCustomNotification: true,
-            isShowLogo: false,
-            ringtonePath: 'system_ringtone_default',
-            backgroundColor: '#0955fa',
-            backgroundUrl: 'https://i.pravatar.cc/500',
-            actionColor: '#4CAF50',
-            incomingCallNotificationChannelName: 'Incoming Call',
-            missedCallNotificationChannelName: 'Missed Call'),
+          isCustomNotification: true,
+          isShowLogo: false,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          backgroundUrl: 'https://i.pravatar.cc/500',
+          actionColor: '#4CAF50',
+          incomingCallNotificationChannelName: 'Incoming Call',
+          missedCallNotificationChannelName: 'Missed Call',
+        ),
         ios: const IOSParams(
           iconName: 'CallKitLogo',
           handleType: 'generic',
@@ -285,7 +314,6 @@ class MeetingController extends GetxController {
       await IsLiveRouteManagement.goToRoomPage(
           room, listener, meetingId, audioCallOnly);
       isMeetingOn = false;
-      await refreshController.requestRefresh();
     } catch (e, st) {
       isMeetingOn = false;
       IsmLiveLog.error(e, st);

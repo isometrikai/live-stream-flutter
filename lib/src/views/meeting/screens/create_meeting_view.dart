@@ -56,8 +56,7 @@ class CreateMeetingScreen extends StatelessWidget {
                     IsmLiveDimens.boxHeight32,
                     IsmLiveButton(
                       onTap: () {
-                        controller.incomingCall('123');
-                        // controller.createMeetingOnTap();
+                        controller.createMeetingOnTap();
                       },
                       label: 'Create',
                     ),

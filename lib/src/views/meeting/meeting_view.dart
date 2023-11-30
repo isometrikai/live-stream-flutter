@@ -47,8 +47,6 @@ class MyMeetingsView extends StatelessWidget {
           ],
         ),
         body: GetBuilder<MeetingController>(
-          // initState: (_) async {
-          // },
           initState: (state) async {
             cont.configuration = configuration;
             await cont.getMeetingList();
@@ -57,6 +55,22 @@ class MyMeetingsView extends StatelessWidget {
             controller: controller.refreshController,
             onRefresh: () async {
               await controller.getMeetingList();
+              IsmLiveLog('-------${controller.myMeetingList}');
+              if (controller.myMeetingList.isNotEmpty) {
+                IsmLiveLog('11111111111111111111111111');
+                controller.incomingCall(
+                    meetingDescription:
+                        controller.myMeetingList.first.meetingDescription,
+                    createdBy: controller.myMeetingList.first.createdBy,
+                    id: controller.myMeetingList.first.conversationId,
+                    imageUrl: controller.myMeetingList.first.initiatorImageUrl,
+                    meetingId: controller.myMeetingList.first.meetingId,
+                    name: controller.myMeetingList.first.initiatorName,
+                    number: controller.myMeetingList.first.initiatorIdentifier,
+                    isAudioCall: controller.myMeetingList.first.audioOnly,
+                    userId: controller.myMeetingList.first.meetingId);
+              }
+
               controller.refreshController.refreshCompleted();
             },
             child: controller.myMeetingList.isEmpty
