@@ -29,8 +29,7 @@ class IsmLiveStreamController extends GetxController {
           if (event.reason != null) {
             IsmLiveLog('Room disconnected: reason => ${event.reason}');
           }
-          WidgetsBindingCompatible.instance
-              ?.addPostFrameCallback((timeStamp) => Get.back());
+          Get.back();
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog('Participant event');
@@ -59,9 +58,13 @@ class IsmLiveStreamController extends GetxController {
           }
         });
 
-  Future<void> askPublish(Room room) async {
+  Future<void> askPublish(Room room, bool audioCall) async {
     try {
-      await room.localParticipant?.setCameraEnabled(true);
+      if (!audioCall) {
+        await room.localParticipant?.setCameraEnabled(true);
+      } else {
+        await room.localParticipant?.setCameraEnabled(false);
+      }
     } catch (error) {
       IsmLiveLog('could not publish video: $error');
     }

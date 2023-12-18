@@ -25,10 +25,15 @@ abstract class IsLiveRouteManagement {
     });
   }
 
-  /// Go to the Home Screen
   static void goToSearchUserScreen() {
     Get.toNamed<void>(
       IsLiveRoutes.searchUserScreen,
+    );
+  }
+
+  static void goToMyMeetingsView() {
+    Get.offAndToNamed<void>(
+      IsLiveRoutes.myMeetingsView,
     );
   }
 }

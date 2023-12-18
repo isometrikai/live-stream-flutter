@@ -19,9 +19,6 @@ class RoomPage extends StatelessWidget {
         id: 'room',
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
-          if (audioCallOnly) {
-            await room.localParticipant?.setCameraEnabled(false);
-          }
 
           await streamController.setUpListeners(
             listener,
@@ -31,7 +28,7 @@ class RoomPage extends StatelessWidget {
 
           WidgetsBindingCompatible.instance?.addPostFrameCallback((_) {
             if (!fastConnection) {
-              streamController.askPublish(room);
+              streamController.askPublish(room, audioCallOnly);
             }
           });
           if (lkPlatformIsMobile()) {
