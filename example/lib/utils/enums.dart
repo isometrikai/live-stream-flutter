@@ -1,4 +1,0 @@
-enum AppFlavor {
-  dev,
-  prod;
-}

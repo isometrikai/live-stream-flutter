@@ -1,20 +1,23 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class DeviceConfig {
-  void init() async {
-    _info = DeviceInfoPlugin();
+class AppConfig {
+  Future<void> init(String title) async {
+    _appTitle = title;
+    _packageInfo = await PackageInfo.fromPlatform();
+    _deviceInfo = DeviceInfoPlugin();
     if (kIsWeb) {
-      _webDeviceInfo = await _info.webBrowserInfo;
+      _webDeviceInfo = await _deviceInfo.webBrowserInfo;
     } else if (GetPlatform.isAndroid) {
-      _androidDeviceInfo = await _info.androidInfo;
+      _androidDeviceInfo = await _deviceInfo.androidInfo;
     } else if (GetPlatform.isIOS) {
-      _iosDeviceInfo = await _info.iosInfo;
+      _iosDeviceInfo = await _deviceInfo.iosInfo;
     }
   }
 
-  DeviceInfoPlugin _info = DeviceInfoPlugin();
+  DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
   /// To get android device info
   AndroidDeviceInfo? _androidDeviceInfo;
@@ -23,6 +26,14 @@ class DeviceConfig {
   IosDeviceInfo? _iosDeviceInfo;
 
   WebBrowserInfo? _webDeviceInfo;
+
+  PackageInfo? _packageInfo;
+
+  String get appVersion => _packageInfo?.version ?? '';
+
+  String? _appTitle;
+
+  String get appTitle => _appTitle ?? '';
 
   /// Device id
   String? get deviceId => kIsWeb

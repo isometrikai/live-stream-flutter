@@ -41,8 +41,7 @@ class IsmLiveStreamController extends GetxController {
         ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
         ..on<TrackE2EEStateEvent>(onE2EEStateEvent)
         ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog(
-              'Participant name updated: ${event.participant.identity}, name => ${event.name}');
+          IsmLiveLog('Participant name updated: ${event.participant.identity}, name => ${event.name}');
         })
         ..on<DataReceivedEvent>((event) {
           var decoded = 'Failed to decode';
@@ -117,8 +116,7 @@ class IsmLiveStreamController extends GetxController {
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch -
-          b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -136,21 +134,17 @@ class IsmLiveStreamController extends GetxController {
     update(['room']);
   }
 
-  Future<bool?> stopMeeting(
-      {required bool isLoading, required String meetingId}) async {
-    var res = await _viewModel.stopMeeting(
+  Future<bool> stopMeeting({
+    required bool isLoading,
+    required String meetingId,
+  }) =>
+      _viewModel.stopMeeting(
         token: meetingController.configuration?.userConfig.userToken ?? '',
-        licenseKey:
-            meetingController.configuration?.communicationConfig.licenseKey ??
-                '',
-        appSecret:
-            meetingController.configuration?.communicationConfig.appSecret ??
-                '',
+        licenseKey: meetingController.configuration?.communicationConfig.licenseKey ?? '',
+        appSecret: meetingController.configuration?.communicationConfig.appSecret ?? '',
         isLoading: isLoading,
-        meetingId: meetingId);
-
-    return res;
-  }
+        meetingId: meetingId,
+      );
 
   void onPan(details) {
     positionX += details.delta.dx;
@@ -189,10 +183,13 @@ class IsmLiveStreamController extends GetxController {
     }
   }
 
-  void onTapDisconnect(room, meetingId) async {
-    var res = await stopMeeting(isLoading: true, meetingId: meetingId);
+  Future<void> onTapDisconnect(room, meetingId) async {
+    var res = await stopMeeting(
+      isLoading: true,
+      meetingId: meetingId,
+    );
 
-    if (res ?? false) {
+    if (res) {
       await room.disconnect();
     }
   }

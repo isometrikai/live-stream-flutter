@@ -17,7 +17,6 @@ dependencies:
   appscrip_live_stream_component:
     path: ../
   cached_network_image: ^3.2.3
-  connectivity_plus: ^4.0.2
   cupertino_icons: ^1.0.2
   device_info_plus: ^9.0.3
   flutter:
@@ -25,15 +24,11 @@ dependencies:
   flutter_screenutil: ^5.9.0
   flutter_secure_storage: ^9.0.0
   get: ^4.6.6
-  http: ^1.1.0
-  image_cropper: ^5.0.0
-  image_picker: ^1.0.4
+  http: ^1.1.2
+  image_cropper: ^5.0.1
+  image_picker: ^1.0.5
   package_info_plus: ^4.1.0
-  shared_preferences: ^2.2.1
-  flutter_callkit_incoming: ^2.0.0+2
- 
-
-
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_lints: ^2.0.0

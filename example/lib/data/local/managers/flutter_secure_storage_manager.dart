@@ -1,4 +1,4 @@
-import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FlutterSecureStorageManager {
@@ -41,7 +41,7 @@ class FlutterSecureStorageManager {
       await flutterSecureStorage.delete(key: key);
       await flutterSecureStorage.write(key: key, value: value);
     } catch (e, st) {
-      AppLog.error(e, st);
+      IsmLiveLog.error(e, st);
     }
   }
 }

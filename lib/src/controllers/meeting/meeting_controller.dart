@@ -24,8 +24,7 @@ class MeetingController extends GetxController {
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
-  RefreshController userRefreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController userRefreshController = RefreshController(initialRefresh: false);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
   final Debouncer debouncer = Debouncer();
@@ -75,10 +74,7 @@ class MeetingController extends GetxController {
           var meetingDescription = data['meetingDescription'];
           var createdBy = data['createdBy'];
           var isAudioCall = data['isAudioCall'];
-          await createMeeting(
-              meetingDescription: meetingDescription,
-              members: ['$createdBy'],
-              audioOnly: isAudioCall);
+          await createMeeting(meetingDescription: meetingDescription, members: ['$createdBy'], audioOnly: isAudioCall);
 
           break;
         case Event.actionCallToggleHold:
@@ -181,12 +177,7 @@ class MeetingController extends GetxController {
   }) async {
     try {
       var params = CallKitParams(
-          id: id,
-          nameCaller: name,
-          handle: number,
-          type: 2,
-          extra: <String, dynamic>{'userId': userId},
-          ios: const IOSParams(handleType: 'generic'));
+          id: id, nameCaller: name, handle: number, type: 2, extra: <String, dynamic>{'userId': userId}, ios: const IOSParams(handleType: 'generic'));
 
       await FlutterCallkitIncoming.showMissCallNotification(params);
     } catch (e) {
@@ -195,12 +186,8 @@ class MeetingController extends GetxController {
   }
 
   void createMeetingOnTap() async {
-    if (membersSelectedList.isNotEmpty &&
-        meetingTitleController.text.isNotEmpty) {
-      await createMeeting(
-          meetingDescription: meetingTitleController.text,
-          members: membersSelectedList,
-          audioOnly: selectedCallType.last);
+    if (membersSelectedList.isNotEmpty && meetingTitleController.text.isNotEmpty) {
+      await createMeeting(meetingDescription: meetingTitleController.text, members: membersSelectedList, audioOnly: selectedCallType.last);
     }
   }
 
@@ -254,8 +241,7 @@ class MeetingController extends GetxController {
   }
 
   bool isMeetingOn = false;
-  Future<void> connectMeeting(
-      String token, String meetingId, bool audioCallOnly) async {
+  Future<void> connectMeeting(String token, String meetingId, bool audioCallOnly) async {
     if (isMeetingOn) {
       return;
     }
@@ -299,20 +285,16 @@ class MeetingController extends GetxController {
       );
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [
-          const ParticipantTrackPermission('allowed-identity', true, null)
-        ],
+        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
       );
 
-      var localVideo =
-          await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
+      var localVideo = await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
         cameraPosition: CameraPosition.front,
         params: VideoParametersPresets.h720_169,
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsLiveRouteManagement.goToRoomPage(
-          room, listener, meetingId, audioCallOnly);
+      await IsLiveRouteManagement.goToRoomPage(room, listener, meetingId, audioCallOnly);
       isMeetingOn = false;
     } catch (e, st) {
       isMeetingOn = false;
@@ -366,10 +348,7 @@ class MeetingController extends GetxController {
   }
 
   bool isApicalling = false;
-  Future<void> getMembersList(
-      {required int skip,
-      required int limit,
-      required String searchTag}) async {
+  Future<void> getMembersList({required int skip, required int limit, required String searchTag}) async {
     if (isApicalling) {
       return;
     }
