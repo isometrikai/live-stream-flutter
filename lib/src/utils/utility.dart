@@ -29,6 +29,7 @@ class IsmLiveUtility {
     required String appSecret,
   }) =>
       {
+        'Content-Type': 'application/json',
         'userSecret': userSecret,
         'licenseKey': licenseKey,
         'appSecret': appSecret,
