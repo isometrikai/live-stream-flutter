@@ -12,7 +12,8 @@ class Utility {
       );
 
   /// Token common Header for All api
-  static Map<String, String> tokenHeader(String token) => IsmLiveUtility.tokenHeader(
+  static Map<String, String> tokenHeader(String token) =>
+      IsmLiveUtility.tokenHeader(
         token: token,
         licenseKey: AppConstants.licenseKey,
         appSecret: AppConstants.appSecret,
