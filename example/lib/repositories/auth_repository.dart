@@ -20,10 +20,10 @@ class AuthRepository {
     required String password,
   }) =>
       _apiWrapper.makeRequest(
-        Apis.authenticate,
+        IsmLiveApis.authenticate,
         type: IsmLiveRequestType.post,
         payload: {'userIdentifier': email, 'password': password},
-        headers: Utility.commonHeader(),
+        headers: Utility.secretHeader(),
         showLoader: true,
         showDialog: true,
       );
@@ -33,10 +33,10 @@ class AuthRepository {
     required Map<String, dynamic> createUser,
   }) =>
       _apiWrapper.makeRequest(
-        Apis.user,
+        IsmLiveApis.user,
         type: IsmLiveRequestType.post,
         payload: createUser,
-        headers: Utility.commonHeader(),
+        headers: Utility.secretHeader(),
         showLoader: isLoading,
       );
 
@@ -47,9 +47,9 @@ class AuthRepository {
     required String mediaExtension,
   }) =>
       _apiWrapper.makeRequest(
-        '${Apis.presignedurl}?userIdentifier=$userIdentifier&mediaExtension=$mediaExtension',
+        '${IsmLiveApis.presignedurl}?userIdentifier=$userIdentifier&mediaExtension=$mediaExtension',
         type: IsmLiveRequestType.get,
-        headers: Utility.commonHeader(),
+        headers: Utility.secretHeader(),
         showLoader: showLoader,
       );
 

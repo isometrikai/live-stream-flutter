@@ -4,7 +4,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:appscrip_live_stream_component_example/repositories/repositories.dart';
-import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:get/get.dart';
 
 class AuthViewModel {
@@ -46,7 +45,7 @@ class AuthViewModel {
 
       return userDetails;
     } catch (e, st) {
-      AppLog.error('Login $e', st);
+      IsmLiveLog.error('Login $e', st);
       return null;
     }
   }
@@ -57,8 +56,7 @@ class AuthViewModel {
     required Map<String, dynamic> createUser,
   }) async {
     try {
-      var res = await _repository.signup(
-          isLoading: isLoading, createUser: createUser);
+      var res = await _repository.signup(isLoading: isLoading, createUser: createUser);
       if (res.hasError) {
         if ([401, 404].contains(res.statusCode)) {
           await IsmLiveUtility.showInfoDialog(res);
@@ -67,17 +65,14 @@ class AuthViewModel {
       }
       var data = res.decode();
 
-      var userDetails = UserDetailsModel(
-          userId: data['userId'],
-          userToken: data['userToken'],
-          email: createUser['userIdentifier'],
-          deviceId: deviceId);
+      var userDetails =
+          UserDetailsModel(userId: data['userId'], userToken: data['userToken'], email: createUser['userIdentifier'], deviceId: deviceId);
 
       dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
 
       return userDetails;
     } catch (e, st) {
-      AppLog.error('Sign up $e', st);
+      IsmLiveLog.error('Sign up $e', st);
       return null;
     }
   }
@@ -117,7 +112,7 @@ class AuthViewModel {
         file: file,
       );
     } catch (e, st) {
-      AppLog.error(e, st);
+      IsmLiveLog.error(e, st);
       return IsmLiveResponseModel.error();
     }
   }

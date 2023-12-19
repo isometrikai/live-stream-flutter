@@ -2,8 +2,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-import 'package:appscrip_live_stream_component_example/widgets/image.dart';
-import 'package:appscrip_live_stream_component_example/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,8 +35,7 @@ class SignupView extends StatelessWidget {
                 child: Form(
                   key: controller.signFormKey,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Center(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,14 +68,13 @@ class SignupView extends StatelessWidget {
                                 () => Stack(
                                   children: [
                                     controller.profileImage.trim().isEmpty
-                                        ? AppImage.asset(
+                                        ? IsmLiveImage.asset(
                                             width: 100,
                                             height: 100,
-                                            IsmLiveAssetConstants
-                                                .images.noImage,
+                                            IsmLiveAssetConstants.images.noImage,
                                             isProfileImage: true,
                                           )
-                                        : AppImage.network(
+                                        : IsmLiveImage.network(
                                             width: 100,
                                             height: 100,
                                             controller.profileImage,
@@ -87,16 +83,13 @@ class SignupView extends StatelessWidget {
                                     Positioned(
                                       bottom: 10,
                                       right: 0,
-                                      child: GetUtils.isEmail(
-                                              controller.emailController.text)
+                                      child: GetUtils.isEmail(controller.emailController.text)
                                           ? Container(
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                  border: Border.all(
-                                                      color: Colors.grey)),
+                                                  borderRadius: BorderRadius.circular(50),
+                                                  border: Border.all(color: Colors.grey)),
                                               width: 30,
                                               height: 30,
                                               child: const Icon(
@@ -117,8 +110,7 @@ class SignupView extends StatelessWidget {
                           ),
                           Text(TranslationKeys.userName.tr),
                           IsmLiveDimens.boxHeight8,
-                          InputField.userName(
-                              controller: controller.userNameController),
+                          IsmLiveInputField.userName(controller: controller.userNameController),
                           IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('email_label'),
@@ -129,7 +121,7 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('email_field'),
-                            child: InputField.email(
+                            child: IsmLiveInputField.email(
                               controller: controller.emailController,
                               onchange: (value) {
                                 if (GetUtils.isEmail(value)) {
@@ -143,20 +135,16 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('password_label'),
-                            child: IsmLiveAnimatedText(
-                                TranslationKeys.password.tr),
+                            child: IsmLiveAnimatedText(TranslationKeys.password.tr),
                           ),
                           IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('password_field'),
-                            child: InputField.password(
+                            child: IsmLiveInputField.password(
                                 suffixIcon: IconButton(
-                                  icon: Icon(!controller.showPassward
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined),
+                                  icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                                   onPressed: () {
-                                    controller.showPassward =
-                                        !controller.showPassward;
+                                    controller.showPassward = !controller.showPassward;
                                     controller.update();
                                   },
                                 ),
@@ -167,22 +155,18 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight16,
                           Text(TranslationKeys.confirmPassword.tr),
                           IsmLiveDimens.boxHeight8,
-                          InputField.password(
+                          IsmLiveInputField.password(
                               suffixIcon: IconButton(
-                                icon: Icon(!controller.showConfirmPasswared
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined),
+                                icon: Icon(!controller.showConfirmPasswared ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                                 onPressed: () {
-                                  controller.showConfirmPasswared =
-                                      !controller.showConfirmPasswared;
+                                  controller.showConfirmPasswared = !controller.showConfirmPasswared;
                                   controller.update();
                                 },
                               ),
                               obscureText: controller.showConfirmPasswared,
                               obscureCharacter: '*',
                               validator: (value) {
-                                if (controller.passwordController.text ==
-                                    value) {
+                                if (controller.passwordController.text == value) {
                                   return null;
                                 }
                                 return 'Should be same with Password';
@@ -199,8 +183,7 @@ class SignupView extends StatelessWidget {
                                       Get.dialog(
                                         AlertDialog(
                                           title: const Text('Alert message...'),
-                                          content: const Text(
-                                              'All fields must be filled with Profile image'),
+                                          content: const Text('All fields must be filled with Profile image'),
                                           actions: [
                                             TextButton(
                                               onPressed: Get.back,
@@ -261,9 +244,7 @@ class _PickImageBottomSheet extends StatelessWidget {
                   children: [
                     Container(
                       // padding: IsmIsmLiveDimens.edgeInsets8,
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                          color: Colors.blueAccent),
+                      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(50)), color: Colors.blueAccent),
                       width: 50,
                       height: 50,
                       child: const Icon(
@@ -293,9 +274,7 @@ class _PickImageBottomSheet extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.purpleAccent),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: Colors.purpleAccent),
                       width: 50,
                       height: 50,
                       child: const Icon(

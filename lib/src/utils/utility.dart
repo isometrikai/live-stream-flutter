@@ -11,20 +11,23 @@ class IsmLiveUtility {
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
-  static Map<String, String> commonHeader(
-          {required String token,
-          required String licenseKey,
-          required String appSecret}) =>
+  static Map<String, String> tokenHeader({
+    required String token,
+    required String licenseKey,
+    required String appSecret,
+  }) =>
       {
         'userToken': token,
         'licenseKey': licenseKey,
         'appSecret': appSecret,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       };
-  static Map<String, String> header(
-          {required String userSecret,
-          required String licenseKey,
-          required String appSecret}) =>
+
+  static Map<String, String> secretHeader({
+    required String userSecret,
+    required String licenseKey,
+    required String appSecret,
+  }) =>
       {
         'userSecret': userSecret,
         'licenseKey': licenseKey,
@@ -37,7 +40,7 @@ class IsmLiveUtility {
     return [
       ConnectivityResult.mobile,
       ConnectivityResult.wifi,
-      ConnectivityResult.ethernet
+      ConnectivityResult.ethernet,
     ].contains(result);
   }
 

@@ -8,16 +8,13 @@ class MeetingRepository {
   final IsmLiveApiWrapper _apiWrapper;
 
   Future<IsmLiveResponseModel?> getMeetingsList(
-      {required String token,
-      required String licenseKey,
-      required bool isLoading,
-      required String appSecret}) async {
+      {required String token, required String licenseKey, required bool isLoading, required String appSecret}) async {
     try {
       var url = '/meetings/v1/meetings';
       var res = await _apiWrapper.makeRequest(
         url,
         type: IsmLiveRequestType.get,
-        headers: IsmLiveUtility.commonHeader(
+        headers: IsmLiveUtility.tokenHeader(
           token: token,
           licenseKey: licenseKey,
           appSecret: appSecret,
@@ -44,7 +41,7 @@ class MeetingRepository {
         url,
         type: IsmLiveRequestType.get,
         showLoader: isLoading,
-        headers: IsmLiveUtility.header(
+        headers: IsmLiveUtility.secretHeader(
           userSecret: userSecret,
           licenseKey: licenseKey,
           appSecret: appSecret,
@@ -70,7 +67,7 @@ class MeetingRepository {
         url,
         type: IsmLiveRequestType.delete,
         showLoader: isLoading,
-        headers: IsmLiveUtility.commonHeader(
+        headers: IsmLiveUtility.tokenHeader(
           token: userToken,
           licenseKey: licenseKey,
           appSecret: appSecret,
@@ -95,7 +92,7 @@ class MeetingRepository {
       var res = await _apiWrapper.makeRequest(url,
           showLoader: isLoading,
           type: IsmLiveRequestType.post,
-          headers: IsmLiveUtility.commonHeader(
+          headers: IsmLiveUtility.tokenHeader(
             token: token,
             licenseKey: licenseKey,
             appSecret: appSecret,
@@ -126,7 +123,7 @@ class MeetingRepository {
       var res = await _apiWrapper.makeRequest(url,
           showLoader: isLoading,
           type: IsmLiveRequestType.post,
-          headers: IsmLiveUtility.commonHeader(
+          headers: IsmLiveUtility.tokenHeader(
             token: token,
             licenseKey: licenseKey,
             appSecret: appSecret,
@@ -136,8 +133,7 @@ class MeetingRepository {
             'pushNotifications': true,
             'metaData': {'open meeting': true},
             'members': members,
-            'meetingImageUrl':
-                'https://d1q6f0aelx0por.cloudfront.net/product-logos/cb773227-1c2c-42a4-a527-12e6f827c1d2-elixir.png',
+            'meetingImageUrl': 'https://d1q6f0aelx0por.cloudfront.net/product-logos/cb773227-1c2c-42a4-a527-12e6f827c1d2-elixir.png',
             'meetingDescription': meetingDescription,
             'hdMeeting': false,
             'enableRecording': false,

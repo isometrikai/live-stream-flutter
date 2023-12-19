@@ -2,7 +2,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-import 'package:appscrip_live_stream_component_example/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -51,8 +50,7 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('email_field'),
-                        child: InputField.email(
-                            controller: controller.emailController),
+                        child: IsmLiveInputField.email(controller: controller.emailController),
                       ),
                       IsmLiveDimens.boxHeight16,
                       Hero(
@@ -62,14 +60,11 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('password_field'),
-                        child: InputField.password(
+                        child: IsmLiveInputField.password(
                             suffixIcon: IconButton(
-                              icon: Icon(!controller.showPassward
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined),
+                              icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                               onPressed: () {
-                                controller.showPassward =
-                                    !controller.showPassward;
+                                controller.showPassward = !controller.showPassward;
                               },
                             ),
                             obscureText: controller.showPassward,

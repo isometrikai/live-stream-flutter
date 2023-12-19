@@ -3,6 +3,7 @@ class IsmLiveApis {
   const IsmLiveApis._();
 
   static const String baseUrl = 'https://apis.isometrik.io';
+
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String user = '/chat/user';
   static const String allUsers = '/chat/users';

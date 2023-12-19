@@ -15,10 +15,11 @@ class HomeView extends StatelessWidget {
         builder: (controller) => IsmLiveStream(
           configuration: IsmLiveStreamConfig(
             communicationConfig: IsmLiveCommunicationConfig(
-                deviceId: controller.user.deviceId,
-                appSecret: AppConstants.appSecret,
-                licenseKey: AppConstants.licenseKey,
-                userSecret: AppConstants.userSecret),
+              deviceId: controller.user.deviceId,
+              appSecret: AppConstants.appSecret,
+              licenseKey: AppConstants.licenseKey,
+              userSecret: AppConstants.userSecret,
+            ),
             userConfig: IsmLiveUserConfig(
               userToken: controller.user.userToken,
               userId: controller.user.userId,

@@ -14,15 +14,9 @@ void main() async {
 
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(DeviceConfig()).init();
   Get.lazyPut(SharedPreferencesManager.new);
   await Future.wait([
-    AppConfig.init(
-      const EnvConfig(
-        appTitle: AppConstants.appName,
-        appFlavor: AppFlavor.dev,
-      ),
-    ),
+    Get.put<AppConfig>(AppConfig()).init(AppConstants.appName),
     Get.put<DBWrapper>(DBWrapper()).init(),
   ]);
 }
