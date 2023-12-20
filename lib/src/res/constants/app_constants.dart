@@ -8,9 +8,11 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 class IsmLiveConstants {
   const IsmLiveConstants._();
 
-  static const String name = 'Appscrip Live Stream';
+  static const String name = 'IsmLive';
 
   static const Duration timeOutDuration = Duration(seconds: 60);
 
   static double imageHeight = IsmLiveDimens.twentyFive;
+
+  static const int keepAlivePeriod = 60;
 }

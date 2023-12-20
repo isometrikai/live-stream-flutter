@@ -2,7 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component_pl
 
 export 'src/controllers/controllers.dart';
 export 'src/data/data.dart';
-export 'src/live_stream.dart';
+export 'src/live_app.dart';
 export 'src/models/models.dart';
 export 'src/repositories/repositories.dart';
 export 'src/res/res.dart';
@@ -12,6 +12,5 @@ export 'src/views/views.dart';
 export 'src/widgets/widgets.dart';
 
 class AppscripLiveStreamComponent {
-  Future<String?> getPlatformVersion() =>
-      AppscripLiveStreamComponentPlatform.instance.getPlatformVersion();
+  Future<String?> getPlatformVersion() => AppscripLiveStreamComponentPlatform.instance.getPlatformVersion();
 }

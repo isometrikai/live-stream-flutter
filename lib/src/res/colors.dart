@@ -4,7 +4,7 @@ class IsmLiveColors {
   const IsmLiveColors._();
 
   static const Color primary = Colors.purple;
-  static Color secondary = Colors.purple.shade100;
+  static const Color secondary = Color(0xFFE1BEE7);
 
   static const Color white = Colors.white;
   static const Color black = Colors.black;

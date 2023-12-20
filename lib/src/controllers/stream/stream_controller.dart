@@ -140,8 +140,8 @@ class IsmLiveStreamController extends GetxController {
   }) =>
       _viewModel.stopMeeting(
         token: meetingController.configuration?.userConfig.userToken ?? '',
-        licenseKey: meetingController.configuration?.communicationConfig.licenseKey ?? '',
-        appSecret: meetingController.configuration?.communicationConfig.appSecret ?? '',
+        licenseKey: meetingController.configuration?.projectConfig.licenseKey ?? '',
+        appSecret: meetingController.configuration?.projectConfig.appSecret ?? '',
         isLoading: isLoading,
         meetingId: meetingId,
       );

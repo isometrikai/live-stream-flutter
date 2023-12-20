@@ -9,7 +9,7 @@ class IsmLiveLog {
   ///final dynamic message //This will be displayed in console
   ///final StackTrace? stackTrace //Optional
   ///```
-  ///will be used to log the `message` with `yellow` color.
+  ///will be used to log the `message` with `red` color.
   ///
   ///It can be used for error logs
   ///
@@ -34,7 +34,7 @@ class IsmLiveLog {
   ///final dynamic message //This will be displayed in console
   ///final StackTrace? stackTrace //Optional
   ///```
-  ///will be used to log the `message` with `yellow` color.
+  ///will be used to log the `message` with `green` color.
   ///
   ///It can be used for success logs
   ///
@@ -84,7 +84,7 @@ class IsmLiveLog {
   ///final dynamic message //This will be displayed in console
   ///final StackTrace? stackTrace //Optional
   ///```
-  ///will be used to log the `message` with `yellow` color.
+  ///will be used to log the `message` with `white` color.
   ///
   ///It can be used for basic logs
   ///

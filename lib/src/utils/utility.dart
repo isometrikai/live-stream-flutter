@@ -11,6 +11,14 @@ class IsmLiveUtility {
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
+  static void updateLater(VoidCallback callback) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 10), () {
+        callback();
+      });
+    });
+  }
+
   static Map<String, String> tokenHeader({
     required String token,
     required String licenseKey,
