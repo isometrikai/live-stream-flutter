@@ -20,7 +20,7 @@ class MeetingController extends GetxController {
   List<String> membersSelectedList = [];
   List<String> membersNameSelectedList = [];
   final MeetingViewModel viewModel;
-  IsmLiveStreamConfig? configuration;
+  IsmLiveConfigData? configuration;
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
@@ -251,12 +251,12 @@ class MeetingController extends GetxController {
       var room = Room(
         roomOptions: RoomOptions(
             defaultCameraCaptureOptions: CameraCaptureOptions(
-              deviceId: configuration?.communicationConfig.deviceId,
+              deviceId: configuration?.projectConfig.deviceId,
               cameraPosition: CameraPosition.front,
               params: VideoParametersPresets.h720_169,
             ),
             defaultAudioCaptureOptions: AudioCaptureOptions(
-              deviceId: configuration?.communicationConfig.deviceId,
+              deviceId: configuration?.projectConfig.deviceId,
               noiseSuppression: true,
               echoCancellation: true,
               autoGainControl: true,
@@ -307,8 +307,8 @@ class MeetingController extends GetxController {
       var res = await viewModel.getMeetingsList(
           isLoading: isLoading,
           token: configuration!.userConfig.userToken,
-          licenseKey: configuration!.communicationConfig.licenseKey,
-          appSecret: configuration!.communicationConfig.appSecret);
+          licenseKey: configuration!.projectConfig.licenseKey,
+          appSecret: configuration!.projectConfig.appSecret);
       myMeetingList = res ?? [];
     }
     update();
@@ -317,10 +317,10 @@ class MeetingController extends GetxController {
   Future<String?> joinMeeting({required String meetingId}) async {
     if (configuration != null) {
       var res = await viewModel.joinMeeting(
-          deviceId: configuration!.communicationConfig.deviceId,
+          deviceId: configuration!.projectConfig.deviceId,
           token: configuration!.userConfig.userToken,
-          licenseKey: configuration!.communicationConfig.licenseKey,
-          appSecret: configuration!.communicationConfig.appSecret,
+          licenseKey: configuration!.projectConfig.licenseKey,
+          appSecret: configuration!.projectConfig.appSecret,
           meetingId: meetingId);
       if (res != null) {
         return res;
@@ -336,10 +336,10 @@ class MeetingController extends GetxController {
   }) async {
     var res = await viewModel.createMeeting(
         audioOnly: audioOnly,
-        deviceId: configuration!.communicationConfig.deviceId,
+        deviceId: configuration!.projectConfig.deviceId,
         token: configuration!.userConfig.userToken,
-        licenseKey: configuration!.communicationConfig.licenseKey,
-        appSecret: configuration!.communicationConfig.appSecret,
+        licenseKey: configuration!.projectConfig.licenseKey,
+        appSecret: configuration!.projectConfig.appSecret,
         meetingDescription: meetingDescription,
         members: members);
     if (res != null) {
@@ -354,9 +354,9 @@ class MeetingController extends GetxController {
     }
     isApicalling = true;
     var res = await viewModel.getMembersList(
-        userSecret: configuration!.communicationConfig.userSecret,
-        licenseKey: configuration!.communicationConfig.licenseKey,
-        appSecret: configuration!.communicationConfig.appSecret,
+        userSecret: configuration!.projectConfig.userSecret,
+        licenseKey: configuration!.projectConfig.licenseKey,
+        appSecret: configuration!.projectConfig.appSecret,
         skip: skip,
         limit: limit,
         searchTag: searchTag);
@@ -374,8 +374,8 @@ class MeetingController extends GetxController {
   }) async {
     var res = await viewModel.deleteMeeting(
         userToken: configuration!.userConfig.userToken,
-        licenseKey: configuration!.communicationConfig.licenseKey,
-        appSecret: configuration!.communicationConfig.appSecret,
+        licenseKey: configuration!.projectConfig.licenseKey,
+        appSecret: configuration!.projectConfig.appSecret,
         meetingId: meetingId,
         isLoading: isLoading);
     return res;

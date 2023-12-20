@@ -22,11 +22,12 @@ dependencies:
     sdk: flutter
   flutter_webrtc: ^0.9.45
   get: ^4.6.6
+  google_fonts: ^6.1.0
   http: ^1.1.0
   image_cropper: ^5.0.0
   internet_connection_checker: ^1.0.0+1
   livekit_client: ^1.5.2
-  mqtt_client: ^9.7.3
+  mqtt_client: ^10.0.1
   permission_handler: ^11.0.1
   plugin_platform_interface: ^2.0.2
   pull_to_refresh: ^2.0.0

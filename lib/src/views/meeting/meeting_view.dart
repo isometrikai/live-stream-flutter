@@ -1,29 +1,37 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class MyMeetingsView extends StatelessWidget {
-  MyMeetingsView({
+class MyMeetingsView extends StatefulWidget {
+  const MyMeetingsView({
     super.key,
-    required this.configuration,
   });
-  final IsmLiveStreamConfig configuration;
-  final cont = Get.put(
-      MeetingController(
-        MeetingViewModel(
-          MeetingRepository(
-            Client(),
-          ),
-        ),
-      ),
-      permanent: true);
+
+  @override
+  State<MyMeetingsView> createState() => _MyMeetingsViewState();
+}
+
+class _MyMeetingsViewState extends State<MyMeetingsView> {
+  @override
+  void initState() {
+    super.initState();
+    if (!Get.isRegistered<IsmLiveMqttController>()) {
+      IsmLiveMqttBinding().dependencies();
+    }
+    if (!Get.isRegistered<MeetingController>()) {
+      MeetingBinding().dependencies();
+    }
+    IsmLiveUtility.updateLater(() {
+      Get.find<IsmLiveMqttController>().setup(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: IsmLiveTheme.of(context).backgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: IsmLiveTheme.of(context).backgroundColor,
           elevation: 0,
           leading: const Center(
             child: Text(
@@ -48,7 +56,8 @@ class MyMeetingsView extends StatelessWidget {
         ),
         body: GetBuilder<MeetingController>(
           initState: (state) async {
-            cont.configuration = configuration;
+            var cont = Get.find<MeetingController>();
+            cont.configuration = IsmLiveConfig.of(context);
             await cont.getMeetingList();
           },
           builder: (controller) => SmartRefresher(
@@ -59,8 +68,7 @@ class MyMeetingsView extends StatelessWidget {
               if (controller.myMeetingList.isNotEmpty) {
                 IsmLiveLog('11111111111111111111111111');
                 controller.incomingCall(
-                    meetingDescription:
-                        controller.myMeetingList.first.meetingDescription,
+                    meetingDescription: controller.myMeetingList.first.meetingDescription,
                     createdBy: controller.myMeetingList.first.createdBy,
                     id: controller.myMeetingList.first.conversationId,
                     imageUrl: controller.myMeetingList.first.initiatorImageUrl,
@@ -89,8 +97,7 @@ class MyMeetingsView extends StatelessWidget {
                         ),
                         key: UniqueKey(),
                         onDismissed: (direction) async {
-                          var isDeleted = await controller.deleteMeeting(
-                              isLoading: false, meetingId: item);
+                          var isDeleted = await controller.deleteMeeting(isLoading: false, meetingId: item);
                           if (isDeleted) {
                             controller.myMeetingList.removeAt(index);
                             controller.update();
@@ -104,28 +111,18 @@ class MyMeetingsView extends StatelessWidget {
                           height: IsmLiveDimens.fifty,
                           child: Row(
                             children: [
-                              Text(controller
-                                  .myMeetingList[index].meetingDescription),
+                              Text(controller.myMeetingList[index].meetingDescription),
                               const Spacer(),
                               SizedBox(
                                 width: IsmLiveDimens.hundred,
                                 child: IsmLiveButton(
                                   onTap: () async {
-                                    var rtcTocken =
-                                        await controller.joinMeeting(
-                                            meetingId: controller
-                                                .myMeetingList[index]
-                                                .meetingId);
+                                    var rtcTocken = await controller.joinMeeting(meetingId: controller.myMeetingList[index].meetingId);
 
-                                    IsmLiveLog(controller
-                                        .myMeetingList[index].audioOnly);
+                                    IsmLiveLog(controller.myMeetingList[index].audioOnly);
                                     if (rtcTocken != null) {
                                       await controller.connectMeeting(
-                                          rtcTocken,
-                                          controller
-                                              .myMeetingList[index].meetingId,
-                                          controller
-                                              .myMeetingList[index].audioOnly);
+                                          rtcTocken, controller.myMeetingList[index].meetingId, controller.myMeetingList[index].audioOnly);
                                     }
                                   },
                                   label: 'Join',

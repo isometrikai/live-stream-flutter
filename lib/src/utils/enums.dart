@@ -19,6 +19,17 @@ enum IsmLiveRequestType {
   upload;
 }
 
+enum IsmLiveConnectionState {
+  connected,
+  disconnected,
+  connecting,
+  subscribed,
+  unsubscribed;
+
+  @override
+  String toString() => '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
+}
+
 enum SimulateScenarioResult {
   signalReconnect,
   nodeFailure,

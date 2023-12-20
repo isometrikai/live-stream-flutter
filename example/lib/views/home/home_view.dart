@@ -12,13 +12,16 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<HomeController>(
-        builder: (controller) => IsmLiveStream(
-          configuration: IsmLiveStreamConfig(
-            communicationConfig: IsmLiveCommunicationConfig(
-              deviceId: controller.user.deviceId,
+        builder: (controller) => IsmLiveApp(
+          configuration: IsmLiveConfigData(
+            projectConfig: IsmLiveProjectConfig(
+              accountId: AppConstants.accountId,
               appSecret: AppConstants.appSecret,
-              licenseKey: AppConstants.licenseKey,
               userSecret: AppConstants.userSecret,
+              keySetId: AppConstants.keySetId,
+              licenseKey: AppConstants.licenseKey,
+              projectId: AppConstants.projectId,
+              deviceId: controller.user.deviceId,
             ),
             userConfig: IsmLiveUserConfig(
               userToken: controller.user.userToken,
@@ -27,6 +30,10 @@ class HomeView extends StatelessWidget {
               lastName: controller.user.lastName,
               userEmail: controller.user.email,
               userProfile: '',
+            ),
+            mqttConfig: const IsmLiveMqttConfig(
+              hostName: AppConstants.mqttHost,
+              port: AppConstants.mqttPort,
             ),
           ),
         ),
