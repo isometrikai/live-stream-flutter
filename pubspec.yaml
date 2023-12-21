@@ -18,6 +18,7 @@ dependencies:
   flutter_callkit_incoming: ^2.0.0+2
   flutter_screenutil: ^5.9.0
   flutter_secure_storage: ^9.0.0
+  flutter_staggered_grid_view: ^0.7.0
   flutter_web_plugins:
     sdk: flutter
   flutter_webrtc: ^0.9.45

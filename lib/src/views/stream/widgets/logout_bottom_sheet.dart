@@ -12,7 +12,7 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
-          color: IsmLiveTheme.of(context).carBackgroundColor,
+          color: IsmLiveTheme.of(context).cardBackgroundColor,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(IsmLiveDimens.sixteen),
           ),
@@ -24,9 +24,8 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
             children: [
               IsmLiveImage.network(
                 user.profileUrl,
+                name: user.userName,
                 isProfileImage: true,
-                height: IsmLiveDimens.forty,
-                width: IsmLiveDimens.forty,
               ),
               IsmLiveDimens.boxWidth10,
               Column(

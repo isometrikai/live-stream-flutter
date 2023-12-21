@@ -34,7 +34,10 @@ class IsmLiveApiWrapper {
     );
 
     /// To see whether the network is available or not
-    var uri = (baseUrl ?? IsmLiveApis.baseUrl) + api;
+    var url = (baseUrl ?? IsmLiveApis.baseUrl) + api;
+
+    final uri = Uri.parse(url);
+
     IsmLiveLog.info('[Request] - ${type.name.toUpperCase()} - $uri\n$payload');
 
     if (showLoader) IsmLiveUtility.showLoader();
@@ -43,7 +46,7 @@ class IsmLiveApiWrapper {
         // Handles API call
         var start = DateTime.now();
         var response = await _handleRequest(
-          Uri.parse(uri),
+          uri,
           type: type,
           headers: headers,
           payload: shouldEncodePayload ? jsonEncode(payload) : payload,
@@ -319,9 +322,10 @@ class IsmLiveApiWrapper {
           // Logic to refresh the token the API will be called again automatically from the makeRequest function
           // ex: await Get.find<AuthController>().refreshToken();
         }
+        var hasError = ![404].contains(response.statusCode);
         var res = IsmLiveResponseModel(
           data: utf8.decode(response.bodyBytes),
-          hasError: true,
+          hasError: hasError,
           statusCode: response.statusCode,
         );
         if (![401, 404, 406, 410].contains(response.statusCode) && showDialog) {

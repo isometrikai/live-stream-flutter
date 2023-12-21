@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:get/get.dart';
@@ -28,6 +29,25 @@ class IsmLiveStreamViewModel {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return false;
+    }
+  }
+
+  Future<List<IsmLiveStreamModel>> getStreams({
+    required IsmLiveStreamQueryModel queryModel,
+  }) async {
+    try {
+      var res = await _repository.getStreams(queryModel: queryModel);
+
+      if (res.hasError) {
+        return [];
+      }
+
+      var list = jsonDecode(res.data)['streams'] as List? ?? [];
+
+      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
     }
   }
 

@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with StreamAPIMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin {
   IsmLiveStreamController(this._viewModel);
   final IsmLiveStreamViewModel _viewModel;
 
@@ -19,8 +21,39 @@ class IsmLiveStreamController extends GetxController with StreamAPIMixin {
 
   CameraPosition position = CameraPosition.front;
 
+  late TabController tabController;
+
+  final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
+  final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
+
+  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+
+  List<IsmLiveStreamModel> get streams => _streams[streamType]!;
+  // set streams(List<IsmLiveStreamModel> data) => _streams[streamType] = data;
+
   double positionX = 20;
   double positionY = 20;
+
+  final Rx<IsmLiveStreamType> _streamType = IsmLiveStreamType.all.obs;
+  IsmLiveStreamType get streamType => _streamType.value;
+  set streamType(IsmLiveStreamType value) => _streamType.value = value;
+
+  @override
+  void onInit() {
+    super.onInit();
+    tabController = TabController(
+      vsync: this,
+      length: IsmLiveStreamType.values.length,
+    );
+    generateVariables();
+  }
+
+  void generateVariables() {
+    for (var type in IsmLiveStreamType.values) {
+      _streamRefreshControllers[type] = RefreshController();
+      _streams[type] = [];
+    }
+  }
 
   @override
   void onReady() {
@@ -31,6 +64,10 @@ class IsmLiveStreamController extends GetxController with StreamAPIMixin {
   void startOnInit() async {
     unawaited(getUserDetails());
     unawaited(subscribeUser());
+    unawaited(getStreams(streamType));
+    tabController.addListener(() {
+      streamType = IsmLiveStreamType.values[tabController.index];
+    });
   }
 
   Future<bool> subscribeUser() => _subscribeUser(true);

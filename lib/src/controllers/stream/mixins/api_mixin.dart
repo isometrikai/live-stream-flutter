@@ -14,4 +14,14 @@ mixin StreamAPIMixin {
   Future<bool> _subscribeUser(bool isSubscribing) => _controller._viewModel.subscribeUser(
         isSubscribing: isSubscribing,
       );
+
+  Future<void> getStreams(IsmLiveStreamType type) async {
+    _controller._streams[type] = await _controller._viewModel.getStreams(
+      queryModel: type.queryModel,
+    );
+    _controller._streamRefreshControllers[type]!.refreshCompleted();
+    IsmLiveUtility.updateLater(() {
+      _controller.update([IsmLiveStreamView.updateId]);
+    });
+  }
 }

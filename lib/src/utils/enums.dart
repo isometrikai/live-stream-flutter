@@ -1,14 +1,4 @@
-enum IsmLiveStreamType {
-  nearby('Nearby'),
-  pk('PK'),
-  popular('Popular'),
-  following('Following'),
-  paid('Paid'),
-  starts('Stars');
-
-  const IsmLiveStreamType(this.label);
-  final String label;
-}
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 
 enum IsmLiveRequestType {
   get,
@@ -44,14 +34,6 @@ enum IsmLiveMessageType {
   error,
   success,
   information;
-}
-
-enum IsmLiveNavItemType {
-  streams,
-  reels,
-  explore,
-  chats,
-  profile;
 }
 
 enum IsmLiveButtonType {
@@ -113,4 +95,19 @@ enum IsmLiveCallType {
 enum IsmLiveEngineType {
   agora,
   livekit,
+}
+
+enum IsmLiveStreamType {
+  all(0, IsmLiveStrings.all),
+  audioOnly(1, IsmLiveStrings.audioOnly),
+  multilive(2, IsmLiveStrings.multiLive),
+  private(3, IsmLiveStrings.private),
+  ecommerce(4, IsmLiveStrings.ecommerce),
+  restream(5, IsmLiveStrings.reStream),
+  hd(6, IsmLiveStrings.hd),
+  recorded(7, IsmLiveStrings.recorded);
+
+  const IsmLiveStreamType(this.value, this.label);
+  final int value;
+  final String label;
 }
