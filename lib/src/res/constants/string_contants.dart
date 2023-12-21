@@ -11,4 +11,13 @@ class IsmLiveStrings {
   static const String errorLoadingImage = 'Error loading image';
 
   static const String title = 'My Streams';
+
+  static const String all = 'All';
+  static const String audioOnly = 'Audio Only';
+  static const String multiLive = 'Multi Live';
+  static const String private = 'Private';
+  static const String ecommerce = 'Ecommerce';
+  static const String reStream = 'Restream';
+  static const String hd = 'HD';
+  static const String recorded = 'Recorded';
 }

@@ -6,18 +6,24 @@ import 'package:google_fonts/google_fonts.dart';
 class IsmLiveThemeData with Diagnosticable {
   const IsmLiveThemeData({
     this.primaryColor,
+    this.secondaryColor,
     this.backgroundColor,
     this.textTheme,
     this.buttonTheme,
-    this.carBackgroundColor,
+    this.cardBackgroundColor,
+    this.selectedTextColor,
+    this.unselectedTextColor,
   });
 
   factory IsmLiveThemeData.fallback() => IsmLiveThemeData(
         primaryColor: IsmLiveColors.primary,
+        secondaryColor: IsmLiveColors.secondary,
         backgroundColor: IsmLiveColors.white,
         textTheme: GoogleFonts.getTextTheme('Roboto'),
+        selectedTextColor: IsmLiveColors.white,
+        unselectedTextColor: IsmLiveColors.grey,
         // buttonTheme:
-        carBackgroundColor: IsmLiveColors.white,
+        cardBackgroundColor: IsmLiveColors.white,
       );
 
   factory IsmLiveThemeData.light() => IsmLiveThemeData.fallback();
@@ -25,8 +31,11 @@ class IsmLiveThemeData with Diagnosticable {
   factory IsmLiveThemeData.dark() => IsmLiveThemeData.fallback();
 
   final Color? primaryColor;
+  final Color? secondaryColor;
   final Color? backgroundColor;
+  final Color? selectedTextColor;
+  final Color? unselectedTextColor;
   final TextTheme? textTheme;
   final ButtonStyle? buttonTheme;
-  final Color? carBackgroundColor;
+  final Color? cardBackgroundColor;
 }

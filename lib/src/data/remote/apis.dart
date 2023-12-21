@@ -12,4 +12,7 @@ class IsmLiveApis {
   static const String presignedurl = '$user/presignedurl/create';
 
   static const String userSubscription = '/gs/v2/subscription';
+
+  // Streams
+  static const String getStreams = '/streaming/v2/streams';
 }

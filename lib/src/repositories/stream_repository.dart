@@ -29,6 +29,15 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> getStreams({
+    required IsmLiveStreamQueryModel queryModel,
+  }) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.getStreams}?${queryModel.toMap().makeQuery()}',
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+      );
+
   Future<IsmLiveResponseModel?> stopMeeting({
     required bool isLoading,
     required String meetingId,

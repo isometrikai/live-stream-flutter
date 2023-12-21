@@ -53,8 +53,8 @@ class IsmLiveImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        height: height,
-        width: width,
+        height: height ?? IsmLiveDimens.forty,
+        width: width ?? IsmLiveDimens.forty,
         decoration: BoxDecoration(
           borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,

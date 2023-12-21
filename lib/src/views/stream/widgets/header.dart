@@ -38,8 +38,6 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
                   controller.user?.profileUrl ?? '',
                   name: controller.user?.userName ?? 'U',
                   isProfileImage: true,
-                  height: IsmLiveDimens.forty,
-                  width: IsmLiveDimens.forty,
                 ),
                 IsmLiveDimens.boxWidth8,
                 Text(
