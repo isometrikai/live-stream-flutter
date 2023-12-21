@@ -12,7 +12,7 @@ class AuthViewModel {
 
   final AuthRepository _repository;
 
-  var dbWrapper = Get.find<DBWrapper>();
+  DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   Future<UserDetailsModel?> login({
     required String userName,

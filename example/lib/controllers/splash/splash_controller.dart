@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {
-  DBWrapper get _dbWrapper => Get.find<DBWrapper>();
+  DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   @override
   void onInit() {
@@ -19,7 +19,7 @@ class SplashController extends GetxController {
   var isLoggedIn = false;
 
   void startOnInit() async {
-    isLoggedIn = _dbWrapper.getBoolValue(LocalKeys.isLoggedIn);
+    isLoggedIn = dbWrapper.getBoolValue(LocalKeys.isLoggedIn);
     late Function route;
     if (isLoggedIn) {
       route = RouteManagement.goToHome;

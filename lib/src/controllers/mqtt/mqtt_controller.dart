@@ -49,7 +49,7 @@ class IsmLiveMqttController extends GetxController {
   Future<void> initializeMqttClient() async {
     client = MqttServerClient(
       _config!.mqttConfig.hostName,
-      '${_config!.userConfig.userId}$deviceId',
+      '$userId$deviceId',
     );
 
     client?.port = _config!.mqttConfig.port;
@@ -182,9 +182,9 @@ class IsmLiveMqttController extends GetxController {
 
       var payload = jsonDecode(MqttPublishPayload.bytesToStringAsString(recMess.payload.message)) as Map<String, dynamic>;
 
-      if (IsmLiveHandler.isLogsEnabled) {
-        IsmLiveLog(payload);
-      }
+      // if (IsmLiveHandler.isLogsEnabled) {
+      IsmLiveLog(payload);
+      // }
 
       if (payload['action'] != null) {
         actionStreamController.add(payload);

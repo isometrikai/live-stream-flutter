@@ -7,6 +7,9 @@ class IsmLiveApis {
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String user = '/chat/user';
   static const String allUsers = '/chat/users';
+  static const String userDetails = '$user/details';
   static const String authenticate = '$user/authenticate';
   static const String presignedurl = '$user/presignedurl/create';
+
+  static const String userSubscription = '/gs/v2/subscription';
 }

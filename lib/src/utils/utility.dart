@@ -11,6 +11,16 @@ class IsmLiveUtility {
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
+  static IsmLiveConfigData get _config {
+    IsmLiveConfigData? config;
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      config = Get.find<IsmLiveStreamController>().configuration ?? IsmLiveConfig.of(Get.context!);
+    } else {
+      config = IsmLiveConfig.of(Get.context!);
+    }
+    return config;
+  }
+
   static void updateLater(VoidCallback callback) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 10), () {
@@ -19,28 +29,18 @@ class IsmLiveUtility {
     });
   }
 
-  static Map<String, String> tokenHeader({
-    required String token,
-    required String licenseKey,
-    required String appSecret,
-  }) =>
-      {
-        'userToken': token,
-        'licenseKey': licenseKey,
-        'appSecret': appSecret,
+  static Map<String, String> tokenHeader() => {
+        'userToken': _config.userConfig.userToken,
+        'licenseKey': _config.projectConfig.licenseKey,
+        'appSecret': _config.projectConfig.appSecret,
         'Content-Type': 'application/json',
       };
 
-  static Map<String, String> secretHeader({
-    required String userSecret,
-    required String licenseKey,
-    required String appSecret,
-  }) =>
-      {
+  static Map<String, String> secretHeader() => {
         'Content-Type': 'application/json',
-        'userSecret': userSecret,
-        'licenseKey': licenseKey,
-        'appSecret': appSecret,
+        'userSecret': _config.projectConfig.userSecret,
+        'licenseKey': _config.projectConfig.licenseKey,
+        'appSecret': _config.projectConfig.appSecret,
       };
 
   /// Returns true if the internet connection is available.
@@ -55,17 +55,20 @@ class IsmLiveUtility {
 
   static Future<T?> openBottomSheet<T>(
     Widget child, {
+    bool isDismissible = false,
+    bool ignoreSafeArea = false,
+    bool enableDrag = false,
     Color? backgroundColor,
-    bool isDismissible = true,
     ShapeBorder? shape,
   }) async =>
       await Get.bottomSheet<T>(
         child,
-        barrierColor: Colors.black.withOpacity(0.7),
-        backgroundColor: backgroundColor,
         isDismissible: isDismissible,
-        shape: shape,
         isScrollControlled: true,
+        ignoreSafeArea: ignoreSafeArea,
+        enableDrag: enableDrag,
+        backgroundColor: backgroundColor,
+        shape: shape,
       );
 
   static Future<TimeOfDay> pickTime({

@@ -36,6 +36,9 @@ class HomeView extends StatelessWidget {
               port: AppConstants.mqttPort,
             ),
           ),
+          onLogout: () {
+            controller.logout();
+          },
         ),
       );
 }

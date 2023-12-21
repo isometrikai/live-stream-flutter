@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' show Client;
 
 class AuthRepository {
@@ -11,8 +9,6 @@ class AuthRepository {
 
   final Client $client;
   final IsmLiveApiWrapper _apiWrapper;
-
-  var dbWrapper = Get.find<DBWrapper>();
 
   Future<IsmLiveResponseModel> login({
     required String userName,

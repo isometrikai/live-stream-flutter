@@ -9,13 +9,15 @@ class IsmLiveThemeData with Diagnosticable {
     this.backgroundColor,
     this.textTheme,
     this.buttonTheme,
+    this.carBackgroundColor,
   });
 
   factory IsmLiveThemeData.fallback() => IsmLiveThemeData(
         primaryColor: IsmLiveColors.primary,
         backgroundColor: IsmLiveColors.white,
         textTheme: GoogleFonts.getTextTheme('Roboto'),
-        buttonTheme: IsmLiveButtonTheme.fallback(),
+        // buttonTheme:
+        carBackgroundColor: IsmLiveColors.white,
       );
 
   factory IsmLiveThemeData.light() => IsmLiveThemeData.fallback();
@@ -25,5 +27,6 @@ class IsmLiveThemeData with Diagnosticable {
   final Color? primaryColor;
   final Color? backgroundColor;
   final TextTheme? textTheme;
-  final IsmLiveButtonTheme? buttonTheme;
+  final ButtonStyle? buttonTheme;
+  final Color? carBackgroundColor;
 }

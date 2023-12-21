@@ -1,16 +1,35 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:http/http.dart' show Client;
 
 class IsmLiveStreamRepository {
-  IsmLiveStreamRepository(this.$client) : _apiWrapper = IsmLiveApiWrapper($client);
-
-  final Client $client;
+  const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+        IsmLiveApis.userDetails,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+      );
+
+  Future<IsmLiveResponseModel> subscribeUser({
+    required bool isSubscribing,
+  }) {
+    var api = IsmLiveApis.userSubscription;
+    if (!isSubscribing) {
+      api = '$api?streamStartChannel=true';
+    }
+    return _apiWrapper.makeRequest(
+      api,
+      type: isSubscribing ? IsmLiveRequestType.put : IsmLiveRequestType.delete,
+      payload: !isSubscribing
+          ? null
+          : {
+              'streamStartChannel': true,
+            },
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
   Future<IsmLiveResponseModel?> stopMeeting({
-    required String token,
-    required String licenseKey,
-    required String appSecret,
     required bool isLoading,
     required String meetingId,
   }) async {
@@ -20,11 +39,7 @@ class IsmLiveStreamRepository {
         url,
         showLoader: isLoading,
         type: IsmLiveRequestType.post,
-        headers: IsmLiveUtility.tokenHeader(
-          token: token,
-          licenseKey: licenseKey,
-          appSecret: appSecret,
-        ),
+        headers: IsmLiveUtility.tokenHeader(),
         payload: {
           'meetingId': meetingId,
         },

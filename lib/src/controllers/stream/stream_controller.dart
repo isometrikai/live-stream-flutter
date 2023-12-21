@@ -1,17 +1,40 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
-class IsmLiveStreamController extends GetxController {
+part 'mixins/api_mixin.dart';
+
+class IsmLiveStreamController extends GetxController with StreamAPIMixin {
   IsmLiveStreamController(this._viewModel);
-  var meetingController = Get.find<MeetingController>();
   final IsmLiveStreamViewModel _viewModel;
+
+  IsmLiveConfigData? configuration;
+
+  UserDetails? user;
+
   List<ParticipantTrack> participantTracks = [];
+
   CameraPosition position = CameraPosition.front;
+
   double positionX = 20;
   double positionY = 20;
+
+  @override
+  void onReady() {
+    super.onReady();
+    IsmLiveUtility.updateLater(startOnInit);
+  }
+
+  void startOnInit() async {
+    unawaited(getUserDetails());
+    unawaited(subscribeUser());
+  }
+
+  Future<bool> subscribeUser() => _subscribeUser(true);
+  Future<bool> unsubscribeUser() => _subscribeUser(false);
 
   void onClick(int index) {
     var member2 = participantTracks.elementAt(index + 1);
@@ -139,9 +162,6 @@ class IsmLiveStreamController extends GetxController {
     required String meetingId,
   }) =>
       _viewModel.stopMeeting(
-        token: meetingController.configuration?.userConfig.userToken ?? '',
-        licenseKey: meetingController.configuration?.projectConfig.licenseKey ?? '',
-        appSecret: meetingController.configuration?.projectConfig.appSecret ?? '',
         isLoading: isLoading,
         meetingId: meetingId,
       );

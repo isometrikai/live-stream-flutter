@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' show Client;
 
 class IsmLiveHandler {
   const IsmLiveHandler._();
@@ -10,6 +14,14 @@ class IsmLiveHandler {
 
   static bool isLogsEnabled = false;
 
+  static VoidCallback? onLogout;
+
+  static Future<void> initialize() async {
+    Get.put(IsmLiveApiWrapper(Client()));
+    Get.lazyPut(IsmLivePreferencesManager.new);
+    unawaited(Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init());
+  }
+
   static MapStreamSubscription addListener(
     MapFunction listener,
   ) {
@@ -18,5 +30,18 @@ class IsmLiveHandler {
     }
     var mqttController = Get.find<IsmLiveMqttController>();
     return mqttController.actionStreamController.stream.listen(listener);
+  }
+
+  static Future<void> logout([VoidCallback? logoutCallback]) async {
+    var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+    if (!isUnsubscribed) {
+      return;
+    }
+    var mqttController = Get.find<IsmLiveMqttController>();
+    await mqttController.unsubscribeTopics();
+    await mqttController.unsubscribeTopics();
+    await Get.delete<IsmLiveMqttController>(force: true);
+
+    (logoutCallback ?? onLogout)?.call();
   }
 }
