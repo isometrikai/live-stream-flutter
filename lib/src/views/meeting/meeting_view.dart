@@ -3,29 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class MyMeetingsView extends StatefulWidget {
+class MyMeetingsView extends StatelessWidget {
   const MyMeetingsView({
     super.key,
   });
-
-  @override
-  State<MyMeetingsView> createState() => _MyMeetingsViewState();
-}
-
-class _MyMeetingsViewState extends State<MyMeetingsView> {
-  @override
-  void initState() {
-    super.initState();
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
-    }
-    if (!Get.isRegistered<MeetingController>()) {
-      MeetingBinding().dependencies();
-    }
-    IsmLiveUtility.updateLater(() {
-      Get.find<IsmLiveMqttController>().setup(context);
-    });
-  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -33,7 +14,9 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
         appBar: AppBar(
           backgroundColor: IsmLiveTheme.of(context).backgroundColor,
           elevation: 0,
-          leading: const Center(
+          leadingWidth: IsmLiveDimens.eighty,
+          leading: const TextButton(
+            onPressed: IsmLiveApp.logout,
             child: Text(
               'LogOut',
               style: TextStyle(color: Colors.black),
@@ -44,12 +27,12 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
             style: IsmLiveStyles.black16,
           ),
           centerTitle: true,
-          actions: const [
+          actions: [
             IconButton(
               onPressed: IsLiveRouteManagement.goToCreateMeetingScreen,
               icon: Icon(
                 Icons.add,
-                color: Colors.blue,
+                color: IsmLiveTheme.of(context).primaryColor,
               ),
             ),
           ],
@@ -64,9 +47,7 @@ class _MyMeetingsViewState extends State<MyMeetingsView> {
             controller: controller.refreshController,
             onRefresh: () async {
               await controller.getMeetingList();
-              IsmLiveLog('-------${controller.myMeetingList}');
               if (controller.myMeetingList.isNotEmpty) {
-                IsmLiveLog('11111111111111111111111111');
                 controller.incomingCall(
                     meetingDescription: controller.myMeetingList.first.meetingDescription,
                     createdBy: controller.myMeetingList.first.createdBy,

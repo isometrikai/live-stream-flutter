@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:http/http.dart'
-    show Client, Response, MultipartRequest, MultipartFile;
+import 'package:http/http.dart' show Client, Response, MultipartRequest, MultipartFile;
 
 /// API WRAPPER to call all the IsmLiveApis and handle the status codes
 class IsmLiveApiWrapper {
@@ -26,21 +25,17 @@ class IsmLiveApiWrapper {
   }) async {
     assert(
       type != IsmLiveRequestType.upload ||
-          (type == IsmLiveRequestType.upload &&
-              payload is! Map<String, String> &&
-              field.isNotEmpty &&
-              filePath.isNotEmpty),
+          (type == IsmLiveRequestType.upload && payload is! Map<String, String> && field.isNotEmpty && filePath.isNotEmpty),
       'if type is passed as [RequestType.upload] then payload must be of type Map<String, String> and field & filePath must not be empty',
     );
     assert(
-      type != IsmLiveRequestType.get ||
-          (type == IsmLiveRequestType.get && payload == null),
+      type != IsmLiveRequestType.get || (type == IsmLiveRequestType.get && payload == null),
       'if type is passed as [RequestType.get] then payload must not be passed',
     );
 
     /// To see whether the network is available or not
     var uri = (baseUrl ?? IsmLiveApis.baseUrl) + api;
-    IsmLiveLog.info('[Request] - $type - $uri\n$payload');
+    IsmLiveLog.info('[Request] - ${type.name.toUpperCase()} - $uri\n$payload');
 
     if (showLoader) IsmLiveUtility.showLoader();
     if (await IsmLiveUtility.isNetworkAvailable) {
@@ -86,8 +81,7 @@ class IsmLiveApiWrapper {
           IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res =
-            IsmLiveResponseModel.message(IsmLiveStringConstants.timeoutError);
+        var res = IsmLiveResponseModel.message(IsmLiveStrings.timeoutError);
         if (showDialog) {
           await IsmLiveUtility.showInfoDialog(
             res,
@@ -113,8 +107,7 @@ class IsmLiveApiWrapper {
           IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res = IsmLiveResponseModel.message(
-            IsmLiveStringConstants.somethingWentWrong);
+        var res = IsmLiveResponseModel.message(IsmLiveStrings.somethingWentWrong);
 
         if (showDialog) {
           await IsmLiveUtility.showInfoDialog(
@@ -130,8 +123,7 @@ class IsmLiveApiWrapper {
           IsmLiveUtility.closeLoader();
         }
         await Future.delayed(const Duration(milliseconds: 100));
-        var res = IsmLiveResponseModel.message(
-            IsmLiveStringConstants.somethingWentWrong);
+        var res = IsmLiveResponseModel.message(IsmLiveStrings.somethingWentWrong);
 
         if (showDialog) {
           await IsmLiveUtility.showInfoDialog(res);
@@ -144,7 +136,7 @@ class IsmLiveApiWrapper {
         IsmLiveUtility.closeLoader();
       }
       await Future.delayed(const Duration(milliseconds: 100));
-      var res = IsmLiveResponseModel.message(IsmLiveStringConstants.noInternet);
+      var res = IsmLiveResponseModel.message(IsmLiveStrings.noInternet);
 
       if (showDialog) {
         await IsmLiveUtility.showInfoDialog(
@@ -291,8 +283,7 @@ class IsmLiveApiWrapper {
     required DateTime startTime,
   }) async {
     var diff = DateTime.now().difference(startTime).inMilliseconds / 1000;
-    IsmLiveLog(
-        '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}\n${response.body}');
+    IsmLiveLog('[Response] - ${diff}s ${response.statusCode} ${response.request?.url}\n${response.body}');
 
     switch (response.statusCode) {
       case 200:

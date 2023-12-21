@@ -5,20 +5,16 @@ import 'package:appscrip_live_stream_component/src/models/create_meeting_model.d
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 
 class MeetingViewModel {
-  MeetingViewModel(this.repository);
-  final MeetingRepository repository;
+  MeetingViewModel(this._repository);
+  final MeetingRepository _repository;
 
-  Future<List<MyMeetingModel>?> getMeetingsList(
-      {required String token,
-      required String licenseKey,
-      required bool isLoading,
-      required String appSecret}) async {
+  Future<List<MyMeetingModel>?> getMeetingsList({
+    required bool isLoading,
+  }) async {
     try {
-      var res = await repository.getMeetingsList(
-          isLoading: isLoading,
-          token: token,
-          licenseKey: licenseKey,
-          appSecret: appSecret);
+      var res = await _repository.getMeetingsList(
+        isLoading: isLoading,
+      );
       if (res?.hasError ?? true) {
         return null;
       }
@@ -38,20 +34,16 @@ class MeetingViewModel {
     }
   }
 
-  Future<String?> joinMeeting(
-      {required String token,
-      required String licenseKey,
-      required String appSecret,
-      required String deviceId,
-      required String meetingId}) async {
+  Future<String?> joinMeeting({
+    required String deviceId,
+    required String meetingId,
+  }) async {
     try {
-      var res = await repository.joinMeeting(
-          deviceId: deviceId,
-          isLoading: true,
-          token: token,
-          licenseKey: licenseKey,
-          appSecret: appSecret,
-          meetingId: meetingId);
+      var res = await _repository.joinMeeting(
+        deviceId: deviceId,
+        isLoading: true,
+        meetingId: meetingId,
+      );
       if (res?.hasError ?? true) {
         return null;
       }
@@ -67,24 +59,19 @@ class MeetingViewModel {
   }
 
   Future<CreateMeetingModel?> createMeeting({
-    required String token,
-    required String licenseKey,
-    required String appSecret,
     required String deviceId,
     required String meetingDescription,
     required bool audioOnly,
     required List<String> members,
   }) async {
     try {
-      var res = await repository.createMeeting(
-          audioOnly: audioOnly,
-          deviceId: deviceId,
-          isLoading: true,
-          token: token,
-          licenseKey: licenseKey,
-          appSecret: appSecret,
-          meetingDescription: meetingDescription,
-          members: members);
+      var res = await _repository.createMeeting(
+        audioOnly: audioOnly,
+        deviceId: deviceId,
+        isLoading: true,
+        meetingDescription: meetingDescription,
+        members: members,
+      );
       if (res?.hasError ?? true) {
         return null;
       }
@@ -99,22 +86,18 @@ class MeetingViewModel {
     }
   }
 
-  Future<List<UserDetails>?> getMembersList(
-      {required String userSecret,
-      required String licenseKey,
-      required String appSecret,
-      required int skip,
-      required int limit,
-      required String searchTag}) async {
+  Future<List<UserDetails>?> getMembersList({
+    required int skip,
+    required int limit,
+    required String searchTag,
+  }) async {
     try {
-      var res = await repository.getMembersList(
-          isLoading: true,
-          userSecret: userSecret,
-          licenseKey: licenseKey,
-          appSecret: appSecret,
-          skip: skip,
-          limit: limit,
-          searchTag: searchTag);
+      var res = await _repository.getMembersList(
+        isLoading: true,
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
 
       if (res?.hasError ?? true) {
         return null;
@@ -137,18 +120,13 @@ class MeetingViewModel {
   }
 
   Future<bool> deleteMeeting({
-    required String licenseKey,
-    required String appSecret,
-    required String userToken,
     required String meetingId,
     required bool isLoading,
   }) async {
-    var res = await repository.deleteMeeting(
-        licenseKey: licenseKey,
-        appSecret: appSecret,
-        userToken: userToken,
-        meetingId: meetingId,
-        isLoading: isLoading);
+    var res = await _repository.deleteMeeting(
+      meetingId: meetingId,
+      isLoading: isLoading,
+    );
 
     if (res?.hasError ?? true) {
       return false;

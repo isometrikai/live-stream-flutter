@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 import 'package:appscrip_live_stream_component/src/utils/debouncer.dart';
@@ -305,10 +307,8 @@ class MeetingController extends GetxController {
   Future<void> getMeetingList([bool isLoading = true]) async {
     if (configuration != null) {
       var res = await viewModel.getMeetingsList(
-          isLoading: isLoading,
-          token: configuration!.userConfig.userToken,
-          licenseKey: configuration!.projectConfig.licenseKey,
-          appSecret: configuration!.projectConfig.appSecret);
+        isLoading: isLoading,
+      );
       myMeetingList = res ?? [];
     }
     update();
@@ -317,11 +317,9 @@ class MeetingController extends GetxController {
   Future<String?> joinMeeting({required String meetingId}) async {
     if (configuration != null) {
       var res = await viewModel.joinMeeting(
-          deviceId: configuration!.projectConfig.deviceId,
-          token: configuration!.userConfig.userToken,
-          licenseKey: configuration!.projectConfig.licenseKey,
-          appSecret: configuration!.projectConfig.appSecret,
-          meetingId: meetingId);
+        deviceId: configuration!.projectConfig.deviceId,
+        meetingId: meetingId,
+      );
       if (res != null) {
         return res;
       }
@@ -335,13 +333,11 @@ class MeetingController extends GetxController {
     bool audioOnly = false,
   }) async {
     var res = await viewModel.createMeeting(
-        audioOnly: audioOnly,
-        deviceId: configuration!.projectConfig.deviceId,
-        token: configuration!.userConfig.userToken,
-        licenseKey: configuration!.projectConfig.licenseKey,
-        appSecret: configuration!.projectConfig.appSecret,
-        meetingDescription: meetingDescription,
-        members: members);
+      audioOnly: audioOnly,
+      deviceId: configuration!.projectConfig.deviceId,
+      meetingDescription: meetingDescription,
+      members: members,
+    );
     if (res != null) {
       await connectMeeting(res.rtcToken, res.meetingId, selectedCallType.last);
     }
@@ -354,12 +350,10 @@ class MeetingController extends GetxController {
     }
     isApicalling = true;
     var res = await viewModel.getMembersList(
-        userSecret: configuration!.projectConfig.userSecret,
-        licenseKey: configuration!.projectConfig.licenseKey,
-        appSecret: configuration!.projectConfig.appSecret,
-        skip: skip,
-        limit: limit,
-        searchTag: searchTag);
+      skip: skip,
+      limit: limit,
+      searchTag: searchTag,
+    );
 
     if (res != null) {
       userDetailsList.addAll(res);
@@ -373,11 +367,9 @@ class MeetingController extends GetxController {
     required bool isLoading,
   }) async {
     var res = await viewModel.deleteMeeting(
-        userToken: configuration!.userConfig.userToken,
-        licenseKey: configuration!.projectConfig.licenseKey,
-        appSecret: configuration!.projectConfig.appSecret,
-        meetingId: meetingId,
-        isLoading: isLoading);
+      meetingId: meetingId,
+      isLoading: isLoading,
+    );
     return res;
   }
 }

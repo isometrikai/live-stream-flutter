@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
@@ -11,7 +12,7 @@ class AuthViewModel {
 
   final AuthRepository _repository;
 
-  var dbWrapper = Get.find<DBWrapper>();
+  DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   Future<UserDetailsModel?> login({
     required String userName,
@@ -41,7 +42,12 @@ class AuthViewModel {
         userName: userName,
       );
 
-      dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
+      unawaited(
+        Future.wait([
+          dbWrapper.saveValue(LocalKeys.user, userDetails.toJson()),
+          dbWrapper.saveValue(LocalKeys.isLoggedIn, true),
+        ]),
+      );
 
       return userDetails;
     } catch (e, st) {
@@ -68,7 +74,7 @@ class AuthViewModel {
       var userDetails =
           UserDetailsModel(userId: data['userId'], userToken: data['userToken'], email: createUser['userIdentifier'], deviceId: deviceId);
 
-      dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
+      await dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
 
       return userDetails;
     } catch (e, st) {

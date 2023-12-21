@@ -10,6 +10,10 @@ class IsmLiveDimens {
   /// Get the width with the percent value of the screen width.
   static double percentWidth(double percentValue) => percentValue.sw;
 
+  static final double appBarHeight = 56.sp;
+
+  static final double appBarElevation = 8.sp;
+
   static final double zero = 0.sp;
   static final double one = 1.sp;
   static final double two = 2.sp;
@@ -91,19 +95,14 @@ class IsmLiveDimens {
   static final EdgeInsets edgeInsetsB20 = EdgeInsets.only(bottom: twenty);
 
   static final EdgeInsets edgeInsets2_0 = EdgeInsets.symmetric(horizontal: two);
-  static final EdgeInsets edgeInsets4_0 =
-      EdgeInsets.symmetric(horizontal: four);
-  static final EdgeInsets edgeInsets8_0 =
-      EdgeInsets.symmetric(horizontal: eight);
+  static final EdgeInsets edgeInsets4_0 = EdgeInsets.symmetric(horizontal: four);
+  static final EdgeInsets edgeInsets8_0 = EdgeInsets.symmetric(horizontal: eight);
   static EdgeInsets edgeInsets10_0 = EdgeInsets.symmetric(horizontal: ten);
 
   static final EdgeInsets edgeInsets0_4 = EdgeInsets.symmetric(vertical: four);
   static final EdgeInsets edgeInsets0_8 = EdgeInsets.symmetric(vertical: eight);
 
-  static final EdgeInsets edgeInsets4_8 =
-      EdgeInsets.symmetric(horizontal: four, vertical: eight);
-  static final EdgeInsets edgeInsets16_10 =
-      EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
-  static final EdgeInsets edgeInsets8_4 =
-      EdgeInsets.symmetric(horizontal: eight, vertical: four);
+  static final EdgeInsets edgeInsets4_8 = EdgeInsets.symmetric(horizontal: four, vertical: eight);
+  static final EdgeInsets edgeInsets16_10 = EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
+  static final EdgeInsets edgeInsets8_4 = EdgeInsets.symmetric(horizontal: eight, vertical: four);
 }

@@ -3,7 +3,7 @@ import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  var dbWrapper = Get.find<DBWrapper>();
+  DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   UserDetailsModel? userDetail;
 

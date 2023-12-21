@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharedPreferencesManager {
+class IsmLivePreferencesManager {
   // Obtain shared preferences.
   SharedPreferences? sharedPreferences;
 

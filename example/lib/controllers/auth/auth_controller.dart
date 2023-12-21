@@ -86,7 +86,11 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     var res = await _viewModel.login(
-        userName: userNameController.text.trim(), email: emailController.text.trim(), password: passwordController.text.trim(), deviceId: id);
+      userName: userNameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+      deviceId: id,
+    );
     if (res == null) {
       return;
     }

@@ -1,21 +1,42 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
   const IsmLiveStreamViewModel(this._repository);
   final IsmLiveStreamRepository _repository;
 
+  IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
+
+  Future<void> getUserDetails() async {
+    var res = await _repository.getUserDetails();
+
+    var user = UserDetails.fromJson(res.data);
+    unawaited(_dbWrapper.saveValue(IsmLiveLocalKeys.user, user.toJson()));
+    return;
+  }
+
+  Future<bool> subscribeUser({
+    required bool isSubscribing,
+  }) async {
+    try {
+      var res = await _repository.subscribeUser(
+        isSubscribing: isSubscribing,
+      );
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
   Future<bool> stopMeeting({
-    required String token,
-    required String licenseKey,
-    required String appSecret,
     required bool isLoading,
     required String meetingId,
   }) async {
     try {
       var res = await _repository.stopMeeting(
-        token: token,
-        licenseKey: licenseKey,
-        appSecret: appSecret,
         isLoading: isLoading,
         meetingId: meetingId,
       );

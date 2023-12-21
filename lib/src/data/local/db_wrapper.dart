@@ -1,11 +1,11 @@
-import 'package:appscrip_live_stream_component_example/data/data.dart';
+import 'package:appscrip_live_stream_component/src/data/local/local.dart';
 import 'package:get/get.dart';
 
-class DBWrapper {
+class IsmLiveDBWrapper {
   Future<void> init() async => await _preference.init();
 
   final _flutterSecureStorage = const FlutterSecureStorageManager();
-  final _preference = Get.find<SharedPreferencesManager>();
+  final _preference = Get.find<IsmLivePreferencesManager>();
 
   void clearData(String key) => _preference.delete(key);
 
