@@ -15,6 +15,7 @@ class IsmLiveApis {
 
   // Streams
   static const String _streaming = '/streaming/v2';
+  static const String stream = '$_streaming/stream';
   static const String getStreams = '$_streaming/streams';
   static const String getRTCToken = '$_streaming/viewer';
 }

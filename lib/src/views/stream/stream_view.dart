@@ -35,7 +35,7 @@ class IsmLiveStreamView extends StatelessWidget {
           );
           await streamController.sortParticipants(room);
 
-          WidgetsBindingCompatible.instance?.addPostFrameCallback((_) {
+          IsmLiveUtility.updateLater(() {
             if (!fastConnection) {
               streamController.askPublish(room, audioCallOnly);
             }
@@ -65,7 +65,12 @@ class IsmLiveStreamView extends StatelessWidget {
                 Positioned(
                   bottom: IsmLiveDimens.twenty,
                   child: room.localParticipant != null
-                      ? ControlsWidget(room, room.localParticipant!, meetingId: meetingId, audioCallOnly: audioCallOnly)
+                      ? IsmLiveControlsWidget(
+                          room,
+                          room.localParticipant!,
+                          meetingId: meetingId,
+                          audioCallOnly: audioCallOnly,
+                        )
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(

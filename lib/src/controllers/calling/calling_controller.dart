@@ -13,6 +13,8 @@ class IsmLiveCallingController extends GetxController {
   double positionX = 20;
   double positionY = 20;
 
+  CameraPosition position = CameraPosition.front;
+
   // ----------- Functions -----------
 
   void onClick(int index) {
@@ -140,5 +142,56 @@ class IsmLiveCallingController extends GetxController {
 
   void onRoomDidUpdate(Room room) {
     sortParticipants(room);
+  }
+
+  Future<void> onTapDisconnect(room, meetingId) async {
+    var res = await stopMeeting(
+      isLoading: true,
+      meetingId: meetingId,
+    );
+
+    if (res) {
+      await room.disconnect();
+    }
+  }
+
+  Future<bool> stopMeeting({
+    required bool isLoading,
+    required String meetingId,
+  }) =>
+      _viewModel.stopMeeting(
+        isLoading: isLoading,
+        meetingId: meetingId,
+      );
+
+  void disableAudio(LocalParticipant participant) async {
+    await participant.setMicrophoneEnabled(false);
+  }
+
+  Future<void> enableAudio(LocalParticipant participant) async {
+    await participant.setMicrophoneEnabled(true);
+  }
+
+  void disableVideo(LocalParticipant participant) async {
+    await participant.setCameraEnabled(false);
+  }
+
+  void enableVideo(LocalParticipant participant) async {
+    await participant.setCameraEnabled(true);
+  }
+
+  void toggleCamera(LocalParticipant participant) async {
+    final track = participant.videoTracks.firstOrNull?.track;
+    if (track == null) return;
+
+    try {
+      final newPosition = position.switched();
+      await track.setCameraPosition(newPosition);
+      position = newPosition;
+      update();
+    } catch (error) {
+      IsmLiveLog('could not restart track: $error');
+      return;
+    }
   }
 }

@@ -38,7 +38,10 @@ class IsmLiveStreamRepository {
         headers: IsmLiveUtility.tokenHeader(),
       );
 
-  Future<IsmLiveResponseModel> getRTCToken(String streamId) => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getRTCToken(
+    String streamId,
+  ) =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.getRTCToken,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
@@ -48,26 +51,27 @@ class IsmLiveStreamRepository {
         showLoader: true,
       );
 
-  Future<IsmLiveResponseModel?> stopMeeting({
-    required bool isLoading,
-    required String meetingId,
-  }) async {
-    try {
-      var url = '/meetings/v1/publish/stop';
-      var res = await _apiWrapper.makeRequest(
-        url,
-        showLoader: isLoading,
+  Future<IsmLiveResponseModel> createStream(
+    IsmLiveCreateStreamModel streamModel,
+  ) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.stream,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
-        payload: {
-          'meetingId': meetingId,
-        },
+        payload: streamModel.toMap(),
+        showLoader: true,
       );
 
-      return res;
-    } catch (e, st) {
-      IsmLiveLog.error(e, st);
-      return null;
-    }
-  }
+  Future<IsmLiveResponseModel> stopStream(
+    String streamId,
+  ) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.stream,
+        type: IsmLiveRequestType.put,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: {
+          'streamId': streamId,
+        },
+        showLoader: true,
+      );
 }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
-class ControlsWidget extends StatelessWidget {
-  const ControlsWidget(
+class IsmLiveControlsWidget extends StatelessWidget {
+  const IsmLiveControlsWidget(
     this.room,
     this.participant, {
     Key? key,
@@ -19,14 +19,14 @@ class ControlsWidget extends StatelessWidget {
   final bool audioCallOnly;
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveCallingController>(
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
       initState: (state) {
-        final streamController = Get.find<IsmLiveCallingController>();
+        final streamController = Get.find<IsmLiveStreamController>();
 
         participant.addListener(streamController.update);
       },
       dispose: (state) async {
-        final streamController = Get.find<IsmLiveCallingController>();
+        final streamController = Get.find<IsmLiveStreamController>();
 
         participant.removeListener(streamController.update);
       },
@@ -44,7 +44,7 @@ class ControlsWidget extends StatelessWidget {
                     size: IsmLiveDimens.twentyFive,
                   ),
                   onTap: () {
-                    controller.onTapDisconnect(room, meetingId);
+                    controller.disconnectStream(room, meetingId);
                   },
                   color: Colors.red,
                   radius: IsmLiveDimens.fifty,
