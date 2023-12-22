@@ -1,103 +1,106 @@
+import 'dart:math' as math;
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:livekit_client/livekit_client.dart';
 
-class IsmLiveStreamView extends StatefulWidget {
-  const IsmLiveStreamView({
-    super.key,
-  });
+class IsmLiveStreamView extends StatelessWidget {
+  IsmLiveStreamView({
+    Key? key,
+  })  : room = Get.arguments['room'],
+        listener = Get.arguments['listener'],
+        meetingId = Get.arguments['streamId'],
+        audioCallOnly = Get.arguments['audioCallOnly'],
+        super(key: key);
 
-  static const String updateId = 'ismlive-stream-view';
+  final Room room;
+  final EventsListener<RoomEvent> listener;
+  final String meetingId;
+  final bool audioCallOnly;
 
-  @override
-  State<IsmLiveStreamView> createState() => _IsmLiveStreamViewState();
-}
+  bool get fastConnection => room.engine.fastConnectOptions != null;
 
-class _IsmLiveStreamViewState extends State<IsmLiveStreamView> {
-  @override
-  void initState() {
-    super.initState();
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
-    }
-    if (!Get.isRegistered<IsmLiveStreamController>()) {
-      IsmLiveStreamBinding().dependencies();
-    }
-    IsmLiveUtility.updateLater(() {
-      Get.find<IsmLiveMqttController>().setup(context);
-      Get.find<IsmLiveStreamController>().configuration = IsmLiveConfig.of(context);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: const IsmLiveHeader(),
-        body: GetBuilder<IsmLiveStreamController>(
-          builder: (controller) => Column(
-            children: [
-              TabBar(
-                isScrollable: true,
-                dividerHeight: 0,
-                indicatorColor: Colors.transparent,
-                overlayColor: MaterialStateProperty.all(Colors.transparent),
-                controller: controller.tabController,
-                onTap: (index) {
-                  controller.streamType = IsmLiveStreamType.values[index];
-                },
-                tabs: [
-                  ...IsmLiveStreamType.values.map(
-                    IsmLiveTabButton.new,
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: controller.tabController,
-                  children: [
-                    ...IsmLiveStreamType.values.map(
-                      (e) => _StreamView(
-                        key: ValueKey('ismlive-stream-view-${e.value}'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
-class _StreamView extends StatelessWidget {
-  const _StreamView({
-    super.key,
-  });
+  static const String route = IsmLiveRoutes.streamView;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: IsmLiveStreamView.updateId,
-        builder: (controller) => SmartRefresher(
-          controller: controller.streamRefreshController,
-          enablePullDown: true,
-          onRefresh: () => controller.getStreams(controller.streamType),
-          child: controller.streams.isEmpty
-              ? const Center(
-                  child: Text('No Streams'),
-                )
-              : StaggeredGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: IsmLiveDimens.sixteen,
-                  crossAxisSpacing: IsmLiveDimens.sixteen,
-                  children: [
-                    ...controller.streams.map(
-                      (e) => Text(
-                        e.streamId ?? '',
+        id: 'room',
+        initState: (ismLiveBuilder) async {
+          var streamController = Get.find<IsmLiveStreamController>();
+
+          await streamController.setUpListeners(
+            listener,
+            room,
+          );
+          await streamController.sortParticipants(room);
+
+          WidgetsBindingCompatible.instance?.addPostFrameCallback((_) {
+            if (!fastConnection) {
+              streamController.askPublish(room, audioCallOnly);
+            }
+          });
+          if (lkPlatformIsMobile()) {
+            await Hardware.instance.setSpeakerphoneOn(true);
+          }
+        },
+        dispose: (ismLiveBuilder) async {
+          var streamController = Get.find<IsmLiveStreamController>();
+          room.removeListener(() {
+            streamController.onRoomDidUpdate(room);
+          });
+          await listener.dispose();
+          await room.dispose();
+        },
+        builder: (controller) => PopScope(
+          canPop: false,
+          child: Scaffold(
+            body: Stack(
+              children: [
+                controller.participantTracks.isNotEmpty
+                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
+                    : const NoVideoWidget(
+                        name: null,
+                      ),
+                Positioned(
+                  bottom: IsmLiveDimens.twenty,
+                  child: room.localParticipant != null
+                      ? ControlsWidget(room, room.localParticipant!, meetingId: meetingId, audioCallOnly: audioCallOnly)
+                      : IsmLiveDimens.box0,
+                ),
+                Positioned(
+                  left: controller.positionX,
+                  top: controller.positionY,
+                  child: GestureDetector(
+                    onPanUpdate: controller.onPan,
+                    child: SizedBox(
+                      width: Get.width * 0.9,
+                      height: IsmLiveDimens.twoHundred,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: math.max(0, controller.participantTracks.length - 1),
+                        itemBuilder: (BuildContext context, int index) => Container(
+                          margin: IsmLiveDimens.edgeInsets4_8,
+                          width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
+                          height: IsmLiveDimens.twoHundred,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.onClick(index);
+                              },
+                              child: ParticipantWidget.widgetFor(controller.participantTracks[index + 1], showStatsLayer: true),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
+          ),
         ),
       );
 }

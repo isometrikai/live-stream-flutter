@@ -111,3 +111,16 @@ enum IsmLiveStreamType {
   final int value;
   final String label;
 }
+
+enum IsmLiveActions {
+  streamStart('streamStartPresence');
+
+  factory IsmLiveActions.fromString(String action) =>
+      <String, IsmLiveActions>{
+        IsmLiveActions.streamStart.value: IsmLiveActions.streamStart,
+      }[action] ??
+      IsmLiveActions.streamStart;
+
+  const IsmLiveActions(this.value);
+  final String value;
+}

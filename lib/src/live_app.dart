@@ -39,7 +39,7 @@ class IsmLiveApp extends StatelessWidget {
         data: theme ?? IsmLiveThemeData.fallback(),
         child: IsmLiveConfig(
           data: configuration,
-          child: const IsmLiveStreamView(),
+          child: const IsmLiveStreamListing(),
         ),
       );
 }

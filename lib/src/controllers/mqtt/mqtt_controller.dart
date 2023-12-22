@@ -188,6 +188,15 @@ class IsmLiveMqttController extends GetxController {
 
       if (payload['action'] != null) {
         actionStreamController.add(payload);
+        var action = IsmLiveActions.fromString(payload['action']);
+        switch (action) {
+          case IsmLiveActions.streamStart:
+            if (!Get.isRegistered<IsmLiveStreamController>()) {
+              IsmLiveStreamBinding().dependencies();
+            }
+            var streamController = Get.find<IsmLiveStreamController>();
+            unawaited(streamController.getStreams());
+        }
       } else {}
     });
   }

@@ -8,7 +8,7 @@ abstract class IsLiveRouteManagement {
   // }
 
   static void goToCreateMeetingScreen() {
-    Get.toNamed(IsLiveRoutes.createMeetingScreen);
+    Get.toNamed(IsmLiveRoutes.createMeetingScreen);
   }
 
   static Future<void> goToRoomPage(
@@ -17,7 +17,7 @@ abstract class IsLiveRouteManagement {
     String meetingId,
     bool audioCallOnly,
   ) async {
-    await Get.toNamed(IsLiveRoutes.roomPage, arguments: {
+    await Get.toNamed(IsmLiveRoutes.roomPage, arguments: {
       'room': room,
       'listener': listener,
       'meetingId': meetingId,
@@ -25,15 +25,32 @@ abstract class IsLiveRouteManagement {
     });
   }
 
+  static Future<void> goToStreamView({
+    required Room room,
+    required EventsListener<RoomEvent> listener,
+    required String streamId,
+    bool audioCallOnly = false,
+  }) async {
+    await Get.toNamed(
+      IsmLiveRoutes.streamView,
+      arguments: {
+        'room': room,
+        'listener': listener,
+        'streamId': streamId,
+        'audioCallOnly': audioCallOnly,
+      },
+    );
+  }
+
   static void goToSearchUserScreen() {
     Get.toNamed<void>(
-      IsLiveRoutes.searchUserScreen,
+      IsmLiveRoutes.searchUserScreen,
     );
   }
 
   static void goToMyMeetingsView() {
     Get.offAndToNamed<void>(
-      IsLiveRoutes.myMeetingsView,
+      IsmLiveRoutes.myMeetingsView,
     );
   }
 }
