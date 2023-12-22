@@ -15,13 +15,16 @@ mixin StreamAPIMixin {
         isSubscribing: isSubscribing,
       );
 
-  Future<void> getStreams(IsmLiveStreamType type) async {
-    _controller._streams[type] = await _controller._viewModel.getStreams(
-      queryModel: type.queryModel,
+  Future<void> getStreams([IsmLiveStreamType? type]) async {
+    var streamType = type ?? _controller.streamType;
+    _controller._streams[streamType] = await _controller._viewModel.getStreams(
+      queryModel: streamType.queryModel,
     );
-    _controller._streamRefreshControllers[type]!.refreshCompleted();
+    _controller._streamRefreshControllers[streamType]!.refreshCompleted();
     IsmLiveUtility.updateLater(() {
-      _controller.update([IsmLiveStreamView.updateId]);
+      _controller.update([IsmLiveStreamListing.updateId]);
     });
   }
+
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId) => _controller._viewModel.getRTCToken(streamId);
 }

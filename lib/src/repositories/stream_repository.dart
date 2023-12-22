@@ -38,6 +38,16 @@ class IsmLiveStreamRepository {
         headers: IsmLiveUtility.tokenHeader(),
       );
 
+  Future<IsmLiveResponseModel> getRTCToken(String streamId) => _apiWrapper.makeRequest(
+        IsmLiveApis.getRTCToken,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: {
+          'streamId': streamId,
+        },
+        showLoader: true,
+      );
+
   Future<IsmLiveResponseModel?> stopMeeting({
     required bool isLoading,
     required String meetingId,

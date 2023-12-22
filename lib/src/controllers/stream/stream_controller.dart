@@ -8,8 +8,9 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
+part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin {
   IsmLiveStreamController(this._viewModel);
   final IsmLiveStreamViewModel _viewModel;
 
@@ -64,7 +65,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   void startOnInit() async {
     unawaited(getUserDetails());
     unawaited(subscribeUser());
-    unawaited(getStreams(streamType));
+    unawaited(getStreams());
     tabController.addListener(() {
       streamType = IsmLiveStreamType.values[tabController.index];
     });
@@ -72,6 +73,18 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   Future<bool> subscribeUser() => _subscribeUser(true);
   Future<bool> unsubscribeUser() => _subscribeUser(false);
+
+  Future<void> joinStream(IsmLiveStreamModel stream) async {
+    var res = await getRTCToken(stream.streamId ?? '');
+
+    if (res == null) {
+      return;
+    }
+    await connectStream(
+      token: res.rtcToken,
+      streamId: stream.streamId!,
+    );
+  }
 
   void onClick(int index) {
     var member2 = participantTracks.elementAt(index + 1);
@@ -86,6 +99,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   ) async =>
       listener
         ..on<RoomDisconnectedEvent>((event) async {
+          unawaited(getStreams());
           if (event.reason != null) {
             IsmLiveLog('Room disconnected: reason => ${event.reason}');
           }

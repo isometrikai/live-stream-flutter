@@ -51,6 +51,21 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId) async {
+    try {
+      var res = await _repository.getRTCToken(streamId);
+      if (res.hasError) {
+        return null;
+      }
+      var data = jsonDecode(res.data) as Map<String, dynamic>;
+
+      return IsmLiveRTCModel.fromMap(data);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
   Future<bool> stopMeeting({
     required bool isLoading,
     required String meetingId,
