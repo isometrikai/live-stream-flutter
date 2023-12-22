@@ -57,29 +57,31 @@ class IsmLiveStreamViewModel {
       if (res.hasError) {
         return null;
       }
-      var data = jsonDecode(res.data) as Map<String, dynamic>;
 
-      return IsmLiveRTCModel.fromMap(data);
+      return IsmLiveRTCModel.fromJson(res.data);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
     }
   }
 
-  Future<bool> stopMeeting({
-    required bool isLoading,
-    required String meetingId,
-  }) async {
+  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
     try {
-      var res = await _repository.stopMeeting(
-        isLoading: isLoading,
-        meetingId: meetingId,
-      );
-
-      if (res?.hasError ?? true) {
-        return false;
+      var res = await _repository.createStream(streamModel);
+      if (res.hasError) {
+        return null;
       }
-      return true;
+      return IsmLiveRTCModel.fromJson(res.data);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
+  Future<bool> stopStream(String streamId) async {
+    try {
+      var res = await _repository.stopStream(streamId);
+      return !res.hasError;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return false;

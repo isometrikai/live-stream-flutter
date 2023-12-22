@@ -9,6 +9,7 @@ mixin StreamJoinMixin {
     required String token,
     required String streamId,
     bool audioCallOnly = false,
+    bool isCreating = false,
   }) async {
     if (isMeetingOn) {
       return;
@@ -57,13 +58,17 @@ mixin StreamJoinMixin {
         trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
       );
 
-      // var localVideo = await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
-      //   cameraPosition: CameraPosition.front,
-      //   params: VideoParametersPresets.h720_169,
-      // ));
-      // await room.localParticipant?.publishVideoTrack(localVideo);
+      if (isCreating) {
+        var localVideo = await LocalVideoTrack.createCameraTrack(
+          const CameraCaptureOptions(
+            cameraPosition: CameraPosition.front,
+            params: VideoParametersPresets.h720_169,
+          ),
+        );
+        await room.localParticipant?.publishVideoTrack(localVideo);
+      }
 
-      await room.localParticipant?.setMicrophoneEnabled(false);
+      await room.localParticipant?.setMicrophoneEnabled(isCreating);
 
       IsmLiveUtility.closeLoader();
 

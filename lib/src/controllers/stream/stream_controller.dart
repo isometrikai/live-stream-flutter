@@ -74,15 +74,28 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   Future<bool> subscribeUser() => _subscribeUser(true);
   Future<bool> unsubscribeUser() => _subscribeUser(false);
 
-  Future<void> joinStream(IsmLiveStreamModel stream) async {
-    var res = await getRTCToken(stream.streamId ?? '');
+  Future<void> joinStream(
+    IsmLiveStreamModel stream,
+  ) async {
+    var data = await getRTCToken(stream.streamId ?? '');
+    if (data == null) {
+      return;
+    }
 
-    if (res == null) {
+    await connectStream(
+      token: data.rtcToken,
+      streamId: stream.streamId!,
+    );
+  }
+
+  Future<void> startStream() async {
+    var data = await createStream();
+    if (data == null) {
       return;
     }
     await connectStream(
-      token: res.rtcToken,
-      streamId: stream.streamId!,
+      token: data.rtcToken,
+      streamId: data.streamId!,
     );
   }
 
@@ -208,15 +221,6 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     update(['room']);
   }
 
-  Future<bool> stopMeeting({
-    required bool isLoading,
-    required String meetingId,
-  }) =>
-      _viewModel.stopMeeting(
-        isLoading: isLoading,
-        meetingId: meetingId,
-      );
-
   void onPan(details) {
     positionX += details.delta.dx;
     positionY += details.delta.dy;
@@ -254,12 +258,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     }
   }
 
-  Future<void> onTapDisconnect(room, meetingId) async {
-    var res = await stopMeeting(
-      isLoading: true,
-      meetingId: meetingId,
-    );
-
+  Future<void> disconnectStream(room, streamId) async {
+    var res = await stopStream(streamId);
     if (res) {
       await room.disconnect();
     }

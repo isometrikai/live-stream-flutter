@@ -34,6 +34,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: const IsmLiveHeader(),
+        floatingActionButton: const IsmLiveCreateStreamFAB(),
         body: GetBuilder<IsmLiveStreamController>(
           builder: (controller) => Column(
             children: [
@@ -90,16 +91,20 @@ class _StreamListing extends StatelessWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: IsmLiveDimens.sixteen,
                   crossAxisSpacing: IsmLiveDimens.sixteen,
-                  children: controller.streams
-                      .map(
-                        (e) => IsmLiveTapHandler(
-                          onTap: () {
-                            controller.joinStream(e);
-                          },
-                          child: IsmLiveStreamCard(e),
+                  children: controller.streams.map(
+                    (e) {
+                      var isCreatedByMe = e.createdBy == controller.user?.userId;
+                      return IsmLiveTapHandler(
+                        onTap: () {
+                          controller.joinStream(e);
+                        },
+                        child: IsmLiveStreamCard(
+                          e,
+                          isCreatedByMe: isCreatedByMe,
                         ),
-                      )
-                      .toList(),
+                      );
+                    },
+                  ).toList(),
                 ),
         ),
       );

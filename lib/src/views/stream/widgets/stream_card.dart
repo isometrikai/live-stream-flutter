@@ -7,10 +7,12 @@ class IsmLiveStreamCard extends StatelessWidget {
     this.stream, {
     super.key,
     this.onTap,
+    this.isCreatedByMe = false,
   });
 
   final IsmLiveStreamModel stream;
   final VoidCallback? onTap;
+  final bool isCreatedByMe;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -18,7 +20,7 @@ class IsmLiveStreamCard extends StatelessWidget {
         child: Container(
           height: IsmLiveDimens.twoHundredTwenty,
           margin: IsmLiveDimens.edgeInsets8,
-          padding: IsmLiveDimens.edgeInsets4_8,
+          padding: IsmLiveDimens.edgeInsets8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
             color: Colors.black,
@@ -31,11 +33,35 @@ class IsmLiveStreamCard extends StatelessWidget {
             ),
           ),
           alignment: Alignment.bottomCenter,
-          child: Text(
-            stream.initiatorName ?? '',
-            style: IsmLiveTheme.of(context).textTheme?.bodyLarge?.copyWith(
-                  color: Colors.white,
-                ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (isCreatedByMe)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    padding: IsmLiveDimens.edgeInsets8_4,
+                    decoration: BoxDecoration(
+                      color: IsmLiveTheme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: IsmLiveTheme.of(context).textTheme?.bodyLarge?.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+              Text(
+                stream.initiatorName ?? '',
+                style: IsmLiveTheme.of(context).textTheme?.bodyLarge?.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+            ],
           ),
         ),
       );

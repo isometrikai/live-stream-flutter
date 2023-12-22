@@ -38,7 +38,13 @@ class _MyAppState extends State<MyApp> {
         builder: (_, child) => child!,
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(primaryColor: Colors.purple),
+          theme: ThemeData(
+            primaryColor: Colors.purple,
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+            ),
+          ),
           translations: TranslationsFile(),
           getPages: AppPages.pages,
           initialRoute: AppPages.initial,

@@ -27,4 +27,10 @@ mixin StreamAPIMixin {
   }
 
   Future<IsmLiveRTCModel?> getRTCToken(String streamId) => _controller._viewModel.getRTCToken(streamId);
+
+  Future<IsmLiveRTCModel?> createStream() => _controller._viewModel.createStream(
+        const IsmLiveCreateStreamModel(),
+      );
+
+  Future<bool> stopStream(String streamId) => _controller._viewModel.stopStream(streamId);
 }
