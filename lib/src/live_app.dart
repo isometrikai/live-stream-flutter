@@ -18,9 +18,11 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) =>
+      IsmLiveHandler.isMqttConnected = value;
 
-  static Future<void> logout([VoidCallback? logoutCallback]) => IsmLiveHandler.logout(logoutCallback);
+  static Future<void> logout([VoidCallback? logoutCallback]) =>
+      IsmLiveHandler.logout(logoutCallback);
 
   static MapStreamSubscription addListener(
     MapFunction listener,

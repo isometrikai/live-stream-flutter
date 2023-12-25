@@ -11,7 +11,10 @@ class IsmLiveConfig extends StatelessWidget {
   final IsmLiveConfigData data;
   final Widget child;
 
-  static IsmLiveConfigData of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<_InheritedLiveConfig>()!.config.data;
+  static IsmLiveConfigData of(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_InheritedLiveConfig>()!
+      .config
+      .data;
 
   @override
   Widget build(BuildContext context) => _InheritedLiveConfig(
@@ -29,5 +32,6 @@ class _InheritedLiveConfig extends InheritedWidget {
   final IsmLiveConfig config;
 
   @override
-  bool updateShouldNotify(covariant _InheritedLiveConfig oldWidget) => oldWidget.config.data != config.data;
+  bool updateShouldNotify(covariant _InheritedLiveConfig oldWidget) =>
+      oldWidget.config.data != config.data;
 }

@@ -10,7 +10,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin {
+class IsmLiveStreamController extends GetxController
+    with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin {
   IsmLiveStreamController(this._viewModel);
   final IsmLiveStreamViewModel _viewModel;
 
@@ -18,16 +19,23 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   UserDetails? user;
 
+  bool isHdBroadcast = false;
+
+  bool isRecordingBroadcast = false;
+
   List<ParticipantTrack> participantTracks = [];
 
   CameraPosition position = CameraPosition.front;
 
   late TabController tabController;
 
+  late TextEditingController descriptionController = TextEditingController();
+
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
   // set streams(List<IsmLiveStreamModel> data) => _streams[streamType] = data;
@@ -106,6 +114,21 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     update(['room']);
   }
 
+  void onChangeHdBroadcast(
+    bool value,
+  ) {
+    isHdBroadcast = value;
+    update([GoLiveView.update]);
+  }
+
+  void onChangeRecording(
+    bool value,
+  ) {
+    isRecordingBroadcast = value;
+
+    update([GoLiveView.update]);
+  }
+
   Future<void> setUpListeners(
     EventsListener<RoomEvent> listener,
     Room room,
@@ -128,7 +151,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
         ..on<TrackE2EEStateEvent>(onE2EEStateEvent)
         ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog('Participant name updated: ${event.participant.identity}, name => ${event.name}');
+          IsmLiveLog(
+              'Participant name updated: ${event.participant.identity}, name => ${event.name}');
         })
         ..on<DataReceivedEvent>((event) {
           var decoded = 'Failed to decode';
@@ -203,7 +227,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;

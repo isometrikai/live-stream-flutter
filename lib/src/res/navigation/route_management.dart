@@ -48,6 +48,12 @@ abstract class IsLiveRouteManagement {
     );
   }
 
+  static void goToGoLiveView() {
+    Get.toNamed<void>(
+      IsmLiveRoutes.goLive,
+    );
+  }
+
   static void goToMyMeetingsView() {
     Get.offAndToNamed<void>(
       IsmLiveRoutes.myMeetingsView,
