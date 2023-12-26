@@ -15,6 +15,14 @@ class IsmLiveInputField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.borderColor,
+    this.fillColor,
+    this.hintStyle,
+    this.alignLabelWithHint,
+    this.maxLines,
+    this.filled,
+    this.cursorColor,
+    this.style,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -28,6 +36,14 @@ class IsmLiveInputField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.borderColor,
+    this.fillColor,
+    this.hintStyle,
+    this.alignLabelWithHint,
+    this.maxLines,
+    this.filled,
+    this.cursorColor,
+    this.style,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -43,6 +59,14 @@ class IsmLiveInputField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.borderColor,
+    this.fillColor,
+    this.hintStyle,
+    this.alignLabelWithHint,
+    this.maxLines,
+    this.filled,
+    this.cursorColor,
+    this.style,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -57,6 +81,14 @@ class IsmLiveInputField extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
     this.hintText,
+    this.borderColor,
+    this.fillColor,
+    this.hintStyle,
+    this.alignLabelWithHint,
+    this.maxLines,
+    this.filled,
+    this.cursorColor,
+    this.style,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -70,54 +102,67 @@ class IsmLiveInputField extends StatelessWidget {
   final bool readOnly;
   final void Function()? onTap;
   final String? hintText;
+  final Color? borderColor;
+  final Color? fillColor;
+  final Color? cursorColor;
+  final TextStyle? hintStyle;
+  final TextStyle? style;
+  final bool? alignLabelWithHint;
+  final bool? filled;
+  final int? maxLines;
 
   @override
-  Widget build(BuildContext context) => Material(
-        child: TextFormField(
-          onTap: onTap,
-          readOnly: readOnly,
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-              borderSide: const BorderSide(
-                color: IsmLiveColors.primary,
-                width: 1,
-              ),
+  Widget build(BuildContext context) => TextFormField(
+        maxLines: maxLines,
+        style: style,
+        onTap: onTap,
+        cursorColor: cursorColor,
+        readOnly: readOnly,
+        controller: controller,
+        decoration: InputDecoration(
+          filled: filled,
+          alignLabelWithHint: alignLabelWithHint,
+          fillColor: fillColor,
+          hintText: hintText,
+          hintStyle: hintStyle,
+          isDense: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            borderSide: BorderSide(
+              color: borderColor ?? IsmLiveColors.primary,
+              width: 1,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-              borderSide: const BorderSide(
-                color: IsmLiveColors.primary,
-                width: 1,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-              borderSide: const BorderSide(
-                color: IsmLiveColors.primary,
-                width: 1,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-              borderSide: const BorderSide(
-                color: IsmLiveColors.primary,
-                width: 1,
-              ),
-            ),
-            counterText: '',
-            suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon,
           ),
-          validator: validator,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          keyboardType: _textInputType,
-          obscureText: obscureText,
-          obscuringCharacter: obscureCharacter,
-          onChanged: onchange,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            borderSide: BorderSide(
+              color: borderColor ?? IsmLiveColors.primary,
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            borderSide: BorderSide(
+              color: borderColor ?? IsmLiveColors.primary,
+              width: 1,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            borderSide: BorderSide(
+              color: borderColor ?? IsmLiveColors.primary,
+              width: 1,
+            ),
+          ),
+          counterText: '',
+          suffixIcon: suffixIcon,
+          prefixIcon: prefixIcon,
         ),
+        validator: validator,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        keyboardType: _textInputType,
+        obscureText: obscureText,
+        obscuringCharacter: obscureCharacter,
+        onChanged: onchange,
       );
 }

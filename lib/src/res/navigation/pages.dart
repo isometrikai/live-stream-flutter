@@ -42,5 +42,12 @@ class IsLivePages {
       binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage<GoLiveView>(
+      name: IsmLiveRoutes.goLive,
+      transitionDuration: transitionDuration,
+      page: GoLiveView.new,
+      binding: IsmLiveStreamBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 }

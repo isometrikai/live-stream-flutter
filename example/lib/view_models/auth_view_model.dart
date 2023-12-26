@@ -26,6 +26,7 @@ class AuthViewModel {
         email: email,
         password: password,
       );
+
       if (res.hasError) {
         if ([401, 404].contains(res.statusCode)) {
           await IsmLiveUtility.showInfoDialog(res);
@@ -62,7 +63,8 @@ class AuthViewModel {
     required Map<String, dynamic> createUser,
   }) async {
     try {
-      var res = await _repository.signup(isLoading: isLoading, createUser: createUser);
+      var res = await _repository.signup(
+          isLoading: isLoading, createUser: createUser);
       if (res.hasError) {
         if ([401, 404].contains(res.statusCode)) {
           await IsmLiveUtility.showInfoDialog(res);
@@ -71,8 +73,11 @@ class AuthViewModel {
       }
       var data = res.decode();
 
-      var userDetails =
-          UserDetailsModel(userId: data['userId'], userToken: data['userToken'], email: createUser['userIdentifier'], deviceId: deviceId);
+      var userDetails = UserDetailsModel(
+          userId: data['userId'],
+          userToken: data['userToken'],
+          email: createUser['userIdentifier'],
+          deviceId: deviceId);
 
       await dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
 

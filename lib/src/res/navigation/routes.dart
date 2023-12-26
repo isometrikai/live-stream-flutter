@@ -6,6 +6,7 @@ class IsmLiveRoutes {
   static const String searchUserScreen = '/searchUserScreen';
   static const String createMeetingScreen = '/createMeetingScreen';
   static const String roomPage = '/roomPage';
+  static const String goLive = '/goLive';
 
   static const String streamView = '/stream-view';
 }
