@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="0 0 72 72">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#bff2ff"/>
+      <stop offset="1" stop-color="#10a4da"/>
+    </linearGradient>
+  </defs>
+  <g id="Camera" transform="translate(0.447 0.23)">
+    <circle id="Ellipse_751" data-name="Ellipse 751" cx="36" cy="36" r="36" transform="translate(-0.447 -0.23)" fill="url(#linear-gradient)"/>
+    <g id="Camera-2" data-name="Camera" transform="translate(15.204 20.57)">
+      <path id="Path_622" data-name="Path 622" d="M26.153,21.391a6.1,6.1,0,1,1-6.1-6.1A6.1,6.1,0,0,1,26.153,21.391Z" transform="translate(0.307 -4.104)" fill="#fff"/>
+      <path id="Path_623" data-name="Path 623" d="M41.99,12.966H36.21a1.721,1.721,0,0,1-1.273-.573C31.925,9.02,30.79,7.875,29.56,7.875H20.493c-1.241,0-2.46,1.145-5.483,4.528a1.688,1.688,0,0,1-1.262.562h-.435v-.848a.851.851,0,0,0-.848-.848H9.707a.851.851,0,0,0-.848.848v.848h-.8A3.439,3.439,0,0,0,4.5,16.221V34.887a3.671,3.671,0,0,0,3.553,3.532H41.99a3.4,3.4,0,0,0,3.235-3.532V16.221A3.161,3.161,0,0,0,41.99,12.966Zm-16.7,21.253a9.067,9.067,0,1,1,8.633-8.633A9.076,9.076,0,0,1,25.286,34.218Zm9.757-15.1a1.379,1.379,0,1,1,1.379-1.379A1.376,1.376,0,0,1,35.043,19.117Z" transform="translate(-4.5 -7.875)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

@@ -50,7 +50,8 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('email_field'),
-                        child: IsmLiveInputField.email(controller: controller.emailController),
+                        child: IsmLiveInputField.email(
+                            controller: controller.emailController),
                       ),
                       IsmLiveDimens.boxHeight16,
                       Hero(
@@ -61,10 +62,14 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('password_field'),
                         child: IsmLiveInputField.password(
+                            maxLines: 1,
                             suffixIcon: IconButton(
-                              icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                              icon: Icon(!controller.showPassward
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined),
                               onPressed: () {
-                                controller.showPassward = !controller.showPassward;
+                                controller.showPassward =
+                                    !controller.showPassward;
                               },
                             ),
                             obscureText: controller.showPassward,

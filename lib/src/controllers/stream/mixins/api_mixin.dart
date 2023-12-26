@@ -42,4 +42,17 @@ mixin StreamAPIMixin {
 
   Future<bool> stopStream(String streamId) =>
       _controller._viewModel.stopStream(streamId);
+
+  Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
+    var res = await _controller._viewModel.getPresignedUrl(
+      showLoader: false,
+      userIdentifier: DateTime.now().millisecondsSinceEpoch.toString(),
+      mediaExtension: mediaExtension,
+    );
+    if (res == null) {
+      return;
+    }
+
+    _controller.streamImage = res.mediaUrl ?? '';
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/views/stream/widgets/title_radio_button.dart';
+import 'package:appscrip_live_stream_component/src/widgets/pick_image_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,7 @@ class GoLiveView extends StatelessWidget {
                 Padding(
                   padding: IsmLiveDimens.edgeInsets16,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       IsmLiveDimens.boxHeight32,
                       Row(
@@ -65,7 +67,14 @@ class GoLiveView extends StatelessWidget {
                                     Icons.add,
                                     color: IsmLiveColors.white,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await Get.bottomSheet(PicKImageSheet(),
+                                        barrierColor:
+                                            Colors.black.withOpacity(0.7),
+                                        backgroundColor: IsmLiveColors.white,
+                                        isScrollControlled: true,
+                                        elevation: 0);
+                                  },
                                 ),
                                 Text(
                                   'Add Cover',

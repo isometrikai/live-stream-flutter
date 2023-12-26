@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="0 0 72 72">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffbfea"/>
+      <stop offset="1" stop-color="#da1089"/>
+    </linearGradient>
+  </defs>
+  <g id="Room" transform="translate(0.006 0.23)">
+    <circle id="Ellipse_754" data-name="Ellipse 754" cx="36" cy="36" r="36" transform="translate(-0.006 -0.23)" fill="url(#linear-gradient)"/>
+    <g id="Room-2" data-name="Room" transform="translate(15.075 23.943)">
+      <path id="Path_629" data-name="Path 629" d="M33.613,10.8a1.532,1.532,0,0,0-.834.242l-7.755,4.895a.767.767,0,0,0-.359.645V23.4a.767.767,0,0,0,.359.645l7.755,4.895a1.611,1.611,0,0,0,.834.242h1.865a.763.763,0,0,0,.771-.762V11.562a.769.769,0,0,0-.771-.762Z" transform="translate(3.914 -8.505)" fill="#fff"/>
+      <path id="Path_630" data-name="Path 630" d="M23.9,31.95H6.867A4.632,4.632,0,0,1,2.25,27.342V13.608A4.624,4.624,0,0,1,6.858,9H23.891A4.624,4.624,0,0,1,28.5,13.608V27.333A4.612,4.612,0,0,1,23.9,31.95Z" transform="translate(-2.25 -9)" fill="#fff"/>
+      <g id="Icon_feather-link" data-name="Icon feather-link" transform="translate(7.26 6.353)">
+        <path id="Path_604" data-name="Path 604" d="M15,9.132a2.785,2.785,0,0,0,4.2.3l1.671-1.671a2.785,2.785,0,1,0-3.938-3.938l-.958.953" transform="translate(-10.541 -3.007)" fill="none" stroke="#e442a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+        <path id="Path_605" data-name="Path 605" d="M9.68,14.609a2.785,2.785,0,0,0-4.2-.3L3.809,15.979a2.785,2.785,0,1,0,3.938,3.938l.952-.953" transform="translate(-2.993 -9.599)" fill="none" stroke="#e442a5" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+      </g>
+    </g>
+  </g>
+</svg>

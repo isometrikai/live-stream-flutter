@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ class IsmLiveStreamController extends GetxController
   UserDetails? user;
 
   bool isHdBroadcast = false;
+
+  String? streamImage;
 
   bool isRecordingBroadcast = false;
 
