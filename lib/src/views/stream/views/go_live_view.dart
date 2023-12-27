@@ -1,22 +1,35 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/views/stream/widgets/title_radio_button.dart';
 import 'package:appscrip_live_stream_component/src/widgets/pick_image_bottom_sheet.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class GoLiveView extends StatelessWidget {
   const GoLiveView({super.key});
   static const String update = 'go-live';
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+      initState: (state) async {
+        Get.find<IsmLiveStreamController>().initializationOfGoLive();
+      },
+      dispose: (state) {
+        Get.find<IsmLiveStreamController>().cameraController?.dispose();
+      },
       id: update,
       builder: (controller) => Scaffold(
             body: Stack(
               children: [
-                Container(
-                  color: Colors.amberAccent,
-                  height: Get.height,
-                  width: Get.width,
+                FutureBuilder(
+                  future: controller.initializecameraControllerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return CameraPreview(controller.cameraController!);
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
                 Padding(
                   padding: IsmLiveDimens.edgeInsets16,
@@ -59,29 +72,56 @@ class GoLiveView extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.circular(IsmLiveDimens.ten),
                             ),
-                            child: Column(
-                              children: [
-                                IconButton(
-                                  padding: IsmLiveDimens.edgeInsets0,
-                                  icon: const Icon(
-                                    Icons.add,
-                                    color: IsmLiveColors.white,
+                            child: controller.streamImage.isNullOrEmpty
+                                ? Column(
+                                    children: [
+                                      IconButton(
+                                        padding: IsmLiveDimens.edgeInsets0,
+                                        icon: const Icon(
+                                          Icons.add,
+                                          color: IsmLiveColors.white,
+                                        ),
+                                        onPressed: () async {
+                                          await Get.bottomSheet(
+                                              const PicKImageSheet(),
+                                              barrierColor:
+                                                  Colors.black.withOpacity(0.7),
+                                              backgroundColor:
+                                                  IsmLiveColors.white,
+                                              isScrollControlled: true,
+                                              elevation: 0);
+                                        },
+                                      ),
+                                      Text(
+                                        'Add Cover',
+                                        style: IsmLiveStyles.white12,
+                                      ),
+                                    ],
+                                  )
+                                : Stack(
+                                    children: [
+                                      IsmLiveImage.network(
+                                        height: IsmLiveDimens.hundred,
+                                        width: IsmLiveDimens.eighty,
+                                        controller.streamImage!,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(IsmLiveDimens.ten)),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.close,
+                                            color: IsmLiveColors.white,
+                                          ),
+                                          onPressed: () {
+                                            controller.streamImage = null;
+                                            controller.update([update]);
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  onPressed: () async {
-                                    await Get.bottomSheet(PicKImageSheet(),
-                                        barrierColor:
-                                            Colors.black.withOpacity(0.7),
-                                        backgroundColor: IsmLiveColors.white,
-                                        isScrollControlled: true,
-                                        elevation: 0);
-                                  },
-                                ),
-                                Text(
-                                  'Add Cover',
-                                  style: IsmLiveStyles.white12,
-                                ),
-                              ],
-                            ),
                           ),
                           IsmLiveDimens.boxWidth10,
                           Expanded(

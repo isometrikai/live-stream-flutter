@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 
 class IsmLiveStreamRepository {
@@ -86,5 +88,20 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.secretHeader(),
         showLoader: showLoader,
+      );
+
+  Future<IsmLiveResponseModel> updatePresignedUrl({
+    required bool showLoading,
+    required String presignedUrl,
+    required Uint8List file,
+  }) =>
+      _apiWrapper.makeRequest(
+        presignedUrl,
+        baseUrl: '',
+        type: IsmLiveRequestType.put,
+        payload: file,
+        headers: {},
+        showLoader: showLoading,
+        shouldEncodePayload: false,
       );
 }

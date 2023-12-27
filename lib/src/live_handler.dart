@@ -21,6 +21,7 @@ class IsmLiveHandler {
     unawaited(availableCameras().then((value) {
       IsmLiveUtility.cameras = value;
     }));
+
     Get.put(IsmLiveApiWrapper(Client()));
     Get.lazyPut(IsmLivePreferencesManager.new);
     unawaited(Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init());

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/presigned_url.dart';
@@ -110,6 +111,24 @@ class IsmLiveStreamViewModel {
       return PresignedUrl.fromMap(data);
     } catch (e) {
       return null;
+    }
+  }
+
+  // / get Api for Presigned Url.....
+  Future<IsmLiveResponseModel> updatePresignedUrl({
+    required bool showLoading,
+    required String presignedUrl,
+    required Uint8List file,
+  }) async {
+    try {
+      return _repository.updatePresignedUrl(
+        showLoading: showLoading,
+        presignedUrl: presignedUrl,
+        file: file,
+      );
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return IsmLiveResponseModel.error();
     }
   }
 }

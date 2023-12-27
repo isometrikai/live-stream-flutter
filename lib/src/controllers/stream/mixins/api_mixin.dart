@@ -35,6 +35,8 @@ mixin StreamAPIMixin {
   Future<IsmLiveRTCModel?> createStream() =>
       _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
+            streamImage: _controller.streamImage ??
+                'http://res.cloudinary.com/dbmv1uykj/image/upload/v1700742161/n0i3pwzqp98i8csd4uyk.jpg',
             hdBroadcast: _controller.isHdBroadcast,
             enableRecording: _controller.isRecordingBroadcast,
             streamDescription: _controller.descriptionController.text),
@@ -52,7 +54,10 @@ mixin StreamAPIMixin {
     if (res == null) {
       return;
     }
-
-    _controller.streamImage = res.mediaUrl ?? '';
+    var urlResponse = await _controller._viewModel.updatePresignedUrl(
+        showLoading: false, presignedUrl: res.presignedUrl ?? '', file: bytes);
+    if (urlResponse.statusCode == 200) {
+      _controller.streamImage = res.mediaUrl ?? '';
+    }
   }
 }
