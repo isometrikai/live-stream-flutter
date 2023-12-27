@@ -24,7 +24,6 @@ class PicKImageSheet extends StatelessWidget {
                     Get.back();
                     if (index == 0) {
                       await FileManager.checkPermission();
-
                       controller.uploadImage(ImageSource.camera);
                     } else if (index == 1) {
                       await FileManager.checkPermission();

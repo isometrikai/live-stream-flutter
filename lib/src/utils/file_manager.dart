@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/attachment_model.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -56,15 +57,26 @@ class FileManager {
     }
   }
 
-  static Future<XFile?> pickImage(ImageSource imageSource) async {
+  static Future<XFile?> pickImage(
+    ImageSource imageSource, {
+    bool shouldCrop = true,
+  }) async {
     await _checkPermission();
 
     try {
+      XFile? result;
       if (imageSource == ImageSource.camera) {
-        final cameraMedia = await IsLiveRouteManagement.goToCamera(true, true);
-        return cameraMedia;
+        result = await IsLiveRouteManagement.goToCamera(true, true);
       } else {
-        return await _picker.pickImage(source: imageSource);
+        result = await _picker.pickImage(source: imageSource);
+      }
+      if (result == null) {
+        return null;
+      }
+      if (shouldCrop) {
+        return await cropImage(result.path);
+      } else {
+        return result;
       }
     } catch (e, st) {
       IsmLiveLog.error(e, st);
@@ -106,6 +118,32 @@ class FileManager {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
+    }
+  }
+
+  static Future<XFile?> cropImage(String sourcePath) async {
+    var croppedFile = await ImageCropper().cropImage(
+      sourcePath: sourcePath,
+      cropStyle: CropStyle.circle,
+      compressQuality: 100,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: IsmLiveColors.black,
+          toolbarWidgetColor: IsmLiveColors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(
+          title: 'Cropper',
+        )
+      ],
+    );
+
+    if (croppedFile == null) {
+      return null;
+    } else {
+      return XFile(croppedFile.path);
     }
   }
 

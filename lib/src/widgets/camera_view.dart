@@ -23,7 +23,7 @@ class CameraScreenView extends StatefulWidget {
 }
 
 class _CameraScreenViewState extends State<CameraScreenView> {
-  late CameraController cameraController;
+  late CameraController cameraControllerback;
   var isRecording = false;
   var flash = false;
   var isCameraFront = true;
@@ -37,15 +37,15 @@ class _CameraScreenViewState extends State<CameraScreenView> {
   }
 
   void startInit() async {
-    cameraController = CameraController(
+    cameraControllerback = CameraController(
       IsmLiveUtility.cameras[0],
       ResolutionPreset.ultraHigh,
       imageFormatGroup: ImageFormatGroup.yuv420,
       enableAudio: true,
     );
-    await cameraController.initialize();
+    await cameraControllerback.initialize();
     flash = false;
-    await cameraController.setFlashMode(FlashMode.off);
+    await cameraControllerback.setFlashMode(FlashMode.off);
     if (mounted) {
       setState(() {});
     }
@@ -53,7 +53,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
 
   @override
   void dispose() {
-    cameraController.dispose();
+    cameraControllerback.dispose();
     super.dispose();
   }
 
@@ -74,8 +74,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
           fit: StackFit.expand,
           children: [
             Center(
-              child: cameraController.value.isInitialized
-                  ? CameraPreview(cameraController)
+              child: cameraControllerback.value.isInitialized
+                  ? CameraPreview(cameraControllerback)
                   : const CircularProgressIndicator.adaptive(),
             ),
             Container(
@@ -112,7 +112,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                     if (!isCameraFront)
                       InkWell(
                         onTap: () async {
-                          await cameraController.setFlashMode(
+                          await cameraControllerback.setFlashMode(
                             flash ? FlashMode.off : FlashMode.torch,
                           );
                           flash = !flash;
@@ -207,7 +207,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           onTap: widget.isPhotoRequired
                               ? () async {
                                   final picture =
-                                      await cameraController.takePicture();
+                                      await cameraControllerback.takePicture();
                                   Get.back<XFile>(result: picture);
                                 }
                               : () async {
@@ -215,11 +215,11 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                     isRecording = false;
                                     timer?.cancel();
                                     setState(() {});
-                                    final recording = await cameraController
+                                    final recording = await cameraControllerback
                                         .stopVideoRecording();
                                     Get.back<XFile>(result: recording);
                                   } else {
-                                    await cameraController
+                                    await cameraControllerback
                                         .startVideoRecording();
                                     isRecording = true;
                                     startTimer();
@@ -228,7 +228,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                 },
                           onLongPressStart: (_) {
                             if (widget.isOnlyImage) return;
-                            cameraController.startVideoRecording().then(
+                            cameraControllerback.startVideoRecording().then(
                               (value) {
                                 isRecording = true;
                                 startTimer();
@@ -240,7 +240,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             if (widget.isOnlyImage) return;
                             timer?.cancel();
                             setState(() {});
-                            cameraController.stopVideoRecording().then(
+                            cameraControllerback.stopVideoRecording().then(
                               (value) {
                                 Get.back<XFile>(result: value);
                               },
@@ -274,11 +274,11 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           onTap: () async {
                             var cameraPos = isCameraFront ? 0 : 1;
                             isCameraFront = !isCameraFront;
-                            cameraController = CameraController(
+                            cameraControllerback = CameraController(
                               IsmLiveUtility.cameras[cameraPos],
                               ResolutionPreset.high,
                             );
-                            await cameraController.initialize();
+                            await cameraControllerback.initialize();
                             setState(() {});
                           },
                           child:

@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/views/stream/widgets/title_radio_button.dart';
+import 'package:appscrip_live_stream_component/src/views/stream/widgets/your_live_sheet.dart';
 import 'package:appscrip_live_stream_component/src/widgets/pick_image_bottom_sheet.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class GoLiveView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
       initState: (state) async {
-        Get.find<IsmLiveStreamController>().initializationOfGoLive();
+        await Get.find<IsmLiveStreamController>().initializationOfGoLive();
       },
       dispose: (state) {
         Get.find<IsmLiveStreamController>().cameraController?.dispose();
@@ -20,12 +21,15 @@ class GoLiveView extends StatelessWidget {
       id: update,
       builder: (controller) => Scaffold(
             body: Stack(
+              fit: StackFit.expand,
               children: [
                 FutureBuilder(
                   future: controller.initializecameraControllerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return CameraPreview(controller.cameraController!);
+                      return CameraPreview(
+                        controller.cameraController!,
+                      );
                     } else {
                       return const Center(child: CircularProgressIndicator());
                     }
@@ -158,7 +162,12 @@ class GoLiveView extends StatelessWidget {
                         onTap: () {
                           if (controller
                               .descriptionController.text.isNotEmpty) {
-                            controller.startStream();
+                            Get.bottomSheet(YourLiveSheet(
+                              onTap: () {
+                                controller.startStream();
+                                Get.back();
+                              },
+                            ), backgroundColor: IsmLiveColors.white);
                           }
                         },
                       )

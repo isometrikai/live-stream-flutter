@@ -6,8 +6,9 @@ mixin StreamAPIMixin {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
+  IsmLiveStreamViewModel get _viewModel => _controller._viewModel;
   Future<void> getUserDetails() async {
-    await _controller._viewModel.getUserDetails();
+    await _viewModel.getUserDetails();
     _controller.user =
         UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
     _controller.update([IsmLiveHeader.updateId]);
@@ -54,8 +55,11 @@ mixin StreamAPIMixin {
     if (res == null) {
       return;
     }
-    var urlResponse = await _controller._viewModel.updatePresignedUrl(
-        showLoading: false, presignedUrl: res.presignedUrl ?? '', file: bytes);
+    var urlResponse = await _viewModel.updatePresignedUrl(
+      showLoading: false,
+      presignedUrl: res.presignedUrl ?? '',
+      file: bytes,
+    );
     if (urlResponse.statusCode == 200) {
       _controller.streamImage = res.mediaUrl ?? '';
     }
