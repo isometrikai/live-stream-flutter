@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/presigned_url.dart';
 import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
@@ -44,7 +46,9 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
-      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -65,7 +69,8 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
+  Future<IsmLiveRTCModel?> createStream(
+      IsmLiveCreateStreamModel streamModel) async {
     try {
       var res = await _repository.createStream(streamModel);
       if (res.hasError) {
@@ -85,6 +90,45 @@ class IsmLiveStreamViewModel {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return false;
+    }
+  }
+
+  Future<PresignedUrl?> getPresignedUrl({
+    required bool showLoader,
+    required String userIdentifier,
+    required String mediaExtension,
+  }) async {
+    try {
+      var res = await _repository.getPresignedUrl(
+        showLoader: showLoader,
+        userIdentifier: userIdentifier,
+        mediaExtension: mediaExtension,
+      );
+      if (res.hasError) {
+        return null;
+      }
+      var data = res.decode();
+      return PresignedUrl.fromMap(data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // / get Api for Presigned Url.....
+  Future<IsmLiveResponseModel> updatePresignedUrl({
+    required bool showLoading,
+    required String presignedUrl,
+    required Uint8List file,
+  }) async {
+    try {
+      return _repository.updatePresignedUrl(
+        showLoading: showLoading,
+        presignedUrl: presignedUrl,
+        file: file,
+      );
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return IsmLiveResponseModel.error();
     }
   }
 }

@@ -1,5 +1,6 @@
 export 'animate_text.dart';
 export 'button.dart';
+export 'camera_view.dart';
 export 'controls.dart';
 export 'image.dart';
 export 'image_provider.dart';

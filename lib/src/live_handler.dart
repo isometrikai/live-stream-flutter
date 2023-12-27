@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' show Client;
@@ -17,6 +18,10 @@ class IsmLiveHandler {
   static VoidCallback? onLogout;
 
   static Future<void> initialize() async {
+    unawaited(availableCameras().then((value) {
+      IsmLiveUtility.cameras = value;
+    }));
+
     Get.put(IsmLiveApiWrapper(Client()));
     Get.lazyPut(IsmLivePreferencesManager.new);
     unawaited(Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init());
@@ -33,7 +38,8 @@ class IsmLiveHandler {
   }
 
   static Future<void> logout([VoidCallback? logoutCallback]) async {
-    var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+    var isUnsubscribed =
+        await Get.find<IsmLiveStreamController>().unsubscribeUser();
     if (!isUnsubscribed) {
       return;
     }

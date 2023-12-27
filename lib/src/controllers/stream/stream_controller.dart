@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/attachment_model.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
@@ -21,7 +28,15 @@ class IsmLiveStreamController extends GetxController
 
   bool isHdBroadcast = false;
 
+  String? streamImage;
+
   bool isRecordingBroadcast = false;
+
+  Uint8List? bytes;
+
+  CameraController? cameraController;
+
+  Future<void>? initializecameraControllerFuture;
 
   List<ParticipantTrack> participantTracks = [];
 
@@ -62,6 +77,14 @@ class IsmLiveStreamController extends GetxController
       _streamRefreshControllers[type] = RefreshController();
       _streams[type] = [];
     }
+  }
+
+  void initializationOfGoLive() async {
+    await Permission.camera.request();
+    cameraController =
+        CameraController(IsmLiveUtility.cameras[1], ResolutionPreset.medium);
+    initializecameraControllerFuture = cameraController?.initialize();
+    update([GoLiveView.update]);
   }
 
   @override
@@ -287,6 +310,40 @@ class IsmLiveStreamController extends GetxController
     var res = await stopStream(streamId);
     if (res) {
       await room.disconnect();
+    }
+  }
+
+  void uploadImage(ImageSource imageSource) async {
+    XFile? result;
+    if (imageSource == ImageSource.gallery) {
+      result = await FileManager.pickImage(ImageSource.gallery);
+    } else {
+      result = await FileManager.pickImage(
+        ImageSource.camera,
+      );
+    }
+    if (result != null) {
+      var croppedFile = await ImageCropper().cropImage(
+        sourcePath: result.path,
+        cropStyle: CropStyle.circle,
+        compressQuality: 100,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Cropper'.tr,
+            toolbarColor: Colors.black,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+          )
+        ],
+      );
+      bytes = File(croppedFile!.path).readAsBytesSync();
+      var extension = result.name.split('.').last;
+      await getPresignedUrl(extension, bytes!);
+      update([GoLiveView.update]);
     }
   }
 }

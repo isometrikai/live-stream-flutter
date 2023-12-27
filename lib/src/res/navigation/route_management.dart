@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 abstract class IsLiveRouteManagement {
@@ -58,5 +59,24 @@ abstract class IsLiveRouteManagement {
     Get.offAndToNamed<void>(
       IsmLiveRoutes.myMeetingsView,
     );
+  }
+
+  static Future<XFile?> goToCamera(
+    bool isPhotoRequired,
+    bool isOnlyImage,
+  ) async {
+    if (IsmLiveUtility.cameras.isNotEmpty) {
+      return await Get.to<XFile>(
+        CameraScreenView(
+          isPhotoRequired: isPhotoRequired,
+          isOnlyImage: isOnlyImage,
+        ),
+      );
+    } else {
+      IsmLiveUtility.showDialog(
+        'Camera Not Available',
+      );
+      return null;
+    }
   }
 }

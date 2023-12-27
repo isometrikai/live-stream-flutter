@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="0 0 72 72">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#bfffe1"/>
+      <stop offset="1" stop-color="#10da7b"/>
+    </linearGradient>
+  </defs>
+  <g id="Photos_Videos" data-name="Photos &amp; Videos" transform="translate(-0.018 0.446)">
+    <circle id="Ellipse_750" data-name="Ellipse 750" cx="36" cy="36" r="36" transform="translate(0.018 -0.446)" fill="url(#linear-gradient)"/>
+    <g id="Img" transform="translate(20.57 21.464)">
+      <path id="Path_367" data-name="Path 367" d="M26.609,9.35H3.393A3.4,3.4,0,0,0,0,12.745V34.081a3.4,3.4,0,0,0,3.393,3.391H26.609A3.393,3.393,0,0,0,30,34.081V12.745A3.4,3.4,0,0,0,26.609,9.35ZM19.4,14.4a3.277,3.277,0,1,1-3.277,3.277A3.278,3.278,0,0,1,19.4,14.4Zm6.145,19.937H4.925a.927.927,0,0,1-.9-1.463l5.624-11.14a.947.947,0,0,1,1.734-.161l5.656,7.391a1.386,1.386,0,0,0,2.148.136l1.384-1.4a1.317,1.317,0,0,1,2.091.177l3.583,5.118C26.762,33.734,26.45,34.336,25.545,34.336Z" transform="translate(0 -9.35)" fill="#fff"/>
+    </g>
+  </g>
+</svg>
