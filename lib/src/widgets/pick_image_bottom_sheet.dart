@@ -9,8 +9,8 @@ class PicKImageSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) {
-          controller.checkPermission();
-          var attachments = controller.attachmentBottomList(
+          FileManager.checkPermission();
+          var attachments = FileManager.attachmentBottomList(
               enableDoc: false, enableVideo: false);
           return Padding(
             padding: IsmLiveDimens.edgeInsets16,
@@ -23,116 +23,25 @@ class PicKImageSheet extends StatelessWidget {
                   onTap: () async {
                     Get.back();
                     if (index == 0) {
-                      await controller.checkPermission();
+                      await FileManager.checkPermission();
 
-                      // var file = await FileManager.pickImage();
-
-                      // if (file != null) {
                       controller.uploadImage(ImageSource.camera);
-                      // final res = await _homeViewModel.uploadDoc(
-                      //   image: file.path,
-                      //   folderName: 'nurse/media',
-                      //   fileName: '${userController.user.id!}_${file.name}',
-                      //   fileType: 'image',
-                      // );
-
-                      // final jsonRes = jsonDecode(res!) as Map<String, dynamic>;
-                      // handleSendPressed(
-                      //   jsonRes['url'].toString(),
-                      //   2,
-                      //   isGroupChat: isGroupChat,
-                      //   chatId: chatId,
-                      //   imageUrl: imageUrl,
-                      //   receiverId: receiverId,
-                      //   userType: userType,
-                      // );
-                      // }
                     } else if (index == 1) {
-                      await controller.checkPermission();
+                      await FileManager.checkPermission();
                       controller.uploadImage(ImageSource.gallery);
-
-                      // if (file != null) {
-                      // final res = await _homeViewModel.uploadDoc(
-                      //   image: file.path,
-                      //   folderName: 'nurse/media',
-                      //   fileName: '${userController.user.id!}_${file.name}',
-                      //   fileType: 'image',
-                      // );
-                      // final jsonRes = jsonDecode(res!) as Map<String, dynamic>;
-                      // handleSendPressed(
-                      //   jsonRes['url'].toString(),
-                      //   2,
-                      //   isGroupChat: isGroupChat,
-                      //   chatId: chatId,
-                      //   imageUrl: imageUrl,
-                      //   receiverId: receiverId,
-                      //   userType: userType,
-                      // );
-                      // }
                     } else if (index == 2) {
-                      await controller.checkPermission(true);
+                      await FileManager.checkPermission(true);
                       var file = await ImagePicker()
                           .pickVideo(source: ImageSource.gallery);
 
                       if (file == null) {
                         return;
                       }
-
-                      // final uint8list = await VideoThumbnail.thumbnailData(
-                      //   video: file.path,
-                      //   imageFormat: ImageFormat.JPEG,
-                      //   maxWidth: 128,
-                      //   quality: 25,
-                      // );
-                      // final imageEncoded = base64.encode(uint8list!);
-
-                      // final res = await _homeViewModel.uploadDoc(
-                      //   image: file.path,
-                      //   folderName: 'nurse/media',
-                      //   fileName: '${userController.user.id!}_${file.name}',
-                      //   fileType: 'image',
-                      // );
-
-                      // final jsonRes = jsonDecode(res!) as Map<String, dynamic>;
-                      // final size = await file.length();
-
-                      // handleSendPressed(
-                      //   '${jsonRes['url']}',
-                      //   3,
-                      //   fileName: file.name,
-                      //   fileSize: size,
-                      //   thumbnail: imageEncoded,
-                      //   isGroupChat: isGroupChat,
-                      //   chatId: chatId,
-                      //   imageUrl: imageUrl,
-                      //   receiverId: receiverId,
-                      //   userType: userType,
-                      // );
                     } else if (index == 3) {
-                      await controller.checkPermission();
+                      await FileManager.checkPermission();
                       var file = await FileManager.pickDocument(false);
 
-                      if (file != null) {
-                        // final res = await _homeViewModel.uploadDoc(
-                        //   image: file.path,
-                        //   folderName: 'nurse/media',
-                        //   fileName: '${userController.user.id!}_${file.name}',
-                        //   fileType: 'image',
-                        // );
-
-                        // final jsonRes = jsonDecode(res!) as Map<String, dynamic>;
-                        // handleSendPressed(
-                        //   '${jsonRes['url']},${file.name}',
-                        //   10,
-                        //   fileName: file.name,
-                        //   fileSize: await file.length(),
-                        //   isGroupChat: isGroupChat,
-                        //   chatId: chatId,
-                        //   imageUrl: imageUrl,
-                        //   receiverId: receiverId,
-                        //   userType: userType,
-                        // );
-                      }
+                      if (file != null) {}
                     }
                   },
                   child: Text(attachments[index].label.tr),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/attachment_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -107,4 +108,73 @@ class FileManager {
       return null;
     }
   }
+
+  // Future<bool> _hasPermission(Permission permission) async {
+  //   try {
+  //     if (await permission.isGranted) {
+  //       return true;
+  //     }
+  //     var status = await permission.request();
+  //     if ([
+  //       PermissionStatus.permanentlyDenied,
+  //       PermissionStatus.restricted,
+  //     ].contains(status)) {
+  //       var canOpen = await openAppSettings();
+  //       if (!canOpen) {
+  //         return false;
+  //       }
+  //     }
+  //     status = await permission.request();
+  //     if (status != PermissionStatus.granted) {
+  //       return false;
+  //     }
+  //     return true;
+  //   } catch (e, st) {
+  //     IsmLiveLog.error(e, st);
+  //     return false;
+  //   }
+  // }
+
+  static Future<void> checkPermission([bool isVideo = false]) async {
+    if (Platform.isIOS) {
+      await _hasPermission(Permission.storage);
+    } else {
+      // if (DeviceConfig.versionNumber <= 28) {
+      if (isVideo) {
+        await _hasPermission(Permission.videos);
+      } else {
+        await _hasPermission(Permission.photos);
+      }
+      // }
+    }
+  }
+
+  static List<AttachmentModel> attachmentBottomList({
+    bool enableDoc = false,
+    bool enableVideo = false,
+  }) =>
+      <AttachmentModel>[
+        AttachmentModel(
+          label: 'Camera',
+          iconPath: AssetConstants.camera,
+          onTap: () => FileManager.pickImage(ImageSource.camera),
+        ),
+        AttachmentModel(
+          label: 'Gallery',
+          iconPath: AssetConstants.photoVideo,
+          onTap: () => FileManager.pickImage(ImageSource.gallery),
+        ),
+        if (enableVideo)
+          const AttachmentModel(
+            label: 'Video',
+            iconPath: AssetConstants.videoIcon,
+            onTap: FileManager.pickVideo,
+          ),
+        if (enableDoc)
+          const AttachmentModel(
+            label: 'Doc',
+            iconPath: AssetConstants.document,
+            onTap: FileManager.pickDocument,
+          ),
+      ];
 }

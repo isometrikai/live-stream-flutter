@@ -48,7 +48,7 @@ mixin StreamAPIMixin {
   Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ?? '',
       mediaExtension: mediaExtension,
     );
     if (res == null) {
