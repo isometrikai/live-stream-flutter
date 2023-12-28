@@ -1,4 +1,4 @@
-import 'package:appscrip_live_stream_component/src/res/res.dart';
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/widgets.dart';
 
 class IsmLiveTheme extends StatelessWidget {
@@ -11,10 +11,13 @@ class IsmLiveTheme extends StatelessWidget {
   final IsmLiveThemeData data;
   final Widget child;
 
-  static final IsmLiveThemeData _kFallbackTheme = IsmLiveThemeData.fallback();
+  static IsmLiveThemeData? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<_InheritedLiveTheme>()?.theme.data;
 
-  static IsmLiveThemeData of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_InheritedLiveTheme>()?.theme.data ?? _kFallbackTheme;
+  static IsmLiveThemeData of(BuildContext context) {
+    final result = maybeOf(context);
+    assert(result != null, 'No IsmLiveTheme found in the context');
+    return result!;
+  }
 
   @override
   Widget build(BuildContext context) => _InheritedLiveTheme(

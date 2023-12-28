@@ -296,7 +296,7 @@ class MeetingController extends GetxController {
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsLiveRouteManagement.goToRoomPage(room, listener, meetingId, audioCallOnly);
+      await IsmLiveRouteManagement.goToRoomPage(room, listener, meetingId, audioCallOnly);
       isMeetingOn = false;
     } catch (e, st) {
       isMeetingOn = false;

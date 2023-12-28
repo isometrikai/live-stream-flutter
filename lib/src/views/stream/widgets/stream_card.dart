@@ -1,6 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class IsmLiveStreamCard extends StatelessWidget {
   const IsmLiveStreamCard(
@@ -47,9 +48,9 @@ class IsmLiveStreamCard extends StatelessWidget {
                     ),
                     child: Text(
                       'Continue',
-                      style: IsmLiveTheme.of(context).textTheme?.bodyLarge?.copyWith(
-                            color: Colors.white,
-                          ),
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 )
@@ -57,9 +58,9 @@ class IsmLiveStreamCard extends StatelessWidget {
                 const SizedBox.shrink(),
               Text(
                 stream.initiatorName ?? '',
-                style: IsmLiveTheme.of(context).textTheme?.bodyLarge?.copyWith(
-                      color: Colors.white,
-                    ),
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: Colors.white,
+                ),
               ),
             ],
           ),

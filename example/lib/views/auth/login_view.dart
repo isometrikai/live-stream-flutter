@@ -33,13 +33,10 @@ class LoginView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
-                        tag: const ValueKey('logo_isometrik'),
+                      const Hero(
+                        tag: ValueKey('logo_isometrik'),
                         child: Center(
-                          child: Image.asset(
-                            IsmLiveAssetConstants.logos.isometrik,
-                            package: 'appscrip_live_stream_component',
-                          ),
+                          child: IsmLiveImage.asset(AssetConstants.isometrik),
                         ),
                       ),
                       IsmLiveDimens.boxHeight32,
@@ -50,8 +47,7 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('email_field'),
-                        child: IsmLiveInputField.email(
-                            controller: controller.emailController),
+                        child: IsmLiveInputField.email(controller: controller.emailController),
                       ),
                       IsmLiveDimens.boxHeight16,
                       Hero(
@@ -62,19 +58,17 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('password_field'),
                         child: IsmLiveInputField.password(
-                            maxLines: 1,
-                            suffixIcon: IconButton(
-                              icon: Icon(!controller.showPassward
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined),
-                              onPressed: () {
-                                controller.showPassward =
-                                    !controller.showPassward;
-                              },
-                            ),
-                            obscureText: controller.showPassward,
-                            obscureCharacter: '*',
-                            controller: controller.passwordController),
+                          maxLines: 1,
+                          suffixIcon: IconButton(
+                            icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                            onPressed: () {
+                              controller.showPassward = !controller.showPassward;
+                            },
+                          ),
+                          obscureText: controller.showPassward,
+                          obscureCharacter: '*',
+                          controller: controller.passwordController,
+                        ),
                       ),
                       IsmLiveDimens.boxHeight32,
                       Hero(

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
 
-abstract class IsLiveRouteManagement {
+abstract class IsmLiveRouteManagement {
   // static void goToMyMeetingsView(IsmLiveStreamConfig configuration) {
   //   Get.toNamed<void>(IsLiveRoutes.myMeetingsView, arguments: configuration);
   // }
@@ -32,7 +32,7 @@ abstract class IsLiveRouteManagement {
     required String streamId,
     bool audioCallOnly = false,
   }) async {
-    await Get.toNamed(
+    await Get.offNamed(
       IsmLiveRoutes.streamView,
       arguments: {
         'room': room,

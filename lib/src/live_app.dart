@@ -2,6 +2,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 
+part 'live_data.dart';
+
 class IsmLiveApp extends StatelessWidget {
   IsmLiveApp({
     super.key,
@@ -9,7 +11,6 @@ class IsmLiveApp extends StatelessWidget {
     this.onCallStart,
     this.onCallEnd,
     this.enableLog = true,
-    this.theme,
     this.onLogout,
   }) {
     IsmLiveHandler.initialize();
@@ -18,30 +19,28 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) =>
-      IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
 
-  static Future<void> logout([VoidCallback? logoutCallback]) =>
-      IsmLiveHandler.logout(logoutCallback);
+  static Future<void> logout([VoidCallback? logoutCallback]) => IsmLiveHandler.logout(logoutCallback);
 
   static MapStreamSubscription addListener(
     MapFunction listener,
   ) =>
       IsmLiveHandler.addListener(listener);
 
+  IsmLiveThemeData get themeData => _kThemeData;
+
+  IsmLiveTranslationsData get translationsData => _kTranslationsData;
+
   final IsmLiveConfigData configuration;
   final VoidCallback? onCallStart;
   final VoidCallback? onCallEnd;
   final bool enableLog;
-  final IsmLiveThemeData? theme;
   final VoidCallback? onLogout;
 
   @override
-  Widget build(BuildContext context) => IsmLiveTheme(
-        data: theme ?? IsmLiveThemeData.fallback(),
-        child: IsmLiveConfig(
-          data: configuration,
-          child: const IsmLiveStreamListing(),
-        ),
+  Widget build(BuildContext context) => IsmLiveConfig(
+        data: configuration,
+        child: const IsmLiveStreamListing(),
       );
 }

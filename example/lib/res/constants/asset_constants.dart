@@ -5,4 +5,6 @@
 /// Will be ignored for test since all are static values and would not change.
 class AssetConstants {
   const AssetConstants._();
+
+  static const String isometrik = 'assets/logo/isometrik.png';
 }

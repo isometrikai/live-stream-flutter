@@ -1,4 +1,3 @@
-export 'asset_constants.dart';
 export 'config/config.dart';
 export 'enums.dart';
 export 'extensions.dart';

@@ -19,8 +19,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.fillColor,
     this.hintStyle,
     this.alignLabelWithHint,
+    this.minLines,
     this.maxLines,
-    this.filled,
     this.cursorColor,
     this.style,
   }) : _textInputType = textInputType ?? TextInputType.text;
@@ -40,8 +40,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.fillColor,
     this.hintStyle,
     this.alignLabelWithHint,
+    this.minLines,
     this.maxLines,
-    this.filled,
     this.cursorColor,
     this.style,
   })  : _textInputType = TextInputType.name,
@@ -63,8 +63,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.fillColor,
     this.hintStyle,
     this.alignLabelWithHint,
+    this.minLines,
     this.maxLines,
-    this.filled,
     this.cursorColor,
     this.style,
   }) : _textInputType = TextInputType.emailAddress;
@@ -85,8 +85,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.fillColor,
     this.hintStyle,
     this.alignLabelWithHint,
+    this.minLines,
     this.maxLines,
-    this.filled,
     this.cursorColor,
     this.style,
   }) : _textInputType = TextInputType.visiblePassword;
@@ -108,61 +108,65 @@ class IsmLiveInputField extends StatelessWidget {
   final TextStyle? hintStyle;
   final TextStyle? style;
   final bool? alignLabelWithHint;
-  final bool? filled;
+  final int? minLines;
   final int? maxLines;
 
   @override
-  Widget build(BuildContext context) => TextFormField(
-        maxLines: maxLines,
-        style: style,
-        onTap: onTap,
-        cursorColor: cursorColor,
-        readOnly: readOnly,
-        controller: controller,
-        decoration: InputDecoration(
-          filled: filled,
-          alignLabelWithHint: alignLabelWithHint,
-          fillColor: fillColor,
-          hintText: hintText,
-          hintStyle: hintStyle,
-          isDense: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-            borderSide: BorderSide(
-              color: borderColor ?? IsmLiveColors.primary,
-              width: 1,
+  Widget build(BuildContext context) => Material(
+        type: MaterialType.transparency,
+        child: TextFormField(
+          maxLines: maxLines ?? 1,
+          minLines: minLines ?? 1,
+          style: style,
+          onTap: onTap,
+          cursorColor: cursorColor,
+          readOnly: readOnly,
+          controller: controller,
+          decoration: InputDecoration(
+            filled: true,
+            alignLabelWithHint: alignLabelWithHint,
+            fillColor: fillColor ?? IsmLiveColors.white,
+            hintText: hintText,
+            hintStyle: hintStyle,
+            isDense: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderSide: BorderSide(
+                color: borderColor ?? IsmLiveColors.primary,
+                width: 1,
+              ),
             ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-            borderSide: BorderSide(
-              color: borderColor ?? IsmLiveColors.primary,
-              width: 1,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderSide: BorderSide(
+                color: borderColor ?? IsmLiveColors.primary,
+                width: 1,
+              ),
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-            borderSide: BorderSide(
-              color: borderColor ?? IsmLiveColors.primary,
-              width: 1,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderSide: BorderSide(
+                color: borderColor ?? IsmLiveColors.primary,
+                width: 1,
+              ),
             ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-            borderSide: BorderSide(
-              color: borderColor ?? IsmLiveColors.primary,
-              width: 1,
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderSide: BorderSide(
+                color: borderColor ?? IsmLiveColors.primary,
+                width: 1,
+              ),
             ),
+            counterText: '',
+            suffixIcon: suffixIcon,
+            prefixIcon: prefixIcon,
           ),
-          counterText: '',
-          suffixIcon: suffixIcon,
-          prefixIcon: prefixIcon,
+          validator: validator,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          keyboardType: _textInputType,
+          obscureText: obscureText,
+          obscuringCharacter: obscureCharacter,
+          onChanged: onchange,
         ),
-        validator: validator,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardType: _textInputType,
-        obscureText: obscureText,
-        obscuringCharacter: obscureCharacter,
-        onChanged: onchange,
       );
 }

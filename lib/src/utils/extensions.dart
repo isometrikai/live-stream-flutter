@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
 
 extension IsmLiveNullString on String? {
   bool get isNullOrEmpty => this == null || this!.trim().isEmpty;
@@ -53,4 +54,22 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
         return model.copyWith(recorded: true);
     }
   }
+}
+
+extension IsmLiveEditingExtension on TextEditingController {
+  bool get isEmpty => text.trim().isEmpty;
+
+  bool get isNotEmpty => text.trim().isNotEmpty;
+}
+
+extension IsmLiveContextExtension on BuildContext {
+  IsmLiveThemeData get liveTheme => IsmLiveTheme.of(this);
+
+  IsmLiveConfigData get liveConfig => IsmLiveConfig.of(this);
+
+  IsmLiveTranslationsData get liveTranslations => IsmLiveTranslations.of(this);
+}
+
+extension IsmLiveMaterialStateExtension on Set<MaterialState> {
+  bool get isDisabled => any((e) => [MaterialState.disabled].contains(e));
 }

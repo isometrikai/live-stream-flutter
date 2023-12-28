@@ -1,21 +1,19 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
   IsmLiveStreamViewModel get _viewModel => _controller._viewModel;
+
   Future<void> getUserDetails() async {
     await _viewModel.getUserDetails();
-    _controller.user =
-        UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
+    _controller.user = UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
     _controller.update([IsmLiveHeader.updateId]);
   }
 
-  Future<bool> _subscribeUser(bool isSubscribing) =>
-      _controller._viewModel.subscribeUser(
+  Future<bool> _subscribeUser(bool isSubscribing) => _controller._viewModel.subscribeUser(
         isSubscribing: isSubscribing,
       );
 
@@ -30,36 +28,49 @@ mixin StreamAPIMixin {
     });
   }
 
-  Future<IsmLiveRTCModel?> getRTCToken(String streamId) =>
-      _viewModel.getRTCToken(streamId);
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId) => _viewModel.getRTCToken(streamId);
 
-  Future<IsmLiveRTCModel?> createStream() => _viewModel.createStream(
-        IsmLiveCreateStreamModel(
-            streamImage: _controller.streamImage ??
-                'http://res.cloudinary.com/dbmv1uykj/image/upload/v1700742161/n0i3pwzqp98i8csd4uyk.jpg',
-            hdBroadcast: _controller.isHdBroadcast,
-            enableRecording: _controller.isRecordingBroadcast,
-            streamDescription: _controller.descriptionController.text),
-      );
+  Future<IsmLiveRTCModel?> createStream() async {
+    var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
+    var type = _controller.pickedImage!.name.split('.').last;
+    var image = await uploadImage(type, bytes);
+    if (image.isNullOrEmpty) {
+      return null;
+    }
+    return _viewModel.createStream(
+      IsmLiveCreateStreamModel(
+        streamImage: image!,
+        hdBroadcast: _controller.isHdBroadcast,
+        enableRecording: _controller.isRecordingBroadcast,
+        streamDescription: _controller.descriptionController.text,
+      ),
+    );
+  }
 
   Future<bool> stopStream(String streamId) => _viewModel.stopStream(streamId);
 
-  Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
+  Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
+    IsmLiveUtility.showLoader();
     var res = await _viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ?? '',
+      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
-      return;
+      IsmLiveUtility.closeLoader();
+
+      return null;
     }
     var urlResponse = await _viewModel.updatePresignedUrl(
       showLoading: false,
       presignedUrl: res.presignedUrl ?? '',
       file: bytes,
     );
-    if (urlResponse.statusCode == 200) {
-      _controller.streamImage = res.mediaUrl ?? '';
+    IsmLiveUtility.closeLoader();
+
+    if (urlResponse.statusCode != 200) {
+      return null;
     }
+    return res.mediaUrl ?? '';
   }
 }

@@ -3,10 +3,22 @@ import 'package:get/get.dart';
 
 part 'routes.dart';
 
-class IsLivePages {
+class IsmLivePages {
   static const transitionDuration = Duration(milliseconds: 300);
 
+  static const String initialRoute = IsmLiveStreamListing.route;
+
   static final pages = [
+    GetPage<IsmLiveStreamListing>(
+      name: IsmLiveStreamListing.route,
+      transitionDuration: transitionDuration,
+      page: IsmLiveStreamListing.new,
+      binding: IsmLiveStreamBinding(),
+      bindings: [
+        IsmLiveMqttBinding(),
+      ],
+      transition: Transition.rightToLeft,
+    ),
     GetPage<MyMeetingsView>(
       name: IsmLiveRoutes.myMeetingsView,
       transitionDuration: transitionDuration,
@@ -42,10 +54,10 @@ class IsLivePages {
       binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),
-    GetPage<GoLiveView>(
+    GetPage<IsmGoLiveView>(
       name: IsmLiveRoutes.goLive,
       transitionDuration: transitionDuration,
-      page: GoLiveView.new,
+      page: IsmGoLiveView.new,
       binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),

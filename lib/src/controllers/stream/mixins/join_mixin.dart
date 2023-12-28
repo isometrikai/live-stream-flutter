@@ -72,7 +72,7 @@ mixin StreamJoinMixin {
 
       IsmLiveUtility.closeLoader();
 
-      await IsLiveRouteManagement.goToStreamView(
+      await IsmLiveRouteManagement.goToStreamView(
         room: room,
         listener: listener,
         streamId: streamId,

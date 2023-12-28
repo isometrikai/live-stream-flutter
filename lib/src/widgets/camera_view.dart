@@ -74,9 +74,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
           fit: StackFit.expand,
           children: [
             Center(
-              child: cameraControllerback.value.isInitialized
-                  ? CameraPreview(cameraControllerback)
-                  : const CircularProgressIndicator.adaptive(),
+              child: cameraControllerback.value.isInitialized ? CameraPreview(cameraControllerback) : const CircularProgressIndicator.adaptive(),
             ),
             Container(
               height: Get.height,
@@ -106,7 +104,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                     InkWell(
                       onTap: Get.back,
                       child: SvgPicture.asset(
-                        AssetConstants.backRounded,
+                        IsmLiveAssetConstants.backRounded,
                       ),
                     ),
                     if (!isCameraFront)
@@ -170,18 +168,14 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             final allowedExtensions = <String>[];
                             if (widget.isOnlyImage) {
                               allowedExtensions.clear();
-                              allowedExtensions.addAll(
-                                  List.from(IsmLiveUtility.imageTypeList));
+                              allowedExtensions.addAll(List.from(IsmLiveUtility.imageTypeList));
                             } else {
                               allowedExtensions.clear();
                               allowedExtensions.addAll(
-                                List.from(IsmLiveUtility.imageTypeList)
-                                  ..addAll(
-                                      List.from(IsmLiveUtility.videoTypeList)),
+                                List.from(IsmLiveUtility.imageTypeList)..addAll(List.from(IsmLiveUtility.videoTypeList)),
                               );
                             }
-                            final pickedFile =
-                                await FilePicker.platform.pickFiles(
+                            final pickedFile = await FilePicker.platform.pickFiles(
                               type: FileType.custom,
                               allowMultiple: false,
                               allowCompression: true,
@@ -200,14 +194,13 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             );
                           },
                           child: SvgPicture.asset(
-                            AssetConstants.galerryRoundedSvg,
+                            IsmLiveAssetConstants.galerryRoundedSvg,
                           ),
                         ),
                         GestureDetector(
                           onTap: widget.isPhotoRequired
                               ? () async {
-                                  final picture =
-                                      await cameraControllerback.takePicture();
+                                  final picture = await cameraControllerback.takePicture();
                                   Get.back<XFile>(result: picture);
                                 }
                               : () async {
@@ -215,12 +208,10 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                     isRecording = false;
                                     timer?.cancel();
                                     setState(() {});
-                                    final recording = await cameraControllerback
-                                        .stopVideoRecording();
+                                    final recording = await cameraControllerback.stopVideoRecording();
                                     Get.back<XFile>(result: recording);
                                   } else {
-                                    await cameraControllerback
-                                        .startVideoRecording();
+                                    await cameraControllerback.startVideoRecording();
                                     isRecording = true;
                                     startTimer();
                                     setState(() {});
@@ -262,9 +253,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               height: IsmLiveDimens.sixty,
                               width: IsmLiveDimens.sixty,
                               decoration: BoxDecoration(
-                                color: isRecording
-                                    ? IsmLiveColors.black
-                                    : IsmLiveColors.white,
+                                color: isRecording ? IsmLiveColors.black : IsmLiveColors.white,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -281,8 +270,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             await cameraControllerback.initialize();
                             setState(() {});
                           },
-                          child:
-                              SvgPicture.asset(AssetConstants.switchCameraSvg),
+                          child: SvgPicture.asset(IsmLiveAssetConstants.switchCameraSvg),
                         ),
                       ],
                     ),
@@ -297,9 +285,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           ),
                         ),
                         child: Text(
-                          isRecording
-                              ? 'Tap To End Video'
-                              : 'Tap to Start Video',
+                          isRecording ? 'Tap To End Video' : 'Tap to Start Video',
                           style: IsmLiveStyles.white10.copyWith(fontSize: 12),
                         ),
                       ),

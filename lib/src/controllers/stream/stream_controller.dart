@@ -7,16 +7,15 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
+part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController
-    with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveAPIMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -27,15 +26,15 @@ class IsmLiveStreamController extends GetxController
 
   bool isHdBroadcast = false;
 
-  String? streamImage;
-
   bool isRecordingBroadcast = false;
-
-  bool isCameraInitializing = false;
 
   Uint8List? bytes;
 
   CameraController? cameraController;
+
+  Future? cameraFuture;
+
+  XFile? pickedImage;
 
   List<ParticipantTrack> participantTracks = [];
 
@@ -43,16 +42,14 @@ class IsmLiveStreamController extends GetxController
 
   late TabController tabController;
 
-  late TextEditingController descriptionController = TextEditingController();
+  var descriptionController = TextEditingController();
 
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController =>
-      _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
-  // set streams(List<IsmLiveStreamModel> data) => _streams[streamType] = data;
 
   double positionX = 20;
   double positionY = 20;
@@ -71,24 +68,6 @@ class IsmLiveStreamController extends GetxController
     generateVariables();
   }
 
-  void generateVariables() {
-    for (var type in IsmLiveStreamType.values) {
-      _streamRefreshControllers[type] = RefreshController();
-      _streams[type] = [];
-    }
-  }
-
-  Future<void> initializationOfGoLive() async {
-    await Permission.camera.request();
-    isCameraInitializing = true;
-    update([GoLiveView.update]);
-    cameraController =
-        CameraController(IsmLiveUtility.cameras[1], ResolutionPreset.medium);
-    await cameraController?.initialize();
-    isCameraInitializing = false;
-    update([GoLiveView.update]);
-  }
-
   @override
   void onReady() {
     super.onReady();
@@ -104,7 +83,15 @@ class IsmLiveStreamController extends GetxController
     });
   }
 
+  void generateVariables() {
+    for (var type in IsmLiveStreamType.values) {
+      _streamRefreshControllers[type] = RefreshController();
+      _streams[type] = [];
+    }
+  }
+
   Future<bool> subscribeUser() => _subscribeUser(true);
+
   Future<bool> unsubscribeUser() => _subscribeUser(false);
 
   Future<void> joinStream(
@@ -143,7 +130,7 @@ class IsmLiveStreamController extends GetxController
     bool value,
   ) {
     isHdBroadcast = value;
-    update([GoLiveView.update]);
+    update([IsmGoLiveView.updateId]);
   }
 
   void onChangeRecording(
@@ -151,7 +138,7 @@ class IsmLiveStreamController extends GetxController
   ) {
     isRecordingBroadcast = value;
 
-    update([GoLiveView.update]);
+    update([IsmGoLiveView.updateId]);
   }
 
   Future<void> setUpListeners(
@@ -176,8 +163,7 @@ class IsmLiveStreamController extends GetxController
         ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
         ..on<TrackE2EEStateEvent>(onE2EEStateEvent)
         ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog(
-              'Participant name updated: ${event.participant.identity}, name => ${event.name}');
+          IsmLiveLog('Participant name updated: ${event.participant.identity}, name => ${event.name}');
         })
         ..on<DataReceivedEvent>((event) {
           var decoded = 'Failed to decode';
@@ -252,8 +238,7 @@ class IsmLiveStreamController extends GetxController
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch -
-          b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -312,23 +297,6 @@ class IsmLiveStreamController extends GetxController
     var res = await stopStream(streamId);
     if (res) {
       await room.disconnect();
-    }
-  }
-
-  Future<void> uploadImage(
-    ImageSource imageSource,
-  ) async {
-    XFile? result;
-
-    result = await FileManager.pickImage(
-      imageSource,
-    );
-    await initializationOfGoLive();
-    if (result != null) {
-      bytes = File(result.path).readAsBytesSync();
-      var extension = result.name.split('.').last;
-      await getPresignedUrl(extension, bytes!);
-      update([GoLiveView.update]);
     }
   }
 }

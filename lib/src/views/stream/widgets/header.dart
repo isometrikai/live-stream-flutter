@@ -27,7 +27,6 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
               }
               IsmLiveUtility.openBottomSheet(
                 IsmLiveLogoutBottomSheet(user: controller.user!),
-                isDismissible: true,
               );
             },
             child: Row(
@@ -37,6 +36,7 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
                   controller.user?.profileUrl ?? '',
                   name: controller.user?.userName ?? 'U',
                   isProfileImage: true,
+                  dimensions: IsmLiveDimens.forty,
                 ),
                 IsmLiveDimens.boxWidth8,
                 Text(

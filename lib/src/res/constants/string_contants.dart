@@ -20,4 +20,9 @@ class IsmLiveStrings {
   static const String reStream = 'Restream';
   static const String hd = 'HD';
   static const String recorded = 'Recorded';
+
+  static const String youreLive = 'You\'re Live';
+
+  static const String moderationWarning =
+      'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day.\nWarning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
 }

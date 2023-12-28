@@ -45,6 +45,7 @@ enum IsmLiveButtonType {
 
 enum IsmLiveImageType {
   asset,
+  svg,
   file,
   network;
 }

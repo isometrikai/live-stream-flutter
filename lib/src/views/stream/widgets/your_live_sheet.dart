@@ -1,9 +1,15 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class YourLiveSheet extends StatelessWidget {
-  const YourLiveSheet({super.key, required this.onTap});
-  final Function() onTap;
+  const YourLiveSheet({
+    super.key,
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
@@ -24,7 +30,10 @@ class YourLiveSheet extends StatelessWidget {
             IsmLiveDimens.boxHeight16,
             IsmLiveButton(
               label: 'Ok',
-              onTap: onTap,
+              onTap: () {
+                Get.back();
+                onTap();
+              },
             ),
           ],
         ),
