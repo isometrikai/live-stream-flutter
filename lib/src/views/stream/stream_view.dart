@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/views/stream/views/counter_view.dart';
 import 'package:flutter/material.dart';
@@ -59,51 +57,64 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: true)
                     : const NoVideoWidget(
                         name: null,
                       ),
-                Positioned(
-                  bottom: IsmLiveDimens.twenty,
-                  child: room.localParticipant != null
-                      ? IsmLiveControlsWidget(
-                          room,
-                          room.localParticipant!,
-                          meetingId: meetingId,
-                          audioCallOnly: audioCallOnly,
-                        )
-                      : IsmLiveDimens.box0,
-                ),
-                Positioned(
-                  left: controller.positionX,
-                  top: controller.positionY,
-                  child: GestureDetector(
-                    onPanUpdate: controller.onPan,
-                    child: SizedBox(
-                      width: Get.width * 0.9,
-                      height: IsmLiveDimens.twoHundred,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: math.max(0, controller.participantTracks.length - 1),
-                        itemBuilder: (BuildContext context, int index) => Container(
-                          margin: IsmLiveDimens.edgeInsets4_8,
-                          width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
-                          height: IsmLiveDimens.twoHundred,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
-                            child: GestureDetector(
-                              onTap: () {
-                                controller.onClick(index);
-                              },
-                              child: ParticipantWidget.widgetFor(controller.participantTracks[index + 1], showStatsLayer: true),
-                            ),
+
+                room.localParticipant != null
+                    ? SafeArea(
+                        child: Padding(
+                          padding: IsmLiveDimens.edgeInsets16,
+                          child: Column(
+                            children: [
+                              const StreamHeader(
+                                  name: 'hhh', viewerCont: 10, imageUrl: ''),
+                              const Spacer(),
+                              IsmLiveControlsWidget(
+                                room,
+                                room.localParticipant!,
+                                meetingId: meetingId,
+                                audioCallOnly: audioCallOnly,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
+                      )
+                    : IsmLiveDimens.box0,
+
+                // Positioned(
+                //   left: controller.positionX,
+                //   top: controller.positionY,
+                //   child: GestureDetector(
+                //     onPanUpdate: controller.onPan,
+                //     child: SizedBox(
+                //       width: Get.width * 0.9,
+                //       height: IsmLiveDimens.twoHundred,
+                //       child: ListView.builder(
+                //         shrinkWrap: true,
+                //         scrollDirection: Axis.horizontal,
+                //         itemCount: math.max(0, controller.participantTracks.length - 1),
+                //         itemBuilder: (BuildContext context, int index) => Container(
+                //           margin: IsmLiveDimens.edgeInsets4_8,
+                //           width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
+                //           height: IsmLiveDimens.twoHundred,
+                //           child: ClipRRect(
+                //             borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
+                //             child: GestureDetector(
+                //               onTap: () {
+                //                 controller.onClick(index);
+                //               },
+                //               child: ParticipantWidget.widgetFor(controller.participantTracks[index + 1], showStatsLayer: true),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 const IsmLiveCounterView(),
               ],
             ),
