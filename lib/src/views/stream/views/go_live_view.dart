@@ -20,161 +20,173 @@ class GoLiveView extends StatelessWidget {
       },
       id: update,
       builder: (controller) => Scaffold(
-            body: Stack(
-              fit: StackFit.expand,
-              children: [
-                FutureBuilder(
-                  future: controller.initializecameraControllerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return CameraPreview(
-                        controller.cameraController!,
-                      );
-                    } else {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                Padding(
-                  padding: IsmLiveDimens.edgeInsets16,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            body: controller.cameraController == null
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Stack(
+                    fit: StackFit.expand,
                     children: [
-                      IsmLiveDimens.boxHeight32,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              color: IsmLiveColors.white,
+                      controller.isCameraInitializing
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : CameraPreview(
+                              controller.cameraController!,
                             ),
-                            onPressed: Get.back,
-                          ),
-                          Text(
-                            'Go Live',
-                            style: IsmLiveStyles.whiteBold16,
-                          ),
-                          const IconButton(
-                            icon: SizedBox(),
-                            onPressed: null,
-                          ),
-                        ],
-                      ),
-                      IsmLiveDimens.boxHeight20,
-                      Row(
-                        children: [
-                          Container(
-                            height: IsmLiveDimens.hundred,
-                            width: IsmLiveDimens.eighty,
-                            decoration: BoxDecoration(
-                              color: IsmLiveColors.white.withOpacity(0.3),
-                              border: Border.all(
-                                color: IsmLiveColors.white,
-                                width: 0.5,
-                              ),
-                              borderRadius:
-                                  BorderRadius.circular(IsmLiveDimens.ten),
-                            ),
-                            child: controller.streamImage.isNullOrEmpty
-                                ? Column(
-                                    children: [
-                                      IconButton(
-                                        padding: IsmLiveDimens.edgeInsets0,
-                                        icon: const Icon(
-                                          Icons.add,
-                                          color: IsmLiveColors.white,
-                                        ),
-                                        onPressed: () async {
-                                          await Get.bottomSheet(
-                                              const PicKImageSheet(),
-                                              barrierColor:
-                                                  Colors.black.withOpacity(0.7),
-                                              backgroundColor:
-                                                  IsmLiveColors.white,
-                                              isScrollControlled: true,
-                                              elevation: 0);
-                                        },
-                                      ),
-                                      Text(
-                                        'Add Cover',
-                                        style: IsmLiveStyles.white12,
-                                      ),
-                                    ],
-                                  )
-                                : Stack(
-                                    children: [
-                                      IsmLiveImage.network(
-                                        height: IsmLiveDimens.hundred,
-                                        width: IsmLiveDimens.eighty,
-                                        controller.streamImage!,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(IsmLiveDimens.ten)),
-                                      ),
-                                      Positioned(
-                                        right: 0,
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.close,
-                                            color: IsmLiveColors.white,
-                                          ),
-                                          onPressed: () {
-                                            controller.streamImage = null;
-                                            controller.update([update]);
-                                          },
-                                        ),
-                                      ),
-                                    ],
+                      Padding(
+                        padding: IsmLiveDimens.edgeInsets16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IsmLiveDimens.boxHeight32,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: IsmLiveColors.white,
                                   ),
-                          ),
-                          IsmLiveDimens.boxWidth10,
-                          Expanded(
-                            child: IsmLiveInputField(
-                              hintStyle: IsmLiveStyles.white12,
-                              maxLines: 3,
-                              alignLabelWithHint: true,
-                              filled: true,
-                              cursorColor: IsmLiveColors.white,
-                              style: IsmLiveStyles.white16,
-                              borderColor: IsmLiveColors.white,
-                              fillColor: IsmLiveColors.white.withOpacity(0.3),
-                              controller: controller.descriptionController,
-                              hintText: 'Enter description',
+                                  onPressed: Get.back,
+                                ),
+                                Text(
+                                  'Go Live',
+                                  style: IsmLiveStyles.whiteBold16,
+                                ),
+                                const IconButton(
+                                  icon: SizedBox(),
+                                  onPressed: null,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      IsmLiveDimens.boxHeight32,
-                      TitleSwitchButton(
-                        title: 'HD Broadcast',
-                        onChange: controller.onChangeHdBroadcast,
-                        value: controller.isHdBroadcast,
-                      ),
-                      IsmLiveDimens.boxHeight10,
-                      TitleSwitchButton(
-                        title: 'Record Broadcast',
-                        onChange: controller.onChangeRecording,
-                        value: controller.isRecordingBroadcast,
-                      ),
-                      const Spacer(),
-                      IsmLiveButton(
-                        label: 'Go Live',
-                        onTap: () {
-                          if (controller
-                              .descriptionController.text.isNotEmpty) {
-                            Get.bottomSheet(YourLiveSheet(
+                            IsmLiveDimens.boxHeight20,
+                            Row(
+                              children: [
+                                Container(
+                                  height: IsmLiveDimens.hundred,
+                                  width: IsmLiveDimens.eighty,
+                                  decoration: BoxDecoration(
+                                    color: IsmLiveColors.white.withOpacity(0.3),
+                                    border: Border.all(
+                                      color: IsmLiveColors.white,
+                                      width: 0.5,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                        IsmLiveDimens.ten),
+                                  ),
+                                  child: controller.streamImage.isNullOrEmpty
+                                      ? Column(
+                                          children: [
+                                            IconButton(
+                                              padding:
+                                                  IsmLiveDimens.edgeInsets0,
+                                              icon: const Icon(
+                                                Icons.add,
+                                                color: IsmLiveColors.white,
+                                              ),
+                                              onPressed: () async {
+                                                await Get.bottomSheet(
+                                                    PicKImageSheet(
+                                                  cameraDispose: () async {
+                                                    await controller
+                                                        .cameraController
+                                                        ?.dispose();
+                                                    controller
+                                                            .cameraController =
+                                                        null;
+                                                  },
+                                                ),
+                                                    barrierColor: Colors.black
+                                                        .withOpacity(0.7),
+                                                    backgroundColor:
+                                                        IsmLiveColors.white,
+                                                    isScrollControlled: true,
+                                                    elevation: 0);
+                                              },
+                                            ),
+                                            Text(
+                                              'Add Cover',
+                                              style: IsmLiveStyles.white12,
+                                            ),
+                                          ],
+                                        )
+                                      : Stack(
+                                          children: [
+                                            IsmLiveImage.network(
+                                              height: IsmLiveDimens.hundred,
+                                              width: IsmLiveDimens.eighty,
+                                              controller.streamImage!,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(
+                                                      IsmLiveDimens.ten)),
+                                            ),
+                                            Positioned(
+                                              right: 0,
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                  Icons.close,
+                                                  color: IsmLiveColors.white,
+                                                ),
+                                                onPressed: () {
+                                                  controller.streamImage = null;
+                                                  controller.update([update]);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                                IsmLiveDimens.boxWidth10,
+                                Expanded(
+                                  child: IsmLiveInputField(
+                                    hintStyle: IsmLiveStyles.white12,
+                                    maxLines: 3,
+                                    alignLabelWithHint: true,
+                                    filled: true,
+                                    cursorColor: IsmLiveColors.white,
+                                    style: IsmLiveStyles.white16,
+                                    borderColor: IsmLiveColors.white,
+                                    fillColor:
+                                        IsmLiveColors.white.withOpacity(0.3),
+                                    controller:
+                                        controller.descriptionController,
+                                    hintText: 'Enter description',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            IsmLiveDimens.boxHeight32,
+                            TitleSwitchButton(
+                              title: 'HD Broadcast',
+                              onChange: controller.onChangeHdBroadcast,
+                              value: controller.isHdBroadcast,
+                            ),
+                            IsmLiveDimens.boxHeight10,
+                            TitleSwitchButton(
+                              title: 'Record Broadcast',
+                              onChange: controller.onChangeRecording,
+                              value: controller.isRecordingBroadcast,
+                            ),
+                            const Spacer(),
+                            IsmLiveButton(
+                              label: 'Go Live',
                               onTap: () {
-                                controller.startStream();
-                                Get.back();
+                                if (controller
+                                    .descriptionController.text.isNotEmpty) {
+                                  Get.bottomSheet(YourLiveSheet(
+                                    onTap: () {
+                                      controller.startStream();
+                                      Get.back();
+                                    },
+                                  ), backgroundColor: IsmLiveColors.white);
+                                }
                               },
-                            ), backgroundColor: IsmLiveColors.white);
-                          }
-                        },
-                      )
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
           ));
 }

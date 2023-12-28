@@ -31,11 +31,11 @@ class IsmLiveStreamController extends GetxController
 
   bool isRecordingBroadcast = false;
 
+  bool isCameraInitializing = false;
+
   Uint8List? bytes;
 
   CameraController? cameraController;
-
-  Future<void>? initializecameraControllerFuture;
 
   List<ParticipantTrack> participantTracks = [];
 
@@ -80,9 +80,12 @@ class IsmLiveStreamController extends GetxController
 
   Future<void> initializationOfGoLive() async {
     await Permission.camera.request();
+    isCameraInitializing = true;
+    update([GoLiveView.update]);
     cameraController =
         CameraController(IsmLiveUtility.cameras[1], ResolutionPreset.medium);
-    initializecameraControllerFuture = cameraController?.initialize();
+    await cameraController?.initialize();
+    isCameraInitializing = false;
     update([GoLiveView.update]);
   }
 
@@ -312,11 +315,15 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void uploadImage(ImageSource imageSource) async {
+  Future<void> uploadImage(
+    ImageSource imageSource,
+  ) async {
     XFile? result;
 
-    result = await FileManager.pickImage(imageSource);
-
+    result = await FileManager.pickImage(
+      imageSource,
+    );
+    await initializationOfGoLive();
     if (result != null) {
       bytes = File(result.path).readAsBytesSync();
       var extension = result.name.split('.').last;
