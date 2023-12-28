@@ -4,11 +4,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/attachment_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,6 +18,7 @@ part 'mixins/join_mixin.dart';
 class IsmLiveStreamController extends GetxController
     with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin {
   IsmLiveStreamController(this._viewModel);
+  @override
   final IsmLiveStreamViewModel _viewModel;
 
   IsmLiveConfigData? configuration;
@@ -32,11 +31,11 @@ class IsmLiveStreamController extends GetxController
 
   bool isRecordingBroadcast = false;
 
+  bool isCameraInitializing = false;
+
   Uint8List? bytes;
 
   CameraController? cameraController;
-
-  Future<void>? initializecameraControllerFuture;
 
   List<ParticipantTrack> participantTracks = [];
 
@@ -79,11 +78,14 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void initializationOfGoLive() async {
+  Future<void> initializationOfGoLive() async {
     await Permission.camera.request();
+    isCameraInitializing = true;
+    update([GoLiveView.update]);
     cameraController =
         CameraController(IsmLiveUtility.cameras[1], ResolutionPreset.medium);
-    initializecameraControllerFuture = cameraController?.initialize();
+    await cameraController?.initialize();
+    isCameraInitializing = false;
     update([GoLiveView.update]);
   }
 
@@ -313,34 +315,17 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void uploadImage(ImageSource imageSource) async {
+  Future<void> uploadImage(
+    ImageSource imageSource,
+  ) async {
     XFile? result;
-    if (imageSource == ImageSource.gallery) {
-      result = await FileManager.pickImage(ImageSource.gallery);
-    } else {
-      result = await FileManager.pickImage(
-        ImageSource.camera,
-      );
-    }
+
+    result = await FileManager.pickImage(
+      imageSource,
+    );
+    await initializationOfGoLive();
     if (result != null) {
-      var croppedFile = await ImageCropper().cropImage(
-        sourcePath: result.path,
-        cropStyle: CropStyle.circle,
-        compressQuality: 100,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Cropper'.tr,
-            toolbarColor: Colors.black,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false,
-          ),
-          IOSUiSettings(
-            title: 'Cropper',
-          )
-        ],
-      );
-      bytes = File(croppedFile!.path).readAsBytesSync();
+      bytes = File(result.path).readAsBytesSync();
       var extension = result.name.split('.').last;
       await getPresignedUrl(extension, bytes!);
       update([GoLiveView.update]);

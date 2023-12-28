@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PicKImageSheet extends StatelessWidget {
-  const PicKImageSheet({super.key});
+  const PicKImageSheet({super.key, required this.cameraDispose});
 
+  final void Function() cameraDispose;
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) {
@@ -24,13 +25,17 @@ class PicKImageSheet extends StatelessWidget {
                     Get.back();
                     if (index == 0) {
                       await FileManager.checkPermission();
-
-                      controller.uploadImage(ImageSource.camera);
+                      cameraDispose.call();
+                      await controller.uploadImage(
+                        ImageSource.camera,
+                      );
                     } else if (index == 1) {
                       await FileManager.checkPermission();
-                      controller.uploadImage(ImageSource.gallery);
+                      cameraDispose.call();
+                      await controller.uploadImage(ImageSource.gallery);
                     } else if (index == 2) {
                       await FileManager.checkPermission(true);
+                      cameraDispose.call();
                       var file = await ImagePicker()
                           .pickVideo(source: ImageSource.gallery);
 
@@ -39,6 +44,7 @@ class PicKImageSheet extends StatelessWidget {
                       }
                     } else if (index == 3) {
                       await FileManager.checkPermission();
+                      cameraDispose.call();
                       var file = await FileManager.pickDocument(false);
 
                       if (file != null) {}

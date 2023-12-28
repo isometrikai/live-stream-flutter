@@ -6,8 +6,9 @@ mixin StreamAPIMixin {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
+  IsmLiveStreamViewModel get _viewModel => _controller._viewModel;
   Future<void> getUserDetails() async {
-    await _controller._viewModel.getUserDetails();
+    await _viewModel.getUserDetails();
     _controller.user =
         UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
     _controller.update([IsmLiveHeader.updateId]);
@@ -30,10 +31,9 @@ mixin StreamAPIMixin {
   }
 
   Future<IsmLiveRTCModel?> getRTCToken(String streamId) =>
-      _controller._viewModel.getRTCToken(streamId);
+      _viewModel.getRTCToken(streamId);
 
-  Future<IsmLiveRTCModel?> createStream() =>
-      _controller._viewModel.createStream(
+  Future<IsmLiveRTCModel?> createStream() => _viewModel.createStream(
         IsmLiveCreateStreamModel(
             streamImage: _controller.streamImage ??
                 'http://res.cloudinary.com/dbmv1uykj/image/upload/v1700742161/n0i3pwzqp98i8csd4uyk.jpg',
@@ -42,11 +42,10 @@ mixin StreamAPIMixin {
             streamDescription: _controller.descriptionController.text),
       );
 
-  Future<bool> stopStream(String streamId) =>
-      _controller._viewModel.stopStream(streamId);
+  Future<bool> stopStream(String streamId) => _viewModel.stopStream(streamId);
 
   Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
-    var res = await _controller._viewModel.getPresignedUrl(
+    var res = await _viewModel.getPresignedUrl(
       showLoader: false,
       userIdentifier: _controller.user?.userIdentifier ?? '',
       mediaExtension: mediaExtension,
@@ -54,8 +53,11 @@ mixin StreamAPIMixin {
     if (res == null) {
       return;
     }
-    var urlResponse = await _controller._viewModel.updatePresignedUrl(
-        showLoading: false, presignedUrl: res.presignedUrl ?? '', file: bytes);
+    var urlResponse = await _viewModel.updatePresignedUrl(
+      showLoading: false,
+      presignedUrl: res.presignedUrl ?? '',
+      file: bytes,
+    );
     if (urlResponse.statusCode == 200) {
       _controller.streamImage = res.mediaUrl ?? '';
     }
