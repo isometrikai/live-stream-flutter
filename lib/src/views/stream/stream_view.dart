@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/views/stream/views/counter_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -103,6 +104,7 @@ class IsmLiveStreamView extends StatelessWidget {
                     ),
                   ),
                 ),
+                const IsmLiveCounterView(),
               ],
             ),
           ),
