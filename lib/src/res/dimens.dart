@@ -28,6 +28,7 @@ class IsmLiveDimens {
 
   static final double fifteen = 15.sp;
   static final double sixteen = 16.sp;
+  static final double fourteen = 14.sp;
   static final double twenty = 20.sp;
   static final double twentyFour = 24.sp;
   static final double twentyFive = 25.sp;
@@ -36,6 +37,7 @@ class IsmLiveDimens {
   static final double thirtyTwo = 32.sp;
 
   static final double forty = 40.sp;
+  static final double fortyFive = 45.sp;
   static final double fifty = 50.sp;
   static final double fiftyFive = 55.sp;
   static final double sixty = 60.sp;
@@ -87,23 +89,32 @@ class IsmLiveDimens {
   static final EdgeInsets edgeInsets16 = EdgeInsets.all(sixteen);
 
   static final EdgeInsets edgeInsetsL2 = EdgeInsets.only(left: two);
+  static final EdgeInsets edgeInsets0_5_10_5 =
+      EdgeInsets.only(bottom: five, top: five, right: ten);
 
   static final EdgeInsets edgeInsetsL4 = EdgeInsets.only(left: four);
   static final EdgeInsets edgeInsetsL5 = EdgeInsets.only(left: five);
   static final EdgeInsets edgeInsetsR4 = EdgeInsets.only(right: four);
+  static final EdgeInsets edgeInsetsR10 = EdgeInsets.only(right: ten);
   static final EdgeInsets edgeInsetsB10 = EdgeInsets.only(bottom: ten);
   static final EdgeInsets edgeInsetsB20 = EdgeInsets.only(bottom: twenty);
 
   static final EdgeInsets edgeInsets2_0 = EdgeInsets.symmetric(horizontal: two);
-  static final EdgeInsets edgeInsets4_0 = EdgeInsets.symmetric(horizontal: four);
-  static final EdgeInsets edgeInsets4_2 = EdgeInsets.symmetric(horizontal: four, vertical: two);
-  static final EdgeInsets edgeInsets8_0 = EdgeInsets.symmetric(horizontal: eight);
+  static final EdgeInsets edgeInsets4_0 =
+      EdgeInsets.symmetric(horizontal: four);
+  static final EdgeInsets edgeInsets4_2 =
+      EdgeInsets.symmetric(horizontal: four, vertical: two);
+  static final EdgeInsets edgeInsets8_0 =
+      EdgeInsets.symmetric(horizontal: eight);
   static EdgeInsets edgeInsets10_0 = EdgeInsets.symmetric(horizontal: ten);
 
   static final EdgeInsets edgeInsets0_4 = EdgeInsets.symmetric(vertical: four);
   static final EdgeInsets edgeInsets0_8 = EdgeInsets.symmetric(vertical: eight);
 
-  static final EdgeInsets edgeInsets4_8 = EdgeInsets.symmetric(horizontal: four, vertical: eight);
-  static final EdgeInsets edgeInsets16_10 = EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
-  static final EdgeInsets edgeInsets8_4 = EdgeInsets.symmetric(horizontal: eight, vertical: four);
+  static final EdgeInsets edgeInsets4_8 =
+      EdgeInsets.symmetric(horizontal: four, vertical: eight);
+  static final EdgeInsets edgeInsets16_10 =
+      EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
+  static final EdgeInsets edgeInsets8_4 =
+      EdgeInsets.symmetric(horizontal: eight, vertical: four);
 }
