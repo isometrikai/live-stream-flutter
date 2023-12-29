@@ -45,6 +45,7 @@ enum IsmLiveButtonType {
 
 enum IsmLiveImageType {
   asset,
+  svg,
   file,
   network;
 }
@@ -90,11 +91,6 @@ enum IsmLiveMeetingType {
 enum IsmLiveCallType {
   one2one,
   liveStream;
-}
-
-enum IsmLiveEngineType {
-  agora,
-  livekit,
 }
 
 enum IsmLiveStreamType {

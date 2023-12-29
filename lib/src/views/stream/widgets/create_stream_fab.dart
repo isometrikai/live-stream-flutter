@@ -6,7 +6,7 @@ class IsmLiveCreateStreamFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const FloatingActionButton(
-        onPressed: IsLiveRouteManagement.goToGoLiveView,
+        onPressed: IsmLiveRouteManagement.goToGoLiveView,
         child: Icon(Icons.videocam_rounded),
       );
 }

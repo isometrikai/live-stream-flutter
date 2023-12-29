@@ -48,6 +48,6 @@ class AppPages {
       binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),
-    ...IsLivePages.pages,
+    ...IsmLivePages.pages,
   ];
 }

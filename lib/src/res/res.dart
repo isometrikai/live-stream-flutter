@@ -4,3 +4,4 @@ export 'dimens.dart';
 export 'navigation/navigation.dart';
 export 'styles.dart';
 export 'theme/theme.dart';
+export 'translations/translation.dart';

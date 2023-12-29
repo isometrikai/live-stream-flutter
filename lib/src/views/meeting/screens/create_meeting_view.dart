@@ -31,7 +31,7 @@ class CreateMeetingScreen extends StatelessWidget {
                     IsmLiveDimens.boxHeight8,
                     IsmLiveInputField(
                       controller: controller.selecteMemberController,
-                      onTap: IsLiveRouteManagement.goToSearchUserScreen,
+                      onTap: IsmLiveRouteManagement.goToSearchUserScreen,
                       readOnly: true,
                       hintText: 'Add A Member',
                     ),

@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   await _setup();
@@ -40,10 +42,14 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primaryColor: Colors.purple,
+            textTheme: GoogleFonts.getTextTheme('Roboto'),
             floatingActionButtonTheme: const FloatingActionButtonThemeData(
               backgroundColor: Colors.purple,
               foregroundColor: Colors.white,
             ),
+          ),
+          builder: (context, child) => IsmLiveSetup(
+            child: child!,
           ),
           translations: TranslationsFile(),
           getPages: AppPages.pages,

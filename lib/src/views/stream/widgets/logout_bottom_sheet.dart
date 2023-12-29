@@ -10,42 +10,35 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
   final UserDetails user;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: IsmLiveTheme.of(context).cardBackgroundColor,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(IsmLiveDimens.sixteen),
-          ),
-        ),
-        child: Padding(
-          padding: IsmLiveDimens.edgeInsets16,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IsmLiveImage.network(
-                user.profileUrl,
-                name: user.userName,
-                isProfileImage: true,
+  Widget build(BuildContext context) => Padding(
+        padding: IsmLiveDimens.edgeInsets16,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IsmLiveImage.network(
+              user.profileUrl,
+              name: user.userName,
+              isProfileImage: true,
+              dimensions: IsmLiveDimens.forty,
+            ),
+            IsmLiveDimens.boxWidth10,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(user.userName),
+                Text(user.userIdentifier),
+              ],
+            ),
+            const Spacer(flex: 2),
+            const Flexible(
+              flex: 3,
+              child: IsmLiveButton(
+                onTap: IsmLiveApp.logout,
+                label: 'LogOut',
               ),
-              IsmLiveDimens.boxWidth10,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(user.userName),
-                  Text(user.userIdentifier),
-                ],
-              ),
-              const Spacer(flex: 2),
-              const Flexible(
-                flex: 3,
-                child: IsmLiveButton(
-                  onTap: IsmLiveApp.logout,
-                  label: 'LogOut',
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
 }

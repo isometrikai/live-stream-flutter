@@ -40,13 +40,10 @@ class SignupView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Hero(
-                            tag: const ValueKey('logo_isometrik'),
+                          const Hero(
+                            tag: ValueKey('logo_isometrik'),
                             child: Center(
-                              child: Image.asset(
-                                IsmLiveAssetConstants.logos.isometrik,
-                                package: 'appscrip_live_stream_component',
-                              ),
+                              child: IsmLiveImage.asset(AssetConstants.isometrik),
                             ),
                           ),
                           Center(
@@ -68,10 +65,10 @@ class SignupView extends StatelessWidget {
                                 () => Stack(
                                   children: [
                                     controller.profileImage.trim().isEmpty
-                                        ? IsmLiveImage.asset(
+                                        ? const IsmLiveImage.asset(
                                             width: 100,
                                             height: 100,
-                                            IsmLiveAssetConstants.images.noImage,
+                                            IsmLiveAssetConstants.noImage,
                                             isProfileImage: true,
                                           )
                                         : IsmLiveImage.network(
@@ -141,37 +138,39 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('password_field'),
                             child: IsmLiveInputField.password(
-                                suffixIcon: IconButton(
-                                  icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                                  onPressed: () {
-                                    controller.showPassward = !controller.showPassward;
-                                    controller.update();
-                                  },
-                                ),
-                                obscureText: controller.showPassward,
-                                obscureCharacter: '*',
-                                controller: controller.passwordController),
+                              suffixIcon: IconButton(
+                                icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                onPressed: () {
+                                  controller.showPassward = !controller.showPassward;
+                                  controller.update();
+                                },
+                              ),
+                              obscureText: controller.showPassward,
+                              obscureCharacter: '*',
+                              controller: controller.passwordController,
+                            ),
                           ),
                           IsmLiveDimens.boxHeight16,
                           Text(TranslationKeys.confirmPassword.tr),
                           IsmLiveDimens.boxHeight8,
                           IsmLiveInputField.password(
-                              suffixIcon: IconButton(
-                                icon: Icon(!controller.showConfirmPasswared ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                                onPressed: () {
-                                  controller.showConfirmPasswared = !controller.showConfirmPasswared;
-                                  controller.update();
-                                },
-                              ),
-                              obscureText: controller.showConfirmPasswared,
-                              obscureCharacter: '*',
-                              validator: (value) {
-                                if (controller.passwordController.text == value) {
-                                  return null;
-                                }
-                                return 'Should be same with Password';
+                            suffixIcon: IconButton(
+                              icon: Icon(!controller.showConfirmPasswared ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                              onPressed: () {
+                                controller.showConfirmPasswared = !controller.showConfirmPasswared;
+                                controller.update();
                               },
-                              controller: controller.confirmPasswordController),
+                            ),
+                            obscureText: controller.showConfirmPasswared,
+                            obscureCharacter: '*',
+                            validator: (value) {
+                              if (controller.passwordController.text == value) {
+                                return null;
+                              }
+                              return 'Should be same with Password';
+                            },
+                            controller: controller.confirmPasswordController,
+                          ),
                           IsmLiveDimens.boxHeight32,
                           Hero(
                             tag: const ValueKey('login-signup'),

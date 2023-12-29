@@ -15,8 +15,7 @@ class IsmLiveUtility {
   static IsmLiveConfigData get _config {
     IsmLiveConfigData? config;
     if (Get.isRegistered<IsmLiveStreamController>()) {
-      config = Get.find<IsmLiveStreamController>().configuration ??
-          IsmLiveConfig.of(Get.context!);
+      config = Get.find<IsmLiveStreamController>().configuration ?? IsmLiveConfig.of(Get.context!);
     } else {
       config = IsmLiveConfig.of(Get.context!);
     }
@@ -57,20 +56,24 @@ class IsmLiveUtility {
 
   static Future<T?> openBottomSheet<T>(
     Widget child, {
-    bool isDismissible = false,
-    bool ignoreSafeArea = false,
-    bool enableDrag = false,
+    bool isDismissible = true,
+    bool? ignoreSafeArea,
+    bool enableDrag = true,
+    bool isScrollController = false,
     Color? backgroundColor,
-    ShapeBorder? shape,
   }) async =>
       await Get.bottomSheet<T>(
         child,
         isDismissible: isDismissible,
-        isScrollControlled: true,
+        isScrollControlled: isScrollController,
         ignoreSafeArea: ignoreSafeArea,
         enableDrag: enableDrag,
-        backgroundColor: backgroundColor,
-        shape: shape,
+        backgroundColor: backgroundColor ?? IsmLiveColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(IsmLiveDimens.sixteen),
+          ),
+        ),
       );
 
   static Future<TimeOfDay> pickTime({
@@ -272,7 +275,7 @@ class IsmLiveUtility {
     }
   }
 
-  static late List<CameraDescription> cameras;
+  static List<CameraDescription> cameras = [];
 
   /// Image Type List For Every Platform
   static List<String> imageTypeList = [

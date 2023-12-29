@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
@@ -10,51 +11,73 @@ class IsmLiveImage extends StatelessWidget {
     super.key,
     this.name = '',
     this.isProfileImage = false,
+    this.dimensions,
     this.height,
     this.width,
     this.radius,
     this.borderRadius,
     this.fromPackage = true,
-  }) : _imageType = IsmLiveImageType.asset;
+  })  : _imageType = IsmLiveImageType.asset,
+        color = null;
+
+  const IsmLiveImage.svg(
+    this.path, {
+    super.key,
+    this.name = '',
+    this.isProfileImage = false,
+    this.dimensions,
+    this.height,
+    this.width,
+    this.radius,
+    this.color,
+    this.borderRadius,
+    this.fromPackage = true,
+  }) : _imageType = IsmLiveImageType.svg;
 
   const IsmLiveImage.network(
     this.path, {
     super.key,
     this.name = '',
     this.isProfileImage = false,
+    this.dimensions,
     this.height,
     this.width,
     this.radius,
     this.borderRadius,
     this.fromPackage = true,
-  }) : _imageType = IsmLiveImageType.network;
+  })  : _imageType = IsmLiveImageType.network,
+        color = null;
 
   const IsmLiveImage.file(
     this.path, {
     super.key,
     this.name = '',
     this.isProfileImage = true,
+    this.dimensions,
     this.height,
     this.width,
     this.radius,
     this.borderRadius,
     this.fromPackage = true,
-  }) : _imageType = IsmLiveImageType.file;
+  })  : _imageType = IsmLiveImageType.file,
+        color = null;
 
   final String path;
   final String name;
   final bool isProfileImage;
+  final double? dimensions;
   final double? height;
   final double? width;
   final double? radius;
+  final Color? color;
   final BorderRadius? borderRadius;
   final IsmLiveImageType _imageType;
   final bool fromPackage;
 
   @override
   Widget build(BuildContext context) => Container(
-        height: height ?? IsmLiveDimens.forty,
-        width: width ?? IsmLiveDimens.forty,
+        height: height ?? dimensions,
+        width: width ?? dimensions,
         decoration: BoxDecoration(
           borderRadius: isProfileImage
               ? null
@@ -64,6 +87,7 @@ class IsmLiveImage extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: switch (_imageType) {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
+          IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
           IsmLiveImageType.network =>
             _Network(path, isProfileImage: isProfileImage, name: name),
@@ -80,7 +104,7 @@ class _Asset extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Image.asset(
         path,
-        package: fromPackage ? null : 'appscrip_live_stream_component',
+        package: fromPackage ? IsmLiveConstants.packageName : null,
       );
 }
 
@@ -153,6 +177,32 @@ class _Network extends StatelessWidget {
           IsmLiveLog.error('ImageError - $url\n$error');
           return _ErrorImage(isProfileImage: isProfileImage, name: name);
         },
+      );
+}
+
+class _Svg extends StatelessWidget {
+  const _Svg(
+    this.path, {
+    Key? key,
+    this.color,
+    required this.fromPackage,
+  }) : super(key: key);
+
+  final String path;
+  final Color? color;
+
+  final bool fromPackage;
+
+  @override
+  Widget build(BuildContext context) => SvgPicture.asset(
+        path,
+        colorFilter: color != null
+            ? ColorFilter.mode(
+                color!,
+                BlendMode.srcIn,
+              )
+            : null,
+        package: fromPackage ? IsmLiveConstants.packageName : null,
       );
 }
 

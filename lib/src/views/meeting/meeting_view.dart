@@ -29,7 +29,7 @@ class MyMeetingsView extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: IsLiveRouteManagement.goToCreateMeetingScreen,
+              onPressed: IsmLiveRouteManagement.goToCreateMeetingScreen,
               icon: Icon(
                 Icons.add,
                 color: IsmLiveTheme.of(context).primaryColor,

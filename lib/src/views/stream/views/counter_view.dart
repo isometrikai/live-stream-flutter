@@ -19,8 +19,8 @@ class IsmLiveCounterView extends StatefulWidget {
 }
 
 class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTickerProviderStateMixin {
-  late AnimationController scaleController;
-  late Animation<double> scaleAnimation;
+  late AnimationController controller;
+  late Animation<double> animation;
 
   final RxInt _counter = 0.obs;
   int get counter => _counter.value;
@@ -36,15 +36,15 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
   void initState() {
     super.initState();
     counter = widget.duration;
-    scaleController = AnimationController(
+    controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
     );
-    scaleAnimation = Tween<double>(
+    animation = Tween<double>(
       begin: 0.5,
       end: 1.5,
     ).animate(CurvedAnimation(
-      parent: scaleController,
+      parent: controller,
       curve: Curves.easeInOutBack,
     ));
     start();
@@ -52,9 +52,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
 
   void start() async {
     _counter.stream.listen((value) {
-      IsmLiveLog('OnListen $value');
-      scaleController.reset();
-      scaleController.forward();
+      controller.reset();
+      controller.forward();
     });
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (counter == 0) {
@@ -66,13 +65,13 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
       counter--;
     });
     IsmLiveUtility.updateLater(() {
-      scaleController.forward();
+      controller.forward();
     });
   }
 
   @override
   void dispose() {
-    scaleController.dispose();
+    controller.dispose();
     timer?.cancel();
     super.dispose();
   }
@@ -88,11 +87,11 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
               color: Colors.black38,
               child: Center(
                 child: AnimatedBuilder(
-                  animation: scaleController,
+                  animation: controller,
                   builder: (context, child) => ScaleTransition(
-                    scale: scaleAnimation,
+                    scale: animation,
                     child: Text(
-                      counter == 0 ? 'You\'re Live!' : counter.toString(),
+                      counter == 0 ? IsmLiveTranslations.of(context).streamTranslations?.youreLive ?? IsmLiveStrings.youreLive : counter.toString(),
                       style: IsmLiveStyles.whiteBold25,
                     ),
                   ),

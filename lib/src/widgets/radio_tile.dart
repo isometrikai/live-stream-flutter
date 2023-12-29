@@ -1,8 +1,8 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 
-class TitleSwitchButton extends StatelessWidget {
-  const TitleSwitchButton({
+class IsmLiveRadioListTile extends StatelessWidget {
+  const IsmLiveRadioListTile({
     super.key,
     required this.title,
     required this.onChange,
@@ -20,7 +20,7 @@ class TitleSwitchButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Switch(value: value, onChanged: null),
+            Switch(value: value, onChanged: onChange),
             IsmLiveDimens.boxWidth2,
             Text(
               title,

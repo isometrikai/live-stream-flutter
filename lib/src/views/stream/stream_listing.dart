@@ -11,6 +11,8 @@ class IsmLiveStreamListing extends StatefulWidget {
 
   static const String updateId = 'ismlive-stream-view';
 
+  static const String route = IsmLiveRoutes.streamListing;
+
   @override
   State<IsmLiveStreamListing> createState() => _IsmLiveStreamListingState();
 }
@@ -27,8 +29,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
     }
     IsmLiveUtility.updateLater(() {
       Get.find<IsmLiveMqttController>().setup(context);
-      Get.find<IsmLiveStreamController>().configuration =
-          IsmLiveConfig.of(context);
+      Get.find<IsmLiveStreamController>().configuration = IsmLiveConfig.of(context);
     });
   }
 
@@ -94,8 +95,7 @@ class _StreamListing extends StatelessWidget {
                   crossAxisSpacing: IsmLiveDimens.sixteen,
                   children: controller.streams.map(
                     (e) {
-                      var isCreatedByMe =
-                          e.createdBy == controller.user?.userId;
+                      var isCreatedByMe = e.createdBy == controller.user?.userId;
                       return IsmLiveTapHandler(
                         onTap: () {
                           controller.joinStream(e);
