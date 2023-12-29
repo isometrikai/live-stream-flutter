@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 class IsmLiveUsersAvatar extends StatelessWidget {
   const IsmLiveUsersAvatar({
-    Key? key,
+    super.key,
     required this.viewerList,
-  }) : super(key: key);
+  });
 
   final List<IsmLiveStreamViewerDetailsModel> viewerList;
 

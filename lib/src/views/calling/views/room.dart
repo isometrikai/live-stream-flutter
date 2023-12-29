@@ -7,8 +7,8 @@ import 'package:livekit_client/livekit_client.dart';
 
 class RoomPage extends StatelessWidget {
   RoomPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final Room room = Get.arguments['room'];
   final EventsListener<RoomEvent> listener = Get.arguments['listener'];
   final String meetingId = Get.arguments['meetingId'];

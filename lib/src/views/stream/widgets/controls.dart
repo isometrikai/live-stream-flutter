@@ -8,10 +8,10 @@ class IsmLiveControlsWidget extends StatelessWidget {
   const IsmLiveControlsWidget(
     this.room,
     this.participant, {
-    Key? key,
+    super.key,
     required this.meetingId,
     required this.audioCallOnly,
-  }) : super(key: key);
+  });
 
   final Room room;
   final LocalParticipant participant;

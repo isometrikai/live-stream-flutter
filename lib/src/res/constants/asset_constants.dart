@@ -3,7 +3,6 @@
 /// assets path which are used in the application.
 ///
 /// Will be ignored for test since all are static values and would not change.
-
 class IsmLiveAssetConstants {
   const IsmLiveAssetConstants._();
 

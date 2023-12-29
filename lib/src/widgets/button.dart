@@ -4,32 +4,28 @@ import 'package:get/get.dart';
 
 class IsmLiveButton extends StatelessWidget {
   const IsmLiveButton({
-    Key? key,
+    super.key,
     this.onTap,
     required this.label,
-  })  : _type = IsmLiveButtonType.primary,
-        super(key: key);
+  }) : _type = IsmLiveButtonType.primary;
 
   const IsmLiveButton.secondary({
-    Key? key,
+    super.key,
     this.onTap,
     required this.label,
-  })  : _type = IsmLiveButtonType.secondary,
-        super(key: key);
+  }) : _type = IsmLiveButtonType.secondary;
 
   const IsmLiveButton.outlined({
-    Key? key,
+    super.key,
     this.onTap,
     required this.label,
-  })  : _type = IsmLiveButtonType.outlined,
-        super(key: key);
+  }) : _type = IsmLiveButtonType.outlined;
 
   const IsmLiveButton.text({
-    Key? key,
+    super.key,
     this.onTap,
     required this.label,
-  })  : _type = IsmLiveButtonType.text,
-        super(key: key);
+  }) : _type = IsmLiveButtonType.text;
 
   final VoidCallback? onTap;
   final String label;

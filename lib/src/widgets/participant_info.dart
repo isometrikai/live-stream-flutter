@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class ParticipantTrack {
-  ParticipantTrack(
-      {required this.participant,
-      required this.videoTrack,
-      required this.isScreenShare});
+  ParticipantTrack({required this.participant, required this.videoTrack, required this.isScreenShare});
   VideoTrack? videoTrack;
   Participant participant;
   final bool isScreenShare;
@@ -15,9 +12,9 @@ class ParticipantTrack {
 class ParticipantInfoWidget extends StatelessWidget {
   const ParticipantInfoWidget({
     this.title,
-    Key? key,
+    super.key,
     required this.isMute,
-  }) : super(key: key);
+  });
   //
   final String? title;
   final bool isMute;

@@ -109,14 +109,76 @@ enum IsmLiveStreamType {
 }
 
 enum IsmLiveActions {
-  streamStart('streamStartPresence');
+  copublishRequestAccepted('copublishRequestAccepted'),
+  copublishRequestAdded('copublishRequestAdded'),
+  copublishRequestDenied('copublishRequestDenied'),
+  copublishRequestRemoved('copublishRequestRemoved'),
+  memberAdded('memberAdded'),
+  memberLeft('memberLeft'),
+  memberRemoved('memberRemoved'),
+  messageRemoved('messageRemoved'),
+  messageReplyRemoved('messageReplyRemoved'),
+  messageReplySent('messageReplySent'),
+  messageSent('messageSent'),
+  moderatorAdded('moderatorAdded'),
+  moderatorLeft('moderatorLeft'),
+  moderatorRemoved('moderatorRemoved'),
+  profileSwitched('profileSwitched'),
+  publisherTimeout('publisherTimeout'),
+  publishStarted('publishStarted'),
+  publishStopped('publishStopped'),
+  streamStarted('streamStarted'),
+  streamStopped('streamStopped'),
+  streamStartPresence('streamStartPresence'),
+  viewerJoined('viewerJoined'),
+  viewerLeft('viewerLeft'),
+  viewerRemoved('viewerRemoved'),
+  viewerTimeout('viewerTimeout');
 
   factory IsmLiveActions.fromString(String action) =>
       <String, IsmLiveActions>{
-        IsmLiveActions.streamStart.value: IsmLiveActions.streamStart,
+        IsmLiveActions.copublishRequestAccepted.value: IsmLiveActions.copublishRequestAccepted,
+        IsmLiveActions.copublishRequestAdded.value: IsmLiveActions.copublishRequestAdded,
+        IsmLiveActions.copublishRequestDenied.value: IsmLiveActions.copublishRequestDenied,
+        IsmLiveActions.copublishRequestRemoved.value: IsmLiveActions.copublishRequestRemoved,
+        IsmLiveActions.memberAdded.value: IsmLiveActions.memberAdded,
+        IsmLiveActions.memberLeft.value: IsmLiveActions.memberLeft,
+        IsmLiveActions.memberRemoved.value: IsmLiveActions.memberRemoved,
+        IsmLiveActions.messageRemoved.value: IsmLiveActions.messageRemoved,
+        IsmLiveActions.messageReplyRemoved.value: IsmLiveActions.messageReplyRemoved,
+        IsmLiveActions.messageReplySent.value: IsmLiveActions.messageReplySent,
+        IsmLiveActions.messageSent.value: IsmLiveActions.messageSent,
+        IsmLiveActions.moderatorAdded.value: IsmLiveActions.moderatorAdded,
+        IsmLiveActions.moderatorLeft.value: IsmLiveActions.moderatorLeft,
+        IsmLiveActions.moderatorRemoved.value: IsmLiveActions.moderatorRemoved,
+        IsmLiveActions.profileSwitched.value: IsmLiveActions.profileSwitched,
+        IsmLiveActions.publisherTimeout.value: IsmLiveActions.publisherTimeout,
+        IsmLiveActions.publishStarted.value: IsmLiveActions.publishStarted,
+        IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
+        IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
+        IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
+        IsmLiveActions.streamStartPresence.value: IsmLiveActions.streamStartPresence,
+        IsmLiveActions.viewerJoined.value: IsmLiveActions.viewerJoined,
+        IsmLiveActions.viewerLeft.value: IsmLiveActions.viewerLeft,
+        IsmLiveActions.viewerRemoved.value: IsmLiveActions.viewerRemoved,
+        IsmLiveActions.viewerTimeout.value: IsmLiveActions.viewerTimeout,
       }[action] ??
-      IsmLiveActions.streamStart;
+      IsmLiveActions.streamStartPresence;
 
   const IsmLiveActions(this.value);
   final String value;
 }
+
+/*
+
+ static func dataType(_ type: String) -> MQTTData {
+        switch type {
+        case "viewerJoined": return .mqttViewerJoined
+        case "viewerLeft": return .mqttViewerRemoved
+        case "viewerTimeout": return .mqttViewerTimeout
+        case "viewerRemoved": return .mqttviewerRemovedByInitiator
+        default: return .none
+        }
+    }
+ 
+ */

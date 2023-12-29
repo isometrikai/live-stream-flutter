@@ -79,9 +79,7 @@ class IsmLiveImage extends StatelessWidget {
         height: height ?? dimensions,
         width: width ?? dimensions,
         decoration: BoxDecoration(
-          borderRadius: isProfileImage
-              ? null
-              : borderRadius ?? BorderRadius.circular(radius ?? 0),
+          borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         clipBehavior: Clip.antiAlias,
@@ -89,8 +87,7 @@ class IsmLiveImage extends StatelessWidget {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
           IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
-          IsmLiveImageType.network =>
-            _Network(path, isProfileImage: isProfileImage, name: name),
+          IsmLiveImageType.network => _Network(path, isProfileImage: isProfileImage, name: name),
         },
       );
 }
@@ -183,10 +180,9 @@ class _Network extends StatelessWidget {
 class _Svg extends StatelessWidget {
   const _Svg(
     this.path, {
-    Key? key,
     this.color,
     required this.fromPackage,
-  }) : super(key: key);
+  });
 
   final String path;
   final Color? color;
