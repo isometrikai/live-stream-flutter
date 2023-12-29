@@ -190,12 +190,39 @@ class IsmLiveMqttController extends GetxController {
         actionStreamController.add(payload);
         var action = IsmLiveActions.fromString(payload['action']);
         switch (action) {
-          case IsmLiveActions.streamStart:
+          case IsmLiveActions.copublishRequestAccepted:
+          case IsmLiveActions.copublishRequestAdded:
+          case IsmLiveActions.copublishRequestDenied:
+          case IsmLiveActions.copublishRequestRemoved:
+          case IsmLiveActions.memberAdded:
+          case IsmLiveActions.memberLeft:
+          case IsmLiveActions.memberRemoved:
+          case IsmLiveActions.messageRemoved:
+          case IsmLiveActions.messageReplyRemoved:
+          case IsmLiveActions.messageReplySent:
+          case IsmLiveActions.messageSent:
+          case IsmLiveActions.moderatorAdded:
+          case IsmLiveActions.moderatorLeft:
+          case IsmLiveActions.moderatorRemoved:
+          case IsmLiveActions.profileSwitched:
+          case IsmLiveActions.publisherTimeout:
+          case IsmLiveActions.publishStarted:
+          case IsmLiveActions.publishStopped:
+            break;
+          case IsmLiveActions.streamStartPresence:
             if (!Get.isRegistered<IsmLiveStreamController>()) {
               IsmLiveStreamBinding().dependencies();
             }
             var streamController = Get.find<IsmLiveStreamController>();
             unawaited(streamController.getStreams());
+            break;
+          case IsmLiveActions.streamStarted:
+          case IsmLiveActions.streamStopped:
+          case IsmLiveActions.viewerJoined:
+          case IsmLiveActions.viewerLeft:
+          case IsmLiveActions.viewerRemoved:
+          case IsmLiveActions.viewerTimeout:
+            break;
         }
       } else {}
     });

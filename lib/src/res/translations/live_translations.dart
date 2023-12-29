@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class IsmLiveTranslations extends StatelessWidget {
   const IsmLiveTranslations({
-    Key? key,
+    super.key,
     required this.data,
     required this.child,
-  }) : super(key: key);
+  });
 
   static IsmLiveTranslationsData? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_InheritedLiveranslations>()?.translations.data;

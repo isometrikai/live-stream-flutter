@@ -2,7 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 
 class NoVideoWidget extends StatelessWidget {
-  const NoVideoWidget({Key? key, this.name}) : super(key: key);
+  const NoVideoWidget({super.key, this.name});
   final String? name;
   @override
   Widget build(BuildContext context) => Center(

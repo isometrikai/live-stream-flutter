@@ -82,19 +82,14 @@ class MeetingController extends GetxController {
         case Event.actionCallToggleHold:
           break;
         case Event.actionCallToggleMute:
-          // TODO: only iOS
           break;
         case Event.actionCallToggleDmtf:
-          // TODO: only iOS
           break;
         case Event.actionCallToggleGroup:
-          // TODO: only iOS
           break;
         case Event.actionCallToggleAudioSession:
-          // TODO: only iOS
           break;
         case Event.actionDidUpdateDevicePushTokenVoip:
-          // TODO: only iOS
           break;
         case Event.actionCallCustom:
           IsmLiveLog('lastttttt');

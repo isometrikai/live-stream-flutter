@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 /// The view part of the [SignupView], which will be used to
 /// show the Signup view page
 class SignupView extends StatelessWidget {
-  const SignupView({Key? key}) : super(key: key);
+  const SignupView({super.key});
 
   static const String route = AppRoutes.signup;
 

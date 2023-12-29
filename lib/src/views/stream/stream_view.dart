@@ -6,12 +6,11 @@ import 'package:livekit_client/livekit_client.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
   IsmLiveStreamView({
-    Key? key,
+    super.key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
         meetingId = Get.arguments['streamId'],
-        audioCallOnly = Get.arguments['audioCallOnly'],
-        super(key: key);
+        audioCallOnly = Get.arguments['audioCallOnly'];
 
   final Room room;
   final EventsListener<RoomEvent> listener;
@@ -57,9 +56,7 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(
-                        controller.participantTracks.first,
-                        showStatsLayer: true)
+                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -73,9 +70,7 @@ class IsmLiveStreamView extends StatelessWidget {
                               StreamHeader(
                                 name: controller.hostDetails?.userName ?? 'U',
                                 viewerCont: 10,
-                                imageUrl: controller
-                                        .hostDetails?.userProfileImageUrl ??
-                                    '',
+                                imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
                                 onTabCross: () {
                                   controller.onExist(room, meetingId);
                                 },
