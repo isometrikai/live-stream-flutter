@@ -38,22 +38,26 @@ class _MyAppState extends State<MyApp> {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (_, child) => child!,
-        child: GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primaryColor: Colors.purple,
-            textTheme: GoogleFonts.getTextTheme('Roboto'),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              backgroundColor: Colors.purple,
-              foregroundColor: Colors.white,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: Utility.hideKeyboard,
+          child: GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primaryColor: Colors.purple,
+              textTheme: GoogleFonts.getTextTheme('Roboto'),
+              floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+              ),
             ),
+            builder: (context, child) => IsmLiveSetup(
+              child: child!,
+            ),
+            translations: TranslationsFile(),
+            getPages: AppPages.pages,
+            initialRoute: AppPages.initial,
           ),
-          builder: (context, child) => IsmLiveSetup(
-            child: child!,
-          ),
-          translations: TranslationsFile(),
-          getPages: AppPages.pages,
-          initialRoute: AppPages.initial,
         ),
       );
 }
