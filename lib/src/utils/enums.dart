@@ -93,11 +93,6 @@ enum IsmLiveCallType {
   liveStream;
 }
 
-enum IsmLiveEngineType {
-  agora,
-  livekit,
-}
-
 enum IsmLiveStreamType {
   all(0, IsmLiveStrings.all),
   audioOnly(1, IsmLiveStrings.audioOnly),
