@@ -37,12 +37,12 @@ class IsmLiveCallingController extends GetxController {
       listener
         ..on<RoomDisconnectedEvent>((event) async {
           if (event.reason != null) {
-            IsmLiveLog('Room disconnected: reason => ${event.reason}');
+            IsmLiveLog.error('Room disconnected: reason => ${event.reason}');
           }
           Get.back();
         })
         ..on<ParticipantEvent>((event) {
-          IsmLiveLog('Participant event');
+          IsmLiveLog.error('Participant event');
 
           sortParticipants(room);
         })

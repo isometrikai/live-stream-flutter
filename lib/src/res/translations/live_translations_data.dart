@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 class IsmLiveTranslationsData with Diagnosticable {
   const IsmLiveTranslationsData({
     this.streamTranslations,
+    this.uploadingImage,
   });
+
   final IsmLiveStreamTranslations? streamTranslations;
+  final String? uploadingImage;
 }

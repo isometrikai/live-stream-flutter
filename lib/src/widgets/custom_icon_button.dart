@@ -2,12 +2,13 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 
 class CustomIconButton extends StatelessWidget {
-  const CustomIconButton(
-      {super.key,
-      required this.icon,
-      this.radius,
-      required this.onTap,
-      this.color});
+  const CustomIconButton({
+    super.key,
+    required this.icon,
+    this.radius,
+    required this.onTap,
+    this.color,
+  });
   final Widget icon;
   final double? radius;
   final VoidCallback onTap;
@@ -18,12 +19,12 @@ class CustomIconButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            height: IsmLiveDimens.fifty,
-            width: IsmLiveDimens.fifty,
+            height: IsmLiveDimens.fortyFive,
+            width: IsmLiveDimens.fortyFive,
             decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.circular(radius ?? IsmLiveDimens.five),
-                color: color ?? IsmLiveColors.black.withOpacity(0.4)),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.five),
+              color: color ?? IsmLiveColors.black.withOpacity(0.4),
+            ),
             child: icon,
           ),
         ),

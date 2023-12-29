@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// Class to call the api after specific amount of time
-class Debouncer {
-  Debouncer();
+class IsmLiveDebouncer {
+  IsmLiveDebouncer();
 
   Timer? _timer;
   void run(VoidCallback action) {

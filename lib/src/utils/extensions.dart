@@ -73,3 +73,12 @@ extension IsmLiveContextExtension on BuildContext {
 extension IsmLiveMaterialStateExtension on Set<MaterialState> {
   bool get isDisabled => any((e) => [MaterialState.disabled].contains(e));
 }
+
+extension IsmLiveDurationExtension on Duration {
+  String get formattedTime {
+    final h = inHours.toString().padLeft(2, '0');
+    final m = (inMinutes % 60).toString().padLeft(2, '0');
+    final s = (inSeconds % 60).toString().padLeft(2, '0');
+    return [h, m, s].join(':');
+  }
+}

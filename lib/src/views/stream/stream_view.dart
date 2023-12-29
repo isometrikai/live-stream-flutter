@@ -6,17 +6,18 @@ import 'package:livekit_client/livekit_client.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
   IsmLiveStreamView({
-    Key? key,
+    super.key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
         meetingId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
-        super(key: key);
+        isHost = Get.arguments['isHost'];
 
   final Room room;
   final EventsListener<RoomEvent> listener;
   final String meetingId;
   final bool audioCallOnly;
+  final bool isHost;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
@@ -27,10 +28,10 @@ class IsmLiveStreamView extends StatelessWidget {
         id: 'room',
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
-          streamController.initialApiCalls(meetingId);
           await streamController.setUpListeners(
-            listener,
-            room,
+            streamId: meetingId,
+            listener: listener,
+            room: room,
           );
           await streamController.sortParticipants(room);
 
@@ -57,12 +58,17 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(
-                        controller.participantTracks.first,
-                        showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
+                SizedBox(
+                  height: Get.height,
+                  width: Get.width,
+                  child: const ColoredBox(
+                    color: Colors.black38,
+                  ),
+                ),
 
                 room.localParticipant != null
                     ? SafeArea(
@@ -74,18 +80,22 @@ class IsmLiveStreamView extends StatelessWidget {
                               StreamHeader(
                                 name: controller.hostDetails?.userName ?? 'U',
                                 viewerCont: controller.streamViewersList.length,
-                                imageUrl: controller
-                                        .hostDetails?.userProfileImageUrl ??
-                                    '',
+                                imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
                                 viewerList: controller.streamViewersList,
                                 onTabCross: () {
-                                  controller.onExist(room, meetingId);
+                                  controller.onExit(
+                                    isHost: isHost,
+                                    room: room,
+                                    streamId: meetingId,
+                                  );
                                 },
                                 onTabViewers: () {
-                                  IsmLiveUtility.openBottomSheet(
-                                      IsmLiveListSheet(
-                                          list: controller.streamViewersList),
-                                      isScrollController: true);
+                                  if (isHost) {
+                                    IsmLiveUtility.openBottomSheet(
+                                      IsmLiveListSheet(list: controller.streamViewersList),
+                                      isScrollController: true,
+                                    );
+                                  }
                                 },
                               ),
                               IsmLiveControlsWidget(
@@ -130,7 +140,14 @@ class IsmLiveStreamView extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-                const IsmLiveCounterView(),
+                if (isHost) ...[
+                  Positioned(
+                    bottom: IsmLiveDimens.sixteen,
+                    left: IsmLiveDimens.sixteen,
+                    child: const IsmLiveModerationWarning(),
+                  ),
+                  const IsmLiveCounterView(),
+                ],
               ],
             ),
           ),

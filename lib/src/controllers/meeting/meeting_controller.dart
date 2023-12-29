@@ -29,7 +29,7 @@ class MeetingController extends GetxController {
   RefreshController userRefreshController = RefreshController(initialRefresh: false);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
-  final Debouncer debouncer = Debouncer();
+  final IsmLiveDebouncer debouncer = IsmLiveDebouncer();
   final List<Widget> fruits = <Widget>[
     const Text('VideoCall'),
     const Text('AudioCall'),

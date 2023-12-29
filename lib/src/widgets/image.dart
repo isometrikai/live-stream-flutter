@@ -16,6 +16,7 @@ class IsmLiveImage extends StatelessWidget {
     this.width,
     this.radius,
     this.borderRadius,
+    this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.asset,
         color = null;
@@ -31,6 +32,7 @@ class IsmLiveImage extends StatelessWidget {
     this.radius,
     this.color,
     this.borderRadius,
+    this.border,
     this.fromPackage = true,
   }) : _imageType = IsmLiveImageType.svg;
 
@@ -44,6 +46,7 @@ class IsmLiveImage extends StatelessWidget {
     this.width,
     this.radius,
     this.borderRadius,
+    this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.network,
         color = null;
@@ -58,6 +61,7 @@ class IsmLiveImage extends StatelessWidget {
     this.width,
     this.radius,
     this.borderRadius,
+    this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.file,
         color = null;
@@ -73,6 +77,7 @@ class IsmLiveImage extends StatelessWidget {
   final BorderRadius? borderRadius;
   final IsmLiveImageType _imageType;
   final bool fromPackage;
+  final Border? border;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -81,6 +86,7 @@ class IsmLiveImage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
+          border: border,
         ),
         clipBehavior: Clip.antiAlias,
         child: switch (_imageType) {

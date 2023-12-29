@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -51,6 +50,16 @@ class IsmLiveStreamRepository {
         payload: {
           'streamId': streamId,
         },
+        showLoader: true,
+      );
+
+  Future<IsmLiveResponseModel> leaveStream(
+    String streamId,
+  ) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.leaveStream}?streamId=$streamId',
+        type: IsmLiveRequestType.delete,
+        headers: IsmLiveUtility.tokenHeader(),
         showLoader: true,
       );
 

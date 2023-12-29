@@ -92,9 +92,9 @@ class IsmLiveUtility {
       initialTime;
 
   /// Show loader
-  static void showLoader() async {
+  static void showLoader([String? message]) async {
     await Get.dialog(
-      const IsmLiveLoader(),
+      IsmLiveLoader(message: message),
       barrierDismissible: false,
     );
   }

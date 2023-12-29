@@ -27,20 +27,30 @@ abstract class IsmLiveRouteManagement {
   }
 
   static Future<void> goToStreamView({
+    required bool isHost,
     required Room room,
     required EventsListener<RoomEvent> listener,
     required String streamId,
     bool audioCallOnly = false,
   }) async {
-    await Get.offNamed(
-      IsmLiveRoutes.streamView,
-      arguments: {
-        'room': room,
-        'listener': listener,
-        'streamId': streamId,
-        'audioCallOnly': audioCallOnly,
-      },
-    );
+    var arguments = {
+      'room': room,
+      'listener': listener,
+      'streamId': streamId,
+      'audioCallOnly': audioCallOnly,
+      'isHost': isHost,
+    };
+    if (isHost) {
+      await Get.offNamed(
+        IsmLiveRoutes.streamView,
+        arguments: arguments,
+      );
+    } else {
+      await Get.toNamed(
+        IsmLiveRoutes.streamView,
+        arguments: arguments,
+      );
+    }
   }
 
   static void goToSearchUserScreen() {

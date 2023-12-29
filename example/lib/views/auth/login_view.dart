@@ -12,6 +12,12 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<AuthController>(
+        initState: (_) {
+          Get.find<AuthController>()
+            ..emailController.clear()
+            ..passwordController.clear()
+            ..showPassward = false;
+        },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
@@ -65,7 +71,7 @@ class LoginView extends StatelessWidget {
                               controller.showPassward = !controller.showPassward;
                             },
                           ),
-                          obscureText: controller.showPassward,
+                          obscureText: !controller.showPassward,
                           obscureCharacter: '*',
                           controller: controller.passwordController,
                         ),
