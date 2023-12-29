@@ -6,11 +6,12 @@ import 'package:livekit_client/livekit_client.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
   IsmLiveStreamView({
-    super.key,
+    Key? key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
         meetingId = Get.arguments['streamId'],
-        audioCallOnly = Get.arguments['audioCallOnly'];
+        audioCallOnly = Get.arguments['audioCallOnly'],
+        super(key: key);
 
   final Room room;
   final EventsListener<RoomEvent> listener;
@@ -26,7 +27,7 @@ class IsmLiveStreamView extends StatelessWidget {
         id: 'room',
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
-          streamController.fetchStreamMembes(meetingId);
+          streamController.initialApiCalls(meetingId);
           await streamController.setUpListeners(
             listener,
             room,
@@ -56,7 +57,9 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -66,16 +69,25 @@ class IsmLiveStreamView extends StatelessWidget {
                         child: Padding(
                           padding: IsmLiveDimens.edgeInsets16,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               StreamHeader(
                                 name: controller.hostDetails?.userName ?? 'U',
-                                viewerCont: 10,
-                                imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                viewerCont: controller.streamViewersList.length,
+                                imageUrl: controller
+                                        .hostDetails?.userProfileImageUrl ??
+                                    '',
+                                viewerList: controller.streamViewersList,
                                 onTabCross: () {
                                   controller.onExist(room, meetingId);
                                 },
+                                onTabViewers: () {
+                                  IsmLiveUtility.openBottomSheet(
+                                      IsmLiveListSheet(
+                                          list: controller.streamViewersList),
+                                      isScrollController: true);
+                                },
                               ),
-                              const Spacer(),
                               IsmLiveControlsWidget(
                                 room,
                                 room.localParticipant!,

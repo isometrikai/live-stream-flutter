@@ -1,5 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/users_pile_model.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:flutter/material.dart';
 
 class IsmLiveUsersAvatar extends StatelessWidget {
@@ -8,11 +8,11 @@ class IsmLiveUsersAvatar extends StatelessWidget {
     required this.viewerList,
   });
 
-  final List<IsmLiveProfileModel?> viewerList;
+  final List<IsmLiveStreamViewerDetailsModel> viewerList;
 
   @override
   Widget build(BuildContext context) {
-    viewerList.insert(0, null);
+    // viewerList.insert(0, null);
     return SizedBox(
       height: IsmLiveDimens.forty,
       child: Stack(
@@ -33,8 +33,8 @@ class IsmLiveUsersAvatar extends StatelessWidget {
               child: 0 == index
                   ? const Icon(Icons.more_horiz)
                   : IsmLiveImage.network(
-                      viewerList[index]?.imageUrl ?? '',
-                      name: viewerList[index]?.userName ?? 'U',
+                      viewerList[index].userProfileImageUrl ?? '',
+                      name: viewerList[index].userName ?? 'U',
                       isProfileImage: true,
                     ),
             ),

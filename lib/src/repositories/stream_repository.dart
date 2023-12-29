@@ -103,6 +103,19 @@ class IsmLiveStreamRepository {
         showLoader: false,
       );
 
+  Future<IsmLiveResponseModel> getStreamViewer({
+    required String streamId,
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.getStreamViewer}?streamId=$streamId&limit=$limit&skip=$skip',
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showLoader: false,
+      );
+
   Future<IsmLiveResponseModel> updatePresignedUrl({
     required bool showLoading,
     required String presignedUrl,

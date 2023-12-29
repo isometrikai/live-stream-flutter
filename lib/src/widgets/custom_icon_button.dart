@@ -8,20 +8,24 @@ class CustomIconButton extends StatelessWidget {
       this.radius,
       required this.onTap,
       this.color});
-  final Icon icon;
+  final Widget icon;
   final double? radius;
   final VoidCallback onTap;
   final Color? color;
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: IsmLiveDimens.fifty,
-          width: IsmLiveDimens.fifty,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.five),
-              color: color ?? IsmLiveColors.black.withOpacity(0.4)),
-          child: icon,
+  Widget build(BuildContext context) => Padding(
+        padding: IsmLiveDimens.edgeInsetsB10,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            height: IsmLiveDimens.fifty,
+            width: IsmLiveDimens.fifty,
+            decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(radius ?? IsmLiveDimens.five),
+                color: color ?? IsmLiveColors.black.withOpacity(0.4)),
+            child: icon,
+          ),
         ),
       );
 }

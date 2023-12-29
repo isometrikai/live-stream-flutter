@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/stream/member_details_model.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,6 +36,8 @@ class IsmLiveStreamController extends GetxController
   bool isRecordingBroadcast = false;
 
   List<IsmLiveMemberDetailsModel> streamMembersList = [];
+
+  List<IsmLiveStreamViewerDetailsModel> streamViewersList = [];
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -313,8 +316,9 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void fetchStreamMembes(streamId) async {
+  void initialApiCalls(streamId) async {
     await getStreamMembers(streamId: streamId, limit: 10, skip: 0);
+    await getStreamViewer(streamId: streamId, limit: 10, skip: 0);
   }
 
   void onExist(room, streamId) {

@@ -26,4 +26,12 @@ class IsmLiveAssetConstants {
   static const String document = '$_icons/document.svg';
   static const String camera = '$_icons/camera.svg';
   static const String videoIcon = '$_icons/video_icon.svg';
+  static const String icMembersLiveStream = '$_icons/ic_members_stream.svg';
+  static const String icRotateCamera = '$_icons/ic_rotate_camera.svg';
+  static const String icFavouriteStream = '$_icons/ic_favourite_stream.svg';
+  static const String icSettingStream = '$_icons/ic_setting_stream.svg';
+  static const String icGiftStream = '$_icons/ic_gift_stream.svg';
+  static const String icShareLiveStream = '$_icons/ic_share_live_stream.svg';
+  static const String icMuteLiveStream = '$_icons/ic_mute_live_stream.svg';
+  static const String icMultiLiveStream = '$_icons/ic_multi_live_stream.svg';
 }
