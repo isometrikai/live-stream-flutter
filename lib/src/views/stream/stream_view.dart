@@ -27,7 +27,7 @@ class IsmLiveStreamView extends StatelessWidget {
         id: 'room',
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
-
+          streamController.fetchStreamMembes(meetingId);
           await streamController.setUpListeners(
             listener,
             room,
@@ -70,8 +70,16 @@ class IsmLiveStreamView extends StatelessWidget {
                           padding: IsmLiveDimens.edgeInsets16,
                           child: Column(
                             children: [
-                              const StreamHeader(
-                                  name: 'hhh', viewerCont: 10, imageUrl: ''),
+                              StreamHeader(
+                                name: controller.hostDetails?.userName ?? 'U',
+                                viewerCont: 10,
+                                imageUrl: controller
+                                        .hostDetails?.userProfileImageUrl ??
+                                    '',
+                                onTabCross: () {
+                                  controller.onExist(room, meetingId);
+                                },
+                              ),
                               const Spacer(),
                               IsmLiveControlsWidget(
                                 room,

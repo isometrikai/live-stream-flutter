@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/member_details_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,12 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveAPIMixin {
+class IsmLiveStreamController extends GetxController
+    with
+        GetSingleTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        GoLiveAPIMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -27,6 +33,10 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   bool isHdBroadcast = false;
 
   bool isRecordingBroadcast = false;
+
+  List<IsmLiveMemberDetailsModel> streamMembersList = [];
+
+  IsmLiveMemberDetailsModel? hostDetails;
 
   Uint8List? bytes;
 
@@ -47,7 +57,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -163,7 +174,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
         ..on<TrackE2EEStateEvent>(onE2EEStateEvent)
         ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog('Participant name updated: ${event.participant.identity}, name => ${event.name}');
+          IsmLiveLog(
+              'Participant name updated: ${event.participant.identity}, name => ${event.name}');
         })
         ..on<DataReceivedEvent>((event) {
           var decoded = 'Failed to decode';
@@ -238,7 +250,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -298,5 +311,24 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     if (res) {
       await room.disconnect();
     }
+  }
+
+  void fetchStreamMembes(streamId) async {
+    await getStreamMembers(streamId: streamId, limit: 10, skip: 0);
+  }
+
+  void onExist(room, streamId) {
+    IsmLiveUtility.openBottomSheet(
+      IsmLiveCustomButtomSheet(
+        title: 'Are you sure that you want to end your live video ?',
+        leftLabel: 'Cancel',
+        rightLabel: 'End Video',
+        leftOnTab: Get.back,
+        rightOnTab: () {
+          disconnectStream(room, streamId);
+          Get.back();
+        },
+      ),
+    );
   }
 }

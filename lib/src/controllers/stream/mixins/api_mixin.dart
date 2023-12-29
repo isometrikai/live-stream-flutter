@@ -1,7 +1,8 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -9,11 +10,13 @@ mixin StreamAPIMixin {
 
   Future<void> getUserDetails() async {
     await _viewModel.getUserDetails();
-    _controller.user = UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
+    _controller.user =
+        UserDetails.fromJson(_dbWrapper.getStringValue(IsmLiveLocalKeys.user));
     _controller.update([IsmLiveHeader.updateId]);
   }
 
-  Future<bool> _subscribeUser(bool isSubscribing) => _controller._viewModel.subscribeUser(
+  Future<bool> _subscribeUser(bool isSubscribing) =>
+      _controller._viewModel.subscribeUser(
         isSubscribing: isSubscribing,
       );
 
@@ -28,7 +31,8 @@ mixin StreamAPIMixin {
     });
   }
 
-  Future<IsmLiveRTCModel?> getRTCToken(String streamId) => _viewModel.getRTCToken(streamId);
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId) =>
+      _viewModel.getRTCToken(streamId);
 
   Future<IsmLiveRTCModel?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
@@ -49,11 +53,27 @@ mixin StreamAPIMixin {
 
   Future<bool> stopStream(String streamId) => _viewModel.stopStream(streamId);
 
+  Future<void> getStreamMembers({
+    required String streamId,
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) async {
+    _controller.streamMembersList = await _viewModel.getStreamMembers(
+        streamId: streamId, limit: limit, skip: skip);
+
+    if (_controller.streamMembersList.isNotEmpty) {
+      _controller.hostDetails = _controller.streamMembersList
+          .firstWhere((element) => element.isAdmin);
+    }
+  }
+
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader();
     var res = await _viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
