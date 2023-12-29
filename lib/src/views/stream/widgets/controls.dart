@@ -20,90 +20,81 @@ class IsmLiveControlsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-      initState: (state) {
-        final streamController = Get.find<IsmLiveStreamController>();
+        initState: (state) {
+          final streamController = Get.find<IsmLiveStreamController>();
 
-        participant.addListener(streamController.update);
-      },
-      dispose: (state) async {
-        final streamController = Get.find<IsmLiveStreamController>();
+          participant.addListener(streamController.update);
+        },
+        dispose: (state) async {
+          final streamController = Get.find<IsmLiveStreamController>();
 
-        participant.removeListener(streamController.update);
-      },
-      builder: (controller) => Container(
-            margin: IsmLiveDimens.edgeInsetsB20,
-            width: Get.width,
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: IsmLiveDimens.thirty,
-              children: [
-                CustomIconButton(
-                  icon: Icon(
-                    Icons.phone,
-                    color: Colors.white,
-                    size: IsmLiveDimens.twentyFive,
-                  ),
-                  onTap: () {
-                    controller.disconnectStream(room, meetingId);
-                  },
-                  color: Colors.red,
-                  radius: IsmLiveDimens.fifty,
+          participant.removeListener(streamController.update);
+        },
+        builder: (controller) => Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icMembersLiveStream,
+                  dimensions: IsmLiveDimens.fifty,
                 ),
-                participant.isMicrophoneEnabled()
-                    ? CustomIconButton(
-                        icon: Icon(
-                          Icons.mic,
-                          color: Colors.white,
-                          size: IsmLiveDimens.twentyFive,
-                        ),
-                        onTap: () {
-                          controller.disableAudio(participant);
-                        },
-                      )
-                    : CustomIconButton(
-                        icon: Icon(
-                          Icons.mic_off,
-                          color: Colors.white,
-                          size: IsmLiveDimens.twentyFive,
-                        ),
-                        onTap: () {
-                          controller.enableAudio(participant);
-                        },
-                      ),
-                if (!audioCallOnly)
-                  participant.isCameraEnabled()
-                      ? CustomIconButton(
-                          icon: Icon(
-                            Icons.videocam_sharp,
-                            color: Colors.white,
-                            size: IsmLiveDimens.twentyFive,
-                          ),
-                          onTap: () {
-                            controller.disableVideo(participant);
-                          },
-                        )
-                      : CustomIconButton(
-                          icon: Icon(
-                            Icons.videocam_off,
-                            color: Colors.white,
-                            size: IsmLiveDimens.twentyFive,
-                          ),
-                          onTap: () {
-                            controller.enableVideo(participant);
-                          },
-                        ),
-                if (!audioCallOnly)
-                  CustomIconButton(
-                    icon: Icon(
-                      Icons.flip_camera_ios,
-                      color: Colors.white,
-                      size: IsmLiveDimens.twentyFive,
-                    ),
-                    onTap: () {
-                      controller.toggleCamera(participant);
-                    },
-                  ),
-              ],
-            ),
-          ));
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icMultiLiveStream,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icGiftStream,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icFavouriteStream,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icSettingStream,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icShareLiveStream,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {},
+                color: IsmLiveColors.transparent,
+              ),
+              CustomIconButton(
+                icon: IsmLiveImage.svg(
+                  IsmLiveAssetConstants.icRotateCamera,
+                  dimensions: IsmLiveDimens.fifty,
+                ),
+                onTap: () {
+                  controller.toggleCamera(participant);
+                },
+                color: IsmLiveColors.transparent,
+              ),
+            ],
+          ),
+        ),
+      );
 }

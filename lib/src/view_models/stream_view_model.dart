@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/presigned_url.dart';
 import 'package:appscrip_live_stream_component/src/models/stream/member_details_model.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
@@ -137,6 +138,35 @@ class IsmLiveStreamViewModel {
       return list
           .map((e) =>
               IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
+  Future<List<IsmLiveStreamViewerDetailsModel>> getStreamViewer({
+    required String streamId,
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.getStreamViewer(
+        streamId: streamId,
+        limit: limit,
+        searchTag: searchTag,
+        skip: skip,
+      );
+      if (res.hasError) {
+        return [];
+      }
+
+      var list = jsonDecode(res.data)['viewers'] as List? ?? [];
+
+      return list
+          .map((e) => IsmLiveStreamViewerDetailsModel.fromMap(
+              e as Map<String, dynamic>))
           .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
