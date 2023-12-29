@@ -10,6 +10,7 @@ const _kThemeData = IsmLiveThemeData(
 );
 
 const _kTranslationsData = IsmLiveTranslationsData(
+  uploadingImage: IsmLiveStrings.uploadingImage,
   streamTranslations: IsmLiveStreamTranslations(
     youreLive: IsmLiveStrings.youreLive,
     moderationWarning: IsmLiveStrings.moderationWarning,

@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class IsmLiveHostDetail extends StatelessWidget {
   const IsmLiveHostDetail({
@@ -12,31 +11,36 @@ class IsmLiveHostDetail extends StatelessWidget {
   final String name;
   final String imageUrl;
   final int viewerCont;
+
+  Color _color(BuildContext context) => context.liveTheme.backgroundColor ?? IsmLiveColors.white;
+
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
         onTap: () {
-          Get.bottomSheet(
-              StreamLiveSheet(
-                widget: IsmLiveImage.network(
-                  imageUrl,
-                  isProfileImage: true,
-                  name: name,
-                  height: IsmLiveDimens.hundred,
-                  width: IsmLiveDimens.hundred,
-                ),
-                title: '@$name',
+          IsmLiveUtility.openBottomSheet(
+            StreamLiveSheet(
+              widget: IsmLiveImage.network(
+                imageUrl,
+                isProfileImage: true,
+                name: name,
+                height: IsmLiveDimens.hundred,
+                width: IsmLiveDimens.hundred,
               ),
-              backgroundColor: IsmLiveColors.white);
+              title: '@$name',
+            ),
+            // backgroundColor: IsmLiveColors.white,
+          );
         },
         child: Container(
           width: IsmLiveDimens.hundredFourty,
-          height: IsmLiveDimens.forty,
           decoration: BoxDecoration(
-              color: IsmLiveColors.white.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(IsmLiveDimens.fifty),
-              border: Border.all(color: IsmLiveColors.white)),
+            color: _color(context).withOpacity(0.3),
+            borderRadius: BorderRadius.circular(IsmLiveDimens.hundred),
+            border: Border.all(color: _color(context)),
+          ),
+          padding: IsmLiveDimens.edgeInsets2,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IsmLiveImage.network(
                 imageUrl,
@@ -44,6 +48,7 @@ class IsmLiveHostDetail extends StatelessWidget {
                 isProfileImage: true,
                 height: IsmLiveDimens.forty,
                 width: IsmLiveDimens.forty,
+                border: Border.all(color: _color(context)),
               ),
               IsmLiveDimens.boxWidth4,
               SizedBox(
@@ -64,7 +69,7 @@ class IsmLiveHostDetail extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.person,
-                          size: IsmLiveDimens.fifteen,
+                          size: IsmLiveDimens.sixteen,
                           color: IsmLiveColors.white,
                         ),
                         IsmLiveDimens.boxWidth2,

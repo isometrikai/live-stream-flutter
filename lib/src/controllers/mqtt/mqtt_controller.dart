@@ -184,6 +184,7 @@ class IsmLiveMqttController extends GetxController {
 
       // if (IsmLiveHandler.isLogsEnabled) {
       IsmLiveLog(payload);
+      IsmLiveLog.success(payload['action']);
       // }
 
       if (payload['action'] != null) {

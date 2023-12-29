@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:appscrip_live_stream_component_example/view_models/view_models.dart';
@@ -49,13 +50,13 @@ class AuthController extends GetxController {
     _isEmailValid.value = value;
   }
 
-  final RxBool _showPassward = true.obs;
+  final RxBool _showPassward = false.obs;
   bool get showPassward => _showPassward.value;
   set showPassward(bool value) {
     _showPassward.value = value;
   }
 
-  final RxBool _showConfirmPasswared = true.obs;
+  final RxBool _showConfirmPasswared = false.obs;
   bool get showConfirmPasswared => _showConfirmPasswared.value;
   set showConfirmPasswared(bool value) {
     _showConfirmPasswared.value = value;
@@ -155,18 +156,21 @@ class AuthController extends GetxController {
 
   // / get Api for presigned Url.....
   Future<void> getPresignedUrl(String mediaExtension, Uint8List bytes) async {
+    IsmLiveUtility.showLoader();
     var res = await _viewModel.getPresignedUrl(
       showLoader: false,
       userIdentifier: DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
+      IsmLiveUtility.closeLoader();
       return;
     }
     var urlResponse = await updatePresignedUrl(res.presignedUrl ?? '', bytes);
     if (urlResponse == 200) {
       profileImage = res.mediaUrl ?? '';
     }
+    IsmLiveUtility.closeLoader();
   }
 
   /// put Api for updatePresignedUrl...

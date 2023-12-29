@@ -36,57 +36,50 @@ class IsmLiveControlsWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icMembersLiveStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icMultiLiveStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icGiftStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icFavouriteStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icSettingStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icShareLiveStream,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {},
                 color: IsmLiveColors.transparent,
               ),
               CustomIconButton(
-                icon: IsmLiveImage.svg(
+                icon: const IsmLiveImage.svg(
                   IsmLiveAssetConstants.icRotateCamera,
-                  dimensions: IsmLiveDimens.fifty,
                 ),
                 onTap: () {
                   controller.toggleCamera(participant);

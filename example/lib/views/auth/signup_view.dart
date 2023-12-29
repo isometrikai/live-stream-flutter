@@ -14,7 +14,17 @@ class SignupView extends StatelessWidget {
   static const String route = AppRoutes.signup;
 
   @override
-  Widget build(BuildContext context) => GetBuilder<AuthController>(
+  Widget build(BuildContext context) => GetX<AuthController>(
+      initState: (_) {
+        Get.find<AuthController>()
+          ..profileImage = ''
+          ..userNameController.clear()
+          ..emailController.clear()
+          ..passwordController.clear()
+          ..confirmPasswordController.clear()
+          ..showPassward = false
+          ..showConfirmPasswared = false;
+      },
       builder: (controller) => SafeArea(
             bottom: false,
             top: false,
@@ -61,44 +71,40 @@ class SignupView extends StatelessWidget {
                                   ),
                                 );
                               },
-                              child: Obx(
-                                () => Stack(
-                                  children: [
-                                    controller.profileImage.trim().isEmpty
-                                        ? const IsmLiveImage.asset(
-                                            width: 100,
-                                            height: 100,
-                                            IsmLiveAssetConstants.noImage,
-                                            isProfileImage: true,
+                              child: Stack(
+                                children: [
+                                  controller.profileImage.trim().isEmpty
+                                      ? const IsmLiveImage.asset(
+                                          width: 100,
+                                          height: 100,
+                                          IsmLiveAssetConstants.noImage,
+                                          isProfileImage: true,
+                                        )
+                                      : IsmLiveImage.network(
+                                          width: 100,
+                                          height: 100,
+                                          controller.profileImage,
+                                          isProfileImage: true,
+                                        ),
+                                  Positioned(
+                                    bottom: 10,
+                                    right: 0,
+                                    child: GetUtils.isEmail(controller.emailController.text)
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white, borderRadius: BorderRadius.circular(50), border: Border.all(color: Colors.grey)),
+                                            width: 30,
+                                            height: 30,
+                                            child: const Icon(
+                                              Icons.edit,
+                                              color: Colors.grey,
+                                              size: 15,
+                                            ),
                                           )
-                                        : IsmLiveImage.network(
-                                            width: 100,
-                                            height: 100,
-                                            controller.profileImage,
-                                            isProfileImage: true,
-                                          ),
-                                    Positioned(
-                                      bottom: 10,
-                                      right: 0,
-                                      child: GetUtils.isEmail(controller.emailController.text)
-                                          ? Container(
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(50),
-                                                  border: Border.all(color: Colors.grey)),
-                                              width: 30,
-                                              height: 30,
-                                              child: const Icon(
-                                                Icons.edit,
-                                                color: Colors.grey,
-                                                size: 15,
-                                              ),
-                                            )
-                                          : const SizedBox.shrink(),
-                                    )
-                                  ],
-                                ),
+                                        : const SizedBox.shrink(),
+                                  )
+                                ],
                               ),
                             ),
                           ),
@@ -145,7 +151,7 @@ class SignupView extends StatelessWidget {
                                   controller.update();
                                 },
                               ),
-                              obscureText: controller.showPassward,
+                              obscureText: !controller.showPassward,
                               obscureCharacter: '*',
                               controller: controller.passwordController,
                             ),
@@ -161,7 +167,7 @@ class SignupView extends StatelessWidget {
                                 controller.update();
                               },
                             ),
-                            obscureText: controller.showConfirmPasswared,
+                            obscureText: !controller.showConfirmPasswared,
                             obscureCharacter: '*',
                             validator: (value) {
                               if (controller.passwordController.text == value) {
@@ -203,12 +209,7 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('login-signup-change'),
                             child: IsmLiveButton.text(
-                              onTap: () {
-                                controller.passwordController.clear();
-                                controller.showPassward = false;
-                                controller.showConfirmPasswared = false;
-                                RouteManagement.goToLogin(true);
-                              },
+                              onTap: () => RouteManagement.goToLogin(true),
                               label: TranslationKeys.login.tr,
                             ),
                           ),

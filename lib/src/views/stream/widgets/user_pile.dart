@@ -11,36 +11,33 @@ class IsmLiveUsersAvatar extends StatelessWidget {
   final List<IsmLiveStreamViewerDetailsModel> viewerList;
 
   @override
-  Widget build(BuildContext context) {
-    // viewerList.insert(0, null);
-    return SizedBox(
-      height: IsmLiveDimens.forty,
-      child: Stack(
-        children: List.generate(
-          viewerList.length > 8 ? 8 : viewerList.length,
-          (index) => Positioned(
-            left: index * 25,
-            child: Container(
-              height: IsmLiveDimens.forty,
-              width: IsmLiveDimens.forty,
-              decoration: BoxDecoration(
-                color: IsmLiveColors.white,
-                borderRadius: BorderRadius.circular(IsmLiveDimens.fifty),
-                border: Border.all(
+  Widget build(BuildContext context) => SizedBox(
+        height: IsmLiveDimens.forty,
+        child: Stack(
+          children: List.generate(
+            viewerList.length > 8 ? 8 : viewerList.length,
+            (index) => Positioned(
+              left: index * 25,
+              child: Container(
+                height: IsmLiveDimens.forty,
+                width: IsmLiveDimens.forty,
+                decoration: BoxDecoration(
                   color: IsmLiveColors.white,
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.fifty),
+                  border: Border.all(
+                    color: IsmLiveColors.white,
+                  ),
                 ),
+                child: 0 == index
+                    ? const Icon(Icons.more_horiz)
+                    : IsmLiveImage.network(
+                        viewerList[index].userProfileImageUrl ?? '',
+                        name: viewerList[index].userName,
+                        isProfileImage: true,
+                      ),
               ),
-              child: 0 == index
-                  ? const Icon(Icons.more_horiz)
-                  : IsmLiveImage.network(
-                      viewerList[index].userProfileImageUrl ?? '',
-                      name: viewerList[index].userName ?? 'U',
-                      isProfileImage: true,
-                    ),
             ),
-          ),
-        ).toList().reversed.toList(),
-      ),
-    );
-  }
+          ).toList().reversed.toList(),
+        ),
+      );
 }

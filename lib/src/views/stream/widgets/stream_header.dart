@@ -1,6 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StreamHeader extends StatelessWidget {
   const StreamHeader({
@@ -20,11 +21,20 @@ class StreamHeader extends StatelessWidget {
   final Function()? onTabViewers;
   @override
   Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IsmLiveHostDetail(
-            imageUrl: imageUrl,
-            name: name,
-            viewerCont: viewerCont,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IsmLiveHostDetail(
+                imageUrl: imageUrl,
+                name: name,
+                viewerCont: viewerCont,
+              ),
+              IsmLiveDimens.boxHeight10,
+              const _LiveTimer(),
+            ],
           ),
           IsmLiveDimens.boxWidth16,
           Expanded(
@@ -41,6 +51,41 @@ class StreamHeader extends StatelessWidget {
               color: IsmLiveColors.white,
             ),
             onPressed: onTabCross,
+          ),
+        ],
+      );
+}
+
+class _LiveTimer extends StatelessWidget {
+  const _LiveTimer();
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: IsmLiveColors.red,
+              borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+            ),
+            child: Padding(
+              padding: IsmLiveDimens.edgeInsets8_4,
+              child: Text(
+                'Live',
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: IsmLiveColors.white,
+                ),
+              ),
+            ),
+          ),
+          IsmLiveDimens.boxWidth10,
+          GetX<IsmLiveStreamController>(
+            builder: (controller) => Text(
+              controller.streamDuration.formattedTime,
+              style: context.textTheme.labelMedium?.copyWith(
+                color: IsmLiveColors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       );

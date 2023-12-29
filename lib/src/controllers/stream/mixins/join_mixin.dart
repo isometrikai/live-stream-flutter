@@ -1,16 +1,48 @@
 part of '../stream_controller.dart';
 
 mixin StreamJoinMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   bool isMeetingOn = false;
+
+  Future<void> joinStream(
+    IsmLiveStreamModel stream,
+  ) async {
+    var data = await _controller.getRTCToken(stream.streamId ?? '');
+    if (data == null) {
+      return;
+    }
+    var now = DateTime.now();
+    _controller.streamDuration = now.difference(stream.startTime ?? now);
+
+    IsmLiveLog.success(_controller.streamDuration);
+
+    await connectStream(
+      token: data.rtcToken,
+      streamId: stream.streamId!,
+      isHost: false,
+    );
+  }
+
+  Future<void> startStream() async {
+    var data = await _controller.createStream();
+    if (data == null) {
+      return;
+    }
+    _controller.streamDuration = Duration.zero;
+
+    await connectStream(
+      token: data.rtcToken,
+      streamId: data.streamId!,
+      isHost: true,
+    );
+  }
 
   Future<void> connectStream({
     required String token,
     required String streamId,
     bool audioCallOnly = false,
-    bool isCreating = false,
+    required bool isHost,
   }) async {
     if (isMeetingOn) {
       return;
@@ -56,12 +88,10 @@ mixin StreamJoinMixin {
       );
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [
-          const ParticipantTrackPermission('allowed-identity', true, null)
-        ],
+        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
       );
 
-      if (isCreating) {
+      if (isHost) {
         var localVideo = await LocalVideoTrack.createCameraTrack(
           const CameraCaptureOptions(
             cameraPosition: CameraPosition.front,
@@ -71,11 +101,14 @@ mixin StreamJoinMixin {
         await room.localParticipant?.publishVideoTrack(localVideo);
       }
 
-      await room.localParticipant?.setMicrophoneEnabled(isCreating);
+      await room.localParticipant?.setMicrophoneEnabled(isHost);
 
       IsmLiveUtility.closeLoader();
 
+      startStreamTimer();
+
       await IsmLiveRouteManagement.goToStreamView(
+        isHost: isHost,
         room: room,
         listener: listener,
         streamId: streamId,
@@ -86,5 +119,11 @@ mixin StreamJoinMixin {
       isMeetingOn = false;
       IsmLiveLog.error(e, st);
     }
+  }
+
+  void startStreamTimer() {
+    _controller._streamTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _controller.streamDuration += const Duration(seconds: 1);
+    });
   }
 }

@@ -82,6 +82,11 @@ class _Primary extends StatelessWidget {
                   IsmLiveColors.white;
             },
           ),
+          textStyle: MaterialStateProperty.all(
+            context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         onPressed: onTap,
         child: Text(label),
@@ -123,6 +128,11 @@ class _Secondary extends StatelessWidget {
                   context.liveTheme.primaryColor ??
                   IsmLiveColors.primary;
             },
+          ),
+          textStyle: MaterialStateProperty.all(
+            context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         onPressed: onTap,
@@ -166,6 +176,22 @@ class _Outlined extends StatelessWidget {
                   IsmLiveColors.primary;
             },
           ),
+          side: MaterialStateProperty.resolveWith(
+            (states) {
+              if (states.isDisabled) {
+                return BorderSide.none;
+              }
+              final color = context.theme.outlinedButtonTheme.style?.backgroundColor?.resolve(states) ??
+                  context.liveTheme.primaryColor ??
+                  IsmLiveColors.primary;
+              return BorderSide(color: color, width: 2);
+            },
+          ),
+          textStyle: MaterialStateProperty.all(
+            context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         onPressed: onTap,
         child: Text(label),
@@ -205,6 +231,11 @@ class _Text extends StatelessWidget {
               }
               return context.theme.textButtonTheme.style?.backgroundColor?.resolve(states) ?? context.liveTheme.primaryColor ?? IsmLiveColors.primary;
             },
+          ),
+          textStyle: MaterialStateProperty.all(
+            context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         onPressed: onTap,
