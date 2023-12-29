@@ -9,6 +9,11 @@ class IsmLiveStyles {
     fontSize: IsmLiveDimens.sixteen,
   );
 
+  static TextStyle lightGrey14 = TextStyle(
+    color: Colors.grey[400],
+    fontSize: IsmLiveDimens.fourteen,
+  );
+
   static TextStyle white16 = TextStyle(
     color: Colors.white,
     fontSize: IsmLiveDimens.sixteen,

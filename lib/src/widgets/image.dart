@@ -79,7 +79,9 @@ class IsmLiveImage extends StatelessWidget {
         height: height ?? dimensions,
         width: width ?? dimensions,
         decoration: BoxDecoration(
-          borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
+          borderRadius: isProfileImage
+              ? null
+              : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         clipBehavior: Clip.antiAlias,
@@ -87,7 +89,8 @@ class IsmLiveImage extends StatelessWidget {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
           IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
-          IsmLiveImageType.network => _Network(path, isProfileImage: isProfileImage, name: name),
+          IsmLiveImageType.network =>
+            _Network(path, isProfileImage: isProfileImage, name: name),
         },
       );
 }
@@ -216,7 +219,7 @@ class _ErrorImage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: IsmLiveColors.primary.withOpacity(0.2),
+          color: IsmLiveColors.primary, //.withOpacity(0.2),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: isProfileImage
@@ -225,7 +228,7 @@ class _ErrorImage extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
-                  color: IsmLiveColors.primary,
+                  color: IsmLiveColors.white,
                 ),
               )
             : Container(

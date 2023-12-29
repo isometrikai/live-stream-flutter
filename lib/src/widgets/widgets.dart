@@ -8,5 +8,6 @@ export 'loader.dart';
 export 'no_video.dart';
 export 'participant.dart';
 export 'participant_info.dart';
+export 'pick_image_bottom_sheet.dart';
 export 'radio_tile.dart';
 export 'tap_handler.dart';
