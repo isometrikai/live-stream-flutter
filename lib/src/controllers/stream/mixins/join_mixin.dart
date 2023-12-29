@@ -1,7 +1,8 @@
 part of '../stream_controller.dart';
 
 mixin StreamJoinMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   bool isMeetingOn = false;
 
@@ -55,7 +56,9 @@ mixin StreamJoinMixin {
       );
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
       );
 
       if (isCreating) {

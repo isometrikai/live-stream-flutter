@@ -41,7 +41,7 @@ class IsmGoLiveView extends StatelessWidget {
           ),
           body: Stack(
             alignment: Alignment.center,
-            fit: StackFit.loose,
+            fit: StackFit.expand,
             children: [
               FutureBuilder(
                 future: controller.cameraFuture,
@@ -153,7 +153,8 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null ||
+                  controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () {
                     IsmLiveUtility.openBottomSheet(
