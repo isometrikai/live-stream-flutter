@@ -27,7 +27,7 @@ class IsmLiveStreamView extends StatelessWidget {
         id: 'room',
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
-          streamController.fetchStreamMembes(meetingId);
+          streamController.initialApiCalls(meetingId);
           await streamController.setUpListeners(
             listener,
             room,
@@ -59,7 +59,7 @@ class IsmLiveStreamView extends StatelessWidget {
                 controller.participantTracks.isNotEmpty
                     ? ParticipantWidget.widgetFor(
                         controller.participantTracks.first,
-                        showStatsLayer: true)
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -69,18 +69,25 @@ class IsmLiveStreamView extends StatelessWidget {
                         child: Padding(
                           padding: IsmLiveDimens.edgeInsets16,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               StreamHeader(
                                 name: controller.hostDetails?.userName ?? 'U',
-                                viewerCont: 10,
+                                viewerCont: controller.streamViewersList.length,
                                 imageUrl: controller
                                         .hostDetails?.userProfileImageUrl ??
                                     '',
+                                viewerList: controller.streamViewersList,
                                 onTabCross: () {
                                   controller.onExist(room, meetingId);
                                 },
+                                onTabViewers: () {
+                                  IsmLiveUtility.openBottomSheet(
+                                      IsmLiveListSheet(
+                                          list: controller.streamViewersList),
+                                      isScrollController: true);
+                                },
                               ),
-                              const Spacer(),
                               IsmLiveControlsWidget(
                                 room,
                                 room.localParticipant!,

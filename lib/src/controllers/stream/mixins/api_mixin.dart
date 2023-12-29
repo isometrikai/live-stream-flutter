@@ -68,6 +68,16 @@ mixin StreamAPIMixin {
     }
   }
 
+  Future<void> getStreamViewer({
+    required String streamId,
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) async {
+    _controller.streamViewersList = await _viewModel.getStreamViewer(
+        streamId: streamId, limit: limit, skip: skip);
+  }
+
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader();
     var res = await _viewModel.getPresignedUrl(
