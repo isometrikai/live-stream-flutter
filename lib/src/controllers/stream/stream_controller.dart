@@ -17,7 +17,12 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveAPIMixin {
+class IsmLiveStreamController extends GetxController
+    with
+        GetSingleTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        GoLiveAPIMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -38,6 +43,16 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   Uint8List? bytes;
 
+  int hearts = 0;
+
+  int orders = 0;
+
+  int followers = 0;
+
+  int earnings = 0;
+
+  DateTime duration = DateTime.now();
+
   CameraController? cameraController;
 
   final getStreamDebouncer = IsmLiveDebouncer();
@@ -57,7 +72,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -116,7 +132,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     var member2 = participantTracks.elementAt(index + 1);
     participantTracks[index + 1] = participantTracks.elementAt(0);
     participantTracks[0] = member2;
-    update(['room']);
+    update([IsmLiveStreamView.update]);
   }
 
   void onChangeHdBroadcast(
@@ -144,10 +160,11 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
           unawaited(getStreams());
           _streamTimer?.cancel();
-          Get.back();
+          IsmLiveRouteManagement.goToEndSttreamView();
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
+
           sortParticipants(room);
         })
         ..on<ParticipantConnectedEvent>((event) async {
@@ -156,6 +173,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
             getStreamMembers(streamId: streamId, limit: 10, skip: 0),
             getStreamViewer(streamId: streamId, limit: 10, skip: 0),
           ]));
+          update([IsmLiveStreamView.update]);
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
@@ -163,6 +181,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
             getStreamMembers(streamId: streamId, limit: 10, skip: 0),
             getStreamViewer(streamId: streamId, limit: 10, skip: 0),
           ]));
+          update([IsmLiveStreamView.update]);
         })
         ..on<RoomRecordingStatusChanged>((event) {})
         ..on<LocalTrackPublishedEvent>((_) => sortParticipants(room))
@@ -237,7 +256,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -252,7 +272,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     }
 
     participantTracks = [...userMediaTracks];
-    update(['room']);
+    update([IsmLiveStreamView.update]);
   }
 
   void onPan(details) {
@@ -315,17 +335,21 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         leftOnTab: Get.back,
         rightOnTab: () async {
+          Get.back();
           await disconnectStream(
             isHost: isHost,
             room: room,
             streamId: streamId,
           );
-          Get.back();
+
+          IsmLiveRouteManagement.goToEndSttreamView();
         },
       ),
       isDismissible: false,

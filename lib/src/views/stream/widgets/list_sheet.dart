@@ -9,15 +9,28 @@ class IsmLiveListSheet extends StatelessWidget {
   });
   final List<IsmLiveStreamViewerDetailsModel> list;
   @override
-  Widget build(BuildContext context) => ListView.builder(
-        shrinkWrap: true,
-        itemBuilder: (context, index) => ListTile(
-          leading: IsmLiveImage.network(
-            list[index].userProfileImageUrl ?? '',
-            name: list[index].userName,
+  Widget build(BuildContext context) => list.isEmpty
+      ? const Center(
+          child: Text('No Viewers Found!'),
+        )
+      : ListView.builder(
+          shrinkWrap: true,
+          itemBuilder: (context, index) => Padding(
+            padding: IsmLiveDimens.edgeInsets12,
+            child: Row(
+              children: [
+                IsmLiveImage.network(
+                  list[index].userProfileImageUrl ?? '',
+                  height: IsmLiveDimens.fifty,
+                  width: IsmLiveDimens.fifty,
+                  name: list[index].userName,
+                  isProfileImage: true,
+                ),
+                IsmLiveDimens.boxWidth20,
+                Text(list[index].userName),
+              ],
+            ),
           ),
-          title: Text(list[index].userName),
-        ),
-        itemCount: list.length,
-      );
+          itemCount: list.length,
+        );
 }
