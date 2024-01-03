@@ -23,6 +23,10 @@ class IsmLiveStrings {
 
   static const String youreLive = 'You\'re Live';
 
+  static const String preparingYourStream = 'Preparing your stream';
+  static const String reconnecting = 'Reconnecting... Please wait';
+  static const String joiningLiveStream = 'Joining the live stream';
+
   static const String uploadingImage = 'Uploading Image';
 
   static const String areYouSureEndStream = 'Are you sure that you want to end your live stream?';

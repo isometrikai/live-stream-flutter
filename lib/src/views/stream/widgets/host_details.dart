@@ -1,16 +1,16 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class IsmLiveHostDetail extends StatelessWidget {
   const IsmLiveHostDetail({
     super.key,
     required this.name,
     required this.imageUrl,
-    required this.viewerCont,
   });
+
   final String name;
   final String imageUrl;
-  final int viewerCont;
 
   Color _color(BuildContext context) => context.liveTheme.backgroundColor ?? IsmLiveColors.white;
 
@@ -28,7 +28,6 @@ class IsmLiveHostDetail extends StatelessWidget {
               ),
               title: '@$name',
             ),
-            // backgroundColor: IsmLiveColors.white,
           );
         },
         child: Container(
@@ -73,9 +72,11 @@ class IsmLiveHostDetail extends StatelessWidget {
                           color: IsmLiveColors.white,
                         ),
                         IsmLiveDimens.boxWidth2,
-                        Text(
-                          '$viewerCont',
-                          style: IsmLiveStyles.white12,
+                        GetX<IsmLiveStreamController>(
+                          builder: (controller) => Text(
+                            controller.streamViewersList.length.toString(),
+                            style: IsmLiveStyles.white12,
+                          ),
                         ),
                       ],
                     ),

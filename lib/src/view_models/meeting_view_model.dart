@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/create_meeting_model.dart';
-import 'package:appscrip_live_stream_component/src/models/my_meeting_model.dart';
 
 class MeetingViewModel {
   MeetingViewModel(this._repository);

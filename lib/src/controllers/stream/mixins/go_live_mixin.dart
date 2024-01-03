@@ -1,6 +1,6 @@
 part of '../stream_controller.dart';
 
-mixin GoLiveAPIMixin {
+mixin GoLiveMixin {
   IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty && _controller.pickedImage != null;

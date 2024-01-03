@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/views/counter_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -11,24 +10,29 @@ class IsmLiveStreamView extends StatelessWidget {
         listener = Get.arguments['listener'],
         meetingId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
-        isHost = Get.arguments['isHost'];
+        isHost = Get.arguments['isHost'],
+        isNewStream = Get.arguments['isNewStream'];
 
   final Room room;
   final EventsListener<RoomEvent> listener;
   final String meetingId;
   final bool audioCallOnly;
   final bool isHost;
+  final bool isNewStream;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
   static const String route = IsmLiveRoutes.streamView;
 
+  static const String updateId = 'stream-view';
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: 'room',
+        id: updateId,
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
           await streamController.setUpListeners(
+            isHost: isHost,
             streamId: meetingId,
             listener: listener,
             room: room,
@@ -70,46 +74,43 @@ class IsmLiveStreamView extends StatelessWidget {
                   ),
                 ),
 
-                room.localParticipant != null
-                    ? SafeArea(
-                        child: Padding(
-                          padding: IsmLiveDimens.edgeInsets16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              StreamHeader(
-                                name: controller.hostDetails?.userName ?? 'U',
-                                viewerCont: controller.streamViewersList.length,
-                                imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
-                                viewerList: controller.streamViewersList,
-                                onTabCross: () {
-                                  controller.onExit(
-                                    isHost: isHost,
-                                    room: room,
-                                    streamId: meetingId,
-                                  );
-                                },
-                                onTabViewers: () {
-                                  if (isHost) {
-                                    IsmLiveUtility.openBottomSheet(
-                                      IsmLiveListSheet(list: controller.streamViewersList),
-                                      isScrollController: true,
-                                    );
-                                  }
-                                },
-                              ),
-                              IsmLiveControlsWidget(
-                                room,
-                                room.localParticipant!,
-                                meetingId: meetingId,
-                                audioCallOnly: audioCallOnly,
-                              ),
-                            ],
+                if (room.localParticipant != null) ...[
+                  SafeArea(
+                    child: Padding(
+                      padding: IsmLiveDimens.edgeInsets16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          StreamHeader(
+                            name: controller.user?.userName ?? 'U',
+                            imageUrl: controller.user?.profileUrl ?? '',
+                            onTabCross: () {
+                              controller.onExit(
+                                isHost: isHost,
+                                room: room,
+                                streamId: meetingId,
+                              );
+                            },
+                            onTabViewers: () {
+                              if (isHost) {
+                                IsmLiveUtility.openBottomSheet(
+                                  Obx(() => IsmLiveListSheet(list: controller.streamViewersList)),
+                                  isScrollController: true,
+                                );
+                              }
+                            },
                           ),
-                        ),
-                      )
-                    : IsmLiveDimens.box0,
-
+                          IsmLiveControlsWidget(
+                            room,
+                            room.localParticipant!,
+                            meetingId: meetingId,
+                            audioCallOnly: audioCallOnly,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 // Positioned(
                 //   left: controller.positionX,
                 //   top: controller.positionY,
@@ -140,7 +141,7 @@ class IsmLiveStreamView extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-                if (isHost) ...[
+                if (isHost && isNewStream) ...[
                   Positioned(
                     bottom: IsmLiveDimens.sixteen,
                     left: IsmLiveDimens.sixteen,

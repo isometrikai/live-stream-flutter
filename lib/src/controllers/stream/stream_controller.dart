@@ -3,9 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/member_details_model.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
-import 'package:appscrip_live_stream_component/src/utils/debouncer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,7 +14,7 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveAPIMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -32,7 +29,9 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   List<IsmLiveMemberDetailsModel> streamMembersList = [];
 
-  List<IsmLiveStreamViewerDetailsModel> streamViewersList = [];
+  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
+  List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
+  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -135,6 +134,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   }
 
   Future<void> setUpListeners({
+    required bool isHost,
     required String streamId,
     required EventsListener<RoomEvent> listener,
     required Room room,
@@ -152,17 +152,21 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         })
         ..on<ParticipantConnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantConnectedEvent: $event');
-          unawaited(Future.wait([
-            getStreamMembers(streamId: streamId, limit: 10, skip: 0),
-            getStreamViewer(streamId: streamId, limit: 10, skip: 0),
-          ]));
+          if (isHost) {
+            unawaited(Future.wait([
+              getStreamMembers(streamId: streamId, limit: 10, skip: 0),
+              getStreamViewer(streamId: streamId, limit: 10, skip: 0),
+            ]));
+          }
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
-          unawaited(Future.wait([
-            getStreamMembers(streamId: streamId, limit: 10, skip: 0),
-            getStreamViewer(streamId: streamId, limit: 10, skip: 0),
-          ]));
+          if (isHost) {
+            unawaited(Future.wait([
+              getStreamMembers(streamId: streamId, limit: 10, skip: 0),
+              getStreamViewer(streamId: streamId, limit: 10, skip: 0),
+            ]));
+          }
         })
         ..on<RoomRecordingStatusChanged>((event) {})
         ..on<LocalTrackPublishedEvent>((_) => sortParticipants(room))

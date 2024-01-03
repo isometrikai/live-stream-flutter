@@ -17,15 +17,18 @@ class YourLiveSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IsmLiveDimens.boxHeight32,
+            IsmLiveDimens.boxHeight16,
             Text(
               'You\'re Live',
               style: IsmLiveStyles.blackBold16,
             ),
-            IsmLiveDimens.boxHeight16,
-            const Text(
-              'We\'ve sent a notification to your \n followers your fans will start to join soon',
-              textAlign: TextAlign.center,
+            IsmLiveDimens.boxHeight8,
+            Padding(
+              padding: IsmLiveDimens.edgeInsets40_0,
+              child: const Text(
+                'We\'ve sent a notification to your followers your fans will start to join soon',
+                textAlign: TextAlign.center,
+              ),
             ),
             IsmLiveDimens.boxHeight16,
             IsmLiveButton(

@@ -14,28 +14,30 @@ class IsmLiveModerationWarning extends StatelessWidget {
           offstage: !controller.isModerationWarningVisible,
           child: SizedBox(
             width: Get.width * 0.8,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.liveTranslations.streamTranslations?.moderationWarning ?? IsmLiveStrings.moderationWarning,
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: IsmLiveColors.white,
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.liveTranslations.streamTranslations?.moderationWarning ?? IsmLiveStrings.moderationWarning,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: IsmLiveColors.white,
+                    ),
                   ),
-                ),
-                IsmLiveDimens.boxHeight10,
-                SizedBox(
-                  width: Get.width * 0.5,
-                  child: IsmLiveButton(
-                    label: 'Got it',
-                    onTap: () {
-                      controller.isModerationWarningVisible = false;
-                      controller.update([updateId]);
-                    },
+                  IsmLiveDimens.boxHeight10,
+                  SizedBox(
+                    width: Get.width * 0.5,
+                    child: IsmLiveButton(
+                      label: 'Got it',
+                      onTap: () {
+                        controller.isModerationWarningVisible = false;
+                        controller.update([updateId]);
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

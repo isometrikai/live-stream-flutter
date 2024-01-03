@@ -26,17 +26,19 @@ class IsmGoLiveView extends StatelessWidget {
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: IsmLiveColors.black,
-          bottomNavigationBar: Padding(
-            padding: IsmLiveDimens.edgeInsets16,
-            child: IsmLiveButton(
-              label: 'Go Live',
-              onTap: !controller.isGoLiveEnabled
-                  ? null
-                  : () {
-                      IsmLiveUtility.openBottomSheet(
-                        YourLiveSheet(onTap: controller.startStream),
-                      );
-                    },
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: IsmLiveDimens.edgeInsets16,
+              child: IsmLiveButton(
+                label: 'Go Live',
+                onTap: !controller.isGoLiveEnabled
+                    ? null
+                    : () {
+                        IsmLiveUtility.openBottomSheet(
+                          YourLiveSheet(onTap: controller.startStream),
+                        );
+                      },
+              ),
             ),
           ),
           body: Stack(
