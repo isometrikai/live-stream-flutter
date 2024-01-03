@@ -28,9 +28,6 @@ class AuthViewModel {
       );
 
       if (res.hasError) {
-        if ([401, 404].contains(res.statusCode)) {
-          await IsmLiveUtility.showInfoDialog(res);
-        }
         return null;
       }
 
@@ -65,9 +62,6 @@ class AuthViewModel {
     try {
       var res = await _repository.signup(isLoading: isLoading, createUser: createUser);
       if (res.hasError) {
-        if ([401, 404].contains(res.statusCode)) {
-          await IsmLiveUtility.showInfoDialog(res);
-        }
         return null;
       }
       var data = res.decode();
@@ -77,7 +71,7 @@ class AuthViewModel {
         userToken: data['userToken'],
         email: createUser['userIdentifier'],
         deviceId: deviceId,
-        userName: data['userName'],
+        userName: createUser['userName'],
       );
 
       await dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());

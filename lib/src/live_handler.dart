@@ -45,7 +45,6 @@ class IsmLiveHandler {
     }
     var mqttController = Get.find<IsmLiveMqttController>();
     await mqttController.unsubscribeTopics();
-    await mqttController.unsubscribeTopics();
     await Get.delete<IsmLiveMqttController>(force: true);
 
     (logoutCallback ?? onLogout)?.call();

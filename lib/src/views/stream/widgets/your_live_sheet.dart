@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 class YourLiveSheet extends StatelessWidget {
   const YourLiveSheet({
     super.key,
-    required this.onTap,
+    this.onTap,
   });
 
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -35,7 +35,7 @@ class YourLiveSheet extends StatelessWidget {
               label: 'Ok',
               onTap: () {
                 Get.back();
-                onTap();
+                onTap?.call();
               },
             ),
           ],

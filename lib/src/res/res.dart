@@ -1,7 +1,9 @@
 export 'colors.dart';
+export 'config/config.dart';
 export 'constants/constants.dart';
 export 'dimens.dart';
 export 'navigation/navigation.dart';
+export 'properties/properties.dart';
 export 'styles.dart';
 export 'theme/theme.dart';
 export 'translations/translation.dart';

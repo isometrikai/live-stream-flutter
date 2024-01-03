@@ -14,18 +14,17 @@ class IsmLiveTabButton extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
           var isSelected = type == controller.streamType;
-          var theme = IsmLiveTheme.of(context);
           return DecoratedBox(
             decoration: BoxDecoration(
-              color: isSelected ? theme.primaryColor : Colors.grey.shade100,
+              color: isSelected ? context.liveTheme.primaryColor : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
             ),
             child: Padding(
               padding: IsmLiveDimens.edgeInsets16_10,
               child: Text(
                 type.label,
-                style: IsmLiveStyles.white16.copyWith(
-                  color: isSelected ? null : theme.unselectedTextColor,
+                style: context.textTheme.titleSmall?.copyWith(
+                  color: isSelected ? context.liveTheme.selectedTextColor : context.liveTheme.unselectedTextColor,
                 ),
               ),
             ),

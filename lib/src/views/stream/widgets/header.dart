@@ -10,16 +10,15 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
 
   final double? height;
 
-  static const String updateId = 'IsmLive-header';
+  static const String updateId = 'ismlive-header';
 
   @override
-  Size get preferredSize =>
-      Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
+  Size get preferredSize => Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
 
   @override
   Widget build(BuildContext context) => AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: false,
+        centerTitle: true,
         title: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           builder: (controller) => IsmLiveTapHandler(

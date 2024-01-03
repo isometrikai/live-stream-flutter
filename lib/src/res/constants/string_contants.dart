@@ -12,6 +12,8 @@ class IsmLiveStrings {
 
   static const String title = 'My Streams';
 
+  static const String noStreams = 'No Streams';
+
   static const String all = 'All';
   static const String audioOnly = 'Audio Only';
   static const String multiLive = 'Multi Live';

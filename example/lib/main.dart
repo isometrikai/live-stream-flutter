@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
                 foregroundColor: Colors.white,
               ),
             ),
-            builder: (context, child) => IsmLiveSetup(
+            builder: (context, child) => IsmLiveData(
               child: child!,
             ),
             translations: TranslationsFile(),

@@ -16,14 +16,16 @@ class SignupView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<AuthController>(
       initState: (_) {
-        Get.find<AuthController>()
-          ..profileImage = ''
-          ..userNameController.clear()
-          ..emailController.clear()
-          ..passwordController.clear()
-          ..confirmPasswordController.clear()
-          ..showPassward = false
-          ..showConfirmPasswared = false;
+        IsmLiveUtility.updateLater(() {
+          Get.find<AuthController>()
+            ..profileImage = ''
+            ..userNameController.clear()
+            ..emailController.clear()
+            ..passwordController.clear()
+            ..confirmPasswordController.clear()
+            ..showPassward = false
+            ..showConfirmPasswared = false;
+        });
       },
       builder: (controller) => SafeArea(
             bottom: false,

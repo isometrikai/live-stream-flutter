@@ -68,6 +68,8 @@ extension IsmLiveContextExtension on BuildContext {
   IsmLiveConfigData get liveConfig => IsmLiveConfig.of(this);
 
   IsmLiveTranslationsData get liveTranslations => IsmLiveTranslations.of(this);
+
+  IsmLivePropertiesData get liveProperties => IsmLiveProperties.of(this);
 }
 
 extension IsmLiveMaterialStateExtension on Set<MaterialState> {

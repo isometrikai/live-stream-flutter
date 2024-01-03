@@ -15,7 +15,7 @@ class IsmLiveTheme extends StatelessWidget {
 
   static IsmLiveThemeData of(BuildContext context) {
     final result = maybeOf(context);
-    assert(result != null, 'No IsmLiveTheme found in the context');
+    assert(result != null, 'No IsmLiveThemeData found in the context');
     return result!;
   }
 

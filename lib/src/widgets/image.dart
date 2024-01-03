@@ -176,10 +176,10 @@ class _Network extends StatelessWidget {
                   child: CircularProgressIndicator.adaptive(),
                 ),
         ),
-        errorWidget: (context, url, error) {
-          IsmLiveLog.error('ImageError - $url\n$error');
-          return _ErrorImage(isProfileImage: isProfileImage, name: name);
-        },
+        errorWidget: (context, url, error) => _ErrorImage(
+          isProfileImage: isProfileImage,
+          name: name,
+        ),
       );
 }
 

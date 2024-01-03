@@ -38,6 +38,7 @@ class IsmLiveStreamRepository {
         '${IsmLiveApis.getStreams}?${queryModel.toMap().makeQuery()}',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> getRTCToken(

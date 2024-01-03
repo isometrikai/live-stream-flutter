@@ -22,7 +22,7 @@
 
 
     <application
-        android:label="Flutter LiveStream"
+        android:label="ISeeYou-Live"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
