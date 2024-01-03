@@ -43,5 +43,7 @@ class IsmLiveAssetConstants {
   static const String heart = '$_icons/heart.svg';
   static const String profileUser = '$_icons/profile-2user.svg';
   static const String vs = '$_icons/vs.svg';
+  static const String speakerOff = '$_icons/speaker_off.svg';
+  static const String speakerOn = '$_icons/speaker_on.svg';
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

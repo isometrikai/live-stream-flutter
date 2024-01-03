@@ -184,6 +184,8 @@ enum IsmLiveStreamOption {
   favourite(IsmLiveAssetConstants.favourite),
   settings(IsmLiveAssetConstants.setting),
   rotateCamera(IsmLiveAssetConstants.rotateCamera),
+  speakerOn(IsmLiveAssetConstants.speakerOn),
+  speakerOff(IsmLiveAssetConstants.speakerOff),
   vs(IsmLiveAssetConstants.vs);
 
   const IsmLiveStreamOption(this.icon);
@@ -192,6 +194,7 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get viewersOptions => [
         IsmLiveStreamOption.gift,
         IsmLiveStreamOption.share,
+        IsmLiveStreamOption.speakerOn,
         IsmLiveStreamOption.multiLive
       ];
 
