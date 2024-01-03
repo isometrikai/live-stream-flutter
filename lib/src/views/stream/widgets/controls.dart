@@ -30,64 +30,28 @@ class IsmLiveControlsWidget extends StatelessWidget {
 
           participant.removeListener(streamController.update);
         },
-        builder: (controller) => Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icMembersLiveStream,
+        builder: (controller) {
+          var options = participant.videoTracks.isEmpty
+              ? IsmLiveStreamOption.viewersOptions
+              : IsmLiveStreamOption.hostOptions;
+
+          return Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ...List.generate(
+                  options.length,
+                  (index) => CustomIconButton(
+                    icon: IsmLiveImage.svg(options[index].icon),
+                    onTap: controller.onOptionTap(options[index],
+                        participant: participant),
+                    color: IsmLiveColors.transparent,
+                  ),
                 ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icMultiLiveStream,
-                ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icGiftStream,
-                ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icFavouriteStream,
-                ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icSettingStream,
-                ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icShareLiveStream,
-                ),
-                onTap: () {},
-                color: IsmLiveColors.transparent,
-              ),
-              CustomIconButton(
-                icon: const IsmLiveImage.svg(
-                  IsmLiveAssetConstants.icRotateCamera,
-                ),
-                onTap: () {
-                  controller.toggleCamera(participant);
-                },
-                color: IsmLiveColors.transparent,
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       );
 }

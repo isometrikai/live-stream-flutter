@@ -62,7 +62,9 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -93,7 +95,8 @@ class IsmLiveStreamView extends StatelessWidget {
                             },
                             onTabViewers: () {
                               IsmLiveUtility.openBottomSheet(
-                                Obx(() => IsmLiveListSheet(list: controller.streamViewersList)),
+                                Obx(() => IsmLiveListSheet(
+                                    list: controller.streamViewersList)),
                               );
                             },
                           ),

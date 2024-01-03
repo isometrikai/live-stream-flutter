@@ -70,19 +70,21 @@ mixin StreamJoinMixin {
       return;
     }
     isMeetingOn = true;
-
+    _controller.isHost = isHost;
     unawaited(_mqttController?.subscribeStream(streamId));
 
     final translation = Get.context?.liveTranslations.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else {
-      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
@@ -132,7 +134,9 @@ mixin StreamJoinMixin {
 
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
       );
 
       if (isHost) {
@@ -162,15 +166,18 @@ mixin StreamJoinMixin {
         audioCallOnly: audioCallOnly,
       );
       unawaited(_mqttController?.unsubscribeStream(streamId));
+      _controller.isHost = null;
       isMeetingOn = false;
     } catch (e, st) {
+      _controller.isHost = null;
       isMeetingOn = false;
       IsmLiveLog.error(e, st);
     }
   }
 
   void startStreamTimer() {
-    _controller._streamTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _controller._streamTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
       _controller.streamDuration += const Duration(seconds: 1);
     });
   }

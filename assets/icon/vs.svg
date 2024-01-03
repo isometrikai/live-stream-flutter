@@ -1,0 +1,21 @@
+<svg id="Group_137750" data-name="Group 137750" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="45" height="45" viewBox="0 0 45 45">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.213" y1="0.085" x2="0.807" y2="0.93" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#d8c80e"/>
+      <stop offset="1" stop-color="#08bed6"/>
+    </linearGradient>
+    <filter id="VS" x="6.5" y="9.5" width="29" height="28" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="0.5" result="blur"/>
+      <feFlood flood-opacity="0.18"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="multi_live" data-name="multi live" transform="translate(2496 -2606)">
+    <path id="Path_156054" data-name="Path 156054" d="M22.5,0A22.5,22.5,0,1,1,0,22.5,22.5,22.5,0,0,1,22.5,0Z" transform="translate(-2496 2606)" fill="url(#linear-gradient)"/>
+  </g>
+  <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#VS)">
+    <text id="VS-2" data-name="VS" transform="translate(8 30)" fill="#fff" font-size="19" font-family="Chantilly-Serial-Heavy-RegularItalic, Chantilly-Serial-Heavy" font-style="italic"><tspan x="0" y="0">VS</tspan></text>
+  </g>
+</svg>
