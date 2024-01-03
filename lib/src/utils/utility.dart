@@ -63,7 +63,7 @@ class IsmLiveUtility {
     Color? backgroundColor,
   }) async =>
       await Get.bottomSheet<T>(
-        child,
+        SafeArea(child: child),
         isDismissible: isDismissible,
         isScrollControlled: isScrollController,
         ignoreSafeArea: ignoreSafeArea,

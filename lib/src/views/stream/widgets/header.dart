@@ -19,6 +19,7 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) => AppBar(
         automaticallyImplyLeading: false,
+        centerTitle: false,
         title: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           builder: (controller) => IsmLiveTapHandler(
