@@ -45,5 +45,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Required to access and upload photos from your library for various app features.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Required for taking photos, video calls, and streaming functionality within the app.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Needed for audio recording during video calls and streaming within the app.</string>
 </dict>
 </plist>
