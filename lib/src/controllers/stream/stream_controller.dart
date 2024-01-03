@@ -149,6 +149,10 @@ class IsmLiveStreamController extends GetxController
         return () => toggleCamera(participant);
       case IsmLiveStreamOption.vs:
         return () {};
+      case IsmLiveStreamOption.speakerOn:
+        return () {};
+      case IsmLiveStreamOption.speakerOff:
+        return () {};
     }
   }
 

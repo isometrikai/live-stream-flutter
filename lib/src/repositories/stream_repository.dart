@@ -142,14 +142,40 @@ class IsmLiveStreamRepository {
         shouldEncodePayload: false,
       );
 
-  // Future<IsmLiveResponseModel> sendMessage(
-  //   IsmLiveCreateStreamModel streamModel,
-  // ) =>
+  // Future<IsmLiveResponseModel> getEndStream({
+  //   required bool showLoading,
+  //   required String streamId,
+  // }) =>
   //     _apiWrapper.makeRequest(
-  //       IsmLiveApis.postMessage,
-  //       type: IsmLiveRequestType.post,
+  //       '${IsmLiveApis.getEndStream}?streamId=$streamId',
+  //       type: IsmLiveRequestType.get,
   //       headers: IsmLiveUtility.tokenHeader(),
-  //       payload: streamModel.toMap(),
-  //       showLoader: true,
+  //       showLoader: showLoading,
   //     );
+
+  Future<IsmLiveResponseModel> sendMessage({
+    required bool showLoading,
+    required String streamId,
+    required String body,
+    required List<String> searchableTags,
+    required IsmLiveMetaData metaData,
+    required String customType,
+    required String deviceId,
+    required int messageType,
+  }) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.postMessage,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: {
+          'streamId': streamId,
+          'searchableTags': searchableTags,
+          'metaData': metaData,
+          'messageType': messageType,
+          'deviceId': deviceId,
+          'customType': customType,
+          'body': body
+        },
+        showLoader: true,
+      );
 }

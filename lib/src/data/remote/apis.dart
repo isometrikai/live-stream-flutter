@@ -22,4 +22,5 @@ class IsmLiveApis {
   static const String getStreamViewer = '$_streaming/viewers';
   static const String leaveStream = '$_streaming/viewer/leave';
   static const String postMessage = '$_streaming/message';
+  // static const String getEndStream = '$_streaming/analytics';
 }
