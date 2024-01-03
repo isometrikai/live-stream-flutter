@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_bold_dollar-circle" data-name="vuesax/bold/dollar-circle" transform="translate(-236 -572)">
+    <g id="dollar-circle">
+      <path id="Vector" d="M0,2.85H.65A1.247,1.247,0,0,0,1.84,1.57C1.84.7,1.53.53,1.02.35L.01,0V2.85Z" transform="translate(248.75 585.07)" fill="#292d32"/>
+      <path id="Vector-2" data-name="Vector" d="M9.97,0A10,10,0,1,0,20,9.97,10,10,0,0,0,9.97,0Zm2.29,10.1a2.5,2.5,0,0,1,1.83,2.64,2.737,2.737,0,0,1-2.69,2.78h-.65v.58a.75.75,0,0,1-1.5,0v-.58H8.89a3.027,3.027,0,0,1-2.97-3.08.75.75,0,0,1,1.5,0,1.531,1.531,0,0,0,1.47,1.58h.36V10.64L7.74,10.1A2.5,2.5,0,0,1,5.91,7.46,2.737,2.737,0,0,1,8.6,4.68h.65V4.1a.75.75,0,0,1,1.5,0v.58h.36a3.027,3.027,0,0,1,2.97,3.08.75.75,0,0,1-1.5,0,1.531,1.531,0,0,0-1.47-1.58h-.36V9.56Z" transform="translate(238 573.9)" fill="#292d32"/>
+      <path id="Vector-3" data-name="Vector" d="M0,1.29c0,.87.31,1.04.82,1.22l1.01.35V0H1.18A1.241,1.241,0,0,0,0,1.29Z" transform="translate(245.42 580.08)" fill="#292d32"/>
+      <path id="Vector-4" data-name="Vector" d="M0,0H24V24H0Z" transform="translate(236 572)" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

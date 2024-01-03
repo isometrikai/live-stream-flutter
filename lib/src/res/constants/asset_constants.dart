@@ -34,4 +34,10 @@ class IsmLiveAssetConstants {
   static const String icShareLiveStream = '$_icons/ic_share_live_stream.svg';
   static const String icMuteLiveStream = '$_icons/ic_mute_live_stream.svg';
   static const String icMultiLiveStream = '$_icons/ic_multi_live_stream.svg';
+  static const String box = '$_icons/vuesax-bold-box.svg';
+  static const String clock = '$_icons/vuesax-bold-clock.svg';
+  static const String dollar = '$_icons/vuesax-bold-dollar-circle.svg';
+  static const String eye = '$_icons/vuesax-bold-eye.svg';
+  static const String heart = '$_icons/vuesax-bold-heart.svg';
+  static const String profileUser = '$_icons/vuesax-bold-profile-2user.svg';
 }

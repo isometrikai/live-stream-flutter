@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/views/counter_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -22,10 +21,11 @@ class IsmLiveStreamView extends StatelessWidget {
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
   static const String route = IsmLiveRoutes.streamView;
+  static const String update = 'stream-view';
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: 'room',
+        id: update,
         initState: (ismLiveBuilder) async {
           var streamController = Get.find<IsmLiveStreamController>();
           await streamController.setUpListeners(
@@ -58,7 +58,9 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -80,7 +82,9 @@ class IsmLiveStreamView extends StatelessWidget {
                               StreamHeader(
                                 name: controller.hostDetails?.userName ?? 'U',
                                 viewerCont: controller.streamViewersList.length,
-                                imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                imageUrl: controller
+                                        .hostDetails?.userProfileImageUrl ??
+                                    '',
                                 viewerList: controller.streamViewersList,
                                 onTabCross: () {
                                   controller.onExit(
@@ -90,12 +94,10 @@ class IsmLiveStreamView extends StatelessWidget {
                                   );
                                 },
                                 onTabViewers: () {
-                                  if (isHost) {
-                                    IsmLiveUtility.openBottomSheet(
-                                      IsmLiveListSheet(list: controller.streamViewersList),
-                                      isScrollController: true,
-                                    );
-                                  }
+                                  IsmLiveUtility.openBottomSheet(
+                                    IsmLiveListSheet(
+                                        list: controller.streamViewersList),
+                                  );
                                 },
                               ),
                               IsmLiveControlsWidget(

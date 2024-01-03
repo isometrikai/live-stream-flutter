@@ -61,5 +61,12 @@ class IsmLivePages {
       binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage<IsmLiveEndStream>(
+      name: IsmLiveRoutes.endStream,
+      transitionDuration: transitionDuration,
+      page: IsmLiveEndStream.new,
+      binding: IsmLiveStreamBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 }
