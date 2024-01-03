@@ -5,9 +5,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class IsmLiveStreamListing extends StatefulWidget {
-  const IsmLiveStreamListing({
-    super.key,
-  });
+  const IsmLiveStreamListing({super.key});
 
   static const String updateId = 'ismlive-stream-view';
 
@@ -37,13 +35,16 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   Widget build(BuildContext context) => Scaffold(
         appBar: const IsmLiveHeader(),
         floatingActionButton: const IsmLiveCreateStreamFAB(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: GetBuilder<IsmLiveStreamController>(
           builder: (controller) => Column(
             children: [
               TabBar(
                 isScrollable: true,
+                tabAlignment: TabAlignment.start,
                 dividerHeight: 0,
                 indicatorColor: Colors.transparent,
+                labelPadding: IsmLiveDimens.edgeInsets8_0,
                 overlayColor: MaterialStateProperty.all(Colors.transparent),
                 controller: controller.tabController,
                 onTap: (index) {
@@ -61,7 +62,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                   children: [
                     ...IsmLiveStreamType.values.map(
                       (e) => _StreamListing(
-                        key: ValueKey('ismlive-stream-view-${e.value}'),
+                        key: ValueKey('${IsmLiveStreamListing.updateId}-${e.value}'),
                       ),
                     ),
                   ],
@@ -86,8 +87,9 @@ class _StreamListing extends StatelessWidget {
           enablePullDown: true,
           onRefresh: () => controller.getStreams(controller.streamType),
           child: controller.streams.isEmpty
-              ? const Center(
-                  child: Text('No Streams'),
+              ? const IsmLiveEmptyScreen(
+                  label: IsmLiveStrings.noStreams,
+                  placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
                 )
               : StaggeredGrid.count(
                   crossAxisCount: 2,

@@ -71,6 +71,7 @@ flutter:
     - assets/images/
     - assets/icon/
     - assets/logo/
+    - assets/placeholders/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   #

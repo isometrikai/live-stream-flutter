@@ -168,17 +168,3 @@ enum IsmLiveActions {
   const IsmLiveActions(this.value);
   final String value;
 }
-
-/*
-
- static func dataType(_ type: String) -> MQTTData {
-        switch type {
-        case "viewerJoined": return .mqttViewerJoined
-        case "viewerLeft": return .mqttViewerRemoved
-        case "viewerTimeout": return .mqttViewerTimeout
-        case "viewerRemoved": return .mqttviewerRemovedByInitiator
-        default: return .none
-        }
-    }
- 
- */

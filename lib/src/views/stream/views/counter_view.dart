@@ -7,12 +7,14 @@ import 'package:get/get.dart';
 class IsmLiveCounterView extends StatefulWidget {
   const IsmLiveCounterView({
     super.key,
-    this.duration = 3,
+    this.duration,
     this.onComplete,
+    this.onCompleteSheet,
   });
 
-  final int duration;
+  final int? duration;
   final VoidCallback? onComplete;
+  final Widget? onCompleteSheet;
 
   @override
   State<IsmLiveCounterView> createState() => _IsmLiveCounterViewState();
@@ -21,6 +23,10 @@ class IsmLiveCounterView extends StatefulWidget {
 class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
+
+  String youreLiveText = '';
+
+  IsmLiveCounterProperties? streamProperties;
 
   final RxInt _counter = 0.obs;
   int get counter => _counter.value;
@@ -35,7 +41,6 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
   @override
   void initState() {
     super.initState();
-    counter = widget.duration;
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -47,7 +52,18 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
       parent: controller,
       curve: Curves.easeInOutBack,
     ));
-    start();
+    IsmLiveUtility.updateLater(() {
+      setup();
+      start();
+    });
+  }
+
+  void setup() {
+    streamProperties = context.liveProperties.streamProperties?.counterProperties;
+    counter = widget.duration ?? streamProperties?.streamCounter ?? IsmLiveConstants.streamCounter;
+    if (streamProperties?.showYoureLiveText ?? false) {
+      youreLiveText = context.liveTranslations.streamTranslations?.youreLive ?? IsmLiveStrings.youreLive;
+    }
   }
 
   void start() async {
@@ -60,8 +76,12 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
         t.cancel();
         isCompleted = true;
         widget.onComplete?.call();
+        if ((streamProperties?.showYoureLiveSheet ?? false) && widget.onCompleteSheet != null) {
+          IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!);
+        }
         return;
       }
+
       counter--;
     });
     IsmLiveUtility.updateLater(() {
@@ -91,8 +111,11 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
                   builder: (context, child) => ScaleTransition(
                     scale: animation,
                     child: Text(
-                      counter == 0 ? IsmLiveTranslations.of(context).streamTranslations?.youreLive ?? IsmLiveStrings.youreLive : counter.toString(),
-                      style: IsmLiveStyles.whiteBold25,
+                      counter == 0 ? youreLiveText : counter.toString(),
+                      style: context.textTheme.displayMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: counter == 0 ? IsmLiveColors.red : IsmLiveColors.white,
+                      ),
                     ),
                   ),
                 ),

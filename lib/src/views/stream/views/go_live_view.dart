@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/widgets/your_live_sheet.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,7 @@ import 'package:get/get.dart';
 class IsmGoLiveView extends StatelessWidget {
   const IsmGoLiveView({super.key});
 
-  static const String updateId = 'go-live';
+  static const String updateId = 'ismlive-go-live';
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -31,13 +30,12 @@ class IsmGoLiveView extends StatelessWidget {
               padding: IsmLiveDimens.edgeInsets16,
               child: IsmLiveButton(
                 label: 'Go Live',
-                onTap: !controller.isGoLiveEnabled
-                    ? null
-                    : () {
-                        IsmLiveUtility.openBottomSheet(
-                          YourLiveSheet(onTap: controller.startStream),
-                        );
-                      },
+                onTap: !controller.isGoLiveEnabled ? null : controller.startStream,
+                // : () {
+                //     IsmLiveUtility.openBottomSheet(
+                //       YourLiveSheet(onTap: controller.startStream),
+                //     );
+                //   },
               ),
             ),
           ),

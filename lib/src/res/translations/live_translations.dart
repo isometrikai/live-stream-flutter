@@ -9,11 +9,11 @@ class IsmLiveTranslations extends StatelessWidget {
   });
 
   static IsmLiveTranslationsData? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_InheritedLiveranslations>()?.translations.data;
+      context.dependOnInheritedWidgetOfExactType<_InheritedLiveTranslations>()?.translations.data;
 
   static IsmLiveTranslationsData of(BuildContext context) {
     final result = maybeOf(context);
-    assert(result != null, 'No IsmLiveTranslations found in the context');
+    assert(result != null, 'No IsmLiveTranslationsData found in the context');
     return result!;
   }
 
@@ -21,14 +21,14 @@ class IsmLiveTranslations extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => _InheritedLiveranslations(
+  Widget build(BuildContext context) => _InheritedLiveTranslations(
         translations: this,
         child: child,
       );
 }
 
-class _InheritedLiveranslations extends InheritedTheme {
-  const _InheritedLiveranslations({
+class _InheritedLiveTranslations extends InheritedTheme {
+  const _InheritedLiveTranslations({
     required this.translations,
     required super.child,
   });
@@ -36,7 +36,7 @@ class _InheritedLiveranslations extends InheritedTheme {
   final IsmLiveTranslations translations;
 
   @override
-  bool updateShouldNotify(covariant _InheritedLiveranslations oldWidget) => oldWidget.translations.data != translations.data;
+  bool updateShouldNotify(covariant _InheritedLiveTranslations oldWidget) => oldWidget.translations.data != translations.data;
 
   @override
   Widget wrap(BuildContext context, Widget child) => IsmLiveTranslations(

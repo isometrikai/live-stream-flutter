@@ -323,13 +323,13 @@ class IsmLiveApiWrapper {
           // Logic to refresh the token the API will be called again automatically from the makeRequest function
           // ex: await Get.find<AuthController>().refreshToken();
         }
-        var hasError = ![404].contains(response.statusCode);
+        var hasError = true;
         var res = IsmLiveResponseModel(
           data: utf8.decode(response.bodyBytes),
           hasError: hasError,
           statusCode: response.statusCode,
         );
-        if (![401, 404, 406, 410].contains(response.statusCode) && showDialog) {
+        if (![401, 406, 410].contains(response.statusCode) && showDialog) {
           await IsmLiveUtility.showInfoDialog(res);
         }
         return res;

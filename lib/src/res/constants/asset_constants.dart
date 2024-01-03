@@ -14,6 +14,8 @@ class IsmLiveAssetConstants {
 
   static const String _icons = '$_path/icon';
 
+  static const String _placeholders = '$_path/placeholders';
+
   static const String appscrip = '$_logo/appscrip.png';
   static const String isometrik = '$_logo/isometrik.png';
 
@@ -40,4 +42,6 @@ class IsmLiveAssetConstants {
   static const String eye = '$_icons/vuesax-bold-eye.svg';
   static const String heart = '$_icons/vuesax-bold-heart.svg';
   static const String profileUser = '$_icons/vuesax-bold-profile-2user.svg';
+
+  static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

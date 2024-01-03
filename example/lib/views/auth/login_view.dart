@@ -13,10 +13,12 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<AuthController>(
         initState: (_) {
-          Get.find<AuthController>()
-            ..emailController.clear()
-            ..passwordController.clear()
-            ..showPassward = false;
+          IsmLiveUtility.updateLater(() {
+            Get.find<AuthController>()
+              ..emailController.clear()
+              ..passwordController.clear()
+              ..showPassward = false;
+          });
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,

@@ -1,4 +1,4 @@
-import 'package:appscrip_live_stream_component/src/utils/utils.dart';
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/widgets.dart';
 
 class IsmLiveConfig extends StatelessWidget {
@@ -15,7 +15,7 @@ class IsmLiveConfig extends StatelessWidget {
 
   static IsmLiveConfigData of(BuildContext context) {
     final result = maybeOf(context);
-    assert(result != null, 'No IsmLiveConfig found in the context');
+    assert(result != null, 'No IsmLiveConfigData found in the context');
     return result!;
   }
 

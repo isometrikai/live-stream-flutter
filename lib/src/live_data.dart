@@ -17,16 +17,29 @@ const _kTranslationsData = IsmLiveTranslationsData(
   ),
 );
 
-class IsmLiveSetup extends StatelessWidget {
-  const IsmLiveSetup({
+const _kPropertiesData = IsmLivePropertiesData(
+  streamProperties: IsmLiveStreamProperties(
+    counterProperties: IsmLiveCounterProperties(
+      showYoureLiveSheet: true,
+      showYoureLiveText: true,
+    ),
+  ),
+);
+
+class IsmLiveData extends StatelessWidget {
+  const IsmLiveData({
     super.key,
     this.theme,
     this.translations,
+    this.properties,
+    this.configurations,
     required this.child,
   });
 
   final IsmLiveThemeData? theme;
   final IsmLiveTranslationsData? translations;
+  final IsmLivePropertiesData? properties;
+  final IsmLiveConfigData? configurations;
   final Widget child;
 
   @override
@@ -34,7 +47,15 @@ class IsmLiveSetup extends StatelessWidget {
         data: theme ?? _kThemeData,
         child: IsmLiveTranslations(
           data: translations ?? _kTranslationsData,
-          child: child,
+          child: IsmLiveProperties(
+            data: properties ?? _kPropertiesData,
+            child: configurations != null
+                ? IsmLiveConfig(
+                    data: configurations!,
+                    child: child,
+                  )
+                : child,
+          ),
         ),
       );
 }

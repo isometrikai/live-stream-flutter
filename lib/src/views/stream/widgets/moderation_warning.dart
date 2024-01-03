@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class IsmLiveModerationWarning extends StatelessWidget {
   const IsmLiveModerationWarning({super.key});
 
-  static const String updateId = 'moderation-warning';
+  static const String updateId = 'ismlive-moderation-warning';
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(

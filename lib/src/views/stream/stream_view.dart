@@ -24,7 +24,7 @@ class IsmLiveStreamView extends StatelessWidget {
 
   static const String route = IsmLiveRoutes.streamView;
 
-  static const String updateId = 'stream-view';
+  static const String updateId = 'ismlive-stream-view';
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -144,7 +144,7 @@ class IsmLiveStreamView extends StatelessWidget {
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
-                  const IsmLiveCounterView(),
+                  const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
                 ],
               ],
             ),

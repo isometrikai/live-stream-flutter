@@ -17,4 +17,6 @@ class IsmLiveConstants {
   static double imageHeight = IsmLiveDimens.twentyFive;
 
   static const int keepAlivePeriod = 60;
+
+  static const int streamCounter = 3;
 }

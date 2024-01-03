@@ -45,7 +45,7 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   int earnings = 0;
 
-  DateTime duration = DateTime.now();
+  Duration duration = Duration.zero;
 
   CameraController? cameraController;
 
