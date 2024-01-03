@@ -48,7 +48,7 @@ class IsmLiveStreamCard extends StatelessWidget {
                     ),
                     child: Text(
                       'Continue',
-                      style: context.textTheme.bodyLarge?.copyWith(
+                      style: context.textTheme.labelSmall?.copyWith(
                         color: Colors.white,
                       ),
                     ),

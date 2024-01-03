@@ -98,7 +98,7 @@ class _StreamListing extends StatelessWidget {
                       var isCreatedByMe = e.createdBy == controller.user?.userId;
                       return IsmLiveTapHandler(
                         onTap: () {
-                          controller.joinStream(e);
+                          controller.joinStream(e, isCreatedByMe);
                         },
                         child: IsmLiveStreamCard(
                           e,

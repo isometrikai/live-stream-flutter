@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/presigned_url.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/member_details_model.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
@@ -86,7 +83,11 @@ class IsmLiveStreamViewModel {
       if (res.hasError) {
         return null;
       }
-      return IsmLiveRTCModel.fromJson(res.data);
+      final model = IsmLiveRTCModel.fromJson(res.data);
+
+      unawaited(_dbWrapper.saveValueSecurely(model.streamId!, model.rtcToken));
+
+      return model;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
@@ -96,6 +97,7 @@ class IsmLiveStreamViewModel {
   Future<bool> stopStream(String streamId) async {
     try {
       var res = await _repository.stopStream(streamId);
+      unawaited(_dbWrapper.deleteSecuredValue(streamId));
       return !res.hasError;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
@@ -103,7 +105,7 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<PresignedUrl?> getPresignedUrl({
+  Future<IsmLivePresignedUrl?> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
     required String mediaExtension,
@@ -118,7 +120,7 @@ class IsmLiveStreamViewModel {
         return null;
       }
       var data = res.decode();
-      return PresignedUrl.fromMap(data);
+      return IsmLivePresignedUrl.fromMap(data);
     } catch (e) {
       return null;
     }
@@ -150,7 +152,7 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<List<IsmLiveStreamViewerDetailsModel>> getStreamViewer({
+  Future<List<IsmLiveViewerModel>> getStreamViewer({
     required String streamId,
     required int limit,
     required int skip,
@@ -169,7 +171,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['viewers'] as List? ?? [];
 
-      return list.map((e) => IsmLiveStreamViewerDetailsModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list.map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];

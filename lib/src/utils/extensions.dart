@@ -82,3 +82,7 @@ extension IsmLiveDurationExtension on Duration {
     return [h, m, s].join(':');
   }
 }
+
+extension IsmLiveIntExtensions on int {
+  double get sheetHeight => IsmLiveDimens.oneHundredTwenty + this * IsmLiveDimens.sixty;
+}

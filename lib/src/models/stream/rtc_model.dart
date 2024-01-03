@@ -18,7 +18,7 @@ class IsmLiveRTCModel {
         uid: map['uid'] as int? ?? 0,
         streamKey: map['streamKey'] as String?,
         streamId: map['streamId'] as String?,
-        startTime: map['startTime'] != null ? DateTime.fromMicrosecondsSinceEpoch(map['startTime'] as int) : null,
+        startTime: map['startTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['startTime'] as int) : null,
         rtcToken: map['rtcToken'] as String? ?? '',
         playbackUrl: map['playbackUrl'] as String?,
         numberOfViewers: map['numberOfViewers'] as int?,

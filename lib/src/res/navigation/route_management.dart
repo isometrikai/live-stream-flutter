@@ -28,6 +28,7 @@ abstract class IsmLiveRouteManagement {
 
   static Future<void> goToStreamView({
     required bool isHost,
+    required bool isNewStream,
     required Room room,
     required EventsListener<RoomEvent> listener,
     required String streamId,
@@ -39,8 +40,9 @@ abstract class IsmLiveRouteManagement {
       'streamId': streamId,
       'audioCallOnly': audioCallOnly,
       'isHost': isHost,
+      'isNewStream': isNewStream,
     };
-    if (isHost) {
+    if (isNewStream) {
       await Get.offNamed(
         IsmLiveRoutes.streamView,
         arguments: arguments,

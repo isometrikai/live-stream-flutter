@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/viewer_details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,16 +6,13 @@ class StreamHeader extends StatelessWidget {
   const StreamHeader({
     super.key,
     required this.name,
-    required this.viewerCont,
     required this.imageUrl,
     this.onTabCross,
-    required this.viewerList,
     this.onTabViewers,
   });
+
   final String name;
   final String imageUrl;
-  final int viewerCont;
-  final List<IsmLiveStreamViewerDetailsModel> viewerList;
   final Function()? onTabCross;
   final Function()? onTabViewers;
   @override
@@ -30,7 +26,6 @@ class StreamHeader extends StatelessWidget {
               IsmLiveHostDetail(
                 imageUrl: imageUrl,
                 name: name,
-                viewerCont: viewerCont,
               ),
               IsmLiveDimens.boxHeight10,
               const _LiveTimer(),
@@ -40,9 +35,7 @@ class StreamHeader extends StatelessWidget {
           Expanded(
             child: IsmLiveTapHandler(
               onTap: onTabViewers,
-              child: IsmLiveUsersAvatar(
-                viewerList: viewerList,
-              ),
+              child: const IsmLiveUsersAvatar(),
             ),
           ),
           IconButton(

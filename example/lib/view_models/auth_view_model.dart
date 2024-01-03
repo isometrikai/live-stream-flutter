@@ -63,8 +63,7 @@ class AuthViewModel {
     required Map<String, dynamic> createUser,
   }) async {
     try {
-      var res = await _repository.signup(
-          isLoading: isLoading, createUser: createUser);
+      var res = await _repository.signup(isLoading: isLoading, createUser: createUser);
       if (res.hasError) {
         if ([401, 404].contains(res.statusCode)) {
           await IsmLiveUtility.showInfoDialog(res);
@@ -74,10 +73,12 @@ class AuthViewModel {
       var data = res.decode();
 
       var userDetails = UserDetailsModel(
-          userId: data['userId'],
-          userToken: data['userToken'],
-          email: createUser['userIdentifier'],
-          deviceId: deviceId);
+        userId: data['userId'],
+        userToken: data['userToken'],
+        email: createUser['userIdentifier'],
+        deviceId: deviceId,
+        userName: data['userName'],
+      );
 
       await dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
 
@@ -89,7 +90,7 @@ class AuthViewModel {
   }
 
   /// get Api for Presigned Url.....
-  Future<PresignedUrl?> getPresignedUrl({
+  Future<IsmLivePresignedUrl?> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
     required String mediaExtension,
@@ -104,7 +105,7 @@ class AuthViewModel {
         return null;
       }
       var data = res.decode();
-      return PresignedUrl.fromMap(data);
+      return IsmLivePresignedUrl.fromMap(data);
     } catch (e) {
       return null;
     }
