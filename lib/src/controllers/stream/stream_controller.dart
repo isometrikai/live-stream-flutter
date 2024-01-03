@@ -14,12 +14,7 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController
-    with
-        GetSingleTickerProviderStateMixin,
-        StreamAPIMixin,
-        StreamJoinMixin,
-        GoLiveMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -71,8 +66,7 @@ class IsmLiveStreamController extends GetxController
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController =>
-      _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -131,7 +125,7 @@ class IsmLiveStreamController extends GetxController
     var member2 = participantTracks.elementAt(index + 1);
     participantTracks[index + 1] = participantTracks.elementAt(0);
     participantTracks[0] = member2;
-    update([IsmLiveStreamView.update]);
+    update([IsmLiveStreamView.updateId]);
   }
 
   void onChangeHdBroadcast(
@@ -160,7 +154,7 @@ class IsmLiveStreamController extends GetxController
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
           unawaited(getStreams());
           _streamTimer?.cancel();
-          IsmLiveRouteManagement.goToEndSttreamView();
+          IsmLiveRouteManagement.goToEndStreamView();
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
@@ -258,8 +252,7 @@ class IsmLiveStreamController extends GetxController
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch -
-          b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -274,7 +267,7 @@ class IsmLiveStreamController extends GetxController
     }
 
     participantTracks = [...userMediaTracks];
-    update([IsmLiveStreamView.update]);
+    update([IsmLiveStreamView.updateId]);
   }
 
   void onPan(details) {
@@ -337,9 +330,7 @@ class IsmLiveStreamController extends GetxController
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost
-            ? IsmLiveStrings.areYouSureEndStream
-            : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         leftOnTab: Get.back,
@@ -351,7 +342,7 @@ class IsmLiveStreamController extends GetxController
             streamId: streamId,
           );
 
-          IsmLiveRouteManagement.goToEndSttreamView();
+          IsmLiveRouteManagement.goToEndStreamView();
         },
       ),
       isDismissible: false,

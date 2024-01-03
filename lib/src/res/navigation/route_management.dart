@@ -61,7 +61,7 @@ abstract class IsmLiveRouteManagement {
     );
   }
 
-  static void goToEndSttreamView() {
+  static void goToEndStreamView() {
     Get.offAndToNamed<void>(
       IsmLiveRoutes.endStream,
     );
