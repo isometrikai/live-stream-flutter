@@ -1,7 +1,8 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -137,13 +138,24 @@ mixin StreamAPIMixin {
     );
   }
 
+  Future<bool> sendMessage({
+    required bool showLoading,
+    required IsmLiveSendMessageModel sendMessageModel,
+  }) async =>
+      await _viewModel.sendMessage(
+        showLoading: showLoading,
+        sendMessageModel: sendMessageModel,
+      );
+
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ??
+          IsmLiveStrings.uploadingImage,
     );
     var res = await _viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {

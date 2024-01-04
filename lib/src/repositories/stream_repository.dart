@@ -155,27 +155,13 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> sendMessage({
     required bool showLoading,
-    required String streamId,
-    required String body,
-    required List<String> searchableTags,
-    required IsmLiveMetaData metaData,
-    required String customType,
-    required String deviceId,
-    required int messageType,
+    required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.postMessage,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
-        payload: {
-          'streamId': streamId,
-          'searchableTags': searchableTags,
-          'metaData': metaData,
-          'messageType': messageType,
-          'deviceId': deviceId,
-          'customType': customType,
-          'body': body
-        },
-        showLoader: true,
+        payload: payload,
+        showLoader: showLoading,
       );
 }

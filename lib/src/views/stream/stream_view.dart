@@ -66,13 +66,6 @@ class IsmLiveStreamView extends StatelessWidget {
                     : const NoVideoWidget(
                         name: null,
                       ),
-                SizedBox(
-                  height: Get.height,
-                  width: Get.width,
-                  child: const ColoredBox(
-                    color: Colors.black38,
-                  ),
-                ),
 
                 if (room.localParticipant != null) ...[
                   SafeArea(
@@ -85,6 +78,7 @@ class IsmLiveStreamView extends StatelessWidget {
                             name: controller.user?.userName ?? 'U',
                             imageUrl: controller.user?.profileUrl ?? '',
                             onTabCross: () {
+                              FocusScope.of(context).unfocus();
                               controller.onExit(
                                 isHost: isHost,
                                 room: room,
@@ -105,6 +99,23 @@ class IsmLiveStreamView extends StatelessWidget {
                             room.localParticipant!,
                             meetingId: meetingId,
                             audioCallOnly: audioCallOnly,
+                          ),
+                          IsmLiveInputField(
+                            controller: controller.messageFieldController,
+                            hintText: 'Say Something…',
+                            radius: IsmLiveDimens.fifty,
+                            onFieldSubmit: (value) {
+                              controller.onFieldSubmit(
+                                streamId: meetingId,
+                                body: value,
+                                messageType: 1,
+                              );
+                            },
+                            prefixIcon: Icon(
+                              Icons.sentiment_satisfied_alt,
+                              size: IsmLiveDimens.twenty,
+                            ),
+                            borderColor: IsmLiveColors.white,
                           ),
                         ],
                       ),
