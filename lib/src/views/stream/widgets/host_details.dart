@@ -74,7 +74,7 @@ class IsmLiveHostDetail extends StatelessWidget {
                         IsmLiveDimens.boxWidth2,
                         GetX<IsmLiveStreamController>(
                           builder: (controller) => Text(
-                            controller.streamViewersList.length.toString(),
+                            controller.streamMembersList.length.toString(),
                             style: IsmLiveStyles.white12,
                           ),
                         ),

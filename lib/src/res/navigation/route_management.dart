@@ -91,8 +91,8 @@ abstract class IsmLiveRouteManagement {
         ),
       );
     } else {
-      IsmLiveUtility.showDialog(
-        'Camera Not Available',
+      await IsmLiveUtility.showInfoDialog(
+        IsmLiveResponseModel.message('Camera Not Available'),
       );
       return null;
     }

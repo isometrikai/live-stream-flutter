@@ -107,6 +107,7 @@ mixin StreamAPIMixin {
         (e) => e.isAdmin,
       );
     }
+    _controller.update([IsmLiveStreamView.updateId]);
   }
 
   Future<void> getStreamViewer({
@@ -144,6 +145,15 @@ mixin StreamAPIMixin {
       await _viewModel.sendMessage(
         showLoading: showLoading,
         sendMessageModel: sendMessageModel,
+      );
+
+  Future<bool> kickoutViewer({
+    required String streamId,
+    required String viewerId,
+  }) =>
+      _viewModel.kickoutViewer(
+        streamId: streamId,
+        viewerId: viewerId,
       );
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {

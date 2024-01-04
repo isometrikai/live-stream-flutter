@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -46,7 +45,7 @@ class IsmLiveStreamRepository {
     String streamId,
   ) =>
       _apiWrapper.makeRequest(
-        IsmLiveApis.getRTCToken,
+        IsmLiveApis.viewer,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
@@ -112,6 +111,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: false,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> getStreamViewer({
@@ -125,6 +125,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: false,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> updatePresignedUrl({
@@ -164,4 +165,20 @@ class IsmLiveStreamRepository {
         payload: payload,
         showLoader: showLoading,
       );
+
+  Future<IsmLiveResponseModel> kickoutViewer({
+    required String streamId,
+    required String viewerId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'viewerId': viewerId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.viewer}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }

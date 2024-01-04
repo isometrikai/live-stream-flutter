@@ -11,10 +11,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
-part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
+part 'mixins/ongoing_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -27,7 +27,15 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   bool isRecordingBroadcast = false;
 
-  List<IsmLiveMemberDetailsModel> streamMembersList = [];
+  String? streamId;
+
+  final RxBool _speakerOn = true.obs;
+  bool get speakerOn => _speakerOn.value;
+  set speakerOn(bool value) => _speakerOn.value = value;
+
+  final RxList<IsmLiveMemberDetailsModel> _streamMembersList = <IsmLiveMemberDetailsModel>[].obs;
+  List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
+  set streamMembersList(List<IsmLiveMemberDetailsModel> value) => _streamMembersList.value = value;
 
   final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
@@ -119,34 +127,6 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     for (var type in IsmLiveStreamType.values) {
       _streamRefreshControllers[type] = RefreshController();
       _streams[type] = [];
-    }
-  }
-
-  VoidCallback onOptionTap(
-    IsmLiveStreamOption option, {
-    LocalParticipant? participant,
-  }) {
-    switch (option) {
-      case IsmLiveStreamOption.gift:
-        return () {};
-      case IsmLiveStreamOption.multiLive:
-        return () {};
-      case IsmLiveStreamOption.share:
-        return () {};
-      case IsmLiveStreamOption.members:
-        return () {};
-      case IsmLiveStreamOption.favourite:
-        return () {};
-      case IsmLiveStreamOption.settings:
-        return () {};
-      case IsmLiveStreamOption.rotateCamera:
-        return () => toggleCamera(participant);
-      case IsmLiveStreamOption.vs:
-        return () {};
-      case IsmLiveStreamOption.speakerOn:
-        return () {};
-      case IsmLiveStreamOption.speakerOff:
-        return () {};
     }
   }
 

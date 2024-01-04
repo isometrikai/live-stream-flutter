@@ -17,8 +17,7 @@ enum IsmLiveConnectionState {
   unsubscribed;
 
   @override
-  String toString() =>
-      '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
+  String toString() => '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
 }
 
 enum SimulateScenarioResult {
@@ -138,20 +137,15 @@ enum IsmLiveActions {
 
   factory IsmLiveActions.fromString(String action) =>
       <String, IsmLiveActions>{
-        IsmLiveActions.copublishRequestAccepted.value:
-            IsmLiveActions.copublishRequestAccepted,
-        IsmLiveActions.copublishRequestAdded.value:
-            IsmLiveActions.copublishRequestAdded,
-        IsmLiveActions.copublishRequestDenied.value:
-            IsmLiveActions.copublishRequestDenied,
-        IsmLiveActions.copublishRequestRemoved.value:
-            IsmLiveActions.copublishRequestRemoved,
+        IsmLiveActions.copublishRequestAccepted.value: IsmLiveActions.copublishRequestAccepted,
+        IsmLiveActions.copublishRequestAdded.value: IsmLiveActions.copublishRequestAdded,
+        IsmLiveActions.copublishRequestDenied.value: IsmLiveActions.copublishRequestDenied,
+        IsmLiveActions.copublishRequestRemoved.value: IsmLiveActions.copublishRequestRemoved,
         IsmLiveActions.memberAdded.value: IsmLiveActions.memberAdded,
         IsmLiveActions.memberLeft.value: IsmLiveActions.memberLeft,
         IsmLiveActions.memberRemoved.value: IsmLiveActions.memberRemoved,
         IsmLiveActions.messageRemoved.value: IsmLiveActions.messageRemoved,
-        IsmLiveActions.messageReplyRemoved.value:
-            IsmLiveActions.messageReplyRemoved,
+        IsmLiveActions.messageReplyRemoved.value: IsmLiveActions.messageReplyRemoved,
         IsmLiveActions.messageReplySent.value: IsmLiveActions.messageReplySent,
         IsmLiveActions.messageSent.value: IsmLiveActions.messageSent,
         IsmLiveActions.moderatorAdded.value: IsmLiveActions.moderatorAdded,
@@ -163,8 +157,7 @@ enum IsmLiveActions {
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
-        IsmLiveActions.streamStartPresence.value:
-            IsmLiveActions.streamStartPresence,
+        IsmLiveActions.streamStartPresence.value: IsmLiveActions.streamStartPresence,
         IsmLiveActions.viewerJoined.value: IsmLiveActions.viewerJoined,
         IsmLiveActions.viewerLeft.value: IsmLiveActions.viewerLeft,
         IsmLiveActions.viewerRemoved.value: IsmLiveActions.viewerRemoved,
@@ -184,8 +177,7 @@ enum IsmLiveStreamOption {
   favourite(IsmLiveAssetConstants.favourite),
   settings(IsmLiveAssetConstants.setting),
   rotateCamera(IsmLiveAssetConstants.rotateCamera),
-  speakerOn(IsmLiveAssetConstants.speakerOn),
-  speakerOff(IsmLiveAssetConstants.speakerOff),
+  speaker(IsmLiveAssetConstants.speakerOn),
   vs(IsmLiveAssetConstants.vs);
 
   const IsmLiveStreamOption(this.icon);
@@ -194,8 +186,8 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get viewersOptions => [
         IsmLiveStreamOption.gift,
         IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speakerOn,
-        IsmLiveStreamOption.multiLive
+        IsmLiveStreamOption.speaker,
+        IsmLiveStreamOption.multiLive,
       ];
 
   static List<IsmLiveStreamOption> get hostOptions => [
