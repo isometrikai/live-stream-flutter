@@ -28,6 +28,21 @@ class IsmLiveMqttController extends GetxController {
 
   IsmLiveConfigData? _config;
 
+  IsmLiveStreamController get _streamController {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+    return Get.find<IsmLiveStreamController>();
+  }
+
+  void _updateStreams() {
+    IsmLiveUtility.updateLater(() {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _streamController.update([IsmLiveStreamListing.updateId]);
+      });
+    });
+  }
+
   // ----------------- Functios -----------------------
 
   Future<void> setup(BuildContext context) async {
@@ -190,7 +205,7 @@ class IsmLiveMqttController extends GetxController {
       if (payload['action'] != null) {
         actionStreamController.add(payload);
         final action = IsmLiveActions.fromString(payload['action']);
-        final streamId = payload['streamId'];
+        final streamId = payload['streamId'] as String;
         switch (action) {
           case IsmLiveActions.copublishRequestAccepted:
           case IsmLiveActions.copublishRequestAdded:
@@ -212,14 +227,14 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.publishStopped:
             break;
           case IsmLiveActions.streamStartPresence:
-            if (!Get.isRegistered<IsmLiveStreamController>()) {
-              IsmLiveStreamBinding().dependencies();
-            }
-            var streamController = Get.find<IsmLiveStreamController>();
-            unawaited(streamController.getStreams());
+            unawaited(_streamController.getStreams());
             break;
           case IsmLiveActions.streamStarted:
+            break;
           case IsmLiveActions.streamStopped:
+            _streamController.streams.removeWhere((e) => e.streamId == streamId);
+            _updateStreams();
+
             break;
           case IsmLiveActions.viewerJoined:
           case IsmLiveActions.viewerLeft:

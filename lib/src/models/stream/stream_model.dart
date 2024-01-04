@@ -36,6 +36,7 @@ class IsmLiveStreamModel {
     this.copublishRequestsCount,
     this.canPublish,
     this.audioOnly,
+    this.members,
   });
 
   factory IsmLiveStreamModel.fromMap(Map<String, dynamic> map) => IsmLiveStreamModel(
@@ -43,7 +44,14 @@ class IsmLiveStreamModel {
         streamImage: map['streamImage'] as String? ?? '',
         streamId: map['streamId'] as String? ?? '',
         streamDescription: map['streamDescription'] as String? ?? '',
-        startTime: DateTime.fromMillisecondsSinceEpoch(map['startTime'] as int? ?? 0),
+        startTime: DateTime.fromMillisecondsSinceEpoch(
+          map['startTime'] as int? ?? map['timestamp'] as int? ?? 0,
+        ),
+        members: (map['members'] as List? ?? [])
+            .map(
+              (e) => IsmLiveMemberModel.fromMap(e as Map<String, dynamic>),
+            )
+            .toList(),
         selfHosted: map['selfHosted'] as bool? ?? false,
         searchableTags: map['searchableTags'] as List? ?? [],
         rtmpIngest: map['rtmpIngest'] as bool? ?? false,
@@ -66,7 +74,7 @@ class IsmLiveStreamModel {
         featuringProduct: map['featuringProduct'] as dynamic,
         enableRecording: map['enableRecording'] as bool? ?? false,
         customType: map['customType'] as dynamic,
-        createdBy: map['createdBy'] as String? ?? '',
+        createdBy: map['createdBy'] as String? ?? map['initiatorId'] as String? ?? '',
         copublishRequestsCount: map['copublishRequestsCount'] as int? ?? 0,
         canPublish: map['canPublish'] as bool? ?? false,
         audioOnly: map['audioOnly'] as bool? ?? false,
@@ -105,6 +113,7 @@ class IsmLiveStreamModel {
   final int? copublishRequestsCount;
   final bool? canPublish;
   final bool? audioOnly;
+  final List<IsmLiveMemberModel>? members;
 
   IsmLiveStreamModel copyWith({
     int? viewersCount,
