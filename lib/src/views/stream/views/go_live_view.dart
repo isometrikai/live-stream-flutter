@@ -31,11 +31,6 @@ class IsmGoLiveView extends StatelessWidget {
               child: IsmLiveButton(
                 label: 'Go Live',
                 onTap: !controller.isGoLiveEnabled ? null : controller.startStream,
-                // : () {
-                //     IsmLiveUtility.openBottomSheet(
-                //       YourLiveSheet(onTap: controller.startStream),
-                //     );
-                //   },
               ),
             ),
           ),
@@ -154,22 +149,27 @@ class _StreamImage extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
-                  onTap: () {
-                    IsmLiveUtility.openBottomSheet(
-                      PickImageSheet(
-                        beforePicking: () async {
-                          await controller.cameraController?.dispose();
-                          controller.cameraController = null;
-                        },
-                        afterPicking: (file) {
-                          if (file != null) {
-                            controller.pickedImage = file;
-                            controller.update([IsmGoLiveView.updateId]);
-                          }
-                          controller.initializationOfGoLive();
-                        },
-                      ),
-                    );
+                  onTap: () async {
+                    var file = await FileManager.pickGalleryImage();
+                    if (file != null) {
+                      controller.pickedImage = file;
+                      controller.update([IsmGoLiveView.updateId]);
+                    }
+                    // IsmLiveUtility.openBottomSheet(
+                    //   PickImageSheet(
+                    //     beforePicking: () async {
+                    //       await controller.cameraController?.dispose();
+                    //       controller.cameraController = null;
+                    //     },
+                    //     afterPicking: (file) {
+                    //       if (file != null) {
+                    //         controller.pickedImage = file;
+                    //         controller.update([IsmGoLiveView.updateId]);
+                    //       }
+                    //       controller.initializationOfGoLive();
+                    //     },
+                    //   ),
+                    // );
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

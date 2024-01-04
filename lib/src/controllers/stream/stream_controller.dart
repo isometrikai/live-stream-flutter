@@ -14,12 +14,7 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController
-    with
-        GetSingleTickerProviderStateMixin,
-        StreamAPIMixin,
-        StreamJoinMixin,
-        GoLiveMixin {
+class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -34,11 +29,9 @@ class IsmLiveStreamController extends GetxController
 
   List<IsmLiveMemberDetailsModel> streamMembersList = [];
 
-  final RxList<IsmLiveViewerModel> _streamViewersList =
-      <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) =>
-      _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -74,8 +67,7 @@ class IsmLiveStreamController extends GetxController
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController =>
-      _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -206,21 +198,9 @@ class IsmLiveStreamController extends GetxController
         })
         ..on<ParticipantConnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantConnectedEvent: $event');
-          if (isHost) {
-            unawaited(Future.wait([
-              getStreamMembers(streamId: streamId, limit: 10, skip: 0),
-              getStreamViewer(streamId: streamId, limit: 10, skip: 0),
-            ]));
-          }
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
-          if (isHost) {
-            unawaited(Future.wait([
-              getStreamMembers(streamId: streamId, limit: 10, skip: 0),
-              getStreamViewer(streamId: streamId, limit: 10, skip: 0),
-            ]));
-          }
         })
         ..on<RoomRecordingStatusChanged>((event) {})
         ..on<LocalTrackPublishedEvent>((_) => sortParticipants(room))
@@ -295,8 +275,7 @@ class IsmLiveStreamController extends GetxController
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch -
-          b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -377,9 +356,7 @@ class IsmLiveStreamController extends GetxController
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost
-            ? IsmLiveStrings.areYouSureEndStream
-            : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         leftOnTab: Get.back,

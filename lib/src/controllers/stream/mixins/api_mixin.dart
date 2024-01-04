@@ -111,8 +111,8 @@ mixin StreamAPIMixin {
 
   Future<void> getStreamViewer({
     required String streamId,
-    required int limit,
-    required int skip,
+    int limit = 10,
+    int skip = 0,
     String? searchTag,
   }) async =>
       _viewerDebouncer.run(

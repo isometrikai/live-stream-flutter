@@ -183,13 +183,14 @@ class IsmLiveMqttController extends GetxController {
       var payload = jsonDecode(MqttPublishPayload.bytesToStringAsString(recMess.payload.message)) as Map<String, dynamic>;
 
       // if (IsmLiveHandler.isLogsEnabled) {
-      IsmLiveLog(payload);
+      IsmLiveLog(jsonEncode(payload));
       IsmLiveLog.success(payload['action']);
       // }
 
       if (payload['action'] != null) {
         actionStreamController.add(payload);
-        var action = IsmLiveActions.fromString(payload['action']);
+        final action = IsmLiveActions.fromString(payload['action']);
+        final streamId = payload['streamId'];
         switch (action) {
           case IsmLiveActions.copublishRequestAccepted:
           case IsmLiveActions.copublishRequestAdded:
@@ -219,8 +220,15 @@ class IsmLiveMqttController extends GetxController {
             break;
           case IsmLiveActions.streamStarted:
           case IsmLiveActions.streamStopped:
+            break;
           case IsmLiveActions.viewerJoined:
           case IsmLiveActions.viewerLeft:
+            if (!Get.isRegistered<IsmLiveStreamController>()) {
+              IsmLiveStreamBinding().dependencies();
+            }
+            var streamController = Get.find<IsmLiveStreamController>();
+            unawaited(streamController.getStreamViewer(streamId: streamId));
+            break;
           case IsmLiveActions.viewerRemoved:
           case IsmLiveActions.viewerTimeout:
             break;
