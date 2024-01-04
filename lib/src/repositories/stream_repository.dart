@@ -155,13 +155,13 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> sendMessage({
     required bool showLoading,
-    required IsmLiveSendMessageModel sendMessageModel,
+    required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.postMessage,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
-        payload: sendMessageModel.toMap(),
+        payload: payload,
         showLoader: showLoading,
       );
 }

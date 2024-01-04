@@ -228,7 +228,7 @@ class IsmLiveStreamViewModel {
     try {
       var res = await _repository.sendMessage(
         showLoading: showLoading,
-        sendMessageModel: sendMessageModel,
+        payload: sendMessageModel.toMap(),
       );
 
       return !res.hasError;
