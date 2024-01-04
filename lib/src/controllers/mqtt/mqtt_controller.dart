@@ -35,10 +35,18 @@ class IsmLiveMqttController extends GetxController {
     return Get.find<IsmLiveStreamController>();
   }
 
-  void _updateStreams() {
+  void _updateStreamListing() {
     IsmLiveUtility.updateLater(() {
       Future.delayed(const Duration(milliseconds: 100), () {
         _streamController.update([IsmLiveStreamListing.updateId]);
+      });
+    });
+  }
+
+  void _updateStream() {
+    IsmLiveUtility.updateLater(() {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _streamController.update([IsmLiveStreamView.updateId]);
       });
     });
   }
@@ -233,18 +241,25 @@ class IsmLiveMqttController extends GetxController {
             break;
           case IsmLiveActions.streamStopped:
             _streamController.streams.removeWhere((e) => e.streamId == streamId);
-            _updateStreams();
-
+            _updateStreamListing();
             break;
           case IsmLiveActions.viewerJoined:
           case IsmLiveActions.viewerLeft:
-            if (!Get.isRegistered<IsmLiveStreamController>()) {
-              IsmLiveStreamBinding().dependencies();
-            }
-            var streamController = Get.find<IsmLiveStreamController>();
-            unawaited(streamController.getStreamViewer(streamId: streamId));
+            unawaited(_streamController.getStreamViewer(streamId: streamId));
             break;
           case IsmLiveActions.viewerRemoved:
+            final viewerId = payload['viewerId'] as String?;
+            if (streamId == _streamController.streamId) {
+              IsmLiveLog.error(_streamController.streamViewersList.length);
+              _streamController.streamViewersList.removeWhere((e) => e.userId == viewerId);
+              IsmLiveLog.info(_streamController.streamViewersList.length);
+              _updateStream();
+              if (viewerId == userId) {
+                Get.back();
+                IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
+              }
+            }
+            break;
           case IsmLiveActions.viewerTimeout:
             break;
         }

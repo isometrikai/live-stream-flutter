@@ -150,21 +150,27 @@ class IsmLiveUtility {
 
   /// Show info dialog
   static void showDialog(
-    String message,
-  ) async {
+    Widget dialog, {
+    bool isDismissible = true,
+  }) async {
     await Get.dialog(
-      CupertinoAlertDialog(
-        title: const Text('Info'),
-        content: Text(
-          message,
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: Get.back,
-            child: const Text('Okay'),
+      UnconstrainedBox(
+        child: SizedBox(
+          width: IsmLiveDimens.percentWidth(1) - (IsmLiveDimens.sixteen * 2),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Get.context?.liveTheme.backgroundColor,
+              borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
+            ),
+            child: Padding(
+              padding: IsmLiveDimens.edgeInsets16,
+              child: dialog,
+            ),
           ),
-        ],
+        ),
       ),
+      barrierDismissible: isDismissible,
+      useSafeArea: true,
     );
   }
 

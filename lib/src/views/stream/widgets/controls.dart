@@ -18,8 +18,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
   final String meetingId;
   final bool audioCallOnly;
 
+  static const String updateId = 'ism-live-controls';
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: updateId,
         initState: (state) {
           final streamController = Get.find<IsmLiveStreamController>();
 
@@ -31,9 +34,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
           participant.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = participant.videoTracks.isEmpty
-              ? IsmLiveStreamOption.viewersOptions
-              : IsmLiveStreamOption.hostOptions;
+          var options = participant.videoTracks.isEmpty ? IsmLiveStreamOption.viewersOptions : IsmLiveStreamOption.hostOptions;
 
           return Expanded(
             child: Container(
@@ -42,9 +43,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
               child: ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, index) => CustomIconButton(
-                  icon: IsmLiveImage.svg(options[index].icon),
-                  onTap: controller.onOptionTap(options[index],
-                      participant: participant),
+                  icon: IsmLiveImage.svg(controller.controlIcon(options[index])),
+                  onTap: () async {
+                    await controller.onOptionTap(options[index], participant: participant);
+                    controller.update([IsmLiveControlsWidget.updateId]);
+                  },
                   color: IsmLiveColors.transparent,
                 ),
                 itemCount: options.length,

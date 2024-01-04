@@ -7,39 +7,70 @@ class IsmLiveButton extends StatelessWidget {
     super.key,
     this.onTap,
     required this.label,
+    this.small = false,
   }) : _type = IsmLiveButtonType.primary;
 
   const IsmLiveButton.secondary({
     super.key,
     this.onTap,
     required this.label,
+    this.small = false,
   }) : _type = IsmLiveButtonType.secondary;
 
   const IsmLiveButton.outlined({
     super.key,
     this.onTap,
     required this.label,
+    this.small = false,
   }) : _type = IsmLiveButtonType.outlined;
 
   const IsmLiveButton.text({
     super.key,
     this.onTap,
     required this.label,
+    this.small = false,
   }) : _type = IsmLiveButtonType.text;
 
   final VoidCallback? onTap;
   final String label;
   final IsmLiveButtonType _type;
+  final bool small;
+
+  static MaterialStateProperty<TextStyle?> _textStyle(BuildContext context, bool small) => MaterialStateProperty.all(
+        (small ? context.textTheme.bodySmall : context.textTheme.bodyMedium)?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+      );
+
+  static MaterialStateProperty<EdgeInsetsGeometry?> _padding(BuildContext context, bool small) => MaterialStateProperty.all(
+        small ? IsmLiveDimens.edgeInsets8_4 : IsmLiveDimens.edgeInsets16_8,
+      );
 
   @override
   Widget build(BuildContext context) => SizedBox(
         height: 48,
         width: double.maxFinite,
         child: switch (_type) {
-          IsmLiveButtonType.primary => _Primary(label: label, onTap: onTap),
-          IsmLiveButtonType.secondary => _Secondary(label: label, onTap: onTap),
-          IsmLiveButtonType.outlined => _Outlined(label: label, onTap: onTap),
-          IsmLiveButtonType.text => _Text(label: label, onTap: onTap),
+          IsmLiveButtonType.primary => _Primary(
+              label: label,
+              onTap: onTap,
+              small: small,
+            ),
+          IsmLiveButtonType.secondary => _Secondary(
+              label: label,
+              onTap: onTap,
+              small: small,
+            ),
+          IsmLiveButtonType.outlined => _Outlined(
+              label: label,
+              onTap: onTap,
+              small: small,
+            ),
+          IsmLiveButtonType.text => _Text(
+              label: label,
+              onTap: onTap,
+              small: small,
+            ),
         },
       );
 }
@@ -48,14 +79,17 @@ class _Primary extends StatelessWidget {
   const _Primary({
     this.onTap,
     required this.label,
+    this.small = false,
   });
 
   final VoidCallback? onTap;
   final String label;
+  final bool small;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
         style: ButtonStyle(
+          padding: IsmLiveButton._padding(context, small),
           shape: context.theme.elevatedButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
@@ -82,11 +116,7 @@ class _Primary extends StatelessWidget {
                   IsmLiveColors.white;
             },
           ),
-          textStyle: MaterialStateProperty.all(
-            context.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
         child: Text(label),
@@ -97,14 +127,17 @@ class _Secondary extends StatelessWidget {
   const _Secondary({
     this.onTap,
     required this.label,
+    this.small = false,
   });
 
   final VoidCallback? onTap;
   final String label;
+  final bool small;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
         style: ButtonStyle(
+          padding: IsmLiveButton._padding(context, small),
           shape: context.theme.elevatedButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
@@ -129,11 +162,7 @@ class _Secondary extends StatelessWidget {
                   IsmLiveColors.primary;
             },
           ),
-          textStyle: MaterialStateProperty.all(
-            context.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
         child: Text(label),
@@ -144,14 +173,17 @@ class _Outlined extends StatelessWidget {
   const _Outlined({
     this.onTap,
     required this.label,
+    this.small = false,
   });
 
   final VoidCallback? onTap;
   final String label;
+  final bool small;
 
   @override
   Widget build(BuildContext context) => OutlinedButton(
         style: ButtonStyle(
+          padding: IsmLiveButton._padding(context, small),
           shape: context.theme.outlinedButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
@@ -187,11 +219,7 @@ class _Outlined extends StatelessWidget {
               return BorderSide(color: color, width: 2);
             },
           ),
-          textStyle: MaterialStateProperty.all(
-            context.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
         child: Text(label),
@@ -202,14 +230,17 @@ class _Text extends StatelessWidget {
   const _Text({
     this.onTap,
     required this.label,
+    this.small = false,
   });
 
   final VoidCallback? onTap;
   final String label;
+  final bool small;
 
   @override
   Widget build(BuildContext context) => TextButton(
         style: ButtonStyle(
+          padding: IsmLiveButton._padding(context, small),
           shape: context.theme.textButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
@@ -232,11 +263,7 @@ class _Text extends StatelessWidget {
               return context.theme.textButtonTheme.style?.backgroundColor?.resolve(states) ?? context.liveTheme.primaryColor ?? IsmLiveColors.primary;
             },
           ),
-          textStyle: MaterialStateProperty.all(
-            context.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
         child: Text(label),

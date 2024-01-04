@@ -8,14 +8,14 @@ class IsmLiveStreamView extends StatelessWidget {
     super.key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
-        meetingId = Get.arguments['streamId'],
+        streamId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
         isHost = Get.arguments['isHost'],
         isNewStream = Get.arguments['isNewStream'];
 
   final Room room;
   final EventsListener<RoomEvent> listener;
-  final String meetingId;
+  final String streamId;
   final bool audioCallOnly;
   final bool isHost;
   final bool isNewStream;
@@ -33,7 +33,7 @@ class IsmLiveStreamView extends StatelessWidget {
           var streamController = Get.find<IsmLiveStreamController>();
           await streamController.setUpListeners(
             isHost: isHost,
-            streamId: meetingId,
+            streamId: streamId,
             listener: listener,
             room: room,
           );
@@ -45,7 +45,7 @@ class IsmLiveStreamView extends StatelessWidget {
             }
           });
           if (lkPlatformIsMobile()) {
-            await Hardware.instance.setSpeakerphoneOn(true);
+            await streamController.toggleSpeaker(true);
           }
         },
         dispose: (ismLiveBuilder) async {
@@ -82,14 +82,35 @@ class IsmLiveStreamView extends StatelessWidget {
                               controller.onExit(
                                 isHost: isHost,
                                 room: room,
-                                streamId: meetingId,
+                                streamId: streamId,
                               );
                             },
                             onTabViewers: () {
                               IsmLiveUtility.openBottomSheet(
-                                IsmLiveListSheet(
-                                  list: controller.streamViewersList,
-                                  isHost: isHost,
+                                GetBuilder<IsmLiveStreamController>(
+                                  id: updateId,
+                                  builder: (controller) => IsmLiveListSheet(
+                                    list: controller.streamViewersList,
+                                    isHost: isHost,
+                                    trailing: (_, viewer) => SizedBox(
+                                      width: IsmLiveDimens.eighty,
+                                      child: isHost
+                                          ? IsmLiveButton(
+                                              label: 'Kickout',
+                                              small: true,
+                                              onTap: () {
+                                                controller.kickoutViewer(
+                                                  streamId: streamId,
+                                                  viewerId: viewer.userId,
+                                                );
+                                              },
+                                            )
+                                          : const IsmLiveButton(
+                                              label: 'Follow',
+                                              small: true,
+                                            ),
+                                    ),
+                                  ),
                                 ),
                               );
                             },
@@ -97,7 +118,7 @@ class IsmLiveStreamView extends StatelessWidget {
                           IsmLiveControlsWidget(
                             room,
                             room.localParticipant!,
-                            meetingId: meetingId,
+                            meetingId: streamId,
                             audioCallOnly: audioCallOnly,
                           ),
                           IsmLiveInputField(
@@ -106,7 +127,7 @@ class IsmLiveStreamView extends StatelessWidget {
                             radius: IsmLiveDimens.fifty,
                             onFieldSubmit: (value) {
                               controller.onFieldSubmit(
-                                streamId: meetingId,
+                                streamId: streamId,
                                 body: value,
                                 messageType: 1,
                               );

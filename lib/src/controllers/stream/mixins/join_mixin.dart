@@ -14,6 +14,18 @@ mixin StreamJoinMixin {
 
   bool isMeetingOn = false;
 
+  bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
+
+  Future<void> initializationOfGoLive() async {
+    await Permission.camera.request();
+    _controller.cameraController = CameraController(
+      IsmLiveUtility.cameras[1],
+      ResolutionPreset.medium,
+    );
+    _controller.cameraFuture = _controller.cameraController!.initialize();
+    _controller.update([IsmGoLiveView.updateId]);
+  }
+
   Future<void> joinStream(
     IsmLiveStreamModel stream,
     bool isHost,
@@ -82,6 +94,7 @@ mixin StreamJoinMixin {
     if (isMeetingOn) {
       return;
     }
+    _controller.streamId = streamId;
     isMeetingOn = true;
     _controller.isHost = isHost;
     unawaited(_mqttController?.subscribeStream(streamId));
@@ -100,33 +113,7 @@ mixin StreamJoinMixin {
     IsmLiveUtility.showLoader(message);
 
     try {
-      var room = Room(
-          // roomOptions: RoomOptions(
-          //   defaultCameraCaptureOptions: CameraCaptureOptions(
-          //     deviceId: _controller.configuration?.projectConfig.deviceId,
-          //     cameraPosition: CameraPosition.front,
-          //     params: VideoParametersPresets.h720_169,
-          //   ),
-          //   defaultAudioCaptureOptions: AudioCaptureOptions(
-          //     deviceId: _controller.configuration?.projectConfig.deviceId,
-          //     noiseSuppression: true,
-          //     echoCancellation: true,
-          //     autoGainControl: true,
-          //     highPassFilter: true,
-          //     typingNoiseDetection: true,
-          //   ),
-          //   defaultVideoPublishOptions: VideoPublishOptions(
-          //     videoEncoding: VideoParametersPresets.h720_169.encoding,
-          //     videoSimulcastLayers: [
-          //       VideoParametersPresets.h180_169,
-          //       VideoParametersPresets.h360_169,
-          //     ],
-          //   ),
-          //   defaultAudioPublishOptions: const AudioPublishOptions(
-          //     dtx: true,
-          //   ),
-          // ),
-          );
+      var room = Room();
 
       // Create a Listener before connecting
       final listener = room.createListener();
@@ -163,12 +150,10 @@ mixin StreamJoinMixin {
 
       IsmLiveUtility.closeLoader();
 
-      if (isHost && !isNewStream) {
-        unawaited(Future.wait([
-          _controller.getStreamMembers(streamId: streamId, limit: 10, skip: 0),
-          _controller.getStreamViewer(streamId: streamId, limit: 10, skip: 0),
-        ]));
-      }
+      unawaited(Future.wait([
+        _controller.getStreamMembers(streamId: streamId, limit: 10, skip: 0),
+        _controller.getStreamViewer(streamId: streamId, limit: 10, skip: 0),
+      ]));
 
       _controller.update([IsmLiveStreamView.updateId]);
 
@@ -185,6 +170,7 @@ mixin StreamJoinMixin {
       unawaited(_mqttController?.unsubscribeStream(streamId));
       _controller.isHost = null;
       isMeetingOn = false;
+      _controller.streamId = null;
     } catch (e, st) {
       _controller.isHost = null;
       isMeetingOn = false;
