@@ -11,7 +11,8 @@ class IsmLiveEndStream extends StatelessWidget {
   Widget build(BuildContext context) => PopScope(
         canPop: false,
         child: Scaffold(
-          appBar: AppBar(automaticallyImplyLeading: false, elevation: 0, actions: [
+          appBar:
+              AppBar(automaticallyImplyLeading: false, elevation: 0, actions: [
             IconButton(
               icon: const Icon(
                 Icons.close,
@@ -26,8 +27,8 @@ class IsmLiveEndStream extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IsmLiveImage.network(
-                    controller.hostDetails?.userProfileImageUrl ?? '',
-                    name: controller.hostDetails?.userName ?? 'U',
+                    controller.user?.userProfileImageUrl ?? '',
+                    name: controller.user?.userName ?? 'U',
                     height: IsmLiveDimens.hundred,
                     width: IsmLiveDimens.hundred,
                     isProfileImage: true,
@@ -43,7 +44,8 @@ class IsmLiveEndStream extends StatelessWidget {
                   GridView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 1.5,
                     ),
@@ -80,12 +82,8 @@ class IsmLiveEndStream extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Viewers(${controller.streamViewersList.length})',
-                    ),
+                  const Divider(
+                    thickness: 5,
                   ),
                   IsmLiveListSheet(
                     list: controller.streamViewersList,

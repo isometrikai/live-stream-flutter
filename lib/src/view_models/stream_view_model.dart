@@ -45,7 +45,9 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
-      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -77,7 +79,8 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
+  Future<IsmLiveRTCModel?> createStream(
+      IsmLiveCreateStreamModel streamModel) async {
     try {
       var res = await _repository.createStream(streamModel);
       if (res.hasError) {
@@ -97,7 +100,9 @@ class IsmLiveStreamViewModel {
   Future<bool> stopStream(String streamId) async {
     try {
       var res = await _repository.stopStream(streamId);
+
       unawaited(_dbWrapper.deleteSecuredValue(streamId));
+
       return !res.hasError;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
@@ -145,7 +150,10 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['members'] as List? ?? [];
 
-      return list.map((e) => IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) =>
+              IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -171,7 +179,9 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['viewers'] as List? ?? [];
 
-      return list.map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -193,6 +203,50 @@ class IsmLiveStreamViewModel {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return IsmLiveResponseModel.error();
+    }
+  }
+
+  // Future<IsmLiveResponseModel> getEndStream({
+  //   required bool showLoading,
+  //   required String streamId,
+  // }) async {
+  //   try {
+  //     return _repository.getEndStream(
+  //       showLoading: showLoading,
+  //       streamId: streamId,
+  //     );
+  //   } catch (e, st) {
+  //     IsmLiveLog.error(e, st);
+  //     return IsmLiveResponseModel.error();
+  //   }
+  // }
+
+  Future<bool> sendMessage({
+    required bool showLoading,
+    required String streamId,
+    required String body,
+    required List<String> searchableTags,
+    required IsmLiveMetaData metaData,
+    required String customType,
+    required String deviceId,
+    required int messageType,
+  }) async {
+    try {
+      var res = await _repository.sendMessage(
+        body: body,
+        customType: customType,
+        deviceId: deviceId,
+        showLoading: showLoading,
+        messageType: messageType,
+        metaData: metaData,
+        searchableTags: searchableTags,
+        streamId: streamId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
     }
   }
 }

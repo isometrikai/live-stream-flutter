@@ -28,20 +28,22 @@ class IsmLiveAssetConstants {
   static const String document = '$_icons/document.svg';
   static const String camera = '$_icons/camera.svg';
   static const String videoIcon = '$_icons/video_icon.svg';
-  static const String icMembersLiveStream = '$_icons/ic_members_stream.svg';
-  static const String icRotateCamera = '$_icons/ic_rotate_camera.svg';
-  static const String icFavouriteStream = '$_icons/ic_favourite_stream.svg';
-  static const String icSettingStream = '$_icons/ic_setting_stream.svg';
-  static const String icGiftStream = '$_icons/ic_gift_stream.svg';
-  static const String icShareLiveStream = '$_icons/ic_share_live_stream.svg';
-  static const String icMuteLiveStream = '$_icons/ic_mute_live_stream.svg';
-  static const String icMultiLiveStream = '$_icons/ic_multi_live_stream.svg';
-  static const String box = '$_icons/vuesax-bold-box.svg';
-  static const String clock = '$_icons/vuesax-bold-clock.svg';
-  static const String dollar = '$_icons/vuesax-bold-dollar-circle.svg';
-  static const String eye = '$_icons/vuesax-bold-eye.svg';
-  static const String heart = '$_icons/vuesax-bold-heart.svg';
-  static const String profileUser = '$_icons/vuesax-bold-profile-2user.svg';
-
+  static const String members = '$_icons/members.svg';
+  static const String rotateCamera = '$_icons/rotate_camera.svg';
+  static const String favourite = '$_icons/favourite.svg';
+  static const String setting = '$_icons/setting.svg';
+  static const String gift = '$_icons/gift.svg';
+  static const String share = '$_icons/share.svg';
+  static const String mute = '$_icons/mute.svg';
+  static const String multi = '$_icons/multi.svg';
+  static const String box = '$_icons/box.svg';
+  static const String clock = '$_icons/clock.svg';
+  static const String dollar = '$_icons/dollar-circle.svg';
+  static const String eye = '$_icons/eye.svg';
+  static const String heart = '$_icons/heart.svg';
+  static const String profileUser = '$_icons/profile-2user.svg';
+  static const String vs = '$_icons/vs.svg';
+  static const String speakerOff = '$_icons/speaker_off.svg';
+  static const String speakerOn = '$_icons/speaker_on.svg';
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

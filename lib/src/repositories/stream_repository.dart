@@ -6,7 +6,8 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -139,5 +140,42 @@ class IsmLiveStreamRepository {
         headers: {},
         showLoader: showLoading,
         shouldEncodePayload: false,
+      );
+
+  // Future<IsmLiveResponseModel> getEndStream({
+  //   required bool showLoading,
+  //   required String streamId,
+  // }) =>
+  //     _apiWrapper.makeRequest(
+  //       '${IsmLiveApis.getEndStream}?streamId=$streamId',
+  //       type: IsmLiveRequestType.get,
+  //       headers: IsmLiveUtility.tokenHeader(),
+  //       showLoader: showLoading,
+  //     );
+
+  Future<IsmLiveResponseModel> sendMessage({
+    required bool showLoading,
+    required String streamId,
+    required String body,
+    required List<String> searchableTags,
+    required IsmLiveMetaData metaData,
+    required String customType,
+    required String deviceId,
+    required int messageType,
+  }) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.postMessage,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: {
+          'streamId': streamId,
+          'searchableTags': searchableTags,
+          'metaData': metaData,
+          'messageType': messageType,
+          'deviceId': deviceId,
+          'customType': customType,
+          'body': body
+        },
+        showLoader: true,
       );
 }

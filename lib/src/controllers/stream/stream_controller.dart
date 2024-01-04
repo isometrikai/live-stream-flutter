@@ -14,7 +14,12 @@ part 'mixins/api_mixin.dart';
 part 'mixins/go_live_mixin.dart';
 part 'mixins/join_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, GoLiveMixin {
+class IsmLiveStreamController extends GetxController
+    with
+        GetSingleTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        GoLiveMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -29,9 +34,11 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   List<IsmLiveMemberDetailsModel> streamMembersList = [];
 
-  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList =
+      <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) =>
+      _streamViewersList.value = value;
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -64,11 +71,15 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   var descriptionController = TextEditingController();
 
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
+
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
+
+  bool? isHost;
 
   double positionX = 20;
   double positionY = 20;
@@ -117,6 +128,34 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     }
   }
 
+  VoidCallback onOptionTap(
+    IsmLiveStreamOption option, {
+    LocalParticipant? participant,
+  }) {
+    switch (option) {
+      case IsmLiveStreamOption.gift:
+        return () {};
+      case IsmLiveStreamOption.multiLive:
+        return () {};
+      case IsmLiveStreamOption.share:
+        return () {};
+      case IsmLiveStreamOption.members:
+        return () {};
+      case IsmLiveStreamOption.favourite:
+        return () {};
+      case IsmLiveStreamOption.settings:
+        return () {};
+      case IsmLiveStreamOption.rotateCamera:
+        return () => toggleCamera(participant);
+      case IsmLiveStreamOption.vs:
+        return () {};
+      case IsmLiveStreamOption.speakerOn:
+        return () {};
+      case IsmLiveStreamOption.speakerOff:
+        return () {};
+    }
+  }
+
   Future<bool> subscribeUser() => _subscribeUser(true);
 
   Future<bool> unsubscribeUser() => _subscribeUser(false);
@@ -154,7 +193,11 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
           unawaited(getStreams());
           _streamTimer?.cancel();
-          IsmLiveRouteManagement.goToEndStreamView();
+          if (isHost) {
+            IsmLiveRouteManagement.goToEndStreamView();
+          } else {
+            Get.back();
+          }
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
@@ -252,7 +295,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -292,7 +336,10 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     await participant.setCameraEnabled(true);
   }
 
-  void toggleCamera(LocalParticipant participant) async {
+  void toggleCamera(LocalParticipant? participant) async {
+    if (participant == null) {
+      return;
+    }
     final track = participant.videoTracks.firstOrNull?.track;
     if (track == null) return;
 
@@ -330,7 +377,9 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         leftOnTab: Get.back,
@@ -341,8 +390,6 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
             room: room,
             streamId: streamId,
           );
-
-          IsmLiveRouteManagement.goToEndStreamView();
         },
       ),
       isDismissible: false,
