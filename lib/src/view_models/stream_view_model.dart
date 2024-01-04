@@ -223,24 +223,12 @@ class IsmLiveStreamViewModel {
 
   Future<bool> sendMessage({
     required bool showLoading,
-    required String streamId,
-    required String body,
-    required List<String> searchableTags,
-    required IsmLiveMetaData metaData,
-    required String customType,
-    required String deviceId,
-    required int messageType,
+    required IsmLiveSendMessageModel sendMessageModel,
   }) async {
     try {
       var res = await _repository.sendMessage(
-        body: body,
-        customType: customType,
-        deviceId: deviceId,
         showLoading: showLoading,
-        messageType: messageType,
-        metaData: metaData,
-        searchableTags: searchableTags,
-        streamId: streamId,
+        sendMessageModel: sendMessageModel,
       );
 
       return !res.hasError;

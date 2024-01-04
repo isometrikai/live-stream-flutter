@@ -36,20 +36,19 @@ class IsmLiveControlsWidget extends StatelessWidget {
               : IsmLiveStreamOption.hostOptions;
 
           return Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ...List.generate(
-                  options.length,
-                  (index) => CustomIconButton(
-                    icon: IsmLiveImage.svg(options[index].icon),
-                    onTap: controller.onOptionTap(options[index],
-                        participant: participant),
-                    color: IsmLiveColors.transparent,
-                  ),
+            child: Container(
+              alignment: Alignment.bottomRight,
+              width: IsmLiveDimens.fifty,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, index) => CustomIconButton(
+                  icon: IsmLiveImage.svg(options[index].icon),
+                  onTap: controller.onOptionTap(options[index],
+                      participant: participant),
+                  color: IsmLiveColors.transparent,
                 ),
-              ],
+                itemCount: options.length,
+              ),
             ),
           );
         },

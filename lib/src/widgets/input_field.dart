@@ -23,6 +23,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.maxLines,
     this.cursorColor,
     this.style,
+    this.radius,
+    this.onFieldSubmit,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -44,6 +46,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.maxLines,
     this.cursorColor,
     this.style,
+    this.radius,
+    this.onFieldSubmit,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -67,6 +71,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.maxLines,
     this.cursorColor,
     this.style,
+    this.radius,
+    this.onFieldSubmit,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -89,6 +95,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.maxLines,
     this.cursorColor,
     this.style,
+    this.radius,
+    this.onFieldSubmit,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -101,6 +109,7 @@ class IsmLiveInputField extends StatelessWidget {
   final Widget? prefixIcon;
   final bool readOnly;
   final void Function()? onTap;
+  final void Function(String)? onFieldSubmit;
   final String? hintText;
   final Color? borderColor;
   final Color? fillColor;
@@ -110,11 +119,13 @@ class IsmLiveInputField extends StatelessWidget {
   final bool? alignLabelWithHint;
   final int? minLines;
   final int? maxLines;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) => Material(
         type: MaterialType.transparency,
         child: TextFormField(
+          onFieldSubmitted: onFieldSubmit,
           maxLines: maxLines ?? 1,
           minLines: minLines ?? 1,
           style: style,
@@ -137,21 +148,24 @@ class IsmLiveInputField extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderRadius:
+                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderRadius:
+                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+              borderRadius:
+                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,

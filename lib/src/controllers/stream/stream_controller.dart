@@ -70,6 +70,8 @@ class IsmLiveStreamController extends GetxController
 
   var descriptionController = TextEditingController();
 
+  var messageFieldController = TextEditingController();
+
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
@@ -165,6 +167,29 @@ class IsmLiveStreamController extends GetxController
     participantTracks[index + 1] = participantTracks.elementAt(0);
     participantTracks[0] = member2;
     update([IsmLiveStreamView.updateId]);
+  }
+
+  void onFieldSubmit({
+    required String streamId,
+    required String body,
+    required int messageType,
+  }) async {
+    var res = await sendMessage(
+      showLoading: false,
+      sendMessageModel: IsmLiveSendMessageModel(
+        streamId: streamId,
+        body: body,
+        searchableTags: [body],
+        metaData: const IsmLiveMetaData(),
+        customType: body,
+        deviceId: configuration?.projectConfig.deviceId ?? '',
+        messageType: messageType,
+      ),
+    );
+
+    if (res) {
+      messageFieldController.clear();
+    }
   }
 
   void onChangeHdBroadcast(
