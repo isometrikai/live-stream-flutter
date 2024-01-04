@@ -13,6 +13,16 @@ class IsmLiveConfigData with Diagnosticable {
   })  : username = username ?? '2${projectConfig.accountId}${projectConfig.projectId}',
         password = password ?? '${projectConfig.licenseKey}${projectConfig.keySetId}';
 
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<IsmLiveUserConfig>('userConfig', userConfig));
+    properties.add(DiagnosticsProperty<IsmLiveProjectConfig>('projectConfig', projectConfig));
+    properties.add(DiagnosticsProperty<IsmLiveMqttConfig>('mqttConfig', mqttConfig));
+    properties.add(StringProperty('username', username));
+    properties.add(StringProperty('password', password));
+  }
+
   final IsmLiveUserConfig userConfig;
   final IsmLiveProjectConfig projectConfig;
   final IsmLiveMqttConfig mqttConfig;

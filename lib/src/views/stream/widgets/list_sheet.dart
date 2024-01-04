@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveListSheet extends StatelessWidget {
-  const IsmLiveListSheet({
-    super.key,
-    required this.list,
-  });
+  const IsmLiveListSheet({super.key, required this.list, required this.isHost});
+
   final List<IsmLiveViewerModel> list;
+  final bool isHost;
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
@@ -49,6 +48,14 @@ class IsmLiveListSheet extends StatelessWidget {
                       viewer.userIdentifier,
                       style: context.textTheme.bodySmall,
                     ),
+                    // trailing: isHost
+                    //     ? SizedBox(
+                    //         width: IsmLiveDimens.fifty,
+                    //         child: const IsmLiveButton(
+                    //           label: 'Kickout',
+                    //         ),
+                    //       )
+                    //     : const Text('Follow'),
                     trailing: const Text('Follow'),
                   );
                 },

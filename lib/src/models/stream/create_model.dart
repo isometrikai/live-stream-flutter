@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 
 class IsmLiveCreateStreamModel {
   const IsmLiveCreateStreamModel({
-    this.streamImage = 'http://res.cloudinary.com/dbmv1uykj/image/upload/v1700742161/n0i3pwzqp98i8csd4uyk.jpg',
-    this.streamDescription = 'This is fallback description',
+    required this.streamImage,
+    required this.streamDescription,
     this.selfHosted = true,
     this.restream = false,
     this.productsLinked = false,

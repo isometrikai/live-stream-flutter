@@ -35,9 +35,9 @@ class PickImageSheet extends StatelessWidget {
                   beforePicking?.call();
                   XFile? file;
                   if (index == 0) {
-                    file = await FileManager.pickImage(ImageSource.camera);
+                    file = await FileManager.pickCameraImage();
                   } else if (index == 1) {
-                    file = await FileManager.pickImage(ImageSource.gallery);
+                    file = await FileManager.pickGalleryImage();
                   } else if (index == 2) {
                     if (enableVideo) {
                       file = await FileManager.pickVideo();

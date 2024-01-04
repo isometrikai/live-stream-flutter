@@ -14,7 +14,23 @@ class FileManager {
 
   static ImagePicker? $picker;
 
-  static Future<XFile?> pickImage(
+  static Future<XFile?> pickCameraImage({
+    bool shouldCrop = true,
+  }) =>
+      _pickImage(
+        ImageSource.camera,
+        shouldCrop: shouldCrop,
+      );
+
+  static Future<XFile?> pickGalleryImage({
+    bool shouldCrop = true,
+  }) =>
+      _pickImage(
+        ImageSource.gallery,
+        shouldCrop: shouldCrop,
+      );
+
+  static Future<XFile?> _pickImage(
     ImageSource imageSource, {
     bool shouldCrop = true,
   }) async {
@@ -104,15 +120,15 @@ class FileManager {
     bool enableVideo = false,
   }) =>
       <AttachmentModel>[
-        AttachmentModel(
+        const AttachmentModel(
           label: 'Camera',
           iconPath: IsmLiveAssetConstants.camera,
-          onTap: () => FileManager.pickImage(ImageSource.camera),
+          onTap: FileManager.pickCameraImage,
         ),
-        AttachmentModel(
+        const AttachmentModel(
           label: 'Gallery',
           iconPath: IsmLiveAssetConstants.photoVideo,
-          onTap: () => FileManager.pickImage(ImageSource.gallery),
+          onTap: FileManager.pickGalleryImage,
         ),
         if (enableVideo)
           const AttachmentModel(

@@ -14,6 +14,8 @@ void main() async {
   runApp(const MyApp());
 }
 
+Rx<IsmLiveConfigData?> kConfigData = Rx<IsmLiveConfigData?>(null);
+
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.lazyPut(SharedPreferencesManager.new);
@@ -51,8 +53,11 @@ class _MyAppState extends State<MyApp> {
                 foregroundColor: Colors.white,
               ),
             ),
-            builder: (context, child) => IsmLiveData(
-              child: child!,
+            builder: (context, child) => Obx(
+              () => IsmLiveData(
+                configurations: kConfigData.value,
+                child: child!,
+              ),
             ),
             translations: TranslationsFile(),
             getPages: AppPages.pages,

@@ -11,8 +11,7 @@ class IsmLiveEndStream extends StatelessWidget {
   Widget build(BuildContext context) => PopScope(
         canPop: false,
         child: Scaffold(
-          appBar:
-              AppBar(automaticallyImplyLeading: false, elevation: 0, actions: [
+          appBar: AppBar(automaticallyImplyLeading: false, elevation: 0, actions: [
             IconButton(
               icon: const Icon(
                 Icons.close,
@@ -44,8 +43,7 @@ class IsmLiveEndStream extends StatelessWidget {
                   GridView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 1.5,
                     ),
@@ -87,6 +85,7 @@ class IsmLiveEndStream extends StatelessWidget {
                   ),
                   IsmLiveListSheet(
                     list: controller.streamViewersList,
+                    isHost: false,
                   ),
                 ],
               ),

@@ -20,6 +20,18 @@ class IsmLiveThemeData with Diagnosticable {
   final BorderRadius? buttonRadius;
   final Color? cardBackgroundColor;
 
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ColorProperty('primaryColor', primaryColor));
+    properties.add(ColorProperty('secondaryColor', secondaryColor));
+    properties.add(ColorProperty('backgroundColor', backgroundColor));
+    properties.add(ColorProperty('selectedTextColor', selectedTextColor));
+    properties.add(ColorProperty('unselectedTextColor', unselectedTextColor));
+    properties.add(DiagnosticsProperty<BorderRadius>('buttonRadius', buttonRadius));
+    properties.add(ColorProperty('cardBackgroundColor', cardBackgroundColor));
+  }
+
   IsmLiveThemeData copyWith({
     Color? primaryColor,
     Color? secondaryColor,
