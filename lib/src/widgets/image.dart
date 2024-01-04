@@ -84,16 +84,20 @@ class IsmLiveImage extends StatelessWidget {
         height: height ?? dimensions,
         width: width ?? dimensions,
         decoration: BoxDecoration(
-          borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
+          borderRadius: isProfileImage
+              ? null
+              : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           border: border,
         ),
         clipBehavior: Clip.antiAlias,
         child: switch (_imageType) {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
-          IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
+          IsmLiveImageType.svg =>
+            _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
-          IsmLiveImageType.network => _Network(path, isProfileImage: isProfileImage, name: name),
+          IsmLiveImageType.network =>
+            _Network(path, isProfileImage: isProfileImage, name: name),
         },
       );
 }
