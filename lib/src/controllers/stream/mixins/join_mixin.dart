@@ -69,6 +69,7 @@ mixin StreamJoinMixin {
         }
       }
     }
+
     var stream = await _controller.createStream();
     if (stream == null) {
       return;
@@ -103,12 +104,14 @@ mixin StreamJoinMixin {
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else {
-      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
@@ -132,13 +135,14 @@ mixin StreamJoinMixin {
 
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
       );
 
       if (isHost) {
         var localVideo = await LocalVideoTrack.createCameraTrack(
-          CameraCaptureOptions(
-            deviceId: Get.context?.liveConfig.projectConfig.deviceId,
+          const CameraCaptureOptions(
             cameraPosition: CameraPosition.front,
             params: VideoParametersPresets.h720_169,
           ),
@@ -179,7 +183,8 @@ mixin StreamJoinMixin {
   }
 
   void startStreamTimer() {
-    _controller._streamTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _controller._streamTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
       _controller.streamDuration += const Duration(seconds: 1);
     });
   }

@@ -10,17 +10,20 @@ class IsmLiveListSheet extends StatelessWidget {
     required this.list,
     required this.isHost,
     this.trailing,
+    this.scrollController,
   });
 
   final List<IsmLiveViewerModel> list;
   final bool isHost;
   final ViewerBuilder? trailing;
+  final ScrollController? scrollController;
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
           maxHeight: min(list.length.sheetHeight, context.height * 0.85),
         ),
         child: SingleChildScrollView(
+          controller: scrollController,
           padding: IsmLiveDimens.edgeInsets20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

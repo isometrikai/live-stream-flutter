@@ -39,7 +39,8 @@ class IsmLiveHandler {
 
   static Future<void> logout([VoidCallback? logoutCallback]) async {
     IsmLiveUtility.showLoader();
-    var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+    var isUnsubscribed =
+        await Get.find<IsmLiveStreamController>().unsubscribeUser();
     if (!isUnsubscribed) {
       return;
     }

@@ -37,6 +37,8 @@ class IsmLiveStreamView extends StatelessWidget {
             listener: listener,
             room: room,
           );
+
+          streamController.pagination(streamId);
           await streamController.sortParticipants(room);
 
           IsmLiveUtility.updateLater(() {
@@ -62,7 +64,9 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -90,6 +94,8 @@ class IsmLiveStreamView extends StatelessWidget {
                                 GetBuilder<IsmLiveStreamController>(
                                   id: updateId,
                                   builder: (controller) => IsmLiveListSheet(
+                                    scrollController:
+                                        controller.viewerListController,
                                     list: controller.streamViewersList,
                                     isHost: isHost,
                                     trailing: (_, viewer) => SizedBox(

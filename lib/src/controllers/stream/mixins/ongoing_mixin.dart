@@ -24,6 +24,7 @@ mixin StreamOngoingMixin {
 
   Future<void> toggleSpeaker([bool? value]) async {
     _controller.speakerOn = value ?? !_controller.speakerOn;
+
     // TODO: speaker change not working, fix this
     await Hardware.instance.setPreferSpeakerOutput(_controller.speakerOn);
   }
