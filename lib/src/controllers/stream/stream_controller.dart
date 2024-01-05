@@ -218,6 +218,7 @@ class IsmLiveStreamController extends GetxController
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
           unawaited(getStreams());
           _streamTimer?.cancel();
+
           if (isHost) {
             IsmLiveRouteManagement.goToEndStreamView();
           } else {
