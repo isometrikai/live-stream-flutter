@@ -34,7 +34,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
           participant.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = participant.videoTracks.isEmpty ? IsmLiveStreamOption.viewersOptions : IsmLiveStreamOption.hostOptions;
+          var options = participant.videoTracks.isEmpty
+              ? IsmLiveStreamOption.viewersOptions
+              : IsmLiveStreamOption.hostOptions;
 
           return Expanded(
             child: Container(
@@ -43,9 +45,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
               child: ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, index) => CustomIconButton(
-                  icon: IsmLiveImage.svg(controller.controlIcon(options[index])),
+                  icon:
+                      IsmLiveImage.svg(controller.controlIcon(options[index])),
                   onTap: () async {
-                    await controller.onOptionTap(options[index], participant: participant);
+                    await controller.onOptionTap(options[index],
+                        participant: participant, room: room);
                     controller.update([IsmLiveControlsWidget.updateId]);
                   },
                   color: IsmLiveColors.transparent,

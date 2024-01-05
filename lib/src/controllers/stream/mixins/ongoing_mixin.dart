@@ -22,21 +22,22 @@ mixin StreamOngoingMixin {
     }
   }
 
-  Future<void> addViewers(List<IsmLiveViewerModel> viewers, [List<String>? updateIds]) async {
-    _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
-  }
-
-  Future<void> toggleSpeaker([bool? value]) async {
+  Future<void> toggleSpeaker({Room? room, bool? value}) async {
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
+    room?.participants.values.first.audioTracks.first.enabled =
+        _controller.speakerOn;
+
     // TODO: speaker change not working, fix this
-    await Hardware.instance.setPreferSpeakerOutput(_controller.speakerOn);
+    //if above code is not working in iso use this
+    // await Hardware.instance.setPreferSpeakerOutput(_controller.speakerOn);
+    // await Hardware.instance.setSpeakerphoneOn(_controller.speakerOn);
   }
 
   Future onOptionTap(
     IsmLiveStreamOption option, {
     LocalParticipant? participant,
+    Room? room,
   }) async {
     switch (option) {
       case IsmLiveStreamOption.gift:
@@ -51,7 +52,7 @@ mixin StreamOngoingMixin {
         _controller.toggleCamera(participant);
         break;
       case IsmLiveStreamOption.speaker:
-        await toggleSpeaker();
+        await toggleSpeaker(room: room);
         break;
     }
   }

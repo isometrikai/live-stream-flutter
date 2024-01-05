@@ -46,8 +46,9 @@ class IsmLiveStreamView extends StatelessWidget {
               streamController.askPublish(room, audioCallOnly);
             }
           });
+
           if (lkPlatformIsMobile()) {
-            await streamController.toggleSpeaker(true);
+            await streamController.toggleSpeaker(room: room, value: true);
           }
         },
         dispose: (ismLiveBuilder) async {
