@@ -129,7 +129,7 @@ class IsmLiveStreamController extends GetxController
   bool isViewesApiCall = false;
   void pagination(String streamId) {
     viewerListController.addListener(() {
-      if (viewerListController.position.maxScrollExtent ==
+      if (viewerListController.position.maxScrollExtent * 0.8 ==
           viewerListController.position.pixels) {
         if (isViewesApiCall) {
           return;

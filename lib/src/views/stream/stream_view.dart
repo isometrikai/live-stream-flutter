@@ -94,7 +94,8 @@ class IsmLiveStreamView extends StatelessWidget {
                                 GetBuilder<IsmLiveStreamController>(
                                   id: updateId,
                                   builder: (controller) => IsmLiveListSheet(
-                                    controller: controller,
+                                    viewerListController:
+                                        controller.viewerListController,
                                     list: controller.streamViewersList,
                                     isHost: isHost,
                                     trailing: (_, viewer) => SizedBox(

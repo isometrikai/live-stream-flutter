@@ -142,7 +142,7 @@ mixin StreamJoinMixin {
 
       if (isHost) {
         var localVideo = await LocalVideoTrack.createCameraTrack(
-          CameraCaptureOptions(
+          const CameraCaptureOptions(
             cameraPosition: CameraPosition.front,
             params: VideoParametersPresets.h720_169,
           ),
