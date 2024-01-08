@@ -65,7 +65,9 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -79,7 +81,9 @@ class IsmLiveStreamView extends StatelessWidget {
                         children: [
                           StreamHeader(
                             name: controller.hostDetails?.userName ?? 'U',
-                            imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                            imageUrl:
+                                controller.hostDetails?.userProfileImageUrl ??
+                                    '',
                             onTabCross: () {
                               FocusScope.of(context).unfocus();
                               controller.onExit(
@@ -93,7 +97,8 @@ class IsmLiveStreamView extends StatelessWidget {
                                 GetBuilder<IsmLiveStreamController>(
                                   id: updateId,
                                   builder: (controller) => IsmLiveListSheet(
-                                    scrollController: controller.viewerListController,
+                                    scrollController:
+                                        controller.viewerListController,
                                     items: controller.streamViewersList,
                                     trailing: (_, viewer) => SizedBox(
                                       width: IsmLiveDimens.eighty,
@@ -118,11 +123,22 @@ class IsmLiveStreamView extends StatelessWidget {
                               );
                             },
                           ),
-                          IsmLiveControlsWidget(
-                            room,
-                            room.localParticipant!,
-                            meetingId: streamId,
-                            audioCallOnly: audioCallOnly,
+                          Expanded(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                IsmLiveChat(
+                                  messagesList: controller.streamMessagesList,
+                                ),
+                                const Spacer(),
+                                IsmLiveControlsWidget(
+                                  room,
+                                  room.localParticipant!,
+                                  meetingId: streamId,
+                                  audioCallOnly: audioCallOnly,
+                                ),
+                              ],
+                            ),
                           ),
                           IsmLiveInputField(
                             controller: controller.messageFieldController,

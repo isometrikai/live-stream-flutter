@@ -1,3 +1,4 @@
+export 'chat.dart';
 export 'controls.dart';
 export 'create_stream_fab.dart';
 export 'dialogs/dialogs.dart';

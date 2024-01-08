@@ -141,13 +141,36 @@ mixin StreamAPIMixin {
     _controller.streamViewersList.addAll(res);
   }
 
+  Future<void> fetchMessages({
+    required bool showLoading,
+    required IsmLiveGetMessageModel getMessageModel,
+  }) async =>
+      _viewerDebouncer.run(
+        () => _fetchMessages(
+          getMessageModel: getMessageModel,
+          showLoading: showLoading,
+        ),
+      );
+
+  Future<void> _fetchMessages({
+    required bool showLoading,
+    required IsmLiveGetMessageModel getMessageModel,
+  }) async {
+    var res = await _viewModel.fetchMessages(
+      getMessageModel: getMessageModel,
+      showLoading: showLoading,
+    );
+
+    _controller.streamMessagesList = res;
+  }
+
   Future<bool> sendMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
   }) async =>
       await _viewModel.sendMessage(
         showLoading: showLoading,
-        sendMessageModel: sendMessageModel,
+        getMessageModel: sendMessageModel,
       );
 
   Future<bool> kickoutViewer({
