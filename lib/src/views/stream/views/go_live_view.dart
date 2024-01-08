@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +15,12 @@ class IsmGoLiveView extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           var controller = Get.find<IsmLiveStreamController>();
+          controller.cameraFuture = null;
+          unawaited(controller.initializationOfGoLive());
           controller.pickedImage = null;
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
-          await controller.initializationOfGoLive();
         },
         dispose: (state) {
           Get.find<IsmLiveStreamController>().cameraController?.dispose();
@@ -25,6 +28,7 @@ class IsmGoLiveView extends StatelessWidget {
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: IsmLiveColors.black,
+          extendBody: true,
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: IsmLiveDimens.edgeInsets16,
@@ -36,6 +40,7 @@ class IsmGoLiveView extends StatelessWidget {
           ),
           body: Stack(
             alignment: Alignment.center,
+            fit: StackFit.expand,
             children: [
               FutureBuilder(
                 future: controller.cameraFuture,
@@ -51,12 +56,17 @@ class IsmGoLiveView extends StatelessWidget {
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }
-                  return CameraPreview(
-                    controller.cameraController!,
-                    child: SizedBox(
-                      height: Get.height,
-                      width: Get.width,
-                      child: const ColoredBox(color: Colors.black38),
+                  return Center(
+                    child: Transform.scale(
+                      scale: controller.cameraController?.value.aspectRatio ?? 1,
+                      child: CameraPreview(
+                        controller.cameraController!,
+                        child: SizedBox(
+                          height: Get.height,
+                          width: Get.width,
+                          child: const ColoredBox(color: Colors.black38),
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -151,6 +161,7 @@ class _StreamImage extends StatelessWidget {
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
+                    unawaited(controller.initializationOfGoLive());
                     if (file != null) {
                       controller.pickedImage = file;
                       controller.update([IsmGoLiveView.updateId]);

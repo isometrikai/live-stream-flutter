@@ -50,9 +50,7 @@ class RoomPage extends StatelessWidget {
               children: [
                 controller.participantTracks.isNotEmpty
                     ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
-                    : const NoVideoWidget(
-                        name: null,
-                      ),
+                    : const NoVideoWidget(imageUrl: ''),
                 Positioned(
                   bottom: IsmLiveDimens.twenty,
                   child: room.localParticipant != null

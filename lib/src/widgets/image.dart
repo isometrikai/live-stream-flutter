@@ -4,6 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
@@ -19,6 +20,7 @@ class IsmLiveImage extends StatelessWidget {
     this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.asset,
+        showError = false,
         color = null;
 
   const IsmLiveImage.svg(
@@ -34,7 +36,8 @@ class IsmLiveImage extends StatelessWidget {
     this.borderRadius,
     this.border,
     this.fromPackage = true,
-  }) : _imageType = IsmLiveImageType.svg;
+  })  : _imageType = IsmLiveImageType.svg,
+        showError = false;
 
   const IsmLiveImage.network(
     this.path, {
@@ -48,6 +51,7 @@ class IsmLiveImage extends StatelessWidget {
     this.borderRadius,
     this.border,
     this.fromPackage = true,
+    this.showError = true,
   })  : _imageType = IsmLiveImageType.network,
         color = null;
 
@@ -64,6 +68,7 @@ class IsmLiveImage extends StatelessWidget {
     this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.file,
+        showError = false,
         color = null;
 
   final String path;
@@ -78,26 +83,28 @@ class IsmLiveImage extends StatelessWidget {
   final IsmLiveImageType _imageType;
   final bool fromPackage;
   final Border? border;
+  final bool showError;
 
   @override
   Widget build(BuildContext context) => Container(
         height: height ?? dimensions,
         width: width ?? dimensions,
         decoration: BoxDecoration(
-          borderRadius: isProfileImage
-              ? null
-              : borderRadius ?? BorderRadius.circular(radius ?? 0),
+          borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           border: border,
         ),
         clipBehavior: Clip.antiAlias,
         child: switch (_imageType) {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
-          IsmLiveImageType.svg =>
-            _Svg(path, fromPackage: fromPackage, color: color),
+          IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
-          IsmLiveImageType.network =>
-            _Network(path, isProfileImage: isProfileImage, name: name),
+          IsmLiveImageType.network => _Network(
+              path,
+              isProfileImage: isProfileImage,
+              name: name,
+              showError: showError,
+            ),
         },
       );
 }
@@ -132,11 +139,13 @@ class _Network extends StatelessWidget {
     this.imageUrl, {
     required this.name,
     required this.isProfileImage,
+    required this.showError,
   });
 
   final String imageUrl;
   final String name;
   final bool isProfileImage;
+  final bool showError;
 
   @override
   Widget build(BuildContext context) => CachedNetworkImage(
@@ -147,7 +156,11 @@ class _Network extends StatelessWidget {
         imageBuilder: (_, image) {
           try {
             if (imageUrl.isEmpty) {
-              _ErrorImage(isProfileImage: isProfileImage, name: name);
+              _ErrorImage(
+                isProfileImage: isProfileImage,
+                name: name,
+                showError: showError,
+              );
             }
             return Container(
               decoration: BoxDecoration(
@@ -158,7 +171,11 @@ class _Network extends StatelessWidget {
             );
           } catch (e, st) {
             IsmLiveLog.error(e, st);
-            return _ErrorImage(isProfileImage: isProfileImage, name: name);
+            return _ErrorImage(
+              isProfileImage: isProfileImage,
+              name: name,
+              showError: showError,
+            );
           }
         },
         placeholder: (context, url) => Container(
@@ -183,6 +200,7 @@ class _Network extends StatelessWidget {
         errorWidget: (context, url, error) => _ErrorImage(
           isProfileImage: isProfileImage,
           name: name,
+          showError: showError,
         ),
       );
 }
@@ -216,26 +234,31 @@ class _ErrorImage extends StatelessWidget {
   const _ErrorImage({
     required this.isProfileImage,
     required this.name,
+    required this.showError,
   });
 
   final bool isProfileImage;
   final String name;
+  final bool showError;
 
   @override
   Widget build(BuildContext context) => Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: IsmLiveColors.primary, //.withOpacity(0.2),
+          color: isProfileImage ? IsmLiveColors.primary : IsmLiveColors.secondary,
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
-        child: isProfileImage
+        child: !showError || isProfileImage
             ? Text(
                 name[0],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: IsmLiveColors.white,
-                ),
+                style: !isProfileImage
+                    ? context.textTheme.displayMedium?.copyWith(
+                        color: IsmLiveColors.primary,
+                        fontWeight: FontWeight.bold,
+                      )
+                    : context.textTheme.titleMedium?.copyWith(
+                        color: IsmLiveColors.white,
+                      ),
               )
             : Container(
                 decoration: BoxDecoration(

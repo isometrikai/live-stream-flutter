@@ -240,7 +240,12 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.streamStarted:
             break;
           case IsmLiveActions.streamStopped:
+            final initiatorId = payload['initiatorId'] as String?;
+            if (Get.isDialogOpen ?? false) {
+              await Future.delayed(const Duration(milliseconds: 300));
+            }
             _streamController.streams.removeWhere((e) => e.streamId == streamId);
+            _streamController.closeStreamView(initiatorId == userId);
             _updateStreamListing();
             break;
           case IsmLiveActions.viewerJoined:
