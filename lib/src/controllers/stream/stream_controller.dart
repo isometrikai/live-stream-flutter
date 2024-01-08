@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/get_message_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,12 @@ part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
 part 'mixins/ongoing_mixin.dart';
 
-class IsmLiveStreamController extends GetxController with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin {
+class IsmLiveStreamController extends GetxController
+    with
+        GetSingleTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        StreamOngoingMixin {
   IsmLiveStreamController(this._viewModel);
   @override
   final IsmLiveStreamViewModel _viewModel;
@@ -33,13 +39,23 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   bool get speakerOn => _speakerOn.value;
   set speakerOn(bool value) => _speakerOn.value = value;
 
-  final RxList<IsmLiveMemberDetailsModel> _streamMembersList = <IsmLiveMemberDetailsModel>[].obs;
+  final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
+      <IsmLiveMemberDetailsModel>[].obs;
   List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
-  set streamMembersList(List<IsmLiveMemberDetailsModel> value) => _streamMembersList.value = value;
+  set streamMembersList(List<IsmLiveMemberDetailsModel> value) =>
+      _streamMembersList.value = value;
 
-  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList =
+      <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) =>
+      _streamViewersList.value = value;
+
+  final RxList<IsmLiveMessageModel> _streamMessagesList =
+      <IsmLiveMessageModel>[].obs;
+  List<IsmLiveMessageModel> get streamMessagesList => _streamMessagesList;
+  set streamMessagesList(List<IsmLiveMessageModel> value) =>
+      _streamMessagesList.value = value;
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -79,7 +95,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -119,12 +136,14 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   bool isViewesApiCall = false;
   void pagination(String streamId) {
     viewerListController.addListener(() {
-      if (viewerListController.position.maxScrollExtent * 0.8 <= viewerListController.position.pixels) {
+      if (viewerListController.position.maxScrollExtent * 0.8 <=
+          viewerListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
         isViewesApiCall = true;
-        getStreamViewer(streamId: streamId, limit: 10, skip: streamViewersList.length);
+        getStreamViewer(
+            streamId: streamId, limit: 10, skip: streamViewersList.length);
         isViewesApiCall = false;
       }
     });
@@ -176,6 +195,14 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     );
 
     if (res) {
+      await fetchMessages(
+          showLoading: false,
+          getMessageModel: IsmLiveGetMessageModel(
+              streamId: streamId,
+              sort: -1,
+              skip: 0,
+              limit: 10,
+              senderIdsExclusive: false));
       messageFieldController.clear();
     }
   }
@@ -297,7 +324,8 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
     final localParticipantTracks = room.localParticipant?.videoTracks;
@@ -378,7 +406,9 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         leftOnTab: Get.back,
