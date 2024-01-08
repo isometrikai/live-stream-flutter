@@ -22,8 +22,15 @@ class IsmLiveStreamController extends GetxController
         StreamJoinMixin,
         StreamOngoingMixin {
   IsmLiveStreamController(this._viewModel);
-  @override
+
   final IsmLiveStreamViewModel _viewModel;
+
+  IsmLiveMqttController? get _mqttController {
+    if (Get.isRegistered<IsmLiveMqttController>()) {
+      return Get.find<IsmLiveMqttController>();
+    }
+    return null;
+  }
 
   IsmLiveConfigData? configuration;
 
@@ -56,6 +63,8 @@ class IsmLiveStreamController extends GetxController
   List<IsmLiveMessageModel> get streamMessagesList => _streamMessagesList;
   set streamMessagesList(List<IsmLiveMessageModel> value) =>
       _streamMessagesList.value = value;
+
+  int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
   IsmLiveMemberDetailsModel? hostDetails;
 
@@ -134,6 +143,7 @@ class IsmLiveStreamController extends GetxController
   }
 
   bool isViewesApiCall = false;
+
   void pagination(String streamId) {
     viewerListController.addListener(() {
       if (viewerListController.position.maxScrollExtent * 0.8 <=
@@ -168,13 +178,6 @@ class IsmLiveStreamController extends GetxController
   Future<bool> subscribeUser() => _subscribeUser(true);
 
   Future<bool> unsubscribeUser() => _subscribeUser(false);
-
-  void onClick(int index) {
-    var member2 = participantTracks.elementAt(index + 1);
-    participantTracks[index + 1] = participantTracks.elementAt(0);
-    participantTracks[0] = member2;
-    update([IsmLiveStreamView.updateId]);
-  }
 
   void onFieldSubmit({
     required String streamId,
@@ -222,53 +225,6 @@ class IsmLiveStreamController extends GetxController
     update([IsmGoLiveView.updateId]);
   }
 
-  Future<void> setUpListeners({
-    required bool isHost,
-    required String streamId,
-    required EventsListener<RoomEvent> listener,
-    required Room room,
-  }) async =>
-      listener
-        ..on<RoomDisconnectedEvent>((event) async {
-          IsmLiveLog.info('RoomDisconnectedEvent: $event');
-          unawaited(getStreams());
-          _streamTimer?.cancel();
-
-          if (isHost) {
-            IsmLiveRouteManagement.goToEndStreamView();
-          } else {
-            Get.back();
-          }
-        })
-        ..on<ParticipantEvent>((event) {
-          IsmLiveLog.info('ParticipantEvent: $event');
-
-          sortParticipants(room);
-        })
-        ..on<ParticipantConnectedEvent>((event) async {
-          IsmLiveLog.info('ParticipantConnectedEvent: $event');
-        })
-        ..on<ParticipantDisconnectedEvent>((event) async {
-          IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
-        })
-        ..on<RoomRecordingStatusChanged>((event) {})
-        ..on<LocalTrackPublishedEvent>((_) => sortParticipants(room))
-        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
-        ..on<TrackE2EEStateEvent>((event) {
-          IsmLiveLog.info('TrackE2EEStateEvent: $event');
-        })
-        ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog.info('ParticipantNameUpdatedEvent: $event');
-        })
-        ..on<DataReceivedEvent>((event) {
-          IsmLiveLog.info('DataReceivedEvent: ${event.topic} $event');
-        })
-        ..on<AudioPlaybackStatusChanged>((event) async {
-          if (!room.canPlaybackAudio) {
-            IsmLiveLog('Audio playback failed for iOS Safari ..........');
-          }
-        });
-
   Future<void> askPublish(Room room, bool audioCall) async {
     try {
       if (!audioCall) {
@@ -284,69 +240,6 @@ class IsmLiveStreamController extends GetxController
     } catch (error) {
       IsmLiveLog('could not publish audio: $error');
     }
-  }
-
-  void onRoomDidUpdate(Room room) {
-    sortParticipants(room);
-  }
-
-  Future<void> sortParticipants(
-    Room room,
-  ) async {
-    var userMediaTracks = <ParticipantTrack>[];
-
-    for (var participant in room.participants.values) {
-      for (var t in participant.videoTracks) {
-        userMediaTracks.add(ParticipantTrack(
-          participant: participant,
-          videoTrack: t.track,
-          isScreenShare: false,
-        ));
-      }
-    }
-    userMediaTracks.sort((a, b) {
-      if (a.participant.isSpeaking && b.participant.isSpeaking) {
-        if (a.participant.audioLevel > b.participant.audioLevel) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-
-      final aSpokeAt = a.participant.lastSpokeAt?.millisecondsSinceEpoch ?? 0;
-      final bSpokeAt = b.participant.lastSpokeAt?.millisecondsSinceEpoch ?? 0;
-
-      if (aSpokeAt != bSpokeAt) {
-        return aSpokeAt > bSpokeAt ? -1 : 1;
-      }
-
-      if (a.participant.hasVideo != b.participant.hasVideo) {
-        return a.participant.hasVideo ? -1 : 1;
-      }
-
-      return a.participant.joinedAt.millisecondsSinceEpoch -
-          b.participant.joinedAt.millisecondsSinceEpoch;
-    });
-
-    final localParticipantTracks = room.localParticipant?.videoTracks;
-    if (localParticipantTracks != null) {
-      for (var t in localParticipantTracks) {
-        userMediaTracks.add(ParticipantTrack(
-          participant: room.localParticipant!,
-          videoTrack: t.track,
-          isScreenShare: false,
-        ));
-      }
-    }
-
-    participantTracks = [...userMediaTracks];
-    update([IsmLiveStreamView.updateId]);
-  }
-
-  void onPan(details) {
-    positionX += details.delta.dx;
-    positionY += details.delta.dy;
-    update();
   }
 
   void disableAudio(LocalParticipant participant) async {
@@ -381,47 +274,5 @@ class IsmLiveStreamController extends GetxController
       IsmLiveLog('could not restart track: $error');
       return;
     }
-  }
-
-  Future<void> disconnectStream({
-    required bool isHost,
-    required Room room,
-    required String streamId,
-  }) async {
-    var isEnded = false;
-    if (isHost) {
-      isEnded = await stopStream(streamId);
-    } else {
-      isEnded = await leaveStream(streamId);
-    }
-    if (isEnded) {
-      await room.disconnect();
-    }
-  }
-
-  void onExit({
-    required bool isHost,
-    required Room room,
-    required String streamId,
-  }) {
-    IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        title: isHost
-            ? IsmLiveStrings.areYouSureEndStream
-            : IsmLiveStrings.areYouSureLeaveStream,
-        leftLabel: 'Cancel',
-        rightLabel: isHost ? 'End Stream' : 'Leave Stram',
-        leftOnTab: Get.back,
-        rightOnTab: () async {
-          Get.back();
-          await disconnectStream(
-            isHost: isHost,
-            room: room,
-            streamId: streamId,
-          );
-        },
-      ),
-      isDismissible: false,
-    );
   }
 }

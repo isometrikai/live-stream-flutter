@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +15,12 @@ class IsmGoLiveView extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           var controller = Get.find<IsmLiveStreamController>();
+          controller.cameraFuture = null;
+          unawaited(controller.initializationOfGoLive());
           controller.pickedImage = null;
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
-          await controller.initializationOfGoLive();
         },
         dispose: (state) {
           Get.find<IsmLiveStreamController>().cameraController?.dispose();
@@ -55,7 +58,7 @@ class IsmGoLiveView extends StatelessWidget {
                   }
                   return Center(
                     child: Transform.scale(
-                      scale: controller.cameraController!.value.aspectRatio,
+                      scale: controller.cameraController?.value.aspectRatio ?? 1,
                       child: CameraPreview(
                         controller.cameraController!,
                         child: SizedBox(
@@ -158,6 +161,7 @@ class _StreamImage extends StatelessWidget {
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
+                    unawaited(controller.initializationOfGoLive());
                     if (file != null) {
                       controller.pickedImage = file;
                       controller.update([IsmGoLiveView.updateId]);

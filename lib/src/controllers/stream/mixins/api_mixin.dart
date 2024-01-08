@@ -1,19 +1,16 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
-
-  IsmLiveStreamViewModel get _viewModel => _controller._viewModel;
 
   final _memberDebouncer = IsmLiveDebouncer();
   final _viewerDebouncer = IsmLiveDebouncer();
   final _messagesDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
-    await _viewModel.getUserDetails();
+    await _controller._viewModel.getUserDetails();
     _controller.user = UserDetails.fromJson(
       _dbWrapper.getStringValue(IsmLiveLocalKeys.user),
     );
@@ -23,7 +20,7 @@ mixin StreamAPIMixin {
   Future<bool> _subscribeUser(
     bool isSubscribing,
   ) =>
-      _viewModel.subscribeUser(
+      _controller._viewModel.subscribeUser(
         isSubscribing: isSubscribing,
       );
 
@@ -38,7 +35,7 @@ mixin StreamAPIMixin {
     IsmLiveStreamType? type,
   ]) async {
     var streamType = type ?? _controller.streamType;
-    _controller._streams[streamType] = await _viewModel.getStreams(
+    _controller._streams[streamType] = await _controller._viewModel.getStreams(
       queryModel: streamType.queryModel,
     );
     _controller._streamRefreshControllers[streamType]!.refreshCompleted();
@@ -50,12 +47,12 @@ mixin StreamAPIMixin {
   Future<IsmLiveRTCModel?> getRTCToken(
     String streamId,
   ) =>
-      _viewModel.getRTCToken(streamId);
+      _controller._viewModel.getRTCToken(streamId);
 
   Future<bool> leaveStream(
     String streamId,
   ) =>
-      _viewModel.leaveStream(streamId);
+      _controller._viewModel.leaveStream(streamId);
 
   Future<IsmLiveRTCModel?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
@@ -64,7 +61,7 @@ mixin StreamAPIMixin {
     if (image.isNullOrEmpty) {
       return null;
     }
-    return _viewModel.createStream(
+    return _controller._viewModel.createStream(
       IsmLiveCreateStreamModel(
         streamImage: image!,
         hdBroadcast: _controller.isHdBroadcast,
@@ -77,7 +74,7 @@ mixin StreamAPIMixin {
   Future<bool> stopStream(
     String streamId,
   ) =>
-      _viewModel.stopStream(streamId);
+      _controller._viewModel.stopStream(streamId);
 
   Future<void> getStreamMembers({
     required String streamId,
@@ -98,7 +95,7 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList = await _viewModel.getStreamMembers(
+    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -133,13 +130,13 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    var res = await _viewModel.getStreamViewer(
+    var res = await _controller._viewModel.getStreamViewer(
       streamId: streamId,
       limit: limit,
       skip: skip,
     );
 
-    _controller.streamViewersList.addAll(res);
+    await _controller.addViewers(res);
   }
 
   Future<void> fetchMessages({
@@ -169,7 +166,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
   }) async =>
-      await _viewModel.sendMessage(
+      await _controller._viewModel.sendMessage(
         showLoading: showLoading,
         getMessageModel: sendMessageModel,
       );
@@ -178,20 +175,18 @@ mixin StreamAPIMixin {
     required String streamId,
     required String viewerId,
   }) =>
-      _viewModel.kickoutViewer(
+      _controller._viewModel.kickoutViewer(
         streamId: streamId,
         viewerId: viewerId,
       );
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ??
-          IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
     );
-    var res = await _viewModel.getPresignedUrl(
+    var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
@@ -199,7 +194,7 @@ mixin StreamAPIMixin {
 
       return null;
     }
-    var urlResponse = await _viewModel.updatePresignedUrl(
+    var urlResponse = await _controller._viewModel.updatePresignedUrl(
       showLoading: false,
       presignedUrl: res.presignedUrl ?? '',
       file: bytes,

@@ -27,22 +27,22 @@ abstract class IsmLiveRouteManagement {
   }
 
   static Future<void> goToStreamView({
+    required RoomListener listener,
     required bool isHost,
-    required bool isNewStream,
     required Room room,
-    required EventsListener<RoomEvent> listener,
     required String streamId,
+    String? imageUrl,
     bool audioCallOnly = false,
   }) async {
     var arguments = {
       'room': room,
       'listener': listener,
+      'imageUrl': imageUrl,
       'streamId': streamId,
       'audioCallOnly': audioCallOnly,
       'isHost': isHost,
-      'isNewStream': isNewStream,
     };
-    if (isNewStream) {
+    if (isHost) {
       await Get.offNamed(
         IsmLiveRoutes.streamView,
         arguments: arguments,
