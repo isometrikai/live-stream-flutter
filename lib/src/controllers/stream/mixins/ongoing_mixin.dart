@@ -22,6 +22,12 @@ mixin StreamOngoingMixin {
     }
   }
 
+  Future<void> addViewers(List<IsmLiveViewerModel> viewers, [List<String>? updateIds]) async {
+    _controller.streamViewersList.addAll(viewers);
+    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
+  }
+
+  Future<void> toggleSpeaker([bool? value]) async {
   Future<void> toggleSpeaker({Room? room, bool? value}) async {
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
