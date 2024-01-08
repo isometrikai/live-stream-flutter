@@ -16,12 +16,13 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
 
   @override
-  Widget build(BuildContext context) => AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: GetBuilder<IsmLiveStreamController>(
-          id: updateId,
-          builder: (controller) => IsmLiveTapHandler(
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: updateId,
+        builder: (controller) => AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          leadingWidth: IsmLiveDimens.sixty,
+          leading: IsmLiveTapHandler(
             onTap: () {
               if (controller.user == null) {
                 return;
@@ -30,22 +31,18 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
                 IsmLiveLogoutBottomSheet(user: controller.user!),
               );
             },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IsmLiveImage.network(
-                  controller.user?.profileUrl ?? '',
-                  name: controller.user?.userName ?? 'U',
-                  isProfileImage: true,
-                  dimensions: IsmLiveDimens.forty,
-                ),
-                IsmLiveDimens.boxWidth8,
-                Text(
-                  IsmLiveStrings.title,
-                  style: IsmLiveStyles.blackBold16,
-                ),
-              ],
+            child: UnconstrainedBox(
+              child: IsmLiveImage.network(
+                controller.user?.profileUrl ?? '',
+                name: controller.user?.userName ?? 'U',
+                isProfileImage: true,
+                dimensions: IsmLiveDimens.forty,
+              ),
             ),
+          ),
+          title: Text(
+            IsmLiveStrings.title,
+            style: IsmLiveStyles.blackBold16,
           ),
         ),
       );

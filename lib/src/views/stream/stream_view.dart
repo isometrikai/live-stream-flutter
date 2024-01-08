@@ -64,9 +64,7 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(
-                        controller.participantTracks.first,
-                        showStatsLayer: false)
+                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
                     : const NoVideoWidget(
                         name: null,
                       ),
@@ -79,8 +77,8 @@ class IsmLiveStreamView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           StreamHeader(
-                            name: controller.user?.userName ?? 'U',
-                            imageUrl: controller.user?.profileUrl ?? '',
+                            name: controller.hostDetails?.userName ?? 'U',
+                            imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
                             onTabCross: () {
                               FocusScope.of(context).unfocus();
                               controller.onExit(
@@ -94,10 +92,8 @@ class IsmLiveStreamView extends StatelessWidget {
                                 GetBuilder<IsmLiveStreamController>(
                                   id: updateId,
                                   builder: (controller) => IsmLiveListSheet(
-                                    scrollController:
-                                        controller.viewerListController,
-                                    list: controller.streamViewersList,
-                                    isHost: isHost,
+                                    scrollController: controller.viewerListController,
+                                    items: controller.streamViewersList,
                                     trailing: (_, viewer) => SizedBox(
                                       width: IsmLiveDimens.eighty,
                                       child: isHost
@@ -181,7 +177,7 @@ class IsmLiveStreamView extends StatelessWidget {
                 // ),
                 if (isHost && isNewStream) ...[
                   Positioned(
-                    bottom: IsmLiveDimens.sixteen,
+                    bottom: IsmLiveDimens.eighty,
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),

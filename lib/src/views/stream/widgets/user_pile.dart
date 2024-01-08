@@ -29,7 +29,7 @@ class IsmLiveUsersAvatar extends StatelessWidget {
                     child: index >= 8
                         ? const Icon(Icons.more_horiz)
                         : IsmLiveImage.network(
-                            viewerList[index].userProfileImageUrl ?? '',
+                            viewerList[index].imageUrl ?? '',
                             name: viewerList[index].userName,
                             isProfileImage: true,
                           ),
