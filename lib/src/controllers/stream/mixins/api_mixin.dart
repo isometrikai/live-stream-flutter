@@ -154,7 +154,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
   }) async {
-    var res = await _viewModel.fetchMessages(
+    var res = await _controller._viewModel.fetchMessages(
       getMessageModel: getMessageModel,
       showLoading: showLoading,
     );
