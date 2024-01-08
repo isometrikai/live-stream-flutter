@@ -2,24 +2,19 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 
 class NoVideoWidget extends StatelessWidget {
-  const NoVideoWidget({super.key, this.name});
-  final String? name;
+  const NoVideoWidget({
+    super.key,
+    required this.imageUrl,
+    this.name = 'U',
+  }) : assert(name.length > 0, 'Length of the name should be atleast 1');
+  final String name;
+  final String imageUrl;
+
   @override
-  Widget build(BuildContext context) => Center(
-        child: Container(
-          height: IsmLiveDimens.hundred,
-          width: IsmLiveDimens.hundred,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.blue,
-          ),
-          alignment: Alignment.center,
-          child: LayoutBuilder(
-            builder: (ctx, constraints) => Text(
-              name?[0] ?? 'U',
-              style: IsmLiveStyles.whiteBold25,
-            ),
-          ),
-        ),
+  Widget build(BuildContext context) => IsmLiveImage.network(
+        imageUrl,
+        name: name,
+        isProfileImage: false,
+        showError: false,
       );
 }

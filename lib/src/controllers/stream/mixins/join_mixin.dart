@@ -5,13 +5,6 @@ mixin StreamJoinMixin {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find();
 
-  IsmLiveMqttController? get _mqttController {
-    if (Get.isRegistered<IsmLiveMqttController>()) {
-      return Get.find<IsmLiveMqttController>();
-    }
-    return null;
-  }
-
   bool isMeetingOn = false;
 
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
@@ -50,6 +43,7 @@ mixin StreamJoinMixin {
     await connectStream(
       token: token,
       streamId: stream.streamId!,
+      imageUrl: stream.streamImage,
       isHost: isHost,
       isNewStream: false,
     );
@@ -88,6 +82,7 @@ mixin StreamJoinMixin {
   Future<void> connectStream({
     required String token,
     required String streamId,
+    String? imageUrl,
     bool audioCallOnly = false,
     required bool isHost,
     required bool isNewStream,
@@ -98,20 +93,18 @@ mixin StreamJoinMixin {
     _controller.streamId = streamId;
     isMeetingOn = true;
     _controller.isHost = isHost;
-    unawaited(_mqttController?.subscribeStream(streamId));
+    unawaited(_controller._mqttController?.subscribeStream(streamId));
 
     final translation = Get.context?.liveTranslations.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ??
-            IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else {
-      message =
-          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
@@ -123,10 +116,7 @@ mixin StreamJoinMixin {
 
       // Try to connect to the room
       try {
-        await room.connect(
-          IsmLiveApis.wsUrl,
-          token,
-        );
+        await room.connect(IsmLiveApis.wsUrl, token);
       } catch (e, st) {
         IsmLiveLog.error(e, st);
         IsmLiveUtility.closeLoader();
@@ -135,9 +125,7 @@ mixin StreamJoinMixin {
 
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [
-          const ParticipantTrackPermission('allowed-identity', true, null)
-        ],
+        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
       );
 
       if (isHost) {
@@ -165,17 +153,14 @@ mixin StreamJoinMixin {
 
       await IsmLiveRouteManagement.goToStreamView(
         isHost: isHost,
-        isNewStream: isNewStream,
         room: room,
+        imageUrl: imageUrl,
         listener: listener,
         streamId: streamId,
         audioCallOnly: audioCallOnly,
       );
-      unawaited(_mqttController?.unsubscribeStream(streamId));
-      _controller.isHost = null;
-      isMeetingOn = false;
-      _controller.streamId = null;
     } catch (e, st) {
+      unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       _controller.isHost = null;
       isMeetingOn = false;
       IsmLiveLog.error(e, st);
@@ -183,8 +168,7 @@ mixin StreamJoinMixin {
   }
 
   void startStreamTimer() {
-    _controller._streamTimer =
-        Timer.periodic(const Duration(seconds: 1), (timer) {
+    _controller._streamTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _controller.streamDuration += const Duration(seconds: 1);
     });
   }

@@ -8,17 +8,17 @@ class IsmLiveStreamView extends StatelessWidget {
     super.key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
+        imageUrl = Get.arguments['imageUrl'],
         streamId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
-        isHost = Get.arguments['isHost'],
-        isNewStream = Get.arguments['isNewStream'];
+        isHost = Get.arguments['isHost'];
 
+  final RoomListener listener;
   final Room room;
-  final EventsListener<RoomEvent> listener;
+  final String? imageUrl;
   final String streamId;
   final bool audioCallOnly;
   final bool isHost;
-  final bool isNewStream;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
@@ -27,36 +27,68 @@ class IsmLiveStreamView extends StatelessWidget {
   static const String updateId = 'ismlive-stream-view';
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: updateId,
-        initState: (ismLiveBuilder) async {
-          var streamController = Get.find<IsmLiveStreamController>();
-          await streamController.setUpListeners(
-            isHost: isHost,
-            streamId: streamId,
-            listener: listener,
-            room: room,
-          );
+  Widget build(BuildContext context) {
+    final child = _IsmLiveStreamView(
+      key: key,
+      room: room,
+      listener: listener,
+      imageUrl: imageUrl,
+      streamId: streamId,
+      audioCallOnly: audioCallOnly,
+      isHost: isHost,
+    );
+    if (isHost) {
+      return child;
+    }
+    return GetX<IsmLiveStreamController>(
+      builder: (controller) => PageView.builder(
+        itemCount: controller.streams.length,
+        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
+        itemBuilder: (_, index) => child,
+      ),
+    );
+  }
+}
 
-          streamController.pagination(streamId);
-          await streamController.sortParticipants(room);
+class _IsmLiveStreamView extends StatelessWidget {
+  const _IsmLiveStreamView({
+    super.key,
+    required this.room,
+    required this.listener,
+    required this.imageUrl,
+    required this.streamId,
+    required this.audioCallOnly,
+    required this.isHost,
+  });
+
+  final Room room;
+  final RoomListener listener;
+  final String? imageUrl;
+  final String streamId;
+  final bool audioCallOnly;
+  final bool isHost;
+
+  bool get fastConnection => room.engine.fastConnectOptions != null;
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmLiveStreamView.updateId,
+        initState: (ismLiveBuilder) async {
+          var streamController = Get.find<IsmLiveStreamController>()
+            ..initializeStream(
+              streamId: streamId,
+              room: room,
+              listener: listener,
+              isHost: isHost,
+            );
 
           IsmLiveUtility.updateLater(() {
             if (!fastConnection) {
               streamController.askPublish(room, audioCallOnly);
             }
           });
-
-          if (lkPlatformIsMobile()) {
-            await streamController.toggleSpeaker(room: room, value: true);
-          }
         },
         dispose: (ismLiveBuilder) async {
-          var streamController = Get.find<IsmLiveStreamController>();
-          room.removeListener(() {
-            streamController.onRoomDidUpdate(room);
-          });
-          await listener.dispose();
           await room.dispose();
         },
         builder: (controller) => PopScope(
@@ -65,10 +97,11 @@ class IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: false)
-                    : const NoVideoWidget(
-                        name: null,
-                      ),
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: false,
+                      )
+                    : NoVideoWidget(imageUrl: imageUrl ?? ''),
 
                 if (room.localParticipant != null) ...[
                   SafeArea(
@@ -91,7 +124,7 @@ class IsmLiveStreamView extends StatelessWidget {
                             onTabViewers: () {
                               IsmLiveUtility.openBottomSheet(
                                 GetBuilder<IsmLiveStreamController>(
-                                  id: updateId,
+                                  id: IsmLiveStreamView.updateId,
                                   builder: (controller) => IsmLiveListSheet(
                                     scrollController: controller.viewerListController,
                                     items: controller.streamViewersList,
@@ -176,7 +209,7 @@ class IsmLiveStreamView extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-                if (isHost && isNewStream) ...[
+                if (isHost) ...[
                   Positioned(
                     bottom: IsmLiveDimens.eighty,
                     left: IsmLiveDimens.sixteen,

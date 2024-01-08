@@ -121,7 +121,10 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
                     activeVideoTrack!,
                     fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
-                : NoVideoWidget(name: widget.participant.name),
+                : NoVideoWidget(
+                    name: widget.participant.name,
+                    imageUrl: '',
+                  ),
             if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.bottomCenter,
