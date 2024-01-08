@@ -7,20 +7,21 @@ import 'package:get/get.dart';
 class IsmLiveListSheet extends StatelessWidget {
   const IsmLiveListSheet({
     super.key,
-    required this.list,
-    required this.isHost,
+    this.title,
+    required this.items,
     this.trailing,
     this.scrollController,
   });
 
-  final List<IsmLiveViewerModel> list;
-  final bool isHost;
+  final String? title;
+  final List<IsmLiveViewerModel> items;
   final ViewerBuilder? trailing;
   final ScrollController? scrollController;
+
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
-          maxHeight: min(list.length.sheetHeight, context.height * 0.85),
+          maxHeight: min(items.length.sheetHeight, context.height * 0.85),
         ),
         child: SingleChildScrollView(
           controller: scrollController,
@@ -29,7 +30,7 @@ class IsmLiveListSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Top Viewers',
+                title ?? 'Top Viewers',
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -38,13 +39,13 @@ class IsmLiveListSheet extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: list.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  var viewer = list[index];
+                  var viewer = items[index];
                   return ListTile(
                     contentPadding: IsmLiveDimens.edgeInsets0,
                     leading: IsmLiveImage.network(
-                      viewer.userProfileImageUrl ?? '',
+                      viewer.imageUrl ?? '',
                       name: viewer.userName,
                       dimensions: IsmLiveDimens.forty,
                       isProfileImage: true,
@@ -54,7 +55,7 @@ class IsmLiveListSheet extends StatelessWidget {
                       style: context.textTheme.titleMedium,
                     ),
                     subtitle: Text(
-                      viewer.userIdentifier,
+                      viewer.identifier,
                       style: context.textTheme.bodySmall,
                     ),
                     trailing: trailing?.call(context, viewer),

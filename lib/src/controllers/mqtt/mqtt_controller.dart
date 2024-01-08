@@ -244,15 +244,17 @@ class IsmLiveMqttController extends GetxController {
             _updateStreamListing();
             break;
           case IsmLiveActions.viewerJoined:
-          case IsmLiveActions.viewerLeft:
-            unawaited(_streamController.getStreamViewer(streamId: streamId));
+            if (streamId == _streamController.streamId) {
+              var viewer = IsmLiveViewerModel.fromMap(payload);
+              await _streamController.addViewers([viewer]);
+              _updateStream();
+            }
             break;
+          case IsmLiveActions.viewerLeft:
           case IsmLiveActions.viewerRemoved:
             final viewerId = payload['viewerId'] as String?;
             if (streamId == _streamController.streamId) {
-              IsmLiveLog.error(_streamController.streamViewersList.length);
               _streamController.streamViewersList.removeWhere((e) => e.userId == viewerId);
-              IsmLiveLog.info(_streamController.streamViewersList.length);
               _updateStream();
               if (viewerId == userId) {
                 Get.back();
