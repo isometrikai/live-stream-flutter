@@ -152,11 +152,12 @@ class IsmLiveUtility {
   static void showDialog(
     Widget dialog, {
     bool isDismissible = true,
+    double? horizontalPadding,
   }) async {
     await Get.dialog(
       UnconstrainedBox(
         child: SizedBox(
-          width: IsmLiveDimens.percentWidth(1) - (IsmLiveDimens.sixteen * 2),
+          width: IsmLiveDimens.percentWidth(1) - (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Get.context?.liveTheme.backgroundColor,

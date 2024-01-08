@@ -4,11 +4,11 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 
 class IsmLiveViewerModel {
   IsmLiveViewerModel({
-    this.userProfileImageUrl,
+    this.imageUrl,
     required this.userName,
-    required this.userIdentifier,
+    required this.identifier,
     required this.userId,
-    this.sessionStartTime,
+    this.startTime,
     this.metaData,
     required this.messageNotificationEmail,
     this.emailNotifications,
@@ -16,46 +16,46 @@ class IsmLiveViewerModel {
   });
 
   factory IsmLiveViewerModel.fromMap(Map<String, dynamic> map) => IsmLiveViewerModel(
-        userProfileImageUrl: map['userProfileImageUrl'] != null ? map['userProfileImageUrl'] as String : null,
-        userName: map['userName'] as String,
-        userIdentifier: map['userIdentifier'] as String,
-        userId: map['userId'] as String,
-        sessionStartTime: map['sessionStartTime'] != null ? map['sessionStartTime'] as int : null,
+        imageUrl: map['userProfileImageUrl'] as String? ?? map['viewerProfilePic'] as String?,
+        userName: map['userName'] as String? ?? map['viewerName'] as String? ?? '',
+        identifier: map['userIdentifier'] as String? ?? map['viewerIdentifier'] as String? ?? '',
+        userId: map['userId'] as String? ?? map['viewerId'] as String? ?? '',
+        startTime: map['sessionStartTime'] as int? ?? map['timestamp'] as int?,
         metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
         messageNotificationEmail: map['messageNotificationEmail'] as dynamic,
-        emailNotifications: map['emailNotifications'] != null ? map['emailNotifications'] as bool : null,
-        clubEmailNotifications: map['clubEmailNotifications'] != null ? map['clubEmailNotifications'] as bool : null,
+        emailNotifications: map['emailNotifications'] as bool?,
+        clubEmailNotifications: map['clubEmailNotifications'] as bool?,
       );
 
   factory IsmLiveViewerModel.fromJson(String source) => IsmLiveViewerModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
-  final String? userProfileImageUrl;
+  final String? imageUrl;
   final String userName;
-  final String userIdentifier;
+  final String identifier;
   final String userId;
-  final int? sessionStartTime;
+  final int? startTime;
   final IsmLiveMetaData? metaData;
   final dynamic messageNotificationEmail;
   final bool? emailNotifications;
   final bool? clubEmailNotifications;
 
   IsmLiveViewerModel copyWith({
-    String? userProfileImageUrl,
+    String? imageUrl,
     String? userName,
-    String? userIdentifier,
+    String? identifier,
     String? userId,
-    int? sessionStartTime,
+    int? startTime,
     IsmLiveMetaData? metaData,
     dynamic messageNotificationEmail,
     bool? emailNotifications,
     bool? clubEmailNotifications,
   }) =>
       IsmLiveViewerModel(
-        userProfileImageUrl: userProfileImageUrl ?? this.userProfileImageUrl,
+        imageUrl: imageUrl ?? this.imageUrl,
         userName: userName ?? this.userName,
-        userIdentifier: userIdentifier ?? this.userIdentifier,
+        identifier: identifier ?? this.identifier,
         userId: userId ?? this.userId,
-        sessionStartTime: sessionStartTime ?? this.sessionStartTime,
+        startTime: startTime ?? this.startTime,
         metaData: metaData ?? this.metaData,
         messageNotificationEmail: messageNotificationEmail ?? this.messageNotificationEmail,
         emailNotifications: emailNotifications ?? this.emailNotifications,
@@ -63,11 +63,11 @@ class IsmLiveViewerModel {
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'userProfileImageUrl': userProfileImageUrl,
+        'userProfileImageUrl': imageUrl,
         'userName': userName,
-        'userIdentifier': userIdentifier,
+        'userIdentifier': identifier,
         'userId': userId,
-        'sessionStartTime': sessionStartTime,
+        'sessionStartTime': startTime,
         'metaData': metaData?.toMap(),
         'messageNotificationEmail': messageNotificationEmail,
         'emailNotifications': emailNotifications,
@@ -78,17 +78,17 @@ class IsmLiveViewerModel {
 
   @override
   String toString() =>
-      'IsmLiveViewerModel(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId, sessionStartTime: $sessionStartTime, metaData: $metaData, messageNotificationEmail: $messageNotificationEmail, emailNotifications: $emailNotifications, clubEmailNotifications: $clubEmailNotifications)';
+      'IsmLiveViewerModel(userProfileImageUrl: $imageUrl, userName: $userName, userIdentifier: $identifier, userId: $userId, sessionStartTime: $startTime, metaData: $metaData, messageNotificationEmail: $messageNotificationEmail, emailNotifications: $emailNotifications, clubEmailNotifications: $clubEmailNotifications)';
 
   @override
   bool operator ==(covariant IsmLiveViewerModel other) {
     if (identical(this, other)) return true;
 
-    return other.userProfileImageUrl == userProfileImageUrl &&
+    return other.imageUrl == imageUrl &&
         other.userName == userName &&
-        other.userIdentifier == userIdentifier &&
+        other.identifier == identifier &&
         other.userId == userId &&
-        other.sessionStartTime == sessionStartTime &&
+        other.startTime == startTime &&
         other.metaData == metaData &&
         other.messageNotificationEmail == messageNotificationEmail &&
         other.emailNotifications == emailNotifications &&
@@ -97,11 +97,11 @@ class IsmLiveViewerModel {
 
   @override
   int get hashCode =>
-      userProfileImageUrl.hashCode ^
+      imageUrl.hashCode ^
       userName.hashCode ^
-      userIdentifier.hashCode ^
+      identifier.hashCode ^
       userId.hashCode ^
-      sessionStartTime.hashCode ^
+      startTime.hashCode ^
       metaData.hashCode ^
       messageNotificationEmail.hashCode ^
       emailNotifications.hashCode ^

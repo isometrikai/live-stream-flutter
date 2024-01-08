@@ -21,7 +21,7 @@ const _kPropertiesData = IsmLivePropertiesData(
   streamProperties: IsmLiveStreamProperties(
     counterProperties: IsmLiveCounterProperties(
       showYoureLiveSheet: true,
-      showYoureLiveText: true,
+      showYoureLiveText: false,
     ),
   ),
 );

@@ -38,6 +38,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
 
   Timer? timer;
 
+  int finishTime = 0;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +65,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
     counter = widget.duration ?? streamProperties?.streamCounter ?? IsmLiveConstants.streamCounter;
     if (streamProperties?.showYoureLiveText ?? false) {
       youreLiveText = context.liveTranslations.streamTranslations?.youreLive ?? IsmLiveStrings.youreLive;
+    } else {
+      finishTime = 1;
     }
   }
 
@@ -72,7 +76,7 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
       controller.forward();
     });
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (counter == 0) {
+      if (counter == finishTime) {
         t.cancel();
         isCompleted = true;
         widget.onComplete?.call();

@@ -10,7 +10,7 @@ class IsmLiveStrings {
 
   static const String errorLoadingImage = 'Error loading image';
 
-  static const String title = 'My Streams';
+  static const String title = 'Live Streams';
 
   static const String noStreams = 'No Streams';
 
