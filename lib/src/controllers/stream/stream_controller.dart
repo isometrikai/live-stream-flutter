@@ -66,6 +66,8 @@ class IsmLiveStreamController extends GetxController
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
+  int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
+
   IsmLiveMemberDetailsModel? hostDetails;
 
   Uint8List? bytes;
