@@ -25,6 +25,7 @@ class IsmGoLiveView extends StatelessWidget {
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: IsmLiveColors.black,
+          extendBody: true,
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: IsmLiveDimens.edgeInsets16,
@@ -36,6 +37,7 @@ class IsmGoLiveView extends StatelessWidget {
           ),
           body: Stack(
             alignment: Alignment.center,
+            fit: StackFit.expand,
             children: [
               FutureBuilder(
                 future: controller.cameraFuture,
@@ -51,12 +53,17 @@ class IsmGoLiveView extends StatelessWidget {
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }
-                  return CameraPreview(
-                    controller.cameraController!,
-                    child: SizedBox(
-                      height: Get.height,
-                      width: Get.width,
-                      child: const ColoredBox(color: Colors.black38),
+                  return Center(
+                    child: Transform.scale(
+                      scale: controller.cameraController!.value.aspectRatio,
+                      child: CameraPreview(
+                        controller.cameraController!,
+                        child: SizedBox(
+                          height: Get.height,
+                          width: Get.width,
+                          child: const ColoredBox(color: Colors.black38),
+                        ),
+                      ),
                     ),
                   );
                 },
