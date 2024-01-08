@@ -25,8 +25,9 @@ mixin StreamOngoingMixin {
   Future<void> toggleSpeaker({Room? room, bool? value}) async {
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
-    room?.participants.values.first.audioTracks.first.enabled =
-        _controller.speakerOn;
+    _controller.speakerOn
+        ? await room?.participants.values.first.audioTracks.first.enable()
+        : await room?.participants.values.first.audioTracks.first.disable();
 
     // TODO: speaker change not working, fix this
     //if above code is not working in iso use this
