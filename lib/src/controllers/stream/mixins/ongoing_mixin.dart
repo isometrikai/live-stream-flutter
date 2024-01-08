@@ -27,7 +27,6 @@ mixin StreamOngoingMixin {
     _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
   }
 
-  Future<void> toggleSpeaker([bool? value]) async {
   Future<void> toggleSpeaker({Room? room, bool? value}) async {
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
