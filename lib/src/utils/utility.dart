@@ -30,6 +30,8 @@ class IsmLiveUtility {
     });
   }
 
+  static String jsonEncodePretty(Object? object) => JsonEncoder.withIndent(' ' * 4).convert(object);
+
   static Map<String, String> tokenHeader() => {
         'userToken': _config.userConfig.userToken,
         'licenseKey': _config.projectConfig.licenseKey,

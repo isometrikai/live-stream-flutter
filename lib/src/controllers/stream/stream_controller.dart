@@ -183,8 +183,6 @@ class IsmLiveStreamController extends GetxController with GetSingleTickerProvide
     );
 
     if (res) {
-      await fetchMessages(
-          showLoading: false, getMessageModel: IsmLiveGetMessageModel(streamId: streamId, sort: -1, skip: 0, limit: 10, senderIdsExclusive: false));
       messageFieldController.clear();
     }
   }
