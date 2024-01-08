@@ -10,6 +10,7 @@ mixin StreamAPIMixin {
 
   final _memberDebouncer = IsmLiveDebouncer();
   final _viewerDebouncer = IsmLiveDebouncer();
+  final _messagesDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
     await _viewModel.getUserDetails();
@@ -145,7 +146,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
   }) async =>
-      _viewerDebouncer.run(
+      _messagesDebouncer.run(
         () => _fetchMessages(
           getMessageModel: getMessageModel,
           showLoading: showLoading,

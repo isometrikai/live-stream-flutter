@@ -172,7 +172,7 @@ class IsmLiveStreamRepository {
     required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
-        '${IsmLiveApis.getMessages}?streamId=${payload['streamId']}&limit=${payload['limit']}&skip=${payload['skip']}',
+        '${IsmLiveApis.getMessages}?${payload.makeQuery()}',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoading,

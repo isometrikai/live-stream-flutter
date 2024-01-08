@@ -1,21 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
 class IsmLiveGetMessageModel {
-  final String streamId;
-  final int sort;
-  final int skip;
-  final int limit;
-  final bool senderIdsExclusive;
-  final String? searchTag;
-  final List<String>? ids;
-  final List<String>? senderIds;
-  final int? lastMessageTimestamp;
-  final List<String>? customType;
-  final List<int>? messageType;
-  IsmLiveGetMessageModel({
+  const IsmLiveGetMessageModel({
     required this.streamId,
     required this.sort,
     required this.skip,
@@ -28,6 +16,36 @@ class IsmLiveGetMessageModel {
     this.customType,
     this.messageType,
   });
+
+  factory IsmLiveGetMessageModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveGetMessageModel(
+        streamId: map['streamId'] as String,
+        sort: map['sort'] as int,
+        skip: map['skip'] as int,
+        limit: map['limit'] as int,
+        senderIdsExclusive: map['senderIdsExclusive'] as bool,
+        searchTag: map['searchTag'] as String?,
+        ids: (map['ids'] as List<dynamic>? ?? []).cast<String>(),
+        senderIds: (map['senderIds'] as List<dynamic>? ?? []).cast<String>(),
+        lastMessageTimestamp: map['lastMessageTimestamp'] as int?,
+        customType: (map['customType'] as List<dynamic>? ?? []).cast<String>(),
+        messageType: (map['messageType'] as List<dynamic>? ?? []).cast<int>(),
+      );
+
+  factory IsmLiveGetMessageModel.fromJson(String source) =>
+      IsmLiveGetMessageModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
+  final String streamId;
+  final int sort;
+  final int skip;
+  final int limit;
+  final bool senderIdsExclusive;
+  final String? searchTag;
+  final List<String>? ids;
+  final List<String>? senderIds;
+  final int? lastMessageTimestamp;
+  final List<String>? customType;
+  final List<int>? messageType;
 
   IsmLiveGetMessageModel copyWith({
     String? streamId,
@@ -62,45 +80,15 @@ class IsmLiveGetMessageModel {
         'skip': skip,
         'limit': limit,
         'senderIdsExclusive': senderIdsExclusive,
-        if (searchTag != null) 'searchTag': searchTag,
-        if (ids != null) 'ids': ids,
-        if (senderIds != null) 'senderIds': senderIds,
-        if (lastMessageTimestamp != null)
-          'lastMessageTimestamp': lastMessageTimestamp,
-        if (customType != null) 'customType': customType,
-        if (messageType != null) 'messageType': messageType,
+        'searchTag': searchTag,
+        'ids': ids,
+        'senderIds': senderIds,
+        'lastMessageTimestamp': lastMessageTimestamp,
+        'customType': customType,
+        'messageType': messageType,
       };
 
-  factory IsmLiveGetMessageModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveGetMessageModel(
-        streamId: map['streamId'] as String,
-        sort: map['sort'] as int,
-        skip: map['skip'] as int,
-        limit: map['limit'] as int,
-        senderIdsExclusive: map['senderIdsExclusive'] as bool,
-        searchTag: map['searchTag'] != null ? map['searchTag'] as String : null,
-        ids: map['ids'] != null
-            ? List<String>.from(map['ids'] as List<String>)
-            : null,
-        senderIds: map['senderIds'] != null
-            ? List<String>.from(map['senderIds'] as List<String>)
-            : null,
-        lastMessageTimestamp: map['lastMessageTimestamp'] != null
-            ? map['lastMessageTimestamp'] as int
-            : null,
-        customType: map['customType'] != null
-            ? List<String>.from(map['customType'] as List<String>)
-            : null,
-        messageType: map['messageType'] != null
-            ? List<int>.from(map['messageType'] as List<int>)
-            : null,
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory IsmLiveGetMessageModel.fromJson(String source) =>
-      IsmLiveGetMessageModel.fromMap(
-          json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>
