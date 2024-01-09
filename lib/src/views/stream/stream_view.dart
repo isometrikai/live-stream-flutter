@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -43,7 +44,8 @@ class IsmLiveStreamView extends StatelessWidget {
     return GetX<IsmLiveStreamController>(
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
-        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
+        onPageChanged: (index) =>
+            controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) => child,
       ),
     );
@@ -90,6 +92,7 @@ class _IsmLiveStreamView extends StatelessWidget {
         },
         dispose: (ismLiveBuilder) async {
           await room.dispose();
+          Get.find<IsmLiveStreamController>().streamMessagesList = [];
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -102,7 +105,6 @@ class _IsmLiveStreamView extends StatelessWidget {
                         showStatsLayer: false,
                       )
                     : NoVideoWidget(imageUrl: imageUrl ?? ''),
-
                 if (room.localParticipant != null) ...[
                   SafeArea(
                     child: Padding(
@@ -160,6 +162,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 IsmLiveChat(
                                   messagesList: controller.streamMessagesList,
+                                  messageListController:
+                                      controller.messagesListController,
                                 ),
                                 const Spacer(),
                                 IsmLiveControlsWidget(
@@ -171,58 +175,81 @@ class _IsmLiveStreamView extends StatelessWidget {
                               ],
                             ),
                           ),
-                          IsmLiveInputField(
-                            controller: controller.messageFieldController,
-                            hintText: 'Say Something…',
-                            radius: IsmLiveDimens.fifty,
-                            onFieldSubmit: (value) {
-                              controller.onFieldSubmit(
-                                streamId: streamId,
-                                body: value,
-                                messageType: 1,
-                              );
-                            },
-                            prefixIcon: Icon(
-                              Icons.sentiment_satisfied_alt,
-                              size: IsmLiveDimens.twenty,
+                          SizedBox(
+                            height: IsmLiveDimens.fifty,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: Get.width * 0.75,
+                                  height: IsmLiveDimens.fortyFive,
+                                  child: IsmLiveInputField(
+                                    controller:
+                                        controller.messageFieldController,
+                                    hintText: 'Say Something…',
+                                    radius: IsmLiveDimens.fifty,
+                                    onchange: (value) => controller
+                                        .update([IsmLiveStreamView.updateId]),
+                                    onFieldSubmit: (value) {
+                                      controller.onFieldSubmit(
+                                        streamId: streamId,
+                                        body: value,
+                                        messageType: 1,
+                                      );
+                                    },
+                                    suffixIcon: IconButton(
+                                        icon: Icon(
+                                          Icons.send,
+                                          size: IsmLiveDimens.twenty,
+                                          color: controller
+                                                  .messageFieldController
+                                                  .isEmpty
+                                              ? null
+                                              : IsmLiveColors.primary,
+                                        ),
+                                        onPressed: () {
+                                          // FocusScope.of(context).unfocus();
+                                          if (controller.messageFieldController
+                                              .isNotEmpty) {
+                                            controller.onFieldSubmit(
+                                              streamId: streamId,
+                                              body: controller
+                                                  .messageFieldController.text,
+                                              messageType: 1,
+                                            );
+                                          }
+                                        }),
+                                    prefixIcon: Icon(
+                                      Icons.sentiment_satisfied_alt,
+                                      size: IsmLiveDimens.twenty,
+                                    ),
+                                    borderColor: IsmLiveColors.white,
+                                  ),
+                                ),
+                                if (room
+                                    .localParticipant!.videoTracks.isEmpty) ...[
+                                  const Spacer(),
+                                  CustomIconButton(
+                                    icon: Padding(
+                                      padding: IsmLiveDimens.edgeInsets8,
+                                      child: const IsmLiveImage.svg(
+                                        IsmLiveAssetConstants.heart,
+                                        color: IsmLiveColors.white,
+                                      ),
+                                    ),
+                                    onTap: () async {},
+                                    color: IsmLiveColors.red,
+                                  ),
+                                ]
+                              ],
                             ),
-                            borderColor: IsmLiveColors.white,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
-                // Positioned(
-                //   left: controller.positionX,
-                //   top: controller.positionY,
-                //   child: GestureDetector(
-                //     onPanUpdate: controller.onPan,
-                //     child: SizedBox(
-                //       width: Get.width * 0.9,
-                //       height: IsmLiveDimens.twoHundred,
-                //       child: ListView.builder(
-                //         shrinkWrap: true,
-                //         scrollDirection: Axis.horizontal,
-                //         itemCount: math.max(0, controller.participantTracks.length - 1),
-                //         itemBuilder: (BuildContext context, int index) => Container(
-                //           margin: IsmLiveDimens.edgeInsets4_8,
-                //           width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
-                //           height: IsmLiveDimens.twoHundred,
-                //           child: ClipRRect(
-                //             borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
-                //             child: GestureDetector(
-                //               onTap: () {
-                //                 controller.onClick(index);
-                //               },
-                //               child: ParticipantWidget.widgetFor(controller.participantTracks[index + 1], showStatsLayer: true),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 if (isHost) ...[
                   Positioned(
                     bottom: IsmLiveDimens.eighty,

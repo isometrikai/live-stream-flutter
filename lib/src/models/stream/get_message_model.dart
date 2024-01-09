@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 class IsmLiveGetMessageModel {
   const IsmLiveGetMessageModel({
     required this.streamId,
-    required this.sort,
-    required this.skip,
-    required this.limit,
-    required this.senderIdsExclusive,
+    this.sort,
+    this.skip,
+    this.limit,
+    this.senderIdsExclusive,
     this.searchTag,
     this.ids,
     this.senderIds,
@@ -36,10 +36,10 @@ class IsmLiveGetMessageModel {
       IsmLiveGetMessageModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
   final String streamId;
-  final int sort;
-  final int skip;
-  final int limit;
-  final bool senderIdsExclusive;
+  final int? sort;
+  final int? skip;
+  final int? limit;
+  final bool? senderIdsExclusive;
   final String? searchTag;
   final List<String>? ids;
   final List<String>? senderIds;
