@@ -1,7 +1,17 @@
 part of '../stream_controller.dart';
 
 mixin StreamMessageMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  List<String> giftList = [
+    IsmLiveAssetConstants.bell,
+    IsmLiveAssetConstants.cherry,
+    IsmLiveAssetConstants.icecream,
+    IsmLiveAssetConstants.kiss,
+    IsmLiveAssetConstants.lolipop,
+    IsmLiveAssetConstants.paw,
+  ];
+
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
@@ -40,6 +50,48 @@ mixin StreamMessageMixin {
         metaData: const IsmLiveMetaData(),
         deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
         messageType: IsmLiveMessageType.normal,
+      ),
+    );
+
+    if (isSent) {
+      _controller.messageFieldController.clear();
+    }
+  }
+
+  Future<void> sendHeartMessage({
+    required String streamId,
+    required String body,
+  }) async {
+    final isSent = await _controller.sendMessage(
+      showLoading: false,
+      sendMessageModel: IsmLiveSendMessageModel(
+        streamId: streamId,
+        body: body,
+        searchableTags: [body],
+        metaData: const IsmLiveMetaData(),
+        deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+        messageType: IsmLiveMessageType.heart,
+      ),
+    );
+
+    if (isSent) {
+      _controller.messageFieldController.clear();
+    }
+  }
+
+  Future<void> sendGiftMessage({
+    required String streamId,
+    required String body,
+  }) async {
+    final isSent = await _controller.sendMessage(
+      showLoading: false,
+      sendMessageModel: IsmLiveSendMessageModel(
+        streamId: streamId,
+        body: body,
+        searchableTags: [body],
+        metaData: const IsmLiveMetaData(),
+        deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+        messageType: IsmLiveMessageType.gift,
       ),
     );
 

@@ -49,12 +49,15 @@ class RoomPage extends StatelessWidget {
             body: Stack(
               children: [
                 controller.participantTracks.isNotEmpty
-                    ? ParticipantWidget.widgetFor(controller.participantTracks.first, showStatsLayer: true)
+                    ? ParticipantWidget.widgetFor(
+                        controller.participantTracks.first,
+                        showStatsLayer: true)
                     : const NoVideoWidget(imageUrl: ''),
                 Positioned(
                   bottom: IsmLiveDimens.twenty,
                   child: room.localParticipant != null
-                      ? ControlsWidget(room, room.localParticipant!, meetingId: meetingId, audioCallOnly: audioCallOnly)
+                      ? ControlsWidget(room, room.localParticipant!,
+                          meetingId: meetingId, audioCallOnly: audioCallOnly)
                       : IsmLiveDimens.box0,
                 ),
                 Positioned(
@@ -68,18 +71,23 @@ class RoomPage extends StatelessWidget {
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: math.max(0, controller.participantTracks.length - 1),
-                        itemBuilder: (BuildContext context, int index) => Container(
+                        itemCount: math.max(
+                            0, controller.participantTracks.length - 1),
+                        itemBuilder: (BuildContext context, int index) =>
+                            Container(
                           margin: IsmLiveDimens.edgeInsets4_8,
                           width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
                           height: IsmLiveDimens.twoHundred,
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
+                            borderRadius:
+                                BorderRadius.circular(IsmLiveDimens.twenty),
                             child: GestureDetector(
                               onTap: () {
                                 controller.onClick(index);
                               },
-                              child: ParticipantWidget.widgetFor(controller.participantTracks[index + 1], showStatsLayer: true),
+                              child: ParticipantWidget.widgetFor(
+                                  controller.participantTracks[index + 1],
+                                  showStatsLayer: true),
                             ),
                           ),
                         ),

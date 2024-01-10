@@ -10,6 +10,8 @@ class IsmLiveAssetConstants {
 
   static const String _images = '$_path/images';
 
+  static const String _gifts = '$_images/gifts';
+
   static const String _logo = '$_path/logo';
 
   static const String _icons = '$_path/icon';
@@ -20,6 +22,13 @@ class IsmLiveAssetConstants {
   static const String isometrik = '$_logo/isometrik.png';
 
   static const String noImage = '$_images/noperson.png';
+  static const String bell = '$_gifts/bell.png';
+  static const String cherry = '$_gifts/cherry.png';
+  static const String giftImage = '$_gifts/gift.png';
+  static const String icecream = '$_gifts/icecream.png';
+  static const String kiss = '$_gifts/kiss.png';
+  static const String lolipop = '$_gifts/lolipop.png';
+  static const String paw = '$_gifts/paw.png';
 
   static const String backRounded = '$_icons/back_rounded.svg';
   static const String galerryRoundedSvg = '$_icons/gallery_rounded.svg';

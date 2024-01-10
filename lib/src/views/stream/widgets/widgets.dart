@@ -3,6 +3,7 @@ export 'controls.dart';
 export 'create_stream_fab.dart';
 export 'dialogs/dialogs.dart';
 export 'end_stream_container.dart';
+export 'gifts_sheet.dart';
 export 'header.dart';
 export 'host_details.dart';
 export 'list_sheet.dart';
