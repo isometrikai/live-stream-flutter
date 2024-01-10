@@ -21,16 +21,20 @@ class IsmLiveMessageModel {
     required this.body,
   });
 
-  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveMessageModel(
+  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveMessageModel(
         sentAt: map['sentAt'] as int,
-        streamId: map['streamId'] as String,
+        streamId: map['streamId'] as String? ?? '',
         senderProfileImageUrl: map['senderProfileImageUrl'] as String?,
         senderName: map['senderName'] as String,
         senderIdentifier: map['senderIdentifier'] as String,
         senderId: map['senderId'] as String,
-        searchableTags: (map['searchableTags'] as List<dynamic>? ?? []).cast<String>(),
+        searchableTags:
+            (map['searchableTags'] as List<dynamic>? ?? []).cast<dynamic>(),
         repliesCount: map['repliesCount'] as int,
-        metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
+        metaData: map['metaData'] != null
+            ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
+            : null,
         messageType: map['messageType'] as int,
         messageId: map['messageId'] as String,
         deviceId: map['deviceId'] as String?,
@@ -38,7 +42,8 @@ class IsmLiveMessageModel {
         body: map['body'] as String,
       );
 
-  factory IsmLiveMessageModel.fromJson(String source) => IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveMessageModel.fromJson(String source) =>
+      IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final int sentAt;
   final String streamId;
@@ -74,7 +79,8 @@ class IsmLiveMessageModel {
       IsmLiveMessageModel(
         sentAt: sentAt ?? this.sentAt,
         streamId: streamId ?? this.streamId,
-        senderProfileImageUrl: senderProfileImageUrl ?? this.senderProfileImageUrl,
+        senderProfileImageUrl:
+            senderProfileImageUrl ?? this.senderProfileImageUrl,
         senderName: senderName ?? this.senderName,
         senderIdentifier: senderIdentifier ?? this.senderIdentifier,
         senderId: senderId ?? this.senderId,

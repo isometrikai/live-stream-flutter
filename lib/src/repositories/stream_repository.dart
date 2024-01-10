@@ -178,6 +178,17 @@ class IsmLiveStreamRepository {
         showLoader: showLoading,
       );
 
+  Future<IsmLiveResponseModel> fetchMessagesCount({
+    required bool showLoading,
+    required Map<String, dynamic> payload,
+  }) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.getMessagesCont}?${payload.makeQuery()}',
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showLoader: showLoading,
+      );
+
   Future<IsmLiveResponseModel> kickoutViewer({
     required String streamId,
     required String viewerId,
