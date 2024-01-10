@@ -25,6 +25,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.style,
     this.radius,
     this.onFieldSubmit,
+    this.textInputAction,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -48,6 +49,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.style,
     this.radius,
     this.onFieldSubmit,
+    this.textInputAction,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -73,6 +75,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.style,
     this.radius,
     this.onFieldSubmit,
+    this.textInputAction,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -97,6 +100,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.style,
     this.radius,
     this.onFieldSubmit,
+    this.textInputAction,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -120,6 +124,7 @@ class IsmLiveInputField extends StatelessWidget {
   final int? minLines;
   final int? maxLines;
   final double? radius;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -148,24 +153,21 @@ class IsmLiveInputField extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.sixteen),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.primary,
                 width: 1,
@@ -178,6 +180,7 @@ class IsmLiveInputField extends StatelessWidget {
           validator: validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           keyboardType: _textInputType,
+          textInputAction: textInputAction,
           obscureText: obscureText,
           obscuringCharacter: obscureCharacter,
           onChanged: onchange,

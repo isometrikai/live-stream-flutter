@@ -44,8 +44,7 @@ class IsmLiveStreamView extends StatelessWidget {
     return GetX<IsmLiveStreamController>(
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
-        onPageChanged: (index) =>
-            controller.onStreamScroll(index: index, room: room),
+        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) => child,
       ),
     );
@@ -114,9 +113,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                         children: [
                           StreamHeader(
                             name: controller.hostDetails?.userName ?? 'U',
-                            imageUrl:
-                                controller.hostDetails?.userProfileImageUrl ??
-                                    '',
+                            imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
                             onTabCross: () {
                               FocusScope.of(context).unfocus();
                               controller.onExit(
@@ -130,8 +127,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 GetBuilder<IsmLiveStreamController>(
                                   id: IsmLiveStreamView.updateId,
                                   builder: (controller) => IsmLiveListSheet(
-                                    scrollController:
-                                        controller.viewerListController,
+                                    scrollController: controller.viewerListController,
                                     items: controller.streamViewersList,
                                     trailing: (_, viewer) => SizedBox(
                                       width: IsmLiveDimens.eighty,
@@ -162,8 +158,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 IsmLiveChat(
                                   messagesList: controller.streamMessagesList,
-                                  messageListController:
-                                      controller.messagesListController,
+                                  messageListController: controller.messagesListController,
                                 ),
                                 const Spacer(),
                                 IsmLiveControlsWidget(
@@ -185,38 +180,29 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   width: Get.width * 0.75,
                                   height: IsmLiveDimens.fortyFive,
                                   child: IsmLiveInputField(
-                                    controller:
-                                        controller.messageFieldController,
+                                    controller: controller.messageFieldController,
                                     hintText: 'Say Something…',
                                     radius: IsmLiveDimens.fifty,
-                                    onchange: (value) => controller
-                                        .update([IsmLiveStreamView.updateId]),
+                                    onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
+                                    textInputAction: TextInputAction.send,
                                     onFieldSubmit: (value) {
-                                      controller.onFieldSubmit(
+                                      controller.sendTextMessage(
                                         streamId: streamId,
                                         body: value,
-                                        messageType: 1,
                                       );
                                     },
                                     suffixIcon: IconButton(
                                         icon: Icon(
                                           Icons.send,
                                           size: IsmLiveDimens.twenty,
-                                          color: controller
-                                                  .messageFieldController
-                                                  .isEmpty
-                                              ? null
-                                              : IsmLiveColors.primary,
+                                          color: controller.messageFieldController.isEmpty ? null : IsmLiveColors.primary,
                                         ),
                                         onPressed: () {
                                           // FocusScope.of(context).unfocus();
-                                          if (controller.messageFieldController
-                                              .isNotEmpty) {
-                                            controller.onFieldSubmit(
+                                          if (controller.messageFieldController.isNotEmpty) {
+                                            controller.sendTextMessage(
                                               streamId: streamId,
-                                              body: controller
-                                                  .messageFieldController.text,
-                                              messageType: 1,
+                                              body: controller.messageFieldController.text,
                                             );
                                           }
                                         }),

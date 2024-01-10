@@ -30,7 +30,7 @@ enum SimulateScenarioResult {
   e2eeKeyRatchet,
 }
 
-enum IsmLiveMessageType {
+enum IsmLiveSnackbarType {
   error,
   success,
   information;
@@ -58,18 +58,18 @@ enum IsmLiveStatsType {
   videoReceiver,
 }
 
-enum IsmLiveCustomType {
+enum IsmLiveCallType {
   videoCall('VideoCall'),
   audioCall('AudioCall');
 
-  factory IsmLiveCustomType.fromValue(String data) =>
+  factory IsmLiveCallType.fromValue(String data) =>
       {
-        IsmLiveCustomType.videoCall.value: IsmLiveCustomType.videoCall,
-        IsmLiveCustomType.audioCall.value: IsmLiveCustomType.audioCall,
+        IsmLiveCallType.videoCall.value: IsmLiveCallType.videoCall,
+        IsmLiveCallType.audioCall.value: IsmLiveCallType.audioCall,
       }[data] ??
-      IsmLiveCustomType.videoCall;
+      IsmLiveCallType.videoCall;
 
-  const IsmLiveCustomType(this.value);
+  const IsmLiveCallType(this.value);
   final String value;
 }
 
@@ -86,11 +86,6 @@ enum IsmLiveMeetingType {
 
   const IsmLiveMeetingType(this.value);
   final int value;
-}
-
-enum IsmLiveCallType {
-  one2one,
-  liveStream;
 }
 
 enum IsmLiveStreamType {
@@ -199,4 +194,35 @@ enum IsmLiveStreamOption {
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];
+}
+
+enum IsmLiveMessageType {
+  normal(0),
+  heart(1),
+  gift(2),
+  remove(3),
+  presence(4);
+
+  factory IsmLiveMessageType.fromValue(int data) =>
+      <int, IsmLiveMessageType>{
+        IsmLiveMessageType.normal.value: IsmLiveMessageType.normal,
+        IsmLiveMessageType.heart.value: IsmLiveMessageType.heart,
+        IsmLiveMessageType.gift.value: IsmLiveMessageType.gift,
+        IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
+        IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
+      }[data] ??
+      IsmLiveMessageType.normal;
+
+  const IsmLiveMessageType(this.value);
+  final int value;
+}
+
+enum IsmLiveCustomType {
+  custom1;
+
+  factory IsmLiveCustomType.fromName(String data) =>
+      <String, IsmLiveCustomType>{
+        IsmLiveCustomType.custom1.name: IsmLiveCustomType.custom1,
+      }[data] ??
+      IsmLiveCustomType.custom1;
 }
