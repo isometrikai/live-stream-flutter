@@ -21,29 +21,24 @@ class IsmLiveMessageModel {
     required this.body,
   });
 
-  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveMessageModel(
+  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveMessageModel(
         sentAt: map['sentAt'] as int,
         streamId: map['streamId'] as String? ?? '',
         senderProfileImageUrl: map['senderProfileImageUrl'] as String?,
         senderName: map['senderName'] as String,
         senderIdentifier: map['senderIdentifier'] as String,
         senderId: map['senderId'] as String,
-        searchableTags:
-            (map['searchableTags'] as List<dynamic>? ?? []).cast<dynamic>(),
+        searchableTags: (map['searchableTags'] as List<dynamic>? ?? []).cast<dynamic>(),
         repliesCount: map['repliesCount'] as int,
-        metaData: map['metaData'] != null
-            ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
-            : null,
-        messageType: map['messageType'] as int,
+        metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
+        messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
         messageId: map['messageId'] as String,
         deviceId: map['deviceId'] as String?,
         customType: map['customType'] as String?,
         body: map['body'] as String,
       );
 
-  factory IsmLiveMessageModel.fromJson(String source) =>
-      IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveMessageModel.fromJson(String source) => IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final int sentAt;
   final String streamId;
@@ -54,7 +49,7 @@ class IsmLiveMessageModel {
   final List<dynamic>? searchableTags;
   final int repliesCount;
   final IsmLiveMetaData? metaData;
-  final int messageType;
+  final IsmLiveMessageType messageType;
   final String messageId;
   final String? deviceId;
   final String? customType;
@@ -70,7 +65,7 @@ class IsmLiveMessageModel {
     List<dynamic>? searchableTags,
     int? repliesCount,
     IsmLiveMetaData? metaData,
-    int? messageType,
+    IsmLiveMessageType? messageType,
     String? messageId,
     String? deviceId,
     String? customType,
@@ -79,8 +74,7 @@ class IsmLiveMessageModel {
       IsmLiveMessageModel(
         sentAt: sentAt ?? this.sentAt,
         streamId: streamId ?? this.streamId,
-        senderProfileImageUrl:
-            senderProfileImageUrl ?? this.senderProfileImageUrl,
+        senderProfileImageUrl: senderProfileImageUrl ?? this.senderProfileImageUrl,
         senderName: senderName ?? this.senderName,
         senderIdentifier: senderIdentifier ?? this.senderIdentifier,
         senderId: senderId ?? this.senderId,
@@ -104,7 +98,7 @@ class IsmLiveMessageModel {
         'searchableTags': searchableTags,
         'repliesCount': repliesCount,
         'metaData': metaData?.toMap(),
-        'messageType': messageType,
+        'messageType': messageType.value,
         'messageId': messageId,
         'deviceId': deviceId,
         'customType': customType,

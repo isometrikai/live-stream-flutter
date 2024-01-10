@@ -222,7 +222,7 @@ class IsmLiveUtility {
 
   static void showMessage({
     String? message,
-    IsmLiveMessageType type = IsmLiveMessageType.information,
+    IsmLiveSnackbarType type = IsmLiveSnackbarType.information,
     Function()? onTap,
     String? actionName,
   }) {
@@ -231,13 +231,13 @@ class IsmLiveUtility {
     closeSnackbar();
     var backgroundColor = Colors.black;
     switch (type) {
-      case IsmLiveMessageType.error:
+      case IsmLiveSnackbarType.error:
         backgroundColor = Colors.red;
         break;
-      case IsmLiveMessageType.information:
+      case IsmLiveSnackbarType.information:
         backgroundColor = Colors.blue;
         break;
-      case IsmLiveMessageType.success:
+      case IsmLiveSnackbarType.success:
         backgroundColor = Colors.green;
         break;
       default:

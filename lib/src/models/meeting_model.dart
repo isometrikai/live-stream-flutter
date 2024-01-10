@@ -23,22 +23,20 @@ class MeetingModel {
   factory MeetingModel.fromMap(Map<String, dynamic> map) => MeetingModel(
         selfHosted: map['selfHosted'] as bool,
         pushNotifications: map['pushNotifications'] as bool,
-        metaData:
-            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         members: List<String>.from(map['members'] as List<dynamic>),
         meetingImageUrl: map['meetingImageUrl'] as String,
         meetingDescription: map['meetingDescription'] as String,
         hdMeeting: map['hdMeeting'] as bool,
         enableRecording: map['enableRecording'] as bool,
         deviceId: map['deviceId'] as String,
-        customType: IsmLiveCustomType.fromValue(map['customType'] as String),
+        customType: IsmLiveCallType.fromValue(map['customType'] as String),
         meetingType: IsmLiveMeetingType.fromValue(map['meetingType'] as int),
         autoTerminate: map['autoTerminate'] as bool,
         audioOnly: map['audioOnly'] as bool,
       );
 
-  factory MeetingModel.fromJson(String source) =>
-      MeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MeetingModel.fromJson(String source) => MeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final bool selfHosted;
   final bool pushNotifications;
@@ -49,7 +47,7 @@ class MeetingModel {
   final bool hdMeeting;
   final bool enableRecording;
   final String deviceId;
-  final IsmLiveCustomType customType;
+  final IsmLiveCallType customType;
   final IsmLiveMeetingType meetingType;
   final bool autoTerminate;
   final bool audioOnly;
@@ -64,7 +62,7 @@ class MeetingModel {
     bool? hdMeeting,
     bool? enableRecording,
     String? deviceId,
-    IsmLiveCustomType? customType,
+    IsmLiveCallType? customType,
     IsmLiveMeetingType? meetingType,
     bool? autoTerminate,
     bool? audioOnly,

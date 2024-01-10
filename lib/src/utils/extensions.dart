@@ -10,11 +10,12 @@ extension IsmLiveMapExtension on Map<String, dynamic> {
     var result = <String, dynamic>{};
     for (var entry in entries) {
       var k = entry.key;
-      if (entry.value != null) {
-        if (entry.value.runtimeType.toString().contains('Map')) {
-          result[k] = (entry.value as Map<String, dynamic>).removeNullValues();
+      var v = entry.value;
+      if (v != null) {
+        if (!v.runtimeType.toString().contains('List') && v.runtimeType.toString().contains('Map')) {
+          result[k] = (v as Map<String, dynamic>).removeNullValues();
         } else {
-          result[k] = entry.value;
+          result[k] = v;
         }
       }
     }
