@@ -227,8 +227,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     borderColor: IsmLiveColors.white,
                                   ),
                                 ),
-                                if (room
-                                    .localParticipant!.videoTracks.isEmpty) ...[
+                                if (!isHost) ...[
                                   const Spacer(),
                                   CustomIconButton(
                                     icon: Padding(
