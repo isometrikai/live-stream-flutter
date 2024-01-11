@@ -2,10 +2,12 @@ class IsmLiveCounterProperties {
   const IsmLiveCounterProperties({
     this.showYoureLiveSheet = true,
     this.showYoureLiveText = true,
-    this.streamCounter,
+    this.counterTime,
+    this.animationTime,
   });
 
   final bool showYoureLiveSheet;
   final bool showYoureLiveText;
-  final int? streamCounter;
+  final int? counterTime;
+  final int? animationTime;
 }

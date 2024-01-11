@@ -20,5 +20,6 @@ class IsmLiveConstants {
 
   static const int keepAlivePeriod = 60;
 
-  static const int streamCounter = 3;
+  static const int counterTime = 3;
+  static const int animationTime = 7;
 }

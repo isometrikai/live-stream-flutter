@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 extension IsmLiveNullString on String? {
   bool get isNullOrEmpty => this == null || this!.trim().isEmpty;
@@ -88,4 +91,21 @@ extension IsmLiveDurationExtension on Duration {
 
 extension IsmLiveIntExtensions on int {
   double get sheetHeight => IsmLiveDimens.oneHundredTwenty + this * IsmLiveDimens.sixty;
+}
+
+extension IsmLiveDoubleExtensions on double {
+  double get verticalPosition => Get.height * 1.1 * this;
+
+  double get horizontalPosition {
+    final random1 = Random().nextBool();
+    final random2 = Random().nextBool();
+    final value = random1
+        ? random2
+            ? 0.3
+            : 0.4
+        : random2
+            ? 0.6
+            : 0.7;
+    return Get.width * 0.5 * this * value;
+  }
 }

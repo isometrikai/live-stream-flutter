@@ -46,20 +46,36 @@ class IsmLiveMessageField extends StatelessWidget {
             ),
             if (!isHost) ...[
               IsmLiveDimens.boxWidth16,
-              CustomIconButton(
-                dimension: IsmLiveDimens.fifty,
-                icon: UnconstrainedBox(
-                  child: IsmLiveImage.svg(
-                    IsmLiveAssetConstants.heart,
-                    color: IsmLiveColors.white,
-                    dimensions: IsmLiveDimens.twentyFour,
-                  ),
-                ),
+              IsmLiveHeartButton(
+                size: IsmLiveDimens.fifty,
                 onTap: () => controller.sendHeartMessage(streamId),
-                color: IsmLiveColors.red,
               ),
             ]
           ],
         ),
+      );
+}
+
+class IsmLiveHeartButton extends StatelessWidget {
+  const IsmLiveHeartButton({
+    super.key,
+    this.onTap,
+    this.size,
+  });
+
+  final VoidCallback? onTap;
+  final double? size;
+
+  @override
+  Widget build(BuildContext context) => CustomIconButton(
+        dimension: size,
+        icon: const UnconstrainedBox(
+          child: IsmLiveImage.svg(
+            IsmLiveAssetConstants.heart,
+            color: IsmLiveColors.white,
+          ),
+        ),
+        onTap: onTap,
+        color: IsmLiveColors.red,
       );
 }
