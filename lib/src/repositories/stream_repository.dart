@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -187,6 +186,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoading,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> kickoutViewer({

@@ -12,6 +12,8 @@ class IsmLiveConstants {
 
   static const String packageName = 'appscrip_live_stream_component';
 
+  static const Duration animationDuration = Duration(milliseconds: 300);
+
   static const Duration timeOutDuration = Duration(seconds: 60);
 
   static double imageHeight = IsmLiveDimens.twentyFive;

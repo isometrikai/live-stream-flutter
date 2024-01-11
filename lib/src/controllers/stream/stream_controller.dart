@@ -37,6 +37,22 @@ class IsmLiveStreamController extends GetxController
 
   UserDetails? user;
 
+  // --------- Start Stream Variables ---------------
+
+  final Rx<Room?> _room = Rx<Room?>(null);
+  Room? get room => _room.value;
+  set room(Room? value) => _room.value = value;
+
+  final Rx<RoomListener?> _listener = Rx<RoomListener?>(null);
+  RoomListener? get listener => _listener.value;
+  set listener(RoomListener? value) => _listener.value = value;
+
+  // --------- End Stream Variables ---------------
+
+  PageController? pageController;
+
+  var previousStreamIndex = 0;
+
   bool isHdBroadcast = false;
 
   bool isRecordingBroadcast = false;
@@ -91,7 +107,9 @@ class IsmLiveStreamController extends GetxController
 
   XFile? pickedImage;
 
-  List<ParticipantTrack> participantTracks = [];
+  final RxList<ParticipantTrack> _participantTracks = <ParticipantTrack>[].obs;
+  List<ParticipantTrack> get participantTracks => _participantTracks;
+  set participantTracks(List<ParticipantTrack> value) => _participantTracks.value = value;
 
   CameraPosition position = CameraPosition.front;
 
@@ -210,33 +228,32 @@ class IsmLiveStreamController extends GetxController
 
   Future<bool> unsubscribeUser() => _subscribeUser(false);
 
-  void onChangeHdBroadcast(
-    bool value,
-  ) {
+  void onChangeHdBroadcast(bool value) {
     isHdBroadcast = value;
     update([IsmGoLiveView.updateId]);
   }
 
-  void onChangeRecording(
-    bool value,
-  ) {
+  void onChangeRecording(bool value) {
     isRecordingBroadcast = value;
 
     update([IsmGoLiveView.updateId]);
   }
 
-  Future<void> askPublish(Room room, bool audioCall) async {
+  Future<void> askPublish(bool audioCall) async {
     try {
+      if (room == null) {
+        return;
+      }
       if (!audioCall) {
-        await room.localParticipant?.setCameraEnabled(true);
+        await room?.localParticipant?.setCameraEnabled(true);
       } else {
-        await room.localParticipant?.setCameraEnabled(false);
+        await room?.localParticipant?.setCameraEnabled(false);
       }
     } catch (error) {
       IsmLiveLog('could not publish video: $error');
     }
     try {
-      await room.localParticipant?.setMicrophoneEnabled(true);
+      await room?.localParticipant?.setMicrophoneEnabled(true);
     } catch (error) {
       IsmLiveLog('could not publish audio: $error');
     }
@@ -267,7 +284,8 @@ class IsmLiveStreamController extends GetxController
     );
   }
 
-  void toggleCamera(LocalParticipant? participant) async {
+  void toggleCamera() async {
+    final participant = room?.localParticipant;
     if (participant == null) {
       return;
     }
@@ -284,4 +302,10 @@ class IsmLiveStreamController extends GetxController
       return;
     }
   }
+
+  Future<void> animateToPage(int index) async => await pageController?.animateToPage(
+        index,
+        duration: IsmLiveConstants.animationDuration,
+        curve: Curves.easeInOut,
+      );
 }

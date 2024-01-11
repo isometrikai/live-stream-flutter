@@ -10,7 +10,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
     this.path, {
     super.key,
-    this.name = '',
+    this.name,
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -26,7 +26,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.svg(
     this.path, {
     super.key,
-    this.name = '',
+    this.name,
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -42,7 +42,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.network(
     this.path, {
     super.key,
-    this.name = '',
+    this.name,
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -58,7 +58,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.file(
     this.path, {
     super.key,
-    this.name = '',
+    this.name,
     this.isProfileImage = true,
     this.dimensions,
     this.height,
@@ -72,7 +72,7 @@ class IsmLiveImage extends StatelessWidget {
         color = null;
 
   final String path;
-  final String name;
+  final String? name;
   final bool isProfileImage;
   final double? dimensions;
   final double? height;
@@ -102,7 +102,7 @@ class IsmLiveImage extends StatelessWidget {
           IsmLiveImageType.network => _Network(
               path,
               isProfileImage: isProfileImage,
-              name: name,
+              name: name ?? 'U',
               showError: showError,
             ),
         },
@@ -165,7 +165,6 @@ class _Network extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
-                color: IsmLiveColors.secondary,
                 image: DecorationImage(image: image, fit: BoxFit.cover),
               ),
             );
