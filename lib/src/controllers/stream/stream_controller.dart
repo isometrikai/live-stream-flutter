@@ -102,7 +102,8 @@ class IsmLiveStreamController extends GetxController
 
   final RxList<ParticipantTrack> _participantTracks = <ParticipantTrack>[].obs;
   List<ParticipantTrack> get participantTracks => _participantTracks;
-  set participantTracks(List<ParticipantTrack> value) => _participantTracks.value = value;
+  set participantTracks(List<ParticipantTrack> value) =>
+      _participantTracks.value = value;
 
   CameraPosition position = CameraPosition.front;
 
@@ -184,6 +185,7 @@ class IsmLiveStreamController extends GetxController
             showLoading: false,
             getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
+              messageType: [IsmLiveMessageType.normal.value],
               skip: messagesCount < 10 ? 0 : (messagesCount - 10),
               limit: _controller.messagesCount < 10 ? _controller.messagesCount : 10,
               sort: 1,
@@ -290,7 +292,8 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  Future<void> animateToPage(int index) async => await pageController?.animateToPage(
+  Future<void> animateToPage(int index) async =>
+      await pageController?.animateToPage(
         index,
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,

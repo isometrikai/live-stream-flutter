@@ -10,7 +10,8 @@ mixin StreamMessageMixin {
     IsmLiveAssetConstants.paw,
   ];
 
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
@@ -18,7 +19,14 @@ mixin StreamMessageMixin {
   ]) async {
     switch (message.messageType) {
       case IsmLiveMessageType.normal:
-        return await _controller.addMessages([message], isMqtt);
+        await _controller.addMessages([message], isMqtt);
+        await _controller.messagesListController.animateTo(
+          _controller.messagesListController.position.maxScrollExtent +
+              IsmLiveDimens.hundred,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+        break;
       case IsmLiveMessageType.heart:
         _controller.addHeart(message);
         break;

@@ -24,6 +24,7 @@ mixin StreamOngoingMixin {
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
+              messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
               skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
               limit: 10,
