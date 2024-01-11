@@ -19,14 +19,8 @@ mixin StreamMessageMixin {
   ]) async {
     switch (message.messageType) {
       case IsmLiveMessageType.normal:
-        await _controller.addMessages([message], isMqtt);
-        await _controller.messagesListController.animateTo(
-          _controller.messagesListController.position.maxScrollExtent +
-              IsmLiveDimens.hundred,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-        );
-        break;
+        return await _controller.addMessages([message], isMqtt);
+
       case IsmLiveMessageType.heart:
         _controller.addHeart(message);
         break;
