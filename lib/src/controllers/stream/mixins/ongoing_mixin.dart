@@ -24,8 +24,11 @@ mixin StreamOngoingMixin {
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
+              messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10
+                  ? 0
+                  : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false),
         );
@@ -138,7 +141,8 @@ mixin StreamOngoingMixin {
 
   Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList =
+        _controller.streamViewersList.toSet().toList();
   }
 
   Future<void> addMessages(
@@ -150,7 +154,14 @@ mixin StreamOngoingMixin {
     } else {
       _controller.streamMessagesList.insertAll(0, messages);
     }
-    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList =
+        _controller.streamMessagesList.toSet().toList();
+    await _controller.messagesListController.animateTo(
+      _controller.messagesListController.position.maxScrollExtent +
+          IsmLiveDimens.hundred,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+    );
   }
 
   void addHeart(IsmLiveMessageModel message) {
@@ -246,7 +257,9 @@ mixin StreamOngoingMixin {
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         onLeft: Get.back,

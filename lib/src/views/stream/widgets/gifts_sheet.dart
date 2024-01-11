@@ -1,6 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 
 class IsmLiveGiftsSheet extends StatelessWidget {
   const IsmLiveGiftsSheet({
@@ -15,25 +15,75 @@ class IsmLiveGiftsSheet extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IsmLiveDimens.boxHeight32,
-            const Text('My Balance'),
+            ListTile(
+              contentPadding: IsmLiveDimens.edgeInsets0,
+              title: Text(
+                'My Balance',
+                style: context.textTheme.headlineSmall,
+              ),
+              trailing: SizedBox(
+                width: IsmLiveDimens.oneHundredTwenty,
+                height: IsmLiveDimens.forty,
+                child: IsmLiveButton(
+                  label: 'Add Coins',
+                  onTap: () {},
+                ),
+              ),
+              subtitle: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: IsmLiveDimens.twentyFive,
+                    width: IsmLiveDimens.twentyFive,
+                    child: const IsmLiveImage.svg(IsmLiveAssetConstants.coin),
+                  ),
+                  IsmLiveDimens.boxWidth4,
+                  Text(
+                    '135',
+                    style: context.textTheme.bodyLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
             IsmLiveDimens.boxHeight16,
-            Expanded(
-              child: MasonryGridView.count(
-                crossAxisSpacing: IsmLiveDimens.eight,
-                crossAxisCount: 4,
+            SizedBox(
+              height: Get.height * 0.32,
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: IsmLiveDimens.five,
+                  crossAxisCount: 3,
+                ),
                 itemBuilder: (context, index) => CustomIconButton(
-                  dimension: IsmLiveDimens.hundred,
                   radius: IsmLiveDimens.ten,
-                  icon: IsmLiveImage.asset(
-                    list[index],
+                  icon: Padding(
+                    padding: IsmLiveDimens.edgeInsets0_8,
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      SizedBox(
+                        height: IsmLiveDimens.fifty,
+                        width: IsmLiveDimens.fifty,
+                        child: IsmLiveImage.asset(
+                          list[index],
+                        ),
+                      ),
+                      IsmLiveDimens.boxHeight5,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const IsmLiveImage.svg(IsmLiveAssetConstants.coin),
+                          IsmLiveDimens.boxWidth2,
+                          const Text('10'),
+                        ],
+                      ),
+                    ]),
                   ),
                   onTap: () async {
                     onTap(list[index]);
                   },
-                  color: IsmLiveColors.grey,
+                  color: const Color.fromARGB(255, 203, 197, 214),
                 ),
                 itemCount: list.length,
               ),
