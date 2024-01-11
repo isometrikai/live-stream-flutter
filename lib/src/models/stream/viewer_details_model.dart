@@ -84,26 +84,9 @@ class IsmLiveViewerModel {
   bool operator ==(covariant IsmLiveViewerModel other) {
     if (identical(this, other)) return true;
 
-    return other.imageUrl == imageUrl &&
-        other.userName == userName &&
-        other.identifier == identifier &&
-        other.userId == userId &&
-        other.startTime == startTime &&
-        other.metaData == metaData &&
-        other.messageNotificationEmail == messageNotificationEmail &&
-        other.emailNotifications == emailNotifications &&
-        other.clubEmailNotifications == clubEmailNotifications;
+    return other.imageUrl == imageUrl && other.userName == userName && other.identifier == identifier && other.userId == userId;
   }
 
   @override
-  int get hashCode =>
-      imageUrl.hashCode ^
-      userName.hashCode ^
-      identifier.hashCode ^
-      userId.hashCode ^
-      startTime.hashCode ^
-      metaData.hashCode ^
-      messageNotificationEmail.hashCode ^
-      emailNotifications.hashCode ^
-      clubEmailNotifications.hashCode;
+  int get hashCode => imageUrl.hashCode ^ userName.hashCode ^ identifier.hashCode ^ userId.hashCode;
 }

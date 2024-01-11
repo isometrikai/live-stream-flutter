@@ -19,10 +19,15 @@ mixin StreamJoinMixin {
     _controller.update([IsmGoLiveView.updateId]);
   }
 
+  void initialize(int index) {
+    _controller.pageController = PageController(initialPage: index);
+  }
+
   Future<void> joinStream(
     IsmLiveStreamModel stream,
-    bool isHost,
-  ) async {
+    bool isHost, {
+    bool joinByScrolling = false,
+  }) async {
     var token = '';
     if (isHost) {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
@@ -46,6 +51,7 @@ mixin StreamJoinMixin {
       imageUrl: stream.streamImage,
       isHost: isHost,
       isNewStream: false,
+      joinByScrolling: joinByScrolling,
     );
   }
 
@@ -86,6 +92,7 @@ mixin StreamJoinMixin {
     bool audioCallOnly = false,
     required bool isHost,
     required bool isNewStream,
+    bool joinByScrolling = false,
   }) async {
     if (isMeetingOn) {
       return;
@@ -110,15 +117,19 @@ mixin StreamJoinMixin {
 
     try {
       var room = Room();
+      _controller.room = room;
 
       // Create a Listener before connecting
       final listener = room.createListener();
+
+      _controller.listener = listener;
 
       // Try to connect to the room
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
       } catch (e, st) {
         IsmLiveLog.error(e, st);
+        isMeetingOn = false;
         IsmLiveUtility.closeLoader();
         return;
       }
@@ -150,15 +161,16 @@ mixin StreamJoinMixin {
       _controller.update([IsmLiveStreamView.updateId]);
 
       startStreamTimer();
-
-      await IsmLiveRouteManagement.goToStreamView(
-        isHost: isHost,
-        room: room,
-        imageUrl: imageUrl,
-        listener: listener,
-        streamId: streamId,
-        audioCallOnly: audioCallOnly,
-      );
+      if (!joinByScrolling) {
+        unawaited(IsmLiveRouteManagement.goToStreamView(
+          isHost: isHost,
+          room: room,
+          imageUrl: imageUrl,
+          listener: listener,
+          streamId: streamId,
+          audioCallOnly: audioCallOnly,
+        ));
+      }
     } catch (e, st) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       _controller.isHost = null;
