@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -26,7 +25,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                 crossAxisSpacing: IsmLiveDimens.eight,
                 crossAxisCount: 4,
                 itemBuilder: (context, index) => CustomIconButton(
-                  hight: IsmLiveDimens.hundred,
+                  dimension: IsmLiveDimens.hundred,
                   radius: IsmLiveDimens.ten,
                   icon: IsmLiveImage.asset(
                     list[index],
