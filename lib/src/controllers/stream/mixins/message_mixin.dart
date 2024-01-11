@@ -20,8 +20,7 @@ mixin StreamMessageMixin {
       case IsmLiveMessageType.normal:
         return await _controller.addMessages([message], isMqtt);
       case IsmLiveMessageType.heart:
-        IsmLiveLog.success('Heart Recieved');
-        // TODO: Handle Heart animation
+        _controller.addHeart(message);
         break;
       case IsmLiveMessageType.gift:
         IsmLiveLog.success('Gift Recieved');

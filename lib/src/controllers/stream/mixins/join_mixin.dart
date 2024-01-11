@@ -98,7 +98,6 @@ mixin StreamJoinMixin {
       return;
     }
     _controller.streamId = streamId;
-    isMeetingOn = true;
     _controller.isHost = isHost;
     unawaited(_controller._mqttController?.subscribeStream(streamId));
 
@@ -161,6 +160,8 @@ mixin StreamJoinMixin {
       _controller.update([IsmLiveStreamView.updateId]);
 
       startStreamTimer();
+      isMeetingOn = true;
+
       if (!joinByScrolling) {
         unawaited(IsmLiveRouteManagement.goToStreamView(
           isHost: isHost,

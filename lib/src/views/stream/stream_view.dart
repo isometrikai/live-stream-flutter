@@ -47,11 +47,12 @@ class IsmLiveStreamView extends StatelessWidget {
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
         controller: controller.pageController,
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
         onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) {
-          IsmLiveLog.success('Next Child $index');
+          // IsmLiveLog.success('Next Child $index');
           final stream = controller.streams[index];
           return _IsmLiveStreamView(
             key: key,
@@ -83,7 +84,7 @@ class _IsmLiveStreamView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
-        initState: (ismLiveBuilder) async {
+        initState: (_) async {
           var streamController = Get.find<IsmLiveStreamController>()
             ..initializeStream(
               streamId: streamId,
@@ -96,7 +97,7 @@ class _IsmLiveStreamView extends StatelessWidget {
             }
           });
         },
-        dispose: (ismLiveBuilder) async {
+        dispose: (_) async {
           await Get.find<IsmLiveStreamController>().room?.dispose();
           Get.find<IsmLiveStreamController>().streamMessagesList = [];
         },
@@ -113,6 +114,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                         )
                       : NoVideoWidget(imageUrl: imageUrl ?? ''),
                 ),
+                ...controller.heartList,
                 Obx(
                   () => (controller.room?.localParticipant != null)
                       ? SafeArea(

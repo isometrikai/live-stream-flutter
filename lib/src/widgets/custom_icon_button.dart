@@ -6,13 +6,13 @@ class CustomIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.radius,
-    required this.onTap,
+    this.onTap,
     this.color,
     this.dimension,
   });
   final Widget icon;
   final double? radius;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color? color;
   final double? dimension;
 

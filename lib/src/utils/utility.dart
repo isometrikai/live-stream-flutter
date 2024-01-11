@@ -22,9 +22,9 @@ class IsmLiveUtility {
     return config;
   }
 
-  static void updateLater(VoidCallback callback) {
+  static void updateLater(VoidCallback callback, [bool addDelay = true]) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 10), () {
+      Future.delayed(addDelay ? const Duration(milliseconds: 10) : Duration.zero, () {
         callback();
       });
     });
