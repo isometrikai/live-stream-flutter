@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -50,8 +49,7 @@ class IsmLiveStreamView extends StatelessWidget {
         controller: controller.pageController,
         scrollDirection: Axis.vertical,
         pageSnapping: true,
-        onPageChanged: (index) =>
-            controller.onStreamScroll(index: index, room: room),
+        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) {
           IsmLiveLog.success('Next Child $index');
           final stream = controller.streams[index];
@@ -125,8 +123,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 StreamHeader(
                                   name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller.hostDetails?.userProfileImageUrl ??
-                                  '',onTabCross: () {
+                                  imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                  onTabCross: () {
                                     FocusScope.of(context).unfocus();
                                     controller.onExit(
                                       isHost: isHost,
@@ -180,71 +178,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  height: IsmLiveDimens.fifty,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: Get.width * 0.75,
-                                        height: IsmLiveDimens.fortyFive,
-                                        child: IsmLiveInputField(
-                                          controller: controller.messageFieldController,
-                                          hintText: 'Say Something…',
-                                          radius: IsmLiveDimens.fifty,
-                                          onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
-                                          textInputAction: TextInputAction.send,
-                                          onFieldSubmit: (value) {
-                                            controller.sendTextMessage(
-                                              streamId: streamId,
-                                              body: value,
-                                            );
-                                          },
-                                          suffixIcon: IconButton(
-                                              icon: Icon(
-                                                Icons.send,
-                                                size: IsmLiveDimens.twenty,
-                                                color: controller.messageFieldController.isEmpty ? null : IsmLiveColors.primary,
-                                              ),
-                                              onPressed: controller
-                                              .messageFieldController.isNotEmpty
-                                          ?() {
-                                                // FocusScope.of(context).unfocus();
-
-                                                  controller.sendTextMessage(
-                                                    streamId: streamId,
-                                                    body: controller.messageFieldController.text,
-                                                  );
-                                                }: null,
-                                              ),
-                                          prefixIcon: Icon(
-                                            Icons.sentiment_satisfied_alt,
-                                            size: IsmLiveDimens.twenty,
-                                          ),
-                                          borderColor: IsmLiveColors.white,
-                                        ),
-                                      ),
-                                      if (!isHost) ...[
-                                        const Spacer(),
-                                        CustomIconButton(
-                                          icon: Padding(
-                                            padding: IsmLiveDimens.edgeInsets8,
-                                            child: const IsmLiveImage.svg(
-                                              IsmLiveAssetConstants.heart,
-                                              color: IsmLiveColors.white,
-                                            ),
-                                          ),
-                                          onTap: () async {await controller.sendHeartMessage(
-                                        streamId: streamId,
-                                        body: 'heart',
-                                      );},
-                                          color: IsmLiveColors.red,
-                                        ),
-                                      ]
-                                    ],
-                                  ),
-                                ),
+                                IsmLiveMessageField(streamId: streamId, isHost: isHost),
                               ],
                             ),
                           ),

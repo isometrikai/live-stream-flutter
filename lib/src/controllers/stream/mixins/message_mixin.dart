@@ -10,8 +10,7 @@ mixin StreamMessageMixin {
     IsmLiveAssetConstants.paw,
   ];
 
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
@@ -41,6 +40,9 @@ mixin StreamMessageMixin {
     required String streamId,
     required String body,
   }) async {
+    if (body.trim().isEmpty) {
+      return;
+    }
     final isSent = await _controller.sendMessage(
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
@@ -58,10 +60,8 @@ mixin StreamMessageMixin {
     }
   }
 
-  Future<void> sendHeartMessage({
-    required String streamId,
-    required String body,
-  }) async {
+  Future<void> sendHeartMessage(String streamId) async {
+    const body = 'heart';
     final isSent = await _controller.sendMessage(
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
@@ -74,9 +74,7 @@ mixin StreamMessageMixin {
       ),
     );
 
-    if (isSent) {
-      _controller.messageFieldController.clear();
-    }
+    if (isSent) {}
   }
 
   Future<void> sendGiftMessage({
