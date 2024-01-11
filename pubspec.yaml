@@ -69,6 +69,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/gifts/
     - assets/icon/
     - assets/logo/
     - assets/placeholders/

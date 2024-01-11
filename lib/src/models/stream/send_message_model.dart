@@ -13,17 +13,23 @@ class IsmLiveSendMessageModel {
     required this.messageType,
   });
 
-  factory IsmLiveSendMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveSendMessageModel(
+  factory IsmLiveSendMessageModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveSendMessageModel(
         streamId: map['streamId'] as String,
         body: map['body'] as String,
         searchableTags: map['searchableTags'] as dynamic,
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
-        customType: map['customType'] != null ? IsmLiveCustomType.fromName(map['customType'].toString()) : null,
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        customType: map['customType'] != null
+            ? IsmLiveCustomType.fromName(map['customType'].toString())
+            : null,
         deviceId: map['deviceId'] as String,
         messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
       );
 
-  factory IsmLiveSendMessageModel.fromJson(String source) => IsmLiveSendMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveSendMessageModel.fromJson(String source) =>
+      IsmLiveSendMessageModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
 
   final String streamId;
   final String body;
@@ -59,7 +65,7 @@ class IsmLiveSendMessageModel {
         'metaData': metaData.toMap(),
         'customType': customType,
         'deviceId': deviceId,
-        'messageType': messageType,
+        'messageType': messageType.value,
       };
 
   String toJson() => json.encode(toMap());

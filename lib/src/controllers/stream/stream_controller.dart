@@ -12,11 +12,16 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
-part 'mixins/ongoing_mixin.dart';
 part 'mixins/message_mixin.dart';
+part 'mixins/ongoing_mixin.dart';
 
 class IsmLiveStreamController extends GetxController
-    with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin {
+    with
+        GetSingleTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        StreamOngoingMixin,
+        StreamMessageMixin {
   IsmLiveStreamController(this._viewModel);
 
   final IsmLiveStreamViewModel _viewModel;
@@ -42,17 +47,23 @@ class IsmLiveStreamController extends GetxController
   bool get speakerOn => _speakerOn.value;
   set speakerOn(bool value) => _speakerOn.value = value;
 
-  final RxList<IsmLiveMemberDetailsModel> _streamMembersList = <IsmLiveMemberDetailsModel>[].obs;
+  final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
+      <IsmLiveMemberDetailsModel>[].obs;
   List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
-  set streamMembersList(List<IsmLiveMemberDetailsModel> value) => _streamMembersList.value = value;
+  set streamMembersList(List<IsmLiveMemberDetailsModel> value) =>
+      _streamMembersList.value = value;
 
-  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList =
+      <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) =>
+      _streamViewersList.value = value;
 
-  final RxList<IsmLiveMessageModel> _streamMessagesList = <IsmLiveMessageModel>[].obs;
+  final RxList<IsmLiveMessageModel> _streamMessagesList =
+      <IsmLiveMessageModel>[].obs;
   List<IsmLiveMessageModel> get streamMessagesList => _streamMessagesList;
-  set streamMessagesList(List<IsmLiveMessageModel> value) => _streamMessagesList.value = value;
+  set streamMessagesList(List<IsmLiveMessageModel> value) =>
+      _streamMessagesList.value = value;
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
@@ -98,7 +109,8 @@ class IsmLiveStreamController extends GetxController
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -139,18 +151,21 @@ class IsmLiveStreamController extends GetxController
 
   void pagination(String streamId) {
     viewerListController.addListener(() async {
-      if (viewerListController.position.maxScrollExtent * 0.8 <= viewerListController.position.pixels) {
+      if (viewerListController.position.maxScrollExtent * 0.8 <=
+          viewerListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
         isViewesApiCall = true;
 
-        await getStreamViewer(streamId: streamId, limit: 10, skip: streamViewersList.length);
+        await getStreamViewer(
+            streamId: streamId, limit: 10, skip: streamViewersList.length);
         isViewesApiCall = false;
       }
     });
     messagesListController.addListener(() {
-      if (messagesListController.position.minScrollExtent == messagesListController.position.pixels) {
+      if (messagesListController.position.minScrollExtent ==
+          messagesListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
@@ -163,7 +178,9 @@ class IsmLiveStreamController extends GetxController
             getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
               skip: messagesCount < 10 ? 0 : (messagesCount - 10),
-              limit: _controller.messagesCount < 10 ? _controller.messagesCount : 10,
+              limit: _controller.messagesCount < 10
+                  ? _controller.messagesCount
+                  : 10,
               sort: 1,
             ),
           );
@@ -239,6 +256,15 @@ class IsmLiveStreamController extends GetxController
 
   void enableVideo(LocalParticipant participant) async {
     await participant.setCameraEnabled(true);
+  }
+
+  void giftsSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLiveGiftsSheet(
+        list: giftList,
+        onTap: (body) => sendGiftMessage(streamId: streamId ?? '', body: body),
+      ),
+    );
   }
 
   void toggleCamera(LocalParticipant? participant) async {
