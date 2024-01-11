@@ -21,7 +21,6 @@ class IsmLiveStreamCard extends StatelessWidget {
         child: Container(
           height: IsmLiveDimens.twoHundredTwenty,
           margin: IsmLiveDimens.edgeInsets8,
-          padding: IsmLiveDimens.edgeInsets8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
             color: Colors.black,
@@ -30,36 +29,70 @@ class IsmLiveStreamCard extends StatelessWidget {
                 stream.streamImage ?? '',
               ),
               fit: BoxFit.cover,
-              opacity: 0.8,
             ),
           ),
+          clipBehavior: Clip.antiAlias,
           alignment: Alignment.bottomCenter,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
             children: [
-              if (isCreatedByMe)
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    padding: IsmLiveDimens.edgeInsets8_4,
-                    decoration: BoxDecoration(
-                      color: IsmLiveTheme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                    ),
-                    child: Text(
-                      'Continue',
-                      style: context.textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                      ),
+              const SizedBox.expand(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.transparent,
+                        Colors.black26,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
                   ),
-                )
-              else
-                const SizedBox.shrink(),
-              Text(
-                stream.initiatorName ?? '',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: IsmLiveDimens.edgeInsets8,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (isCreatedByMe)
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: IsmLiveDimens.edgeInsets8_4,
+                          decoration: BoxDecoration(
+                            color: IsmLiveTheme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                          ),
+                          child: Text(
+                            'Continue',
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IsmLiveImage.network(
+                          stream.initiatorImage ?? '',
+                          name: stream.initiatorName ?? 'U',
+                          dimensions: IsmLiveDimens.thirtyTwo,
+                          isProfileImage: true,
+                        ),
+                        IsmLiveDimens.boxWidth10,
+                        Text(
+                          stream.initiatorName ?? '',
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],

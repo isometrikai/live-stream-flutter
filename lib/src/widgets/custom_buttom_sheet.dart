@@ -6,16 +6,16 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
   const IsmLiveCustomButtomSheet({
     super.key,
     required this.title,
-    this.leftOnTab,
+    this.onLeft,
     required this.leftLabel,
     required this.rightLabel,
-    this.rightOnTab,
+    this.onRight,
   });
   final String title;
-  final VoidCallback? leftOnTab;
   final String leftLabel;
   final String rightLabel;
-  final VoidCallback? rightOnTab;
+  final VoidCallback? onLeft;
+  final VoidCallback? onRight;
   @override
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
@@ -33,14 +33,14 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
                 Expanded(
                   child: IsmLiveButton.outlined(
                     label: leftLabel,
-                    onTap: leftOnTab,
+                    onTap: onLeft,
                   ),
                 ),
                 IsmLiveDimens.boxWidth16,
                 Expanded(
                   child: IsmLiveButton(
                     label: rightLabel,
-                    onTap: rightOnTab,
+                    onTap: onRight,
                   ),
                 ),
               ],

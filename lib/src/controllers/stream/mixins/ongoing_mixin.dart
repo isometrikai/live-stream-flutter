@@ -7,14 +7,10 @@ mixin StreamOngoingMixin {
 
   void initializeStream({
     required String streamId,
-    required Room room,
-    required RoomListener listener,
     required bool isHost,
   }) async {
     _controller.pagination(streamId);
     unawaited(setUpListeners(
-      listener: listener,
-      room: room,
       isHost: isHost,
     ));
     if (!isHost) {
@@ -37,25 +33,23 @@ mixin StreamOngoingMixin {
         );
       }
     }
-    await sortParticipants(room, isHost);
+    await sortParticipants(isHost);
     if (lkPlatformIsMobile()) {
-      unawaited(_controller.toggleSpeaker(room: room, value: true));
+      unawaited(_controller.toggleSpeaker(value: true));
     }
     _controller.update([IsmLiveStreamView.updateId]);
   }
 
   Future<void> setUpListeners({
-    required RoomListener listener,
-    required Room room,
     required bool isHost,
   }) async =>
-      listener
-        ..on<RoomDisconnectedEvent>((event) async {
+      _controller.listener
+        ?..on<RoomDisconnectedEvent>((event) async {
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
-          sortParticipants(room, isHost);
+          sortParticipants(isHost);
         })
         ..on<ParticipantConnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantConnectedEvent: $event');
@@ -64,8 +58,8 @@ mixin StreamOngoingMixin {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
         })
         ..on<RoomRecordingStatusChanged>((event) {})
-        ..on<LocalTrackPublishedEvent>((_) => sortParticipants(room, isHost))
-        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room, isHost))
+        ..on<LocalTrackPublishedEvent>((_) => sortParticipants(isHost))
+        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(isHost))
         ..on<TrackE2EEStateEvent>((event) {
           IsmLiveLog.info('TrackE2EEStateEvent: $event');
         })
@@ -77,19 +71,25 @@ mixin StreamOngoingMixin {
         })
         ..on<AudioPlaybackStatusChanged>((event) async {
           IsmLiveLog.info('DataReceivedEvent: ${event.isPlaying} $event');
-          if (!room.canPlaybackAudio) {
+          if (_controller.room == null) {
+            return;
+          }
+          if (!_controller.room!.canPlaybackAudio) {
             IsmLiveLog.error('Audio playback failed for iOS Safari ..........');
           }
         });
 
   Future<void> sortParticipants(
-    Room room,
     bool isHost,
   ) async {
-    _participantDebouncer.run(() => _sortParticipants(room, isHost));
+    _participantDebouncer.run(() => _sortParticipants(isHost));
   }
 
-  Future<void> _sortParticipants(Room room, bool isHost) async {
+  Future<void> _sortParticipants(bool isHost) async {
+    final room = _controller.room;
+    if (room == null) {
+      return;
+    }
     var userMediaTracks = <ParticipantTrack>[];
 
     if (isHost) {
@@ -158,9 +158,18 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> toggleSpeaker({
-    required Room room,
     bool? value,
   }) async {
+    final room = _controller.room;
+    if (room == null) {
+      return;
+    }
+    if (room.participants.values.isEmpty) {
+      return;
+    }
+    if (room.participants.values.first.audioTracks.isEmpty) {
+      return;
+    }
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
     _controller.speakerOn
@@ -172,11 +181,7 @@ mixin StreamOngoingMixin {
     // await Hardware.instance.setSpeakerphoneOn(_controller.speakerOn);
   }
 
-  Future onOptionTap(
-    IsmLiveStreamOption option, {
-    required Room room,
-    LocalParticipant? participant,
-  }) async {
+  Future onOptionTap(IsmLiveStreamOption option) async {
     switch (option) {
       case IsmLiveStreamOption.gift:
         _controller.giftsSheet();
@@ -189,10 +194,10 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.vs:
         break;
       case IsmLiveStreamOption.rotateCamera:
-        _controller.toggleCamera(participant);
+        _controller.toggleCamera();
         break;
       case IsmLiveStreamOption.speaker:
-        await toggleSpeaker(room: room);
+        await toggleSpeaker();
         break;
     }
   }
@@ -204,14 +209,24 @@ mixin StreamOngoingMixin {
     IsmLiveUtility.showLoader();
     final didLeft = await _controller.leaveStream(_controller.streamId ?? '');
     if (!didLeft) {
+      IsmLiveUtility.closeLoader();
       IsmLiveLog.error('Cannot leave stream');
+      await _controller.animateToPage(_controller.previousStreamIndex);
       return;
     }
+    _controller.isMeetingOn = false;
+    unawaited(room.disconnect());
+    await _controller.joinStream(
+      _controller.streams[index],
+      false,
+      joinByScrolling: true,
+    );
+    _controller.previousStreamIndex = index;
+    IsmLiveUtility.closeLoader();
   }
 
   void onExit({
     required bool isHost,
-    required Room room,
     required String streamId,
   }) {
     IsmLiveUtility.openBottomSheet(
@@ -221,12 +236,11 @@ mixin StreamOngoingMixin {
             : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
-        leftOnTab: Get.back,
-        rightOnTab: () async {
+        onLeft: Get.back,
+        onRight: () async {
           Get.back();
           await disconnectStream(
             isHost: isHost,
-            room: room,
             streamId: streamId,
           );
         },
@@ -237,7 +251,6 @@ mixin StreamOngoingMixin {
 
   Future<void> disconnectStream({
     required bool isHost,
-    required Room room,
     required String streamId,
     bool goBack = true,
   }) async {
@@ -249,10 +262,13 @@ mixin StreamOngoingMixin {
     }
     if (isEnded) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
+      if (isHost) {
+        unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
+      }
       _controller.isHost = null;
       _controller.isMeetingOn = false;
       _controller.streamId = null;
-      await room.disconnect();
+      await _controller.room?.disconnect();
       if (goBack) {
         closeStreamView(isHost);
       }
