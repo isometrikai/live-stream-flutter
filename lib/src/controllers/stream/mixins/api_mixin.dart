@@ -196,11 +196,11 @@ mixin StreamAPIMixin {
         viewerId: viewerId,
       );
 
-  Future<bool> removeMessage({
+  Future<bool> deleteMessage({
     required String streamId,
     required String messageId,
   }) =>
-      _controller._viewModel.removeMessage(
+      _controller._viewModel.deleteMessage(
         streamId: streamId,
         messageId: messageId,
       );

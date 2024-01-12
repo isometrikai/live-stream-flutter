@@ -37,15 +37,6 @@ mixin StreamMessageMixin {
     }
   }
 
-  Future<bool> removeTextMessage({
-    required String streamId,
-    required String messageId,
-  }) =>
-      _controller.removeMessage(
-        streamId: streamId,
-        messageId: messageId,
-      );
-
   Future<void> sendTextMessage({
     required String streamId,
     required String body,

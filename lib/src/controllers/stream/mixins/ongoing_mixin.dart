@@ -204,7 +204,7 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty &&
+    if (room.participants.values.isEmpty ||
         room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
@@ -248,10 +248,10 @@ mixin StreamOngoingMixin {
   ) async {
     switch (option) {
       case IsmLiveHostSettings.muteMyVideo:
-        _controller.muteUnmuteVideo();
+        _controller.toggleVideo();
         break;
       case IsmLiveHostSettings.muteMyAudio:
-        _controller.muteUnmuteAudio();
+        _controller.toggleAudio();
         break;
       case IsmLiveHostSettings.muteRemoteVideo:
       case IsmLiveHostSettings.muteRemoteAudio:

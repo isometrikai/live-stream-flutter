@@ -176,7 +176,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       IsmLiveChat(
                                         isHost: isHost,
                                         onTapRemove: (messageId) =>
-                                            controller.removeTextMessage(
+                                            controller.deleteMessage(
                                                 streamId: streamId,
                                                 messageId: messageId),
                                         messagesList:

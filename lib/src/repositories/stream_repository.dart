@@ -206,7 +206,7 @@ class IsmLiveStreamRepository {
     );
   }
 
-  Future<IsmLiveResponseModel> removeMessage({
+  Future<IsmLiveResponseModel> deleteMessage({
     required String streamId,
     required String messageId,
   }) {

@@ -301,12 +301,12 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<bool> removeMessage({
+  Future<bool> deleteMessage({
     required String streamId,
     required String messageId,
   }) async {
     try {
-      var res = await _repository.removeMessage(
+      var res = await _repository.deleteMessage(
         streamId: streamId,
         messageId: messageId,
       );

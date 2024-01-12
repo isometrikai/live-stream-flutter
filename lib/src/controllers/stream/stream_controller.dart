@@ -274,26 +274,30 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void muteUnmuteAudio() async {
+  void toggleAudio({
+    bool? value,
+  }) async {
     final participant = room?.localParticipant;
     if (participant == null) {
       return;
     }
-    audioOn = !audioOn;
+    audioOn = value ?? !audioOn;
     try {
       await participant.setMicrophoneEnabled(audioOn);
     } catch (error) {
       audioOn = !audioOn;
-      IsmLiveLog('muteUnmuteAudio function  error  $error');
+      IsmLiveLog('toggleAudio function  error  $error');
     }
   }
 
-  void muteUnmuteVideo() async {
+  void toggleVideo({
+    bool? value,
+  }) async {
     final participant = room?.localParticipant;
     if (participant == null) {
       return;
     }
-    videoOn = !videoOn;
+    videoOn = value ?? !videoOn;
     try {
       await participant.setCameraEnabled(videoOn);
     } catch (error) {
