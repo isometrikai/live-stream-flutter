@@ -6,7 +6,8 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -202,6 +203,22 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> removeMessage({
+    required String streamId,
+    required String messageId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'messageId': messageId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.deleteMessage}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
     );
   }
 }

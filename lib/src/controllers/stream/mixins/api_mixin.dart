@@ -196,6 +196,15 @@ mixin StreamAPIMixin {
         viewerId: viewerId,
       );
 
+  Future<bool> removeMessage({
+    required String streamId,
+    required String messageId,
+  }) =>
+      _controller._viewModel.removeMessage(
+        streamId: streamId,
+        messageId: messageId,
+      );
+
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
       Get.context?.liveTranslations.uploadingImage ??

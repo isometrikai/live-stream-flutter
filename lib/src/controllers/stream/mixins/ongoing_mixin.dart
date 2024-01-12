@@ -139,6 +139,20 @@ mixin StreamOngoingMixin {
     }
   }
 
+  String controlSetting(IsmLiveHostSettings option) {
+    switch (option) {
+      case IsmLiveHostSettings.muteRemoteVideo:
+      case IsmLiveHostSettings.muteRemoteAudio:
+      case IsmLiveHostSettings.showNetWorkStats:
+      case IsmLiveHostSettings.hideChatMessages:
+      case IsmLiveHostSettings.hideControlButtons:
+      case IsmLiveHostSettings.muteMyVideo:
+        return _controller.videoOn ? option.muteValues : option.unmuteValues;
+      case IsmLiveHostSettings.muteMyAudio:
+        return _controller.audioOn ? option.muteValues : option.unmuteValues;
+    }
+  }
+
   Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
     _controller.streamViewersList.addAll(viewers);
     _controller.streamViewersList =
@@ -190,12 +204,11 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty) {
+    if (room.participants.values.isEmpty &&
+        room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
-    if (room.participants.values.first.audioTracks.isEmpty) {
-      return;
-    }
+
     _controller.speakerOn = value ?? !_controller.speakerOn;
 
     _controller.speakerOn
@@ -217,6 +230,8 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.members:
       case IsmLiveStreamOption.favourite:
       case IsmLiveStreamOption.settings:
+        _controller.settingSheet();
+        break;
       case IsmLiveStreamOption.vs:
         break;
       case IsmLiveStreamOption.rotateCamera:
@@ -225,6 +240,24 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.speaker:
         await toggleSpeaker();
         break;
+    }
+  }
+
+  Future onSettingTap(
+    IsmLiveHostSettings option,
+  ) async {
+    switch (option) {
+      case IsmLiveHostSettings.muteMyVideo:
+        _controller.muteUnmuteVideo();
+        break;
+      case IsmLiveHostSettings.muteMyAudio:
+        _controller.muteUnmuteAudio();
+        break;
+      case IsmLiveHostSettings.muteRemoteVideo:
+      case IsmLiveHostSettings.muteRemoteAudio:
+      case IsmLiveHostSettings.showNetWorkStats:
+      case IsmLiveHostSettings.hideChatMessages:
+      case IsmLiveHostSettings.hideControlButtons:
     }
   }
 
