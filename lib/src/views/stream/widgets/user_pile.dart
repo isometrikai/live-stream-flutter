@@ -6,17 +6,21 @@ class IsmLiveUsersAvatar extends StatelessWidget {
   const IsmLiveUsersAvatar({super.key});
 
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => Container(
         height: IsmLiveDimens.forty,
+        constraints: BoxConstraints(
+          maxWidth: Get.width * 0.35,
+        ),
         child: GetX<IsmLiveStreamController>(
           builder: (controller) {
             final viewerList = controller.streamViewersList.reversed.toList();
 
             return Stack(
+              alignment: Alignment.center,
               children: List.generate(
-                viewerList.length > 6 ? 6 : viewerList.length,
+                viewerList.length > 5 ? 5 : viewerList.length,
                 (index) => Positioned(
-                  left: index * 20,
+                  right: index * 20,
                   child: Container(
                     height: IsmLiveDimens.forty,
                     width: IsmLiveDimens.forty,
@@ -27,8 +31,10 @@ class IsmLiveUsersAvatar extends StatelessWidget {
                         color: IsmLiveColors.white,
                       ),
                     ),
-                    child: index >= 6
-                        ? const Icon(Icons.more_horiz)
+                    child: index == 4
+                        ? const Icon(
+                            Icons.more_horiz,
+                          )
                         : IsmLiveImage.network(
                             viewerList[index].imageUrl ?? '',
                             name: viewerList[index].userName,
@@ -36,7 +42,8 @@ class IsmLiveUsersAvatar extends StatelessWidget {
                           ),
                   ),
                 ),
-              ).toList().reversed.toList(),
+                growable: false,
+              ).toList(),
             );
           },
         ),
