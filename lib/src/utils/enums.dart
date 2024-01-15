@@ -248,3 +248,83 @@ enum IsmLiveCustomType {
       }[data] ??
       IsmLiveCustomType.custom1;
 }
+
+enum IsmLiveGiftType {
+  normal(IsmLiveStrings.normal),
+  threeD(IsmLiveStrings.threeD),
+  animated(IsmLiveStrings.animated);
+
+  const IsmLiveGiftType(this.label);
+  final String label;
+
+  List<IsmLiveGifts> get gifts {
+    switch (this) {
+      case IsmLiveGiftType.normal:
+        return IsmLiveGifts.normal;
+      case IsmLiveGiftType.threeD:
+        return IsmLiveGifts.threeD;
+      case IsmLiveGiftType.animated:
+        return IsmLiveGifts.animated;
+    }
+  }
+}
+
+enum IsmLiveGifts {
+  bell(IsmLiveGiftType.normal, IsmLiveAssetConstants.bell),
+  cherry(IsmLiveGiftType.normal, IsmLiveAssetConstants.cherry),
+  giftImage(IsmLiveGiftType.normal, IsmLiveAssetConstants.giftImage),
+  icecream(IsmLiveGiftType.normal, IsmLiveAssetConstants.icecream),
+  kiss(IsmLiveGiftType.normal, IsmLiveAssetConstants.kiss),
+  lolipop(IsmLiveGiftType.normal, IsmLiveAssetConstants.lolipop),
+  paw(IsmLiveGiftType.normal, IsmLiveAssetConstants.paw),
+  cake(IsmLiveGiftType.animated, IsmLiveAssetConstants.cake),
+  cheers(IsmLiveGiftType.animated, IsmLiveAssetConstants.cheers),
+  chest(IsmLiveGiftType.animated, IsmLiveAssetConstants.chest),
+  clapping(IsmLiveGiftType.animated, IsmLiveAssetConstants.clapping),
+  coin(IsmLiveGiftType.animated, IsmLiveAssetConstants.coin),
+  crown(IsmLiveGiftType.animated, IsmLiveAssetConstants.crown),
+  cryingLaughter(IsmLiveGiftType.animated, IsmLiveAssetConstants.cryingLaughter),
+  diamond(IsmLiveGiftType.animated, IsmLiveAssetConstants.diamond),
+  goodLife(IsmLiveGiftType.animated, IsmLiveAssetConstants.goodLife),
+  heartEyes(IsmLiveGiftType.animated, IsmLiveAssetConstants.heartEyes),
+  heart(IsmLiveGiftType.animated, IsmLiveAssetConstants.heart),
+  inLove(IsmLiveGiftType.animated, IsmLiveAssetConstants.inLove),
+  moneyFlying(IsmLiveGiftType.animated, IsmLiveAssetConstants.moneyFlying),
+  money(IsmLiveGiftType.animated, IsmLiveAssetConstants.money),
+  party(IsmLiveGiftType.animated, IsmLiveAssetConstants.party),
+  present(IsmLiveGiftType.animated, IsmLiveAssetConstants.present),
+  rocketLaunch(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketLaunch),
+  rocketSpin(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketSpin),
+  rollingLaughter(IsmLiveGiftType.animated, IsmLiveAssetConstants.rollingLaughter),
+  star(IsmLiveGiftType.animated, IsmLiveAssetConstants.star),
+  thumb(IsmLiveGiftType.animated, IsmLiveAssetConstants.thumb),
+  trophy(IsmLiveGiftType.animated, IsmLiveAssetConstants.trophy),
+  verified(IsmLiveGiftType.animated, IsmLiveAssetConstants.verified),
+  wow(IsmLiveGiftType.animated, IsmLiveAssetConstants.wow),
+  yeah(IsmLiveGiftType.animated, IsmLiveAssetConstants.yeah),
+  cake3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.cake3d),
+  cheers3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.cheers3d),
+  clapping3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.clapping3d),
+  crown3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.crown3d),
+  fire(IsmLiveGiftType.threeD, IsmLiveAssetConstants.fire),
+  fish(IsmLiveGiftType.threeD, IsmLiveAssetConstants.fish),
+  happyBirthday(IsmLiveGiftType.threeD, IsmLiveAssetConstants.happyBirthday),
+  heartEyes3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.heartEyes3d),
+  love(IsmLiveGiftType.threeD, IsmLiveAssetConstants.love),
+  money3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.money3d),
+  partyPopper(IsmLiveGiftType.threeD, IsmLiveAssetConstants.partyPopper),
+  rocket(IsmLiveGiftType.threeD, IsmLiveAssetConstants.rocket),
+  trophy3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.trophy3d);
+
+  factory IsmLiveGifts.fromName(String data) => IsmLiveGifts.values.firstWhere((e) => e.name == data, orElse: () => IsmLiveGifts.bell);
+
+  const IsmLiveGifts(this.type, this.path);
+  final String path;
+  final IsmLiveGiftType type;
+
+  static List<IsmLiveGifts> get normal => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.normal).toList();
+
+  static List<IsmLiveGifts> get threeD => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.threeD).toList();
+
+  static List<IsmLiveGifts> get animated => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.animated).toList();
+}

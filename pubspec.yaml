@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   flutter_webrtc: ^0.9.45
   get: ^4.6.6
+  gif: ^2.3.0
   http: ^1.1.0
   image_cropper: ^5.0.0
   image_picker: ^1.0.5
@@ -70,6 +71,9 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/gifts/
+    - assets/images/gifts/normal/
+    - assets/images/gifts/animated/
+    - assets/images/gifts/3d/
     - assets/icon/
     - assets/logo/
     - assets/placeholders/

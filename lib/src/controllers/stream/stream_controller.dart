@@ -122,8 +122,7 @@ class IsmLiveStreamController extends GetxController
 
   final RxList<ParticipantTrack> _participantTracks = <ParticipantTrack>[].obs;
   List<ParticipantTrack> get participantTracks => _participantTracks;
-  set participantTracks(List<ParticipantTrack> value) =>
-      _participantTracks.value = value;
+  set participantTracks(List<ParticipantTrack> value) => _participantTracks.value = value;
 
   CameraPosition position = CameraPosition.front;
 
@@ -309,9 +308,9 @@ class IsmLiveStreamController extends GetxController
   void giftsSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveGiftsSheet(
-        list: giftList,
-        onTap: (body) => sendGiftMessage(streamId: streamId ?? '', body: body),
+        onTap: (gift) => sendGiftMessage(streamId: streamId ?? '', gift: gift),
       ),
+      isScrollController: true,
     );
   }
 
@@ -338,8 +337,7 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  Future<void> animateToPage(int index) async =>
-      await pageController?.animateToPage(
+  Future<void> animateToPage(int index) async => await pageController?.animateToPage(
         index,
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,

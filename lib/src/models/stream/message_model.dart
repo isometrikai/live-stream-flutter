@@ -34,7 +34,7 @@ class IsmLiveMessageModel {
         messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
         messageId: map['messageId'] as String,
         deviceId: map['deviceId'] as String?,
-        customType: map['customType'] as String?,
+        customType: map['customType'] != null ? IsmLiveGifts.fromName(map['customType'].toString()) : null,
         body: map['body'] as String,
       );
 
@@ -52,7 +52,7 @@ class IsmLiveMessageModel {
   final IsmLiveMessageType messageType;
   final String messageId;
   final String? deviceId;
-  final String? customType;
+  final IsmLiveGifts? customType;
   final String body;
 
   IsmLiveMessageModel copyWith({
@@ -68,7 +68,7 @@ class IsmLiveMessageModel {
     IsmLiveMessageType? messageType,
     String? messageId,
     String? deviceId,
-    String? customType,
+    IsmLiveGifts? customType,
     String? body,
   }) =>
       IsmLiveMessageModel(
@@ -101,7 +101,7 @@ class IsmLiveMessageModel {
         'messageType': messageType.value,
         'messageId': messageId,
         'deviceId': deviceId,
-        'customType': customType,
+        'customType': customType?.name,
         'body': body,
       };
 
