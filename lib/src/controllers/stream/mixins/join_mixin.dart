@@ -163,6 +163,8 @@ mixin StreamJoinMixin {
       isMeetingOn = true;
 
       if (!joinByScrolling) {
+        IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
+        IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
         unawaited(IsmLiveRouteManagement.goToStreamView(
           isHost: isHost,
           room: room,

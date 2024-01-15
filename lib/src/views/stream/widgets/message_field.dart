@@ -71,7 +71,7 @@ class IsmLiveHeartButton extends StatelessWidget {
         dimension: size,
         icon: const UnconstrainedBox(
           child: IsmLiveImage.svg(
-            IsmLiveAssetConstants.heart,
+            IsmLiveAssetConstants.heartSvg,
             color: IsmLiveColors.white,
           ),
         ),

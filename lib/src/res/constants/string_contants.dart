@@ -23,6 +23,10 @@ class IsmLiveStrings {
   static const String hd = 'HD';
   static const String recorded = 'Recorded';
 
+  static const String normal = 'Normal';
+  static const String threeD = '3D';
+  static const String animated = 'Animated';
+
   static const String youreLive = 'You\'re Live';
 
   static const String preparingYourStream = 'Preparing your stream';

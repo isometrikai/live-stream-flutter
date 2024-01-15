@@ -10,8 +10,7 @@ mixin StreamMessageMixin {
     IsmLiveAssetConstants.paw,
   ];
 
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
@@ -26,7 +25,7 @@ mixin StreamMessageMixin {
         break;
       case IsmLiveMessageType.gift:
         IsmLiveLog.success('Gift Recieved');
-        // TODO: Handle Gift animation
+        IsmLiveLog.success(message);
         break;
       case IsmLiveMessageType.remove:
         IsmLiveLog.success('Message Removed');
@@ -80,17 +79,18 @@ mixin StreamMessageMixin {
 
   Future<void> sendGiftMessage({
     required String streamId,
-    required String body,
+    required IsmLiveGifts gift,
   }) async {
     final isSent = await _controller.sendMessage(
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
         streamId: streamId,
-        body: body,
-        searchableTags: [body],
+        body: gift.name,
+        searchableTags: [gift.name],
         metaData: const IsmLiveMetaData(),
         deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
         messageType: IsmLiveMessageType.gift,
+        customType: gift,
       ),
     );
 

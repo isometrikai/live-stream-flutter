@@ -5,6 +5,7 @@ export 'controls.dart';
 export 'custom_buttom_sheet.dart';
 export 'custom_icon_button.dart';
 export 'empty_screen.dart';
+export 'gif.dart';
 export 'image.dart';
 export 'input_field.dart';
 export 'loader.dart';
