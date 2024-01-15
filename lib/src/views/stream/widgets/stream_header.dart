@@ -18,6 +18,7 @@ class StreamHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -32,11 +33,9 @@ class StreamHeader extends StatelessWidget {
             ],
           ),
           IsmLiveDimens.boxWidth16,
-          Expanded(
-            child: IsmLiveTapHandler(
-              onTap: onTabViewers,
-              child: const IsmLiveUsersAvatar(),
-            ),
+          IsmLiveTapHandler(
+            onTap: onTabViewers,
+            child: const IsmLiveUsersAvatar(),
           ),
           IconButton(
             icon: const Icon(
