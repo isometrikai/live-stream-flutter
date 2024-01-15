@@ -300,4 +300,21 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<bool> deleteMessage({
+    required String streamId,
+    required String messageId,
+  }) async {
+    try {
+      var res = await _repository.deleteMessage(
+        streamId: streamId,
+        messageId: messageId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }
