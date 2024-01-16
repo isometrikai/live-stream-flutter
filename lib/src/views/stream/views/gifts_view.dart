@@ -4,8 +4,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-class IsmLiveAnimationView extends StatefulWidget {
-  const IsmLiveAnimationView({
+class IsmLiveGiftView extends StatefulWidget {
+  const IsmLiveGiftView({
     super.key,
     required this.child,
     this.duration,
@@ -17,10 +17,10 @@ class IsmLiveAnimationView extends StatefulWidget {
   final VoidCallback? onComplete;
 
   @override
-  State<IsmLiveAnimationView> createState() => _IsmLiveAnimationViewState();
+  State<IsmLiveGiftView> createState() => _IsmLiveGiftViewState();
 }
 
-class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with SingleTickerProviderStateMixin {
+class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
@@ -32,7 +32,7 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
 
   Timer? timer;
 
-  int get duration => widget.duration ?? streamProperties?.animationTime ?? IsmLiveConstants.animationTime;
+  int get duration => widget.duration ?? streamProperties?.giftTime ?? IsmLiveConstants.giftTime;
 
   late DateTime startTime;
 
@@ -42,7 +42,7 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
     IsmLiveUtility.updateLater(setup, false);
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: duration),
+      duration: const Duration(milliseconds: 500),
     );
     animation = Tween<double>(
       begin: 0,
@@ -51,7 +51,9 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
       parent: controller,
       curve: Curves.ease,
     ));
-    IsmLiveUtility.updateLater(start, false);
+    if (mounted) {
+      IsmLiveUtility.updateLater(start, false);
+    }
   }
 
   void setup() {
@@ -60,14 +62,13 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
   }
 
   void start() async {
-    timer = Timer.periodic(const Duration(milliseconds: 300), (t) {
-      final diff = DateTime.now().difference(startTime);
-      if (diff >= Duration(seconds: duration)) {
-        isCompleted = true;
-        t.cancel();
-      }
-    });
     unawaited(controller.forward());
+    Future.delayed(Duration(seconds: duration), () {
+      controller.reverse().then((value) {
+        isCompleted = true;
+        widget.onComplete?.call();
+      });
+    });
   }
 
   @override
@@ -78,16 +79,21 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) => AnimatedPositioned(
-          duration: const Duration(seconds: 1),
-          bottom: animation.value.verticalPosition,
-          right: animation.value.horizontalPosition,
-          child: Obx(
-            () => Offstage(
-              offstage: isCompleted,
-              child: widget.child,
+  Widget build(BuildContext context) => Obx(
+        () => Offstage(
+          offstage: isCompleted,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              height: Get.height * 0.5,
+              width: Get.width * 0.5,
+              child: AnimatedBuilder(
+                animation: controller,
+                builder: (context, child) => ScaleTransition(
+                  scale: animation,
+                  child: widget.child,
+                ),
+              ),
             ),
           ),
         ),
