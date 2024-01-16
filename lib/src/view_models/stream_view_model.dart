@@ -45,9 +45,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
-      return list
-          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -79,8 +77,7 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> createStream(
-      IsmLiveCreateStreamModel streamModel) async {
+  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
     try {
       var res = await _repository.createStream(streamModel);
       if (res.hasError) {
@@ -150,10 +147,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['members'] as List? ?? [];
 
-      return list
-          .map((e) =>
-              IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -179,9 +173,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['viewers'] as List? ?? [];
 
-      return list
-          .map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -255,6 +247,7 @@ class IsmLiveStreamViewModel {
 
       return list
           .map((e) => IsmLiveMessageModel.fromMap(e as Map<String, dynamic>))
+          .where((e) => e.messageType == IsmLiveMessageType.normal)
           .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);

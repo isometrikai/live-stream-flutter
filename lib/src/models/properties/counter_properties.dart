@@ -4,10 +4,12 @@ class IsmLiveCounterProperties {
     this.showYoureLiveText = true,
     this.counterTime,
     this.animationTime,
+    this.giftTime,
   });
 
   final bool showYoureLiveSheet;
   final bool showYoureLiveText;
   final int? counterTime;
   final int? animationTime;
+  final int? giftTime;
 }

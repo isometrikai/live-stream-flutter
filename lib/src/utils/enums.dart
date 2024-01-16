@@ -17,8 +17,7 @@ enum IsmLiveConnectionState {
   unsubscribed;
 
   @override
-  String toString() =>
-      '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
+  String toString() => '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
 }
 
 enum SimulateScenarioResult {
@@ -133,20 +132,15 @@ enum IsmLiveActions {
 
   factory IsmLiveActions.fromString(String action) =>
       <String, IsmLiveActions>{
-        IsmLiveActions.copublishRequestAccepted.value:
-            IsmLiveActions.copublishRequestAccepted,
-        IsmLiveActions.copublishRequestAdded.value:
-            IsmLiveActions.copublishRequestAdded,
-        IsmLiveActions.copublishRequestDenied.value:
-            IsmLiveActions.copublishRequestDenied,
-        IsmLiveActions.copublishRequestRemoved.value:
-            IsmLiveActions.copublishRequestRemoved,
+        IsmLiveActions.copublishRequestAccepted.value: IsmLiveActions.copublishRequestAccepted,
+        IsmLiveActions.copublishRequestAdded.value: IsmLiveActions.copublishRequestAdded,
+        IsmLiveActions.copublishRequestDenied.value: IsmLiveActions.copublishRequestDenied,
+        IsmLiveActions.copublishRequestRemoved.value: IsmLiveActions.copublishRequestRemoved,
         IsmLiveActions.memberAdded.value: IsmLiveActions.memberAdded,
         IsmLiveActions.memberLeft.value: IsmLiveActions.memberLeft,
         IsmLiveActions.memberRemoved.value: IsmLiveActions.memberRemoved,
         IsmLiveActions.messageRemoved.value: IsmLiveActions.messageRemoved,
-        IsmLiveActions.messageReplyRemoved.value:
-            IsmLiveActions.messageReplyRemoved,
+        IsmLiveActions.messageReplyRemoved.value: IsmLiveActions.messageReplyRemoved,
         IsmLiveActions.messageReplySent.value: IsmLiveActions.messageReplySent,
         IsmLiveActions.messageSent.value: IsmLiveActions.messageSent,
         IsmLiveActions.moderatorAdded.value: IsmLiveActions.moderatorAdded,
@@ -158,8 +152,7 @@ enum IsmLiveActions {
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
-        IsmLiveActions.streamStartPresence.value:
-            IsmLiveActions.streamStartPresence,
+        IsmLiveActions.streamStartPresence.value: IsmLiveActions.streamStartPresence,
         IsmLiveActions.viewerJoined.value: IsmLiveActions.viewerJoined,
         IsmLiveActions.viewerLeft.value: IsmLiveActions.viewerLeft,
         IsmLiveActions.viewerRemoved.value: IsmLiveActions.viewerRemoved,
@@ -204,18 +197,17 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyVideo('Mute my video', 'UnMute my video'),
-  muteMyAudio('Mute my audio', 'UnMute my audio'),
-  muteRemoteVideo('Mute remote video', 'UnMute remote video'),
-  muteRemoteAudio('Mute remote audio', 'UnMute remote audio'),
+  muteMyVideo('Mute my video', 'Unmute my video'),
+  muteMyAudio('Mute my audio', 'Unmute my audio'),
+  muteRemoteVideo('Mute remote video', 'Unmute remote video'),
+  muteRemoteAudio('Mute remote audio', 'Unmute remote audio'),
   showNetWorkStats('Show netWork stats', 'Hide netWork stats'),
   hideChatMessages('Hide chat messages', 'Show chat messages'),
   hideControlButtons('Hide control buttons', 'Show control buttons');
 
+  const IsmLiveHostSettings(this.muteValues, this.unmuteValues);
   final String muteValues;
   final String unmuteValues;
-
-  const IsmLiveHostSettings(this.muteValues, this.unmuteValues);
 }
 
 enum IsmLiveMessageType {

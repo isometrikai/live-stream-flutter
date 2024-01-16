@@ -1,15 +1,6 @@
 part of '../stream_controller.dart';
 
 mixin StreamMessageMixin {
-  List<String> giftList = [
-    IsmLiveAssetConstants.bell,
-    IsmLiveAssetConstants.cherry,
-    IsmLiveAssetConstants.icecream,
-    IsmLiveAssetConstants.kiss,
-    IsmLiveAssetConstants.lolipop,
-    IsmLiveAssetConstants.paw,
-  ];
-
   IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   Future<void> handleMessage(
@@ -24,8 +15,7 @@ mixin StreamMessageMixin {
         _controller.addHeart(message);
         break;
       case IsmLiveMessageType.gift:
-        IsmLiveLog.success('Gift Recieved');
-        IsmLiveLog.success(message);
+        _controller.addGift(message);
         break;
       case IsmLiveMessageType.remove:
         IsmLiveLog.success('Message Removed');
@@ -94,8 +84,6 @@ mixin StreamMessageMixin {
       ),
     );
 
-    if (isSent) {
-      _controller.messageFieldController.clear();
-    }
+    if (isSent) {}
   }
 }

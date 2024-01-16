@@ -51,7 +51,9 @@ class _IsmLiveGifState extends State<IsmLiveGif> with SingleTickerProviderStateM
                 package: IsmLiveConstants.packageName,
               )) as ImageProvider,
         onFetchCompleted: () {
-          controller.repeat();
+          if (mounted) {
+            controller.repeat();
+          }
         },
       );
 }

@@ -22,4 +22,5 @@ class IsmLiveConstants {
 
   static const int counterTime = 3;
   static const int animationTime = 7;
+  static const int giftTime = 3;
 }
