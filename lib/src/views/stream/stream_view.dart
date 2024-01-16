@@ -168,11 +168,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      IsmLiveChat(
+                                      IsmLiveChatView(
                                         isHost: isHost,
-                                        onTapRemove: (messageId) => controller.deleteMessage(streamId: streamId, messageId: messageId),
-                                        messagesList: controller.streamMessagesList,
-                                        messageListController: controller.messagesListController,
+                                        streamId: streamId,
                                       ),
                                       const Spacer(),
                                       IsmLiveControlsWidget(

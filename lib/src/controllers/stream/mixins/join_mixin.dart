@@ -5,7 +5,7 @@ mixin StreamJoinMixin {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find();
 
-  bool isMeetingOn = false;
+  // bool isMeetingOn = false;
 
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
 
@@ -94,9 +94,9 @@ mixin StreamJoinMixin {
     required bool isNewStream,
     bool joinByScrolling = false,
   }) async {
-    if (isMeetingOn) {
-      return;
-    }
+    // if (isMeetingOn) {
+    //   return;
+    // }
     _controller.streamId = streamId;
     _controller.isHost = isHost;
     unawaited(_controller._mqttController?.subscribeStream(streamId));
@@ -128,7 +128,7 @@ mixin StreamJoinMixin {
         await room.connect(IsmLiveApis.wsUrl, token);
       } catch (e, st) {
         IsmLiveLog.error(e, st);
-        isMeetingOn = false;
+        // isMeetingOn = false;
         IsmLiveUtility.closeLoader();
         return;
       }
@@ -160,7 +160,7 @@ mixin StreamJoinMixin {
       _controller.update([IsmLiveStreamView.updateId]);
 
       startStreamTimer();
-      isMeetingOn = true;
+      // isMeetingOn = true;
 
       if (!joinByScrolling) {
         IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
@@ -177,7 +177,7 @@ mixin StreamJoinMixin {
     } catch (e, st) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       _controller.isHost = null;
-      isMeetingOn = false;
+      // isMeetingOn = false;
       IsmLiveLog.error(e, st);
     }
   }

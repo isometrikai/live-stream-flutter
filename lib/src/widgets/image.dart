@@ -249,7 +249,7 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: !showError || isProfileImage
             ? Text(
-                name[0],
+                name.isNotEmpty ? name[0] : 'U',
                 style: !isProfileImage
                     ? context.textTheme.displayMedium?.copyWith(
                         color: IsmLiveColors.primary,
