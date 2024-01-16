@@ -11,7 +11,8 @@ class IsmLiveStreamView extends StatelessWidget {
         imageUrl = Get.arguments['imageUrl'],
         streamId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
-        isHost = Get.arguments['isHost'];
+        isHost = Get.arguments['isHost'],
+        isNewStream = Get.arguments['isNewStream'];
 
   final RoomListener listener;
   final Room room;
@@ -19,6 +20,7 @@ class IsmLiveStreamView extends StatelessWidget {
   final String streamId;
   final bool audioCallOnly;
   final bool isHost;
+  final bool isNewStream;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
@@ -35,6 +37,7 @@ class IsmLiveStreamView extends StatelessWidget {
         streamId: streamId,
         audioCallOnly: audioCallOnly,
         isHost: isHost,
+        isNewStream: isNewStream,
       );
     }
     return GetX<IsmLiveStreamController>(
@@ -60,6 +63,7 @@ class IsmLiveStreamView extends StatelessWidget {
             streamId: stream.streamId ?? '',
             audioCallOnly: audioCallOnly,
             isHost: false,
+            isNewStream: false,
           );
         },
       ),
@@ -74,12 +78,14 @@ class _IsmLiveStreamView extends StatelessWidget {
     required this.streamId,
     required this.audioCallOnly,
     required this.isHost,
+    required this.isNewStream,
   });
 
   final String? imageUrl;
   final String streamId;
   final bool audioCallOnly;
   final bool isHost;
+  final bool isNewStream;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -194,7 +200,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
-                  const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
+                  if (isNewStream) const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
                 ],
               ],
             ),

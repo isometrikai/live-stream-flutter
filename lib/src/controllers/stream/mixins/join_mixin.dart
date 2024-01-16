@@ -97,6 +97,7 @@ mixin StreamJoinMixin {
     // if (isMeetingOn) {
     //   return;
     // }
+    _controller.isModerationWarningVisible = true;
     _controller.streamId = streamId;
     _controller.isHost = isHost;
     unawaited(_controller._mqttController?.subscribeStream(streamId));
@@ -167,6 +168,7 @@ mixin StreamJoinMixin {
         IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
         unawaited(IsmLiveRouteManagement.goToStreamView(
           isHost: isHost,
+          isNewStream: isNewStream,
           room: room,
           imageUrl: imageUrl,
           listener: listener,

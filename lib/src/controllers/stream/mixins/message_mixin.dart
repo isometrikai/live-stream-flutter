@@ -101,4 +101,24 @@ mixin StreamMessageMixin {
 
     if (isSent) {}
   }
+
+  Future<void> messageRemoved(String messageId) async {
+    var message = _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
+          (e) => e?.messageId == messageId,
+          orElse: () => null,
+        );
+    IsmLiveLog(message);
+    if (message == null) {
+      return;
+    }
+    message = message.copyWith(isDeleted: true);
+    final index = _controller.streamMessagesList.indexOf(message);
+    IsmLiveLog.info(message);
+    IsmLiveLog.info(index);
+    if (index == -1) {
+      return;
+    }
+    _controller.streamMessagesList[index] = message;
+    _controller._streamMessagesList.refresh();
+  }
 }

@@ -41,7 +41,7 @@ class IsmLiveChatView extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IsmLiveImage.network(
                       message.imageUrl,
@@ -72,7 +72,7 @@ class IsmLiveChatView extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(IsmLiveDimens.four),
                                   ),
                                   child: Padding(
-                                    padding: IsmLiveDimens.edgeInsets8_4,
+                                    padding: IsmLiveDimens.edgeInsets6_2,
                                     child: Text(
                                       'Host',
                                       style: context.textTheme.labelSmall?.copyWith(
@@ -85,13 +85,23 @@ class IsmLiveChatView extends StatelessWidget {
                               ],
                             ],
                           ),
-                          Text(
-                            message.body,
-                            style: context.textTheme.labelMedium!.copyWith(
-                              color: IsmLiveColors.white,
+                          IsmLiveDimens.boxHeight2,
+                          if (message.isDeleted)
+                            Text(
+                              '[Message Deleted]',
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: context.liveTheme.unselectedTextColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          else
+                            Text(
+                              message.body,
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: IsmLiveColors.white,
+                              ),
+                              softWrap: true,
                             ),
-                            softWrap: true,
-                          ),
                         ],
                       ),
                     ),
