@@ -1,3 +1,4 @@
+export 'bottom_sheet/bottom_sheet.dart';
 export 'chat.dart';
 export 'controls.dart';
 export 'create_stream_fab.dart';

@@ -160,10 +160,11 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
+    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
     if (isMqtt) {
-      _controller.streamMessagesList.addAll(messages);
+      _controller.streamMessagesList.addAll(chats);
     } else {
-      _controller.streamMessagesList.insertAll(0, messages);
+      _controller.streamMessagesList.insertAll(0, chats);
     }
     _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
@@ -298,7 +299,7 @@ mixin StreamOngoingMixin {
       await _controller.animateToPage(_controller.previousStreamIndex);
       return;
     }
-    _controller.isMeetingOn = false;
+    // _controller.isMeetingOn = false;
     unawaited(room.disconnect());
     await _controller.joinStream(
       _controller.streams[index],
@@ -348,7 +349,7 @@ mixin StreamOngoingMixin {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
       _controller.isHost = null;
-      _controller.isMeetingOn = false;
+      // _controller.isMeetingOn = false;
       _controller.streamId = null;
       await _controller.room?.disconnect();
       if (goBack) {

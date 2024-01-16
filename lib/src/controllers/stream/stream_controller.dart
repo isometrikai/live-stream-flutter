@@ -85,9 +85,9 @@ class IsmLiveStreamController extends GetxController
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
   set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
 
-  final RxList<IsmLiveMessageModel> _streamMessagesList = <IsmLiveMessageModel>[].obs;
-  List<IsmLiveMessageModel> get streamMessagesList => _streamMessagesList;
-  set streamMessagesList(List<IsmLiveMessageModel> value) => _streamMessagesList.value = value;
+  final RxList<IsmLiveChatModel> _streamMessagesList = <IsmLiveChatModel>[].obs;
+  List<IsmLiveChatModel> get streamMessagesList => _streamMessagesList;
+  set streamMessagesList(List<IsmLiveChatModel> value) => _streamMessagesList.value = value;
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 

@@ -2,74 +2,113 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveChat extends StatelessWidget {
-  const IsmLiveChat({
+class IsmLiveChatView extends StatelessWidget {
+  const IsmLiveChatView({
     super.key,
-    required this.messagesList,
-    this.messageListController,
     required this.isHost,
-    required this.onTapRemove,
+    required this.streamId,
   });
-  final List<IsmLiveMessageModel> messagesList;
-  final ScrollController? messageListController;
+
   final bool isHost;
-  final void Function(String messageId) onTapRemove;
+  final String streamId;
 
   @override
-  Widget build(BuildContext context) => Obx(
-        () => Container(
+  Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
+        builder: (controller) => Container(
           constraints: BoxConstraints(
             maxHeight: Get.height * 0.4,
             maxWidth: Get.width * 0.75,
           ),
-          child: ListView.builder(
-            controller: messageListController,
+          child: ListView.separated(
+            controller: controller.messagesListController,
             padding: IsmLiveDimens.edgeInsets0_8,
             shrinkWrap: true,
-            itemBuilder: (_, index) => UnconstrainedBox(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: IsmLiveDimens.edgeInsets8_4,
-                    margin: IsmLiveDimens.edgeInsets0_4,
-                    constraints: BoxConstraints(
-                      maxWidth: Get.width * 0.6,
+            itemCount: controller.streamMessagesList.length,
+            separatorBuilder: (_, __) => IsmLiveDimens.boxHeight10,
+            itemBuilder: (_, index) {
+              final message = controller.streamMessagesList[index];
+              return IsmLiveTapHandler(
+                onTap: () => IsmLiveUtility.openBottomSheet(
+                  IsmLiveMessageBottomSheet(
+                    isHost: isHost,
+                    onDelete: () => controller.deleteMessage(
+                      streamId: streamId,
+                      messageId: message.messageId,
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
-                      color: IsmLiveColors.black.withOpacity(0.2),
+                    // TODO: Reply - Implement onReply
+                    onReply: null,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IsmLiveImage.network(
+                      message.imageUrl,
+                      name: message.userName,
+                      dimensions: IsmLiveDimens.thirtyTwo,
+                      isProfileImage: true,
                     ),
-                    child: RichText(
-                      text: TextSpan(
+                    IsmLiveDimens.boxWidth8,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          TextSpan(
-                            text: '${messagesList[index].senderName}: ',
-                            style: context.textTheme.labelMedium!.copyWith(
+                          Row(
+                            children: [
+                              Text(
+                                '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                style: context.textTheme.labelSmall!.copyWith(
+                                  color: IsmLiveColors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              if (message.sentByHost) ...[
+                                IsmLiveDimens.boxWidth8,
+                                DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+                                  ),
+                                  child: Padding(
+                                    padding: IsmLiveDimens.edgeInsets6_2,
+                                    child: Text(
+                                      'Host',
+                                      style: context.textTheme.labelSmall?.copyWith(
+                                        color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          IsmLiveDimens.boxHeight2,
+                          if (message.isDeleted)
+                            Text(
+                              '[Message Deleted]',
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: context.liveTheme.unselectedTextColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          else
+                            Text(
+                              message.body,
+                              style: context.textTheme.labelMedium?.copyWith(
                                 color: IsmLiveColors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(
-                            text: messagesList[index].body,
-                          ),
+                              ),
+                              softWrap: true,
+                            ),
                         ],
                       ),
                     ),
-                  ),
-                  if (isHost)
-                    IconButton(
-                      onPressed: () {
-                        onTapRemove(
-                          messagesList[index].messageId,
-                        );
-                      },
-                      icon: const Icon(Icons.remove_circle_outline),
-                    )
-                ],
-              ),
-            ),
-            itemCount: messagesList.length,
+                  ],
+                ),
+              );
+            },
           ),
         ),
       );

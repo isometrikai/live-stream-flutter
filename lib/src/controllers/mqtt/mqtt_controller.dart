@@ -222,7 +222,17 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.memberAdded:
           case IsmLiveActions.memberLeft:
           case IsmLiveActions.memberRemoved:
+            break;
           case IsmLiveActions.messageRemoved:
+            if (_streamController.streamId == streamId) {
+              final messageId = payload['messageId'] as String?;
+              if (messageId == null) {
+                break;
+              }
+              await _streamController.messageRemoved(messageId);
+              _updateStream();
+            }
+            break;
           case IsmLiveActions.messageReplyRemoved:
           case IsmLiveActions.messageReplySent:
             break;

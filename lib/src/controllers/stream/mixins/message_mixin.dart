@@ -3,6 +3,19 @@ part of '../stream_controller.dart';
 mixin StreamMessageMixin {
   IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
+  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) => IsmLiveChatModel(
+        streamId: message.streamId,
+        messageId: message.messageId,
+        userId: message.senderId,
+        userIdentifier: message.senderIdentifier,
+        userName: message.senderName,
+        imageUrl: message.senderProfileImageUrl ?? '',
+        body: message.body,
+        timeStamp: DateTime.fromMillisecondsSinceEpoch(message.sentAt),
+        sentByMe: message.senderId == _controller.user?.userId,
+        sentByHost: message.senderId == _controller.hostDetails?.userId,
+      );
+
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
     bool isMqtt = true,
@@ -33,6 +46,8 @@ mixin StreamMessageMixin {
     if (body.trim().isEmpty) {
       return;
     }
+    _controller.messageFieldController.clear();
+
     final isSent = await _controller.sendMessage(
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
@@ -45,8 +60,8 @@ mixin StreamMessageMixin {
       ),
     );
 
-    if (isSent) {
-      _controller.messageFieldController.clear();
+    if (!isSent) {
+      _controller.messageFieldController.text = body;
     }
   }
 
@@ -85,5 +100,25 @@ mixin StreamMessageMixin {
     );
 
     if (isSent) {}
+  }
+
+  Future<void> messageRemoved(String messageId) async {
+    var message = _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
+          (e) => e?.messageId == messageId,
+          orElse: () => null,
+        );
+    IsmLiveLog(message);
+    if (message == null) {
+      return;
+    }
+    message = message.copyWith(isDeleted: true);
+    final index = _controller.streamMessagesList.indexOf(message);
+    IsmLiveLog.info(message);
+    IsmLiveLog.info(index);
+    if (index == -1) {
+      return;
+    }
+    _controller.streamMessagesList[index] = message;
+    _controller._streamMessagesList.refresh();
   }
 }

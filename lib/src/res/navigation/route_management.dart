@@ -29,6 +29,7 @@ abstract class IsmLiveRouteManagement {
   static Future<void> goToStreamView({
     required RoomListener listener,
     required bool isHost,
+    required bool isNewStream,
     required Room room,
     required String streamId,
     String? imageUrl,
@@ -41,8 +42,9 @@ abstract class IsmLiveRouteManagement {
       'streamId': streamId,
       'audioCallOnly': audioCallOnly,
       'isHost': isHost,
+      'isNewStream': isNewStream,
     };
-    if (isHost) {
+    if (isHost && isNewStream) {
       await Get.offNamed(
         IsmLiveRoutes.streamView,
         arguments: arguments,
@@ -62,6 +64,9 @@ abstract class IsmLiveRouteManagement {
   }
 
   static void goToEndStreamView() {
+    if (Get.currentRoute == IsmLiveRoutes.endStream) {
+      return;
+    }
     Get.offAndToNamed<void>(
       IsmLiveRoutes.endStream,
     );
