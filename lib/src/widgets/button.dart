@@ -37,7 +37,7 @@ class IsmLiveButton extends StatelessWidget {
   final bool small;
 
   static MaterialStateProperty<TextStyle?> _textStyle(BuildContext context, bool small) => MaterialStateProperty.all(
-        (small ? context.textTheme.bodySmall : context.textTheme.bodyMedium)?.copyWith(
+        (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       );

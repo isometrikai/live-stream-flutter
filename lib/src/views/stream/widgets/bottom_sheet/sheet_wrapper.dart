@@ -18,12 +18,12 @@ class IsmLiveScrollSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: IsmLiveDimens.edgeInsets16.copyWith(top: IsmLiveDimens.eight),
+        padding: IsmLiveDimens.edgeInsetsT8,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              contentPadding: IsmLiveDimens.edgeInsets0,
+              contentPadding: IsmLiveDimens.edgeInsets16_0,
               leading: Text(
                 title,
                 style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
@@ -40,6 +40,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
+                padding: IsmLiveDimens.edgeInsets0_8,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
                 separatorBuilder: separatorBuilder ?? (_, __) => IsmLiveDimens.box0,

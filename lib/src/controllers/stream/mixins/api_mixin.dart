@@ -1,8 +1,7 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -67,9 +66,7 @@ mixin StreamAPIMixin {
         streamImage: image!,
         hdBroadcast: _controller.isHdBroadcast,
         enableRecording: _controller.isRecordingBroadcast,
-        streamDescription: _controller.descriptionController.isEmpty
-            ? 'N/A'
-            : _controller.descriptionController.text,
+        streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
       ),
     );
   }
@@ -98,8 +95,7 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList =
-        await _controller._viewModel.getStreamMembers(
+    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -199,17 +195,20 @@ mixin StreamAPIMixin {
       );
 
   Future<void> fetchUsers({
-    required int limit,
-    required int skip,
+    bool forceFetch = false,
+    int limit = 10,
+    int skip = 0,
     String? searchTag,
   }) async {
-    var list = await _controller._viewModel.fetchUsers(
-      limit: limit,
-      skip: skip,
-      searchTag: searchTag,
-    );
-
-    _controller.usersList = list ?? [];
+    if (forceFetch || _controller.usersList.isEmpty) {
+      var list = await _controller._viewModel.fetchUsers(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      _controller.usersList = list ?? [];
+    }
+    _controller.update([IsmLiveModeratorSheet.updateId]);
   }
 
   Future<bool> deleteMessage({
@@ -223,13 +222,11 @@ mixin StreamAPIMixin {
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ??
-          IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
     );
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
