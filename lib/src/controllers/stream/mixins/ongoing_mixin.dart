@@ -255,6 +255,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.share:
       case IsmLiveStreamOption.members:
       case IsmLiveStreamOption.favourite:
+        break;
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;

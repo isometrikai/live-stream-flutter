@@ -34,7 +34,7 @@ class IsmGoLiveView extends StatelessWidget {
               padding: IsmLiveDimens.edgeInsets16,
               child: IsmLiveButton(
                 label: 'Go Live',
-                onTap: !controller.isGoLiveEnabled ? null : controller.startStream,
+                onTap: controller.startStream,
               ),
             ),
           ),
