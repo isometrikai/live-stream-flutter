@@ -45,7 +45,9 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
-      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -77,7 +79,8 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
+  Future<IsmLiveRTCModel?> createStream(
+      IsmLiveCreateStreamModel streamModel) async {
     try {
       var res = await _repository.createStream(streamModel);
       if (res.hasError) {
@@ -147,7 +150,10 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['members'] as List? ?? [];
 
-      return list.map((e) => IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) =>
+              IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -173,7 +179,9 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['viewers'] as List? ?? [];
 
-      return list.map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>)).toList();
+      return list
+          .map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -308,6 +316,39 @@ class IsmLiveStreamViewModel {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return false;
+    }
+  }
+
+  Future<List<UserDetails>?> fetchUsers({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.fetchUsers(
+        isLoading: true,
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
+
+      if (res?.hasError ?? true) {
+        return null;
+      }
+
+      var data = jsonDecode(res!.data);
+
+      List listOfUsers = data['users'];
+      var userDetailsList = <UserDetails>[];
+
+      for (var i in listOfUsers) {
+        userDetailsList.add(UserDetails.fromMap(i));
+      }
+
+      return userDetailsList;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
     }
   }
 }

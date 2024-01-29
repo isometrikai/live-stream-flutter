@@ -9,13 +9,11 @@ class IsmLiveModeratorSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) => IsmLiveScrollSheet(
           title: 'Moderators',
-          itemCount: 0,
+          itemCount: controller.usersList.length,
           itemBuilder: (context, index) => Container(
             padding: IsmLiveDimens.edgeInsets0_4,
-            child: Text(
-              controller.controlSetting(
-                IsmLiveHostSettings.values[index],
-              ),
+            child: ListTile(
+              title: Text(controller.usersList[index].userName),
             ),
           ),
           separatorBuilder: (context, index) => const Divider(
