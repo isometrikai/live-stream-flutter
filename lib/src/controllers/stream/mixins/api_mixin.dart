@@ -204,8 +204,6 @@ mixin StreamAPIMixin {
     int skip = 0,
     String? searchTag,
   }) async {
-    IsmLiveLog.error(
-        '-----------------------------------> ${_controller.usersList.length}');
     if (forceFetch || _controller.usersList.isEmpty) {
       var list = await _controller._viewModel.fetchUsers(
         limit: limit,
