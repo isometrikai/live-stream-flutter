@@ -23,9 +23,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
             trailing: SizedBox(
               width: IsmLiveDimens.oneHundredTwenty,
               height: IsmLiveDimens.forty,
-              child: IsmLiveButton(
+              child: const IsmLiveButton(
                 label: 'Add Coins',
-                onTap: () {},
+                // onTap: () {},
               ),
             ),
             subtitle: Row(
@@ -45,45 +45,67 @@ class IsmLiveGiftsSheet extends StatelessWidget {
             ),
           ),
           IsmLiveDimens.boxHeight10,
-          SizedBox(
-            height: Get.height * 0.6,
-            child: SingleChildScrollView(
-              padding: IsmLiveDimens.edgeInsets16,
-              child: Column(
-                children: [
-                  ...IsmLiveGiftType.values.map(
-                    (e) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          e.label,
-                          style: context.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        IsmLiveDimens.boxHeight10,
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: IsmLiveDimens.eight,
-                            mainAxisSpacing: IsmLiveDimens.eight,
-                            crossAxisCount: 3,
-                          ),
-                          itemBuilder: (_, index) {
-                            final gift = e.gifts[index];
-                            return _GiftItem(
-                              key: ValueKey(gift),
-                              gift: gift,
-                              onTap: () => onTap(gift),
-                            );
-                          },
-                          itemCount: e.gifts.length,
-                        ),
-                      ],
+          GetX<IsmLiveStreamController>(
+            builder: (controller) => TabBar(
+              dividerHeight: 0,
+              indicatorColor: Colors.transparent,
+              labelPadding: IsmLiveDimens.edgeInsets8_0,
+              overlayColor: MaterialStateProperty.all(Colors.transparent),
+              controller: controller.giftsTabController,
+              onTap: (index) {
+                controller.giftType = IsmLiveGiftType.values[index];
+              },
+              tabs: IsmLiveGiftType.values.map(
+                (type) {
+                  var isSelected = type == controller.giftType;
+                  return DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: isSelected ? context.liveTheme.primaryColor : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
                     ),
-                  ),
-                ],
+                    child: Padding(
+                      padding: IsmLiveDimens.edgeInsets16_10,
+                      child: Text(
+                        type.label,
+                        style: context.textTheme.titleSmall?.copyWith(
+                          color: isSelected ? context.liveTheme.selectedTextColor : context.liveTheme.unselectedTextColor,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
+          ),
+          SizedBox(
+            height: Get.height * 0.4,
+            child: GetBuilder<IsmLiveStreamController>(
+              builder: (controller) => TabBarView(
+                controller: controller.giftsTabController,
+                children: IsmLiveGiftType.values
+                    .map(
+                      (e) => GridView.builder(
+                        padding: IsmLiveDimens.edgeInsets16,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing: IsmLiveDimens.eight,
+                          mainAxisSpacing: IsmLiveDimens.eight,
+                          crossAxisCount: 3,
+                        ),
+                        itemBuilder: (_, index) {
+                          final gift = e.gifts[index];
+                          return _GiftItem(
+                            key: ValueKey(gift),
+                            gift: gift,
+                            onTap: () {
+                              Get.back();
+                              onTap(gift);
+                            },
+                          );
+                        },
+                        itemCount: e.gifts.length,
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ),
