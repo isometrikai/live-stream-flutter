@@ -26,7 +26,9 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10
+                  ? 0
+                  : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false),
         );
@@ -153,22 +155,26 @@ mixin StreamOngoingMixin {
 
   Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList =
+        _controller.streamViewersList.toSet().toList();
   }
 
   Future<void> addMessages(
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats =
+        messages.map((e) => _controller.convertMessageToChat(e)).toList();
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList =
+        _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent + IsmLiveDimens.hundred,
+      _controller.messagesListController.position.maxScrollExtent +
+          IsmLiveDimens.hundred,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
@@ -206,7 +212,9 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
     final gift = message.customType!.path;
-    final child = gift.endsWith('gif') ? IsmLiveGif(path: gift) : IsmLiveImage.asset(gift);
+    final child = gift.endsWith('gif')
+        ? IsmLiveGif(path: gift)
+        : IsmLiveImage.asset(gift);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(
@@ -231,7 +239,8 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty || room.participants.values.first.audioTracks.isEmpty) {
+    if (room.participants.values.isEmpty ||
+        room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
 
@@ -254,7 +263,10 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.multiLive:
       case IsmLiveStreamOption.share:
       case IsmLiveStreamOption.members:
+        _controller.moderatorSheet();
+        break;
       case IsmLiveStreamOption.favourite:
+        break;
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;
@@ -316,7 +328,9 @@ mixin StreamOngoingMixin {
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         onLeft: Get.back,

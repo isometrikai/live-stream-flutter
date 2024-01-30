@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/widgets/settings_sheet.dart';
+import 'package:appscrip_live_stream_component/src/views/stream/widgets/bottom_sheet/moderator_sheet.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -139,6 +139,8 @@ class IsmLiveStreamController extends GetxController
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
+  List<UserDetails> usersList = [];
+
   bool? isHost;
 
   double positionX = 20;
@@ -163,6 +165,7 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLiveStreamType.values.length,
     );
+
     generateVariables();
   }
 
@@ -304,7 +307,11 @@ class IsmLiveStreamController extends GetxController
   }
 
   void settingSheet() async {
-    await IsmLiveUtility.openBottomSheet(const IsmLiveSettings());
+    await IsmLiveUtility.openBottomSheet(const IsmLiveSettingsSheet());
+  }
+
+  void moderatorSheet() async {
+    await IsmLiveUtility.openBottomSheet(const IsmLiveModeratorSheet());
   }
 
   void toggleCamera() async {

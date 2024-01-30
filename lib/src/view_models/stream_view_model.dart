@@ -310,4 +310,37 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<List<UserDetails>?> fetchUsers({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.fetchUsers(
+        isLoading: false,
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
+
+      if (res?.hasError ?? true) {
+        return null;
+      }
+
+      var data = jsonDecode(res!.data);
+
+      List listOfUsers = data['users'];
+      var userDetailsList = <UserDetails>[];
+
+      for (var i in listOfUsers) {
+        userDetailsList.add(UserDetails.fromMap(i));
+      }
+
+      return userDetailsList;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
 }

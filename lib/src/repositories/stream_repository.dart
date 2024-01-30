@@ -221,4 +221,26 @@ class IsmLiveStreamRepository {
       showLoader: false,
     );
   }
+
+  Future<IsmLiveResponseModel?> fetchUsers({
+    required bool isLoading,
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    var payload = {
+      'skip': skip,
+      'limit': limit,
+      'searchTag': searchTag,
+    };
+
+    var res = await _apiWrapper.makeRequest(
+      '${IsmLiveApis.getUsers}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      showLoader: isLoading,
+      headers: IsmLiveUtility.secretHeader(),
+    );
+
+    return res;
+  }
 }
