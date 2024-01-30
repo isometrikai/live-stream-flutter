@@ -238,6 +238,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.getUsers}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       showLoader: isLoading,
+      showDialog: false,
       headers: IsmLiveUtility.secretHeader(),
     );
 

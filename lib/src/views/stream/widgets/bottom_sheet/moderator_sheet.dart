@@ -11,9 +11,12 @@ class IsmLiveModeratorSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (_) {
-          Get.find<IsmLiveStreamController>().fetchUsers(forceFetch: true);
+          var controller = Get.find<IsmLiveStreamController>();
+          controller.usersList.clear();
+          controller.fetchUsers(forceFetch: true);
         },
         builder: (controller) => IsmLiveScrollSheet(
+          controller: controller.userListController,
           title: 'Moderators',
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {

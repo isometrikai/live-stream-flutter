@@ -9,12 +9,14 @@ class IsmLiveScrollSheet extends StatelessWidget {
     required this.itemCount,
     required this.itemBuilder,
     this.separatorBuilder,
+    this.controller,
   });
 
   final String title;
   final int itemCount;
   final IndexedWidgetBuilder itemBuilder;
   final IndexedWidgetBuilder? separatorBuilder;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -26,7 +28,8 @@ class IsmLiveScrollSheet extends StatelessWidget {
               contentPadding: IsmLiveDimens.edgeInsets16_0,
               leading: Text(
                 title,
-                style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                style: context.textTheme.bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
               trailing: CustomIconButton(
                 icon: const Icon(
@@ -40,10 +43,12 @@ class IsmLiveScrollSheet extends StatelessWidget {
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
+                controller: controller,
                 padding: IsmLiveDimens.edgeInsets0_8,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
-                separatorBuilder: separatorBuilder ?? (_, __) => IsmLiveDimens.box0,
+                separatorBuilder:
+                    separatorBuilder ?? (_, __) => IsmLiveDimens.box0,
               ),
             ),
           ],
