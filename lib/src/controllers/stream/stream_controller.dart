@@ -17,7 +17,7 @@ part 'mixins/message_mixin.dart';
 part 'mixins/ongoing_mixin.dart';
 
 class IsmLiveStreamController extends GetxController
-    with GetSingleTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin {
+    with GetTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin {
   IsmLiveStreamController(this._viewModel);
 
   final IsmLiveStreamViewModel _viewModel;
@@ -122,6 +122,7 @@ class IsmLiveStreamController extends GetxController
   CameraPosition position = CameraPosition.front;
 
   late TabController tabController;
+  late TabController giftsTabController;
 
   var descriptionController = TextEditingController();
 
@@ -150,6 +151,10 @@ class IsmLiveStreamController extends GetxController
   IsmLiveStreamType get streamType => _streamType.value;
   set streamType(IsmLiveStreamType value) => _streamType.value = value;
 
+  final Rx<IsmLiveGiftType> _giftType = IsmLiveGiftType.normal.obs;
+  IsmLiveGiftType get giftType => _giftType.value;
+  set giftType(IsmLiveGiftType value) => _giftType.value = value;
+
   bool isModerationWarningVisible = true;
 
   Timer? _streamTimer;
@@ -164,6 +169,10 @@ class IsmLiveStreamController extends GetxController
     tabController = TabController(
       vsync: this,
       length: IsmLiveStreamType.values.length,
+    );
+    giftsTabController = TabController(
+      vsync: this,
+      length: IsmLiveGiftType.values.length,
     );
 
     generateVariables();
@@ -220,6 +229,9 @@ class IsmLiveStreamController extends GetxController
     unawaited(getStreams());
     tabController.addListener(() {
       streamType = IsmLiveStreamType.values[tabController.index];
+    });
+    giftsTabController.addListener(() {
+      giftType = IsmLiveGiftType.values[giftsTabController.index];
     });
   }
 
