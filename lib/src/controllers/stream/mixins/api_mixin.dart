@@ -9,6 +9,7 @@ mixin StreamAPIMixin {
   final _memberDebouncer = IsmLiveDebouncer();
   final _viewerDebouncer = IsmLiveDebouncer();
   final _messagesDebouncer = IsmLiveDebouncer();
+  final _usersDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
     await _controller._viewModel.getUserDetails();
@@ -203,9 +204,21 @@ mixin StreamAPIMixin {
     int limit = 15,
     int skip = 0,
     String? searchTag,
-  }) async {
-    IsmLiveLog.error(
-        '-----------------------------------> ${_controller.usersList.length}');
+  }) async =>
+      _usersDebouncer.run(
+        () => _fetchUsers(
+          forceFetch,
+          limit,
+          skip,
+          searchTag,
+        ),
+      );
+  Future<void> _fetchUsers(
+    bool forceFetch,
+    int limit,
+    int skip,
+    String? searchTag,
+  ) async {
     if (forceFetch || _controller.usersList.isEmpty) {
       var list = await _controller._viewModel.fetchUsers(
         limit: limit,

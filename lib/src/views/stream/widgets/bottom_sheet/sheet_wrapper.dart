@@ -9,13 +9,21 @@ class IsmLiveScrollSheet extends StatelessWidget {
     required this.itemCount,
     required this.itemBuilder,
     this.separatorBuilder,
+    this.showSearchBar = false,
+    this.hintText,
+    this.onchange,
+    this.textEditingController,
     this.controller,
   });
 
   final String title;
+  final bool showSearchBar;
   final int itemCount;
   final IndexedWidgetBuilder itemBuilder;
   final IndexedWidgetBuilder? separatorBuilder;
+  final TextEditingController? textEditingController;
+  final String? hintText;
+  final Function(String)? onchange;
   final ScrollController? controller;
 
   @override
@@ -40,6 +48,15 @@ class IsmLiveScrollSheet extends StatelessWidget {
                 onTap: Get.back,
               ),
             ),
+            if (showSearchBar)
+              Padding(
+                padding: IsmLiveDimens.edgeInsets16,
+                child: IsmLiveInputField(
+                  controller: textEditingController ?? TextEditingController(),
+                  hintText: hintText,
+                  onchange: onchange,
+                ),
+              ),
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,

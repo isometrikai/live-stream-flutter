@@ -16,7 +16,10 @@ class IsmLiveModeratorSheet extends StatelessWidget {
           controller.fetchUsers(forceFetch: true);
         },
         builder: (controller) => IsmLiveScrollSheet(
-          controller: controller.userListController,
+          showSearchBar: true,
+          textEditingController: controller.searchModeratorFieldController,
+          hintText: 'Search moderators',
+          onchange: controller.searchModerators,
           title: 'Moderators',
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
