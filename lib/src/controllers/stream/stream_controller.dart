@@ -139,6 +139,8 @@ class IsmLiveStreamController extends GetxController
 
   var messageFieldController = TextEditingController();
 
+  var searchModeratorFieldController = TextEditingController();
+
   ScrollController viewerListController = ScrollController();
 
   ScrollController userListController = ScrollController();
@@ -231,7 +233,7 @@ class IsmLiveStreamController extends GetxController
     messagesListController.addListener(() {
       if (messagesListController.position.minScrollExtent ==
           messagesListController.position.pixels) {
-        if (isMessagesApiCall) {
+        if (isViewesApiCall) {
           return;
         }
 
@@ -288,6 +290,20 @@ class IsmLiveStreamController extends GetxController
     isRecordingBroadcast = value;
 
     update([IsmGoLiveView.updateId]);
+  }
+
+  void searchModerators(String values) async {
+    usersList.clear();
+    if (values.trim().isNotEmpty || searchModeratorFieldController.isNotEmpty) {
+      await fetchUsers(
+        forceFetch: true,
+        searchTag: values.trim(),
+      );
+    } else {
+      await fetchUsers(
+        forceFetch: true,
+      );
+    }
   }
 
   Future<void> askPublish(bool audioCall) async {
