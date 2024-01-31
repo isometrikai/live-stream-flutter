@@ -267,4 +267,13 @@ mixin StreamAPIMixin {
     }
     return res.mediaUrl ?? '';
   }
+
+  Future<bool> makeModerator({
+    required String streamId,
+    required String moderatorId,
+  }) =>
+      _controller._viewModel.makeModerator(
+        streamId: streamId,
+        moderatorId: moderatorId,
+      );
 }

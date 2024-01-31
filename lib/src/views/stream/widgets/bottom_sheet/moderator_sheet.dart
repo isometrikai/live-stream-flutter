@@ -35,9 +35,15 @@ class IsmLiveModeratorSheet extends StatelessWidget {
               subtitle: Text(user.userIdentifier),
               trailing: SizedBox(
                 width: IsmLiveDimens.eighty,
-                child: const IsmLiveButton(
+                child: IsmLiveButton(
                   label: 'Make Moderator',
                   small: true,
+                  onTap: () {
+                    controller.makeModerator(
+                      moderatorId: user.userId,
+                      streamId: controller.streamId ?? '',
+                    );
+                  },
                 ),
               ),
             );

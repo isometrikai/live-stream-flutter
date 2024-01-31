@@ -244,6 +244,11 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.moderatorAdded:
+            final moderatorId = payload['moderatorId'] as String?;
+            IsmLiveLog(userId);
+            IsmLiveLog.info(moderatorId);
+            if (userId == moderatorId) {}
+            break;
           case IsmLiveActions.moderatorLeft:
           case IsmLiveActions.moderatorRemoved:
           case IsmLiveActions.profileSwitched:

@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -243,5 +242,22 @@ class IsmLiveStreamRepository {
     );
 
     return res;
+  }
+
+  Future<IsmLiveResponseModel> makeModerator({
+    required String streamId,
+    required String moderatorId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'moderatorId': moderatorId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.moderator,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
   }
 }
