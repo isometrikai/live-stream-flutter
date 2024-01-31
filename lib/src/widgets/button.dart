@@ -119,7 +119,10 @@ class _Primary extends StatelessWidget {
           textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
-        child: Text(label),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+        ),
       );
 }
 
@@ -165,7 +168,10 @@ class _Secondary extends StatelessWidget {
           textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
-        child: Text(label),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+        ),
       );
 }
 
@@ -222,7 +228,10 @@ class _Outlined extends StatelessWidget {
           textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
-        child: Text(label),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+        ),
       );
 }
 
@@ -266,6 +275,9 @@ class _Text extends StatelessWidget {
           textStyle: IsmLiveButton._textStyle(context, small),
         ),
         onPressed: onTap,
-        child: Text(label),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+        ),
       );
 }

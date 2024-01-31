@@ -343,4 +343,21 @@ class IsmLiveStreamViewModel {
       return null;
     }
   }
+
+  Future<bool> makeModerator({
+    required String streamId,
+    required String moderatorId,
+  }) async {
+    try {
+      var res = await _repository.makeModerator(
+        streamId: streamId,
+        moderatorId: moderatorId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }
