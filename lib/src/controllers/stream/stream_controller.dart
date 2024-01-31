@@ -226,7 +226,13 @@ class IsmLiveStreamController extends GetxController
           return;
         }
         isUsersApiCall = true;
-        await fetchUsers(forceFetch: true, skip: usersList.length);
+        await fetchUsers(
+          forceFetch: true,
+          skip: usersList.length,
+          searchTag: searchModeratorFieldController.text.trim().isEmpty
+              ? null
+              : searchModeratorFieldController.text.trim(),
+        );
         isUsersApiCall = false;
       }
     });
