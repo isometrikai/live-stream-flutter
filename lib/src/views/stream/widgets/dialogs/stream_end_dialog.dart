@@ -1,9 +1,9 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveKickoutDialog extends StatelessWidget {
-  const IsmLiveKickoutDialog({super.key});
+class IsmLiveStreamEndDialog extends StatelessWidget {
+  const IsmLiveStreamEndDialog({super.key});
 
   @override
   Widget build(BuildContext context) => Column(
@@ -19,13 +19,13 @@ class IsmLiveKickoutDialog extends StatelessWidget {
           ),
           IsmLiveDimens.boxHeight8,
           Text(
-            context.liveTranslations.kickoutMessage ?? IsmLiveStrings.kickoutMessage,
+            context.liveTranslations.streamEnded ?? IsmLiveStrings.streamEnded,
             style: context.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
           IsmLiveDimens.boxHeight20,
           const IsmLiveButton(
-            label: 'Continue',
+            label: 'Okay',
             onTap: IsmLiveUtility.closeDialog,
           ),
         ],

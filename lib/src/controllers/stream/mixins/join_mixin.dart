@@ -19,6 +19,15 @@ mixin StreamJoinMixin {
     _controller.update([IsmGoLiveView.updateId]);
   }
 
+  Future<void> initializeAndJoinStream(
+    IsmLiveStreamModel stream,
+    bool isHost, {
+    bool joinByScrolling = false,
+  }) async {
+    initialize(_controller.streams.indexOf(stream));
+    await joinStream(stream, isHost, joinByScrolling: joinByScrolling);
+  }
+
   void initialize(int index) {
     _controller.pageController = PageController(initialPage: index);
   }
