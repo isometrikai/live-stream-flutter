@@ -21,6 +21,7 @@ class IsmLiveModeratorSheet extends StatelessWidget {
           hintText: 'Search moderators',
           onchange: controller.searchModerators,
           title: 'Moderators',
+          controller: controller.userListController,
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
             final user = controller.usersList[index];
