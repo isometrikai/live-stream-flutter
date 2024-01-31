@@ -39,6 +39,8 @@ class IsmLiveStrings {
   static const String areYouSureLeaveStream = 'Are you sure that you want to leave live stream?';
 
   static const String kickoutMessage = 'The host has removed you from the stream, you can watch other live videos';
+  static const String streamEnded = 'The host has ended the stream you were watching, but don\'t worry! You can check out other live videos';
+  static const String addedModerator = '@name has added you as a moderator in a stream';
 
   static const String attention = 'Attention';
 

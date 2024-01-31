@@ -1,8 +1,7 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -68,9 +67,7 @@ mixin StreamAPIMixin {
         streamImage: image!,
         hdBroadcast: _controller.isHdBroadcast,
         enableRecording: _controller.isRecordingBroadcast,
-        streamDescription: _controller.descriptionController.isEmpty
-            ? 'N/A'
-            : _controller.descriptionController.text,
+        streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
       ),
     );
   }
@@ -99,8 +96,7 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList =
-        await _controller._viewModel.getStreamMembers(
+    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -241,13 +237,11 @@ mixin StreamAPIMixin {
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ??
-          IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
     );
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
@@ -275,5 +269,21 @@ mixin StreamAPIMixin {
       _controller._viewModel.makeModerator(
         streamId: streamId,
         moderatorId: moderatorId,
+      );
+
+  Future<bool> removeModerator({
+    required String streamId,
+    required String moderatorId,
+  }) =>
+      _controller._viewModel.removeModerator(
+        streamId: streamId,
+        moderatorId: moderatorId,
+      );
+
+  Future<bool> leaveModerator(
+    String streamId,
+  ) =>
+      _controller._viewModel.leaveModerator(
+        streamId,
       );
 }

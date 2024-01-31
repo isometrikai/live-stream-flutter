@@ -245,9 +245,16 @@ class IsmLiveMqttController extends GetxController {
             break;
           case IsmLiveActions.moderatorAdded:
             final moderatorId = payload['moderatorId'] as String?;
-            IsmLiveLog(userId);
-            IsmLiveLog.info(moderatorId);
-            if (userId == moderatorId) {}
+            if (userId == moderatorId) {
+              final hostName = payload['initiatorName'];
+              IsmLiveUtility.showDialog(
+                IsmLiveModeratorDialog(
+                  hostName: hostName,
+                  streamId: streamId,
+                ),
+                isDismissible: false,
+              );
+            }
             break;
           case IsmLiveActions.moderatorLeft:
           case IsmLiveActions.moderatorRemoved:
@@ -267,7 +274,7 @@ class IsmLiveMqttController extends GetxController {
               await Future.delayed(const Duration(milliseconds: 300));
             }
             _streamController.streams.removeWhere((e) => e.streamId == streamId);
-            _streamController.closeStreamView(initiatorId == userId);
+            _streamController.closeStreamView(initiatorId == userId, true);
             _updateStreamListing();
             break;
           case IsmLiveActions.viewerJoined:
@@ -278,6 +285,7 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.viewerLeft:
+            break;
           case IsmLiveActions.viewerRemoved:
             final viewerId = payload['viewerId'] as String?;
             if (streamId == _streamController.streamId) {

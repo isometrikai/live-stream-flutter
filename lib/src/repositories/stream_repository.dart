@@ -260,4 +260,32 @@ class IsmLiveStreamRepository {
       showLoader: true,
     );
   }
+
+  Future<IsmLiveResponseModel> removeModerator({
+    required String streamId,
+    required String moderatorId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'moderatorId': moderatorId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.moderator}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> leaveModerator(String streamId) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.leaveModerator}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }
