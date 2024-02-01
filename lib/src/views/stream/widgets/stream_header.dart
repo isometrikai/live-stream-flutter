@@ -9,12 +9,14 @@ class StreamHeader extends StatelessWidget {
     required this.imageUrl,
     this.onTabCross,
     this.onTabViewers,
+    this.onTabModerators,
   });
 
   final String name;
   final String imageUrl;
   final Function()? onTabCross;
   final Function()? onTabViewers;
+  final Function()? onTabModerators;
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,10 +31,12 @@ class StreamHeader extends StatelessWidget {
                 name: name,
               ),
               IsmLiveDimens.boxHeight10,
-              const _LiveTimer(),
+              _LiveTimer(
+                onTabModerators: onTabModerators,
+              ),
             ],
           ),
-          IsmLiveDimens.boxWidth16,
+          IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
             onTap: onTabViewers,
             child: const IsmLiveUsersAvatar(),
@@ -49,8 +53,10 @@ class StreamHeader extends StatelessWidget {
 }
 
 class _LiveTimer extends StatelessWidget {
-  const _LiveTimer();
-
+  const _LiveTimer({
+    this.onTabModerators,
+  });
+  final Function()? onTabModerators;
   @override
   Widget build(BuildContext context) => Row(
         children: [
@@ -77,6 +83,17 @@ class _LiveTimer extends StatelessWidget {
                 color: IsmLiveColors.white,
                 fontWeight: FontWeight.w600,
               ),
+            ),
+          ),
+          IconButton(
+            onPressed: onTabModerators,
+            icon: Container(
+              padding: IsmLiveDimens.edgeInsets2,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black26,
+              ),
+              child: const Icon(Icons.local_police_rounded),
             ),
           ),
         ],

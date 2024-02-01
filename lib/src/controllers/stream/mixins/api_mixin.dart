@@ -1,7 +1,8 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -9,6 +10,7 @@ mixin StreamAPIMixin {
   final _viewerDebouncer = IsmLiveDebouncer();
   final _messagesDebouncer = IsmLiveDebouncer();
   final _usersDebouncer = IsmLiveDebouncer();
+  final _moderatorsDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
     await _controller._viewModel.getUserDetails();
@@ -67,7 +69,9 @@ mixin StreamAPIMixin {
         streamImage: image!,
         hdBroadcast: _controller.isHdBroadcast,
         enableRecording: _controller.isRecordingBroadcast,
-        streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
+        streamDescription: _controller.descriptionController.isEmpty
+            ? 'N/A'
+            : _controller.descriptionController.text,
       ),
     );
   }
@@ -96,7 +100,8 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
+    _controller.streamMembersList =
+        await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -223,7 +228,43 @@ mixin StreamAPIMixin {
       );
       _controller.usersList.addAll(list ?? []);
     }
-    _controller.update([IsmLiveModeratorSheet.updateId]);
+    _controller.update([IsmLiveUsersSheet.updateId]);
+  }
+
+  Future<void> fetchModerators({
+    bool forceFetch = false,
+    required String streamId,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async =>
+      _moderatorsDebouncer.run(
+        () => _fetchModerators(
+          streamId,
+          forceFetch,
+          limit,
+          skip,
+          searchTag,
+        ),
+      );
+
+  Future<void> _fetchModerators(
+    String streamId,
+    bool forceFetch,
+    int limit,
+    int skip,
+    String? searchTag,
+  ) async {
+    if (forceFetch || _controller.moderatorsList.isEmpty) {
+      var list = await _controller._viewModel.fetchModerators(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      _controller.moderatorsList.addAll(list);
+    }
+    _controller.update([IsmLiveModeratorsSheet.updateId]);
   }
 
   Future<bool> deleteMessage({
@@ -237,11 +278,13 @@ mixin StreamAPIMixin {
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ??
+          IsmLiveStrings.uploadingImage,
     );
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
@@ -274,11 +317,18 @@ mixin StreamAPIMixin {
   Future<bool> removeModerator({
     required String streamId,
     required String moderatorId,
-  }) =>
-      _controller._viewModel.removeModerator(
-        streamId: streamId,
-        moderatorId: moderatorId,
-      );
+  }) async {
+    var res = await _controller._viewModel.removeModerator(
+      streamId: streamId,
+      moderatorId: moderatorId,
+    );
+    if (res) {
+      _controller.moderatorsList.clear();
+      await fetchModerators(forceFetch: true, streamId: streamId);
+    }
+
+    return res;
+  }
 
   Future<bool> leaveModerator(
     String streamId,

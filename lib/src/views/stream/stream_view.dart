@@ -44,7 +44,8 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex =
+              controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -53,7 +54,8 @@ class IsmLiveStreamView extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
-        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
+        onPageChanged: (index) =>
+            controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) {
           // IsmLiveLog.success('Next Child $index');
           final stream = controller.streams[index];
@@ -132,7 +134,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 StreamHeader(
                                   name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                  imageUrl: controller
+                                          .hostDetails?.userProfileImageUrl ??
+                                      '',
                                   onTabCross: () {
                                     FocusScope.of(context).unfocus();
                                     controller.onExit(
@@ -140,12 +144,18 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       streamId: streamId,
                                     );
                                   },
+                                  onTabModerators: () {
+                                    IsmLiveUtility.openBottomSheet(
+                                        const IsmLiveModeratorsSheet());
+                                  },
                                   onTabViewers: () {
                                     IsmLiveUtility.openBottomSheet(
                                       GetBuilder<IsmLiveStreamController>(
                                         id: IsmLiveStreamView.updateId,
-                                        builder: (controller) => IsmLiveListSheet(
-                                          scrollController: controller.viewerListController,
+                                        builder: (controller) =>
+                                            IsmLiveListSheet(
+                                          scrollController:
+                                              controller.viewerListController,
                                           items: controller.streamViewersList,
                                           trailing: (_, viewer) => SizedBox(
                                             width: IsmLiveDimens.eighty,
@@ -187,7 +197,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                IsmLiveMessageField(streamId: streamId, isHost: isHost),
+                                IsmLiveMessageField(
+                                    streamId: streamId, isHost: isHost),
                               ],
                             ),
                           ),
@@ -200,7 +211,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
-                  if (isNewStream) const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
+                  if (isNewStream)
+                    const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
                 ],
               ],
             ),

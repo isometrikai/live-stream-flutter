@@ -14,6 +14,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
     this.onchange,
     this.textEditingController,
     this.controller,
+    this.trailing,
   });
 
   final String title;
@@ -25,6 +26,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
   final String? hintText;
   final Function(String)? onchange;
   final ScrollController? controller;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -39,14 +41,15 @@ class IsmLiveScrollSheet extends StatelessWidget {
                 style: context.textTheme.bodyLarge!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              trailing: CustomIconButton(
-                icon: const Icon(
-                  Icons.cancel_rounded,
-                  color: IsmLiveColors.grey,
-                ),
-                color: Colors.transparent,
-                onTap: Get.back,
-              ),
+              trailing: trailing ??
+                  CustomIconButton(
+                    icon: const Icon(
+                      Icons.cancel_rounded,
+                      color: IsmLiveColors.grey,
+                    ),
+                    color: Colors.transparent,
+                    onTap: Get.back,
+                  ),
             ),
             if (showSearchBar)
               Padding(
