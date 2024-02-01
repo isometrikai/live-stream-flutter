@@ -323,8 +323,9 @@ mixin StreamAPIMixin {
       moderatorId: moderatorId,
     );
     if (res) {
-      _controller.moderatorsList.clear();
-      await fetchModerators(forceFetch: true, streamId: streamId);
+      _controller.moderatorsList
+          .removeWhere((element) => element.userId == moderatorId);
+      _controller.update([IsmLiveModeratorsSheet.updateId]);
     }
 
     return res;

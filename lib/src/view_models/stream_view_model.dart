@@ -367,9 +367,7 @@ class IsmLiveStreamViewModel {
         return [];
       }
 
-      var data = jsonDecode(res.data);
-
-      List listOfModerators = data['moderators'];
+      List listOfModerators = jsonDecode(res.data)['moderators'];
       var moderatorDetailsList = <UserDetails>[];
 
       for (var i in listOfModerators) {

@@ -419,10 +419,6 @@ class IsmLiveStreamController extends GetxController
     await IsmLiveUtility.openBottomSheet(const IsmLiveSettingsSheet());
   }
 
-  void userSheet() async {
-    await IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
-  }
-
   void toggleCamera() async {
     final participant = room?.localParticipant;
     if (participant == null) {

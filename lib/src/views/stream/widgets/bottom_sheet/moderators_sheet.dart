@@ -24,11 +24,11 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
               ? SizedBox(
                   width: IsmLiveDimens.eighty,
                   child: IsmLiveButton(
-                    label: 'add',
+                    label: 'Add',
                     small: true,
                     onTap: () {
                       Get.back();
-                      controller.userSheet();
+                      IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
                     },
                   ),
                 )
@@ -64,7 +64,19 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         },
                       ),
                     )
-                  : null,
+                  : moderator.userId == controller.user?.userId
+                      ? SizedBox(
+                          width: IsmLiveDimens.eighty,
+                          child: IsmLiveButton(
+                            label: 'Leave',
+                            small: true,
+                            onTap: () {
+                              controller
+                                  .leaveModerator(controller.streamId ?? '');
+                            },
+                          ),
+                        )
+                      : null,
             );
           },
         ),

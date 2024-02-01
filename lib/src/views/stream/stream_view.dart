@@ -137,18 +137,18 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   imageUrl: controller
                                           .hostDetails?.userProfileImageUrl ??
                                       '',
-                                  onTabCross: () {
+                                  onTapCross: () {
                                     FocusScope.of(context).unfocus();
                                     controller.onExit(
                                       isHost: isHost,
                                       streamId: streamId,
                                     );
                                   },
-                                  onTabModerators: () {
+                                  onTapModerators: () {
                                     IsmLiveUtility.openBottomSheet(
                                         const IsmLiveModeratorsSheet());
                                   },
-                                  onTabViewers: () {
+                                  onTapViewers: () {
                                     IsmLiveUtility.openBottomSheet(
                                       GetBuilder<IsmLiveStreamController>(
                                         id: IsmLiveStreamView.updateId,

@@ -7,16 +7,16 @@ class StreamHeader extends StatelessWidget {
     super.key,
     required this.name,
     required this.imageUrl,
-    this.onTabCross,
-    this.onTabViewers,
-    this.onTabModerators,
+    this.onTapCross,
+    this.onTapViewers,
+    this.onTapModerators,
   });
 
   final String name;
   final String imageUrl;
-  final Function()? onTabCross;
-  final Function()? onTabViewers;
-  final Function()? onTabModerators;
+  final Function()? onTapCross;
+  final Function()? onTapViewers;
+  final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,13 +32,13 @@ class StreamHeader extends StatelessWidget {
               ),
               IsmLiveDimens.boxHeight10,
               _LiveTimer(
-                onTabModerators: onTabModerators,
+                onTapModerators: onTapModerators,
               ),
             ],
           ),
           IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
-            onTap: onTabViewers,
+            onTap: onTapViewers,
             child: const IsmLiveUsersAvatar(),
           ),
           IconButton(
@@ -46,7 +46,7 @@ class StreamHeader extends StatelessWidget {
               Icons.close,
               color: IsmLiveColors.white,
             ),
-            onPressed: onTabCross,
+            onPressed: onTapCross,
           ),
         ],
       );
@@ -54,9 +54,9 @@ class StreamHeader extends StatelessWidget {
 
 class _LiveTimer extends StatelessWidget {
   const _LiveTimer({
-    this.onTabModerators,
+    this.onTapModerators,
   });
-  final Function()? onTabModerators;
+  final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
         children: [
@@ -86,7 +86,7 @@ class _LiveTimer extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: onTabModerators,
+            onPressed: onTapModerators,
             icon: Container(
               padding: IsmLiveDimens.edgeInsets2,
               decoration: const BoxDecoration(

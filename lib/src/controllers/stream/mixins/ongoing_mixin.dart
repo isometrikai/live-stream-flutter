@@ -263,7 +263,6 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.multiLive:
       case IsmLiveStreamOption.share:
       case IsmLiveStreamOption.members:
-        _controller.userSheet();
         break;
       case IsmLiveStreamOption.favourite:
         break;
