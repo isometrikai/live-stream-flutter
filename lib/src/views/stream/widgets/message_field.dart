@@ -23,7 +23,8 @@ class IsmLiveMessageField extends StatelessWidget {
                 controller: controller.messageFieldController,
                 hintText: 'Say Something…',
                 radius: IsmLiveDimens.fifty,
-                onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
+                onchange: (value) =>
+                    controller.update([IsmLiveStreamView.updateId]),
                 textInputAction: TextInputAction.send,
                 onFieldSubmit: (value) => controller.sendTextMessage(
                   streamId: streamId,
