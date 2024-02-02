@@ -7,14 +7,16 @@ class StreamHeader extends StatelessWidget {
     super.key,
     required this.name,
     required this.imageUrl,
-    this.onTabCross,
-    this.onTabViewers,
+    this.onTapCross,
+    this.onTapViewers,
+    this.onTapModerators,
   });
 
   final String name;
   final String imageUrl;
-  final Function()? onTabCross;
-  final Function()? onTabViewers;
+  final Function()? onTapCross;
+  final Function()? onTapViewers;
+  final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,12 +31,14 @@ class StreamHeader extends StatelessWidget {
                 name: name,
               ),
               IsmLiveDimens.boxHeight10,
-              const _LiveTimer(),
+              _LiveTimer(
+                onTapModerators: onTapModerators,
+              ),
             ],
           ),
-          IsmLiveDimens.boxWidth16,
+          IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
-            onTap: onTabViewers,
+            onTap: onTapViewers,
             child: const IsmLiveUsersAvatar(),
           ),
           IconButton(
@@ -42,15 +46,17 @@ class StreamHeader extends StatelessWidget {
               Icons.close,
               color: IsmLiveColors.white,
             ),
-            onPressed: onTabCross,
+            onPressed: onTapCross,
           ),
         ],
       );
 }
 
 class _LiveTimer extends StatelessWidget {
-  const _LiveTimer();
-
+  const _LiveTimer({
+    this.onTapModerators,
+  });
+  final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
         children: [
@@ -77,6 +83,17 @@ class _LiveTimer extends StatelessWidget {
                 color: IsmLiveColors.white,
                 fontWeight: FontWeight.w600,
               ),
+            ),
+          ),
+          IconButton(
+            onPressed: onTapModerators,
+            icon: Container(
+              padding: IsmLiveDimens.edgeInsets2,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black26,
+              ),
+              child: const Icon(Icons.local_police_rounded),
             ),
           ),
         ],

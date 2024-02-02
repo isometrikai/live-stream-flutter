@@ -6,7 +6,8 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -221,7 +222,7 @@ class IsmLiveStreamRepository {
     );
   }
 
-  Future<IsmLiveResponseModel?> fetchUsers({
+  Future<IsmLiveResponseModel> fetchUsers({
     required bool isLoading,
     required int skip,
     required int limit,
@@ -239,6 +240,31 @@ class IsmLiveStreamRepository {
       showLoader: isLoading,
       showDialog: false,
       headers: IsmLiveUtility.secretHeader(),
+    );
+
+    return res;
+  }
+
+  Future<IsmLiveResponseModel> fetchModerators({
+    required bool isLoading,
+    required int skip,
+    required String streamId,
+    required int limit,
+    String? searchTag,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'skip': skip,
+      'limit': limit,
+      'searchTag': searchTag,
+    };
+
+    var res = await _apiWrapper.makeRequest(
+      '${IsmLiveApis.getModerators}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      showLoader: isLoading,
+      showDialog: false,
+      headers: IsmLiveUtility.tokenHeader(),
     );
 
     return res;

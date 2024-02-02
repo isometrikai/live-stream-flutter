@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/widgets/bottom_sheet/moderator_sheet.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -141,9 +140,13 @@ class IsmLiveStreamController extends GetxController
 
   var searchModeratorFieldController = TextEditingController();
 
+  var searchUserFieldController = TextEditingController();
+
   ScrollController viewerListController = ScrollController();
 
   ScrollController userListController = ScrollController();
+
+  ScrollController moderatorListController = ScrollController();
 
   ScrollController messagesListController = ScrollController();
 
@@ -157,6 +160,8 @@ class IsmLiveStreamController extends GetxController
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
   List<UserDetails> usersList = [];
+
+  List<UserDetails> moderatorsList = [];
 
   bool? isHost;
 
@@ -202,6 +207,7 @@ class IsmLiveStreamController extends GetxController
 
   bool isViewesApiCall = false;
   bool isUsersApiCall = false;
+  bool isModeratorsApiCall = false;
   bool isMessagesApiCall = false;
 
   void pagination(String streamId) {
@@ -229,13 +235,33 @@ class IsmLiveStreamController extends GetxController
         await fetchUsers(
           forceFetch: true,
           skip: usersList.length,
-          searchTag: searchModeratorFieldController.text.trim().isEmpty
+          searchTag: searchUserFieldController.text.trim().isEmpty
               ? null
-              : searchModeratorFieldController.text.trim(),
+              : searchUserFieldController.text.trim(),
         );
         isUsersApiCall = false;
       }
     });
+
+    moderatorListController.addListener(() async {
+      if (moderatorListController.position.maxScrollExtent * 0.8 <=
+          moderatorListController.position.pixels) {
+        if (isModeratorsApiCall) {
+          return;
+        }
+        isModeratorsApiCall = true;
+        await fetchModerators(
+          forceFetch: true,
+          streamId: streamId,
+          skip: moderatorsList.length,
+          searchTag: searchModeratorFieldController.text.trim().isEmpty
+              ? null
+              : searchModeratorFieldController.text.trim(),
+        );
+        isModeratorsApiCall = false;
+      }
+    });
+
     messagesListController.addListener(() {
       if (messagesListController.position.minScrollExtent ==
           messagesListController.position.pixels) {
@@ -298,9 +324,9 @@ class IsmLiveStreamController extends GetxController
     update([IsmGoLiveView.updateId]);
   }
 
-  void searchModerators(String values) async {
+  void searchUser(String values) async {
     usersList.clear();
-    if (values.trim().isNotEmpty || searchModeratorFieldController.isNotEmpty) {
+    if (values.trim().isNotEmpty || searchUserFieldController.isNotEmpty) {
       await fetchUsers(
         forceFetch: true,
         searchTag: values.trim(),
@@ -308,6 +334,22 @@ class IsmLiveStreamController extends GetxController
     } else {
       await fetchUsers(
         forceFetch: true,
+      );
+    }
+  }
+
+  void searchModerators(String values) async {
+    moderatorsList.clear();
+    if (values.trim().isNotEmpty || searchModeratorFieldController.isNotEmpty) {
+      await fetchModerators(
+        forceFetch: true,
+        streamId: streamId ?? '',
+        searchTag: values.trim(),
+      );
+    } else {
+      await fetchModerators(
+        forceFetch: true,
+        streamId: streamId ?? '',
       );
     }
   }
@@ -375,10 +417,6 @@ class IsmLiveStreamController extends GetxController
 
   void settingSheet() async {
     await IsmLiveUtility.openBottomSheet(const IsmLiveSettingsSheet());
-  }
-
-  void moderatorSheet() async {
-    await IsmLiveUtility.openBottomSheet(const IsmLiveModeratorSheet());
   }
 
   void toggleCamera() async {

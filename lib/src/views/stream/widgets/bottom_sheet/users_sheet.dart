@@ -2,10 +2,10 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveModeratorSheet extends StatelessWidget {
-  const IsmLiveModeratorSheet({super.key});
+class IsmLiveUsersSheet extends StatelessWidget {
+  const IsmLiveUsersSheet({super.key});
 
-  static const String updateId = 'stream-moderator-sheet';
+  static const String updateId = 'stream-users-sheet';
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -17,10 +17,10 @@ class IsmLiveModeratorSheet extends StatelessWidget {
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
-          textEditingController: controller.searchModeratorFieldController,
-          hintText: 'Search moderators',
-          onchange: controller.searchModerators,
-          title: 'Moderators',
+          textEditingController: controller.searchUserFieldController,
+          hintText: 'Search Users',
+          onchange: controller.searchUser,
+          title: 'Users',
           controller: controller.userListController,
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
