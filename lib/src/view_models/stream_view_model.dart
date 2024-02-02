@@ -368,13 +368,10 @@ class IsmLiveStreamViewModel {
       }
 
       List listOfModerators = jsonDecode(res.data)['moderators'];
-      var moderatorDetailsList = <UserDetails>[];
 
-      for (var i in listOfModerators) {
-        moderatorDetailsList.add(UserDetails.fromMap(i));
-      }
-
-      return moderatorDetailsList;
+      return listOfModerators
+          .map((e) => UserDetails.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
