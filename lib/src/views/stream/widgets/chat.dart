@@ -51,57 +51,74 @@ class IsmLiveChatView extends StatelessWidget {
                     ),
                     IsmLiveDimens.boxWidth8,
                     Expanded(
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                style: context.textTheme.labelSmall!.copyWith(
-                                  color: IsmLiveColors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              if (message.sentByHost) ...[
-                                IsmLiveDimens.boxWidth8,
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(IsmLiveDimens.four),
-                                  ),
-                                  child: Padding(
-                                    padding: IsmLiveDimens.edgeInsets6_2,
-                                    child: Text(
-                                      'Host',
-                                      style: context.textTheme.labelSmall?.copyWith(
-                                        color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          IsmLiveDimens.boxHeight2,
-                          if (message.isDeleted)
-                            Text(
-                              '[Message Deleted]',
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: context.liveTheme.unselectedTextColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )
-                          else
-                            Text(
-                              message.body,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: IsmLiveColors.white,
-                              ),
-                              softWrap: true,
+                          Container(
+                            padding: IsmLiveDimens.edgeInsets4_0,
+                            decoration: BoxDecoration(
+                              color: Colors.black38,
+                              borderRadius:
+                                  BorderRadius.circular(IsmLiveDimens.four),
                             ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                  style: context.textTheme.labelSmall!.copyWith(
+                                    color: IsmLiveColors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                IsmLiveDimens.boxHeight2,
+                                if (message.isDeleted)
+                                  Text(
+                                    '[Message Deleted]',
+                                    style:
+                                        context.textTheme.labelMedium?.copyWith(
+                                      color:
+                                          context.liveTheme.unselectedTextColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                    message.body,
+                                    style:
+                                        context.textTheme.labelMedium?.copyWith(
+                                      color: IsmLiveColors.white,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          if (message.sentByHost) ...[
+                            IsmLiveDimens.boxWidth8,
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: (context.liveTheme.primaryColor ??
+                                        IsmLiveColors.primary)
+                                    .withOpacity(0.2),
+                                borderRadius:
+                                    BorderRadius.circular(IsmLiveDimens.four),
+                              ),
+                              child: Padding(
+                                padding: IsmLiveDimens.edgeInsets6_2,
+                                child: Text(
+                                  'Host',
+                                  style: context.textTheme.labelSmall?.copyWith(
+                                    color: context.liveTheme.primaryColor ??
+                                        IsmLiveColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
