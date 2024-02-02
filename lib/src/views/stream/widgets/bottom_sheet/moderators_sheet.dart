@@ -64,7 +64,8 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         },
                       ),
                     )
-                  : moderator.userId == controller.user?.userId
+                  : moderator.userId == controller.user?.userId &&
+                          controller.isHost != true
                       ? SizedBox(
                           width: IsmLiveDimens.eighty,
                           child: IsmLiveButton(
