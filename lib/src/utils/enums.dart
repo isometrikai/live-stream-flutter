@@ -11,10 +11,7 @@ enum IsmLiveRequestType {
 
 enum IsmLiveConnectionState {
   connected,
-  disconnected,
-  connecting,
-  subscribed,
-  unsubscribed;
+  disconnected;
 
   @override
   String toString() => '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';

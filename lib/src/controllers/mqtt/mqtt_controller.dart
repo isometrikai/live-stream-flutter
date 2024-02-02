@@ -20,7 +20,11 @@ class IsmLiveMqttController extends GetxController {
 
   MqttServerClient? client;
 
-  late IsmLiveConnectionState connectionState;
+  final Rx<IsmLiveConnectionState> _connectionState = IsmLiveConnectionState.disconnected.obs;
+  IsmLiveConnectionState get connectionState => _connectionState.value;
+  set connectionState(IsmLiveConnectionState value) => _connectionState.value = value;
+
+  bool get isConnected => connectionState == IsmLiveConnectionState.connected;
 
   final actionStreamController = StreamController<Map<String, dynamic>>.broadcast();
 
@@ -125,6 +129,11 @@ class IsmLiveMqttController extends GetxController {
 
   Future<void> subscribeStream(String streamId) async {
     try {
+      IsmLiveLog(connectionState);
+      if (connectionState != IsmLiveConnectionState.connected) {
+        IsmLiveLog.info('MQTT is not connected, try to reconnect');
+        await connectClient();
+      }
       var topic = '$_topicPrefix/$streamId';
       if (client?.getSubscriptionsStatus(topic) == MqttSubscriptionStatus.doesNotExist) {
         client?.subscribe(topic, MqttQos.atMostOnce);
@@ -181,19 +190,16 @@ class IsmLiveMqttController extends GetxController {
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
   void _onSubscribed(String topic) {
-    connectionState = IsmLiveConnectionState.subscribed;
     IsmLiveLog.success('MQTT Subscribed - $topic');
   }
 
   /// onUnsubscribed callback, it will be called when connection successfully unsubscribes to certain topic
   void _onUnSubscribed(String? topic) {
-    connectionState = IsmLiveConnectionState.unsubscribed;
     IsmLiveLog.success('MQTT Unsubscribed - $topic');
   }
 
   /// onSubscribeFailed callback, it will be called when connection fails to subscribe to certain topic
   void _onSubscribeFailed(String topic) {
-    connectionState = IsmLiveConnectionState.unsubscribed;
     IsmLiveLog.error('MQTT Subscription failed - $topic');
   }
 
@@ -244,7 +250,19 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.moderatorAdded:
-            final moderatorId = payload['moderatorId'] as String?;
+            final moderatorId = payload['moderatorId'] as String? ?? '';
+            final moderatorName = payload['moderatorName'] as String? ?? '';
+            final moderatorIdentifier = payload['moderatorIdentifier'] as String? ?? '';
+            final message = IsmLiveMessageModel(
+              streamId: streamId,
+              senderName: moderatorName,
+              senderIdentifier: moderatorIdentifier,
+              senderId: moderatorId,
+              messageType: IsmLiveMessageType.normal,
+              messageId: '',
+              body: '$moderatorName is a moderator now',
+            );
+            unawaited(_streamController.handleMessage(message));
             if (userId == moderatorId) {
               final hostName = payload['initiatorName'];
               IsmLiveUtility.showDialog(
@@ -280,11 +298,38 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.viewerJoined:
             if (streamId == _streamController.streamId) {
               var viewer = IsmLiveViewerModel.fromMap(payload);
+              final message = IsmLiveMessageModel(
+                streamId: streamId,
+                senderName: viewer.userName,
+                senderIdentifier: viewer.identifier,
+                senderId: viewer.userId,
+                messageType: IsmLiveMessageType.normal,
+                messageId: '',
+                body: '${viewer.userName} has joined',
+              );
+              unawaited(_streamController.handleMessage(message));
               await _streamController.addViewers([viewer]);
               _updateStream();
             }
             break;
           case IsmLiveActions.viewerLeft:
+            IsmLiveLog.info('Here ${streamId == _streamController.streamId}');
+            if (streamId == _streamController.streamId) {
+              var viewer = IsmLiveViewerModel.fromMap(payload);
+              IsmLiveLog(viewer);
+              final message = IsmLiveMessageModel(
+                streamId: streamId,
+                senderName: viewer.userName,
+                senderIdentifier: viewer.identifier,
+                senderId: viewer.userId,
+                messageType: IsmLiveMessageType.normal,
+                messageId: '',
+                body: '${viewer.userName} has left',
+              );
+              unawaited(_streamController.handleMessage(message));
+              _streamController.streamViewersList.removeWhere((e) => e.userId == userId);
+              _updateStream();
+            }
             break;
           case IsmLiveActions.viewerRemoved:
             final viewerId = payload['viewerId'] as String?;

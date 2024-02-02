@@ -34,7 +34,10 @@ Path: `android` > `app` > `main` > `AndroidMenifest.xml`
    Add the following lines
 
    ```xml
-   <application>
+   <application
+        android:enableOnBackInvokedCallback="true"
+
+   >
     ...
     <service
         android:name="de.julianassmann.flutter_background.IsolateHolderService"
