@@ -5,20 +5,21 @@ import 'package:flutter/foundation.dart';
 
 class IsmLiveMessageModel {
   const IsmLiveMessageModel({
-    required this.sentAt,
+    this.sentAt = 0,
     required this.streamId,
     this.senderProfileImageUrl,
     required this.senderName,
     required this.senderIdentifier,
     required this.senderId,
     this.searchableTags,
-    required this.repliesCount,
+    this.repliesCount = 0,
     this.metaData,
     required this.messageType,
     required this.messageId,
     this.deviceId,
     this.customType,
     required this.body,
+    this.isEvent = false,
   });
 
   factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveMessageModel(
@@ -54,6 +55,7 @@ class IsmLiveMessageModel {
   final String? deviceId;
   final IsmLiveGifts? customType;
   final String body;
+  final bool isEvent;
 
   IsmLiveMessageModel copyWith({
     int? sentAt,
@@ -70,6 +72,7 @@ class IsmLiveMessageModel {
     String? deviceId,
     IsmLiveGifts? customType,
     String? body,
+    bool? isEvent,
   }) =>
       IsmLiveMessageModel(
         sentAt: sentAt ?? this.sentAt,
@@ -86,6 +89,7 @@ class IsmLiveMessageModel {
         deviceId: deviceId ?? this.deviceId,
         customType: customType ?? this.customType,
         body: body ?? this.body,
+        isEvent: isEvent ?? this.isEvent,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -103,13 +107,14 @@ class IsmLiveMessageModel {
         'deviceId': deviceId,
         'customType': customType?.name,
         'body': body,
+        'isEvent': isEvent,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body)';
+      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body, isEvent: $isEvent)';
 
   @override
   bool operator ==(covariant IsmLiveMessageModel other) {
@@ -128,7 +133,8 @@ class IsmLiveMessageModel {
         other.messageId == messageId &&
         other.deviceId == deviceId &&
         other.customType == customType &&
-        other.body == body;
+        other.body == body &&
+        other.isEvent == isEvent;
   }
 
   @override
@@ -146,5 +152,6 @@ class IsmLiveMessageModel {
       messageId.hashCode ^
       deviceId.hashCode ^
       customType.hashCode ^
-      body.hashCode;
+      body.hashCode ^
+      isEvent.hashCode;
 }
