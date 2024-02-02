@@ -15,6 +15,19 @@ class IsmLiveChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) => Container(
+          padding: IsmLiveDimens.edgeInsets4_0,
+          decoration: BoxDecoration(
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: Offset(0, 0),
+              ),
+            ],
+            // color: Colors.black26,
+            borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+          ),
           constraints: BoxConstraints(
             maxHeight: Get.height * 0.4,
             maxWidth: Get.width * 0.75,
@@ -55,46 +68,38 @@ class IsmLiveChatView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            padding: IsmLiveDimens.edgeInsets4_0,
-                            decoration: BoxDecoration(
-                              color: Colors.black38,
-                              borderRadius:
-                                  BorderRadius.circular(IsmLiveDimens.four),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                style: context.textTheme.labelSmall!.copyWith(
+                                  color: IsmLiveColors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              IsmLiveDimens.boxHeight2,
+                              if (message.isDeleted)
                                 Text(
-                                  '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                  style: context.textTheme.labelSmall!.copyWith(
-                                    color: IsmLiveColors.white,
+                                  '[Message Deleted]',
+                                  style:
+                                      context.textTheme.labelMedium?.copyWith(
+                                    color:
+                                        context.liveTheme.unselectedTextColor,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                ),
-                                IsmLiveDimens.boxHeight2,
-                                if (message.isDeleted)
-                                  Text(
-                                    '[Message Deleted]',
-                                    style:
-                                        context.textTheme.labelMedium?.copyWith(
-                                      color:
-                                          context.liveTheme.unselectedTextColor,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  )
-                                else
-                                  Text(
-                                    message.body,
-                                    style:
-                                        context.textTheme.labelMedium?.copyWith(
-                                      color: IsmLiveColors.white,
-                                    ),
-                                    softWrap: true,
+                                )
+                              else
+                                Text(
+                                  message.body,
+                                  style:
+                                      context.textTheme.labelMedium?.copyWith(
+                                    color: IsmLiveColors.white,
                                   ),
-                              ],
-                            ),
+                                  softWrap: true,
+                                ),
+                            ],
                           ),
                           if (message.sentByHost) ...[
                             IsmLiveDimens.boxWidth8,
