@@ -238,6 +238,23 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<bool> replyMessage({
+    required bool showLoading,
+    required IsmLiveSendMessageModel getMessageModel,
+  }) async {
+    try {
+      var res = await _repository.replyMessage(
+        showLoading: showLoading,
+        payload: getMessageModel.toMap(),
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
   Future<List<IsmLiveMessageModel>> fetchMessages({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,

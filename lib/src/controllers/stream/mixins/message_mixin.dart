@@ -1,9 +1,11 @@
 part of '../stream_controller.dart';
 
 mixin StreamMessageMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
-  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) => IsmLiveChatModel(
+  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
+      IsmLiveChatModel(
         streamId: message.streamId,
         messageId: message.messageId,
         userId: message.senderId,
@@ -48,20 +50,41 @@ mixin StreamMessageMixin {
     }
     _controller.messageFieldController.clear();
 
-    final isSent = await _controller.sendMessage(
-      showLoading: false,
-      sendMessageModel: IsmLiveSendMessageModel(
-        streamId: streamId,
-        body: body,
-        searchableTags: [body],
-        metaData: const IsmLiveMetaData(),
-        deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
-        messageType: IsmLiveMessageType.normal,
-      ),
-    );
+    if (_controller.parentMessageId != null) {
+      final isReply = await _controller.replyMessage(
+        showLoading: false,
+        sendMessageModel: IsmLiveSendMessageModel(
+          streamId: streamId,
+          body: body,
+          searchableTags: [body],
+          metaData: const IsmLiveMetaData(),
+          deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+          messageType: IsmLiveMessageType.normal,
+          parentMessageId: _controller.parentMessageId,
+        ),
+      );
 
-    if (!isSent) {
-      _controller.messageFieldController.text = body;
+      if (!isReply) {
+        _controller.messageFieldController.text = body;
+      } else {
+        _controller.parentMessageId = null;
+      }
+    } else {
+      final isSent = await _controller.sendMessage(
+        showLoading: false,
+        sendMessageModel: IsmLiveSendMessageModel(
+          streamId: streamId,
+          body: body,
+          searchableTags: [body],
+          metaData: const IsmLiveMetaData(),
+          deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+          messageType: IsmLiveMessageType.normal,
+        ),
+      );
+
+      if (!isSent) {
+        _controller.messageFieldController.text = body;
+      }
     }
   }
 
@@ -103,10 +126,11 @@ mixin StreamMessageMixin {
   }
 
   Future<void> messageRemoved(String messageId) async {
-    var message = _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
-          (e) => e?.messageId == messageId,
-          orElse: () => null,
-        );
+    var message =
+        _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
+              (e) => e?.messageId == messageId,
+              orElse: () => null,
+            );
     IsmLiveLog(message);
     if (message == null) {
       return;

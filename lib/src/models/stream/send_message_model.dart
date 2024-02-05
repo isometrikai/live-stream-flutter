@@ -4,6 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 
 class IsmLiveSendMessageModel {
   IsmLiveSendMessageModel({
+    this.parentMessageId,
     required this.streamId,
     required this.body,
     required this.searchableTags,
@@ -13,17 +14,24 @@ class IsmLiveSendMessageModel {
     required this.messageType,
   });
 
-  factory IsmLiveSendMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveSendMessageModel(
+  factory IsmLiveSendMessageModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveSendMessageModel(
         streamId: map['streamId'] as String,
         body: map['body'] as String,
         searchableTags: map['searchableTags'] as dynamic,
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
-        customType: map['customType'] != null ? IsmLiveGifts.fromName(map['customType'].toString()) : null,
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        customType: map['customType'] != null
+            ? IsmLiveGifts.fromName(map['customType'].toString())
+            : null,
         deviceId: map['deviceId'] as String,
+        parentMessageId: map['parentMessageId'] as String?,
         messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
       );
 
-  factory IsmLiveSendMessageModel.fromJson(String source) => IsmLiveSendMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveSendMessageModel.fromJson(String source) =>
+      IsmLiveSendMessageModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
 
   final String streamId;
   final String body;
@@ -31,6 +39,7 @@ class IsmLiveSendMessageModel {
   final IsmLiveMetaData metaData;
   final IsmLiveGifts? customType;
   final String deviceId;
+  final String? parentMessageId;
   final IsmLiveMessageType messageType;
 
   IsmLiveSendMessageModel copyWith({
@@ -40,6 +49,7 @@ class IsmLiveSendMessageModel {
     IsmLiveMetaData? metaData,
     IsmLiveGifts? customType,
     String? deviceId,
+    String? parentMessageId,
     IsmLiveMessageType? messageType,
   }) =>
       IsmLiveSendMessageModel(
@@ -49,6 +59,7 @@ class IsmLiveSendMessageModel {
         metaData: metaData ?? this.metaData,
         customType: customType ?? this.customType,
         deviceId: deviceId ?? this.deviceId,
+        parentMessageId: parentMessageId ?? this.parentMessageId,
         messageType: messageType ?? this.messageType,
       );
 
@@ -59,6 +70,7 @@ class IsmLiveSendMessageModel {
         'metaData': metaData.toMap(),
         'customType': customType?.name,
         'deviceId': deviceId,
+        'parentMessageId': parentMessageId,
         'messageType': messageType.value,
       };
 
@@ -66,7 +78,7 @@ class IsmLiveSendMessageModel {
 
   @override
   String toString() =>
-      'IsmLiveSendMessageModel(streamId: $streamId, body: $body, searchableTags: $searchableTags, metaData: $metaData, customType: $customType, deviceId: $deviceId, messageType: $messageType)';
+      'IsmLiveSendMessageModel(streamId: $streamId, body: $body, searchableTags: $searchableTags, metaData: $metaData, customType: $customType,deviceId: $deviceId,parentMessageId: $parentMessageId,messageType: $messageType)';
 
   @override
   bool operator ==(covariant IsmLiveSendMessageModel other) {
@@ -78,6 +90,7 @@ class IsmLiveSendMessageModel {
         other.metaData == metaData &&
         other.customType == customType &&
         other.deviceId == deviceId &&
+        other.parentMessageId == parentMessageId &&
         other.messageType == messageType;
   }
 
@@ -89,5 +102,6 @@ class IsmLiveSendMessageModel {
       metaData.hashCode ^
       customType.hashCode ^
       deviceId.hashCode ^
+      parentMessageId.hashCode ^
       messageType.hashCode;
 }

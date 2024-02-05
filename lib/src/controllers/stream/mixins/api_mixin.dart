@@ -191,6 +191,15 @@ mixin StreamAPIMixin {
         getMessageModel: sendMessageModel,
       );
 
+  Future<bool> replyMessage({
+    required bool showLoading,
+    required IsmLiveSendMessageModel sendMessageModel,
+  }) async =>
+      await _controller._viewModel.replyMessage(
+        showLoading: showLoading,
+        getMessageModel: sendMessageModel,
+      );
+
   Future<bool> kickoutViewer({
     required String streamId,
     required String viewerId,
