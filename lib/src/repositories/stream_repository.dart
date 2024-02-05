@@ -172,7 +172,7 @@ class IsmLiveStreamRepository {
     required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
-        IsmLiveApis.postReplyMessage,
+        IsmLiveApis.replyMessage,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: payload,
@@ -184,7 +184,7 @@ class IsmLiveStreamRepository {
     required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
-        '${IsmLiveApis.getMessages}?${payload.makeQuery()}',
+        '${IsmLiveApis.messages}?${payload.makeQuery()}',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoading,
@@ -195,7 +195,7 @@ class IsmLiveStreamRepository {
     required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
-        '${IsmLiveApis.getMessagesCont}?${payload.makeQuery()}',
+        '${IsmLiveApis.messagesCont}?${payload.makeQuery()}',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoading,
