@@ -49,7 +49,9 @@ class IsmLiveChatView extends StatelessWidget {
                       messageId: message.messageId,
                     ),
                     // TODO: Reply - Implement onReply
-                    onReply: null,
+                    onReply: () {
+                      controller.parentMessageId = message.messageId;
+                    },
                   ),
                 ),
                 child: Row(

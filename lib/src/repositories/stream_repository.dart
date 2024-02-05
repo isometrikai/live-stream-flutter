@@ -167,6 +167,18 @@ class IsmLiveStreamRepository {
         showLoader: showLoading,
       );
 
+  Future<IsmLiveResponseModel> replyMessage({
+    required bool showLoading,
+    required Map<String, dynamic> payload,
+  }) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.postReplyMessage,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: payload,
+        showLoader: showLoading,
+      );
+
   Future<IsmLiveResponseModel> fetchMessages({
     required bool showLoading,
     required Map<String, dynamic> payload,

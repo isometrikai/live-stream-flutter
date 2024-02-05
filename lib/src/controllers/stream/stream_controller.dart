@@ -69,6 +69,8 @@ class IsmLiveStreamController extends GetxController
 
   String? streamId;
 
+  String? parentMessageId;
+
   final RxBool _speakerOn = true.obs;
   bool get speakerOn => _speakerOn.value;
   set speakerOn(bool value) => _speakerOn.value = value;
