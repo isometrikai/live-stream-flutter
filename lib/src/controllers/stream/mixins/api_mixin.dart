@@ -334,6 +334,7 @@ mixin StreamAPIMixin {
     if (res) {
       _controller.moderatorsList
           .removeWhere((element) => element.userId == moderatorId);
+
       _controller.update([IsmLiveModeratorsSheet.updateId]);
     }
 
@@ -342,8 +343,12 @@ mixin StreamAPIMixin {
 
   Future<bool> leaveModerator(
     String streamId,
-  ) =>
-      _controller._viewModel.leaveModerator(
-        streamId,
-      );
+  ) async {
+    var isLeave = await _controller._viewModel.leaveModerator(
+      streamId,
+    );
+    _controller.isModerator = !isLeave;
+
+    return isLeave;
+  }
 }

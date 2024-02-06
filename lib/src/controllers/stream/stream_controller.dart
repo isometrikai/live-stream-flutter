@@ -16,7 +16,12 @@ part 'mixins/message_mixin.dart';
 part 'mixins/ongoing_mixin.dart';
 
 class IsmLiveStreamController extends GetxController
-    with GetTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin {
+    with
+        GetTickerProviderStateMixin,
+        StreamAPIMixin,
+        StreamJoinMixin,
+        StreamOngoingMixin,
+        StreamMessageMixin {
   IsmLiveStreamController(this._viewModel);
 
   final IsmLiveStreamViewModel _viewModel;
@@ -62,6 +67,8 @@ class IsmLiveStreamController extends GetxController
 
   bool isRecordingBroadcast = false;
 
+  bool isModerator = false;
+
   String? streamId;
 
   IsmLiveChatModel? parentMessage;
@@ -78,17 +85,22 @@ class IsmLiveStreamController extends GetxController
   bool get audioOn => _audioOn.value;
   set audioOn(bool value) => _audioOn.value = value;
 
-  final RxList<IsmLiveMemberDetailsModel> _streamMembersList = <IsmLiveMemberDetailsModel>[].obs;
+  final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
+      <IsmLiveMemberDetailsModel>[].obs;
   List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
-  set streamMembersList(List<IsmLiveMemberDetailsModel> value) => _streamMembersList.value = value;
+  set streamMembersList(List<IsmLiveMemberDetailsModel> value) =>
+      _streamMembersList.value = value;
 
-  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList =
+      <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) =>
+      _streamViewersList.value = value;
 
   final RxList<IsmLiveChatModel> _streamMessagesList = <IsmLiveChatModel>[].obs;
   List<IsmLiveChatModel> get streamMessagesList => _streamMessagesList;
-  set streamMessagesList(List<IsmLiveChatModel> value) => _streamMessagesList.value = value;
+  set streamMessagesList(List<IsmLiveChatModel> value) =>
+      _streamMessagesList.value = value;
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
@@ -118,7 +130,8 @@ class IsmLiveStreamController extends GetxController
 
   final RxList<ParticipantTrack> _participantTracks = <ParticipantTrack>[].obs;
   List<ParticipantTrack> get participantTracks => _participantTracks;
-  set participantTracks(List<ParticipantTrack> value) => _participantTracks.value = value;
+  set participantTracks(List<ParticipantTrack> value) =>
+      _participantTracks.value = value;
 
   CameraPosition position = CameraPosition.front;
 
@@ -145,7 +158,8 @@ class IsmLiveStreamController extends GetxController
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController =>
+      _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -202,19 +216,22 @@ class IsmLiveStreamController extends GetxController
 
   void pagination(String streamId) {
     viewerListController.addListener(() async {
-      if (viewerListController.position.maxScrollExtent * 0.8 <= viewerListController.position.pixels) {
+      if (viewerListController.position.maxScrollExtent * 0.8 <=
+          viewerListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
         isViewesApiCall = true;
 
-        await getStreamViewer(streamId: streamId, limit: 10, skip: streamViewersList.length);
+        await getStreamViewer(
+            streamId: streamId, limit: 10, skip: streamViewersList.length);
         isViewesApiCall = false;
       }
     });
 
     userListController.addListener(() async {
-      if (userListController.position.maxScrollExtent * 0.8 <= userListController.position.pixels) {
+      if (userListController.position.maxScrollExtent * 0.8 <=
+          userListController.position.pixels) {
         if (isUsersApiCall) {
           return;
         }
@@ -222,14 +239,17 @@ class IsmLiveStreamController extends GetxController
         await fetchUsers(
           forceFetch: true,
           skip: usersList.length,
-          searchTag: searchUserFieldController.text.trim().isEmpty ? null : searchUserFieldController.text.trim(),
+          searchTag: searchUserFieldController.text.trim().isEmpty
+              ? null
+              : searchUserFieldController.text.trim(),
         );
         isUsersApiCall = false;
       }
     });
 
     moderatorListController.addListener(() async {
-      if (moderatorListController.position.maxScrollExtent * 0.8 <= moderatorListController.position.pixels) {
+      if (moderatorListController.position.maxScrollExtent * 0.8 <=
+          moderatorListController.position.pixels) {
         if (isModeratorsApiCall) {
           return;
         }
@@ -238,14 +258,17 @@ class IsmLiveStreamController extends GetxController
           forceFetch: true,
           streamId: streamId,
           skip: moderatorsList.length,
-          searchTag: searchModeratorFieldController.text.trim().isEmpty ? null : searchModeratorFieldController.text.trim(),
+          searchTag: searchModeratorFieldController.text.trim().isEmpty
+              ? null
+              : searchModeratorFieldController.text.trim(),
         );
         isModeratorsApiCall = false;
       }
     });
 
     messagesListController.addListener(() {
-      if (messagesListController.position.minScrollExtent == messagesListController.position.pixels) {
+      if (messagesListController.position.minScrollExtent ==
+          messagesListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
@@ -259,7 +282,9 @@ class IsmLiveStreamController extends GetxController
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               skip: messagesCount < 10 ? 0 : (messagesCount - 10),
-              limit: _controller.messagesCount < 10 ? _controller.messagesCount : 10,
+              limit: _controller.messagesCount < 10
+                  ? _controller.messagesCount
+                  : 10,
               sort: 1,
             ),
           );
@@ -417,7 +442,8 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  Future<void> animateToPage(int index) async => await pageController?.animateToPage(
+  Future<void> animateToPage(int index) async =>
+      await pageController?.animateToPage(
         index,
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,
