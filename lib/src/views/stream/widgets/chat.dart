@@ -40,99 +40,132 @@ class IsmLiveChatView extends StatelessWidget {
             separatorBuilder: (_, __) => IsmLiveDimens.boxHeight10,
             itemBuilder: (_, index) {
               final message = controller.streamMessagesList[index];
-              return IsmLiveTapHandler(
-                onTap: () => IsmLiveUtility.openBottomSheet(
-                  IsmLiveMessageBottomSheet(
-                    isHost: isHost,
-                    onDelete: () => controller.deleteMessage(
-                      streamId: streamId,
-                      messageId: message.messageId,
-                    ),
-                    // TODO: Reply - Implement onReply
-                    onReply: () {
-                      controller.parentMessageId = message.messageId;
-                    },
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IsmLiveImage.network(
+                    message.imageUrl,
+                    name: message.userName,
+                    dimensions: IsmLiveDimens.thirtyTwo,
+                    isProfileImage: true,
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IsmLiveImage.network(
-                      message.imageUrl,
-                      name: message.userName,
-                      dimensions: IsmLiveDimens.thirtyTwo,
-                      isProfileImage: true,
-                    ),
-                    IsmLiveDimens.boxWidth8,
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                style: context.textTheme.labelSmall!.copyWith(
-                                  color: IsmLiveColors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              IsmLiveDimens.boxHeight2,
-                              if (message.isDeleted)
-                                Text(
-                                  '[Message Deleted]',
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
-                                    color:
-                                        context.liveTheme.unselectedTextColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                )
-                              else
-                                Text(
-                                  message.body,
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
-                                    color: IsmLiveColors.white,
-                                  ),
-                                  softWrap: true,
-                                ),
-                            ],
-                          ),
-                          if (message.sentByHost) ...[
-                            IsmLiveDimens.boxWidth8,
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: (context.liveTheme.primaryColor ??
-                                        IsmLiveColors.primary)
-                                    .withOpacity(0.2),
-                                borderRadius:
-                                    BorderRadius.circular(IsmLiveDimens.four),
-                              ),
-                              child: Padding(
-                                padding: IsmLiveDimens.edgeInsets6_2,
-                                child: Text(
-                                  'Host',
-                                  style: context.textTheme.labelSmall?.copyWith(
-                                    color: context.liveTheme.primaryColor ??
-                                        IsmLiveColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                  IsmLiveDimens.boxWidth8,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                              style: context.textTheme.labelSmall!.copyWith(
+                                color: IsmLiveColors.white,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
+                            if (message.sentByHost) ...[
+                              IsmLiveDimens.boxWidth8,
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+                                ),
+                                child: Padding(
+                                  padding: IsmLiveDimens.edgeInsets6_2,
+                                  child: Text(
+                                    'Host',
+                                    style: context.textTheme.labelSmall?.copyWith(
+                                      color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
+                        ),
+                        if (message.isDeleted)
+                          Text(
+                            '[Message Deleted]',
+                            style: context.textTheme.labelMedium?.copyWith(
+                              color: context.liveTheme.unselectedTextColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )
+                        else ...[
+                          if (message.isReply && message.parentBody != null) ...[
+                            Text(
+                              'Reply to ${message.parentBody}',
+                              style: context.textTheme.labelSmall?.copyWith(
+                                color: Colors.white70,
+                                fontStyle: FontStyle.italic,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                          Text(
+                            message.body,
+                            style: context.textTheme.labelMedium?.copyWith(
+                              color: IsmLiveColors.white,
+                            ),
+                            softWrap: true,
+                          ),
+                          IsmLiveDimens.boxHeight2,
+                          Row(
+                            children: [
+                              _TextButton(
+                                label: 'Reply',
+                                onTap: () {
+                                  controller.parentMessage = message;
+                                  controller.update([IsmLiveMessageField.updateId]);
+                                },
+                              ),
+                              if (isHost) ...[
+                                IsmLiveDimens.boxWidth8,
+                                _TextButton(
+                                  label: 'Delete',
+                                  onTap: () => controller.deleteMessage(
+                                    streamId: streamId,
+                                    messageId: message.messageId,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ],
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
+          ),
+        ),
+      );
+}
+
+class _TextButton extends StatelessWidget {
+  const _TextButton({
+    required this.label,
+    this.onTap,
+  });
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => IsmLiveTapHandler(
+        onTap: onTap,
+        child: Text(
+          label,
+          style: context.textTheme.labelSmall?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
           ),
         ),
       );

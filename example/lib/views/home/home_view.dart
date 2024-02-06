@@ -14,6 +14,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<HomeController>(
         builder: (controller) => IsmLiveApp(
           configuration: kConfigData.value ?? controller.configData,
+          enableLog: true,
           onLogout: () {
             controller.logout();
           },

@@ -15,12 +15,13 @@ class IsmLiveChatModel {
     this.isReply = false,
     this.sentByMe = false,
     this.sentByHost = false,
+    this.parentBody,
   });
 
   factory IsmLiveChatModel.fromMap(Map<String, dynamic> map) => IsmLiveChatModel(
         streamId: map['streamId'] as String,
         messageId: map['messageId'] as String,
-        parentId: map['parentId'] != null ? map['parentId'] as String : null,
+        parentId: map['parentId'] as String?,
         userId: map['userId'] as String,
         userIdentifier: map['userIdentifier'] as String,
         userName: map['userName'] as String,
@@ -31,6 +32,7 @@ class IsmLiveChatModel {
         isReply: map['isReply'] as bool,
         sentByMe: map['sentByMe'] as bool,
         sentByHost: map['sentByHost'] as bool,
+        parentBody: map['parentBody'] as String?,
       );
 
   factory IsmLiveChatModel.fromJson(String source) => IsmLiveChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -48,6 +50,7 @@ class IsmLiveChatModel {
   final bool isReply;
   final bool sentByMe;
   final bool sentByHost;
+  final String? parentBody;
 
   IsmLiveChatModel copyWith({
     String? streamId,
@@ -63,6 +66,7 @@ class IsmLiveChatModel {
     bool? isReply,
     bool? sentByMe,
     bool? sentByHost,
+    String? parentBody,
   }) =>
       IsmLiveChatModel(
         streamId: streamId ?? this.streamId,
@@ -78,6 +82,7 @@ class IsmLiveChatModel {
         isReply: isReply ?? this.isReply,
         sentByMe: sentByMe ?? this.sentByMe,
         sentByHost: sentByHost ?? this.sentByHost,
+        parentBody: parentBody ?? this.parentBody,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -94,21 +99,26 @@ class IsmLiveChatModel {
         'isReply': isReply,
         'sentByMe': sentByMe,
         'sentByHost': sentByHost,
+        'parentBody': parentBody,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost)';
+      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost, parentBody: $parentBody)';
 
   @override
   bool operator ==(covariant IsmLiveChatModel other) {
     if (identical(this, other)) return true;
 
-    return other.streamId == streamId && other.messageId == messageId && other.parentId == parentId && other.userId == userId;
+    return other.streamId == streamId &&
+        other.messageId == messageId &&
+        other.parentId == parentId &&
+        other.userId == userId &&
+        other.parentBody == parentBody;
   }
 
   @override
-  int get hashCode => streamId.hashCode ^ messageId.hashCode ^ parentId.hashCode ^ userId.hashCode;
+  int get hashCode => streamId.hashCode ^ messageId.hashCode ^ parentId.hashCode ^ userId.hashCode ^ parentBody.hashCode;
 }

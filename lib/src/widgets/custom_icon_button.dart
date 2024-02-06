@@ -17,20 +17,17 @@ class CustomIconButton extends StatelessWidget {
   final double? dimension;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: IsmLiveDimens.edgeInsetsB10,
-        child: IsmLiveTapHandler(
-          onTap: onTap,
-          child: Container(
-            height: dimension,
-            width: dimension,
-            decoration: BoxDecoration(
-              borderRadius: radius == null ? null : BorderRadius.circular(radius!),
-              color: color ?? IsmLiveColors.black.withOpacity(0.4),
-              shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
-            ),
-            child: icon,
+  Widget build(BuildContext context) => IsmLiveTapHandler(
+        onTap: onTap,
+        child: Container(
+          height: dimension,
+          width: dimension,
+          decoration: BoxDecoration(
+            borderRadius: radius == null ? null : BorderRadius.circular(radius!),
+            color: color ?? IsmLiveColors.black.withOpacity(0.4),
+            shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
           ),
+          child: icon,
         ),
       );
 }

@@ -20,7 +20,7 @@ class StreamHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -91,7 +91,7 @@ class _LiveTimer extends StatelessWidget {
               padding: IsmLiveDimens.edgeInsets2,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.black26,
+                color: Colors.black12,
               ),
               child: const Icon(Icons.local_police_rounded),
             ),
