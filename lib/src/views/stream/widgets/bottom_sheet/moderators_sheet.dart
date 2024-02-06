@@ -12,12 +12,6 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
-        initState: (_) {
-          var controller = Get.find<IsmLiveStreamController>();
-          controller.moderatorsList.clear();
-          controller.fetchModerators(
-              forceFetch: true, streamId: controller.streamId ?? '');
-        },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
           trailing: controller.isHost == true
@@ -64,8 +58,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         },
                       ),
                     )
-                  : moderator.userId == controller.user?.userId &&
-                          controller.isHost != true
+                  : controller.isModerator && controller.isHost != true
                       ? SizedBox(
                           width: IsmLiveDimens.eighty,
                           child: IsmLiveButton(
