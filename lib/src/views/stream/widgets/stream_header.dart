@@ -88,12 +88,16 @@ class _LiveTimer extends StatelessWidget {
           IconButton(
             onPressed: onTapModerators,
             icon: Container(
-              padding: IsmLiveDimens.edgeInsets2,
+              padding: IsmLiveDimens.edgeInsets4,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.black12,
               ),
-              child: const Icon(Icons.local_police_rounded),
+              child: Icon(
+                Icons.local_police_rounded,
+                color: IsmLiveColors.white,
+                size: IsmLiveDimens.sixteen,
+              ),
             ),
           ),
         ],

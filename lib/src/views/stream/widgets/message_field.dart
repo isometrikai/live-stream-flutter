@@ -95,7 +95,7 @@ class IsmLiveMessageField extends StatelessWidget {
                 ],
               ),
             ),
-            if (isHost) ...[
+            if (!isHost) ...[
               IsmLiveDimens.boxWidth8,
               IsmLiveHeartButton(
                 size: IsmLiveDimens.fortyFive,
