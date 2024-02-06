@@ -12,6 +12,7 @@ class IsmLiveMessageModel {
     required this.senderIdentifier,
     required this.senderId,
     this.searchableTags,
+    this.replyMessage = false,
     this.repliesCount = 0,
     this.metaData,
     required this.messageType,
@@ -20,6 +21,8 @@ class IsmLiveMessageModel {
     this.customType,
     required this.body,
     this.isEvent = false,
+    this.parentMessageId,
+    this.parentMessageSenderId,
   });
 
   factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) => IsmLiveMessageModel(
@@ -30,13 +33,16 @@ class IsmLiveMessageModel {
         senderIdentifier: map['senderIdentifier'] as String,
         senderId: map['senderId'] as String,
         searchableTags: (map['searchableTags'] as List<dynamic>? ?? []).cast<dynamic>(),
-        repliesCount: map['repliesCount'] as int,
+        replyMessage: map['replyMessage'] as bool? ?? false,
+        repliesCount: map['repliesCount'] as int? ?? 0,
         metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
         messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
         messageId: map['messageId'] as String,
         deviceId: map['deviceId'] as String?,
         customType: map['customType'] != null ? IsmLiveGifts.fromName(map['customType'].toString()) : null,
         body: map['body'] as String,
+        parentMessageId: map['parentMessageId'] as String?,
+        parentMessageSenderId: map['parentMessageSenderId'] as String?,
       );
 
   factory IsmLiveMessageModel.fromJson(String source) => IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -48,6 +54,7 @@ class IsmLiveMessageModel {
   final String senderIdentifier;
   final String senderId;
   final List<dynamic>? searchableTags;
+  final bool replyMessage;
   final int repliesCount;
   final IsmLiveMetaData? metaData;
   final IsmLiveMessageType messageType;
@@ -56,6 +63,8 @@ class IsmLiveMessageModel {
   final IsmLiveGifts? customType;
   final String body;
   final bool isEvent;
+  final String? parentMessageId;
+  final String? parentMessageSenderId;
 
   IsmLiveMessageModel copyWith({
     int? sentAt,
@@ -65,6 +74,7 @@ class IsmLiveMessageModel {
     String? senderIdentifier,
     String? senderId,
     List<dynamic>? searchableTags,
+    bool? replyMessage,
     int? repliesCount,
     IsmLiveMetaData? metaData,
     IsmLiveMessageType? messageType,
@@ -73,6 +83,8 @@ class IsmLiveMessageModel {
     IsmLiveGifts? customType,
     String? body,
     bool? isEvent,
+    String? parentMessageId,
+    String? parentMessageSenderId,
   }) =>
       IsmLiveMessageModel(
         sentAt: sentAt ?? this.sentAt,
@@ -82,6 +94,7 @@ class IsmLiveMessageModel {
         senderIdentifier: senderIdentifier ?? this.senderIdentifier,
         senderId: senderId ?? this.senderId,
         searchableTags: searchableTags ?? this.searchableTags,
+        replyMessage: replyMessage ?? this.replyMessage,
         repliesCount: repliesCount ?? this.repliesCount,
         metaData: metaData ?? this.metaData,
         messageType: messageType ?? this.messageType,
@@ -90,6 +103,8 @@ class IsmLiveMessageModel {
         customType: customType ?? this.customType,
         body: body ?? this.body,
         isEvent: isEvent ?? this.isEvent,
+        parentMessageId: parentMessageId ?? this.parentMessageId,
+        parentMessageSenderId: parentMessageSenderId ?? this.parentMessageSenderId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -100,6 +115,7 @@ class IsmLiveMessageModel {
         'senderIdentifier': senderIdentifier,
         'senderId': senderId,
         'searchableTags': searchableTags,
+        'replyMessage': replyMessage,
         'repliesCount': repliesCount,
         'metaData': metaData?.toMap(),
         'messageType': messageType.value,
@@ -108,13 +124,15 @@ class IsmLiveMessageModel {
         'customType': customType?.name,
         'body': body,
         'isEvent': isEvent,
+        'parentMessageId': parentMessageId,
+        'parentMessageSenderId': parentMessageSenderId,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body, isEvent: $isEvent)';
+      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, replyMessage: $replyMessage, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body, isEvent: $isEvent, parentMessageId: $parentMessageId, parentMessageSenderId: $parentMessageSenderId)';
 
   @override
   bool operator ==(covariant IsmLiveMessageModel other) {
@@ -127,6 +145,7 @@ class IsmLiveMessageModel {
         other.senderIdentifier == senderIdentifier &&
         other.senderId == senderId &&
         listEquals(other.searchableTags, searchableTags) &&
+        other.replyMessage == replyMessage &&
         other.repliesCount == repliesCount &&
         other.metaData == metaData &&
         other.messageType == messageType &&
@@ -134,7 +153,9 @@ class IsmLiveMessageModel {
         other.deviceId == deviceId &&
         other.customType == customType &&
         other.body == body &&
-        other.isEvent == isEvent;
+        other.isEvent == isEvent &&
+        other.parentMessageId == parentMessageId &&
+        other.parentMessageSenderId == parentMessageSenderId;
   }
 
   @override
@@ -146,6 +167,7 @@ class IsmLiveMessageModel {
       senderIdentifier.hashCode ^
       senderId.hashCode ^
       searchableTags.hashCode ^
+      replyMessage.hashCode ^
       repliesCount.hashCode ^
       metaData.hashCode ^
       messageType.hashCode ^
@@ -153,5 +175,7 @@ class IsmLiveMessageModel {
       deviceId.hashCode ^
       customType.hashCode ^
       body.hashCode ^
-      isEvent.hashCode;
+      isEvent.hashCode ^
+      parentMessageId.hashCode ^
+      parentMessageSenderId.hashCode;
 }

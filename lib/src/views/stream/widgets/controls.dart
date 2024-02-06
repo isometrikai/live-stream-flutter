@@ -35,8 +35,10 @@ class IsmLiveControlsWidget extends StatelessWidget {
           return Container(
             alignment: Alignment.bottomRight,
             width: IsmLiveDimens.fifty,
-            child: ListView.builder(
+            child: ListView.separated(
               shrinkWrap: true,
+              itemCount: options.length,
+              separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
               itemBuilder: (context, index) => CustomIconButton(
                 icon: IsmLiveImage.svg(controller.controlIcon(options[index])),
                 onTap: () async {
@@ -45,7 +47,6 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 },
                 color: IsmLiveColors.transparent,
               ),
-              itemCount: options.length,
             ),
           );
         },

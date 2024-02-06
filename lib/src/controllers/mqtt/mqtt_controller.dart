@@ -211,10 +211,10 @@ class IsmLiveMqttController extends GetxController {
 
       var payload = jsonDecode(MqttPublishPayload.bytesToStringAsString(recMess.payload.message)) as Map<String, dynamic>;
 
-      // if (IsmLiveHandler.isLogsEnabled) {
-      IsmLiveLog(IsmLiveUtility.jsonEncodePretty(payload));
-      IsmLiveLog.success(payload['action']);
-      // }
+      if (IsmLiveHandler.isLogsEnabled) {
+        IsmLiveLog(IsmLiveUtility.jsonEncodePretty(payload));
+        IsmLiveLog.success(payload['action']);
+      }
 
       if (payload['action'] != null) {
         actionStreamController.add(payload);
@@ -240,8 +240,8 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.messageReplyRemoved:
-          case IsmLiveActions.messageReplySent:
             break;
+          case IsmLiveActions.messageReplySent:
           case IsmLiveActions.messageSent:
             if (_streamController.streamId == streamId) {
               final message = IsmLiveMessageModel.fromMap(payload);

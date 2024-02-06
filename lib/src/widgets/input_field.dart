@@ -26,6 +26,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.radius,
     this.onFieldSubmit,
     this.textInputAction,
+    this.contentPadding,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -50,6 +51,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.radius,
     this.onFieldSubmit,
     this.textInputAction,
+    this.contentPadding,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -76,6 +78,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.radius,
     this.onFieldSubmit,
     this.textInputAction,
+    this.contentPadding,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -101,6 +104,7 @@ class IsmLiveInputField extends StatelessWidget {
     this.radius,
     this.onFieldSubmit,
     this.textInputAction,
+    this.contentPadding,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -125,6 +129,7 @@ class IsmLiveInputField extends StatelessWidget {
   final int? maxLines;
   final double? radius;
   final TextInputAction? textInputAction;
+  final EdgeInsets? contentPadding;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -145,6 +150,7 @@ class IsmLiveInputField extends StatelessWidget {
             hintText: hintText,
             hintStyle: hintStyle,
             isDense: true,
+            contentPadding: contentPadding,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
               borderSide: BorderSide(

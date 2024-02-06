@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -195,7 +194,7 @@ class IsmLiveStreamRepository {
     required Map<String, dynamic> payload,
   }) =>
       _apiWrapper.makeRequest(
-        '${IsmLiveApis.messagesCont}?${payload.makeQuery()}',
+        '${IsmLiveApis.messagesCount}?${payload.makeQuery()}',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoading,

@@ -1,11 +1,9 @@
 part of '../stream_controller.dart';
 
 mixin StreamMessageMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
-  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
-      IsmLiveChatModel(
+  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) => IsmLiveChatModel(
         streamId: message.streamId,
         messageId: message.messageId,
         userId: message.senderId,
@@ -16,6 +14,9 @@ mixin StreamMessageMixin {
         timeStamp: DateTime.fromMillisecondsSinceEpoch(message.sentAt),
         sentByMe: message.senderId == _controller.user?.userId,
         sentByHost: message.senderId == _controller.hostDetails?.userId,
+        isReply: message.replyMessage,
+        parentId: message.parentMessageId,
+        parentBody: message.metaData?.parentMessageBody,
       );
 
   Future<void> handleMessage(
@@ -44,30 +45,35 @@ mixin StreamMessageMixin {
   Future<void> sendTextMessage({
     required String streamId,
     required String body,
+    IsmLiveChatModel? parentMessage,
   }) async {
     if (body.trim().isEmpty) {
       return;
     }
     _controller.messageFieldController.clear();
+    _controller.parentMessage = null;
+    _controller.update([IsmLiveMessageField.updateId]);
 
-    if (_controller.parentMessageId != null) {
+    if (parentMessage != null) {
       final isReply = await _controller.replyMessage(
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
           streamId: streamId,
           body: body,
           searchableTags: [body],
-          metaData: const IsmLiveMetaData(),
+          metaData: IsmLiveMetaData(
+            parentMessageBody: parentMessage.body,
+          ),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
           messageType: IsmLiveMessageType.normal,
-          parentMessageId: _controller.parentMessageId,
+          parentMessageId: parentMessage.messageId,
         ),
       );
 
       if (!isReply) {
         _controller.messageFieldController.text = body;
-      } else {
-        _controller.parentMessageId = null;
+        _controller.parentMessage = parentMessage;
+        _controller.update([IsmLiveMessageField.updateId]);
       }
     } else {
       final isSent = await _controller.sendMessage(
@@ -126,19 +132,15 @@ mixin StreamMessageMixin {
   }
 
   Future<void> messageRemoved(String messageId) async {
-    var message =
-        _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
-              (e) => e?.messageId == messageId,
-              orElse: () => null,
-            );
-    IsmLiveLog(message);
+    var message = _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
+          (e) => e?.messageId == messageId,
+          orElse: () => null,
+        );
     if (message == null) {
       return;
     }
     message = message.copyWith(isDeleted: true);
     final index = _controller.streamMessagesList.indexOf(message);
-    IsmLiveLog.info(message);
-    IsmLiveLog.info(index);
     if (index == -1) {
       return;
     }
