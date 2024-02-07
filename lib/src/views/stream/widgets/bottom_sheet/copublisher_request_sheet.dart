@@ -26,12 +26,6 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
               width: Get.width / 2,
               child: Stack(
                 children: [
-                  IsmLiveImage.network(
-                    imageUrlLeft,
-                    height: IsmLiveDimens.hundred,
-                    width: IsmLiveDimens.hundred,
-                    isProfileImage: true,
-                  ),
                   Positioned(
                     right: 10,
                     child: IsmLiveImage.network(
@@ -41,17 +35,25 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                       isProfileImage: true,
                     ),
                   ),
-                ].reversed.toList(),
+                  IsmLiveImage.network(
+                    imageUrlLeft,
+                    height: IsmLiveDimens.hundred,
+                    width: IsmLiveDimens.hundred,
+                    isProfileImage: true,
+                  ),
+                ],
               ),
             ),
             IsmLiveDimens.boxHeight10,
             Text(
-              'Request to be in this live video',
+              //TODO
+              IsmLiveStrings.requestCopublisher,
               style: context.textTheme.titleMedium,
             ),
             IsmLiveDimens.boxHeight10,
             Text(
-              'Anyone can watch, some of yours followers may get notified elizabeth can save this to igtv, which means it ‘ll appear on their profile and anywhere else the igtv video shows.',
+              //TODO
+              IsmLiveStrings.copublisherDiscription,
               style: context.textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),

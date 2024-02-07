@@ -288,9 +288,11 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-      case IsmLiveStreamOption.share:
-      case IsmLiveStreamOption.members:
         if (!_controller.isModerator) _controller.copublisherRequestSheet();
+        break;
+      case IsmLiveStreamOption.share:
+        break;
+      case IsmLiveStreamOption.members:
         break;
       case IsmLiveStreamOption.favourite:
         break;
