@@ -50,7 +50,8 @@ class RoomPage extends StatelessWidget {
               children: [
                 controller.participantTracks.isNotEmpty
                     ? ParticipantWidget.widgetFor(
-                        controller.participantTracks.first, null,
+                        controller.participantTracks.first,
+                        imageUrl: null,
                         showStatsLayer: true)
                     : const NoVideoWidget(imageUrl: ''),
                 Positioned(
@@ -86,7 +87,8 @@ class RoomPage extends StatelessWidget {
                                 controller.onClick(index);
                               },
                               child: ParticipantWidget.widgetFor(
-                                  controller.participantTracks[index + 1], null,
+                                  controller.participantTracks[index + 1],
+                                  imageUrl: null,
                                   showStatsLayer: true),
                             ),
                           ),

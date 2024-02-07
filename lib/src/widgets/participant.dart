@@ -10,9 +10,8 @@ abstract class ParticipantWidget extends StatefulWidget {
     super.key,
   });
 
-  static ParticipantWidget widgetFor(
-      ParticipantTrack participantTrack, String? imageUrl,
-      {bool showStatsLayer = false}) {
+  static ParticipantWidget widgetFor(ParticipantTrack participantTrack,
+      {String? imageUrl, bool showStatsLayer = false}) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
         participantTrack.participant as LocalParticipant,
