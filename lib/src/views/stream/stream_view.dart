@@ -118,6 +118,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                   () => controller.participantTracks.isNotEmpty
                       ? ParticipantWidget.widgetFor(
                           controller.participantTracks.first,
+                          imageUrl: controller.user?.profileUrl,
                           showStatsLayer: false,
                         )
                       : NoVideoWidget(imageUrl: imageUrl ?? ''),
