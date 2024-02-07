@@ -11,10 +11,24 @@ class NoVideoWidget extends StatelessWidget {
   final String imageUrl;
 
   @override
-  Widget build(BuildContext context) => IsmLiveImage.network(
-        imageUrl,
-        name: name,
-        isProfileImage: false,
-        showError: false,
+  Widget build(BuildContext context) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IsmLiveImage.network(
+              imageUrl,
+              name: name,
+              isProfileImage: true,
+              height: IsmLiveDimens.hundred,
+              width: IsmLiveDimens.hundred,
+              showError: false,
+            ),
+            IsmLiveDimens.boxHeight10,
+            Text(
+              name,
+              style: IsmLiveStyles.blackBold16,
+            )
+          ],
+        ),
       );
 }
