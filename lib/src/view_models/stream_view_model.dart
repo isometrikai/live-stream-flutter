@@ -439,4 +439,15 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<bool> requestCopublisher(String streamId) async {
+    try {
+      var res = await _repository.requestCopublisher(streamId);
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }

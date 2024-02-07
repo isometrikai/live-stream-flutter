@@ -30,5 +30,6 @@ class IsmLiveApis {
   static const String moderator = '$_streaming/moderator';
   static const String leaveModerator = '$moderator/leave';
   static const String getModerators = '$_streaming/moderators';
+  static const String copublisherRequest = '$_streaming/copublish/request';
   // static const String getEndStream = '$_streaming/analytics';
 }
