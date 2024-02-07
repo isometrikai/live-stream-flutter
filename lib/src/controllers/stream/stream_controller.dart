@@ -423,6 +423,21 @@ class IsmLiveStreamController extends GetxController
     await IsmLiveUtility.openBottomSheet(const IsmLiveSettingsSheet());
   }
 
+  void copublisherRequestSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLiveCopublisherSheet(
+        imageUrlLeft: user?.profileUrl ?? '',
+        buttonLable: 'Send Request',
+        imageUrlRight: hostDetails?.userProfileImageUrl ?? '',
+        onTap: () {
+          if (!isModerator) {
+            requestCopublisher(streamId ?? '');
+          }
+        },
+      ),
+    );
+  }
+
   void toggleCamera() async {
     final participant = room?.localParticipant;
     if (participant == null) {

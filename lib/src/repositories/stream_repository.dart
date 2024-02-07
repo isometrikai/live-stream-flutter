@@ -6,7 +6,8 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -322,6 +323,19 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.leaveModerator}?${payload.makeQuery()}',
       type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> requestCopublisher(String streamId) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.copublisherRequest,
+      type: IsmLiveRequestType.post,
+      headers: IsmLiveUtility.tokenHeader(),
+      payload: payload,
       showLoader: true,
     );
   }

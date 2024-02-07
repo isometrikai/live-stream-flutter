@@ -4,9 +4,11 @@ class IsmLiveStrings {
   static const String timeoutError =
       'Oops! The request took too long to process. Please check your internet connection and try again. If the issue persists, you can contact our support team for assistance.';
 
-  static const String somethingWentWrong = 'Oops! Something went wrong. Please check your internet connection and try again.';
+  static const String somethingWentWrong =
+      'Oops! Something went wrong. Please check your internet connection and try again.';
 
-  static const String noInternet = 'No internet connection. Please connect to the internet and try again.';
+  static const String noInternet =
+      'No internet connection. Please connect to the internet and try again.';
 
   static const String errorLoadingImage = 'Error loading image';
 
@@ -35,14 +37,24 @@ class IsmLiveStrings {
 
   static const String uploadingImage = 'Uploading Image';
 
-  static const String areYouSureEndStream = 'Are you sure that you want to end your live stream?';
-  static const String areYouSureLeaveStream = 'Are you sure that you want to leave live stream?';
+  static const String areYouSureEndStream =
+      'Are you sure that you want to end your live stream?';
+  static const String areYouSureLeaveStream =
+      'Are you sure that you want to leave live stream?';
 
-  static const String kickoutMessage = 'The host has removed you from the stream, you can watch other live videos';
-  static const String streamEnded = 'The host has ended the stream you were watching, but don\'t worry! You can check out other live videos';
-  static const String addedModerator = '@name has added you as a moderator in a stream';
+  static const String kickoutMessage =
+      'The host has removed you from the stream, you can watch other live videos';
+  static const String streamEnded =
+      'The host has ended the stream you were watching, but don\'t worry! You can check out other live videos';
+  static const String addedModerator =
+      '@name has added you as a moderator in a stream';
 
   static const String attention = 'Attention';
+
+  static const String requestCopublisher = 'Request to be in this live video';
+
+  static const String copublisherDiscription =
+      'Anyone can watch, some of yours followers may get notified elizabeth can save this to igtv, which means it ‘ll appear on their profile and anywhere else the igtv video shows.';
 
   static const String moderationWarning =
       'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day.\nWarning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
