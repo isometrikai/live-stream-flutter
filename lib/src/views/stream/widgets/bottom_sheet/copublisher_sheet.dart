@@ -16,6 +16,9 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                 Get.find<IsmLiveStreamController>().fetchCopublisherRequests(
                     streamId:
                         Get.find<IsmLiveStreamController>().streamId ?? '');
+                Get.find<IsmLiveStreamController>().fetchEligibleMembers(
+                    streamId:
+                        Get.find<IsmLiveStreamController>().streamId ?? '');
               },
               builder: (controller) => TabBar(
                 dividerHeight: 0,
@@ -64,48 +67,29 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                       showSearchBar: true,
                       showHeader: false,
                       textEditingController:
-                          controller.searchCopublisherFieldController,
-                      hintText: 'Search request',
+                          controller.searchMembersFieldController,
+                      hintText: 'Search User',
                       onchange: controller.searchRequest,
                       title: '',
-                      controller: controller.copublisherListController,
-                      itemCount: controller.copublisherRequestsList.length,
+                      controller: controller.membersListController,
+                      itemCount: controller.eligibleMembersList.length,
                       itemBuilder: (context, index) {
-                        final copublisher =
-                            controller.copublisherRequestsList[index];
+                        final members = controller.eligibleMembersList[index];
                         return ListTile(
                           leading: IsmLiveImage.network(
-                            copublisher.profileUrl,
+                            members.profileUrl,
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
-                          title: Text(copublisher.userName),
-                          subtitle: Text(copublisher.userIdentifier),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'accept',
-                                  small: true,
-                                  onTap: () {
-                                    controller.acceptCopublisherRequest(
-                                        requestById: copublisher.userId,
-                                        streamId: controller.streamId ?? '');
-                                  },
-                                ),
-                              ),
-                              IsmLiveDimens.boxWidth4,
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'deny',
-                                  small: true,
-                                  onTap: () {},
-                                ),
-                              )
-                            ],
+                          title: Text(members.userName),
+                          subtitle: Text(members.userIdentifier),
+                          trailing: SizedBox(
+                            width: IsmLiveDimens.hundred,
+                            child: IsmLiveButton(
+                              label: 'add Copublisher',
+                              small: true,
+                              onTap: () {},
+                            ),
                           ),
                         );
                       },
@@ -113,9 +97,9 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                     IsmLiveScrollSheet(
                       showSearchBar: true,
                       showHeader: false,
-                      // textEditingController:
-                      //     controller.searchCopublisherFieldController,
-                      hintText: 'Search User',
+                      textEditingController:
+                          controller.searchCopublisherFieldController,
+                      hintText: 'Search request',
                       onchange: controller.searchRequest,
                       title: '',
                       controller: controller.copublisherListController,
@@ -185,7 +169,11 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                                 child: IsmLiveButton(
                                   label: 'accept',
                                   small: true,
-                                  onTap: () {},
+                                  onTap: () {
+                                    controller.acceptCopublisherRequest(
+                                        requestById: copublisher.userId,
+                                        streamId: controller.streamId ?? '');
+                                  },
                                 ),
                               ),
                               IsmLiveDimens.boxWidth4,
