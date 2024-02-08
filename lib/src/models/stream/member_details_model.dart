@@ -63,7 +63,7 @@ class IsmLiveMemberDetailsModel {
         userId: map['userId'] as String,
         metaData:
             IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
-        joinTime: map['joinTime'] as num,
+        joinTime: map['joinTime'] as num? ?? 0,
         isPublishing: map['isPublishing'] as bool,
         isAdmin: map['isAdmin'] as bool,
       );
