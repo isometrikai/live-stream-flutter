@@ -438,6 +438,22 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
+  void searchMembers(String values) async {
+    eligibleMembersList.clear();
+    if (values.trim().isNotEmpty || eligibleMembersList.isNotEmpty) {
+      await fetchEligibleMembers(
+        forceFetch: true,
+        streamId: streamId ?? '',
+        searchTag: values.trim(),
+      );
+    } else {
+      await fetchEligibleMembers(
+        forceFetch: true,
+        streamId: streamId ?? '',
+      );
+    }
+  }
+
   Future<void> askPublish(bool audioCall) async {
     try {
       if (room == null) {

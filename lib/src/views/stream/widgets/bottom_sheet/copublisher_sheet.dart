@@ -69,7 +69,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                       textEditingController:
                           controller.searchMembersFieldController,
                       hintText: 'Search User',
-                      onchange: controller.searchRequest,
+                      onchange: controller.searchMembers,
                       title: '',
                       controller: controller.membersListController,
                       itemCount: controller.eligibleMembersList.length,
@@ -115,28 +115,6 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                           ),
                           title: Text(copublisher.userName),
                           subtitle: Text(copublisher.userIdentifier),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'accept',
-                                  small: true,
-                                  onTap: () {},
-                                ),
-                              ),
-                              IsmLiveDimens.boxWidth4,
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'deny',
-                                  small: true,
-                                  onTap: () {},
-                                ),
-                              )
-                            ],
-                          ),
                         );
                       },
                     ),
@@ -167,7 +145,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                               SizedBox(
                                 width: IsmLiveDimens.sixty,
                                 child: IsmLiveButton(
-                                  label: 'accept',
+                                  label: 'Accept',
                                   small: true,
                                   onTap: () {
                                     controller.acceptCopublisherRequest(
@@ -180,7 +158,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                               SizedBox(
                                 width: IsmLiveDimens.sixty,
                                 child: IsmLiveButton(
-                                  label: 'deny',
+                                  label: 'Deny',
                                   small: true,
                                   onTap: () {},
                                 ),
