@@ -147,6 +147,8 @@ class IsmLiveStreamController extends GetxController
 
   var searchCopublisherFieldController = TextEditingController();
 
+  var searchExistingMembesFieldController = TextEditingController();
+
   var searchMembersFieldController = TextEditingController();
 
   var searchUserFieldController = TextEditingController();
@@ -158,6 +160,8 @@ class IsmLiveStreamController extends GetxController
   ScrollController moderatorListController = ScrollController();
 
   ScrollController copublisherListController = ScrollController();
+
+  ScrollController existingMembersListController = ScrollController();
 
   ScrollController membersListController = ScrollController();
 
@@ -236,6 +240,7 @@ class IsmLiveStreamController extends GetxController
   bool isCopublisherApiCall = false;
   bool isMembersApiCall = false;
   bool isMessagesApiCall = false;
+  bool isExistingMembersApiCall = false;
 
   void pagination(String streamId) {
     viewerListController.addListener(() async {
@@ -292,7 +297,7 @@ class IsmLiveStreamController extends GetxController
     copublisherListController.addListener(() async {
       if (copublisherListController.position.maxScrollExtent * 0.8 <=
           copublisherListController.position.pixels) {
-        if (isModeratorsApiCall) {
+        if (isCopublisherApiCall) {
           return;
         }
         isCopublisherApiCall = true;
@@ -305,6 +310,24 @@ class IsmLiveStreamController extends GetxController
               : searchCopublisherFieldController.text.trim(),
         );
         isCopublisherApiCall = false;
+      }
+    });
+
+    existingMembersListController.addListener(() async {
+      if (existingMembersListController.position.maxScrollExtent * 0.8 <=
+          existingMembersListController.position.pixels) {
+        if (isExistingMembersApiCall) {
+          return;
+        }
+        isExistingMembersApiCall = true;
+        await getStreamMembers(
+          streamId: streamId,
+          skip: streamMembersList.length,
+          searchTag: searchExistingMembesFieldController.text.trim().isEmpty
+              ? null
+              : searchExistingMembesFieldController.text.trim(),
+        );
+        isExistingMembersApiCall = false;
       }
     });
 
@@ -433,6 +456,20 @@ class IsmLiveStreamController extends GetxController
     } else {
       await fetchCopublisherRequests(
         forceFetch: true,
+        streamId: streamId ?? '',
+      );
+    }
+  }
+
+  void searchMember(String values) async {
+    streamMembersList.clear();
+    if (values.trim().isNotEmpty || streamMembersList.isNotEmpty) {
+      await getStreamMembers(
+        streamId: streamId ?? '',
+        searchTag: values.trim(),
+      );
+    } else {
+      await getStreamMembers(
         streamId: streamId ?? '',
       );
     }

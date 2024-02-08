@@ -85,8 +85,8 @@ mixin StreamAPIMixin {
 
   Future<void> getStreamMembers({
     required String streamId,
-    required int limit,
-    required int skip,
+    int limit = 15,
+    int skip = 0,
     String? searchTag,
   }) async =>
       _memberDebouncer.run(() => _getStreamMembers(
@@ -115,6 +115,7 @@ mixin StreamAPIMixin {
       );
     }
     _controller.update([IsmLiveStreamView.updateId]);
+    _controller.update([IsmLiveCopublisherSheet.updateId]);
   }
 
   Future<void> getStreamViewer({
