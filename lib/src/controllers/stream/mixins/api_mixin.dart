@@ -462,6 +462,24 @@ mixin StreamAPIMixin {
     return res;
   }
 
+  Future<bool> denyCopublisherRequest({
+    required String streamId,
+    required String requestById,
+  }) async {
+    var res = await _controller._viewModel.denyCopublisherRequest(
+      streamId: streamId,
+      requestById: requestById,
+    );
+    if (res) {
+      _controller.copublisherRequestsList
+          .removeWhere((element) => element.userId == requestById);
+
+      _controller.update([IsmLiveCopublisherSheet.updateId]);
+    }
+
+    return res;
+  }
+
   Future<bool> addMember({
     required String streamId,
     required String memberId,
