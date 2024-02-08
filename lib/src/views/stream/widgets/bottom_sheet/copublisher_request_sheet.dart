@@ -2,8 +2,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveCopublisherRequestSheet extends StatelessWidget {
-  const IsmLiveCopublisherRequestSheet({
+class IsmLiveCopublisherViewerRequestSheet extends StatelessWidget {
+  const IsmLiveCopublisherViewerRequestSheet({
     super.key,
     required this.imageUrlLeft,
     required this.imageUrlRight,

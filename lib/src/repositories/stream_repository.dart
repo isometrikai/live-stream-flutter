@@ -361,4 +361,20 @@ class IsmLiveStreamRepository {
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
+
+  Future<IsmLiveResponseModel> acceptCopublisherRequest({
+    required String streamId,
+    required String requestById,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'requestByUserId': requestById,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.acceptCopublisher}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.post,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }

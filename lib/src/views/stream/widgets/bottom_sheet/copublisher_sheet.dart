@@ -2,8 +2,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveCobublisherSheet extends StatelessWidget {
-  const IsmLiveCobublisherSheet({super.key});
+class IsmLiveCopublisherSheet extends StatelessWidget {
+  const IsmLiveCopublisherSheet({super.key});
   static const String updateId = 'stream-copublisher-sheet';
 
   @override
@@ -60,6 +60,102 @@ class IsmLiveCobublisherSheet extends StatelessWidget {
                 builder: (controller) => TabBarView(
                   controller: controller.cobublisTabController,
                   children: [
+                    IsmLiveScrollSheet(
+                      showSearchBar: true,
+                      showHeader: false,
+                      textEditingController:
+                          controller.searchCopublisherFieldController,
+                      hintText: 'Search request',
+                      onchange: controller.searchRequest,
+                      title: '',
+                      controller: controller.copublisherListController,
+                      itemCount: controller.copublisherRequestsList.length,
+                      itemBuilder: (context, index) {
+                        final copublisher =
+                            controller.copublisherRequestsList[index];
+                        return ListTile(
+                          leading: IsmLiveImage.network(
+                            copublisher.profileUrl,
+                            dimensions: IsmLiveDimens.forty,
+                            isProfileImage: true,
+                          ),
+                          title: Text(copublisher.userName),
+                          subtitle: Text(copublisher.userIdentifier),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: IsmLiveDimens.sixty,
+                                child: IsmLiveButton(
+                                  label: 'accept',
+                                  small: true,
+                                  onTap: () {
+                                    controller.acceptCopublisherRequest(
+                                        requestById: copublisher.userId,
+                                        streamId: controller.streamId ?? '');
+                                  },
+                                ),
+                              ),
+                              IsmLiveDimens.boxWidth4,
+                              SizedBox(
+                                width: IsmLiveDimens.sixty,
+                                child: IsmLiveButton(
+                                  label: 'deny',
+                                  small: true,
+                                  onTap: () {},
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    IsmLiveScrollSheet(
+                      showSearchBar: true,
+                      showHeader: false,
+                      // textEditingController:
+                      //     controller.searchCopublisherFieldController,
+                      hintText: 'Search User',
+                      onchange: controller.searchRequest,
+                      title: '',
+                      controller: controller.copublisherListController,
+                      itemCount: controller.copublisherRequestsList.length,
+                      itemBuilder: (context, index) {
+                        final copublisher =
+                            controller.copublisherRequestsList[index];
+                        return ListTile(
+                          leading: IsmLiveImage.network(
+                            copublisher.profileUrl,
+                            dimensions: IsmLiveDimens.forty,
+                            isProfileImage: true,
+                          ),
+                          title: Text(copublisher.userName),
+                          subtitle: Text(copublisher.userIdentifier),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: IsmLiveDimens.sixty,
+                                child: IsmLiveButton(
+                                  label: 'accept',
+                                  small: true,
+                                  onTap: () {},
+                                ),
+                              ),
+                              IsmLiveDimens.boxWidth4,
+                              SizedBox(
+                                width: IsmLiveDimens.sixty,
+                                child: IsmLiveButton(
+                                  label: 'deny',
+                                  small: true,
+                                  onTap: () {},
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                     IsmLiveScrollSheet(
                       showSearchBar: true,
                       showHeader: false,

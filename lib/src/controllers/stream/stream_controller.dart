@@ -480,7 +480,7 @@ class IsmLiveStreamController extends GetxController
 
   void copublisherRequestSheet() async {
     await IsmLiveUtility.openBottomSheet(
-      IsmLiveCopublisherRequestSheet(
+      IsmLiveCopublisherViewerRequestSheet(
         imageUrlLeft: user?.profileUrl ?? '',
         buttonLable: 'Send Request',
         imageUrlRight: hostDetails?.userProfileImageUrl ?? '',
@@ -495,7 +495,7 @@ class IsmLiveStreamController extends GetxController
 
   void copublisherSheet() async {
     await IsmLiveUtility.openBottomSheet(
-      const IsmLiveCobublisherSheet(),
+      const IsmLiveCopublisherSheet(),
     );
   }
 

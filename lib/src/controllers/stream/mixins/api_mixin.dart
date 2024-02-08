@@ -400,6 +400,24 @@ mixin StreamAPIMixin {
       _controller.copublisherRequestsList =
           _controller.copublisherRequestsList.toSet().toList();
     }
-    _controller.update([IsmLiveCobublisherSheet.updateId]);
+    _controller.update([IsmLiveCopublisherSheet.updateId]);
+  }
+
+  Future<bool> acceptCopublisherRequest({
+    required String streamId,
+    required String requestById,
+  }) async {
+    var res = await _controller._viewModel.acceptCopublisherRequest(
+      streamId: streamId,
+      requestById: requestById,
+    );
+    if (res) {
+      _controller.copublisherRequestsList
+          .removeWhere((element) => element.userId == requestById);
+
+      _controller.update([IsmLiveCopublisherSheet.updateId]);
+    }
+
+    return res;
   }
 }

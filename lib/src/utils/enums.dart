@@ -335,9 +335,9 @@ enum IsmLiveGifts {
 }
 
 enum IsmLiveCopublisher {
-  copublisherRequest(IsmLiveStrings.copublisherRequests),
+  members(IsmLiveStrings.members),
   users(IsmLiveStrings.users),
-  members(IsmLiveStrings.members);
+  copublisherRequest(IsmLiveStrings.copublisherRequests);
 
   const IsmLiveCopublisher(this.label);
   final String label;
