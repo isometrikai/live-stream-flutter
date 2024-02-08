@@ -399,4 +399,21 @@ class IsmLiveStreamRepository {
       showLoader: true,
     );
   }
+
+  Future<IsmLiveResponseModel> addMember({
+    required String streamId,
+    required String memberId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'memberId': memberId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.addMember,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }

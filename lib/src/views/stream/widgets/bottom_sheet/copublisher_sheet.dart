@@ -88,7 +88,11 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                             child: IsmLiveButton(
                               label: 'add Copublisher',
                               small: true,
-                              onTap: () {},
+                              onTap: () {
+                                controller.addMember(
+                                    streamId: controller.streamId ?? '',
+                                    memberId: members.userId);
+                              },
                             ),
                           ),
                         );

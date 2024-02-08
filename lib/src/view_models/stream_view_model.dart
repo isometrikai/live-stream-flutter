@@ -526,4 +526,21 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<bool> addMember({
+    required String streamId,
+    required String memberId,
+  }) async {
+    try {
+      var res = await _repository.addMember(
+        streamId: streamId,
+        memberId: memberId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }
