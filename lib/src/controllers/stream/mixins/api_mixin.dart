@@ -473,6 +473,7 @@ mixin StreamAPIMixin {
     if (res) {
       _controller.eligibleMembersList
           .removeWhere((element) => element.userId == memberId);
+
       _controller.update([IsmLiveCopublisherSheet.updateId]);
     }
 
