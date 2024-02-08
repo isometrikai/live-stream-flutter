@@ -318,7 +318,7 @@ class IsmLiveStreamController extends GetxController
         await fetchEligibleMembers(
           forceFetch: true,
           streamId: streamId,
-          skip: copublisherRequestsList.length,
+          skip: eligibleMembersList.length,
           searchTag: searchMembersFieldController.text.trim().isEmpty
               ? null
               : searchMembersFieldController.text.trim(),
