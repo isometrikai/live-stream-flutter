@@ -11,6 +11,7 @@ mixin StreamAPIMixin {
   final _messagesDebouncer = IsmLiveDebouncer();
   final _usersDebouncer = IsmLiveDebouncer();
   final _copublisherRequestsDebouncer = IsmLiveDebouncer();
+  final _eligibleMembersDebouncer = IsmLiveDebouncer();
   final _moderatorsDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
@@ -399,6 +400,45 @@ mixin StreamAPIMixin {
       _controller.copublisherRequestsList.addAll(list);
       _controller.copublisherRequestsList =
           _controller.copublisherRequestsList.toSet().toList();
+    }
+    _controller.update([IsmLiveCopublisherSheet.updateId]);
+  }
+
+  Future<void> fetchEligibleMembers({
+    bool forceFetch = false,
+    required String streamId,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    _eligibleMembersDebouncer.run(
+      () async => await _fetchEligibleMembers(
+        streamId: streamId,
+        forceFetch: forceFetch,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      ),
+    );
+  }
+
+  Future<void> _fetchEligibleMembers({
+    bool forceFetch = false,
+    required String streamId,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    if (forceFetch || _controller.eligibleMembersList.isEmpty) {
+      var list = await _controller._viewModel.fetchEligibleMembers(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      _controller.eligibleMembersList.addAll(list);
+      _controller.eligibleMembersList =
+          _controller.eligibleMembersList.toSet().toList();
     }
     _controller.update([IsmLiveCopublisherSheet.updateId]);
   }

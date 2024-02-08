@@ -362,6 +362,28 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> fetchEligibleMembers({
+    required int skip,
+    required String streamId,
+    required int limit,
+    String? searchTag,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'skip': skip,
+      'limit': limit,
+      'searchTag': searchTag,
+    };
+
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.eligibleMembers}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      showLoader: false,
+      showDialog: true,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
   Future<IsmLiveResponseModel> acceptCopublisherRequest({
     required String streamId,
     required String requestById,
