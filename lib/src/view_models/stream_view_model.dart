@@ -450,4 +450,33 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<List<UserDetails>> fetchCopublisherRequests({
+    required int skip,
+    required String streamId,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.fetchCopublisherRequests(
+        streamId: streamId,
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
+
+      if (res.hasError) {
+        return [];
+      }
+
+      List listOfcopublishRequests = jsonDecode(res.data)['copublishRequests'];
+
+      return listOfcopublishRequests
+          .map((e) => UserDetails.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
 }

@@ -15,6 +15,9 @@ class UserDetails {
             ? const IsmLiveMetaData()
             : IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         createdAt: map['createdAt'] as int? ?? 0,
+        timestamp: map['timestamp'] as num?,
+        pending: map['pending'] as bool?,
+        accepted: map['accepted'] as bool?,
         notification:
             map['notification'] != null ? map['notification'] as bool : false,
         isAdmin: map['isAdmin'] != null ? map['isAdmin'] as bool : false,
@@ -29,6 +32,9 @@ class UserDetails {
     this.notification,
     this.isAdmin,
     this.createdAt,
+    this.timestamp,
+    this.pending,
+    this.accepted,
   });
 
   final String userProfileImageUrl;
@@ -39,6 +45,9 @@ class UserDetails {
   final bool? notification;
   final bool? isAdmin;
   final int? createdAt;
+  final num? timestamp;
+  final bool? pending;
+  final bool? accepted;
 
   String get profileUrl => metaData?.profilePic ?? userProfileImageUrl;
 
@@ -50,6 +59,9 @@ class UserDetails {
     IsmLiveMetaData? metaData,
     bool? notification,
     bool? isAdmin,
+    bool? accepted,
+    bool? pending,
+    num? timestamp,
   }) =>
       UserDetails(
         userProfileImageUrl: userProfileImageUrl ?? this.userProfileImageUrl,
@@ -58,6 +70,9 @@ class UserDetails {
         userId: userId ?? this.userId,
         metaData: metaData ?? this.metaData,
         notification: notification ?? this.notification,
+        accepted: accepted ?? this.accepted,
+        pending: pending ?? this.pending,
+        timestamp: timestamp ?? this.timestamp,
         isAdmin: isAdmin ?? this.isAdmin,
       );
 
@@ -68,6 +83,9 @@ class UserDetails {
         'userId': userId,
         'metaData': metaData?.toMap(),
         'notification': notification,
+        'timestamp': timestamp,
+        'pending': pending,
+        'accepted': accepted,
         'isAdmin': isAdmin,
       };
 
@@ -75,7 +93,7 @@ class UserDetails {
 
   @override
   String toString() =>
-      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId,notification: $notification,isAdmin: $isAdmin,metaData : $metaData)';
+      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId,notification: $notification,isAdmin: $isAdmin,accepted: $accepted,timestamp: $timestamp,pending$pending,metaData : $metaData)';
 
   @override
   bool operator ==(covariant UserDetails other) {
@@ -87,6 +105,9 @@ class UserDetails {
         other.userId == userId &&
         other.metaData == metaData &&
         other.isAdmin == isAdmin &&
+        other.pending == pending &&
+        other.accepted == accepted &&
+        other.timestamp == timestamp &&
         other.notification == notification;
   }
 
@@ -98,5 +119,8 @@ class UserDetails {
       userId.hashCode ^
       metaData.hashCode ^
       isAdmin.hashCode ^
+      timestamp.hashCode ^
+      pending.hashCode ^
+      accepted.hashCode ^
       notification.hashCode;
 }

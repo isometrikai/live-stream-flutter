@@ -31,5 +31,9 @@ class IsmLiveApis {
   static const String leaveModerator = '$moderator/leave';
   static const String getModerators = '$_streaming/moderators';
   static const String copublisherRequest = '$_streaming/copublish/request';
+  static const String acceptCopublisher = '$_streaming/copublish/accept';
+  static const String denyCopublisher = '$_streaming/copublish/deny';
+  static const String copublishersRequests = '$_streaming/copublish/requests';
+  static const String switchProfile = '$_streaming/switchprofile';
   // static const String getEndStream = '$_streaming/analytics';
 }

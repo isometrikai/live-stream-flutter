@@ -10,6 +10,7 @@ mixin StreamAPIMixin {
   final _viewerDebouncer = IsmLiveDebouncer();
   final _messagesDebouncer = IsmLiveDebouncer();
   final _usersDebouncer = IsmLiveDebouncer();
+  final _copublisherRequestsDebouncer = IsmLiveDebouncer();
   final _moderatorsDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
@@ -361,5 +362,44 @@ mixin StreamAPIMixin {
       streamId,
     );
     return isSend;
+  }
+
+  Future<void> fetchCopublisherRequests({
+    bool forceFetch = false,
+    required String streamId,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    _copublisherRequestsDebouncer.run(
+      () async => await _fetchCopublisherRequests(
+        streamId: streamId,
+        forceFetch: forceFetch,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      ),
+    );
+  }
+
+  Future<void> _fetchCopublisherRequests({
+    bool forceFetch = false,
+    required String streamId,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    if (forceFetch || _controller.copublisherRequestsList.isEmpty) {
+      var list = await _controller._viewModel.fetchCopublisherRequests(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      _controller.copublisherRequestsList.addAll(list);
+      _controller.copublisherRequestsList =
+          _controller.copublisherRequestsList.toSet().toList();
+    }
+    _controller.update([IsmLiveCobublisherSheet.updateId]);
   }
 }

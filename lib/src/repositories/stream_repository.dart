@@ -275,7 +275,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.getModerators}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       showLoader: isLoading,
-      showDialog: false,
+      showDialog: true,
       headers: IsmLiveUtility.tokenHeader(),
     );
 
@@ -337,6 +337,28 @@ class IsmLiveStreamRepository {
       headers: IsmLiveUtility.tokenHeader(),
       payload: payload,
       showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> fetchCopublisherRequests({
+    required int skip,
+    required String streamId,
+    required int limit,
+    String? searchTag,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'skip': skip,
+      'limit': limit,
+      'searchTag': searchTag,
+    };
+
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.copublishersRequests}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      showLoader: false,
+      showDialog: true,
+      headers: IsmLiveUtility.tokenHeader(),
     );
   }
 }
