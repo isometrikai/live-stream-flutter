@@ -275,7 +275,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.getModerators}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       showLoader: isLoading,
-      showDialog: true,
+      showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),
     );
 
