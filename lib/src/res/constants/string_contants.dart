@@ -29,6 +29,10 @@ class IsmLiveStrings {
   static const String threeD = '3D';
   static const String animated = 'Animated';
 
+  static const String copublisherRequests = 'Requests';
+  static const String users = 'Users';
+  static const String members = 'Members';
+
   static const String youreLive = 'You\'re Live';
 
   static const String preparingYourStream = 'Preparing your stream';

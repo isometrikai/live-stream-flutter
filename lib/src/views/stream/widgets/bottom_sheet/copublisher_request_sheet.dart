@@ -2,8 +2,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveCopublisherSheet extends StatelessWidget {
-  const IsmLiveCopublisherSheet({
+class IsmLiveCopublisherViewerRequestSheet extends StatelessWidget {
+  const IsmLiveCopublisherViewerRequestSheet({
     super.key,
     required this.imageUrlLeft,
     required this.imageUrlRight,
@@ -17,7 +17,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: IsmLiveDimens.edgeInsets16_30_10_5,
+        padding: IsmLiveDimens.edgeInsets16_30_16_5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,

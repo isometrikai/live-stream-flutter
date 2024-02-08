@@ -137,12 +137,15 @@ class IsmLiveStreamController extends GetxController
 
   late TabController tabController;
   late TabController giftsTabController;
+  late TabController cobublisTabController;
 
   var descriptionController = TextEditingController();
 
   var messageFieldController = TextEditingController();
 
   var searchModeratorFieldController = TextEditingController();
+
+  var searchCopublisherFieldController = TextEditingController();
 
   var searchUserFieldController = TextEditingController();
 
@@ -151,6 +154,8 @@ class IsmLiveStreamController extends GetxController
   ScrollController userListController = ScrollController();
 
   ScrollController moderatorListController = ScrollController();
+
+  ScrollController copublisherListController = ScrollController();
 
   ScrollController messagesListController = ScrollController();
 
@@ -167,6 +172,8 @@ class IsmLiveStreamController extends GetxController
 
   List<UserDetails> moderatorsList = [];
 
+  List<UserDetails> copublisherRequestsList = [];
+
   bool? isHost;
 
   double positionX = 20;
@@ -179,6 +186,11 @@ class IsmLiveStreamController extends GetxController
   final Rx<IsmLiveGiftType> _giftType = IsmLiveGiftType.normal.obs;
   IsmLiveGiftType get giftType => _giftType.value;
   set giftType(IsmLiveGiftType value) => _giftType.value = value;
+
+  final Rx<IsmLiveCopublisher> _copublisher =
+      IsmLiveCopublisher.copublisherRequest.obs;
+  IsmLiveCopublisher get copublisher => _copublisher.value;
+  set copublisher(IsmLiveCopublisher value) => _copublisher.value = value;
 
   bool isModerationWarningVisible = true;
 
@@ -199,6 +211,10 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLiveGiftType.values.length,
     );
+    cobublisTabController = TabController(
+      vsync: this,
+      length: IsmLiveCopublisher.values.length,
+    );
 
     generateVariables();
   }
@@ -212,6 +228,7 @@ class IsmLiveStreamController extends GetxController
   bool isViewesApiCall = false;
   bool isUsersApiCall = false;
   bool isModeratorsApiCall = false;
+  bool isCopublisherApiCall = false;
   bool isMessagesApiCall = false;
 
   void pagination(String streamId) {
@@ -266,6 +283,25 @@ class IsmLiveStreamController extends GetxController
       }
     });
 
+    copublisherListController.addListener(() async {
+      if (copublisherListController.position.maxScrollExtent * 0.8 <=
+          copublisherListController.position.pixels) {
+        if (isModeratorsApiCall) {
+          return;
+        }
+        isCopublisherApiCall = true;
+        await fetchCopublisherRequests(
+          forceFetch: true,
+          streamId: streamId,
+          skip: copublisherRequestsList.length,
+          searchTag: searchCopublisherFieldController.text.trim().isEmpty
+              ? null
+              : searchCopublisherFieldController.text.trim(),
+        );
+        isCopublisherApiCall = false;
+      }
+    });
+
     messagesListController.addListener(() {
       if (messagesListController.position.minScrollExtent ==
           messagesListController.position.pixels) {
@@ -303,6 +339,9 @@ class IsmLiveStreamController extends GetxController
     });
     giftsTabController.addListener(() {
       giftType = IsmLiveGiftType.values[giftsTabController.index];
+    });
+    cobublisTabController.addListener(() {
+      copublisher = IsmLiveCopublisher.values[cobublisTabController.index];
     });
   }
 
@@ -352,6 +391,22 @@ class IsmLiveStreamController extends GetxController
       );
     } else {
       await fetchModerators(
+        forceFetch: true,
+        streamId: streamId ?? '',
+      );
+    }
+  }
+
+  void searchRequest(String values) async {
+    copublisherRequestsList.clear();
+    if (values.trim().isNotEmpty || copublisherRequestsList.isNotEmpty) {
+      await fetchCopublisherRequests(
+        forceFetch: true,
+        streamId: streamId ?? '',
+        searchTag: values.trim(),
+      );
+    } else {
+      await fetchCopublisherRequests(
         forceFetch: true,
         streamId: streamId ?? '',
       );
@@ -425,7 +480,7 @@ class IsmLiveStreamController extends GetxController
 
   void copublisherRequestSheet() async {
     await IsmLiveUtility.openBottomSheet(
-      IsmLiveCopublisherSheet(
+      IsmLiveCopublisherViewerRequestSheet(
         imageUrlLeft: user?.profileUrl ?? '',
         buttonLable: 'Send Request',
         imageUrlRight: hostDetails?.userProfileImageUrl ?? '',
@@ -435,6 +490,12 @@ class IsmLiveStreamController extends GetxController
           }
         },
       ),
+    );
+  }
+
+  void copublisherSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLiveCopublisherSheet(),
     );
   }
 

@@ -10,6 +10,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
     required this.itemBuilder,
     this.separatorBuilder,
     this.showSearchBar = false,
+    this.showHeader = true,
     this.hintText,
     this.onchange,
     this.textEditingController,
@@ -27,6 +28,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
   final Function(String)? onchange;
   final ScrollController? controller;
   final Widget? trailing;
+  final bool showHeader;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -34,23 +36,24 @@ class IsmLiveScrollSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              contentPadding: IsmLiveDimens.edgeInsets16_0,
-              leading: Text(
-                title,
-                style: context.textTheme.bodyLarge!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              trailing: trailing ??
-                  CustomIconButton(
-                    icon: const Icon(
-                      Icons.cancel_rounded,
-                      color: IsmLiveColors.grey,
+            if (showHeader)
+              ListTile(
+                contentPadding: IsmLiveDimens.edgeInsets16_0,
+                leading: Text(
+                  title,
+                  style: context.textTheme.bodyLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                trailing: trailing ??
+                    CustomIconButton(
+                      icon: const Icon(
+                        Icons.cancel_rounded,
+                        color: IsmLiveColors.grey,
+                      ),
+                      color: Colors.transparent,
+                      onTap: Get.back,
                     ),
-                    color: Colors.transparent,
-                    onTap: Get.back,
-                  ),
-            ),
+              ),
             if (showSearchBar)
               Padding(
                 padding: IsmLiveDimens.edgeInsets16,
