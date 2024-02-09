@@ -37,6 +37,7 @@ class IsmLiveApis {
   static const String switchProfile = '$_streaming/switchprofile';
   static const String eligibleMembers = '$_streaming/members/eligible';
   static const String member = '$_streaming/member';
+  static const String leaveMember = '$_streaming/member/leave';
 
   // static const String getEndStream = '$_streaming/analytics';
 }

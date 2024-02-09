@@ -19,6 +19,7 @@ class StreamHeader extends StatelessWidget {
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -36,7 +37,6 @@ class StreamHeader extends StatelessWidget {
               ),
             ],
           ),
-          IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
             onTap: onTapViewers,
             child: const IsmLiveUsersAvatar(),
@@ -59,10 +59,13 @@ class _LiveTimer extends StatelessWidget {
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+              color: Get.find<IsmLiveMqttController>().isConnected
+                  ? IsmLiveColors.green
+                  : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.four),
             ),
             child: Padding(
@@ -86,6 +89,38 @@ class _LiveTimer extends StatelessWidget {
             ),
           ),
           IconButton(
+            padding: IsmLiveDimens.edgeInsets0,
+            onPressed: () async {
+              await IsmLiveUtility.openBottomSheet(const IsmLiveMembersSheet());
+            },
+            icon: Container(
+              padding: IsmLiveDimens.edgeInsets4,
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(IsmLiveDimens.eight)),
+                color: Colors.black12,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.person,
+                    color: IsmLiveColors.white,
+                    size: IsmLiveDimens.sixteen,
+                  ),
+                  IsmLiveDimens.boxWidth2,
+                  GetX<IsmLiveStreamController>(
+                    builder: (controller) => Text(
+                      controller.streamMembersList.length.toString(),
+                      style: IsmLiveStyles.white12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          IconButton(
+            padding: IsmLiveDimens.edgeInsets0,
             onPressed: onTapModerators,
             icon: Container(
               padding: IsmLiveDimens.edgeInsets4,

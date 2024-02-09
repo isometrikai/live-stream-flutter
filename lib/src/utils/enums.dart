@@ -335,7 +335,6 @@ enum IsmLiveGifts {
 }
 
 enum IsmLiveCopublisher {
-  members(IsmLiveStrings.members),
   users(IsmLiveStrings.users),
   copublisherRequest(IsmLiveStrings.copublisherRequests);
 

@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class IsmLiveHostDetail extends StatelessWidget {
   const IsmLiveHostDetail({
@@ -12,7 +11,8 @@ class IsmLiveHostDetail extends StatelessWidget {
   final String name;
   final String imageUrl;
 
-  Color _color(BuildContext context) => context.liveTheme.backgroundColor ?? IsmLiveColors.white;
+  Color _color(BuildContext context) =>
+      context.liveTheme.backgroundColor ?? IsmLiveColors.white;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -52,35 +52,10 @@ class IsmLiveHostDetail extends StatelessWidget {
               IsmLiveDimens.boxWidth4,
               SizedBox(
                 width: IsmLiveDimens.seventy,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '@$name',
-                      style: IsmLiveStyles.white12,
-                      maxLines: 1,
-                    ),
-                    IsmLiveDimens.boxHeight2,
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.person,
-                          size: IsmLiveDimens.sixteen,
-                          color: IsmLiveColors.white,
-                        ),
-                        IsmLiveDimens.boxWidth2,
-                        GetX<IsmLiveStreamController>(
-                          builder: (controller) => Text(
-                            controller.streamMembersList.length.toString(),
-                            style: IsmLiveStyles.white12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: Text(
+                  '@$name',
+                  style: IsmLiveStyles.white12,
+                  maxLines: 1,
                 ),
               ),
             ],

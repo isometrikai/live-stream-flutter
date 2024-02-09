@@ -448,4 +448,18 @@ class IsmLiveStreamRepository {
       showLoader: true,
     );
   }
+
+  Future<IsmLiveResponseModel> leaveMember({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.leaveMember}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }
