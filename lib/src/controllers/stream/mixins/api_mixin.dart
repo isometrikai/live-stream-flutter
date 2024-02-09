@@ -497,4 +497,21 @@ mixin StreamAPIMixin {
 
     return res;
   }
+
+  Future<bool> removeMember({
+    required String streamId,
+    required String memberId,
+  }) async {
+    var res = await _controller._viewModel.addMember(
+      streamId: streamId,
+      memberId: memberId,
+    );
+    if (res) {
+      _controller.eligibleMembersList
+          .removeWhere((element) => element.userId == memberId);
+      _controller.update([IsmLiveCopublisherSheet.updateId]);
+    }
+
+    return res;
+  }
 }

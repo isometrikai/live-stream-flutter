@@ -425,9 +425,25 @@ class IsmLiveStreamRepository {
       'memberId': memberId,
     };
     return _apiWrapper.makeRequest(
-      IsmLiveApis.addMember,
+      IsmLiveApis.member,
       type: IsmLiveRequestType.post,
       payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> removeMember({
+    required String streamId,
+    required String memberId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'memberId': memberId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.member}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
     );
