@@ -400,6 +400,22 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> denyCopublisherRequest({
+    required String streamId,
+    required String requestById,
+  }) {
+    var payload = {
+      'streamId': streamId,
+      'requestByUserId': requestById,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.denyCopublisher}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.post,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
   Future<IsmLiveResponseModel> addMember({
     required String streamId,
     required String memberId,

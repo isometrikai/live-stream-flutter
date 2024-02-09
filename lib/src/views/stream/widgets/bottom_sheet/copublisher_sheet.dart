@@ -175,7 +175,11 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                                 child: IsmLiveButton(
                                   label: 'Deny',
                                   small: true,
-                                  onTap: () {},
+                                  onTap: () {
+                                    controller.denyCopublisherRequest(
+                                        requestById: copublisher.userId,
+                                        streamId: controller.streamId ?? '');
+                                  },
                                 ),
                               )
                             ],
