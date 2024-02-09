@@ -115,7 +115,7 @@ mixin StreamAPIMixin {
       );
     }
     _controller.update([IsmLiveStreamView.updateId]);
-    _controller.update([IsmLiveCopublisherSheet.updateId]);
+    _controller.update([IsmLiveMembersSheet.updateId]);
   }
 
   Future<void> getStreamViewer({
@@ -502,14 +502,29 @@ mixin StreamAPIMixin {
     required String streamId,
     required String memberId,
   }) async {
-    var res = await _controller._viewModel.addMember(
+    var res = await _controller._viewModel.removeMember(
       streamId: streamId,
       memberId: memberId,
     );
     if (res) {
-      _controller.eligibleMembersList
+      _controller.streamMembersList
           .removeWhere((element) => element.userId == memberId);
       _controller.update([IsmLiveCopublisherSheet.updateId]);
+    }
+
+    return res;
+  }
+
+  Future<bool> leaveMember({
+    required String streamId,
+  }) async {
+    var res = await _controller._viewModel.leaveMember(
+      streamId: streamId,
+    );
+    if (res) {
+      _controller.streamMembersList
+          .removeWhere((element) => element.userId == _controller.user?.userId);
+      _controller.update([IsmLiveMembersSheet.updateId]);
     }
 
     return res;

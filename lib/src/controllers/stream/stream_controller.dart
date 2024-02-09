@@ -197,7 +197,7 @@ class IsmLiveStreamController extends GetxController
   IsmLiveGiftType get giftType => _giftType.value;
   set giftType(IsmLiveGiftType value) => _giftType.value = value;
 
-  final Rx<IsmLiveCopublisher> _copublisher = IsmLiveCopublisher.members.obs;
+  final Rx<IsmLiveCopublisher> _copublisher = IsmLiveCopublisher.users.obs;
   IsmLiveCopublisher get copublisher => _copublisher.value;
   set copublisher(IsmLiveCopublisher value) => _copublisher.value = value;
 

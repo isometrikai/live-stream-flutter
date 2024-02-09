@@ -577,4 +577,19 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<bool> leaveMember({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.leaveMember(
+        streamId: streamId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }

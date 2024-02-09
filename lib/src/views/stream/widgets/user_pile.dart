@@ -9,7 +9,7 @@ class IsmLiveUsersAvatar extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         height: IsmLiveDimens.forty,
         constraints: BoxConstraints(
-          maxWidth: Get.width * 0.35,
+          maxWidth: Get.width * 0.25,
         ),
         child: GetX<IsmLiveStreamController>(
           builder: (controller) {
