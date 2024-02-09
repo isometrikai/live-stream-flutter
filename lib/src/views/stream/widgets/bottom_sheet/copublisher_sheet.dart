@@ -86,7 +86,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                           ),
                           title: Text(members.userName),
                           subtitle: Text(members.userIdentifier),
-                          trailing: controller.isModerator
+                          trailing: controller.isHost ?? false
                               ? SizedBox(
                                   width: IsmLiveDimens.hundred,
                                   child: IsmLiveButton(
@@ -125,7 +125,7 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                           ),
                           title: Text(existingMember.userName),
                           subtitle: Text(existingMember.userIdentifier),
-                          trailing: controller.isModerator
+                          trailing: controller.isHost ?? false
                               ? SizedBox(
                                   width: IsmLiveDimens.hundred,
                                   child: IsmLiveButton(
