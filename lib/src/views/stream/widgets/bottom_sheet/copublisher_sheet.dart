@@ -86,18 +86,21 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                           ),
                           title: Text(members.userName),
                           subtitle: Text(members.userIdentifier),
-                          trailing: SizedBox(
-                            width: IsmLiveDimens.hundred,
-                            child: IsmLiveButton(
-                              label: 'Add Copublisher',
-                              small: true,
-                              onTap: () {
-                                controller.addMember(
-                                    streamId: controller.streamId ?? '',
-                                    memberId: members.userId);
-                              },
-                            ),
-                          ),
+                          trailing: controller.isModerator
+                              ? SizedBox(
+                                  width: IsmLiveDimens.hundred,
+                                  child: IsmLiveButton(
+                                    label: 'Add Copublisher',
+                                    small: true,
+                                    onTap: () {
+                                      controller.addMember(
+                                        streamId: controller.streamId ?? '',
+                                        memberId: members.userId,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : null,
                         );
                       },
                     ),
@@ -122,14 +125,21 @@ class IsmLiveCopublisherSheet extends StatelessWidget {
                           ),
                           title: Text(existingMember.userName),
                           subtitle: Text(existingMember.userIdentifier),
-                          trailing: SizedBox(
-                            width: IsmLiveDimens.hundred,
-                            child: IsmLiveButton(
-                              label: 'Remove Copublisher',
-                              small: true,
-                              onTap: () {},
-                            ),
-                          ),
+                          trailing: controller.isModerator
+                              ? SizedBox(
+                                  width: IsmLiveDimens.hundred,
+                                  child: IsmLiveButton(
+                                    label: 'Remove Copublisher',
+                                    small: true,
+                                    onTap: () {
+                                      controller.removeMember(
+                                        streamId: controller.streamId ?? '',
+                                        memberId: existingMember.userId,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : null,
                         );
                       },
                     ),
