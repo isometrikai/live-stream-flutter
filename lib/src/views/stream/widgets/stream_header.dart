@@ -37,6 +37,7 @@ class StreamHeader extends StatelessWidget {
               ),
             ],
           ),
+          const Spacer(),
           IsmLiveTapHandler(
             onTap: onTapViewers,
             child: const IsmLiveUsersAvatar(),
@@ -63,9 +64,7 @@ class _LiveTimer extends StatelessWidget {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected
-                  ? IsmLiveColors.green
-                  : IsmLiveColors.red,
+              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.four),
             ),
             child: Padding(
@@ -88,16 +87,13 @@ class _LiveTimer extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            padding: IsmLiveDimens.edgeInsets0,
-            onPressed: () async {
-              await IsmLiveUtility.openBottomSheet(const IsmLiveMembersSheet());
-            },
-            icon: Container(
+          IsmLiveDimens.boxWidth8,
+          IsmLiveTapHandler(
+            onTap: () => IsmLiveUtility.openBottomSheet(const IsmLiveMembersSheet()),
+            child: Container(
               padding: IsmLiveDimens.edgeInsets4,
               decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(IsmLiveDimens.eight)),
+                borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
                 color: Colors.black12,
               ),
               child: Row(
@@ -119,10 +115,10 @@ class _LiveTimer extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            padding: IsmLiveDimens.edgeInsets0,
-            onPressed: onTapModerators,
-            icon: Container(
+          IsmLiveDimens.boxWidth8,
+          IsmLiveTapHandler(
+            onTap: onTapModerators,
+            child: Container(
               padding: IsmLiveDimens.edgeInsets4,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
