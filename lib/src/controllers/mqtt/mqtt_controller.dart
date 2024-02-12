@@ -47,10 +47,10 @@ class IsmLiveMqttController extends GetxController {
     });
   }
 
-  void _updateStream() {
+  void _updateStream([List<String>? updateIds]) {
     IsmLiveUtility.updateLater(() {
       Future.delayed(const Duration(milliseconds: 100), () {
-        _streamController.update([IsmLiveStreamView.updateId]);
+        _streamController.update([IsmLiveStreamView.updateId, ...?updateIds]);
       });
     });
   }
@@ -228,11 +228,12 @@ class IsmLiveMqttController extends GetxController {
             break;
           case IsmLiveActions.memberAdded:
             final memberId = payload['memberId'] as String? ?? '';
-            final memberName = payload['memberName'] as String? ?? '';
+            var memberName = payload['memberName'] as String? ?? '';
             final hostName = payload['initiatorName'] as String? ?? 'Host';
             final hostId = payload['initiatorId'] as String? ?? '';
             if (memberId == userId) {
               _streamController.memberStatus = IsmLiveMemberStatus.gotRequest;
+              memberName = 'You';
             }
             final message = IsmLiveMessageModel(
               streamId: streamId,
@@ -245,6 +246,7 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
+            _updateStream([IsmLiveControlsWidget.updateId]);
             break;
           case IsmLiveActions.memberLeft:
           case IsmLiveActions.memberRemoved:

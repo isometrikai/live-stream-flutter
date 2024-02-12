@@ -40,12 +40,20 @@ class IsmLiveControlsWidget extends StatelessWidget {
               itemCount: options.length,
               separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
               itemBuilder: (context, index) => CustomIconButton(
-                icon: IsmLiveImage.svg(controller.controlIcon(options[index])),
+                icon: IsmLiveImage.svg(
+                  controller.controlIcon(options[index]),
+                ),
                 onTap: () async {
                   await controller.onOptionTap(options[index]);
                   controller.update([IsmLiveControlsWidget.updateId]);
                 },
-                color: IsmLiveColors.transparent,
+                color: options[index] == IsmLiveStreamOption.multiLive
+                    ? !isHost
+                        ? controller.memberStatus.receivedRequest
+                            ? Colors.blue
+                            : null
+                        : null
+                    : null,
               ),
             ),
           );

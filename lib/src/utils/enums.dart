@@ -331,4 +331,10 @@ enum IsmLiveMemberStatus {
   gotRequest,
   requested,
   copublisher;
+
+  bool get receivedRequest => this == IsmLiveMemberStatus.gotRequest;
+
+  bool get didRequested => this == IsmLiveMemberStatus.requested;
+
+  bool get isMember => this == IsmLiveMemberStatus.copublisher;
 }
