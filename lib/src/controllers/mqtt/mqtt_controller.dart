@@ -225,7 +225,27 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.copublishRequestAdded:
           case IsmLiveActions.copublishRequestDenied:
           case IsmLiveActions.copublishRequestRemoved:
+            break;
           case IsmLiveActions.memberAdded:
+            final memberId = payload['memberId'] as String? ?? '';
+            final memberName = payload['memberName'] as String? ?? '';
+            final hostName = payload['initiatorName'] as String? ?? 'Host';
+            final hostId = payload['initiatorId'] as String? ?? '';
+            if (memberId == userId) {
+              _streamController.memberStatus = IsmLiveMemberStatus.gotRequest;
+            }
+            final message = IsmLiveMessageModel(
+              streamId: streamId,
+              senderName: hostName,
+              senderIdentifier: '',
+              senderId: hostId,
+              messageType: IsmLiveMessageType.normal,
+              messageId: '',
+              body: '$hostName has added $memberName as a member',
+              isEvent: true,
+            );
+            unawaited(_streamController.handleMessage(message));
+            break;
           case IsmLiveActions.memberLeft:
           case IsmLiveActions.memberRemoved:
             break;
@@ -261,6 +281,7 @@ class IsmLiveMqttController extends GetxController {
               messageType: IsmLiveMessageType.normal,
               messageId: '',
               body: '$moderatorName is a moderator now',
+              isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
             if (userId == moderatorId) {
@@ -306,6 +327,7 @@ class IsmLiveMqttController extends GetxController {
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
                 body: '${viewer.userName} has joined',
+                isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
               await _streamController.addViewers([viewer]);
@@ -313,10 +335,8 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.viewerLeft:
-            IsmLiveLog.info('Here ${streamId == _streamController.streamId}');
             if (streamId == _streamController.streamId) {
               var viewer = IsmLiveViewerModel.fromMap(payload);
-              IsmLiveLog(viewer);
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: viewer.userName,
@@ -325,6 +345,7 @@ class IsmLiveMqttController extends GetxController {
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
                 body: '${viewer.userName} has left',
+                isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
               _streamController.streamViewersList.removeWhere((e) => e.userId == userId);
