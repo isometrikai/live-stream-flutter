@@ -7,61 +7,61 @@ class IsmLiveMembersSheet extends StatelessWidget {
   static const String updateId = 'members_sheet';
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-      id: updateId,
-      initState: (state) {
-        Get.find<IsmLiveStreamController>().getStreamMembers(
-            streamId: Get.find<IsmLiveStreamController>().streamId ?? '');
-      },
-      builder: (controller) => IsmLiveScrollSheet(
-            showSearchBar: true,
-            textEditingController:
-                controller.searchExistingMembesFieldController,
-            hintText: 'Search Copublisher',
-            onchange: controller.searchMember,
-            title: 'Members',
-            controller: controller.existingMembersListController,
-            itemCount: controller.streamMembersList.length,
-            itemBuilder: (context, index) {
-              final existingMember = controller.streamMembersList[index];
-              return ListTile(
-                leading: IsmLiveImage.network(
-                  existingMember.userProfileImageUrl,
-                  dimensions: IsmLiveDimens.forty,
-                  isProfileImage: true,
-                ),
-                title: Text(existingMember.userName),
-                subtitle: Text(existingMember.userIdentifier),
-                trailing: (controller.isHost ?? false) &&
-                        controller.user?.userId != existingMember.userId
-                    ? SizedBox(
-                        width: IsmLiveDimens.hundred,
-                        child: IsmLiveButton(
-                          label: 'Remove ',
-                          small: true,
-                          onTap: () {
-                            controller.removeMember(
-                              streamId: controller.streamId ?? '',
-                              memberId: existingMember.userId,
-                            );
-                          },
-                        ),
-                      )
-                    : (controller.user?.userId == existingMember.userId) &&
-                            (controller.isHost == false)
-                        ? SizedBox(
-                            width: IsmLiveDimens.hundred,
-                            child: IsmLiveButton(
-                              label: 'Leave ',
-                              small: true,
-                              onTap: () {
-                                controller.leaveMember(
-                                  streamId: controller.streamId ?? '',
-                                );
-                              },
-                            ),
-                          )
-                        : null,
-              );
-            },
-          ));
+        id: updateId,
+        initState: (state) {
+          Get.find<IsmLiveStreamController>().getStreamMembers(
+              streamId: Get.find<IsmLiveStreamController>().streamId ?? '');
+        },
+        builder: (controller) => IsmLiveScrollSheet(
+          showSearchBar: true,
+          textEditingController: controller.searchExistingMembesFieldController,
+          hintText: 'Search Copublisher',
+          onchange: controller.searchMember,
+          title: 'Members',
+          controller: controller.existingMembersListController,
+          itemCount: controller.streamMembersList.length,
+          itemBuilder: (context, index) {
+            final existingMember = controller.streamMembersList[index];
+            return ListTile(
+              leading: IsmLiveImage.network(
+                existingMember.userProfileImageUrl,
+                dimensions: IsmLiveDimens.forty,
+                isProfileImage: true,
+              ),
+              title: Text(existingMember.userName),
+              subtitle: Text(existingMember.userIdentifier),
+              trailing: (controller.isHost ?? false) &&
+                      controller.user?.userId != existingMember.userId
+                  ? SizedBox(
+                      width: IsmLiveDimens.hundred,
+                      child: IsmLiveButton(
+                        label: 'Remove ',
+                        small: true,
+                        onTap: () {
+                          controller.removeMember(
+                            streamId: controller.streamId ?? '',
+                            memberId: existingMember.userId,
+                          );
+                        },
+                      ),
+                    )
+                  : (controller.user?.userId == existingMember.userId) &&
+                          (controller.isHost == false)
+                      ? SizedBox(
+                          width: IsmLiveDimens.hundred,
+                          child: IsmLiveButton(
+                            label: 'Leave ',
+                            small: true,
+                            onTap: () {
+                              controller.leaveMember(
+                                streamId: controller.streamId ?? '',
+                              );
+                            },
+                          ),
+                        )
+                      : null,
+            );
+          },
+        ),
+      );
 }
