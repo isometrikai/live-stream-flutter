@@ -106,8 +106,16 @@ class _IsmLiveStreamView extends StatelessWidget {
           });
         },
         dispose: (_) async {
-          await Get.find<IsmLiveStreamController>().room?.dispose();
-          Get.find<IsmLiveStreamController>().streamMessagesList = [];
+          var controller = Get.find<IsmLiveStreamController>();
+          await controller.room?.dispose();
+          controller.streamMessagesList = [];
+          controller.searchUserFieldController.clear();
+          controller.descriptionController.clear();
+          controller.messageFieldController.clear();
+          controller.searchModeratorFieldController.clear();
+          controller.searchCopublisherFieldController.clear();
+          controller.searchExistingMembesFieldController.clear();
+          controller.searchMembersFieldController.clear();
         },
         builder: (controller) => PopScope(
           canPop: false,

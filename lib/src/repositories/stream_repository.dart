@@ -356,8 +356,6 @@ class IsmLiveStreamRepository {
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.copublishersRequests}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
-      showLoader: false,
-      showDialog: true,
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
@@ -378,8 +376,6 @@ class IsmLiveStreamRepository {
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.eligibleMembers}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
-      showLoader: false,
-      showDialog: true,
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
