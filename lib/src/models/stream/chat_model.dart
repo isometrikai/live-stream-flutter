@@ -16,6 +16,7 @@ class IsmLiveChatModel {
     this.sentByMe = false,
     this.sentByHost = false,
     this.parentBody,
+    this.isEvent = false,
   });
 
   factory IsmLiveChatModel.fromMap(Map<String, dynamic> map) => IsmLiveChatModel(
@@ -33,6 +34,7 @@ class IsmLiveChatModel {
         sentByMe: map['sentByMe'] as bool,
         sentByHost: map['sentByHost'] as bool,
         parentBody: map['parentBody'] as String?,
+        isEvent: map['isEvent'] as bool? ?? false,
       );
 
   factory IsmLiveChatModel.fromJson(String source) => IsmLiveChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -51,6 +53,7 @@ class IsmLiveChatModel {
   final bool sentByMe;
   final bool sentByHost;
   final String? parentBody;
+  final bool isEvent;
 
   IsmLiveChatModel copyWith({
     String? streamId,
@@ -67,6 +70,7 @@ class IsmLiveChatModel {
     bool? sentByMe,
     bool? sentByHost,
     String? parentBody,
+    bool? isEvent,
   }) =>
       IsmLiveChatModel(
         streamId: streamId ?? this.streamId,
@@ -83,6 +87,7 @@ class IsmLiveChatModel {
         sentByMe: sentByMe ?? this.sentByMe,
         sentByHost: sentByHost ?? this.sentByHost,
         parentBody: parentBody ?? this.parentBody,
+        isEvent: isEvent ?? this.isEvent,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -100,13 +105,14 @@ class IsmLiveChatModel {
         'sentByMe': sentByMe,
         'sentByHost': sentByHost,
         'parentBody': parentBody,
+        'isEvent': isEvent,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost, parentBody: $parentBody)';
+      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost, parentBody: $parentBody, isEvent: $isEvent)';
 
   @override
   bool operator ==(covariant IsmLiveChatModel other) {

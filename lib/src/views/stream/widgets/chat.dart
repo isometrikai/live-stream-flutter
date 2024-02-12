@@ -71,20 +71,15 @@ class IsmLiveChatView extends StatelessWidget {
                               IsmLiveDimens.boxWidth8,
                               DecoratedBox(
                                 decoration: BoxDecoration(
-                                  color: (context.liveTheme.primaryColor ??
-                                          IsmLiveColors.primary)
-                                      .withOpacity(0.2),
-                                  borderRadius:
-                                      BorderRadius.circular(IsmLiveDimens.four),
+                                  color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(IsmLiveDimens.four),
                                 ),
                                 child: Padding(
                                   padding: IsmLiveDimens.edgeInsets6_2,
                                   child: Text(
                                     'Host',
-                                    style:
-                                        context.textTheme.labelSmall?.copyWith(
-                                      color: context.liveTheme.primaryColor ??
-                                          IsmLiveColors.primary,
+                                    style: context.textTheme.labelSmall?.copyWith(
+                                      color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -102,8 +97,7 @@ class IsmLiveChatView extends StatelessWidget {
                             ),
                           )
                         else ...[
-                          if (message.isReply &&
-                              message.parentBody != null) ...[
+                          if (message.isReply && message.parentBody != null) ...[
                             Text(
                               'Reply to ${message.parentBody}',
                               style: context.textTheme.labelSmall?.copyWith(
@@ -121,29 +115,30 @@ class IsmLiveChatView extends StatelessWidget {
                             ),
                             softWrap: true,
                           ),
-                          IsmLiveDimens.boxHeight2,
-                          Row(
-                            children: [
-                              _TextButton(
-                                label: 'Reply',
-                                onTap: () {
-                                  controller.parentMessage = message;
-                                  controller
-                                      .update([IsmLiveMessageField.updateId]);
-                                },
-                              ),
-                              if (controller.isModerator) ...[
-                                IsmLiveDimens.boxWidth8,
+                          if (!message.isEvent) ...[
+                            IsmLiveDimens.boxHeight2,
+                            Row(
+                              children: [
                                 _TextButton(
-                                  label: 'Delete',
-                                  onTap: () => controller.deleteMessage(
-                                    streamId: streamId,
-                                    messageId: message.messageId,
-                                  ),
+                                  label: 'Reply',
+                                  onTap: () {
+                                    controller.parentMessage = message;
+                                    controller.update([IsmLiveMessageField.updateId]);
+                                  },
                                 ),
+                                if (controller.isModerator) ...[
+                                  IsmLiveDimens.boxWidth8,
+                                  _TextButton(
+                                    label: 'Delete',
+                                    onTap: () => controller.deleteMessage(
+                                      streamId: streamId,
+                                      messageId: message.messageId,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
+                            ),
+                          ],
                         ],
                       ],
                     ),
