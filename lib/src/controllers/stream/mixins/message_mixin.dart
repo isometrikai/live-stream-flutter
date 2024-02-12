@@ -17,6 +17,7 @@ mixin StreamMessageMixin {
         isReply: message.replyMessage,
         parentId: message.parentMessageId,
         parentBody: message.metaData?.parentMessageBody,
+        isEvent: message.isEvent,
       );
 
   Future<void> handleMessage(
