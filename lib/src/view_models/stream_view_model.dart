@@ -592,4 +592,20 @@ class IsmLiveStreamViewModel {
       return false;
     }
   }
+
+  Future<String> switchViewer({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.switchViewer(
+        streamId: streamId,
+      );
+      var rtcToken = jsonDecode(res.data)['rtcToken'];
+
+      return rtcToken;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return '';
+    }
+  }
 }

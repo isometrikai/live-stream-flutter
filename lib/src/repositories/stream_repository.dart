@@ -462,4 +462,19 @@ class IsmLiveStreamRepository {
       showLoader: true,
     );
   }
+
+  Future<IsmLiveResponseModel> switchViewer({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.switchProfile,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }

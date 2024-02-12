@@ -529,4 +529,13 @@ mixin StreamAPIMixin {
 
     return res;
   }
+
+  Future<String> switchViewer({
+    required String streamId,
+  }) async {
+    var rtcTocken = await _controller._viewModel.switchViewer(
+      streamId: streamId,
+    );
+    return rtcTocken;
+  }
 }
