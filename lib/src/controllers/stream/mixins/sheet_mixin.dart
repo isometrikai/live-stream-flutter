@@ -48,23 +48,29 @@ mixin StreamSheetMixin {
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: Get.context?.liveTranslations.requestCopublishingTitle ??
-            IsmLiveStrings.requestCopublishingTitle,
-        description:
-            Get.context?.liveTranslations.requestCopublishingDescription ??
-                IsmLiveStrings.requestCopublishingDescription,
-        label: 'Send Request',
+        title: Get.context?.liveTranslations.requestCopublishingTitle ?? IsmLiveStrings.requestCopublishingTitle,
+        description: Get.context?.liveTranslations.requestCopublishingDescription ?? IsmLiveStrings.requestCopublishingDescription,
+        label: _controller.memberStatus.isRejected
+            ? 'Request denied by the host'
+            : _controller.memberStatus.didRequested
+                ? 'Requested Co-publishing'
+                : 'Send Request',
         images: [
           _controller.user?.profileUrl ?? '',
           _controller.hostDetails?.userProfileImageUrl ?? '',
         ],
-        onTap: () {
-          if (!_controller.isModerator) {
-            _controller.requestCopublisher(
-              _controller.streamId ?? '',
-            );
-          }
-        },
+        onTap: _controller.memberStatus.didRequested || _controller.memberStatus.isRejected
+            ? null
+            : () async {
+                if (!_controller.isModerator) {
+                  final isSent = await _controller.requestCopublisher(
+                    _controller.streamId ?? '',
+                  );
+                  if (isSent) {
+                    _controller.memberStatus = IsmLiveMemberStatus.requested;
+                  }
+                }
+              },
       ),
     );
   }
