@@ -33,7 +33,7 @@ mixin StreamJoinMixin {
   }
 
   Future<void> enableMyVideo() async {
-    if (_controller.room == null || _controller.room!.localParticipant == null) {
+    if (_controller.room == null) {
       return;
     }
     var localVideo = await LocalVideoTrack.createCameraTrack(
@@ -44,7 +44,6 @@ mixin StreamJoinMixin {
     );
     await Future.wait<dynamic>([
       _controller.room!.localParticipant!.publishVideoTrack(localVideo),
-      _controller.room!.localParticipant!.setCameraEnabled(true),
     ]);
   }
 
@@ -53,12 +52,10 @@ mixin StreamJoinMixin {
     bool? value,
   }) async {
     final participant = room?.localParticipant;
-    if (participant == null) {
-      return;
-    }
+
     _controller.audioOn = value ?? !_controller.audioOn;
     try {
-      await participant.setMicrophoneEnabled(_controller.audioOn);
+      await participant?.setMicrophoneEnabled(_controller.audioOn);
     } catch (error) {
       _controller.audioOn = !_controller.audioOn;
       IsmLiveLog('toggleAudio function  error  $error');
@@ -134,6 +131,7 @@ mixin StreamJoinMixin {
     String? imageUrl,
     bool audioCallOnly = false,
     required bool isHost,
+    bool isCopublisher = false,
     required bool isNewStream,
     bool joinByScrolling = false,
   }) async {
@@ -143,6 +141,7 @@ mixin StreamJoinMixin {
     _controller.isModerationWarningVisible = true;
     _controller.streamId = streamId;
     _controller.isHost = isHost;
+    _controller.isCopublisher = isCopublisher;
     unawaited(
       _controller._mqttController?.subscribeStream(
         streamId,
@@ -153,12 +152,16 @@ mixin StreamJoinMixin {
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
+    } else if (isCopublisher) {
+      message = '';
     } else {
-      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
@@ -192,13 +195,13 @@ mixin StreamJoinMixin {
         ],
       );
 
-      if (isHost) {
+      if (isHost || isCopublisher) {
         await enableMyVideo();
       }
 
       unawaited(
         _controller.toggleAudio(
-          value: isHost,
+          value: isHost || isCopublisher,
         ),
       );
 
@@ -225,6 +228,7 @@ mixin StreamJoinMixin {
       if (!joinByScrolling) {
         IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
         IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
+
         unawaited(
           IsmLiveRouteManagement.goToStreamView(
             isHost: isHost,
