@@ -44,6 +44,7 @@ abstract class IsmLiveRouteManagement {
       'isHost': isHost,
       'isNewStream': isNewStream,
     };
+
     if (isHost && isNewStream) {
       await Get.offNamed(
         IsmLiveRoutes.streamView,

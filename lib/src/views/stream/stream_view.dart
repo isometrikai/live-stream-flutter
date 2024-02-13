@@ -124,10 +124,18 @@ class _IsmLiveStreamView extends StatelessWidget {
               children: [
                 Obx(
                   () => controller.participantTracks.isNotEmpty
-                      ? ParticipantWidget.widgetFor(
-                          controller.participantTracks.first,
-                          imageUrl: controller.user?.profileUrl,
-                          showStatsLayer: false,
+                      ? GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                          ),
+                          itemBuilder: (_, index) =>
+                              ParticipantWidget.widgetFor(
+                            controller.participantTracks[index],
+                            imageUrl: controller.user?.profileUrl,
+                            showStatsLayer: false,
+                          ),
+                          itemCount: controller.participantTracks.length,
                         )
                       : NoVideoWidget(imageUrl: imageUrl ?? ''),
                 ),
@@ -149,7 +157,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   onTapCross: () {
                                     FocusScope.of(context).unfocus();
                                     controller.onExit(
-                                      isHost: isHost,
+                                      isHost: controller.isHost ?? false,
                                       streamId: streamId,
                                     );
                                   },
@@ -194,12 +202,12 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       IsmLiveChatView(
-                                        isHost: isHost,
+                                        isHost: controller.isHost ?? false,
                                         streamId: streamId,
                                       ),
                                       const Spacer(),
                                       IsmLiveControlsWidget(
-                                        isHost: isHost,
+                                        isHost: controller.isHost ?? false,
                                         streamId: streamId,
                                         audioCallOnly: audioCallOnly,
                                       ),
@@ -208,14 +216,15 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                                 IsmLiveDimens.boxHeight8,
                                 IsmLiveMessageField(
-                                    streamId: streamId, isHost: isHost),
+                                    streamId: streamId,
+                                    isHost: controller.isHost ?? false),
                               ],
                             ),
                           ),
                         )
                       : const SizedBox.shrink(),
                 ),
-                if (isHost) ...[
+                if (controller.isHost ?? false) ...[
                   Positioned(
                     bottom: IsmLiveDimens.eighty,
                     left: IsmLiveDimens.sixteen,

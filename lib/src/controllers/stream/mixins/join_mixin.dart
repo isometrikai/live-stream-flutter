@@ -32,6 +32,37 @@ mixin StreamJoinMixin {
     _controller.pageController = PageController(initialPage: index);
   }
 
+  Future<void> enableMyVideo() async {
+    if (_controller.room == null) {
+      return;
+    }
+    var localVideo = await LocalVideoTrack.createCameraTrack(
+      const CameraCaptureOptions(
+        cameraPosition: CameraPosition.front,
+        params: VideoParametersPresets.h720_169,
+      ),
+    );
+    await Future.wait<dynamic>([
+      _controller.room!.localParticipant!.publishVideoTrack(localVideo),
+    ]);
+  }
+
+  Future<void> toggleAudio({
+    Room? room,
+    bool? value,
+  }) async {
+    final participant = room?.localParticipant;
+
+    _controller.audioOn = value ?? !_controller.audioOn;
+    try {
+      await participant?.setMicrophoneEnabled(_controller.audioOn);
+    } catch (error) {
+      _controller.audioOn = !_controller.audioOn;
+      IsmLiveLog('toggleAudio function  error  $error');
+    }
+    _controller.update();
+  }
+
   Future<void> joinStream(
     IsmLiveStreamModel stream,
     bool isHost, {
@@ -100,6 +131,7 @@ mixin StreamJoinMixin {
     String? imageUrl,
     bool audioCallOnly = false,
     required bool isHost,
+    bool isCopublisher = false,
     required bool isNewStream,
     bool joinByScrolling = false,
   }) async {
@@ -109,7 +141,12 @@ mixin StreamJoinMixin {
     _controller.isModerationWarningVisible = true;
     _controller.streamId = streamId;
     _controller.isHost = isHost;
-    unawaited(_controller._mqttController?.subscribeStream(streamId));
+    _controller.isCopublisher = isCopublisher;
+    unawaited(
+      _controller._mqttController?.subscribeStream(
+        streamId,
+      ),
+    );
 
     final translation = Get.context?.liveTranslations.streamTranslations;
     var message = '';
@@ -120,6 +157,8 @@ mixin StreamJoinMixin {
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
+    } else if (isCopublisher) {
+      message = '';
     } else {
       message =
           translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
@@ -148,21 +187,23 @@ mixin StreamJoinMixin {
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
         trackPermissions: [
-          const ParticipantTrackPermission('allowed-identity', true, null)
+          const ParticipantTrackPermission(
+            'allowed-identity',
+            true,
+            null,
+          ),
         ],
       );
 
-      if (isHost) {
-        var localVideo = await LocalVideoTrack.createCameraTrack(
-          const CameraCaptureOptions(
-            cameraPosition: CameraPosition.front,
-            params: VideoParametersPresets.h720_169,
-          ),
-        );
-        await room.localParticipant?.publishVideoTrack(localVideo);
+      if (isHost || isCopublisher) {
+        await enableMyVideo();
       }
 
-      await room.localParticipant?.setMicrophoneEnabled(isHost);
+      unawaited(
+        _controller.toggleAudio(
+          value: isHost || isCopublisher,
+        ),
+      );
 
       IsmLiveUtility.closeLoader();
 
@@ -172,7 +213,11 @@ mixin StreamJoinMixin {
           limit: 10,
           skip: 0,
         ),
-        _controller.getStreamViewer(streamId: streamId, limit: 10, skip: 0),
+        _controller.getStreamViewer(
+          streamId: streamId,
+          limit: 10,
+          skip: 0,
+        ),
       ]));
 
       _controller.update([IsmLiveStreamView.updateId]);
@@ -183,18 +228,25 @@ mixin StreamJoinMixin {
       if (!joinByScrolling) {
         IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
         IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
-        unawaited(IsmLiveRouteManagement.goToStreamView(
-          isHost: isHost,
-          isNewStream: isNewStream,
-          room: room,
-          imageUrl: imageUrl,
-          listener: listener,
-          streamId: streamId,
-          audioCallOnly: audioCallOnly,
-        ));
+
+        unawaited(
+          IsmLiveRouteManagement.goToStreamView(
+            isHost: isHost,
+            isNewStream: isNewStream,
+            room: room,
+            imageUrl: imageUrl,
+            listener: listener,
+            streamId: streamId,
+            audioCallOnly: audioCallOnly,
+          ),
+        );
       }
     } catch (e, st) {
-      unawaited(_controller._mqttController?.unsubscribeStream(streamId));
+      unawaited(
+        _controller._mqttController?.unsubscribeStream(
+          streamId,
+        ),
+      );
       _controller.isHost = null;
       // isMeetingOn = false;
       IsmLiveLog.error(e, st);
@@ -202,9 +254,13 @@ mixin StreamJoinMixin {
   }
 
   void startStreamTimer() {
-    _controller._streamTimer =
-        Timer.periodic(const Duration(seconds: 1), (timer) {
-      _controller.streamDuration += const Duration(seconds: 1);
+    _controller._streamTimer = Timer.periodic(
+        const Duration(
+          seconds: 1,
+        ), (timer) {
+      _controller.streamDuration += const Duration(
+        seconds: 1,
+      );
     });
   }
 }

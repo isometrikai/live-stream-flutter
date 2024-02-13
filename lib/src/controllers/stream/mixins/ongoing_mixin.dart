@@ -42,7 +42,7 @@ mixin StreamOngoingMixin {
         );
       }
     }
-    unawaited(sortParticipants(isHost));
+    await sortParticipants();
     if (lkPlatformIsMobile()) {
       unawaited(_controller.toggleSpeaker(value: true));
     }
@@ -59,8 +59,9 @@ mixin StreamOngoingMixin {
       searchTag: _controller.user?.userName,
     );
 
-    _controller.isModerator = _controller.moderatorsList
-        .any((element) => element.userId == _controller.user?.userId);
+    _controller.isModerator = _controller.moderatorsList.any(
+      (e) => e.userId == _controller.user?.userId,
+    );
 
     ///This is to update the List of moderators without search
     await _controller.fetchModerators(
@@ -78,22 +79,24 @@ mixin StreamOngoingMixin {
         })
         ..on<ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
-          sortParticipants(isHost);
+          sortParticipants();
         })
-        ..on<ParticipantConnectedEvent>((event) async {
+        ..on<ParticipantConnectedEvent>((event) {
           IsmLiveLog.info('ParticipantConnectedEvent: $event');
+          sortParticipants();
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
         })
         ..on<RoomRecordingStatusChanged>((event) {})
-        ..on<LocalTrackPublishedEvent>((_) => sortParticipants(isHost))
-        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(isHost))
+        ..on<LocalTrackPublishedEvent>((_) => sortParticipants())
+        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants())
         ..on<TrackE2EEStateEvent>((event) {
           IsmLiveLog.info('TrackE2EEStateEvent: $event');
         })
         ..on<ParticipantNameUpdatedEvent>((event) {
           IsmLiveLog.info('ParticipantNameUpdatedEvent: $event');
+          sortParticipants();
         })
         ..on<DataReceivedEvent>((event) {
           IsmLiveLog.info('DataReceivedEvent: ${event.topic} $event');
@@ -108,42 +111,48 @@ mixin StreamOngoingMixin {
           }
         });
 
-  Future<void> sortParticipants(
-    bool isHost,
-  ) async {
-    _participantDebouncer.run(() => _sortParticipants(isHost));
+  Future<void> sortParticipants() async {
+    _participantDebouncer.run(_sortParticipants);
   }
 
-  Future<void> _sortParticipants(bool isHost) async {
+  Future<void> _sortParticipants() async {
     final room = _controller.room;
     if (room == null) {
       return;
     }
     var userMediaTracks = <ParticipantTrack>[];
-
-    if (isHost) {
-      final localParticipantTracks = room.localParticipant?.videoTracks;
-      if (localParticipantTracks != null) {
-        for (var t in localParticipantTracks) {
-          userMediaTracks.add(ParticipantTrack(
+    IsmLiveLog(
+        '****************************************************************');
+    // if (isHost || _controller.isMember) {
+    final localParticipantTracks = room.localParticipant?.videoTracks;
+    if (localParticipantTracks != null) {
+      for (var t in localParticipantTracks) {
+        userMediaTracks.add(
+          ParticipantTrack(
             participant: room.localParticipant!,
             videoTrack: t.track,
             isScreenShare: false,
-          ));
-        }
+          ),
+        );
       }
-    } else {
-      for (var participant in room.participants.values) {
-        for (var t in participant.videoTracks) {
-          userMediaTracks.add(ParticipantTrack(
+    }
+    IsmLiveLog(
+        '****************************************************************1111111111111111111 userList== ${userMediaTracks.length}  ');
+    // } else {
+    for (var participant in room.participants.values) {
+      for (var t in participant.videoTracks) {
+        userMediaTracks.add(
+          ParticipantTrack(
             participant: participant,
             videoTrack: t.track,
             isScreenShare: false,
-          ));
-        }
+          ),
+        );
       }
     }
-
+    // }
+    IsmLiveLog(
+        '****************************************************************22222222222222222 userList== ${userMediaTracks.length}  ');
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
   }
@@ -290,9 +299,13 @@ mixin StreamOngoingMixin {
         break;
       case IsmLiveStreamOption.multiLive:
         if (!_controller.isModerator) {
-          _controller.copublisherRequestSheet();
+          if (_controller.memberStatus.canEnableVideo) {
+            _controller.copublishingStartVideoSheet();
+          } else {
+            _controller.copublishingViewerSheet();
+          }
         } else {
-          _controller.copublisherSheet();
+          _controller.copublishingHostSheet();
         }
 
         break;
@@ -324,7 +337,7 @@ mixin StreamOngoingMixin {
         _controller.toggleVideo();
         break;
       case IsmLiveHostSettings.muteMyAudio:
-        _controller.toggleAudio();
+        unawaited(_controller.toggleAudio());
         break;
       case IsmLiveHostSettings.muteRemoteVideo:
       case IsmLiveHostSettings.muteRemoteAudio:
@@ -355,30 +368,6 @@ mixin StreamOngoingMixin {
     );
     _controller.previousStreamIndex = index;
     IsmLiveUtility.closeLoader();
-  }
-
-  void onExit({
-    required bool isHost,
-    required String streamId,
-  }) {
-    IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        title: isHost
-            ? IsmLiveStrings.areYouSureEndStream
-            : IsmLiveStrings.areYouSureLeaveStream,
-        leftLabel: 'Cancel',
-        rightLabel: isHost ? 'End Stream' : 'Leave Stram',
-        onLeft: Get.back,
-        onRight: () async {
-          Get.back();
-          await disconnectStream(
-            isHost: isHost,
-            streamId: streamId,
-          );
-        },
-      ),
-      isDismissible: false,
-    );
   }
 
   Future<void> disconnectStream({
