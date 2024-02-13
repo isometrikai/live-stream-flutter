@@ -8,33 +8,56 @@ class IsmLiveButton extends StatelessWidget {
     this.onTap,
     required this.label,
     this.small = false,
-  }) : _type = IsmLiveButtonType.primary;
+  })  : _type = IsmLiveButtonType.primary,
+        icon = null,
+        secondary = false;
 
   const IsmLiveButton.secondary({
     super.key,
     this.onTap,
     required this.label,
     this.small = false,
-  }) : _type = IsmLiveButtonType.secondary;
+  })  : _type = IsmLiveButtonType.secondary,
+        icon = null,
+        secondary = false;
 
   const IsmLiveButton.outlined({
     super.key,
     this.onTap,
     required this.label,
     this.small = false,
-  }) : _type = IsmLiveButtonType.outlined;
+  })  : _type = IsmLiveButtonType.outlined,
+        icon = null,
+        secondary = false;
 
   const IsmLiveButton.text({
     super.key,
     this.onTap,
     required this.label,
     this.small = false,
-  }) : _type = IsmLiveButtonType.text;
+  })  : _type = IsmLiveButtonType.text,
+        icon = null,
+        secondary = false;
+
+  const IsmLiveButton.icon({
+    super.key,
+    this.icon,
+    this.secondary = false,
+    this.onTap,
+  })  : _type = IsmLiveButtonType.icon,
+        label = '',
+        small = false,
+        assert(
+          icon != null,
+          'icon cannot be null for IsmLiveButton.icon',
+        );
 
   final VoidCallback? onTap;
   final String label;
   final IsmLiveButtonType _type;
   final bool small;
+  final IconData? icon;
+  final bool secondary;
 
   static MaterialStateProperty<TextStyle?> _textStyle(BuildContext context, bool small) => MaterialStateProperty.all(
         (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)?.copyWith(
@@ -48,8 +71,8 @@ class IsmLiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 48,
-        width: double.maxFinite,
+        height: _type == IsmLiveButtonType.icon ? null : 48,
+        width: _type == IsmLiveButtonType.icon ? null : double.maxFinite,
         child: switch (_type) {
           IsmLiveButtonType.primary => _Primary(
               label: label,
@@ -70,6 +93,11 @@ class IsmLiveButton extends StatelessWidget {
               label: label,
               onTap: onTap,
               small: small,
+            ),
+          IsmLiveButtonType.icon => _Icon(
+              icon: icon!,
+              onTap: onTap,
+              secondary: secondary,
             ),
         },
       );
@@ -279,5 +307,60 @@ class _Text extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
         ),
+      );
+}
+
+class _Icon extends StatelessWidget {
+  const _Icon({
+    this.onTap,
+    required this.icon,
+    this.secondary = false,
+  });
+
+  final VoidCallback? onTap;
+  final IconData icon;
+  final bool secondary;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+        style: ButtonStyle(
+          shape: context.theme.elevatedButtonTheme.style?.shape ??
+              MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: context.liveTheme.iconButtonRadius ?? BorderRadius.circular(IsmLiveDimens.twelve),
+                ),
+              ),
+          backgroundColor: MaterialStateColor.resolveWith(
+            (states) {
+              if (states.isDisabled) {
+                return IsmLiveColors.grey;
+              }
+              final primaryColor = context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
+                  context.liveTheme.primaryColor ??
+                  IsmLiveColors.primary;
+
+              final secondaryColor = context.liveTheme.secondaryColor ?? IsmLiveColors.secondary;
+
+              return secondary ? secondaryColor : primaryColor;
+            },
+          ),
+          foregroundColor: MaterialStateColor.resolveWith(
+            (states) {
+              if (states.isDisabled) {
+                return IsmLiveColors.black;
+              }
+              final primaryColor = context.theme.elevatedButtonTheme.style?.foregroundColor?.resolve(states) ??
+                  context.liveTheme.backgroundColor ??
+                  IsmLiveColors.white;
+              final secondaryColor = context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
+                  context.liveTheme.primaryColor ??
+                  IsmLiveColors.primary;
+
+              return secondary ? secondaryColor : primaryColor;
+            },
+          ),
+        ),
+        onPressed: onTap,
+        icon: Icon(icon),
       );
 }

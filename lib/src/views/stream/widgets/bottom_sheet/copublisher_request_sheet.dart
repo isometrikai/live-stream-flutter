@@ -72,13 +72,25 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             IsmLiveDimens.boxHeight20,
-            IsmLiveButton(
-              label: label,
-              onTap: () {
-                Get.back();
-                onTap?.call();
-              },
-            ),
+            if (onTap == null)
+              Padding(
+                padding: IsmLiveDimens.edgeInsets16,
+                child: Text(
+                  label,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            else
+              IsmLiveButton(
+                label: label,
+                onTap: () {
+                  Get.back();
+                  onTap?.call();
+                },
+              ),
           ],
         ),
       );

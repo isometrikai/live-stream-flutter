@@ -7,6 +7,7 @@ class IsmLiveThemeData with Diagnosticable {
     this.secondaryColor,
     this.backgroundColor,
     this.buttonRadius,
+    this.iconButtonRadius,
     this.cardBackgroundColor,
     this.selectedTextColor,
     this.unselectedTextColor,
@@ -18,6 +19,7 @@ class IsmLiveThemeData with Diagnosticable {
   final Color? selectedTextColor;
   final Color? unselectedTextColor;
   final BorderRadius? buttonRadius;
+  final BorderRadius? iconButtonRadius;
   final Color? cardBackgroundColor;
 
   @override
@@ -29,6 +31,7 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(ColorProperty('selectedTextColor', selectedTextColor));
     properties.add(ColorProperty('unselectedTextColor', unselectedTextColor));
     properties.add(DiagnosticsProperty<BorderRadius>('buttonRadius', buttonRadius));
+    properties.add(DiagnosticsProperty<BorderRadius>('iconButtonRadius', iconButtonRadius));
     properties.add(ColorProperty('cardBackgroundColor', cardBackgroundColor));
   }
 
@@ -39,6 +42,7 @@ class IsmLiveThemeData with Diagnosticable {
     Color? selectedTextColor,
     Color? unselectedTextColor,
     BorderRadius? buttonRadius,
+    BorderRadius? iconButtonRadius,
     Color? cardBackgroundColor,
   }) =>
       IsmLiveThemeData(
@@ -48,6 +52,7 @@ class IsmLiveThemeData with Diagnosticable {
         selectedTextColor: selectedTextColor ?? this.selectedTextColor,
         unselectedTextColor: unselectedTextColor ?? this.unselectedTextColor,
         buttonRadius: buttonRadius ?? this.buttonRadius,
+        iconButtonRadius: iconButtonRadius ?? this.iconButtonRadius,
         cardBackgroundColor: cardBackgroundColor ?? this.cardBackgroundColor,
       );
 }

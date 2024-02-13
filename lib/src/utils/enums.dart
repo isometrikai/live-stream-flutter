@@ -37,7 +37,8 @@ enum IsmLiveButtonType {
   primary,
   secondary,
   outlined,
-  text;
+  text,
+  icon;
 }
 
 enum IsmLiveImageType {
@@ -331,11 +332,14 @@ enum IsmLiveMemberStatus {
   gotRequest,
   requested,
   requestApproved,
+  requestDenied,
   copublisher;
 
   bool get receivedRequest => this == IsmLiveMemberStatus.gotRequest;
 
   bool get isApproved => this == IsmLiveMemberStatus.requestApproved;
+
+  bool get isRejected => this == IsmLiveMemberStatus.requestDenied;
 
   bool get didRequested => this == IsmLiveMemberStatus.requested;
 
