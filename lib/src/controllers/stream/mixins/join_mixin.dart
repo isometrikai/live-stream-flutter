@@ -48,12 +48,12 @@ mixin StreamJoinMixin {
   }
 
   Future<void> toggleAudio({
-    Room? room,
     bool? value,
   }) async {
-    final participant = room?.localParticipant;
+    final participant = _controller.room?.localParticipant;
 
     _controller.audioOn = value ?? !_controller.audioOn;
+
     try {
       await participant?.setMicrophoneEnabled(_controller.audioOn);
     } catch (error) {
@@ -141,7 +141,7 @@ mixin StreamJoinMixin {
     _controller.isModerationWarningVisible = true;
     _controller.streamId = streamId;
     _controller.isHost = isHost;
-    _controller.isCopublisher = isCopublisher;
+    // _controller.isCopublisher = isCopublisher;
     unawaited(
       _controller._mqttController?.subscribeStream(
         streamId,

@@ -56,7 +56,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
               ),
             if (showSearchBar)
               Padding(
-                padding: IsmLiveDimens.edgeInsets16,
+                padding: IsmLiveDimens.edgeInsets16_0,
                 child: IsmLiveInputField(
                   controller: textEditingController ?? TextEditingController(),
                   hintText: hintText,
