@@ -121,8 +121,7 @@ mixin StreamOngoingMixin {
       return;
     }
     var userMediaTracks = <ParticipantTrack>[];
-    IsmLiveLog(
-        '****************************************************************');
+
     // if (isHost || _controller.isMember) {
     final localParticipantTracks = room.localParticipant?.videoTracks;
     if (localParticipantTracks != null) {
@@ -136,8 +135,7 @@ mixin StreamOngoingMixin {
         );
       }
     }
-    IsmLiveLog(
-        '****************************************************************1111111111111111111 userList== ${userMediaTracks.length}  ');
+
     // } else {
     for (var participant in room.participants.values) {
       for (var t in participant.videoTracks) {
@@ -151,8 +149,7 @@ mixin StreamOngoingMixin {
       }
     }
     // }
-    IsmLiveLog(
-        '****************************************************************22222222222222222 userList== ${userMediaTracks.length}  ');
+
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
   }
@@ -178,15 +175,20 @@ mixin StreamOngoingMixin {
 
   String controlSetting(IsmLiveHostSettings option) {
     switch (option) {
-      case IsmLiveHostSettings.muteRemoteVideo:
-      case IsmLiveHostSettings.muteRemoteAudio:
-      case IsmLiveHostSettings.showNetWorkStats:
-      case IsmLiveHostSettings.hideChatMessages:
-      case IsmLiveHostSettings.hideControlButtons:
       case IsmLiveHostSettings.muteMyVideo:
         return _controller.videoOn ? option.muteValues : option.unmuteValues;
       case IsmLiveHostSettings.muteMyAudio:
         return _controller.audioOn ? option.muteValues : option.unmuteValues;
+      case IsmLiveHostSettings.muteRemoteVideo:
+        return option.muteValues;
+      case IsmLiveHostSettings.muteRemoteAudio:
+        return option.muteValues;
+      case IsmLiveHostSettings.showNetWorkStats:
+        return option.muteValues;
+      case IsmLiveHostSettings.hideChatMessages:
+        return option.muteValues;
+      case IsmLiveHostSettings.hideControlButtons:
+        return option.muteValues;
     }
   }
 
@@ -329,21 +331,26 @@ mixin StreamOngoingMixin {
     }
   }
 
-  Future onSettingTap(
+  void onSettingTap(
     IsmLiveHostSettings option,
   ) async {
     switch (option) {
-      case IsmLiveHostSettings.muteMyVideo:
-        _controller.toggleVideo();
+      case IsmLiveHostSettings.muteRemoteVideo:
+        break;
+      case IsmLiveHostSettings.muteRemoteAudio:
+        break;
+      case IsmLiveHostSettings.showNetWorkStats:
+        break;
+      case IsmLiveHostSettings.hideChatMessages:
+        break;
+      case IsmLiveHostSettings.hideControlButtons:
         break;
       case IsmLiveHostSettings.muteMyAudio:
         unawaited(_controller.toggleAudio());
         break;
-      case IsmLiveHostSettings.muteRemoteVideo:
-      case IsmLiveHostSettings.muteRemoteAudio:
-      case IsmLiveHostSettings.showNetWorkStats:
-      case IsmLiveHostSettings.hideChatMessages:
-      case IsmLiveHostSettings.hideControlButtons:
+      case IsmLiveHostSettings.muteMyVideo:
+        _controller.toggleVideo();
+        break;
     }
   }
 
