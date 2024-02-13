@@ -2,8 +2,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveCopublisherSheet extends StatelessWidget {
-  const IsmLiveCopublisherSheet({super.key});
+class IsmLiveCopublishingHostSheet extends StatelessWidget {
+  const IsmLiveCopublishingHostSheet({super.key});
   static const String updateId = 'stream-copublisher-sheet';
 
   @override

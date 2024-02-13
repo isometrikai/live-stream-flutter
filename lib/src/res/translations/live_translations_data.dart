@@ -9,6 +9,10 @@ class IsmLiveTranslationsData with Diagnosticable {
     this.addedModerator,
     this.streamEnded,
     this.attention,
+    this.requestCopublishingTitle,
+    this.requestCopublishingDescription,
+    this.hostAcceptedCopublishRequestTitle,
+    this.hostAcceptedCopublishRequestDescription,
   });
 
   final IsmLiveStreamTranslations? streamTranslations;
@@ -27,6 +31,22 @@ class IsmLiveTranslationsData with Diagnosticable {
   final String? addedModerator;
   final String? streamEnded;
   final String? attention;
+  final String? requestCopublishingTitle;
+  final String? requestCopublishingDescription;
+
+  /// The Title to show in the bottomsheet once the host has accepted the request of a viewer to copublish.
+  ///
+  /// Make sure you include `@name` in the string to show the name of the host in the dialog
+  ///
+  /// defaults to [IsmLiveStrings.hostAcceptedCopublishRequestTitle]
+  final String? hostAcceptedCopublishRequestTitle;
+
+  /// The Message to show in the bottomsheet once the host has accepted the request of a viewer to copublish.
+  ///
+  /// Make sure you include `@name` in the string to show the name of the host in the dialog
+  ///
+  /// defaults to [IsmLiveStrings.hostAcceptedCopublishRequestDescription]
+  final String? hostAcceptedCopublishRequestDescription;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -37,6 +57,22 @@ class IsmLiveTranslationsData with Diagnosticable {
     properties.add(StringProperty('addedModerator', addedModerator));
     properties.add(StringProperty('streamEnded', streamEnded));
     properties.add(StringProperty('attention', attention));
+    properties.add(StringProperty(
+      'requestCopublishingTitle',
+      requestCopublishingTitle,
+    ));
+    properties.add(StringProperty(
+      'requestCopublishingDescription',
+      requestCopublishingDescription,
+    ));
+    properties.add(StringProperty(
+      'hostAcceptedCopublishRequestTitle',
+      hostAcceptedCopublishRequestTitle,
+    ));
+    properties.add(StringProperty(
+      'hostAcceptedCopublishRequestDescription',
+      hostAcceptedCopublishRequestDescription,
+    ));
   }
 
   IsmLiveTranslationsData copyWith({
@@ -46,6 +82,10 @@ class IsmLiveTranslationsData with Diagnosticable {
     String? addedModerator,
     String? streamEnded,
     String? attention,
+    String? requestCopublishingTitle,
+    String? requestCopublishingDescription,
+    String? hostAcceptedCopublishRequestTitle,
+    String? hostAcceptedCopublishRequestDescription,
   }) =>
       IsmLiveTranslationsData(
         streamTranslations: streamTranslations ?? this.streamTranslations,
@@ -54,5 +94,9 @@ class IsmLiveTranslationsData with Diagnosticable {
         addedModerator: addedModerator ?? this.addedModerator,
         streamEnded: streamEnded ?? this.streamEnded,
         attention: attention ?? this.attention,
+        requestCopublishingTitle: requestCopublishingTitle ?? this.requestCopublishingTitle,
+        requestCopublishingDescription: requestCopublishingDescription ?? this.requestCopublishingDescription,
+        hostAcceptedCopublishRequestTitle: hostAcceptedCopublishRequestTitle ?? this.hostAcceptedCopublishRequestTitle,
+        hostAcceptedCopublishRequestDescription: hostAcceptedCopublishRequestDescription ?? this.hostAcceptedCopublishRequestDescription,
       );
 }
