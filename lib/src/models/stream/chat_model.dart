@@ -122,9 +122,10 @@ class IsmLiveChatModel {
         other.messageId == messageId &&
         other.parentId == parentId &&
         other.userId == userId &&
+        other.body == body &&
         other.parentBody == parentBody;
   }
 
   @override
-  int get hashCode => streamId.hashCode ^ messageId.hashCode ^ parentId.hashCode ^ userId.hashCode ^ parentBody.hashCode;
+  int get hashCode => streamId.hashCode ^ messageId.hashCode ^ parentId.hashCode ^ userId.hashCode ^ body.hashCode ^ parentBody.hashCode;
 }

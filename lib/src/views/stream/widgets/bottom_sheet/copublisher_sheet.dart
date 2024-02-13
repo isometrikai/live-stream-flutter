@@ -115,26 +115,19 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'Accept',
-                                  small: true,
-                                  onTap: () {
-                                    controller.acceptCopublisherRequest(requestById: copublisher.userId, streamId: controller.streamId ?? '');
-                                  },
-                                ),
+                              IsmLiveButton.icon(
+                                icon: Icons.check_rounded,
+                                onTap: () {
+                                  controller.acceptCopublisherRequest(requestById: copublisher.userId, streamId: controller.streamId ?? '');
+                                },
                               ),
                               IsmLiveDimens.boxWidth4,
-                              SizedBox(
-                                width: IsmLiveDimens.sixty,
-                                child: IsmLiveButton(
-                                  label: 'Deny',
-                                  small: true,
-                                  onTap: () {
-                                    controller.denyCopublisherRequest(requestById: copublisher.userId, streamId: controller.streamId ?? '');
-                                  },
-                                ),
+                              IsmLiveButton.icon(
+                                icon: Icons.close_rounded,
+                                secondary: true,
+                                onTap: () {
+                                  controller.denyCopublisherRequest(requestById: copublisher.userId, streamId: controller.streamId ?? '');
+                                },
                               )
                             ],
                           ),

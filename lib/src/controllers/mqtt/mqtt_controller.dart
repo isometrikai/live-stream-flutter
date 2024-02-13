@@ -221,7 +221,7 @@ class IsmLiveMqttController extends GetxController {
       var payload = jsonDecode(
               MqttPublishPayload.bytesToStringAsString(recMess.payload.message))
           as Map<String, dynamic>;
-                                  
+
       if (IsmLiveHandler.isLogsEnabled) {
         IsmLiveLog(IsmLiveUtility.jsonEncodePretty(payload));
         IsmLiveLog.success(payload['action']);
@@ -233,11 +233,33 @@ class IsmLiveMqttController extends GetxController {
         final streamId = payload['streamId'] as String;
         switch (action) {
           case IsmLiveActions.copublishRequestAccepted:
-            _streamController.memberStatus =
-                IsmLiveMemberStatus.requestApproved;
+            final memberId = payload['userId'] as String? ?? '';
+            if (memberId == userId) {
+              _streamController.memberStatus = IsmLiveMemberStatus.requestApproved;
+            }
             break;
           case IsmLiveActions.copublishRequestAdded:
+            final user = UserDetails.fromMap(payload);
+            if (_streamController.isHost ?? false) {
+              final message = IsmLiveMessageModel(
+                streamId: streamId,
+                senderName: user.userName,
+                senderIdentifier: user.userIdentifier,
+                senderId: user.userId,
+                messageType: IsmLiveMessageType.normal,
+                messageId: '',
+                body: '${user.userName} has requested for Co-publishing',
+                isEvent: true,
+              );
+              unawaited(_streamController.handleMessage(message));
+            }
+            break;
           case IsmLiveActions.copublishRequestDenied:
+            final memberId = payload['userId'] as String? ?? '';
+            if (memberId == userId) {
+              _streamController.memberStatus = IsmLiveMemberStatus.requestDenied;
+            }
+            break;
           case IsmLiveActions.copublishRequestRemoved:
             break;
           case IsmLiveActions.memberAdded:
