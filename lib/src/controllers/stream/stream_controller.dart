@@ -14,9 +14,10 @@ part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
 part 'mixins/message_mixin.dart';
 part 'mixins/ongoing_mixin.dart';
+part 'mixins/sheet_mixin.dart';
 
 class IsmLiveStreamController extends GetxController
-    with GetTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin {
+    with GetTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin, StreamSheetMixin {
   IsmLiveStreamController(this._viewModel);
 
   final IsmLiveStreamViewModel _viewModel;
@@ -71,6 +72,8 @@ class IsmLiveStreamController extends GetxController
   final Rx<IsmLiveMemberStatus> _memberStatus = IsmLiveMemberStatus.notMember.obs;
   IsmLiveMemberStatus get memberStatus => _memberStatus.value;
   set memberStatus(IsmLiveMemberStatus value) => _memberStatus.value = value;
+
+  bool get isMember => memberStatus.isMember;
 
   final RxBool _speakerOn = true.obs;
   bool get speakerOn => _speakerOn.value;
@@ -483,22 +486,6 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void toggleAudio({
-    bool? value,
-  }) async {
-    final participant = room?.localParticipant;
-    if (participant == null) {
-      return;
-    }
-    audioOn = value ?? !audioOn;
-    try {
-      await participant.setMicrophoneEnabled(audioOn);
-    } catch (error) {
-      audioOn = !audioOn;
-      IsmLiveLog('toggleAudio function  error  $error');
-    }
-  }
-
   void toggleVideo({
     bool? value,
   }) async {
@@ -513,40 +500,6 @@ class IsmLiveStreamController extends GetxController
       videoOn = !videoOn;
       IsmLiveLog('muteUnmuteVideo function  error  $error');
     }
-  }
-
-  void giftsSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveGiftsSheet(
-        onTap: (gift) => sendGiftMessage(streamId: streamId ?? '', gift: gift),
-      ),
-      isScrollController: true,
-    );
-  }
-
-  void settingSheet() async {
-    await IsmLiveUtility.openBottomSheet(const IsmLiveSettingsSheet());
-  }
-
-  void copublisherRequestSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveCopublisherViewerRequestSheet(
-        imageUrlLeft: user?.profileUrl ?? '',
-        buttonLable: 'Send Request',
-        imageUrlRight: hostDetails?.userProfileImageUrl ?? '',
-        onTap: () {
-          if (!isModerator) {
-            requestCopublisher(streamId ?? '');
-          }
-        },
-      ),
-    );
-  }
-
-  void copublisherSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      const IsmLiveCopublisherSheet(),
-    );
   }
 
   void toggleCamera() async {

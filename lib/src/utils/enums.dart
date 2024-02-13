@@ -330,11 +330,16 @@ enum IsmLiveMemberStatus {
   notMember,
   gotRequest,
   requested,
+  requestApproved,
   copublisher;
 
   bool get receivedRequest => this == IsmLiveMemberStatus.gotRequest;
 
+  bool get isApproved => this == IsmLiveMemberStatus.requestApproved;
+
   bool get didRequested => this == IsmLiveMemberStatus.requested;
 
   bool get isMember => this == IsmLiveMemberStatus.copublisher;
+
+  bool get canEnableVideo => receivedRequest || isApproved;
 }
