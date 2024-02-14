@@ -11,7 +11,7 @@ abstract class ParticipantWidget extends StatefulWidget {
   });
 
   static ParticipantWidget widgetFor(
-    ParticipantTrack participantTrack, {
+    IsmLiveParticipantTrack participantTrack, {
     String? imageUrl,
     bool showStatsLayer = false,
   }) {

@@ -88,7 +88,7 @@ mixin StreamJoinMixin {
     await connectStream(
       token: token,
       streamId: stream.streamId!,
-      imageUrl: stream.streamImage,
+      streamImage: stream.streamImage,
       isHost: isHost,
       isNewStream: false,
       joinByScrolling: joinByScrolling,
@@ -110,16 +110,21 @@ mixin StreamJoinMixin {
       }
     }
 
-    var stream = await _controller.createStream();
-    if (stream == null) {
+    var data = await _controller.createStream();
+    if (data == null) {
       return;
     }
+    if (data.model == null) {
+      return;
+    }
+    final stream = data.model!;
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
 
     await connectStream(
       token: stream.rtcToken,
       streamId: stream.streamId!,
+      streamImage: data.image,
       isHost: true,
       isNewStream: true,
     );
@@ -128,7 +133,7 @@ mixin StreamJoinMixin {
   Future<void> connectStream({
     required String token,
     required String streamId,
-    String? imageUrl,
+    String? streamImage,
     bool audioCallOnly = false,
     required bool isHost,
     bool isCopublisher = false,
@@ -152,16 +157,14 @@ mixin StreamJoinMixin {
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ??
-            IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else if (isCopublisher) {
       message = '';
     } else {
-      message =
-          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
@@ -234,7 +237,7 @@ mixin StreamJoinMixin {
             isHost: isHost,
             isNewStream: isNewStream,
             room: room,
-            imageUrl: imageUrl,
+            streamImage: streamImage,
             listener: listener,
             streamId: streamId,
             audioCallOnly: audioCallOnly,

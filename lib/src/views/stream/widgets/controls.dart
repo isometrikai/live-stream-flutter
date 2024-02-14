@@ -49,7 +49,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 },
                 color: options[index] == IsmLiveStreamOption.multiLive
                     ? !isHost
-                        ? controller.memberStatus.receivedRequest
+                        ? controller.memberStatus.canEnableVideo
                             ? Colors.blue
                             : null
                         : null

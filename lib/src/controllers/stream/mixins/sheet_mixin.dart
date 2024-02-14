@@ -9,9 +9,7 @@ mixin StreamSheetMixin {
   }) {
     IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
-        title: isHost
-            ? IsmLiveStrings.areYouSureEndStream
-            : IsmLiveStrings.areYouSureLeaveStream,
+        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
         leftLabel: 'Cancel',
         rightLabel: isHost ? 'End Stream' : 'Leave Stram',
         onLeft: Get.back,
@@ -82,24 +80,16 @@ mixin StreamSheetMixin {
   void copublishingStartVideoSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title:
-            (Get.context?.liveTranslations.hostAcceptedCopublishRequestTitle ??
-                    IsmLiveStrings.hostAcceptedCopublishRequestTitle)
-                .trParams({
+        title: (Get.context?.liveTranslations.hostAcceptedCopublishRequestTitle ?? IsmLiveStrings.hostAcceptedCopublishRequestTitle).trParams({
           'name': _controller.hostDetails?.userName ?? 'Host',
         }),
-        description: Get.context?.liveTranslations
-                .hostAcceptedCopublishRequestDescription ??
-            IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description: Get.context?.liveTranslations.hostAcceptedCopublishRequestDescription ?? IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: 'Start Video',
         images: [
           _controller.user?.profileUrl ?? '',
         ],
         onTap: () async {
-          //TODO: Uncomment to enable video
-
-          var token = await _controller.switchViewer(
-              streamId: _controller.streamId ?? '');
+          var token = await _controller.switchViewer(streamId: _controller.streamId ?? '');
           if (token == null) {
             return;
           }
@@ -113,8 +103,6 @@ mixin StreamSheetMixin {
           );
 
           await _controller.sortParticipants();
-          // unawaited(_controller.enableMyVideo());
-          // unawaited(_controller.toggleAudio(value: true));
         },
       ),
     );
