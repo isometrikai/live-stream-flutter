@@ -14,10 +14,8 @@ mixin StreamOngoingMixin {
       isHost: isHost,
     ));
     _controller.moderatorsList.clear();
-    unawaited(_controller.fetchEligibleMembers(streamId: streamId));
 
     _manageModerator(streamId);
-    unawaited(_controller.fetchEligibleMembers(streamId: streamId));
 
     if (!isHost) {
       await _controller.fetchMessagesCount(

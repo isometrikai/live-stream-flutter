@@ -36,14 +36,16 @@ mixin StreamJoinMixin {
     if (_controller.room == null) {
       return;
     }
-    var localVideo = await LocalVideoTrack.createCameraTrack(
-      const CameraCaptureOptions(
-        cameraPosition: CameraPosition.front,
-        params: VideoParametersPresets.h720_169,
-      ),
-    );
+    final tracks = await Future.wait([
+      LocalVideoTrack.createCameraTrack(),
+      LocalAudioTrack.create(),
+    ]);
+    var localVideo = tracks[0] as LocalVideoTrack;
+    var localAudio = tracks[1] as LocalAudioTrack;
+
     await Future.wait<dynamic>([
       _controller.room!.localParticipant!.publishVideoTrack(localVideo),
+      _controller.room!.localParticipant!.publishAudioTrack(localAudio),
     ]);
   }
 
@@ -169,7 +171,31 @@ mixin StreamJoinMixin {
     IsmLiveUtility.showLoader(message);
 
     try {
-      var room = Room();
+      var room = Room(
+        roomOptions: RoomOptions(
+          defaultCameraCaptureOptions: const CameraCaptureOptions(
+            cameraPosition: CameraPosition.front,
+            params: VideoParametersPresets.h720_169,
+          ),
+          defaultAudioCaptureOptions: const AudioCaptureOptions(
+            noiseSuppression: true,
+            echoCancellation: true,
+            autoGainControl: true,
+            highPassFilter: true,
+            typingNoiseDetection: true,
+          ),
+          defaultVideoPublishOptions: VideoPublishOptions(
+            videoEncoding: VideoParametersPresets.h720_169.encoding,
+            videoSimulcastLayers: [
+              VideoParametersPresets.h180_169,
+              VideoParametersPresets.h360_169,
+            ],
+          ),
+          defaultAudioPublishOptions: const AudioPublishOptions(
+            dtx: true,
+          ),
+        ),
+      );
       _controller.room = room;
 
       // Create a Listener before connecting
