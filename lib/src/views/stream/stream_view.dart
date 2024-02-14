@@ -8,7 +8,7 @@ class IsmLiveStreamView extends StatelessWidget {
     super.key,
   })  : room = Get.arguments['room'],
         listener = Get.arguments['listener'],
-        imageUrl = Get.arguments['imageUrl'],
+        streamImage = Get.arguments['streamImage'],
         streamId = Get.arguments['streamId'],
         audioCallOnly = Get.arguments['audioCallOnly'],
         isHost = Get.arguments['isHost'],
@@ -16,7 +16,7 @@ class IsmLiveStreamView extends StatelessWidget {
 
   final RoomListener listener;
   final Room room;
-  final String? imageUrl;
+  final String? streamImage;
   final String streamId;
   final bool audioCallOnly;
   final bool isHost;
@@ -33,7 +33,7 @@ class IsmLiveStreamView extends StatelessWidget {
     if (isHost) {
       return _IsmLiveStreamView(
         key: key,
-        imageUrl: imageUrl,
+        streamImage: streamImage,
         streamId: streamId,
         audioCallOnly: audioCallOnly,
         isHost: isHost,
@@ -44,8 +44,7 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex =
-              controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -54,14 +53,13 @@ class IsmLiveStreamView extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
-        onPageChanged: (index) =>
-            controller.onStreamScroll(index: index, room: room),
+        onPageChanged: (index) => controller.onStreamScroll(index: index, room: room),
         itemBuilder: (_, index) {
           // IsmLiveLog.success('Next Child $index');
           final stream = controller.streams[index];
           return _IsmLiveStreamView(
             key: key,
-            imageUrl: stream.streamImage,
+            streamImage: stream.streamImage,
             streamId: stream.streamId ?? '',
             audioCallOnly: audioCallOnly,
             isHost: false,
@@ -76,14 +74,14 @@ class IsmLiveStreamView extends StatelessWidget {
 class _IsmLiveStreamView extends StatelessWidget {
   const _IsmLiveStreamView({
     super.key,
-    required this.imageUrl,
+    required this.streamImage,
     required this.streamId,
     required this.audioCallOnly,
     required this.isHost,
     required this.isNewStream,
   });
 
-  final String? imageUrl;
+  final String? streamImage;
   final String streamId;
   final bool audioCallOnly;
   final bool isHost;
@@ -122,23 +120,8 @@ class _IsmLiveStreamView extends StatelessWidget {
           child: Scaffold(
             body: Stack(
               children: [
-                Obx(
-                  () => controller.participantTracks.isNotEmpty
-                      ? GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                          ),
-                          itemBuilder: (_, index) =>
-                              ParticipantWidget.widgetFor(
-                            controller.participantTracks[index],
-                            imageUrl: controller.user?.profileUrl,
-                            showStatsLayer: false,
-                          ),
-                          itemCount: controller.participantTracks.length,
-                        )
-                      : NoVideoWidget(imageUrl: imageUrl ?? ''),
-                ),
+                IsmLiveStreamBanner(streamImage),
+                IsmLivePublisherGrid(streamImage: streamImage ?? ''),
                 ...controller.giftList,
                 ...controller.heartList,
                 Obx(
@@ -151,9 +134,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 StreamHeader(
                                   name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller
-                                          .hostDetails?.userProfileImageUrl ??
-                                      '',
+                                  imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
                                   onTapCross: () {
                                     FocusScope.of(context).unfocus();
                                     controller.onExit(
@@ -162,17 +143,14 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     );
                                   },
                                   onTapModerators: () {
-                                    IsmLiveUtility.openBottomSheet(
-                                        const IsmLiveModeratorsSheet());
+                                    IsmLiveUtility.openBottomSheet(const IsmLiveModeratorsSheet());
                                   },
                                   onTapViewers: () {
                                     IsmLiveUtility.openBottomSheet(
                                       GetBuilder<IsmLiveStreamController>(
                                         id: IsmLiveStreamView.updateId,
-                                        builder: (controller) =>
-                                            IsmLiveListSheet(
-                                          scrollController:
-                                              controller.viewerListController,
+                                        builder: (controller) => IsmLiveListSheet(
+                                          scrollController: controller.viewerListController,
                                           items: controller.streamViewersList,
                                           trailing: (_, viewer) => SizedBox(
                                             width: IsmLiveDimens.eighty,
@@ -215,9 +193,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   ),
                                 ),
                                 IsmLiveDimens.boxHeight8,
-                                IsmLiveMessageField(
-                                    streamId: streamId,
-                                    isHost: controller.isHost ?? false),
+                                IsmLiveMessageField(streamId: streamId, isHost: controller.isHost ?? false),
                               ],
                             ),
                           ),
@@ -230,8 +206,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
-                  if (isNewStream)
-                    const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
+                  if (isNewStream) const IsmLiveCounterView(onCompleteSheet: YourLiveSheet()),
                 ],
               ],
             ),

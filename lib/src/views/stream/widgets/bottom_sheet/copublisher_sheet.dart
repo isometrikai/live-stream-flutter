@@ -17,10 +17,11 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 var controller = Get.find<IsmLiveStreamController>();
 
                 controller.fetchCopublisherRequests(
-                    streamId: controller.streamId ?? '');
+                  streamId: controller.streamId ?? '',
+                );
                 controller.fetchEligibleMembers(
-                    streamId:
-                        Get.find<IsmLiveStreamController>().streamId ?? '');
+                  streamId: controller.streamId ?? '',
+                );
               },
               builder: (controller) => TabBar(
                 dividerHeight: 0,
@@ -36,20 +37,15 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                     var isSelected = type == controller.copublisher;
                     return DecoratedBox(
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? context.liveTheme.primaryColor
-                            : Colors.grey.shade100,
-                        borderRadius:
-                            BorderRadius.circular(IsmLiveDimens.eighty),
+                        color: isSelected ? context.liveTheme.primaryColor : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
                       ),
                       child: Padding(
                         padding: IsmLiveDimens.edgeInsets16_10,
                         child: Text(
                           type.label,
                           style: context.textTheme.titleSmall?.copyWith(
-                            color: isSelected
-                                ? context.liveTheme.selectedTextColor
-                                : context.liveTheme.unselectedTextColor,
+                            color: isSelected ? context.liveTheme.selectedTextColor : context.liveTheme.unselectedTextColor,
                           ),
                         ),
                       ),
@@ -68,8 +64,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                     IsmLiveScrollSheet(
                       showSearchBar: true,
                       showHeader: false,
-                      textEditingController:
-                          controller.searchMembersFieldController,
+                      textEditingController: controller.searchMembersFieldController,
                       hintText: 'Search User',
                       onchange: controller.searchMembers,
                       title: '',
@@ -102,16 +97,14 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                     IsmLiveScrollSheet(
                       showSearchBar: true,
                       showHeader: false,
-                      textEditingController:
-                          controller.searchCopublisherFieldController,
+                      textEditingController: controller.searchCopublisherFieldController,
                       hintText: 'Search Request',
                       onchange: controller.searchRequest,
                       title: '',
                       controller: controller.copublisherListController,
                       itemCount: controller.copublisherRequestsList.length,
                       itemBuilder: (context, index) {
-                        final copublisher =
-                            controller.copublisherRequestsList[index];
+                        final copublisher = controller.copublisherRequestsList[index];
                         return ListTile(
                           leading: IsmLiveImage.network(
                             copublisher.profileUrl,
@@ -127,8 +120,9 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                 icon: Icons.check_rounded,
                                 onTap: () {
                                   controller.acceptCopublisherRequest(
-                                      requestById: copublisher.userId,
-                                      streamId: controller.streamId ?? '');
+                                    requestById: copublisher.userId,
+                                    streamId: controller.streamId ?? '',
+                                  );
                                 },
                               ),
                               IsmLiveDimens.boxWidth4,
@@ -137,8 +131,9 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                 secondary: true,
                                 onTap: () {
                                   controller.denyCopublisherRequest(
-                                      requestById: copublisher.userId,
-                                      streamId: controller.streamId ?? '');
+                                    requestById: copublisher.userId,
+                                    streamId: controller.streamId ?? '',
+                                  );
                                 },
                               )
                             ],

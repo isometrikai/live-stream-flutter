@@ -32,13 +32,13 @@ abstract class IsmLiveRouteManagement {
     required bool isNewStream,
     required Room room,
     required String streamId,
-    String? imageUrl,
+    String? streamImage,
     bool audioCallOnly = false,
   }) async {
     var arguments = {
       'room': room,
       'listener': listener,
-      'imageUrl': imageUrl,
+      'streamImage': streamImage,
       'streamId': streamId,
       'audioCallOnly': audioCallOnly,
       'isHost': isHost,
