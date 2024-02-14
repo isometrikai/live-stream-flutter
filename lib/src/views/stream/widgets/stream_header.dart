@@ -64,7 +64,9 @@ class _LiveTimer extends StatelessWidget {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+              color: Get.find<IsmLiveMqttController>().isConnected
+                  ? IsmLiveColors.green
+                  : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.four),
             ),
             child: Padding(
@@ -89,7 +91,10 @@ class _LiveTimer extends StatelessWidget {
           ),
           IsmLiveDimens.boxWidth8,
           IsmLiveTapHandler(
-            onTap: () => IsmLiveUtility.openBottomSheet(const IsmLiveMembersSheet()),
+            onTap: () => IsmLiveUtility.openBottomSheet(
+              const IsmLiveMembersSheet(),
+              isScrollController: true,
+            ),
             child: Container(
               padding: IsmLiveDimens.edgeInsets4,
               decoration: BoxDecoration(

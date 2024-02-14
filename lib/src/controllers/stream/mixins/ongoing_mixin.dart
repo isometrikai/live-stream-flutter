@@ -14,6 +14,7 @@ mixin StreamOngoingMixin {
       isHost: isHost,
     ));
     _controller.moderatorsList.clear();
+    unawaited(_controller.fetchEligibleMembers(streamId: streamId));
 
     _manageModerator(streamId);
     unawaited(_controller.fetchEligibleMembers(streamId: streamId));
@@ -346,7 +347,7 @@ mixin StreamOngoingMixin {
       case IsmLiveHostSettings.hideControlButtons:
         break;
       case IsmLiveHostSettings.muteMyAudio:
-        unawaited(_controller.toggleAudio());
+        await _controller.toggleAudio();
         break;
       case IsmLiveHostSettings.muteMyVideo:
         _controller.toggleVideo();
