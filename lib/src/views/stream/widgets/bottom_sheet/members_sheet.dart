@@ -53,9 +53,9 @@ class IsmLiveMembersSheet extends StatelessWidget {
                             label: 'Leave ',
                             small: true,
                             onTap: () {
-                              controller.leaveMember(
-                                streamId: controller.streamId ?? '',
-                              );
+                              controller.disconnectStream(
+                                  isHost: false,
+                                  streamId: controller.streamId ?? '');
                             },
                           ),
                         )

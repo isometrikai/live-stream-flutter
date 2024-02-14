@@ -181,6 +181,8 @@ class IsmLiveStreamController extends GetxController
 
   bool? isHost;
 
+  bool? isCopublisher;
+
   double positionX = 20;
   double positionY = 20;
 

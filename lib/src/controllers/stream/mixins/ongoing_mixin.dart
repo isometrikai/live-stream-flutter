@@ -292,7 +292,7 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-        if (!_controller.isModerator) {
+        if (!_controller.isModerator && (_controller.isCopublisher != true)) {
           if (_controller.memberStatus.canEnableVideo) {
             _controller.copublishingStartVideoSheet();
           } else {
@@ -377,6 +377,8 @@ mixin StreamOngoingMixin {
     var isEnded = false;
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
+    } else if (_controller.isCopublisher == true) {
+      isEnded = await _controller.leaveMember(streamId: streamId);
     } else {
       isEnded = await _controller.leaveStream(streamId);
     }
