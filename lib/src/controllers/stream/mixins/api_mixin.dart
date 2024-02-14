@@ -58,20 +58,23 @@ mixin StreamAPIMixin {
   ) =>
       _controller._viewModel.leaveStream(streamId);
 
-  Future<IsmLiveRTCModel?> createStream() async {
+  Future<({IsmLiveRTCModel? model, String image})?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
     var type = _controller.pickedImage!.name.split('.').last;
     var image = await uploadImage(type, bytes);
-    if (image.isNullOrEmpty) {
+    if (image == null || image.isNullOrEmpty) {
       return null;
     }
-    return _controller._viewModel.createStream(
-      IsmLiveCreateStreamModel(
-        streamImage: image!,
-        hdBroadcast: _controller.isHdBroadcast,
-        enableRecording: _controller.isRecordingBroadcast,
-        streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
+    return (
+      model: await _controller._viewModel.createStream(
+        IsmLiveCreateStreamModel(
+          streamImage: image,
+          hdBroadcast: _controller.isHdBroadcast,
+          enableRecording: _controller.isRecordingBroadcast,
+          streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
+        ),
       ),
+      image: image,
     );
   }
 

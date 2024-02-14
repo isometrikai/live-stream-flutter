@@ -33,9 +33,7 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10
-                  ? 0
-                  : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false,
             ),
@@ -121,14 +119,14 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    var userMediaTracks = <ParticipantTrack>[];
+    var userMediaTracks = <IsmLiveParticipantTrack>[];
 
     // if (isHost || _controller.isMember) {
     final localParticipantTracks = room.localParticipant?.videoTracks;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(
-          ParticipantTrack(
+          IsmLiveParticipantTrack(
             participant: room.localParticipant!,
             videoTrack: t.track,
             isScreenShare: false,
@@ -141,7 +139,7 @@ mixin StreamOngoingMixin {
     for (var participant in room.participants.values) {
       for (var t in participant.videoTracks) {
         userMediaTracks.add(
-          ParticipantTrack(
+          IsmLiveParticipantTrack(
             participant: participant,
             videoTrack: t.track,
             isScreenShare: false,
@@ -195,26 +193,22 @@ mixin StreamOngoingMixin {
 
   Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList =
-        _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
   }
 
   Future<void> addMessages(
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats =
-        messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList =
-        _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent +
-          IsmLiveDimens.hundred,
+      _controller.messagesListController.position.maxScrollExtent + IsmLiveDimens.hundred,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
@@ -252,9 +246,7 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
     final gift = message.customType!.path;
-    final child = gift.endsWith('gif')
-        ? IsmLiveGif(path: gift)
-        : IsmLiveImage.asset(gift);
+    final child = gift.endsWith('gif') ? IsmLiveGif(path: gift) : IsmLiveImage.asset(gift);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(
@@ -279,8 +271,7 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty ||
-        room.participants.values.first.audioTracks.isEmpty) {
+    if (room.participants.values.isEmpty || room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
 

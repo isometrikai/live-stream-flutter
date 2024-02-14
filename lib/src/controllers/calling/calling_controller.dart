@@ -8,7 +8,7 @@ class IsmLiveCallingController extends GetxController {
   IsmLiveCallingController(this._viewModel);
   final IsmLiveCallingViewModel _viewModel;
 
-  List<ParticipantTrack> participantTracks = [];
+  List<IsmLiveParticipantTrack> participantTracks = [];
 
   double positionX = 20;
   double positionY = 20;
@@ -74,11 +74,11 @@ class IsmLiveCallingController extends GetxController {
   Future<void> sortParticipants(
     Room room,
   ) async {
-    var userMediaTracks = <ParticipantTrack>[];
+    var userMediaTracks = <IsmLiveParticipantTrack>[];
 
     for (var participant in room.participants.values) {
       for (var t in participant.videoTracks) {
-        userMediaTracks.add(ParticipantTrack(
+        userMediaTracks.add(IsmLiveParticipantTrack(
           participant: participant,
           videoTrack: t.track,
           isScreenShare: false,
@@ -111,7 +111,7 @@ class IsmLiveCallingController extends GetxController {
     final localParticipantTracks = room.localParticipant?.videoTracks;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
-        userMediaTracks.add(ParticipantTrack(
+        userMediaTracks.add(IsmLiveParticipantTrack(
           participant: room.localParticipant!,
           videoTrack: t.track,
           isScreenShare: false,
