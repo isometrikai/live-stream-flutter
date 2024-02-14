@@ -13,15 +13,6 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             GetX<IsmLiveStreamController>(
-              initState: (state) {
-                var controller = Get.find<IsmLiveStreamController>();
-
-                controller.fetchCopublisherRequests(
-                    streamId: controller.streamId ?? '');
-                controller.fetchEligibleMembers(
-                    streamId:
-                        Get.find<IsmLiveStreamController>().streamId ?? '');
-              },
               builder: (controller) => TabBar(
                 dividerHeight: 0,
                 indicatorColor: Colors.transparent,

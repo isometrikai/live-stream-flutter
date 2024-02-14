@@ -357,6 +357,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.copublishersRequests}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
     );
   }
 

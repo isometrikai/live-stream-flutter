@@ -163,7 +163,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   },
                                   onTapModerators: () {
                                     IsmLiveUtility.openBottomSheet(
-                                        const IsmLiveModeratorsSheet());
+                                      const IsmLiveModeratorsSheet(),
+                                      isScrollController: true,
+                                    );
                                   },
                                   onTapViewers: () {
                                     IsmLiveUtility.openBottomSheet(
