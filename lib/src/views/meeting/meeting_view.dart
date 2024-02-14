@@ -47,18 +47,6 @@ class MyMeetingsView extends StatelessWidget {
             controller: controller.refreshController,
             onRefresh: () async {
               await controller.getMeetingList();
-              if (controller.myMeetingList.isNotEmpty) {
-                controller.incomingCall(
-                    meetingDescription: controller.myMeetingList.first.meetingDescription,
-                    createdBy: controller.myMeetingList.first.createdBy,
-                    id: controller.myMeetingList.first.conversationId,
-                    imageUrl: controller.myMeetingList.first.initiatorImageUrl,
-                    meetingId: controller.myMeetingList.first.meetingId,
-                    name: controller.myMeetingList.first.initiatorName,
-                    number: controller.myMeetingList.first.initiatorIdentifier,
-                    isAudioCall: controller.myMeetingList.first.audioOnly,
-                    userId: controller.myMeetingList.first.meetingId);
-              }
 
               controller.refreshController.refreshCompleted();
             },
@@ -78,7 +66,8 @@ class MyMeetingsView extends StatelessWidget {
                         ),
                         key: UniqueKey(),
                         onDismissed: (direction) async {
-                          var isDeleted = await controller.deleteMeeting(isLoading: false, meetingId: item);
+                          var isDeleted = await controller.deleteMeeting(
+                              isLoading: false, meetingId: item);
                           if (isDeleted) {
                             controller.myMeetingList.removeAt(index);
                             controller.update();
@@ -92,18 +81,28 @@ class MyMeetingsView extends StatelessWidget {
                           height: IsmLiveDimens.fifty,
                           child: Row(
                             children: [
-                              Text(controller.myMeetingList[index].meetingDescription),
+                              Text(controller
+                                  .myMeetingList[index].meetingDescription),
                               const Spacer(),
                               SizedBox(
                                 width: IsmLiveDimens.hundred,
                                 child: IsmLiveButton(
                                   onTap: () async {
-                                    var rtcTocken = await controller.joinMeeting(meetingId: controller.myMeetingList[index].meetingId);
+                                    var rtcTocken =
+                                        await controller.joinMeeting(
+                                            meetingId: controller
+                                                .myMeetingList[index]
+                                                .meetingId);
 
-                                    IsmLiveLog(controller.myMeetingList[index].audioOnly);
+                                    IsmLiveLog(controller
+                                        .myMeetingList[index].audioOnly);
                                     if (rtcTocken != null) {
                                       await controller.connectMeeting(
-                                          rtcTocken, controller.myMeetingList[index].meetingId, controller.myMeetingList[index].audioOnly);
+                                          rtcTocken,
+                                          controller
+                                              .myMeetingList[index].meetingId,
+                                          controller
+                                              .myMeetingList[index].audioOnly);
                                     }
                                   },
                                   label: 'Join',
