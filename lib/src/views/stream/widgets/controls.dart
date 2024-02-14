@@ -48,10 +48,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
                   controller.update([IsmLiveControlsWidget.updateId]);
                 },
                 color: options[index] == IsmLiveStreamOption.multiLive
-                    ? !isHost
+                    ? !isHost && controller.isCopublisher != true
                         ? controller.memberStatus.canEnableVideo
-                            ? Colors.blue
-                            : null
+                            ? context.theme.primaryColor
+                            : controller.memberStatus.didRequested
+                                ? Colors.blueGrey
+                                : null
                         : null
                     : null,
               ),

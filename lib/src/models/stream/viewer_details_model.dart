@@ -17,9 +17,9 @@ class IsmLiveViewerModel {
 
   factory IsmLiveViewerModel.fromMap(Map<String, dynamic> map) => IsmLiveViewerModel(
         imageUrl: map['userProfileImageUrl'] as String? ?? map['viewerProfilePic'] as String?,
-        userName: map['userName'] as String? ?? map['viewerName'] as String? ?? '',
-        identifier: map['userIdentifier'] as String? ?? map['viewerIdentifier'] as String? ?? '',
-        userId: map['userId'] as String? ?? map['viewerId'] as String? ?? '',
+        userName: map['userName'] as String? ?? map['viewerName'] as String? ?? map['memberName'] as String? ?? '',
+        identifier: map['userIdentifier'] as String? ?? map['viewerIdentifier'] as String? ?? map['memberIdentifier'] as String? ?? '',
+        userId: map['userId'] as String? ?? map['viewerId'] as String? ?? map['memberId'] as String? ?? '',
         startTime: map['sessionStartTime'] as int? ?? map['timestamp'] as int?,
         metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
         messageNotificationEmail: map['messageNotificationEmail'] as dynamic,

@@ -307,6 +307,21 @@ class IsmLiveMqttController extends GetxController {
             _updateStream([IsmLiveControlsWidget.updateId]);
             break;
           case IsmLiveActions.memberLeft:
+            var member = IsmLiveViewerModel.fromMap(payload);
+            final message = IsmLiveMessageModel(
+              streamId: streamId,
+              senderName: member.userName,
+              senderIdentifier: member.identifier,
+              senderId: member.userId,
+              messageType: IsmLiveMessageType.normal,
+              messageId: '',
+              body: '${member.userName} has stopped publishing and left',
+              isEvent: true,
+            );
+            unawaited(_streamController.handleMessage(message));
+            _streamController.streamMembersList.removeWhere((e) => e.userId == userId);
+            _updateStream();
+            break;
           case IsmLiveActions.memberRemoved:
             break;
           case IsmLiveActions.messageRemoved:
