@@ -146,7 +146,7 @@ mixin StreamJoinMixin {
     _controller.isModerationWarningVisible = true;
     _controller.streamId = streamId;
     _controller.isHost = isHost;
-    // _controller.isCopublisher = isCopublisher;
+    _controller.isCopublisher = isCopublisher;
     unawaited(
       _controller._mqttController?.subscribeStream(
         streamId,
