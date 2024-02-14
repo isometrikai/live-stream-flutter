@@ -12,6 +12,11 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
+        initState: (state) {
+          Get.find<IsmLiveStreamController>().fetchModerators(
+              streamId: Get.find<IsmLiveStreamController>().streamId ?? '',
+              forceFetch: true);
+        },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
           trailing: controller.isHost == true
