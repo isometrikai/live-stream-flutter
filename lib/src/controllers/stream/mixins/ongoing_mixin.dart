@@ -344,6 +344,67 @@ mixin StreamOngoingMixin {
     }
   }
 
+  Future<bool> requestBackgroundPermission([bool isRetry = false]) async {
+    // Required for android screenshare.
+    try {
+      var hasPermissions = await FlutterBackground.hasPermissions;
+      if (!isRetry) {
+        const androidConfig = FlutterBackgroundAndroidConfig(
+          notificationTitle: 'Screen Sharing',
+          notificationText: '${IsmLiveConstants.name} is sharing the screen.',
+          notificationImportance: AndroidNotificationImportance.Default,
+          notificationIcon: AndroidResource(
+            name: 'ic_launcher',
+            defType: 'mipmap',
+          ),
+        );
+        hasPermissions = await FlutterBackground.initialize(
+          androidConfig: androidConfig,
+        );
+      }
+      if (hasPermissions && !FlutterBackground.isBackgroundExecutionEnabled) {
+        return await FlutterBackground.enableBackgroundExecution();
+      }
+      return false;
+    } catch (e, st) {
+      if (!isRetry) {
+        return await Future<bool>.delayed(
+          const Duration(seconds: 1),
+          () => requestBackgroundPermission(true),
+        );
+      }
+      IsmLiveLog.error('Could not publish video: $e', st);
+      return false;
+    }
+  }
+
+  void enableScreenShare() async {
+    try {
+      IsmLiveUtility.showLoader();
+      if (_controller.room == null || _controller.room!.localParticipant == null) {
+        return;
+      }
+
+      final isExecuting = await requestBackgroundPermission();
+      IsmLiveLog.error(isExecuting);
+      await _controller.room!.localParticipant!.setScreenShareEnabled(
+        true,
+        captureScreenAudio: true,
+      );
+      IsmLiveUtility.closeLoader();
+    } catch (e, st) {
+      IsmLiveUtility.closeLoader();
+      IsmLiveLog.error(e, st);
+    }
+  }
+
+  void disableScreenShare() async {
+    await _controller.room!.localParticipant!.setScreenShareEnabled(
+      false,
+    );
+    await FlutterBackground.disableBackgroundExecution();
+  }
+
   void onStreamScroll({
     required int index,
     required Room room,
