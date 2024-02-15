@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
