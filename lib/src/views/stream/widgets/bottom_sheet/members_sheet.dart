@@ -4,13 +4,17 @@ import 'package:get/get.dart';
 
 class IsmLiveMembersSheet extends StatelessWidget {
   const IsmLiveMembersSheet({super.key});
+
   static const String updateId = 'members_sheet';
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
-        initState: (state) {
-          Get.find<IsmLiveStreamController>().getStreamMembers(
-              streamId: Get.find<IsmLiveStreamController>().streamId ?? '');
+        initState: (_) {
+          final controller = Get.find<IsmLiveStreamController>();
+          controller.getStreamMembers(
+            streamId: controller.streamId ?? '',
+          );
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
@@ -30,34 +34,25 @@ class IsmLiveMembersSheet extends StatelessWidget {
               ),
               title: Text(existingMember.userName),
               subtitle: Text(existingMember.userIdentifier),
-              trailing: (controller.isHost ?? false) &&
-                      controller.user?.userId != existingMember.userId
-                  ? SizedBox(
-                      width: IsmLiveDimens.hundred,
-                      child: IsmLiveButton(
-                        label: 'Remove ',
-                        small: true,
-                        onTap: () {
-                          controller.removeMember(
-                            streamId: controller.streamId ?? '',
-                            memberId: existingMember.userId,
-                          );
-                        },
-                      ),
+              trailing: (controller.isHost ?? false) && controller.user?.userId != existingMember.userId
+                  ? IsmLiveButton.icon(
+                      icon: Icons.person_remove_rounded,
+                      onTap: () {
+                        controller.removeMember(
+                          streamId: controller.streamId ?? '',
+                          memberId: existingMember.userId,
+                        );
+                      },
                     )
-                  : (controller.user?.userId == existingMember.userId) &&
-                          (controller.isHost == false)
-                      ? SizedBox(
-                          width: IsmLiveDimens.hundred,
-                          child: IsmLiveButton(
-                            label: 'Leave ',
-                            small: true,
-                            onTap: () {
-                              controller.disconnectStream(
-                                  isHost: false,
-                                  streamId: controller.streamId ?? '');
-                            },
-                          ),
+                  : (controller.user?.userId == existingMember.userId) && (controller.isHost == false)
+                      ? IsmLiveButton.icon(
+                          icon: Icons.exit_to_app_rounded,
+                          onTap: () {
+                            controller.disconnectStream(
+                              isHost: false,
+                              streamId: controller.streamId ?? '',
+                            );
+                          },
                         )
                       : null,
             );

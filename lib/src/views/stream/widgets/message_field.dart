@@ -104,14 +104,20 @@ class IsmLiveMessageField extends StatelessWidget {
             ] else ...[
               IsmLiveDimens.boxWidth8,
               if (controller.room!.localParticipant!.isScreenShareEnabled())
-                IsmLiveButton.icon(
-                  icon: Icons.cancel_presentation_rounded,
-                  onTap: controller.disableScreenShare,
+                SizedBox.square(
+                  dimension: IsmLiveDimens.fortyFive,
+                  child: IsmLiveButton.icon(
+                    icon: Icons.cancel_presentation_rounded,
+                    onTap: controller.disableScreenShare,
+                  ),
                 )
               else
-                IsmLiveButton.icon(
-                  icon: Icons.present_to_all_rounded,
-                  onTap: controller.enableScreenShare,
+                SizedBox.square(
+                  dimension: IsmLiveDimens.fortyFive,
+                  child: IsmLiveButton.icon(
+                    icon: Icons.present_to_all_rounded,
+                    onTap: controller.enableScreenShare,
+                  ),
                 )
             ],
           ],

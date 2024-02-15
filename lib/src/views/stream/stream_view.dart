@@ -160,24 +160,19 @@ class _IsmLiveStreamView extends StatelessWidget {
                                         builder: (controller) => IsmLiveListSheet(
                                           scrollController: controller.viewerListController,
                                           items: controller.streamViewersList,
-                                          trailing: (_, viewer) => SizedBox(
-                                            width: IsmLiveDimens.eighty,
-                                            child: controller.isModerator
-                                                ? IsmLiveButton(
-                                                    label: 'Kickout',
-                                                    small: true,
-                                                    onTap: () {
-                                                      controller.kickoutViewer(
-                                                        streamId: streamId,
-                                                        viewerId: viewer.userId,
-                                                      );
-                                                    },
-                                                  )
-                                                : const IsmLiveButton(
-                                                    label: 'Follow',
-                                                    small: true,
-                                                  ),
-                                          ),
+                                          trailing: (_, viewer) => controller.isModerator
+                                              ? IsmLiveButton.icon(
+                                                  icon: Icons.person_remove_rounded,
+                                                  onTap: () {
+                                                    controller.kickoutViewer(
+                                                      streamId: streamId,
+                                                      viewerId: viewer.userId,
+                                                    );
+                                                  },
+                                                )
+                                              : const IsmLiveButton.icon(
+                                                  icon: Icons.group_add_rounded,
+                                                ),
                                         ),
                                       ),
                                     );

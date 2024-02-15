@@ -21,16 +21,12 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
           trailing: controller.isHost == true
-              ? SizedBox(
-                  width: IsmLiveDimens.eighty,
-                  child: IsmLiveButton(
-                    label: 'Add',
-                    small: true,
-                    onTap: () {
-                      Get.back();
-                      IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
-                    },
-                  ),
+              ? IsmLiveButton.icon(
+                  icon: Icons.person_add_rounded,
+                  onTap: () {
+                    Get.back();
+                    IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
+                  },
                 )
               : null,
           textEditingController: controller.searchModeratorFieldController,
@@ -49,32 +45,22 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
               ),
               title: Text(moderator.userName),
               subtitle: Text(moderator.userIdentifier),
-              trailing: (moderator.userId != controller.user?.userId &&
-                      controller.isHost == true)
-                  ? SizedBox(
-                      width: IsmLiveDimens.eighty,
-                      child: IsmLiveButton(
-                        label: 'Remove',
-                        small: true,
-                        onTap: () {
-                          controller.removeModerator(
-                            moderatorId: moderator.userId,
-                            streamId: controller.streamId ?? '',
-                          );
-                        },
-                      ),
+              trailing: (moderator.userId != controller.user?.userId && controller.isHost == true)
+                  ? IsmLiveButton.icon(
+                      icon: Icons.person_remove_rounded,
+                      onTap: () {
+                        controller.removeModerator(
+                          moderatorId: moderator.userId,
+                          streamId: controller.streamId ?? '',
+                        );
+                      },
                     )
                   : controller.isModerator && controller.isHost != true
-                      ? SizedBox(
-                          width: IsmLiveDimens.eighty,
-                          child: IsmLiveButton(
-                            label: 'Leave',
-                            small: true,
-                            onTap: () {
-                              controller
-                                  .leaveModerator(controller.streamId ?? '');
-                            },
-                          ),
+                      ? IsmLiveButton.icon(
+                          icon: Icons.exit_to_app_rounded,
+                          onTap: () {
+                            controller.leaveModerator(controller.streamId ?? '');
+                          },
                         )
                       : null,
             );
