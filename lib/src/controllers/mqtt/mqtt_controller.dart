@@ -341,20 +341,21 @@ class IsmLiveMqttController extends GetxController {
             _updateStream();
             break;
           case IsmLiveActions.memberRemoved:
-            final memberName = payload['memberName'] as String?;
-            final memberId = payload['memberId'] as String?;
-            final initiatorName = payload['initiatorName'] as String?;
-            final initiatorId = payload['initiatorId'] as String?;
+            final memberName = payload['memberName'] as String? ?? '';
+            final memberId = payload['memberId'] as String? ?? '';
+            final initiatorName = payload['initiatorName'] as String? ?? '';
+            final initiatorId = payload['initiatorId'] as String? ?? '';
             if (streamId == _streamController.streamId) {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
-                senderName: initiatorName ?? '',
+                senderName: initiatorName,
                 senderIdentifier: '',
-                senderId: initiatorId ?? '',
+                senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body:
-                    '$initiatorName has remove from publishing to $memberName',
+                body: _streamController.hostDetails?.userId == initiatorId
+                    ? 'You has remove $memberName'
+                    : '$initiatorName has remove $memberName',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
@@ -437,17 +438,17 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.moderatorLeft:
-            final moderatorId = payload['moderatorId'] as String?;
-            final moderatorName = payload['moderatorName'] as String?;
+            final moderatorId = payload['moderatorId'] as String? ?? '';
+            final moderatorName = payload['moderatorName'] as String? ?? '';
             if (streamId == _streamController.streamId) {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
-                senderName: moderatorName ?? '',
+                senderName: moderatorName,
                 senderIdentifier: '',
-                senderId: moderatorId ?? '',
+                senderId: moderatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: '$moderatorName is no more Moderator',
+                body: '$moderatorName has left',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
@@ -457,19 +458,21 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.moderatorRemoved:
-            final moderatorId = payload['moderatorId'] as String?;
-            final moderatorName = payload['moderatorName'] as String?;
-            final initiatorName = payload['initiatorName'] as String?;
-            final initiatorId = payload['initiatorId'] as String?;
+            final moderatorId = payload['moderatorId'] as String? ?? '';
+            final moderatorName = payload['moderatorName'] as String? ?? '';
+            final initiatorName = payload['initiatorName'] as String? ?? '';
+            final initiatorId = payload['initiatorId'] as String? ?? '';
             if (streamId == _streamController.streamId) {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
-                senderName: initiatorName ?? 'You',
+                senderName: initiatorName,
                 senderIdentifier: '',
-                senderId: initiatorId ?? '',
+                senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: '$initiatorName has remove $moderatorName from moderator',
+                body: _streamController.hostDetails?.userId == initiatorId
+                    ? 'You has remove $moderatorName'
+                    : '$initiatorName has remove $moderatorName',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
@@ -540,19 +543,21 @@ class IsmLiveMqttController extends GetxController {
             }
             break;
           case IsmLiveActions.viewerRemoved:
-            final viewerId = payload['viewerId'] as String?;
-            final viewerName = payload['viewerName'] as String?;
-            final initiatorName = payload['initiatorName'] as String?;
-            final initiatorId = payload['initiatorId'] as String?;
+            final viewerId = payload['viewerId'] as String? ?? '';
+            final viewerName = payload['viewerName'] as String? ?? '';
+            final initiatorName = payload['initiatorName'] as String? ?? '';
+            final initiatorId = payload['initiatorId'] as String? ?? '';
             if (streamId == _streamController.streamId) {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
-                senderName: initiatorName ?? 'You',
+                senderName: initiatorName,
                 senderIdentifier: '',
-                senderId: initiatorId ?? '',
+                senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: '$initiatorName has remove $viewerName',
+                body: _streamController.hostDetails?.userId == initiatorId
+                    ? 'You has remove $viewerName'
+                    : 'Moderator has remove $viewerName',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
