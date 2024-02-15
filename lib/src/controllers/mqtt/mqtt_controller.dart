@@ -353,8 +353,8 @@ class IsmLiveMqttController extends GetxController {
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: _streamController.hostDetails?.userId == initiatorId
-                    ? 'You has remove $memberName'
+                body: userId == initiatorId
+                    ? 'You\'ve remove $memberName'
                     : '$initiatorName has remove $memberName',
                 isEvent: true,
               );
@@ -470,8 +470,8 @@ class IsmLiveMqttController extends GetxController {
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: _streamController.hostDetails?.userId == initiatorId
-                    ? 'You has remove $moderatorName'
+                body: userId == initiatorId
+                    ? 'You\'ve remove $moderatorName'
                     : '$initiatorName has remove $moderatorName',
                 isEvent: true,
               );
@@ -555,9 +555,9 @@ class IsmLiveMqttController extends GetxController {
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
-                body: _streamController.hostDetails?.userId == initiatorId
-                    ? 'You has remove $viewerName'
-                    : 'Moderator has remove $viewerName',
+                body: userId == initiatorId
+                    ? 'You\'ve remove $viewerName'
+                    : '$initiatorName has remove $viewerName',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
