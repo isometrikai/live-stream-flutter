@@ -33,18 +33,14 @@ class IsmLiveUsersSheet extends StatelessWidget {
               ),
               title: Text(user.userName),
               subtitle: Text(user.userIdentifier),
-              trailing: SizedBox(
-                width: IsmLiveDimens.eighty,
-                child: IsmLiveButton(
-                  label: 'Make Moderator',
-                  small: true,
-                  onTap: () {
-                    controller.makeModerator(
-                      moderatorId: user.userId,
-                      streamId: controller.streamId ?? '',
-                    );
-                  },
-                ),
+              trailing: IsmLiveButton.icon(
+                icon: Icons.person_add_rounded,
+                onTap: () {
+                  controller.makeModerator(
+                    moderatorId: user.userId,
+                    streamId: controller.streamId ?? '',
+                  );
+                },
               ),
             );
           },

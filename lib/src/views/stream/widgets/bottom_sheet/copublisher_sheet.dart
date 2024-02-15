@@ -64,39 +64,6 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                     IsmLiveScrollSheet(
                       showSearchBar: true,
                       showHeader: false,
-                      textEditingController: controller.searchMembersFieldController,
-                      hintText: 'Search User',
-                      onchange: controller.searchMembers,
-                      title: '',
-                      controller: controller.membersListController,
-                      itemCount: controller.eligibleMembersList.length,
-                      itemBuilder: (context, index) {
-                        final members = controller.eligibleMembersList[index];
-                        return ListTile(
-                          leading: IsmLiveImage.network(
-                            members.profileUrl,
-                            dimensions: IsmLiveDimens.forty,
-                            isProfileImage: true,
-                          ),
-                          title: Text(members.userName),
-                          subtitle: Text(members.userIdentifier),
-                          trailing: controller.isHost == true
-                              ? IsmLiveButton.icon(
-                                  icon: Icons.person_add_rounded,
-                                  onTap: () {
-                                    controller.addMember(
-                                      streamId: controller.streamId ?? '',
-                                      memberId: members.userId,
-                                    );
-                                  },
-                                )
-                              : null,
-                        );
-                      },
-                    ),
-                    IsmLiveScrollSheet(
-                      showSearchBar: true,
-                      showHeader: false,
                       textEditingController: controller.searchCopublisherFieldController,
                       hintText: 'Search Request',
                       onchange: controller.searchRequest,
@@ -138,6 +105,39 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                               )
                             ],
                           ),
+                        );
+                      },
+                    ),
+                    IsmLiveScrollSheet(
+                      showSearchBar: true,
+                      showHeader: false,
+                      textEditingController: controller.searchMembersFieldController,
+                      hintText: 'Search User',
+                      onchange: controller.searchMembers,
+                      title: '',
+                      controller: controller.membersListController,
+                      itemCount: controller.eligibleMembersList.length,
+                      itemBuilder: (context, index) {
+                        final members = controller.eligibleMembersList[index];
+                        return ListTile(
+                          leading: IsmLiveImage.network(
+                            members.profileUrl,
+                            dimensions: IsmLiveDimens.forty,
+                            isProfileImage: true,
+                          ),
+                          title: Text(members.userName),
+                          subtitle: Text(members.userIdentifier),
+                          trailing: controller.isHost == true
+                              ? IsmLiveButton.icon(
+                                  icon: Icons.person_add_rounded,
+                                  onTap: () {
+                                    controller.addMember(
+                                      streamId: controller.streamId ?? '',
+                                      memberId: members.userId,
+                                    );
+                                  },
+                                )
+                              : null,
                         );
                       },
                     ),

@@ -5,10 +5,12 @@ class IsmLiveStreamTranslations {
     this.preparingYourStream,
     this.reconnecting,
     this.joiningLiveStream,
+    this.enablingYourVideo,
   });
   final String? youreLive;
   final String? moderationWarning;
   final String? preparingYourStream;
   final String? reconnecting;
   final String? joiningLiveStream;
+  final String? enablingYourVideo;
 }

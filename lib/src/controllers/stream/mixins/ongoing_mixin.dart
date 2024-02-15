@@ -385,24 +385,36 @@ mixin StreamOngoingMixin {
         return;
       }
 
-      final isExecuting = await requestBackgroundPermission();
+      var isExecuting = await requestBackgroundPermission();
       IsmLiveLog.error(isExecuting);
-      await _controller.room!.localParticipant!.setScreenShareEnabled(
-        true,
-        captureScreenAudio: true,
-      );
-      IsmLiveUtility.closeLoader();
+      if (!isExecuting) {
+        isExecuting = await requestBackgroundPermission();
+      }
+      if (isExecuting) {
+        await _controller.room!.localParticipant!.setScreenShareEnabled(
+          true,
+          captureScreenAudio: true,
+        );
+      }
     } catch (e, st) {
-      IsmLiveUtility.closeLoader();
       IsmLiveLog.error(e, st);
+    } finally {
+      IsmLiveUtility.closeLoader();
     }
   }
 
   void disableScreenShare() async {
-    await _controller.room!.localParticipant!.setScreenShareEnabled(
-      false,
-    );
-    await FlutterBackground.disableBackgroundExecution();
+    try {
+      IsmLiveUtility.showLoader();
+      await _controller.room!.localParticipant!.setScreenShareEnabled(
+        false,
+      );
+      await FlutterBackground.disableBackgroundExecution();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    } finally {
+      IsmLiveUtility.closeLoader();
+    }
   }
 
   void onStreamScroll({

@@ -31,12 +31,9 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
               ],
             ),
             const Spacer(flex: 2),
-            const Flexible(
-              flex: 3,
-              child: IsmLiveButton(
-                onTap: IsmLiveApp.logout,
-                label: 'LogOut',
-              ),
+            const IsmLiveButton.icon(
+              icon: Icons.logout_rounded,
+              onTap: IsmLiveApp.logout,
             ),
           ],
         ),

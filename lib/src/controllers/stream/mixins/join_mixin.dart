@@ -164,7 +164,7 @@ mixin StreamJoinMixin {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else if (isCopublisher) {
-      message = '';
+      message = translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
     } else {
       message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
