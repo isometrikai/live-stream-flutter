@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component_example/utils/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -55,7 +56,10 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('email_field'),
-                        child: IsmLiveInputField.email(controller: controller.emailController),
+                        child: IsmLiveInputField.email(
+                          controller: controller.emailController,
+                          validator: AppValidator.emailValidator,
+                        ),
                       ),
                       IsmLiveDimens.boxHeight16,
                       Hero(
@@ -76,6 +80,7 @@ class LoginView extends StatelessWidget {
                           obscureText: !controller.showPassward,
                           obscureCharacter: '*',
                           controller: controller.passwordController,
+                          validator: AppValidator.passwordValidator,
                         ),
                       ),
                       IsmLiveDimens.boxHeight32,
