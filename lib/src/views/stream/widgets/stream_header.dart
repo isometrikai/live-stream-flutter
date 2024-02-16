@@ -54,9 +54,10 @@ class StreamHeader extends StatelessWidget {
 }
 
 class _LiveTimer extends StatelessWidget {
-  const _LiveTimer({
+  _LiveTimer({
     this.onTapModerators,
   });
+  IsmLiveStreamController controller = Get.find<IsmLiveStreamController>();
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
@@ -121,21 +122,22 @@ class _LiveTimer extends StatelessWidget {
             ),
           ),
           IsmLiveDimens.boxWidth8,
-          IsmLiveTapHandler(
-            onTap: onTapModerators,
-            child: Container(
-              padding: IsmLiveDimens.edgeInsets4,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black12,
-              ),
-              child: Icon(
-                Icons.local_police_rounded,
-                color: IsmLiveColors.white,
-                size: IsmLiveDimens.sixteen,
+          if (controller.isMember || (controller.isCopublisher ?? false))
+            IsmLiveTapHandler(
+              onTap: onTapModerators,
+              child: Container(
+                padding: IsmLiveDimens.edgeInsets4,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black12,
+                ),
+                child: Icon(
+                  Icons.local_police_rounded,
+                  color: IsmLiveColors.white,
+                  size: IsmLiveDimens.sixteen,
+                ),
               ),
             ),
-          ),
         ],
       );
 }

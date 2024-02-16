@@ -473,7 +473,6 @@ mixin StreamOngoingMixin {
       _controller.streamId = null;
       await _controller.room?.disconnect();
       if (goBack) {
-        IsmLiveLog('___________________________>');
         closeStreamView(isHost);
       }
     }
@@ -484,11 +483,8 @@ mixin StreamOngoingMixin {
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView();
     } else {
-      IsmLiveLog('___________________________>innnnnnnnnnnnnn');
       Get.back();
       if (fromMqtt) {
-        IsmLiveLog(
-            '___________________________>innnnnnnnnnnnnn00000000000000000');
         IsmLiveUtility.showDialog(const IsmLiveStreamEndDialog());
       }
     }

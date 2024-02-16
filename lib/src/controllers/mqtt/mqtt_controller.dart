@@ -396,10 +396,11 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.messageRemoved:
             if (_streamController.streamId == streamId) {
               final messageId = payload['messageId'] as String?;
+              final userName = payload['initiatorName'] as String? ?? '';
               if (messageId == null) {
                 break;
               }
-              await _streamController.messageRemoved(messageId);
+              await _streamController.messageRemoved(messageId, userName);
               _updateStream();
             }
             break;
