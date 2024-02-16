@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component_example/utils/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -115,7 +116,10 @@ class SignupView extends StatelessWidget {
                           ),
                           Text(TranslationKeys.userName.tr),
                           IsmLiveDimens.boxHeight8,
-                          IsmLiveInputField.userName(controller: controller.userNameController),
+                          IsmLiveInputField.userName(
+                            controller: controller.userNameController,
+                            validator: AppValidator.userName,
+                          ),
                           IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('email_label'),
@@ -135,6 +139,7 @@ class SignupView extends StatelessWidget {
                                   controller.isEmailValid = false;
                                 }
                               },
+                              validator: AppValidator.emailValidator,
                             ),
                           ),
                           IsmLiveDimens.boxHeight16,
@@ -156,6 +161,7 @@ class SignupView extends StatelessWidget {
                               obscureText: !controller.showPassward,
                               obscureCharacter: '*',
                               controller: controller.passwordController,
+                              validator: AppValidator.passwordValidator,
                             ),
                           ),
                           IsmLiveDimens.boxHeight16,
@@ -189,16 +195,13 @@ class SignupView extends StatelessWidget {
                                   : () {
                                       Get.dialog(
                                         AlertDialog(
-                                          title: const Text('Alert message...'),
-                                          content: const Text('All fields must be filled with Profile image'),
+                                          title: const Text('Alert'),
+                                          content: const Text('Select Profile Image'),
                                           actions: [
-                                            TextButton(
-                                              onPressed: Get.back,
-                                              child: const Text(
-                                                'Okay',
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                            )
+                                            IsmLiveButton(
+                                              onTap: Get.back,
+                                              label: 'Okay',
+                                            ),
                                           ],
                                         ),
                                       );

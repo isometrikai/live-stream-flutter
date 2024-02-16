@@ -23,11 +23,10 @@ class AppValidator {
 
   static String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return TranslationKeys.required;
+      return TranslationKeys.required.tr;
     }
     if (value.length < 8) {
-      return TranslationKeys.passwordMustContain(
-          TranslationKeys.lengthCharacters.tr);
+      return TranslationKeys.passwordMustContain(TranslationKeys.lengthCharacters.tr);
     }
     if (!value.contains(RegExp('[a-z]'))) {
       return TranslationKeys.passwordMustContain(TranslationKeys.lowercase.tr);
