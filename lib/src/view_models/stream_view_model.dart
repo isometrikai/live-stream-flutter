@@ -604,8 +604,8 @@ class IsmLiveStreamViewModel {
       var data = jsonDecode(res.data);
 
       return (
-        pending: data['pending'] as bool,
-        accepted: data['accepted'] as bool
+        pending: data['pending'] as bool? ?? false,
+        accepted: data['accepted'] as bool? ?? false
       );
     } catch (e, st) {
       IsmLiveLog.error(e, st);

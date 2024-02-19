@@ -116,13 +116,6 @@ mixin StreamAPIMixin {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
         (e) => e.isAdmin,
       );
-
-      for (var i in _controller.streamMembersList) {
-        if (i.userId == _controller.user?.userId) {
-          _controller.memberStatus = IsmLiveMemberStatus.requestApproved;
-          break;
-        }
-      }
     }
     _controller.update([IsmLiveStreamView.updateId]);
     _controller.update([IsmLiveMembersSheet.updateId]);
@@ -547,8 +540,12 @@ mixin StreamAPIMixin {
     var res = await _controller._viewModel.statusCopublisherRequest(
       streamId: streamId,
     );
-    if (res != null && res.pending) {
-      _controller.memberStatus = IsmLiveMemberStatus.requested;
+    if (res != null) {
+      if (res.accepted) {
+        _controller.memberStatus = IsmLiveMemberStatus.requestApproved;
+      } else if (res.pending) {
+        _controller.memberStatus = IsmLiveMemberStatus.requested;
+      }
     }
   }
 

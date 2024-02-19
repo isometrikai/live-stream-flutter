@@ -471,6 +471,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: false,
+      showDialog: false,
     );
   }
 
