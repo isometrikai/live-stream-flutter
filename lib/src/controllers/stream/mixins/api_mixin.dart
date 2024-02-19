@@ -541,6 +541,17 @@ mixin StreamAPIMixin {
     return res;
   }
 
+  Future<void> statusCopublisherRequest(
+    String streamId,
+  ) async {
+    var res = await _controller._viewModel.statusCopublisherRequest(
+      streamId: streamId,
+    );
+    if (res != null && res.pending) {
+      _controller.memberStatus = IsmLiveMemberStatus.requested;
+    }
+  }
+
   Future<String?> switchViewer({
     required String streamId,
   }) =>

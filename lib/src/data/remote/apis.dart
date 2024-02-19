@@ -33,6 +33,7 @@ class IsmLiveApis {
   static const String copublisherRequest = '$_streaming/copublish/request';
   static const String acceptCopublisher = '$_streaming/copublish/accept';
   static const String denyCopublisher = '$_streaming/copublish/deny';
+  static const String statusCopublisher = '$_streaming/copublish/status';
   static const String copublishersRequests = '$_streaming/copublish/requests';
   static const String switchProfile = '$_streaming/switchprofile';
   static const String eligibleMembers = '$_streaming/members/eligible';
