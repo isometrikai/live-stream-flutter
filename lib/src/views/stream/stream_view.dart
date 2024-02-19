@@ -44,7 +44,8 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex =
+              controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -139,13 +140,23 @@ class _IsmLiveStreamView extends StatelessWidget {
                               children: [
                                 StreamHeader(
                                   name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                  imageUrl: controller
+                                          .hostDetails?.userProfileImageUrl ??
+                                      '',
                                   onTapCross: () {
                                     FocusScope.of(context).unfocus();
-                                    controller.onExit(
-                                      isHost: controller.isHost ?? false,
-                                      streamId: streamId,
-                                    );
+                                    if ((controller.isHost ?? false) ||
+                                        (controller.isCopublisher ?? false)) {
+                                      controller.onExit(
+                                        isHost: controller.isHost ?? false,
+                                        streamId: streamId,
+                                      );
+                                    } else {
+                                      controller.disconnectStream(
+                                        isHost: controller.isHost ?? false,
+                                        streamId: streamId,
+                                      );
+                                    }
                                   },
                                   onTapModerators: () {
                                     IsmLiveUtility.openBottomSheet(
@@ -157,12 +168,16 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     IsmLiveUtility.openBottomSheet(
                                       GetBuilder<IsmLiveStreamController>(
                                         id: IsmLiveStreamView.updateId,
-                                        builder: (controller) => IsmLiveListSheet(
-                                          scrollController: controller.viewerListController,
+                                        builder: (controller) =>
+                                            IsmLiveListSheet(
+                                          scrollController:
+                                              controller.viewerListController,
                                           items: controller.streamViewersList,
-                                          trailing: (_, viewer) => controller.isModerator
+                                          trailing: (_, viewer) => controller
+                                                  .isModerator
                                               ? IsmLiveButton.icon(
-                                                  icon: Icons.person_remove_rounded,
+                                                  icon: Icons
+                                                      .person_remove_rounded,
                                                   onTap: () {
                                                     controller.kickoutViewer(
                                                       streamId: streamId,
@@ -188,7 +203,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       ),
                                       const Spacer(),
                                       IsmLiveControlsWidget(
-                                        isHost: (controller.isHost ?? false) || (controller.isCopublisher ?? false),
+                                        isHost: (controller.isHost ?? false) ||
+                                            (controller.isCopublisher ?? false),
                                         streamId: streamId,
                                         audioCallOnly: audioCallOnly,
                                       ),
@@ -198,7 +214,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 IsmLiveDimens.boxHeight8,
                                 IsmLiveMessageField(
                                   streamId: streamId,
-                                  isHost: (controller.isHost ?? false) || (controller.isCopublisher ?? false),
+                                  isHost: (controller.isHost ?? false) ||
+                                      (controller.isCopublisher ?? false),
                                 ),
                               ],
                             ),
