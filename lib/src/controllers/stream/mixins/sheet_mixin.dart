@@ -7,22 +7,31 @@ mixin StreamSheetMixin {
     required bool isHost,
     required String streamId,
   }) {
-    IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
-        leftLabel: 'Cancel',
-        rightLabel: isHost ? 'End Stream' : 'Leave Stram',
-        onLeft: Get.back,
-        onRight: () async {
-          Get.back();
-          await _controller.disconnectStream(
-            isHost: isHost,
-            streamId: streamId,
-          );
-        },
-      ),
-      isDismissible: false,
-    );
+    if (isHost || (_controller.isCopublisher ?? false)) {
+      IsmLiveUtility.openBottomSheet(
+        IsmLiveCustomButtomSheet(
+          title: isHost
+              ? IsmLiveStrings.areYouSureEndStream
+              : IsmLiveStrings.areYouSureLeaveStream,
+          leftLabel: 'Cancel',
+          rightLabel: isHost ? 'End Stream' : 'Leave Stram',
+          onLeft: Get.back,
+          onRight: () async {
+            Get.back();
+            await _controller.disconnectStream(
+              isHost: isHost,
+              streamId: streamId,
+            );
+          },
+        ),
+        isDismissible: false,
+      );
+    } else {
+      _controller.disconnectStream(
+        isHost: isHost,
+        streamId: streamId,
+      );
+    }
   }
 
   void giftsSheet() async {
@@ -80,16 +89,22 @@ mixin StreamSheetMixin {
   void copublishingStartVideoSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: (Get.context?.liveTranslations.hostAcceptedCopublishRequestTitle ?? IsmLiveStrings.hostAcceptedCopublishRequestTitle).trParams({
+        title:
+            (Get.context?.liveTranslations.hostAcceptedCopublishRequestTitle ??
+                    IsmLiveStrings.hostAcceptedCopublishRequestTitle)
+                .trParams({
           'name': _controller.hostDetails?.userName ?? 'Host',
         }),
-        description: Get.context?.liveTranslations.hostAcceptedCopublishRequestDescription ?? IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description: Get.context?.liveTranslations
+                .hostAcceptedCopublishRequestDescription ??
+            IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: 'Start Video',
         images: [
           _controller.user?.profileUrl ?? '',
         ],
         onTap: () async {
-          var token = await _controller.switchViewer(streamId: _controller.streamId ?? '');
+          var token = await _controller.switchViewer(
+              streamId: _controller.streamId ?? '');
           if (token == null) {
             return;
           }
