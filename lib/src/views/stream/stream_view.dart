@@ -145,18 +145,11 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       '',
                                   onTapCross: () {
                                     FocusScope.of(context).unfocus();
-                                    if ((controller.isHost ?? false) ||
-                                        (controller.isCopublisher ?? false)) {
-                                      controller.onExit(
-                                        isHost: controller.isHost ?? false,
-                                        streamId: streamId,
-                                      );
-                                    } else {
-                                      controller.disconnectStream(
-                                        isHost: controller.isHost ?? false,
-                                        streamId: streamId,
-                                      );
-                                    }
+
+                                    controller.onExit(
+                                      isHost: controller.isHost ?? false,
+                                      streamId: streamId,
+                                    );
                                   },
                                   onTapModerators: () {
                                     IsmLiveUtility.openBottomSheet(
