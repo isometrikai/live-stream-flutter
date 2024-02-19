@@ -1,9 +1,11 @@
 part of '../stream_controller.dart';
 
 mixin StreamMessageMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
-  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) => IsmLiveChatModel(
+  IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
+      IsmLiveChatModel(
         streamId: message.streamId,
         messageId: message.messageId,
         userId: message.senderId,
@@ -132,19 +134,26 @@ mixin StreamMessageMixin {
     if (isSent) {}
   }
 
-  Future<void> messageRemoved(String messageId) async {
-    var message = _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
-          (e) => e?.messageId == messageId,
-          orElse: () => null,
-        );
+  Future<void> messageRemoved(String messageId, String userName) async {
+    var message =
+        _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
+              (e) => e?.messageId == messageId,
+              orElse: () => null,
+            );
     if (message == null) {
       return;
     }
-    message = message.copyWith(isDeleted: true);
+
     final index = _controller.streamMessagesList.indexOf(message);
     if (index == -1) {
       return;
     }
+
+    message = message.copyWith(
+      isDeleted: true,
+      body: userName,
+    );
+
     _controller.streamMessagesList[index] = message;
     _controller._streamMessagesList.refresh();
   }
