@@ -116,6 +116,13 @@ mixin StreamAPIMixin {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
         (e) => e.isAdmin,
       );
+
+      for (var i in _controller.streamMembersList) {
+        if (i.userId == _controller.user?.userId) {
+          _controller.memberStatus = IsmLiveMemberStatus.requestApproved;
+          break;
+        }
+      }
     }
     _controller.update([IsmLiveStreamView.updateId]);
     _controller.update([IsmLiveMembersSheet.updateId]);
