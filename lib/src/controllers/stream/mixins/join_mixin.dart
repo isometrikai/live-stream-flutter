@@ -94,6 +94,7 @@ mixin StreamJoinMixin {
       isHost: isHost,
       isNewStream: false,
       joinByScrolling: joinByScrolling,
+      hdBroadcast: stream.hdBroadcast ?? false,
     );
   }
 
@@ -129,6 +130,7 @@ mixin StreamJoinMixin {
       streamImage: data.image,
       isHost: true,
       isNewStream: true,
+      hdBroadcast: _controller.isHdBroadcast,
     );
   }
 
@@ -137,6 +139,7 @@ mixin StreamJoinMixin {
     required String streamId,
     String? streamImage,
     bool audioCallOnly = false,
+    bool hdBroadcast = false,
     required bool isHost,
     bool isCopublisher = false,
     required bool isNewStream,
@@ -171,11 +174,12 @@ mixin StreamJoinMixin {
     IsmLiveUtility.showLoader(message);
 
     try {
+      final videoQuality = hdBroadcast ? VideoParametersPresets.h720_169 : VideoParametersPresets.h540_169;
       var room = Room(
         roomOptions: RoomOptions(
-          defaultCameraCaptureOptions: const CameraCaptureOptions(
+          defaultCameraCaptureOptions: CameraCaptureOptions(
             cameraPosition: CameraPosition.front,
-            params: VideoParametersPresets.h720_169,
+            params: videoQuality,
           ),
           defaultAudioCaptureOptions: const AudioCaptureOptions(
             noiseSuppression: true,
@@ -185,11 +189,7 @@ mixin StreamJoinMixin {
             typingNoiseDetection: true,
           ),
           defaultVideoPublishOptions: VideoPublishOptions(
-            videoEncoding: VideoParametersPresets.h720_169.encoding,
-            videoSimulcastLayers: [
-              VideoParametersPresets.h180_169,
-              VideoParametersPresets.h360_169,
-            ],
+            videoEncoding: videoQuality.encoding,
           ),
           defaultAudioPublishOptions: const AudioPublishOptions(
             dtx: true,
