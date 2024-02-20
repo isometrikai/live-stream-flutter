@@ -14,6 +14,7 @@ mixin StreamOngoingMixin {
       isHost: isHost,
     ));
     _controller.moderatorsList.clear();
+    unawaited(_controller.statusCopublisherRequest(streamId));
 
     _manageModerator(streamId);
 

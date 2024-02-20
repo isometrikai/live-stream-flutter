@@ -460,6 +460,21 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> statusCopublisherRequest({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.statusCopublisher}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
+
   Future<IsmLiveResponseModel> switchViewer({
     required String streamId,
   }) {
