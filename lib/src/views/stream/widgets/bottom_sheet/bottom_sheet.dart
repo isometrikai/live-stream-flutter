@@ -1,4 +1,4 @@
-export 'chat_button_sheet.dart';
+export 'chat_bottom_sheet.dart';
 export 'copublisher_request_sheet.dart';
 export 'copublisher_sheet.dart';
 export 'members_sheet.dart';

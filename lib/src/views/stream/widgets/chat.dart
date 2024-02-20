@@ -16,7 +16,6 @@ class IsmLiveChatView extends StatelessWidget {
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) => Container(
           padding: IsmLiveDimens.edgeInsets4_0,
-          width: Get.width / 2,
           constraints: BoxConstraints(
             maxHeight: Get.height * 0.4,
             maxWidth: Get.width * 0.75,
@@ -44,7 +43,7 @@ class IsmLiveChatView extends StatelessWidget {
                   onTap: () {
                     if (!message.isEvent) {
                       IsmLiveUtility.openBottomSheet(
-                        ChatButtonSheet(
+                        ChatBottomSheet(
                           message: message,
                         ),
                       );
