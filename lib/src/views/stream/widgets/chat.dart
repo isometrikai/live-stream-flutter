@@ -40,117 +40,106 @@ class IsmLiveChatView extends StatelessWidget {
                   // color: Colors.black26,
                   borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IsmLiveImage.network(
-                      message.imageUrl,
-                      name: message.userName,
-                      dimensions: IsmLiveDimens.thirtyTwo,
-                      isProfileImage: true,
-                    ),
-                    IsmLiveDimens.boxWidth8,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
+                child: IsmLiveTapHandler(
+                  onTap: () {
+                    if (!message.isEvent) {
+                      IsmLiveUtility.openBottomSheet(
+                        ChatButtonSheet(
+                          message: message,
+                        ),
+                      );
+                    }
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IsmLiveImage.network(
+                        height: IsmLiveDimens.twentyFour,
+                        message.imageUrl,
+                        name: message.userName,
+                        dimensions: IsmLiveDimens.thirtyTwo,
+                        isProfileImage: true,
+                      ),
+                      IsmLiveDimens.boxWidth8,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                  style: context.textTheme.labelSmall!.copyWith(
+                                    color: IsmLiveColors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                if (message.sentByHost) ...[
+                                  IsmLiveDimens.boxWidth8,
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: (context.liveTheme.primaryColor ??
+                                              IsmLiveColors.primary)
+                                          .withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(
+                                          IsmLiveDimens.four),
+                                    ),
+                                    child: Padding(
+                                      padding: IsmLiveDimens.edgeInsets6_2,
+                                      child: Text(
+                                        'Host',
+                                        style: context.textTheme.labelSmall
+                                            ?.copyWith(
+                                          color:
+                                              context.liveTheme.primaryColor ??
+                                                  IsmLiveColors.primary
+                                                      .withOpacity(.1),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            if (message.isDeleted)
                               Text(
-                                '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                style: context.textTheme.labelSmall!.copyWith(
-                                  color: IsmLiveColors.white,
+                                ' ${message.body} Deleted Message',
+                                style: context.textTheme.labelMedium?.copyWith(
+                                  color: context.liveTheme.unselectedTextColor,
                                   fontWeight: FontWeight.w700,
                                 ),
-                              ),
-                              if (message.sentByHost) ...[
-                                IsmLiveDimens.boxWidth8,
-                                DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: (context.liveTheme.primaryColor ??
-                                            IsmLiveColors.primary)
-                                        .withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(
-                                        IsmLiveDimens.four),
+                              )
+                            else ...[
+                              if (message.isReply &&
+                                  message.parentBody != null) ...[
+                                Text(
+                                  'Reply to ${message.parentBody}',
+                                  style: context.textTheme.labelSmall?.copyWith(
+                                    color: Colors.white70,
+                                    fontStyle: FontStyle.italic,
                                   ),
-                                  child: Padding(
-                                    padding: IsmLiveDimens.edgeInsets6_2,
-                                    child: Text(
-                                      'Host',
-                                      style: context.textTheme.labelSmall
-                                          ?.copyWith(
-                                        color: context.liveTheme.primaryColor ??
-                                            IsmLiveColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
-                            ],
-                          ),
-                          if (message.isDeleted)
-                            Text(
-                              ' ${message.body} Deleted Message',
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: context.liveTheme.unselectedTextColor,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )
-                          else ...[
-                            if (message.isReply &&
-                                message.parentBody != null) ...[
                               Text(
-                                'Reply to ${message.parentBody}',
-                                style: context.textTheme.labelSmall?.copyWith(
-                                  color: Colors.white70,
-                                  fontStyle: FontStyle.italic,
+                                message.body,
+                                style: context.textTheme.labelMedium?.copyWith(
+                                  color: IsmLiveColors.white,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                            Text(
-                              message.body,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: IsmLiveColors.white,
-                              ),
-                              softWrap: true,
-                            ),
-                            if (!message.isEvent) ...[
-                              IsmLiveDimens.boxHeight2,
-                              Row(
-                                children: [
-                                  _TextButton(
-                                    label: 'Reply',
-                                    onTap: () {
-                                      controller.parentMessage = message;
-                                      controller.update(
-                                          [IsmLiveMessageField.updateId]);
-                                    },
-                                  ),
-                                  if (controller.isModerator) ...[
-                                    IsmLiveDimens.boxWidth8,
-                                    _TextButton(
-                                      label: 'Delete',
-                                      onTap: () => controller.deleteMessage(
-                                        streamId: streamId,
-                                        messageId: message.messageId,
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                                softWrap: true,
                               ),
                             ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
