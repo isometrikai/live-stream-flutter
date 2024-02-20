@@ -38,21 +38,24 @@ class StreamHeader extends StatelessWidget {
           ),
           const Spacer(),
           GetBuilder<IsmLiveStreamController>(
-            builder: (controller) => IsmLiveTapHandler(
-              onTap: onTapModerators,
-              child: Container(
-                padding: IsmLiveDimens.edgeInsets4,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white24,
-                ),
-                child: Icon(
-                  Icons.local_police_rounded,
-                  color: IsmLiveColors.white,
-                  size: IsmLiveDimens.sixteen,
-                ),
-              ),
-            ),
+            builder: (controller) =>
+                (controller.isMember || (controller.isCopublisher ?? false))
+                    ? IsmLiveTapHandler(
+                        onTap: onTapModerators,
+                        child: Container(
+                          padding: IsmLiveDimens.edgeInsets4,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white24,
+                          ),
+                          child: Icon(
+                            Icons.local_police_rounded,
+                            color: IsmLiveColors.white,
+                            size: IsmLiveDimens.sixteen,
+                          ),
+                        ),
+                      )
+                    : IsmLiveDimens.box0,
           ),
           IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
