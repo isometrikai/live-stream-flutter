@@ -163,7 +163,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.favourite:
       case IsmLiveStreamOption.settings:
       case IsmLiveStreamOption.rotateCamera:
-      case IsmLiveStreamOption.vs:
+      case IsmLiveStreamOption.squar:
         return option.icon;
       case IsmLiveStreamOption.speaker:
         if (_controller.speakerOn) {
@@ -324,7 +324,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;
-      case IsmLiveStreamOption.vs:
+      case IsmLiveStreamOption.squar:
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();

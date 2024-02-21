@@ -34,6 +34,15 @@ class StreamHeader extends StatelessWidget {
               _LiveTimer(
                 onTapModerators: onTapModerators,
               ),
+              IsmLiveDimens.boxHeight8,
+              SizedBox(
+                width: Get.width * 0.7,
+                child: Text(
+                  'Hey I am going live with 100 life-essential products today at 11 AM.',
+                  style: context.textTheme.bodySmall
+                      ?.copyWith(color: Colors.white),
+                ),
+              ),
             ],
           ),
           const Spacer(),
@@ -115,6 +124,7 @@ class _LiveTimer extends StatelessWidget {
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           DecoratedBox(
@@ -122,7 +132,7 @@ class _LiveTimer extends StatelessWidget {
               color: Get.find<IsmLiveMqttController>().isConnected
                   ? IsmLiveColors.green
                   : IsmLiveColors.red,
-              borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
             ),
             child: Padding(
               padding: IsmLiveDimens.edgeInsets8_4,
@@ -144,7 +154,7 @@ class _LiveTimer extends StatelessWidget {
               ),
             ),
           ),
-          IsmLiveDimens.boxWidth8,
+
           // IsmLiveTapHandler(
           //   onTap: () => IsmLiveUtility.openBottomSheet(
           //     const IsmLiveMembersSheet(),

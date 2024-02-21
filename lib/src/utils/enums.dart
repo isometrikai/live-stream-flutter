@@ -171,14 +171,15 @@ enum IsmLiveActions {
 
 enum IsmLiveStreamOption {
   gift(IsmLiveAssetConstants.gift),
-  multiLive(IsmLiveAssetConstants.multi),
-  share(IsmLiveAssetConstants.share),
+  multiLive(IsmLiveAssetConstants.bars),
+  // multiLive(IsmLiveAssetConstants.multi),
+  share(IsmLiveAssetConstants.share_new_icon),
   members(IsmLiveAssetConstants.members),
   favourite(IsmLiveAssetConstants.favourite),
-  settings(IsmLiveAssetConstants.setting),
-  rotateCamera(IsmLiveAssetConstants.rotateCamera),
+  settings(IsmLiveAssetConstants.setting_new_icon),
+  rotateCamera(IsmLiveAssetConstants.rotate),
   speaker(IsmLiveAssetConstants.speakerOn),
-  vs(IsmLiveAssetConstants.vs);
+  squar(IsmLiveAssetConstants.squar);
 
   const IsmLiveStreamOption(this.icon);
 
@@ -191,11 +192,11 @@ enum IsmLiveStreamOption {
       ];
 
   static List<IsmLiveStreamOption> get hostOptions => [
-        IsmLiveStreamOption.members,
+        // IsmLiveStreamOption.members,
         IsmLiveStreamOption.multiLive,
-        IsmLiveStreamOption.vs,
+        IsmLiveStreamOption.squar,
         IsmLiveStreamOption.share,
-        IsmLiveStreamOption.favourite,
+        // IsmLiveStreamOption.favourite,
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];

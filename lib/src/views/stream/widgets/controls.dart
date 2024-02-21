@@ -22,15 +22,19 @@ class IsmLiveControlsWidget extends StatelessWidget {
         initState: (state) {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.addListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.addListener(streamController.update);
         },
         dispose: (state) async {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.removeListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = !isHost ? IsmLiveStreamOption.viewersOptions : IsmLiveStreamOption.hostOptions;
+          var options = !isHost
+              ? IsmLiveStreamOption.viewersOptions
+              : IsmLiveStreamOption.hostOptions;
 
           return Container(
             alignment: Alignment.bottomRight,
@@ -53,9 +57,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
                             ? context.theme.primaryColor
                             : controller.memberStatus.didRequested
                                 ? Colors.blueGrey
-                                : null
-                        : null
-                    : null,
+                                : Colors.transparent
+                        : Colors.transparent
+                    : Colors.transparent,
               ),
             ),
           );

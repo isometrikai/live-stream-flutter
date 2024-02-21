@@ -103,6 +103,11 @@ class IsmLiveAssetConstants {
   static const String video_camera = '$_icons/video_camera.svg';
   static const String volume = '$_icons/volume.svg';
   static const String cancel = '$_icons/cancel.svg';
+  static const String bars = '$_icons/bars.svg';
+  static const String rotate = '$_icons/rotate.svg';
+  static const String share_new_icon = '$_icons/share_new_icon.svg';
+  static const String setting_new_icon = '$_icons/setting_new_icon.svg';
+  static const String squar = '$_icons/squar.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }
