@@ -43,12 +43,7 @@ class IsmLiveChatView extends StatelessWidget {
                   child: Container(
                     padding: IsmLiveDimens.edgeInsets5,
                     decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                        ),
-                      ],
-                      // color: Colors.black26,
+                      color: Colors.black26,
                       borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                     ),
                     child: Row(
@@ -62,7 +57,7 @@ class IsmLiveChatView extends StatelessWidget {
                           dimensions: IsmLiveDimens.thirtyTwo,
                           isProfileImage: true,
                         ),
-                        IsmLiveDimens.boxWidth8,
+                        IsmLiveDimens.boxWidth4,
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
