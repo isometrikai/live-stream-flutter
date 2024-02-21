@@ -1,0 +1,33 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+class IsmLiveButtonThemeData with Diagnosticable {
+  const IsmLiveButtonThemeData({
+    this.foregroundColor,
+    this.backgroundColor,
+    this.disableColor,
+  });
+
+  final Color? foregroundColor;
+  final Color? backgroundColor;
+  final Color? disableColor;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(ColorProperty('foregroundColor', foregroundColor));
+    properties.add(ColorProperty('backgroundColor', backgroundColor));
+    properties.add(ColorProperty('disableColor', disableColor));
+  }
+
+  IsmLiveButtonThemeData copyWith({
+    Color? foregroundColor,
+    Color? backgroundColor,
+    Color? disableColor,
+  }) =>
+      IsmLiveButtonThemeData(
+        foregroundColor: foregroundColor ?? this.foregroundColor,
+        backgroundColor: backgroundColor ?? this.backgroundColor,
+        disableColor: disableColor ?? this.disableColor,
+      );
+}

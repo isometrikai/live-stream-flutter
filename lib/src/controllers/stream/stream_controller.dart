@@ -64,6 +64,10 @@ class IsmLiveStreamController extends GetxController
 
   bool isRecordingBroadcast = false;
 
+  bool isRestreamBroadcast = false;
+
+  bool isSchedulingBroadcast = false;
+
   bool isModerator = false;
 
   String? streamId;
@@ -390,6 +394,18 @@ class IsmLiveStreamController extends GetxController
 
   void onChangeRecording(bool value) {
     isRecordingBroadcast = value;
+
+    update([IsmGoLiveView.updateId]);
+  }
+
+  void onChangeRestream(bool value) {
+    isRestreamBroadcast = value;
+
+    update([IsmGoLiveView.updateId]);
+  }
+
+  void onChangeSchedule(bool value) {
+    isSchedulingBroadcast = value;
 
     update([IsmGoLiveView.updateId]);
   }

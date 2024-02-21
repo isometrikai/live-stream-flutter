@@ -7,6 +7,16 @@ const _kThemeData = IsmLiveThemeData(
   selectedTextColor: IsmLiveColors.white,
   unselectedTextColor: IsmLiveColors.grey,
   cardBackgroundColor: IsmLiveColors.white,
+  primaryButtonTheme: IsmLiveButtonThemeData(
+    backgroundColor: IsmLiveColors.black,
+    foregroundColor: IsmLiveColors.white,
+    disableColor: IsmLiveColors.grey,
+  ),
+  secondaryButtonTheme: IsmLiveButtonThemeData(
+    backgroundColor: IsmLiveColors.white,
+    foregroundColor: IsmLiveColors.black,
+    disableColor: IsmLiveColors.grey,
+  ),
 );
 
 const _kTranslationsData = IsmLiveTranslationsData(

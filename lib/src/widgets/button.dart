@@ -8,6 +8,7 @@ class IsmLiveButton extends StatelessWidget {
     this.onTap,
     required this.label,
     this.small = false,
+    this.showBorder = false,
   })  : _type = IsmLiveButtonType.primary,
         icon = null,
         secondary = false;
@@ -17,25 +18,8 @@ class IsmLiveButton extends StatelessWidget {
     this.onTap,
     required this.label,
     this.small = false,
+    this.showBorder = false,
   })  : _type = IsmLiveButtonType.secondary,
-        icon = null,
-        secondary = false;
-
-  const IsmLiveButton.outlined({
-    super.key,
-    this.onTap,
-    required this.label,
-    this.small = false,
-  })  : _type = IsmLiveButtonType.outlined,
-        icon = null,
-        secondary = false;
-
-  const IsmLiveButton.text({
-    super.key,
-    this.onTap,
-    required this.label,
-    this.small = false,
-  })  : _type = IsmLiveButtonType.text,
         icon = null,
         secondary = false;
 
@@ -47,6 +31,7 @@ class IsmLiveButton extends StatelessWidget {
   })  : _type = IsmLiveButtonType.icon,
         label = '',
         small = false,
+        showBorder = false,
         assert(
           icon != null,
           'icon cannot be null for IsmLiveButton.icon',
@@ -58,6 +43,7 @@ class IsmLiveButton extends StatelessWidget {
   final bool small;
   final IconData? icon;
   final bool secondary;
+  final bool showBorder;
 
   static MaterialStateProperty<TextStyle?> _textStyle(BuildContext context, bool small) => MaterialStateProperty.all(
         (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)?.copyWith(
@@ -69,6 +55,20 @@ class IsmLiveButton extends StatelessWidget {
         small ? IsmLiveDimens.edgeInsets8_4 : IsmLiveDimens.edgeInsets16_8,
       );
 
+  static MaterialStateProperty<OutlinedBorder?> _borderRadius(BuildContext context) => MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: context.liveTheme.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.twentyFive),
+        ),
+      );
+
+  static MaterialStateProperty<BorderSide?> _border(BuildContext context, IsmLiveButtonType type) => MaterialStateProperty.all(
+        BorderSide(
+          color: type == IsmLiveButtonType.primary
+              ? context.liveTheme.primaryButtonTheme?.foregroundColor ?? IsmLiveColors.white
+              : context.liveTheme.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.black,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) => SizedBox(
         height: _type == IsmLiveButtonType.icon ? null : 48,
@@ -78,21 +78,13 @@ class IsmLiveButton extends StatelessWidget {
               label: label,
               onTap: onTap,
               small: small,
+              showBorder: showBorder,
             ),
           IsmLiveButtonType.secondary => _Secondary(
               label: label,
               onTap: onTap,
               small: small,
-            ),
-          IsmLiveButtonType.outlined => _Outlined(
-              label: label,
-              onTap: onTap,
-              small: small,
-            ),
-          IsmLiveButtonType.text => _Text(
-              label: label,
-              onTap: onTap,
-              small: small,
+              showBorder: showBorder,
             ),
           IsmLiveButtonType.icon => _Icon(
               icon: icon!,
@@ -108,30 +100,26 @@ class _Primary extends StatelessWidget {
     this.onTap,
     required this.label,
     this.small = false,
+    this.showBorder = false,
   });
 
   final VoidCallback? onTap;
   final String label;
   final bool small;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
         style: ButtonStyle(
           padding: IsmLiveButton._padding(context, small),
-          shape: context.theme.elevatedButtonTheme.style?.shape ??
-              MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: context.liveTheme.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
-                ),
-              ),
+          shape: IsmLiveButton._borderRadius(context),
+          side: showBorder ? IsmLiveButton._border(context, IsmLiveButtonType.primary) : null,
           backgroundColor: MaterialStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
-                return IsmLiveColors.grey;
+                return context.liveTheme.primaryButtonTheme?.disableColor ?? IsmLiveColors.grey;
               }
-              return context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
-                  context.liveTheme.primaryColor ??
-                  IsmLiveColors.primary;
+              return context.liveTheme.primaryButtonTheme?.backgroundColor ?? IsmLiveColors.black;
             },
           ),
           foregroundColor: MaterialStateColor.resolveWith(
@@ -139,9 +127,7 @@ class _Primary extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.black;
               }
-              return context.theme.elevatedButtonTheme.style?.foregroundColor?.resolve(states) ??
-                  context.liveTheme.backgroundColor ??
-                  IsmLiveColors.white;
+              return context.liveTheme.primaryButtonTheme?.foregroundColor ?? IsmLiveColors.white;
             },
           ),
           textStyle: IsmLiveButton._textStyle(context, small),
@@ -159,145 +145,34 @@ class _Secondary extends StatelessWidget {
     this.onTap,
     required this.label,
     this.small = false,
+    this.showBorder = false,
   });
 
   final VoidCallback? onTap;
   final String label;
   final bool small;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
         style: ButtonStyle(
           padding: IsmLiveButton._padding(context, small),
-          shape: context.theme.elevatedButtonTheme.style?.shape ??
-              MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: context.liveTheme.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
-                ),
-              ),
+          shape: IsmLiveButton._borderRadius(context),
+          side: showBorder ? IsmLiveButton._border(context, IsmLiveButtonType.secondary) : null,
           backgroundColor: MaterialStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
-                return IsmLiveColors.grey;
+                return context.liveTheme.secondaryButtonTheme?.disableColor ?? IsmLiveColors.grey;
               }
-              return context.liveTheme.secondaryColor ?? IsmLiveColors.secondary;
+              return context.liveTheme.secondaryButtonTheme?.backgroundColor ?? IsmLiveColors.white;
             },
           ),
           foregroundColor: MaterialStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
-                return IsmLiveColors.black;
+                return IsmLiveColors.white;
               }
-              return context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
-                  context.liveTheme.primaryColor ??
-                  IsmLiveColors.primary;
-            },
-          ),
-          textStyle: IsmLiveButton._textStyle(context, small),
-        ),
-        onPressed: onTap,
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-        ),
-      );
-}
-
-class _Outlined extends StatelessWidget {
-  const _Outlined({
-    this.onTap,
-    required this.label,
-    this.small = false,
-  });
-
-  final VoidCallback? onTap;
-  final String label;
-  final bool small;
-
-  @override
-  Widget build(BuildContext context) => OutlinedButton(
-        style: ButtonStyle(
-          padding: IsmLiveButton._padding(context, small),
-          shape: context.theme.outlinedButtonTheme.style?.shape ??
-              MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: context.liveTheme.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
-                ),
-              ),
-          backgroundColor: MaterialStateColor.resolveWith(
-            (states) {
-              if (states.isDisabled) {
-                return IsmLiveColors.grey;
-              }
-              return Colors.transparent;
-            },
-          ),
-          foregroundColor: MaterialStateColor.resolveWith(
-            (states) {
-              if (states.isDisabled) {
-                return IsmLiveColors.black;
-              }
-              return context.theme.outlinedButtonTheme.style?.backgroundColor?.resolve(states) ??
-                  context.liveTheme.primaryColor ??
-                  IsmLiveColors.primary;
-            },
-          ),
-          side: MaterialStateProperty.resolveWith(
-            (states) {
-              if (states.isDisabled) {
-                return BorderSide.none;
-              }
-              final color = context.theme.outlinedButtonTheme.style?.backgroundColor?.resolve(states) ??
-                  context.liveTheme.primaryColor ??
-                  IsmLiveColors.primary;
-              return BorderSide(color: color, width: 2);
-            },
-          ),
-          textStyle: IsmLiveButton._textStyle(context, small),
-        ),
-        onPressed: onTap,
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-        ),
-      );
-}
-
-class _Text extends StatelessWidget {
-  const _Text({
-    this.onTap,
-    required this.label,
-    this.small = false,
-  });
-
-  final VoidCallback? onTap;
-  final String label;
-  final bool small;
-
-  @override
-  Widget build(BuildContext context) => TextButton(
-        style: ButtonStyle(
-          padding: IsmLiveButton._padding(context, small),
-          shape: context.theme.textButtonTheme.style?.shape ??
-              MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: context.liveTheme.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
-                ),
-              ),
-          backgroundColor: MaterialStateColor.resolveWith(
-            (states) {
-              if (states.isDisabled) {
-                return IsmLiveColors.grey;
-              }
-              return Colors.transparent;
-            },
-          ),
-          foregroundColor: MaterialStateColor.resolveWith(
-            (states) {
-              if (states.isDisabled) {
-                return IsmLiveColors.black;
-              }
-              return context.theme.textButtonTheme.style?.backgroundColor?.resolve(states) ?? context.liveTheme.primaryColor ?? IsmLiveColors.primary;
+              return context.liveTheme.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.black;
             },
           ),
           textStyle: IsmLiveButton._textStyle(context, small),
@@ -327,7 +202,7 @@ class _Icon extends StatelessWidget {
           shape: context.theme.elevatedButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: context.liveTheme.iconButtonRadius ?? BorderRadius.circular(IsmLiveDimens.twelve),
+                  borderRadius: context.liveTheme.iconButtonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
                 ),
               ),
           backgroundColor: MaterialStateColor.resolveWith(
