@@ -10,9 +10,11 @@ class IsmLiveSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) => Padding(
-          padding: IsmLiveDimens.edgeInsets16,
+          padding: IsmLiveDimens.edgeInsets16_0,
           child: IsmLiveScrollSheet(
             title: 'Settings',
+            showHeader: false,
+            showCancelIcon: true,
             itemCount: IsmLiveHostSettings.values.length,
             itemBuilder: (context, index) => IsmLiveTapHandler(
               onTap: () {
@@ -20,17 +22,19 @@ class IsmLiveSettingsSheet extends StatelessWidget {
                   IsmLiveHostSettings.values[index],
                 );
               },
-              child: Container(
-                margin: IsmLiveDimens.edgeInsets0_4,
-                child: Text(
-                  controller.controlSetting(
-                    IsmLiveHostSettings.values[index],
+              child: Row(
+                children: [
+                  IsmLiveImage.svg(
+                    IsmLiveHostSettings.values[index].icon,
                   ),
-                ),
+                  IsmLiveDimens.boxWidth10,
+                  Text(
+                    controller.controlSetting(
+                      IsmLiveHostSettings.values[index],
+                    ),
+                  ),
+                ],
               ),
-            ),
-            separatorBuilder: (context, index) => const Divider(
-              thickness: 0.5,
             ),
           ),
         ),

@@ -179,15 +179,19 @@ mixin StreamOngoingMixin {
         return _controller.videoOn ? option.muteValues : option.unmuteValues;
       case IsmLiveHostSettings.muteMyAudio:
         return _controller.audioOn ? option.muteValues : option.unmuteValues;
-      case IsmLiveHostSettings.muteRemoteVideo:
+      // case IsmLiveHostSettings.muteRemoteVideo:
+      //   return option.muteValues;
+      // case IsmLiveHostSettings.muteRemoteAudio:
+      //   return option.muteValues;
+      // case IsmLiveHostSettings.showNetWorkStats:
+      //   return option.muteValues;
+      // case IsmLiveHostSettings.hideChatMessages:
+      //   return option.muteValues;
+      // case IsmLiveHostSettings.hideControlButtons:
+      //   return option.muteValues;
+      case IsmLiveHostSettings.block:
         return option.muteValues;
-      case IsmLiveHostSettings.muteRemoteAudio:
-        return option.muteValues;
-      case IsmLiveHostSettings.showNetWorkStats:
-        return option.muteValues;
-      case IsmLiveHostSettings.hideChatMessages:
-        return option.muteValues;
-      case IsmLiveHostSettings.hideControlButtons:
+      case IsmLiveHostSettings.report:
         return option.muteValues;
     }
   }
@@ -335,21 +339,27 @@ mixin StreamOngoingMixin {
     IsmLiveHostSettings option,
   ) async {
     switch (option) {
-      case IsmLiveHostSettings.muteRemoteVideo:
-        break;
-      case IsmLiveHostSettings.muteRemoteAudio:
-        break;
-      case IsmLiveHostSettings.showNetWorkStats:
-        break;
-      case IsmLiveHostSettings.hideChatMessages:
-        break;
-      case IsmLiveHostSettings.hideControlButtons:
-        break;
+      // case IsmLiveHostSettings.muteRemoteVideo:
+      //   break;
+      // case IsmLiveHostSettings.muteRemoteAudio:
+      //   break;
+      // case IsmLiveHostSettings.showNetWorkStats:
+      //   break;
+      // case IsmLiveHostSettings.hideChatMessages:
+      //   break;
+      // case IsmLiveHostSettings.hideControlButtons:
+      //   break;
       case IsmLiveHostSettings.muteMyAudio:
         await _controller.toggleAudio();
         break;
       case IsmLiveHostSettings.muteMyVideo:
         _controller.toggleVideo();
+        break;
+      case IsmLiveHostSettings.block:
+        // TODO: Handle this case.
+        break;
+      case IsmLiveHostSettings.report:
+        // TODO: Handle this case.
         break;
     }
   }

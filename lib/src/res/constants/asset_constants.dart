@@ -98,6 +98,11 @@ class IsmLiveAssetConstants {
   static const String vs = '$_icons/vs.svg';
   static const String speakerOff = '$_icons/speaker_off.svg';
   static const String speakerOn = '$_icons/speaker_on.svg';
+  static const String report = '$_icons/report.svg';
+  static const String block = '$_icons/block.svg';
+  static const String video_camera = '$_icons/video_camera.svg';
+  static const String volume = '$_icons/volume.svg';
+  static const String cancel = '$_icons/cancel.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }
