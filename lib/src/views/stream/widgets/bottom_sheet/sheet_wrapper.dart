@@ -8,7 +8,6 @@ class IsmLiveScrollSheet extends StatelessWidget {
     required this.title,
     required this.itemCount,
     required this.itemBuilder,
-    this.separatorBuilder,
     this.showSearchBar = false,
     this.showHeader = true,
     this.hintText,
@@ -16,13 +15,15 @@ class IsmLiveScrollSheet extends StatelessWidget {
     this.textEditingController,
     this.controller,
     this.trailing,
+    this.showCancelIcon = false,
   });
 
   final String title;
   final bool showSearchBar;
+  final bool showCancelIcon;
   final int itemCount;
   final IndexedWidgetBuilder itemBuilder;
-  final IndexedWidgetBuilder? separatorBuilder;
+
   final TextEditingController? textEditingController;
   final String? hintText;
   final Function(String)? onchange;
@@ -63,15 +64,27 @@ class IsmLiveScrollSheet extends StatelessWidget {
                   onchange: onchange,
                 ),
               ),
+            if (showCancelIcon)
+              Padding(
+                padding: IsmLiveDimens.edgeInsets16_16_16_0,
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: CustomIconButton(
+                    icon: const IsmLiveImage.svg(
+                      IsmLiveAssetConstants.cancel,
+                    ),
+                    color: Colors.transparent,
+                    onTap: Get.back,
+                  ),
+                ),
+              ),
             Flexible(
-              child: ListView.separated(
+              child: ListView.builder(
                 shrinkWrap: true,
                 controller: controller,
                 padding: IsmLiveDimens.edgeInsets0_8,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
-                separatorBuilder:
-                    separatorBuilder ?? (_, __) => IsmLiveDimens.box0,
               ),
             ),
           ],
