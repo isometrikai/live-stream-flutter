@@ -28,17 +28,8 @@ class IsmLiveChatView extends StatelessWidget {
             separatorBuilder: (_, __) => IsmLiveDimens.boxHeight10,
             itemBuilder: (_, index) {
               final message = controller.streamMessagesList[index];
-              return Container(
-                padding: IsmLiveDimens.edgeInsets10,
-                decoration: BoxDecoration(
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                    ),
-                  ],
-                  // color: Colors.black26,
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
-                ),
+              return UnconstrainedBox(
+                alignment: Alignment.centerLeft,
                 child: IsmLiveTapHandler(
                   onTap: () {
                     if (!message.isEvent) {
@@ -49,20 +40,30 @@ class IsmLiveChatView extends StatelessWidget {
                       );
                     }
                   },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      IsmLiveImage.network(
-                        height: IsmLiveDimens.twentyFour,
-                        message.imageUrl,
-                        name: message.userName,
-                        dimensions: IsmLiveDimens.thirtyTwo,
-                        isProfileImage: true,
-                      ),
-                      IsmLiveDimens.boxWidth8,
-                      Expanded(
-                        child: Column(
+                  child: Container(
+                    padding: IsmLiveDimens.edgeInsets10,
+                    decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                        ),
+                      ],
+                      // color: Colors.black26,
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        IsmLiveImage.network(
+                          height: IsmLiveDimens.twentyFour,
+                          message.imageUrl,
+                          name: message.userName,
+                          dimensions: IsmLiveDimens.thirtyTwo,
+                          isProfileImage: true,
+                        ),
+                        IsmLiveDimens.boxWidth8,
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -136,8 +137,8 @@ class IsmLiveChatView extends StatelessWidget {
                             ],
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
