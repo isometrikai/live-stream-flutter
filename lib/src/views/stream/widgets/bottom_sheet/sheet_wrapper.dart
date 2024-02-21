@@ -66,7 +66,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
               ),
             if (showCancelIcon)
               Padding(
-                padding: IsmLiveDimens.edgeInsets16_16_16_0,
+                padding: IsmLiveDimens.edgeInsets16_08_16_0,
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: CustomIconButton(
@@ -79,12 +79,12 @@ class IsmLiveScrollSheet extends StatelessWidget {
                 ),
               ),
             Flexible(
-              child: ListView.builder(
+              child: ListView.separated(
                 shrinkWrap: true,
                 controller: controller,
-                padding: IsmLiveDimens.edgeInsets0_8,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
+                separatorBuilder: (context, index) => IsmLiveDimens.boxHeight24,
               ),
             ),
           ],
