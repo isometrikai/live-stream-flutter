@@ -202,7 +202,7 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyAudio(IsmLiveAssetConstants.mic, 'Mute Volume', 'Unmute Volume'),
+  muteMyAudio(IsmLiveAssetConstants.volume, 'Mute Volume', 'Unmute Volume'),
   muteMyVideo(
       IsmLiveAssetConstants.video_camera, 'Disable Video', 'Enable Video'),
   block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),

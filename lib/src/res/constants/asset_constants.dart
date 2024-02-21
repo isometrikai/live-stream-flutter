@@ -101,7 +101,7 @@ class IsmLiveAssetConstants {
   static const String report = '$_icons/report.svg';
   static const String block = '$_icons/block.svg';
   static const String video_camera = '$_icons/video_camera.svg';
-  static const String mic = '$_icons/mic.svg';
+  static const String volume = '$_icons/volume.svg';
   static const String cancel = '$_icons/cancel.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
