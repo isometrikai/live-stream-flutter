@@ -31,7 +31,7 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: IsmLiveButton.outlined(
+                  child: IsmLiveButton.secondary(
                     label: leftLabel,
                     onTap: onLeft,
                   ),

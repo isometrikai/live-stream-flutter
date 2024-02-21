@@ -54,7 +54,7 @@ class IsmLiveModeratorDialog extends StatelessWidget {
             Row(
               children: [
                 Flexible(
-                  child: IsmLiveButton.outlined(
+                  child: IsmLiveButton.secondary(
                     label: 'Reject',
                     onTap: () {
                       IsmLiveUtility.closeDialog();

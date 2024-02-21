@@ -32,9 +32,31 @@ class IsmGoLiveView extends StatelessWidget {
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: IsmLiveDimens.edgeInsets16,
-              child: IsmLiveButton(
-                label: 'Go Live',
-                onTap: controller.startStream,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: IsmLiveColors.red,
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: IsmLiveDimens.edgeInsets4,
+                      child: Text(
+                        'Broadcasters under 18 are not permitted',
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IsmLiveButton(
+                      label: 'Go Live',
+                      showBorder: true,
+                      onTap: controller.startStream,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -121,17 +143,27 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    IsmLiveDimens.boxHeight32,
+                    IsmLiveDimens.boxHeight10,
                     IsmLiveRadioListTile(
                       title: 'HD Broadcast',
                       onChange: controller.onChangeHdBroadcast,
                       value: controller.isHdBroadcast,
                     ),
-                    IsmLiveDimens.boxHeight10,
                     IsmLiveRadioListTile(
                       title: 'Record Broadcast',
                       onChange: controller.onChangeRecording,
                       value: controller.isRecordingBroadcast,
+                    ),
+                    IsmLiveRadioListTile(
+                      title: 'Restream Broadcast',
+                      onChange: controller.onChangeRestream,
+                      value: controller.isRestreamBroadcast,
+                    ),
+                    const _AddProduct(),
+                    IsmLiveRadioListTile(
+                      title: 'Schedule Live',
+                      onChange: controller.onChangeSchedule,
+                      value: controller.isSchedulingBroadcast,
                     ),
                   ],
                 ),
@@ -166,21 +198,6 @@ class _StreamImage extends StatelessWidget {
                       controller.pickedImage = file;
                       controller.update([IsmGoLiveView.updateId]);
                     }
-                    // IsmLiveUtility.openBottomSheet(
-                    //   PickImageSheet(
-                    //     beforePicking: () async {
-                    //       await controller.cameraController?.dispose();
-                    //       controller.cameraController = null;
-                    //     },
-                    //     afterPicking: (file) {
-                    //       if (file != null) {
-                    //         controller.pickedImage = file;
-                    //         controller.update([IsmGoLiveView.updateId]);
-                    //       }
-                    //       controller.initializationOfGoLive();
-                    //     },
-                    //   ),
-                    // );
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -222,6 +239,56 @@ class _StreamImage extends StatelessWidget {
                     ),
                   ],
                 ),
+        ),
+      );
+}
+
+class _AddProduct extends StatelessWidget {
+  const _AddProduct();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: IsmLiveDimens.edgeInsets10,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Add product*',
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: IsmLiveColors.white,
+              ),
+            ),
+            IsmLiveDimens.boxHeight5,
+            SizedBox(
+              width: Get.width,
+              height: IsmLiveDimens.hundred,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white30,
+                  border: Border.all(color: IsmLiveColors.white),
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline_rounded,
+                      color: context.liveTheme.selectedTextColor,
+                    ),
+                    Text(
+                      'Add products',
+                      style: context.textTheme.labelMedium?.copyWith(
+                        color: context.liveTheme.selectedTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       );
 }

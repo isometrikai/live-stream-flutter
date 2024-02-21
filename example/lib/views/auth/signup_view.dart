@@ -213,7 +213,7 @@ class SignupView extends StatelessWidget {
                           ),
                           Hero(
                             tag: const ValueKey('login-signup-change'),
-                            child: IsmLiveButton.text(
+                            child: IsmLiveButton.secondary(
                               onTap: () => RouteManagement.goToLogin(true),
                               label: TranslationKeys.login.tr,
                             ),
