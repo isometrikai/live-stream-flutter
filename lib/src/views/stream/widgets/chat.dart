@@ -41,7 +41,7 @@ class IsmLiveChatView extends StatelessWidget {
                     }
                   },
                   child: Container(
-                    padding: IsmLiveDimens.edgeInsets10,
+                    padding: IsmLiveDimens.edgeInsets5,
                     decoration: BoxDecoration(
                       boxShadow: const [
                         BoxShadow(
@@ -128,7 +128,7 @@ class IsmLiveChatView extends StatelessWidget {
                                 ),
                               ],
                               Text(
-                                message.body,
+                                message.body.trim(),
                                 style: context.textTheme.labelMedium?.copyWith(
                                   color: IsmLiveColors.white,
                                 ),

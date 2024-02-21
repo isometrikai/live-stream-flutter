@@ -29,7 +29,8 @@ class IsmLiveMessageField extends StatelessWidget {
                       padding: IsmLiveDimens.edgeInsets4,
                       margin: IsmLiveDimens.edgeInsets8_0,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
+                        borderRadius:
+                            BorderRadius.circular(IsmLiveDimens.twelve),
                         color: Colors.white70,
                       ),
                       child: Row(
@@ -71,11 +72,12 @@ class IsmLiveMessageField extends StatelessWidget {
                     contentPadding: IsmLiveDimens.edgeInsets0,
                     fillColor: Colors.white70,
                     borderColor: Colors.white70,
-                    onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
+                    onchange: (value) =>
+                        controller.update([IsmLiveStreamView.updateId]),
                     textInputAction: TextInputAction.send,
                     onFieldSubmit: (value) => controller.sendTextMessage(
                       streamId: streamId,
-                      body: value,
+                      body: value.trim(),
                       parentMessage: controller.parentMessage,
                     ),
                     suffixIcon: IconButton(
@@ -83,7 +85,8 @@ class IsmLiveMessageField extends StatelessWidget {
                       onPressed: controller.messageFieldController.isNotEmpty
                           ? () => controller.sendTextMessage(
                                 streamId: streamId,
-                                body: controller.messageFieldController.text,
+                                body: controller.messageFieldController.text
+                                    .trim(),
                                 parentMessage: controller.parentMessage,
                               )
                           : null,
