@@ -10,9 +10,11 @@ class StreamHeader extends StatelessWidget {
     this.onTapCross,
     this.onTapViewers,
     this.onTapModerators,
+    required this.description,
   });
 
   final String name;
+  final String description;
   final String imageUrl;
   final Function()? onTapCross;
   final Function()? onTapViewers;
@@ -33,6 +35,15 @@ class StreamHeader extends StatelessWidget {
               IsmLiveDimens.boxHeight10,
               _LiveTimer(
                 onTapModerators: onTapModerators,
+              ),
+              IsmLiveDimens.boxHeight8,
+              SizedBox(
+                width: Get.width * 0.7,
+                child: Text(
+                  description,
+                  style: context.textTheme.bodySmall
+                      ?.copyWith(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -115,6 +126,7 @@ class _LiveTimer extends StatelessWidget {
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           DecoratedBox(
@@ -122,7 +134,7 @@ class _LiveTimer extends StatelessWidget {
               color: Get.find<IsmLiveMqttController>().isConnected
                   ? IsmLiveColors.green
                   : IsmLiveColors.red,
-              borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
             ),
             child: Padding(
               padding: IsmLiveDimens.edgeInsets8_4,
@@ -144,7 +156,7 @@ class _LiveTimer extends StatelessWidget {
               ),
             ),
           ),
-          IsmLiveDimens.boxWidth8,
+
           // IsmLiveTapHandler(
           //   onTap: () => IsmLiveUtility.openBottomSheet(
           //     const IsmLiveMembersSheet(),
