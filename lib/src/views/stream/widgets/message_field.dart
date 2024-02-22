@@ -67,38 +67,36 @@ class IsmLiveMessageField extends StatelessWidget {
                     ),
                     IsmLiveDimens.boxHeight2,
                   ],
-                  SizedBox(
-                    child: IsmLiveInputField(
-                      controller: controller.messageFieldController,
-                      hintText: 'Say Something…',
-                      contentPadding: IsmLiveDimens.edgeInsets0,
-                      fillColor: IsmLiveColors.white.withOpacity(0.3),
-                      hintStyle: context.textTheme.bodySmall
-                          ?.copyWith(color: Colors.white),
-                      borderColor: Colors.transparent,
-                      onchange: (value) =>
-                          controller.update([IsmLiveStreamView.updateId]),
-                      textInputAction: TextInputAction.send,
-                      onFieldSubmit: (value) => controller.sendTextMessage(
-                        streamId: streamId,
-                        body: value.trim(),
-                        parentMessage: controller.parentMessage,
-                      ),
-                      // suffixIcon: IconButton(
-                      //   icon: const Icon(Icons.send),
-                      //   onPressed: controller.messageFieldController.isNotEmpty
-                      //       ? () => controller.sendTextMessage(
-                      //             streamId: streamId,
-                      //             body: controller.messageFieldController.text
-                      //                 .trim(),
-                      //             parentMessage: controller.parentMessage,
-                      //           )
-                      //       : null,
-                      // ),
-                      prefixIcon: const Icon(
-                        Icons.mood,
-                        color: Colors.white,
-                      ),
+                  IsmLiveInputField(
+                    controller: controller.messageFieldController,
+                    hintText: 'Say Something…',
+                    contentPadding: IsmLiveDimens.edgeInsets0,
+                    fillColor: IsmLiveColors.white.withOpacity(0.3),
+                    hintStyle: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
+                    borderColor: Colors.transparent,
+                    onchange: (value) =>
+                        controller.update([IsmLiveStreamView.updateId]),
+                    textInputAction: TextInputAction.send,
+                    onFieldSubmit: (value) => controller.sendTextMessage(
+                      streamId: streamId,
+                      body: value.trim(),
+                      parentMessage: controller.parentMessage,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: controller.messageFieldController.isNotEmpty
+                          ? () => controller.sendTextMessage(
+                                streamId: streamId,
+                                body: controller.messageFieldController.text
+                                    .trim(),
+                                parentMessage: controller.parentMessage,
+                              )
+                          : null,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.mood,
+                      color: Colors.white,
                     ),
                   ),
                 ],

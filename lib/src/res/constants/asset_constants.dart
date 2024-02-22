@@ -107,7 +107,7 @@ class IsmLiveAssetConstants {
   static const String rotate = '$_icons/rotate.svg';
   static const String share_new_icon = '$_icons/share_new_icon.svg';
   static const String setting_new_icon = '$_icons/setting_new_icon.svg';
-  static const String squar = '$_icons/squar.svg';
+  static const String product = '$_icons/product.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

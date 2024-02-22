@@ -161,9 +161,11 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.share:
       case IsmLiveStreamOption.members:
       case IsmLiveStreamOption.favourite:
+      case IsmLiveStreamOption.bars:
+      case IsmLiveStreamOption.vs:
       case IsmLiveStreamOption.settings:
       case IsmLiveStreamOption.rotateCamera:
-      case IsmLiveStreamOption.squar:
+      case IsmLiveStreamOption.product:
         return option.icon;
       case IsmLiveStreamOption.speaker:
         if (_controller.speakerOn) {
@@ -324,13 +326,17 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;
-      case IsmLiveStreamOption.squar:
+      case IsmLiveStreamOption.product:
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();
         break;
       case IsmLiveStreamOption.speaker:
         await toggleSpeaker();
+        break;
+      case IsmLiveStreamOption.bars:
+        break;
+      case IsmLiveStreamOption.vs:
         break;
     }
   }

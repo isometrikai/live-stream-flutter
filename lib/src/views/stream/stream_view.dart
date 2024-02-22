@@ -139,6 +139,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 StreamHeader(
+                                  description:
+                                      'Hey I am going live with 100 life-essential products today at 11 AM.',
                                   name: controller.hostDetails?.userName ?? 'U',
                                   imageUrl: controller
                                           .hostDetails?.userProfileImageUrl ??

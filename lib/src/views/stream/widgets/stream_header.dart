@@ -10,9 +10,11 @@ class StreamHeader extends StatelessWidget {
     this.onTapCross,
     this.onTapViewers,
     this.onTapModerators,
+    required this.description,
   });
 
   final String name;
+  final String description;
   final String imageUrl;
   final Function()? onTapCross;
   final Function()? onTapViewers;
@@ -38,7 +40,7 @@ class StreamHeader extends StatelessWidget {
               SizedBox(
                 width: Get.width * 0.7,
                 child: Text(
-                  'Hey I am going live with 100 life-essential products today at 11 AM.',
+                  description,
                   style: context.textTheme.bodySmall
                       ?.copyWith(color: Colors.white),
                 ),
