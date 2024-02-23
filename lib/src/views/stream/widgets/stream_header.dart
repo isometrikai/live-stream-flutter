@@ -70,10 +70,7 @@ class StreamHeader extends StatelessWidget {
           ),
           IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
-            onTap: () => IsmLiveUtility.openBottomSheet(
-              const IsmLiveMembersSheet(),
-              isScrollController: true,
-            ),
+            onTap: onTapViewers,
             child: Container(
               padding: IsmLiveDimens.edgeInsets4,
               decoration: BoxDecoration(
@@ -91,7 +88,7 @@ class StreamHeader extends StatelessWidget {
                   IsmLiveDimens.boxWidth4,
                   GetX<IsmLiveStreamController>(
                     builder: (controller) => Text(
-                      controller.streamMembersList.length.toString(),
+                      controller.streamViewersList.length.toString(),
                       style: IsmLiveStyles.white12,
                     ),
                   ),
@@ -99,7 +96,6 @@ class StreamHeader extends StatelessWidget {
               ),
             ),
           ),
-
           // IsmLiveTapHandler(
           //   onTap: onTapViewers,
           //   child: const IsmLiveUsersAvatar(),
@@ -157,36 +153,36 @@ class _LiveTimer extends StatelessWidget {
             ),
           ),
 
-          // IsmLiveTapHandler(
-          //   onTap: () => IsmLiveUtility.openBottomSheet(
-          //     const IsmLiveMembersSheet(),
-          //     isScrollController: true,
-          //   ),
-          //   child: Container(
-          //     padding: IsmLiveDimens.edgeInsets4,
-          //     decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-          //       color: Colors.black12,
-          //     ),
-          //     child: Row(
-          //       mainAxisSize: MainAxisSize.min,
-          //       children: [
-          //         Icon(
-          //           Icons.person,
-          //           color: IsmLiveColors.white,
-          //           size: IsmLiveDimens.sixteen,
-          //         ),
-          //         IsmLiveDimens.boxWidth2,
-          //         GetX<IsmLiveStreamController>(
-          //           builder: (controller) => Text(
-          //             controller.streamMembersList.length.toString(),
-          //             style: IsmLiveStyles.white12,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          IsmLiveTapHandler(
+            onTap: () => IsmLiveUtility.openBottomSheet(
+              const IsmLiveMembersSheet(),
+              isScrollController: true,
+            ),
+            child: Container(
+              padding: IsmLiveDimens.edgeInsets4,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                color: Colors.black12,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.person,
+                    color: IsmLiveColors.white,
+                    size: IsmLiveDimens.sixteen,
+                  ),
+                  IsmLiveDimens.boxWidth2,
+                  GetX<IsmLiveStreamController>(
+                    builder: (controller) => Text(
+                      controller.streamMembersList.length.toString(),
+                      style: IsmLiveStyles.white12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           // IsmLiveDimens.boxWidth8,
           // GetBuilder<IsmLiveStreamController>(
           //   builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false))
