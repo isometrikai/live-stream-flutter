@@ -90,14 +90,17 @@ class IsmLiveImage extends StatelessWidget {
         height: height ?? dimensions,
         width: width ?? dimensions,
         decoration: BoxDecoration(
-          borderRadius: isProfileImage ? null : borderRadius ?? BorderRadius.circular(radius ?? 0),
+          borderRadius: isProfileImage
+              ? null
+              : borderRadius ?? BorderRadius.circular(radius ?? 0),
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           border: border,
         ),
         clipBehavior: Clip.antiAlias,
         child: switch (_imageType) {
           IsmLiveImageType.asset => _Asset(path, fromPackage: fromPackage),
-          IsmLiveImageType.svg => _Svg(path, fromPackage: fromPackage, color: color),
+          IsmLiveImageType.svg =>
+            _Svg(path, fromPackage: fromPackage, color: color),
           IsmLiveImageType.file => _File(path),
           IsmLiveImageType.network => _Network(
               path,
@@ -180,7 +183,7 @@ class _Network extends StatelessWidget {
         placeholder: (context, url) => Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: IsmLiveColors.primary.withOpacity(0.2),
+            color: IsmLiveColors.black.withOpacity(0.2),
             shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: isProfileImage && name.trim().isNotEmpty
@@ -189,7 +192,7 @@ class _Network extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
-                    color: IsmLiveColors.primary,
+                    color: IsmLiveColors.black,
                   ),
                 )
               : const Center(
@@ -244,7 +247,7 @@ class _ErrorImage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isProfileImage ? IsmLiveColors.primary : IsmLiveColors.secondary,
+          color: isProfileImage ? IsmLiveColors.black : IsmLiveColors.secondary,
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: !showError || isProfileImage
@@ -252,7 +255,7 @@ class _ErrorImage extends StatelessWidget {
                 name.isNotEmpty ? name[0] : 'U',
                 style: !isProfileImage
                     ? context.textTheme.displayMedium?.copyWith(
-                        color: IsmLiveColors.primary,
+                        color: IsmLiveColors.black,
                         fontWeight: FontWeight.bold,
                       )
                     : context.textTheme.titleMedium?.copyWith(

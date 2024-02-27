@@ -154,7 +154,7 @@ class IsmLiveInputField extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.primary,
+                color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
@@ -162,7 +162,7 @@ class IsmLiveInputField extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.primary,
+                color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
@@ -170,7 +170,7 @@ class IsmLiveInputField extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.primary,
+                color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
@@ -178,7 +178,7 @@ class IsmLiveInputField extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.primary,
+                color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
