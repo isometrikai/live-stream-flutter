@@ -1,7 +1,7 @@
 part of 'live_app.dart';
 
 const _kThemeData = IsmLiveThemeData(
-  primaryColor: IsmLiveColors.primary,
+  primaryColor: IsmLiveColors.black,
   secondaryColor: IsmLiveColors.secondary,
   backgroundColor: IsmLiveColors.white,
   selectedTextColor: IsmLiveColors.white,
