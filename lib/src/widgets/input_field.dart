@@ -152,31 +152,28 @@ class IsmLiveInputField extends StatelessWidget {
             isDense: true,
             contentPadding: contentPadding,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.black,
                 width: 1,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
+              borderRadius: BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
                 color: borderColor ?? IsmLiveColors.black,
                 width: 1,

@@ -83,7 +83,7 @@ class IsmLiveAssetConstants {
   static const String members = '$_icons/members.svg';
   static const String rotateCamera = '$_icons/rotate_camera.svg';
   static const String favourite = '$_icons/favourite.svg';
-  static const String setting = '$_icons/setting.svg';
+  static const String settings = '$_icons/settings.svg';
   static const String gift = '$_icons/gift.svg';
   static const String share = '$_icons/share.svg';
   static const String mute = '$_icons/mute.svg';
@@ -104,9 +104,6 @@ class IsmLiveAssetConstants {
   static const String volume = '$_icons/volume.svg';
   static const String cancel = '$_icons/cancel.svg';
   static const String bars = '$_icons/bars.svg';
-  static const String rotate = '$_icons/rotate.svg';
-  static const String share_new_icon = '$_icons/share_new_icon.svg';
-  static const String setting_new_icon = '$_icons/setting_new_icon.svg';
   static const String product = '$_icons/product.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
