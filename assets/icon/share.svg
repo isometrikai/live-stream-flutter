@@ -1,10 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
-  <g id="share" transform="translate(-1096 -972)">
-    <circle id="Ellipse_5" data-name="Ellipse 5" cx="22.5" cy="22.5" r="22.5" transform="translate(1096 972)" opacity="0"/>
-    <g id="noun_Share_1570728" transform="translate(1108.375 987.75)">
-      <g id="Group_1614" data-name="Group 1614">
-        <path id="Path_15" data-name="Path 15" d="M21,975.362l8,6.25-8,6.25v-3.25c-.426-.02-7.844-.258-13,4.25,2.063-6.357,8.543-9.122,13-10.25Z" transform="translate(-8 -975.362)" fill="#fff"/>
-      </g>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <g id="Group_169448" data-name="Group 169448" transform="translate(-11017 22137)">
+    <path id="Path_272543" data-name="Path 272543" d="M13,89.318A14.7,14.7,0,0,1,23.5,78.182V75L31,81.336l-7.5,6.392V84.545A15.315,15.315,0,0,0,13,89.318Z" transform="translate(11017 -22197)" fill="#fff"/>
   </g>
 </svg>

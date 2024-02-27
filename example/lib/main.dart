@@ -46,10 +46,10 @@ class _MyAppState extends State<MyApp> {
           child: GetMaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
-              primaryColor: Colors.purple,
+              primaryColor: Colors.black,
               textTheme: GoogleFonts.getTextTheme('Roboto'),
               floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                backgroundColor: Colors.purple,
+                backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
               ),
             ),

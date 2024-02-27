@@ -133,6 +133,7 @@ class IsmGoLiveView extends StatelessWidget {
                             cursorColor: IsmLiveColors.white,
                             style: IsmLiveStyles.white16,
                             borderColor: IsmLiveColors.white,
+                            radius: IsmLiveDimens.twelve,
                             fillColor: IsmLiveColors.white.withOpacity(0.3),
                             controller: controller.descriptionController,
                             hintText: 'Enter description',
