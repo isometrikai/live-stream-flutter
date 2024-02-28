@@ -260,31 +260,34 @@ class _AddProduct extends StatelessWidget {
               ),
             ),
             IsmLiveDimens.boxHeight5,
-            SizedBox(
-              width: Get.width,
-              height: IsmLiveDimens.hundred,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.white30,
-                  border: Border.all(color: IsmLiveColors.white),
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: context.liveTheme.selectedTextColor,
-                    ),
-                    Text(
-                      'Add products',
-                      style: context.textTheme.labelMedium?.copyWith(
+            IsmLiveTapHandler(
+              onTap: IsmLiveRouteManagement.goToAddProduct,
+              child: SizedBox(
+                width: Get.width,
+                height: IsmLiveDimens.hundred,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.white30,
+                    border: Border.all(color: IsmLiveColors.white),
+                    borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline_rounded,
                         color: context.liveTheme.selectedTextColor,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Add products',
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: context.liveTheme.selectedTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

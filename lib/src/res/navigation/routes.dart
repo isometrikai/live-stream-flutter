@@ -8,6 +8,7 @@ class IsmLiveRoutes {
   static const String roomPage = '/room-page';
   static const String goLive = '/go-live';
   static const String endStream = '/end-stream';
+  static const String addProduct = '/add-product';
 
   static const String streamListing = '/stream-listing';
 

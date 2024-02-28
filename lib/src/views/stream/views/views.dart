@@ -1,3 +1,4 @@
+export 'add_product.dart';
 export 'animation_view.dart';
 export 'counter_view.dart';
 export 'end_stream_view.dart';
