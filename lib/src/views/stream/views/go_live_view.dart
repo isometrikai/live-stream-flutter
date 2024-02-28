@@ -78,16 +78,14 @@ class IsmGoLiveView extends StatelessWidget {
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }
-                  return Center(
-                    child: Transform.scale(
-                      scale: controller.cameraController?.value.aspectRatio ?? 1,
-                      child: CameraPreview(
-                        controller.cameraController!,
-                        child: SizedBox(
-                          height: Get.height,
-                          width: Get.width,
-                          child: const ColoredBox(color: Colors.black38),
-                        ),
+                  return Transform.scale(
+                    scale: controller.cameraController?.value.aspectRatio ?? 1,
+                    child: CameraPreview(
+                      controller.cameraController!,
+                      child: SizedBox(
+                        height: Get.height,
+                        width: Get.width,
+                        child: const ColoredBox(color: Colors.black38),
                       ),
                     ),
                   );
@@ -190,7 +188,8 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null ||
+                  controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
