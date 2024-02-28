@@ -89,10 +89,8 @@ class IsmLiveChatView extends StatelessWidget {
                                         'Host',
                                         style: context.textTheme.labelSmall
                                             ?.copyWith(
-                                          color:
-                                              context.liveTheme.primaryColor ??
-                                                  IsmLiveColors.primary
-                                                      .withOpacity(.1),
+                                          color: IsmLiveColors.white
+                                              .withOpacity(0.7),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -122,12 +120,16 @@ class IsmLiveChatView extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
-                              Text(
-                                message.body.trim(),
-                                style: context.textTheme.labelMedium?.copyWith(
-                                  color: IsmLiveColors.white,
+                              SizedBox(
+                                width: Get.width * 0.55,
+                                child: Text(
+                                  message.body.trim(),
+                                  style:
+                                      context.textTheme.labelMedium?.copyWith(
+                                    color: IsmLiveColors.white,
+                                  ),
+                                  softWrap: true,
                                 ),
-                                softWrap: true,
                               ),
                             ],
                           ],
