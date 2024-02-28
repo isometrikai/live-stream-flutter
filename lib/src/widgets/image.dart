@@ -258,7 +258,7 @@ class _ErrorImage extends StatelessWidget {
                         color: IsmLiveColors.black,
                         fontWeight: FontWeight.bold,
                       )
-                    : context.textTheme.titleMedium?.copyWith(
+                    : context.textTheme.titleSmall?.copyWith(
                         color: IsmLiveColors.white,
                       ),
               )

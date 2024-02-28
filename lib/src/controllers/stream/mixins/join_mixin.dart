@@ -151,7 +151,8 @@ mixin StreamJoinMixin {
     //   return;
     // }
     _controller.isModerationWarningVisible = true;
-    _controller.descriptionController.text = streamDiscription ?? '';
+    _controller.descriptionController.text =
+        streamDiscription ?? _controller.descriptionController.text;
 
     _controller.streamId = streamId;
     _controller.isHost = isHost;
