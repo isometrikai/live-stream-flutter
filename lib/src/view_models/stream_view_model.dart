@@ -631,4 +631,17 @@ class IsmLiveStreamViewModel {
       return null;
     }
   }
+
+  Future<IsmLiveProductModel?> fetchProducts() async {
+    try {
+      var res = await _repository.fetchProducts();
+      if (res.hasError) {
+        return null;
+      }
+      return IsmLiveProductModel.fromJson(res.data);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
 }

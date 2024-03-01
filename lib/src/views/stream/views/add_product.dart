@@ -7,6 +7,7 @@ class IsmLiveAddProduct extends StatelessWidget {
   final bool productList = false;
   @override
   Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(
             'Add Products',
@@ -15,6 +16,7 @@ class IsmLiveAddProduct extends StatelessWidget {
           ),
           elevation: 0,
           centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.black),
         ),
         body: productList
             ? const Center(
@@ -29,53 +31,27 @@ class IsmLiveAddProduct extends StatelessWidget {
                     IsmLiveInputField(
                       contentPadding: IsmLiveDimens.edgeInsets0,
                       borderColor: Colors.transparent,
-                      fillColor: Colors.purple[50],
+                      fillColor: IsmLiveColors.fieldColor,
                       controller: TextEditingController(),
                       hintText: 'Search',
                       prefixIcon: const Icon(Icons.search),
                       onchange: (value) {},
                     ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => const IsmLiveProduct(),
-                      itemCount: 4,
-                      separatorBuilder: (context, index) => const Divider(
-                        thickness: 1,
+                    IsmLiveDimens.boxHeight20,
+                    SizedBox(
+                      height: Get.height * 0.53,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => const IsmLiveProduct(),
+                        itemCount: 4,
+                        separatorBuilder: (context, index) => const Divider(
+                          thickness: 1,
+                        ),
                       ),
                     ),
+                    const Expanded(child: IsmLiveProductBottom()),
                   ],
                 ),
               ),
-        bottomSheet: Container(
-          color: IsmLiveColors.white,
-          padding: IsmLiveDimens.edgeInsets16,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('selected'),
-              SizedBox(
-                height: IsmLiveDimens.seventy,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => Container(
-                    width: IsmLiveDimens.seventy,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        IsmLiveDimens.eight,
-                      ),
-                    ),
-                    child: const IsmLiveImage.network(''),
-                  ),
-                  itemCount: 2,
-                  scrollDirection: Axis.horizontal,
-                ),
-              ),
-              IsmLiveDimens.boxHeight10,
-              const IsmLiveButton(
-                label: 'Continue',
-              ),
-            ],
-          ),
-        ),
       );
 }

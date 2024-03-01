@@ -1,6 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class IsmLiveProduct extends StatelessWidget {
   const IsmLiveProduct({super.key});
@@ -8,52 +8,76 @@ class IsmLiveProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          Container(
+          SizedBox(
             width: IsmLiveDimens.seventy,
             height: IsmLiveDimens.seventy,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-              IsmLiveDimens.eight,
-            )),
-            child: const IsmLiveImage.network(''),
+            child: IsmLiveImage.network(
+              '',
+              radius: IsmLiveDimens.ten,
+            ),
           ),
-          Column(
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'zara',
-                  ),
-                  Checkbox(
-                    checkColor: Colors.white,
-                    value: true,
-                    onChanged: (bool? value) {},
-                  )
-                ],
-              ),
-              const Text(
-                'sfhdfhdsfhsdjgdshfghdgfhj',
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              IsmLiveDimens.boxHeight10,
-              Row(
-                children: [
-                  const Text('\$29.9'),
-                  IsmLiveDimens.boxWidth4,
-                  const Text(
-                    '\$43.66',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      decoration: TextDecoration.overline,
+          IsmLiveDimens.boxWidth10,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'ZARA',
+                      style: context.textTheme.bodySmall
+                          ?.copyWith(color: IsmLiveColors.lightGray),
                     ),
-                  ),
-                  Align(
-                    child: const Text('deuuu'),
-                  ),
-                ],
-              )
-            ],
+                    SizedBox(
+                      height: IsmLiveDimens.twenty,
+                      width: IsmLiveDimens.twenty,
+                      child: Checkbox(
+                        checkColor: Colors.white,
+                        activeColor: Colors.black,
+                        value: true,
+                        onChanged: (bool? value) {},
+                      ),
+                    )
+                  ],
+                ),
+                Text(
+                  'sfhdfhdsfhsdjgdshfghdgfhjakjdshfjskjdfhsdfhdjfjdfsdhfkjhsdkhfshdfkjkjsdkj',
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodyLarge,
+                  maxLines: 1,
+                ),
+                IsmLiveDimens.boxHeight10,
+                Row(
+                  children: [
+                    Text(
+                      '\$29.9',
+                      style: context.textTheme.bodySmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    IsmLiveDimens.boxWidth4,
+                    const Text(
+                      '\$43.66',
+                      style: TextStyle(
+                        color: IsmLiveColors.lightGray,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: IsmLiveColors.lightGray,
+                      ),
+                    ),
+                    const Spacer(),
+                    IsmLiveTapHandler(
+                      child: const Text(
+                        'Add Discount',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onTap: () => IsmLiveUtility.openBottomSheet(
+                        const IsmLiveProductDiscountSheet(),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           )
         ],
       );
