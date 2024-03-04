@@ -34,7 +34,8 @@ class IsmLiveAddProduct extends StatelessWidget {
                       fillColor: IsmLiveColors.fieldColor,
                       controller: TextEditingController(),
                       hintText: 'Search',
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon:
+                          const IsmLiveImage.svg(IsmLiveAssetConstants.search),
                       onchange: (value) {},
                     ),
                     IsmLiveDimens.boxHeight20,

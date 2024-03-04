@@ -260,37 +260,49 @@ class _AddProduct extends StatelessWidget {
               ),
             ),
             IsmLiveDimens.boxHeight5,
-            IsmLiveTapHandler(
-              onTap: IsmLiveRouteManagement.goToAddProduct,
-              child: SizedBox(
-                width: Get.width,
-                height: IsmLiveDimens.hundred,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.white30,
-                    border: Border.all(color: IsmLiveColors.white),
-                    borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_circle_outline_rounded,
-                        color: context.liveTheme.selectedTextColor,
-                      ),
-                      Text(
-                        'Add products',
-                        style: context.textTheme.labelMedium?.copyWith(
-                          color: context.liveTheme.selectedTextColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+
+            SizedBox(
+              height: Get.height * 0.25,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                separatorBuilder: (context, index) => IsmLiveDimens.boxWidth10,
+                itemBuilder: (context, index) =>
+                    const IsmLiveProductContainer(),
+                itemCount: 5,
               ),
-            ),
+            )
+            // IsmLiveTapHandler(
+            //   onTap: IsmLiveRouteManagement.goToAddProduct,
+            //   child: SizedBox(
+            //     width: Get.width,
+            //     height: IsmLiveDimens.hundred,
+            //     child: DecoratedBox(
+            //       decoration: BoxDecoration(
+            //         color: Colors.white30,
+            //         border: Border.all(color: IsmLiveColors.white),
+            //         borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            //       ),
+            //       child: Column(
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         mainAxisSize: MainAxisSize.min,
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           Icon(
+            //             Icons.add_circle_outline_rounded,
+            //             color: context.liveTheme.selectedTextColor,
+            //           ),
+            //           Text(
+            //             'Add products',
+            //             style: context.textTheme.labelMedium?.copyWith(
+            //               color: context.liveTheme.selectedTextColor,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       );
