@@ -632,16 +632,42 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveProductModel?> fetchProducts() async {
+  Future<IsmLiveProductDetailModel?> fetchProductDetails() async {
     try {
-      var res = await _repository.fetchProducts();
+      var res = await _repository.fetchProductDetails();
       if (res.hasError) {
         return null;
       }
-      return IsmLiveProductModel.fromJson(res.data);
+      return IsmLiveProductDetailModel.fromJson(res.data);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
+    }
+  }
+
+  Future<List<IsmLiveProductModel>> fetchProducts({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.fetchProducts(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      if (res.hasError) {
+        return [];
+      }
+
+      List list = jsonDecode(res.data)['products'];
+
+      return list
+          .map((e) => IsmLiveProductModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
     }
   }
 }

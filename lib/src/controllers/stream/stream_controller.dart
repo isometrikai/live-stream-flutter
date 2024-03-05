@@ -168,7 +168,11 @@ class IsmLiveStreamController extends GetxController
 
   var searchUserFieldController = TextEditingController();
 
+  var searchProductFieldController = TextEditingController();
+
   ScrollController viewerListController = ScrollController();
+
+  ScrollController productListController = ScrollController();
 
   ScrollController userListController = ScrollController();
 
@@ -198,6 +202,10 @@ class IsmLiveStreamController extends GetxController
   List<UserDetails> copublisherRequestsList = [];
 
   List<UserDetails> eligibleMembersList = [];
+
+  List<IsmLiveProductModel> productsList = [];
+
+  List<IsmLiveProductModel> selectedProductsList = [];
 
   bool? isHost;
 
@@ -258,6 +266,7 @@ class IsmLiveStreamController extends GetxController
   bool isMembersApiCall = false;
   bool isMessagesApiCall = false;
   bool isExistingMembersApiCall = false;
+  bool isProductApiCall = false;
 
   void pagination(String streamId) {
     viewerListController.addListener(() async {
@@ -271,6 +280,26 @@ class IsmLiveStreamController extends GetxController
         await getStreamViewer(
             streamId: streamId, limit: 10, skip: streamViewersList.length);
         isViewesApiCall = false;
+      }
+    });
+
+    productListController.addListener(() async {
+      if (productListController.position.maxScrollExtent * 0.8 <=
+          productListController.position.pixels) {
+        if (isProductApiCall) {
+          return;
+        }
+        isProductApiCall = true;
+
+        await fetchProducts(
+          limit: 10,
+          skip: productsList.length,
+          forceFetch: true,
+          searchTag: searchProductFieldController.text.trim().isEmpty
+              ? null
+              : searchProductFieldController.text.trim(),
+        );
+        isProductApiCall = false;
       }
     });
 

@@ -1,267 +1,161 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 class IsmLiveProductModel {
-  final String? priceCurrency;
-  final String? productAvailability;
-  final String? productBrand;
-  final String? productColor;
-  final String? productDescription;
-  final List<String>? productImage;
-  final String? productMPN;
-  final String? productMSRP;
-  final String? productMaterial;
-  final String? productName;
-  final String productRatingValue;
-  final int? productReviewCount;
-  final List<IsmLiveProductReviewModel>? productReviews;
-  final String? productSize;
-  final String? productSku;
-  final String? productURL;
   IsmLiveProductModel({
-    this.priceCurrency,
-    this.productAvailability,
-    this.productBrand,
-    this.productColor,
-    this.productDescription,
-    this.productImage,
-    this.productMPN,
-    this.productMSRP,
-    this.productMaterial,
-    this.productName,
-    required this.productRatingValue,
-    this.productReviewCount,
-    this.productReviews,
-    this.productSize,
-    this.productSku,
-    this.productURL,
+    required this.productName,
+    required this.productId,
+    required this.metadata,
+    this.externalProductId,
+    this.count,
   });
-
-  IsmLiveProductModel copyWith({
-    String? priceCurrency,
-    String? productAvailability,
-    String? productBrand,
-    String? productColor,
-    String? productDescription,
-    List<String>? productImage,
-    String? productMPN,
-    String? productMSRP,
-    String? productMaterial,
-    String? productName,
-    String? productRatingValue,
-    int? productReviewCount,
-    List<IsmLiveProductReviewModel>? productReviews,
-    String? productSize,
-    String? productSku,
-    String? productURL,
-  }) =>
-      IsmLiveProductModel(
-        priceCurrency: priceCurrency ?? this.priceCurrency,
-        productAvailability: productAvailability ?? this.productAvailability,
-        productBrand: productBrand ?? this.productBrand,
-        productColor: productColor ?? this.productColor,
-        productDescription: productDescription ?? this.productDescription,
-        productImage: productImage ?? this.productImage,
-        productMPN: productMPN ?? this.productMPN,
-        productMSRP: productMSRP ?? this.productMSRP,
-        productMaterial: productMaterial ?? this.productMaterial,
-        productName: productName ?? this.productName,
-        productRatingValue: productRatingValue ?? this.productRatingValue,
-        productReviewCount: productReviewCount ?? this.productReviewCount,
-        productReviews: productReviews ?? this.productReviews,
-        productSize: productSize ?? this.productSize,
-        productSku: productSku ?? this.productSku,
-        productURL: productURL ?? this.productURL,
-      );
-
-  Map<String, dynamic> toMap() => <String, dynamic>{
-        'priceCurrency': priceCurrency,
-        'productAvailability': productAvailability,
-        'productBrand': productBrand,
-        'productColor': productColor,
-        'productDescription': productDescription,
-        'productImage': productImage,
-        'productMPN': productMPN,
-        'productMSRP': productMSRP,
-        'productMaterial': productMaterial,
-        'productName': productName,
-        'productRatingValue': productRatingValue,
-        'productReviewCount': productReviewCount,
-        'productReviews': productReviews,
-        'productSize': productSize,
-        'productSku': productSku,
-        'productURL': productURL,
-      };
 
   factory IsmLiveProductModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveProductModel(
-        priceCurrency: map['priceCurrency'] != null
-            ? map['priceCurrency'] as String
+        productName: map['productName'] as String,
+        productId: map['productId'] as String,
+        metadata: IsmLiveProductMetaData.fromMap(
+            map['metadata'] as Map<String, dynamic>),
+        externalProductId: map['externalProductId'] != null
+            ? map['externalProductId'] as String
             : null,
-        productAvailability: map['productAvailability'] != null
-            ? map['productAvailability'] as String
-            : null,
-        productBrand:
-            map['productBrand'] != null ? map['productBrand'] as String : null,
-        productColor:
-            map['productColor'] != null ? map['productColor'] as String : null,
-        productDescription: map['productDescription'] != null
-            ? map['productDescription'] as String
-            : null,
-        productImage: map['productImage'] != null
-            ? List<String>.from(map['productImage'] as List<String>)
-            : null,
-        productMPN:
-            map['productMPN'] != null ? map['productMPN'] as String : null,
-        productMSRP:
-            map['productMSRP'] != null ? map['productMSRP'] as String : null,
-        productMaterial: map['productMaterial'] != null
-            ? map['productMaterial'] as String
-            : null,
-        productName:
-            map['productName'] != null ? map['productName'] as String : null,
-        productRatingValue: map['productRatingValue'] as String,
-        productReviewCount: map['productReviewCount'] != null
-            ? map['productReviewCount'] as int
-            : null,
-        productReviews: map['productReviews'] != null
-            ? List<IsmLiveProductReviewModel>.from(
-                (map['productReviews'] as List<IsmLiveProductReviewModel>)
-                    .map<IsmLiveProductReviewModel?>(
-                  (x) => IsmLiveProductReviewModel.fromMap(
-                      x as Map<String, dynamic>),
-                ),
-              )
-            : null,
-        productSize:
-            map['productSize'] != null ? map['productSize'] as String : null,
-        productSku:
-            map['productSku'] != null ? map['productSku'] as String : null,
-        productURL:
-            map['productURL'] != null ? map['productURL'] as String : null,
+        count: map['count'] != null ? map['count'] as num : null,
       );
-
-  String toJson() => json.encode(toMap());
 
   factory IsmLiveProductModel.fromJson(String source) =>
       IsmLiveProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  final String productName;
+  final String productId;
+  final IsmLiveProductMetaData metadata;
+  final String? externalProductId;
+  final num? count;
+
+  IsmLiveProductModel copyWith({
+    String? productName,
+    String? productId,
+    IsmLiveProductMetaData? metadata,
+    String? externalProductId,
+    num? count,
+  }) =>
+      IsmLiveProductModel(
+        productName: productName ?? this.productName,
+        productId: productId ?? this.productId,
+        metadata: metadata ?? this.metadata,
+        externalProductId: externalProductId ?? this.externalProductId,
+        count: count ?? this.count,
+      );
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'productName': productName,
+        'productId': productId,
+        'metadata': metadata.toMap(),
+        'externalProductId': externalProductId,
+        'count': count,
+      };
+
+  String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveProductModel(priceCurrency: $priceCurrency, productAvailability: $productAvailability, productBrand: $productBrand, productColor: $productColor, productDescription: $productDescription, productImage: $productImage, productMPN: $productMPN, productMSRP: $productMSRP, productMaterial: $productMaterial, productName: $productName, productRatingValue: $productRatingValue, productReviewCount: $productReviewCount, productReviews: $productReviews, productSize: $productSize, productSku: $productSku, productURL: $productURL)';
+      'IsmLiveProductModel(productName: $productName, productId: $productId, metadata: $metadata, externalProductId: $externalProductId, count: $count)';
 
   @override
   bool operator ==(covariant IsmLiveProductModel other) {
     if (identical(this, other)) return true;
 
-    return other.priceCurrency == priceCurrency &&
-        other.productAvailability == productAvailability &&
-        other.productBrand == productBrand &&
-        other.productColor == productColor &&
-        other.productDescription == productDescription &&
-        listEquals(other.productImage, productImage) &&
-        other.productMPN == productMPN &&
-        other.productMSRP == productMSRP &&
-        other.productMaterial == productMaterial &&
-        other.productName == productName &&
-        other.productRatingValue == productRatingValue &&
-        other.productReviewCount == productReviewCount &&
-        listEquals(other.productReviews, productReviews) &&
-        other.productSize == productSize &&
-        other.productSku == productSku &&
-        other.productURL == productURL;
+    return other.productName == productName &&
+        other.productId == productId &&
+        other.metadata == metadata &&
+        other.externalProductId == externalProductId &&
+        other.count == count;
   }
 
   @override
   int get hashCode =>
-      priceCurrency.hashCode ^
-      productAvailability.hashCode ^
-      productBrand.hashCode ^
-      productColor.hashCode ^
-      productDescription.hashCode ^
-      productImage.hashCode ^
-      productMPN.hashCode ^
-      productMSRP.hashCode ^
-      productMaterial.hashCode ^
       productName.hashCode ^
-      productRatingValue.hashCode ^
-      productReviewCount.hashCode ^
-      productReviews.hashCode ^
-      productSize.hashCode ^
-      productSku.hashCode ^
-      productURL.hashCode;
+      productId.hashCode ^
+      metadata.hashCode ^
+      externalProductId.hashCode ^
+      count.hashCode;
 }
 
-class IsmLiveProductReviewModel {
-  final String? author;
-  final String? datePublished;
-  final int? ratingValue;
-  final String? reviewBody;
-  IsmLiveProductReviewModel({
-    this.author,
-    this.datePublished,
-    this.ratingValue,
-    this.reviewBody,
+class IsmLiveProductMetaData {
+  final num? price;
+  final String? description;
+  final String? currencySymbol;
+  final String? category;
+  final String? productImageUrl;
+  IsmLiveProductMetaData({
+    this.price,
+    this.description,
+    this.currencySymbol,
+    this.category,
+    this.productImageUrl,
   });
 
-  IsmLiveProductReviewModel copyWith({
-    String? author,
-    String? datePublished,
-    int? ratingValue,
-    String? reviewBody,
+  IsmLiveProductMetaData copyWith({
+    num? price,
+    String? description,
+    String? currencySymbol,
+    String? category,
+    String? productImageUrl,
   }) =>
-      IsmLiveProductReviewModel(
-        author: author ?? this.author,
-        datePublished: datePublished ?? this.datePublished,
-        ratingValue: ratingValue ?? this.ratingValue,
-        reviewBody: reviewBody ?? this.reviewBody,
+      IsmLiveProductMetaData(
+        price: price ?? this.price,
+        description: description ?? this.description,
+        currencySymbol: currencySymbol ?? this.currencySymbol,
+        category: category ?? this.category,
+        productImageUrl: productImageUrl ?? this.productImageUrl,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'author': author,
-        'datePublished': datePublished,
-        'ratingValue': ratingValue,
-        'reviewBody': reviewBody,
+        'price': price,
+        'description': description,
+        'currencySymbol': currencySymbol,
+        'category': category,
+        'productImageUrl': productImageUrl,
       };
 
-  factory IsmLiveProductReviewModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveProductReviewModel(
-        author: map['author'] != null ? map['author'] as String : null,
-        datePublished: map['datePublished'] != null
-            ? map['datePublished'] as String
+  factory IsmLiveProductMetaData.fromMap(Map<String, dynamic> map) =>
+      IsmLiveProductMetaData(
+        price: map['price'] != null ? map['price'] as num : null,
+        description:
+            map['description'] != null ? map['description'] as String : null,
+        currencySymbol: map['currencySymbol'] != null
+            ? map['currencySymbol'] as String
             : null,
-        ratingValue:
-            map['ratingValue'] != null ? map['ratingValue'] as int : null,
-        reviewBody:
-            map['reviewBody'] != null ? map['reviewBody'] as String : null,
+        category: map['category'] != null ? map['category'] as String : null,
+        productImageUrl: map['productImageUrl'] != null
+            ? map['productImageUrl'] as String
+            : null,
       );
 
   String toJson() => json.encode(toMap());
 
-  factory IsmLiveProductReviewModel.fromJson(String source) =>
-      IsmLiveProductReviewModel.fromMap(
+  factory IsmLiveProductMetaData.fromJson(String source) =>
+      IsmLiveProductMetaData.fromMap(
           json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>
-      'IsmLiveProductReviewModel(author: $author, datePublished: $datePublished, ratingValue: $ratingValue, reviewBody: $reviewBody)';
+      'IsmLiveProductMetaData(price: $price, description: $description, currencySymbol: $currencySymbol, category: $category, productImageUrl: $productImageUrl)';
 
   @override
-  bool operator ==(covariant IsmLiveProductReviewModel other) {
+  bool operator ==(covariant IsmLiveProductMetaData other) {
     if (identical(this, other)) return true;
 
-    return other.author == author &&
-        other.datePublished == datePublished &&
-        other.ratingValue == ratingValue &&
-        other.reviewBody == reviewBody;
+    return other.price == price &&
+        other.description == description &&
+        other.currencySymbol == currencySymbol &&
+        other.category == category &&
+        other.productImageUrl == productImageUrl;
   }
 
   @override
   int get hashCode =>
-      author.hashCode ^
-      datePublished.hashCode ^
-      ratingValue.hashCode ^
-      reviewBody.hashCode;
+      price.hashCode ^
+      description.hashCode ^
+      currencySymbol.hashCode ^
+      category.hashCode ^
+      productImageUrl.hashCode;
 }

@@ -1,9 +1,26 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveProduct extends StatelessWidget {
-  const IsmLiveProduct({super.key});
+  const IsmLiveProduct({
+    super.key,
+    required this.productName,
+    required this.productPrice,
+    required this.productDiscription,
+    required this.symbol,
+    required this.isSelected,
+    required this.onChanged,
+    required this.imageUrl,
+  });
+  final String productName;
+  final num productPrice;
+  final String productDiscription;
+  final String symbol;
+  final String imageUrl;
+  final bool isSelected;
+  final Function(bool?) onChanged;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -12,7 +29,7 @@ class IsmLiveProduct extends StatelessWidget {
             width: IsmLiveDimens.seventy,
             height: IsmLiveDimens.seventy,
             child: IsmLiveImage.network(
-              '',
+              imageUrl,
               radius: IsmLiveDimens.ten,
             ),
           ),
@@ -25,7 +42,7 @@ class IsmLiveProduct extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'ZARA',
+                      productName,
                       style: context.textTheme.bodySmall
                           ?.copyWith(color: IsmLiveColors.lightGray),
                     ),
@@ -35,14 +52,14 @@ class IsmLiveProduct extends StatelessWidget {
                       child: Checkbox(
                         checkColor: Colors.white,
                         activeColor: Colors.black,
-                        value: true,
-                        onChanged: (bool? value) {},
+                        value: isSelected,
+                        onChanged: onChanged,
                       ),
                     )
                   ],
                 ),
                 Text(
-                  'sfhdfhdsfhsdjgdshfghdgfhjakjdshfjskjdfhsdfhdjfjdfsdhfkjhsdkhfshdfkjkjsdkj',
+                  productDiscription,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyLarge,
                   maxLines: 1,
@@ -51,29 +68,31 @@ class IsmLiveProduct extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '\$29.9',
+                      '$symbol $productPrice',
                       style: context.textTheme.bodySmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     IsmLiveDimens.boxWidth4,
-                    const Text(
-                      '\$43.66',
-                      style: TextStyle(
+                    Text(
+                      '$symbol $productPrice',
+                      style: const TextStyle(
                         color: IsmLiveColors.lightGray,
                         decoration: TextDecoration.lineThrough,
                         decorationColor: IsmLiveColors.lightGray,
                       ),
                     ),
-                    const Spacer(),
-                    IsmLiveTapHandler(
-                      child: const Text(
-                        'Add Discount',
-                        style: TextStyle(color: Colors.blue),
+                    if (isSelected) ...[
+                      const Spacer(),
+                      IsmLiveTapHandler(
+                        child: const Text(
+                          'Add Discount',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                        onTap: () => IsmLiveUtility.openBottomSheet(
+                          const IsmLiveProductDiscountSheet(),
+                        ),
                       ),
-                      onTap: () => IsmLiveUtility.openBottomSheet(
-                        const IsmLiveProductDiscountSheet(),
-                      ),
-                    ),
+                    ]
                   ],
                 )
               ],

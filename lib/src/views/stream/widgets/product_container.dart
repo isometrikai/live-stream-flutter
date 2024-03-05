@@ -3,11 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveProductContainer extends StatelessWidget {
-  const IsmLiveProductContainer({super.key});
+  const IsmLiveProductContainer({
+    super.key,
+    required this.productName,
+    required this.productDisc,
+    required this.currencyIcon,
+    required this.price,
+    required this.onPress,
+    required this.imageUrl,
+  });
+  final String productName;
+  final String imageUrl;
+  final String productDisc;
+  final String currencyIcon;
+  final num price;
+  final Function() onPress;
 
   @override
   Widget build(BuildContext context) => Container(
-        width: Get.width * .43,
+        width: Get.width * .3,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -18,18 +32,22 @@ class IsmLiveProductContainer extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Expanded(
-                  child: IsmLiveImage.network(''),
+                Expanded(
+                  child: IsmLiveImage.network(imageUrl),
                 ),
                 IsmLiveDimens.boxHeight10,
                 Padding(
                   padding: IsmLiveDimens.edgeInsets8_0,
-                  child: const Text('SOLD'),
+                  child: Text(
+                    productName.toUpperCase(),
+                    style: context.textTheme.bodySmall
+                        ?.copyWith(color: IsmLiveColors.lightGray),
+                  ),
                 ),
                 Padding(
                   padding: IsmLiveDimens.edgeInsets8_0,
                   child: Text(
-                    'sfhdfhdsfhsdjgdshfghdgfhjakjdshfjskjdfhsdfhdjfjdfsdhfkjhsdkhfshdfkjkjsdkj',
+                    productDisc,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.bodyLarge,
                     maxLines: 1,
@@ -39,22 +57,22 @@ class IsmLiveProductContainer extends StatelessWidget {
                 Padding(
                   padding: IsmLiveDimens.edgeInsets8_0,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '\$29.9',
+                        '$currencyIcon $price',
                         style: context.textTheme.bodySmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       IsmLiveDimens.boxWidth4,
-                      const Text(
-                        '\$43.66',
-                        style: TextStyle(
+                      Text(
+                        '$currencyIcon $price',
+                        style: const TextStyle(
                           color: IsmLiveColors.lightGray,
                           decoration: TextDecoration.lineThrough,
                           decorationColor: IsmLiveColors.lightGray,
                         ),
                       ),
-                      const Text('15% Off'),
                     ],
                   ),
                 ),
@@ -65,7 +83,7 @@ class IsmLiveProductContainer extends StatelessWidget {
               top: -10,
               child: IconButton(
                 padding: IsmLiveDimens.edgeInsets0,
-                onPressed: () {},
+                onPressed: onPress,
                 icon: Icon(
                   Icons.cancel,
                   size: IsmLiveDimens.twenty,
