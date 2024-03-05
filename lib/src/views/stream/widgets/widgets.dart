@@ -11,6 +11,8 @@ export 'list_sheet.dart';
 export 'logout_bottom_sheet.dart';
 export 'message_field.dart';
 export 'moderation_warning.dart';
+export 'product.dart';
+export 'product_container.dart';
 export 'publisher_grid.dart';
 export 'stream_banner.dart';
 export 'stream_card.dart';

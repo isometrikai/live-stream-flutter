@@ -265,7 +265,9 @@ class _ErrorImage extends StatelessWidget {
             : Container(
                 decoration: BoxDecoration(
                   color: IsmLiveColors.secondary,
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                  borderRadius: BorderRadius.circular(
+                    IsmLiveDimens.eight,
+                  ),
                 ),
                 alignment: Alignment.center,
                 child: const Text(

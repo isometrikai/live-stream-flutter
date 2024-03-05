@@ -17,13 +17,16 @@ class IsmGoLiveView extends StatelessWidget {
           var controller = Get.find<IsmLiveStreamController>();
           controller.cameraFuture = null;
           unawaited(controller.initializationOfGoLive());
+          unawaited(controller.fetchProducts());
           controller.pickedImage = null;
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
         },
         dispose: (state) {
-          Get.find<IsmLiveStreamController>().cameraController?.dispose();
+          var cons = Get.find<IsmLiveStreamController>();
+          cons.selectedProductsList.clear();
+          cons.cameraController?.dispose();
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -158,7 +161,13 @@ class IsmGoLiveView extends StatelessWidget {
                       onChange: controller.onChangeRestream,
                       value: controller.isRestreamBroadcast,
                     ),
-                    const _AddProduct(),
+                    _AddProduct(
+                      selectedProducts: controller.selectedProductsList,
+                      onRemoveProduct: (index) {
+                        controller.selectedProductsList.removeAt(index);
+                        controller.update([updateId]);
+                      },
+                    ),
                     IsmLiveRadioListTile(
                       title: 'Schedule Live',
                       onChange: controller.onChangeSchedule,
@@ -244,7 +253,12 @@ class _StreamImage extends StatelessWidget {
 }
 
 class _AddProduct extends StatelessWidget {
-  const _AddProduct();
+  const _AddProduct({
+    required this.selectedProducts,
+    required this.onRemoveProduct,
+  });
+  final List<IsmLiveProductModel> selectedProducts;
+  final Function(int index) onRemoveProduct;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -253,41 +267,84 @@ class _AddProduct extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Add product*',
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: IsmLiveColors.white,
-              ),
-            ),
-            IsmLiveDimens.boxHeight5,
-            SizedBox(
-              width: Get.width,
-              height: IsmLiveDimens.hundred,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.white30,
-                  border: Border.all(color: IsmLiveColors.white),
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Add product*',
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: IsmLiveColors.white,
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_circle_outline_rounded,
-                      color: context.liveTheme.selectedTextColor,
-                    ),
-                    Text(
-                      'Add products',
-                      style: context.textTheme.labelMedium?.copyWith(
-                        color: context.liveTheme.selectedTextColor,
+                if (selectedProducts.isNotEmpty)
+                  TextButton(
+                    onPressed: IsmLiveRouteManagement.goToAddProduct,
+                    child: Text(
+                      '+Add',
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: IsmLiveColors.white,
                       ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
+            IsmLiveDimens.boxHeight5,
+            selectedProducts.isNotEmpty
+                ? SizedBox(
+                    height: Get.height * 0.2,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      separatorBuilder: (_, __) => IsmLiveDimens.boxWidth10,
+                      itemBuilder: (_, index) {
+                        var product = selectedProducts[index];
+
+                        return IsmLiveProductContainer(
+                          imageUrl: product.metadata.productImageUrl ?? '',
+                          currencyIcon: product.metadata.currencySymbol ?? '',
+                          price: product.metadata.price ?? 0,
+                          productName: product.productName,
+                          productDisc: product.metadata.description ?? '',
+                          onPress: () {
+                            onRemoveProduct(index);
+                          },
+                        );
+                      },
+                      itemCount: selectedProducts.length,
+                    ),
+                  )
+                : IsmLiveTapHandler(
+                    onTap: IsmLiveRouteManagement.goToAddProduct,
+                    child: SizedBox(
+                      width: Get.width,
+                      height: IsmLiveDimens.hundred,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.white30,
+                          border: Border.all(color: IsmLiveColors.white),
+                          borderRadius:
+                              BorderRadius.circular(IsmLiveDimens.sixteen),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline_rounded,
+                              color: context.liveTheme.selectedTextColor,
+                            ),
+                            Text(
+                              'Add products',
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: context.liveTheme.selectedTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       );

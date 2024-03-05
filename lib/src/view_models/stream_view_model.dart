@@ -631,4 +631,43 @@ class IsmLiveStreamViewModel {
       return null;
     }
   }
+
+  Future<IsmLiveProductDetailModel?> fetchProductDetails() async {
+    try {
+      var res = await _repository.fetchProductDetails();
+      if (res.hasError) {
+        return null;
+      }
+      return IsmLiveProductDetailModel.fromJson(res.data);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
+  Future<List<IsmLiveProductModel>> fetchProducts({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.fetchProducts(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      if (res.hasError) {
+        return [];
+      }
+
+      List list = jsonDecode(res.data)['products'];
+
+      return list
+          .map((e) => IsmLiveProductModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
 }

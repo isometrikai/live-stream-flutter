@@ -4,6 +4,8 @@ export 'get_message_model.dart';
 export 'member_details_model.dart';
 export 'member_model.dart';
 export 'message_model.dart';
+export 'product_details_model.dart';
+export 'product_model.dart';
 export 'rtc_model.dart';
 export 'send_message_model.dart';
 export 'stream_model.dart';

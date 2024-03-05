@@ -13,6 +13,7 @@ mixin StreamAPIMixin {
   final _copublisherRequestsDebouncer = IsmLiveDebouncer();
   final _eligibleMembersDebouncer = IsmLiveDebouncer();
   final _moderatorsDebouncer = IsmLiveDebouncer();
+  final _productsDebouncer = IsmLiveDebouncer();
 
   Future<void> getUserDetails() async {
     await _controller._viewModel.getUserDetails();
@@ -70,6 +71,9 @@ mixin StreamAPIMixin {
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
           streamImage: image,
+          productsLinked: _controller.selectedProductsList.isNotEmpty,
+          products:
+              _controller.selectedProductsList.map((e) => e.productId).toList(),
           hdBroadcast: _controller.isHdBroadcast,
           enableRecording: _controller.isRecordingBroadcast,
           streamDescription: _controller.descriptionController.isEmpty
@@ -555,4 +559,38 @@ mixin StreamAPIMixin {
       _controller._viewModel.switchViewer(
         streamId: streamId,
       );
+
+  Future<void> fetchProducts({
+    bool forceFetch = false,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    _productsDebouncer.run(
+      () async => await _fetchProducts(
+        forceFetch: forceFetch,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      ),
+    );
+  }
+
+  Future<void> _fetchProducts({
+    bool forceFetch = false,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    if (forceFetch || _controller.productsList.isEmpty) {
+      var list = await _controller._viewModel.fetchProducts(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      _controller.productsList.addAll(list);
+    }
+
+    _controller.update([IsmLiveAddProduct.updateId]);
+  }
 }

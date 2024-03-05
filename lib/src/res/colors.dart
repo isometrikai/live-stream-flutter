@@ -5,6 +5,8 @@ class IsmLiveColors {
 
   static const Color primary = Colors.black;
   static const Color secondary = Color(0xFFE1BEE7);
+  static const Color fieldColor = Color.fromRGBO(242, 242, 245, 1);
+  static const Color lightGray = Color.fromRGBO(151, 151, 190, 1);
   static const Color transparent = Color.fromARGB(0, 255, 255, 255);
   static const Color white = Colors.white;
   static const Color black = Colors.black;

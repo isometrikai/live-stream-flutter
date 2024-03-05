@@ -489,4 +489,35 @@ class IsmLiveStreamRepository {
       showLoader: true,
     );
   }
+
+  Future<IsmLiveResponseModel> fetchProductDetails() {
+    var parameter = {
+      'url':
+          'https://www.lenskart.com/vincent-chase-vc-s13981-c3-sunglasses.html',
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.productDetails}?${parameter.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> fetchProducts({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    var payload = {
+      'skip': skip,
+      'limit': limit,
+      'searchTag': searchTag,
+    };
+
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.products}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
 }

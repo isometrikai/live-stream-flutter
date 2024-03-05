@@ -103,4 +103,10 @@ abstract class IsmLiveRouteManagement {
       return null;
     }
   }
+
+  static void goToAddProduct() {
+    Get.toNamed<void>(
+      IsmLiveRoutes.addProduct,
+    );
+  }
 }

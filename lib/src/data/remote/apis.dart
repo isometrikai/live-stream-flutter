@@ -5,6 +5,8 @@ class IsmLiveApis {
   static const String baseUrl = 'https://apis.isometrik.io';
 
   static const String wsUrl = 'wss://streaming.isometrik.io';
+  static const String productDetails =
+      'https://admin-apis.isometrik.io/v1/get_product_details';
   static const String user = '/chat/user';
   static const String allUsers = '/chat/users';
   static const String userDetails = '$user/details';
@@ -39,6 +41,7 @@ class IsmLiveApis {
   static const String eligibleMembers = '$_streaming/members/eligible';
   static const String member = '$_streaming/member';
   static const String leaveMember = '$_streaming/member/leave';
+  static const String products = '$_streaming/ecommerce/products';
 
   // static const String getEndStream = '$_streaming/analytics';
 }
