@@ -273,6 +273,7 @@ class IsmLiveStreamController extends GetxController
   bool isExistingMembersApiCall = false;
   bool isProductApiCall = false;
 
+  // Pagination method
   void pagination(String streamId) {
     viewerListController.addListener(() async {
       if (viewerListController.position.maxScrollExtent * 0.8 <= viewerListController.position.pixels) {
@@ -409,6 +410,7 @@ class IsmLiveStreamController extends GetxController
     });
   }
 
+// Method to start operations on initialization
   void startOnInit() async {
     unawaited(getUserDetails());
     unawaited(subscribeUser());

@@ -2,7 +2,7 @@ part of '../stream_controller.dart';
 
 mixin StreamSheetMixin {
   IsmLiveStreamController get _controller => Get.find();
-
+  // Function to handle exit actions from the stream
   void onExit({
     required bool isHost,
     required String streamId,
@@ -34,6 +34,7 @@ mixin StreamSheetMixin {
     }
   }
 
+// Function to handle showing gifts bottom sheet
   void giftsSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveGiftsSheet(
@@ -46,12 +47,14 @@ mixin StreamSheetMixin {
     );
   }
 
+// Function to handle showing settings bottom sheet
   void settingSheet() async {
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveSettingsSheet(),
     );
   }
 
+  // Function to handle showing copublishing viewer bottom sheet
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
@@ -86,6 +89,7 @@ mixin StreamSheetMixin {
     );
   }
 
+// Function to handle showing copublishing start video bottom sheet
   void copublishingStartVideoSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
@@ -123,6 +127,7 @@ mixin StreamSheetMixin {
     );
   }
 
+  // Function to handle showing copublishing host bottom sheet
   void copublishingHostSheet() async {
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveCopublishingHostSheet(),

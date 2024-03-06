@@ -2,22 +2,25 @@ part of '../stream_controller.dart';
 
 mixin StreamOngoingMixin {
   IsmLiveStreamController get _controller => Get.find();
-
+// Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
-
+  // Function to initialize the stream
   void initializeStream({
     required String streamId,
     required bool isHost,
   }) async {
+    // Pagination setup for the stream
     _controller.pagination(streamId);
+    // Set up event listeners
     unawaited(setUpListeners(
       isHost: isHost,
     ));
+    // Clear moderators list and request status
     _controller.moderatorsList.clear();
     unawaited(_controller.statusCopublisherRequest(streamId));
-
+    // Manage moderator status
     _manageModerator(streamId);
-
+    // Fetch message count and initial messages if not host
     if (!isHost) {
       await _controller.fetchMessagesCount(
         showLoading: false,
@@ -42,15 +45,19 @@ mixin StreamOngoingMixin {
         );
       }
     }
+    // Sort participants and update UI
     await sortParticipants();
+    // Toggle speaker if on mobile platform
     if (lkPlatformIsMobile()) {
       unawaited(_controller.toggleSpeaker(value: true));
     }
+    // Update stream view
     IsmLiveUtility.updateLater(() {
       _controller.update([IsmLiveStreamView.updateId]);
     });
   }
 
+// Function to manage moderator status
   void _manageModerator(String streamId) async {
     /// this is to check user is a moderator or not via API call
     /// By passing User name in search tag  it will give us the filtered list
@@ -70,6 +77,7 @@ mixin StreamOngoingMixin {
     );
   }
 
+// Function to set up event listeners
   Future<void> setUpListeners({
     required bool isHost,
   }) async =>
@@ -175,6 +183,7 @@ mixin StreamOngoingMixin {
     }
   }
 
+  // Function to handle actions on stream controls
   String controlSetting(IsmLiveHostSettings option) {
     switch (option) {
       case IsmLiveHostSettings.muteMyVideo:
@@ -198,12 +207,14 @@ mixin StreamOngoingMixin {
     }
   }
 
+  // Function to add viewers to the stream
   Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
     _controller.streamViewersList.addAll(viewers);
     _controller.streamViewersList =
         _controller.streamViewersList.toSet().toList();
   }
 
+// Function to add messages to the stream
   Future<void> addMessages(
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
@@ -225,6 +236,7 @@ mixin StreamOngoingMixin {
     );
   }
 
+// Function to add heart message to the stream
   void addHeart(IsmLiveMessageModel message) {
     final key = ValueKey(message.messageId);
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -244,6 +256,7 @@ mixin StreamOngoingMixin {
     });
   }
 
+  // Function to add gift message to the stream
   void addGift(IsmLiveMessageModel message) {
     _controller.giftMessages.add(message);
     if (_controller.giftMessages.length == 1) {
