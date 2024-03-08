@@ -2,6 +2,7 @@ part of '../stream_controller.dart';
 
 /// A mixin containing methods related to API calls for managing streams and users.
 mixin StreamAPIMixin {
+  /// Get the instance of IsmLiveStreamController using GetX.
   IsmLiveStreamController get _controller =>
       Get.find<IsmLiveStreamController>();
 

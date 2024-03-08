@@ -17,7 +17,7 @@ class IsmGoLiveView extends StatelessWidget {
           var controller = Get.find<IsmLiveStreamController>();
           controller.cameraFuture = null;
           unawaited(controller.initializationOfGoLive());
-          unawaited(controller.fetchProducts());
+
           controller.pickedImage = null;
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;

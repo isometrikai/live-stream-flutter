@@ -340,6 +340,7 @@ mixin StreamOngoingMixin {
         _controller.settingSheet();
         break;
       case IsmLiveStreamOption.product:
+        IsmLiveRouteManagement.goToTagProduct();
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();

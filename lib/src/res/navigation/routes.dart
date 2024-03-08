@@ -16,6 +16,8 @@ class IsmLiveRoutes {
 
   static const String streamView = '/stream-view';
 
+  static const String tagProduct = '/tag-product';
+
   static const String restreamView = '/restream-view';
   static const String restreamSettingsView = '/restream-settings-view';
 }

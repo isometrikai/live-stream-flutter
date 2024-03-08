@@ -18,7 +18,7 @@ class IsmLiveChatView extends StatelessWidget {
           padding: IsmLiveDimens.edgeInsets4_0,
           constraints: BoxConstraints(
             maxHeight: Get.height * 0.4,
-            maxWidth: Get.width * 0.75,
+            maxWidth: Get.width * 0.5,
           ),
           child: ListView.separated(
             controller: controller.messagesListController,
@@ -121,7 +121,7 @@ class IsmLiveChatView extends StatelessWidget {
                                 ),
                               ],
                               SizedBox(
-                                width: Get.width * 0.55,
+                                width: Get.width * 0.35,
                                 child: Text(
                                   message.body.trim(),
                                   style:

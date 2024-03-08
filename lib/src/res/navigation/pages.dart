@@ -79,5 +79,12 @@ class IsmLivePages {
       binding: IsmLiveStreamBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage<IsmLiveTagProducts>(
+      name: IsmLiveRoutes.tagProduct,
+      transitionDuration: transitionDuration,
+      page: IsmLiveTagProducts.new,
+      binding: IsmLiveStreamBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 }
