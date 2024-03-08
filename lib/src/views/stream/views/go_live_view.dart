@@ -131,6 +131,7 @@ class IsmGoLiveView extends StatelessWidget {
                       onChange: controller.onChangeRestream,
                       value: controller.isRestreamBroadcast,
                     ),
+                    const _Restream(),
                     if (controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice) ...[
                       IsmLiveRadioListTile(
                         title: 'Use Persistent RTMP Stream Key',
@@ -139,7 +140,6 @@ class IsmGoLiveView extends StatelessWidget {
                       ),
                     ],
                     const _PersistentStream(),
-                    const _Restream(),
                     _AddProduct(
                       selectedProducts: controller.selectedProductsList,
                       onRemoveProduct: (index) {
@@ -302,8 +302,7 @@ class _AddProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white30,
                           border: Border.all(color: IsmLiveColors.white),
-                          borderRadius:
-                              BorderRadius.circular(IsmLiveDimens.sixteen),
+                          borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
