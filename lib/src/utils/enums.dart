@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:get/get.dart';
 
 enum IsmLiveRequestType {
   get,
@@ -350,4 +351,20 @@ enum IsmLiveMemberStatus {
   bool get isMember => this == IsmLiveMemberStatus.copublisher;
 
   bool get canEnableVideo => receivedRequest || isApproved;
+}
+
+enum IsmLiveRestreamType {
+  facebook,
+  youtube,
+  instagram;
+
+  String get label => name.capitalizeFirst!;
+}
+
+enum IsmGoLiveTabItem {
+  defaultLive('Single/Multi Guest Live'),
+  liveFromDevice('Live From Device');
+
+  const IsmGoLiveTabItem(this.label);
+  final String label;
 }

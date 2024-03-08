@@ -103,4 +103,12 @@ abstract class IsmLiveRouteManagement {
       return null;
     }
   }
+
+  static void goToRestreamView() {
+    Get.toNamed(IsmLiveRoutes.restreamView);
+  }
+
+  static Future<void> goToRestreamSettingsView(IsmLiveRestreamType type) async {
+    await Get.toNamed(IsmLiveRoutes.restreamSettingsView, arguments: type);
+  }
 }

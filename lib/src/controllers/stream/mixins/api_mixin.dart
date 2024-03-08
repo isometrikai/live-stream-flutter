@@ -1,8 +1,7 @@
 part of '../stream_controller.dart';
 
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller =>
-      Get.find<IsmLiveStreamController>();
+  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
 
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
@@ -72,9 +71,8 @@ mixin StreamAPIMixin {
           streamImage: image,
           hdBroadcast: _controller.isHdBroadcast,
           enableRecording: _controller.isRecordingBroadcast,
-          streamDescription: _controller.descriptionController.isEmpty
-              ? 'N/A'
-              : _controller.descriptionController.text,
+          streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
+          restream: _controller.isRestreamBroadcast,
         ),
       ),
       image: image,
@@ -105,8 +103,7 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList =
-        await _controller._viewModel.getStreamMembers(
+    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -295,13 +292,11 @@ mixin StreamAPIMixin {
 
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ??
-          IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
     );
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
@@ -340,8 +335,7 @@ mixin StreamAPIMixin {
       moderatorId: moderatorId,
     );
     if (res) {
-      _controller.moderatorsList
-          .removeWhere((element) => element.userId == moderatorId);
+      _controller.moderatorsList.removeWhere((element) => element.userId == moderatorId);
 
       _controller.update([IsmLiveModeratorsSheet.updateId]);
     }
@@ -402,8 +396,7 @@ mixin StreamAPIMixin {
         searchTag: searchTag,
       );
       _controller.copublisherRequestsList.addAll(list);
-      _controller.copublisherRequestsList =
-          _controller.copublisherRequestsList.toSet().toList();
+      _controller.copublisherRequestsList = _controller.copublisherRequestsList.toSet().toList();
     }
     _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
@@ -441,8 +434,7 @@ mixin StreamAPIMixin {
         searchTag: searchTag,
       );
       _controller.eligibleMembersList.addAll(list);
-      _controller.eligibleMembersList =
-          _controller.eligibleMembersList.toSet().toList();
+      _controller.eligibleMembersList = _controller.eligibleMembersList.toSet().toList();
     }
     _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
@@ -456,8 +448,7 @@ mixin StreamAPIMixin {
       requestById: requestById,
     );
     if (res) {
-      _controller.copublisherRequestsList
-          .removeWhere((element) => element.userId == requestById);
+      _controller.copublisherRequestsList.removeWhere((element) => element.userId == requestById);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -474,8 +465,7 @@ mixin StreamAPIMixin {
       requestById: requestById,
     );
     if (res) {
-      _controller.copublisherRequestsList
-          .removeWhere((element) => element.userId == requestById);
+      _controller.copublisherRequestsList.removeWhere((element) => element.userId == requestById);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -492,8 +482,7 @@ mixin StreamAPIMixin {
       memberId: memberId,
     );
     if (res) {
-      _controller.eligibleMembersList
-          .removeWhere((element) => element.userId == memberId);
+      _controller.eligibleMembersList.removeWhere((element) => element.userId == memberId);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -510,8 +499,7 @@ mixin StreamAPIMixin {
       memberId: memberId,
     );
     if (res) {
-      _controller.streamMembersList
-          .removeWhere((element) => element.userId == memberId);
+      _controller.streamMembersList.removeWhere((element) => element.userId == memberId);
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
 
@@ -525,8 +513,7 @@ mixin StreamAPIMixin {
       streamId: streamId,
     );
     if (res) {
-      _controller.streamMembersList
-          .removeWhere((element) => element.userId == _controller.user?.userId);
+      _controller.streamMembersList.removeWhere((element) => element.userId == _controller.user?.userId);
 
       _controller.update([IsmLiveMembersSheet.updateId]);
     }
@@ -554,5 +541,12 @@ mixin StreamAPIMixin {
   }) =>
       _controller._viewModel.switchViewer(
         streamId: streamId,
+      );
+
+  Future<void> getRestreamChannels() => _controller._viewModel.getRestreamChannels();
+
+  Future<bool> enableRestreamChannel(bool enable) => _controller._viewModel.addRestreamChannel(
+        url: _controller.rtmlUrl.text.trim(),
+        enable: enable,
       );
 }

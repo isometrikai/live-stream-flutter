@@ -10,6 +10,8 @@ class IsmLiveColors {
   static const Color black = Colors.black;
   static const Color grey = Colors.grey;
 
+  static const Color border = Color(0xFFF5F6FF);
+
   static const Color green = Colors.green;
   static const Color red = Colors.red;
 }

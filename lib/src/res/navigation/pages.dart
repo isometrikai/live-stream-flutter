@@ -17,56 +17,60 @@ class IsmLivePages {
       bindings: [
         IsmLiveMqttBinding(),
       ],
-      transition: Transition.rightToLeft,
     ),
     GetPage<MyMeetingsView>(
       name: IsmLiveRoutes.myMeetingsView,
       transitionDuration: transitionDuration,
       page: MyMeetingsView.new,
       binding: MeetingBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<CreateMeetingScreen>(
       name: IsmLiveRoutes.createMeetingScreen,
       transitionDuration: transitionDuration,
       page: CreateMeetingScreen.new,
       // binding: MeetingBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<SearchUserScreen>(
       name: IsmLiveRoutes.searchUserScreen,
       transitionDuration: transitionDuration,
       page: SearchUserScreen.new,
       // binding: MeetingBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<RoomPage>(
       name: IsmLiveRoutes.roomPage,
       transitionDuration: transitionDuration,
       page: RoomPage.new,
       binding: IsmLiveCallingBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<IsmLiveStreamView>(
       name: IsmLiveStreamView.route,
       transitionDuration: transitionDuration,
       page: IsmLiveStreamView.new,
       binding: IsmLiveStreamBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<IsmGoLiveView>(
       name: IsmLiveRoutes.goLive,
       transitionDuration: transitionDuration,
       page: IsmGoLiveView.new,
       binding: IsmLiveStreamBinding(),
-      transition: Transition.rightToLeft,
     ),
     GetPage<IsmLiveEndStream>(
       name: IsmLiveRoutes.endStream,
       transitionDuration: transitionDuration,
       page: IsmLiveEndStream.new,
       binding: IsmLiveStreamBinding(),
-      transition: Transition.rightToLeft,
+    ),
+    GetPage<IsmLiveRestreamView>(
+      name: IsmLiveRoutes.restreamView,
+      transitionDuration: transitionDuration,
+      page: IsmLiveRestreamView.new,
+      binding: IsmLiveStreamBinding(),
+    ),
+    GetPage<IsmLiveRestreamSettingsView>(
+      name: IsmLiveRoutes.restreamSettingsView,
+      transitionDuration: transitionDuration,
+      page: IsmLiveRestreamSettingsView.new,
+      binding: IsmLiveStreamBinding(),
     ),
   ];
 }

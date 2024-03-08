@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveRadioListTile extends StatelessWidget {
@@ -8,10 +9,14 @@ class IsmLiveRadioListTile extends StatelessWidget {
     required this.title,
     required this.onChange,
     required this.value,
+    this.isDark = true,
+    this.showIcon = false,
   });
   final String title;
   final Function(bool) onChange;
   final bool value;
+  final bool isDark;
+  final bool showIcon;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -32,9 +37,13 @@ class IsmLiveRadioListTile extends StatelessWidget {
             Text(
               title,
               style: context.textTheme.bodyLarge?.copyWith(
-                color: IsmLiveColors.white,
+                color: isDark ? IsmLiveColors.white : IsmLiveColors.black,
               ),
             ),
+            if (showIcon) ...[
+              const Spacer(),
+              const Icon(Icons.keyboard_arrow_right_rounded),
+            ],
           ],
         ),
       );

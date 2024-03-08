@@ -14,4 +14,7 @@ class IsmLiveRoutes {
   static const String ismLiveStreamRoom = '/ismLiveStreamRoom';
 
   static const String streamView = '/stream-view';
+
+  static const String restreamView = '/restream-view';
+  static const String restreamSettingsView = '/restream-settings-view';
 }

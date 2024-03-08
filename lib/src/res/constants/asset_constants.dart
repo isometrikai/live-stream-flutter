@@ -105,6 +105,8 @@ class IsmLiveAssetConstants {
   static const String cancel = '$_icons/cancel.svg';
   static const String bars = '$_icons/bars.svg';
   static const String product = '$_icons/product.svg';
+  static const String youtube = '$_icons/youtube.svg';
+  static const String calendar = '$_icons/calendar.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

@@ -6,8 +6,7 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async =>
-      _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -487,6 +486,34 @@ class IsmLiveStreamRepository {
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> getRestreamChannels() => _apiWrapper.makeRequest(
+        IsmLiveApis.restreamChannel,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showLoader: false,
+        showDialog: false,
+      );
+
+  Future<IsmLiveResponseModel> addRestreamChannel({
+    required String url,
+    required bool enable,
+  }) {
+    final payload = {
+      'ingestUrl': url,
+      'enabled': enable,
+      'channelType': 1,
+      'channelName': 'Youtube',
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.restreamChannel,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: true,
     );
   }
 }

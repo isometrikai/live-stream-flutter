@@ -41,4 +41,5 @@ class IsmLiveApis {
   static const String leaveMember = '$_streaming/member/leave';
 
   // static const String getEndStream = '$_streaming/analytics';
+  static const String restreamChannel = '$_streaming/restream/channel';
 }

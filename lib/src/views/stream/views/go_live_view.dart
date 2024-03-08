@@ -29,37 +29,7 @@ class IsmGoLiveView extends StatelessWidget {
           resizeToAvoidBottomInset: false,
           backgroundColor: IsmLiveColors.black,
           extendBody: true,
-          bottomNavigationBar: SafeArea(
-            child: Padding(
-              padding: IsmLiveDimens.edgeInsets16,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: IsmLiveColors.red,
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: IsmLiveDimens.edgeInsets4,
-                      child: Text(
-                        'Broadcasters under 18 are not permitted',
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    IsmLiveButton(
-                      label: 'Go Live',
-                      showBorder: true,
-                      onTap: controller.startStream,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
             alignment: Alignment.center,
             fit: StackFit.expand,
@@ -91,7 +61,7 @@ class IsmGoLiveView extends StatelessWidget {
                   );
                 },
               ),
-              Padding(
+              SingleChildScrollView(
                 padding: IsmLiveDimens.edgeInsets16,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,12 +128,23 @@ class IsmGoLiveView extends StatelessWidget {
                       onChange: controller.onChangeRestream,
                       value: controller.isRestreamBroadcast,
                     ),
+                    if (controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice) ...[
+                      IsmLiveRadioListTile(
+                        title: 'Use Persistent RTMP Stream Key',
+                        onChange: controller.onChangePersistent,
+                        value: controller.usePersistentStreamKey,
+                      ),
+                    ],
+                    const _PersistentStream(),
+                    const _Restream(),
                     const _AddProduct(),
                     IsmLiveRadioListTile(
                       title: 'Schedule Live',
                       onChange: controller.onChangeSchedule,
                       value: controller.isSchedulingBroadcast,
                     ),
+                    const _ScheduleStream(),
+                    const SizedBox(height: 120),
                   ],
                 ),
               ),
@@ -188,8 +169,7 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null ||
-                  controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
@@ -290,5 +270,149 @@ class _AddProduct extends StatelessWidget {
             ),
           ],
         ),
+      );
+}
+
+class _Restream extends StatelessWidget {
+  const _Restream();
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmGoLiveView.updateId,
+        builder: (controller) => !controller.isRestreamBroadcast
+            ? const SizedBox.shrink()
+            : Column(
+                children: [
+                  const Divider(),
+                  ListTile(
+                    contentPadding: IsmLiveDimens.edgeInsets0,
+                    onTap: IsmLiveRouteManagement.goToRestreamView,
+                    title: Text(
+                      'Restream',
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: IsmLiveColors.white,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.keyboard_arrow_right_rounded,
+                      color: context.liveTheme.selectedTextColor,
+                    ),
+                  ),
+                  const Divider(),
+                ],
+              ),
+      );
+}
+
+class _ScheduleStream extends StatelessWidget {
+  const _ScheduleStream();
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmGoLiveView.updateId,
+        builder: (controller) => !controller.isSchedulingBroadcast
+            ? const SizedBox.shrink()
+            : _InputField(
+                label: 'Date & Time*',
+                controller: TextEditingController(
+                  text: controller.scheduleLiveDate.formattedDate,
+                ),
+                suffixIcon: const UnconstrainedBox(
+                  child: IsmLiveImage.svg(
+                    IsmLiveAssetConstants.calendar,
+                  ),
+                ),
+              ),
+      );
+}
+
+class _PersistentStream extends StatelessWidget {
+  const _PersistentStream();
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmGoLiveView.updateId,
+        builder: (controller) => !controller.usePersistentStreamKey
+            ? const SizedBox.shrink()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _InputField(
+                    label: 'RTML URL',
+                    controller: TextEditingController(),
+                  ),
+                  IsmLiveDimens.boxHeight10,
+                  _InputField(
+                    label: 'Stream Key',
+                    hint: 'Key will be generated after you start a new stream',
+                    readOnly: true,
+                    controller: TextEditingController(),
+                  ),
+                  IsmLiveDimens.boxHeight10,
+                  Text.rich(
+                    const TextSpan(
+                      text:
+                          'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device. \nIf you want to create a new stream key in case you think your key is compromised ',
+                      children: [
+                        TextSpan(
+                          text: 'click here.',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            decorationColor: IsmLiveColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: IsmLiveColors.white,
+                    ),
+                  )
+                ],
+              ),
+      );
+}
+
+class _InputField extends StatelessWidget {
+  const _InputField({
+    required this.label,
+    this.hint,
+    required this.controller,
+    this.readOnly = false,
+    this.suffixIcon,
+  });
+
+  final String label;
+  final String? hint;
+  final TextEditingController controller;
+  final bool readOnly;
+  final Widget? suffixIcon;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: context.textTheme.labelLarge?.copyWith(
+              color: IsmLiveColors.white,
+            ),
+          ),
+          IsmLiveDimens.boxHeight4,
+          IsmLiveInputField(
+            controller: controller,
+            hintText: hint ?? 'Enter $label',
+            hintStyle: context.textTheme.labelLarge?.copyWith(
+              color: IsmLiveColors.white,
+            ),
+            style: context.textTheme.labelLarge?.copyWith(
+              color: IsmLiveColors.white,
+            ),
+            readOnly: readOnly,
+            fillColor: Colors.white30,
+            radius: IsmLiveDimens.twelve,
+            borderColor: IsmLiveColors.white,
+            suffixIcon: suffixIcon,
+          ),
+        ],
       );
 }

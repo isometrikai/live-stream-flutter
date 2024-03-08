@@ -45,9 +45,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
-      return list
-          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -79,8 +77,7 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> createStream(
-      IsmLiveCreateStreamModel streamModel) async {
+  Future<IsmLiveRTCModel?> createStream(IsmLiveCreateStreamModel streamModel) async {
     try {
       var res = await _repository.createStream(streamModel);
       if (res.hasError) {
@@ -150,10 +147,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['members'] as List? ?? [];
 
-      return list
-          .map((e) =>
-              IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveMemberDetailsModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -179,9 +173,7 @@ class IsmLiveStreamViewModel {
 
       var list = jsonDecode(res.data)['viewers'] as List? ?? [];
 
-      return list
-          .map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return list.map((e) => IsmLiveViewerModel.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -386,9 +378,7 @@ class IsmLiveStreamViewModel {
 
       List listOfModerators = jsonDecode(res.data)['moderators'];
 
-      return listOfModerators
-          .map((e) => UserDetails.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return listOfModerators.map((e) => UserDetails.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -471,9 +461,7 @@ class IsmLiveStreamViewModel {
 
       List listOfcopublishRequests = jsonDecode(res.data)['copublishRequests'];
 
-      return listOfcopublishRequests
-          .map((e) => UserDetails.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return listOfcopublishRequests.map((e) => UserDetails.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -498,12 +486,9 @@ class IsmLiveStreamViewModel {
         return [];
       }
 
-      List listOfcopublishRequests =
-          jsonDecode(res.data)['streamEligibleMembers'];
+      List listOfcopublishRequests = jsonDecode(res.data)['streamEligibleMembers'];
 
-      return listOfcopublishRequests
-          .map((e) => UserDetails.fromMap(e as Map<String, dynamic>))
-          .toList();
+      return listOfcopublishRequests.map((e) => UserDetails.fromMap(e as Map<String, dynamic>)).toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return [];
@@ -603,10 +588,7 @@ class IsmLiveStreamViewModel {
 
       var data = jsonDecode(res.data);
 
-      return (
-        pending: data['pending'] as bool? ?? false,
-        accepted: data['accepted'] as bool? ?? false
-      );
+      return (pending: data['pending'] as bool? ?? false, accepted: data['accepted'] as bool? ?? false);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
@@ -629,6 +611,37 @@ class IsmLiveStreamViewModel {
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       return null;
+    }
+  }
+
+  Future<dynamic> getRestreamChannels() async {
+    try {
+      var res = await _repository.getRestreamChannels();
+      if (res.hasError) {
+        return null;
+      }
+
+      return res;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
+  Future<bool> addRestreamChannel({
+    required String url,
+    required bool enable,
+  }) async {
+    try {
+      var res = await _repository.addRestreamChannel(
+        url: url,
+        enable: enable,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
     }
   }
 }
