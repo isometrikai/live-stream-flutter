@@ -12,15 +12,15 @@ class AppConstants {
 
   static const Duration timeOutDuration = Duration(seconds: 60);
 
-  static const String licenseKey = 'lic-IMKDU24b/rXNdtyHLbW2Wz2MJdEhU76pidJ';
-  static const String keySetId = '14514e5f-c0aa-4acc-8c54-aadf12057975';
-  static const String projectId = '0b5facf4-cff7-4b7a-a386-ee3945f895f0';
+  static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
+  static const String keySetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
+  static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
   static const String accountId = '5eb3db9ba9252000014f82ff';
 
   static const String appSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDE0NTE0ZTVmLWMwYWEtNGFjYy04YzU0LWFhZGYxMjA1Nzk3NW0AAAAJcHJvamVjdElkbQAAACQwYjVmYWNmNC1jZmY3LTRiN2EtYTM4Ni1lZTM5NDVmODk1ZjBkAAZzaWduZWRuBgAJquZ4hgE.39woSdaHP5QFUCbinqwoKSqR0xhm6tndiwrlFKeB608';
+      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgAyRZTfiQE.Cd8oTBl0_bylLMQ45YXxUYqyIhbxstGEwCRIgLlQC3Y';
   static const String userSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDE0NTE0ZTVmLWMwYWEtNGFjYy04YzU0LWFhZGYxMjA1Nzk3NW0AAAAJcHJvamVjdElkbQAAACQwYjVmYWNmNC1jZmY3LTRiN2EtYTM4Ni1lZTM5NDVmODk1ZjBkAAZzaWduZWRuBgAJquZ4hgE._bm1V7mVGLt1CPyj8x1tB9LbOiO0qVfDH5JrtQ6cwzo';
+      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgA2RZTfiQE.ci4LzhsWp_E8bTTFVymYqWrCfCBm92uJ1QlczU1PvbY';
 
   static const String mqttHost = 'connections.isometrik.io';
   static const int mqttPort = 2052;

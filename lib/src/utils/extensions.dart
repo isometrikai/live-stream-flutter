@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 extension IsmLiveNullString on String? {
   bool get isNullOrEmpty => this == null || this!.trim().isEmpty;
@@ -107,5 +108,18 @@ extension IsmLiveDoubleExtensions on double {
             ? 0.6
             : 0.7;
     return Get.width * 0.5 * this * value;
+  }
+}
+
+extension IsmLiveRestreamExtensions on IsmLiveRestreamType {
+  String get icon => IsmLiveAssetConstants.youtube;
+
+  String get linkPreview => 'www.youtube.com';
+}
+
+extension IsmLiveDateExtensions on DateTime {
+  String get formattedDate {
+    final date = DateFormat('dd MMM yyyy, hh:mm aa');
+    return date.format(this);
   }
 }
