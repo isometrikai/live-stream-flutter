@@ -7,6 +7,7 @@ class IsmLiveThemeData with Diagnosticable {
     this.primaryColor,
     this.secondaryColor,
     this.backgroundColor,
+    this.borderColor,
     this.primaryButtonTheme,
     this.secondaryButtonTheme,
     this.buttonRadius,
@@ -19,6 +20,7 @@ class IsmLiveThemeData with Diagnosticable {
   final Color? primaryColor;
   final Color? secondaryColor;
   final Color? backgroundColor;
+  final Color? borderColor;
   final IsmLiveButtonThemeData? primaryButtonTheme;
   final IsmLiveButtonThemeData? secondaryButtonTheme;
   final Color? selectedTextColor;
@@ -33,6 +35,7 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(ColorProperty('primaryColor', primaryColor));
     properties.add(ColorProperty('secondaryColor', secondaryColor));
     properties.add(ColorProperty('backgroundColor', backgroundColor));
+    properties.add(ColorProperty('borderColor', borderColor));
     properties.add(
       DiagnosticsProperty<IsmLiveButtonThemeData>(
         'secondaryButtonTheme',
@@ -56,6 +59,7 @@ class IsmLiveThemeData with Diagnosticable {
     Color? primaryColor,
     Color? secondaryColor,
     Color? backgroundColor,
+    Color? borderColor,
     IsmLiveButtonThemeData? primaryButtonTheme,
     IsmLiveButtonThemeData? secondaryButtonTheme,
     Color? selectedTextColor,
@@ -68,6 +72,7 @@ class IsmLiveThemeData with Diagnosticable {
         primaryColor: primaryColor ?? this.primaryColor,
         secondaryColor: secondaryColor ?? this.secondaryColor,
         backgroundColor: backgroundColor ?? this.backgroundColor,
+        borderColor: borderColor ?? this.borderColor,
         primaryButtonTheme: primaryButtonTheme ?? primaryButtonTheme,
         secondaryButtonTheme: secondaryButtonTheme ?? secondaryButtonTheme,
         selectedTextColor: selectedTextColor ?? this.selectedTextColor,

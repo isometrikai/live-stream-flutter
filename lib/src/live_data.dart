@@ -4,6 +4,7 @@ const _kThemeData = IsmLiveThemeData(
   primaryColor: IsmLiveColors.black,
   secondaryColor: IsmLiveColors.secondary,
   backgroundColor: IsmLiveColors.white,
+  borderColor: IsmLiveColors.border,
   selectedTextColor: IsmLiveColors.white,
   unselectedTextColor: IsmLiveColors.grey,
   cardBackgroundColor: IsmLiveColors.white,
