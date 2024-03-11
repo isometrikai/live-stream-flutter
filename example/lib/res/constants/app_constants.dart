@@ -13,8 +13,11 @@ class AppConstants {
   static const Duration timeOutDuration = Duration(seconds: 60);
 
   static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
-  static const String keySetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
-  static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
+  // 'lic-IMKDU24b/rXNdtyHLbW2Wz2MJdEhU76pidJ';
+  static const String keySetId =
+      '40063abb-5af1-4fd4-a7f0-adc4767810b1'; //'14514e5f-c0aa-4acc-8c54-aadf12057975';
+  static const String projectId =
+      'e1241039-2fef-4830-b927-5bb3424f1764'; //'0b5facf4-cff7-4b7a-a386-ee3945f895f0';
   static const String accountId = '5eb3db9ba9252000014f82ff';
 
   static const String appSecret =

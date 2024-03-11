@@ -208,7 +208,11 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add viewers to the stream
-  Future<void> addViewers(List<IsmLiveViewerModel> viewers) async {
+  Future<void> addViewers(
+      List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
+    if (isFirstCall) {
+      _controller.streamViewersList.clear();
+    }
     _controller.streamViewersList.addAll(viewers);
     _controller.streamViewersList =
         _controller.streamViewersList.toSet().toList();

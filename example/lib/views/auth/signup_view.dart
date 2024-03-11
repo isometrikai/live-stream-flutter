@@ -48,7 +48,8 @@ class SignupView extends StatelessWidget {
                 child: Form(
                   key: controller.signFormKey,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Center(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +57,8 @@ class SignupView extends StatelessWidget {
                           const Hero(
                             tag: ValueKey('logo_isometrik'),
                             child: Center(
-                              child: IsmLiveImage.asset(AssetConstants.isometrik),
+                              child:
+                                  IsmLiveImage.asset(AssetConstants.isometrik),
                             ),
                           ),
                           Center(
@@ -92,11 +94,16 @@ class SignupView extends StatelessWidget {
                                   Positioned(
                                     bottom: 10,
                                     right: 0,
-                                    child: GetUtils.isEmail(controller.emailController.text)
+                                    child: GetUtils.isEmail(
+                                            controller.emailController.text)
                                         ? Container(
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
-                                                color: Colors.white, borderRadius: BorderRadius.circular(50), border: Border.all(color: Colors.grey)),
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                border: Border.all(
+                                                    color: Colors.grey)),
                                             width: 30,
                                             height: 30,
                                             child: const Icon(
@@ -145,16 +152,20 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('password_label'),
-                            child: IsmLiveAnimatedText(TranslationKeys.password.tr),
+                            child: IsmLiveAnimatedText(
+                                TranslationKeys.password.tr),
                           ),
                           IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('password_field'),
                             child: IsmLiveInputField.password(
                               suffixIcon: IconButton(
-                                icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                icon: Icon(!controller.showPassward
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined),
                                 onPressed: () {
-                                  controller.showPassward = !controller.showPassward;
+                                  controller.showPassward =
+                                      !controller.showPassward;
                                   controller.update();
                                 },
                               ),
@@ -169,9 +180,12 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight8,
                           IsmLiveInputField.password(
                             suffixIcon: IconButton(
-                              icon: Icon(!controller.showConfirmPasswared ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                              icon: Icon(!controller.showConfirmPasswared
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined),
                               onPressed: () {
-                                controller.showConfirmPasswared = !controller.showConfirmPasswared;
+                                controller.showConfirmPasswared =
+                                    !controller.showConfirmPasswared;
                                 controller.update();
                               },
                             ),
@@ -189,24 +203,8 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('login-signup'),
                             child: IsmLiveButton(
-                              label: TranslationKeys.signup.tr,
-                              onTap: controller.profileImage.isNotEmpty
-                                  ? controller.validateSignUp
-                                  : () {
-                                      Get.dialog(
-                                        AlertDialog(
-                                          title: const Text('Alert'),
-                                          content: const Text('Select Profile Image'),
-                                          actions: [
-                                            IsmLiveButton(
-                                              onTap: Get.back,
-                                              label: 'Okay',
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                            ),
+                                label: TranslationKeys.signup.tr,
+                                onTap: controller.validateSignUp),
                           ),
                           const SizedBox(
                             height: 20,
@@ -249,7 +247,9 @@ class _PickImageBottomSheet extends StatelessWidget {
                   children: [
                     Container(
                       // padding: IsmIsmLiveDimens.edgeInsets8,
-                      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(50)), color: Colors.blueAccent),
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(50)),
+                          color: Colors.blueAccent),
                       width: 50,
                       height: 50,
                       child: const Icon(
@@ -279,7 +279,9 @@ class _PickImageBottomSheet extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: Colors.purpleAccent),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.purpleAccent),
                       width: 50,
                       height: 50,
                       child: const Icon(

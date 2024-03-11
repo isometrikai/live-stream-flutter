@@ -35,7 +35,7 @@ class IsmGoLiveView extends StatelessWidget {
           bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
             alignment: Alignment.center,
-            fit: StackFit.expand,
+            fit: StackFit.loose,
             children: [
               FutureBuilder(
                 future: controller.cameraFuture,
@@ -51,6 +51,11 @@ class IsmGoLiveView extends StatelessWidget {
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }
+                  // final mediaSize = MediaQuery.of(context).size;
+                  // final scale = 1 /
+                  //     (controller.cameraController!.value.aspectRatio *
+                  //         mediaSize.aspectRatio);
+
                   return Transform.scale(
                     scale: controller.cameraController?.value.aspectRatio ?? 1,
                     child: CameraPreview(
@@ -132,7 +137,8 @@ class IsmGoLiveView extends StatelessWidget {
                       value: controller.isRestreamBroadcast,
                     ),
                     const _Restream(),
-                    if (controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice) ...[
+                    if (controller.selectedGoLiveTabItem ==
+                        IsmGoLiveTabItem.liveFromDevice) ...[
                       IsmLiveRadioListTile(
                         title: 'Use Persistent RTMP Stream Key',
                         onChange: controller.onChangePersistent,
@@ -178,7 +184,8 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null ||
+                  controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
@@ -302,7 +309,8 @@ class _AddProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white30,
                           border: Border.all(color: IsmLiveColors.white),
-                          borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+                          borderRadius:
+                              BorderRadius.circular(IsmLiveDimens.sixteen),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,

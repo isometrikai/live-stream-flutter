@@ -364,7 +364,7 @@ class IsmLiveMqttController extends GetxController {
               unawaited(_streamController.handleMessage(message));
               _streamController.streamMembersList
                   .removeWhere((e) => e.userId == memberId);
-              _updateStream();
+              _updateStream([IsmLiveMembersSheet.updateId]);
               if (memberId == userId) {
                 Get.back();
                 IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
@@ -390,7 +390,14 @@ class IsmLiveMqttController extends GetxController {
               body: body,
               isEvent: true,
             );
+            _streamController.streamViewersList
+                .removeWhere((element) => element.userId == memberId);
+
+            await _streamController.getStreamMembers(
+              streamId: streamId,
+            );
             unawaited(_streamController.handleMessage(message));
+            _updateStream([IsmLiveStreamView.updateId]);
 
             break;
           case IsmLiveActions.messageRemoved:
@@ -518,13 +525,13 @@ class IsmLiveMqttController extends GetxController {
                 senderIdentifier: viewer.identifier,
                 senderId: viewer.userId,
                 messageType: IsmLiveMessageType.normal,
-                messageId: '',
+                messageId: DateTime.now().toString(),
                 body: '${viewer.userName} has joined',
                 isEvent: true,
               );
               unawaited(_streamController.handleMessage(message));
-              await _streamController.addViewers([viewer]);
-              _updateStream();
+              await _streamController.addViewers([viewer], false);
+              _updateStream([IsmLiveStreamView.updateId]);
             }
             break;
           case IsmLiveActions.viewerLeft:
@@ -536,7 +543,7 @@ class IsmLiveMqttController extends GetxController {
                 senderIdentifier: viewer.identifier,
                 senderId: viewer.userId,
                 messageType: IsmLiveMessageType.normal,
-                messageId: '',
+                messageId: DateTime.now().toString(),
                 body: '${viewer.userName} has left',
                 isEvent: true,
               );
@@ -559,7 +566,7 @@ class IsmLiveMqttController extends GetxController {
                 senderIdentifier: '',
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
-                messageId: '',
+                messageId: DateTime.now().toString(),
                 body: userId == initiatorId
                     ? 'You\'ve remove $viewerName'
                     : '$initiatorName has remove $viewerName',
@@ -568,7 +575,7 @@ class IsmLiveMqttController extends GetxController {
               unawaited(_streamController.handleMessage(message));
               _streamController.streamViewersList
                   .removeWhere((e) => e.userId == viewerId);
-              _updateStream();
+              _updateStream([IsmLiveStreamView.updateId]);
               if (viewerId == userId) {
                 Get.back();
                 IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());

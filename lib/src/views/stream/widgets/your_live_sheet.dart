@@ -26,7 +26,7 @@ class YourLiveSheet extends StatelessWidget {
             Padding(
               padding: IsmLiveDimens.edgeInsets40_0,
               child: const Text(
-                'We\'ve sent a notification to your followers your fans will start to join soon',
+                'We’ve sent a notification to all your followers , and they should be joining soon',
                 textAlign: TextAlign.center,
               ),
             ),

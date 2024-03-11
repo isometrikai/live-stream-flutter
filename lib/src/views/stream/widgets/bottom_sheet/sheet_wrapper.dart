@@ -84,7 +84,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
                 controller: controller,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
-                separatorBuilder: (context, index) => IsmLiveDimens.boxHeight24,
+                separatorBuilder: (context, index) => IsmLiveDimens.box0,
               ),
             ),
           ],

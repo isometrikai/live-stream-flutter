@@ -169,8 +169,7 @@ mixin StreamAPIMixin {
       limit: limit,
       skip: skip,
     );
-
-    await _controller.addViewers(res);
+    await _controller.addViewers(res, skip == 0);
   }
 
 // Fetches messages related to a live stream.
