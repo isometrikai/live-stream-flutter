@@ -30,8 +30,7 @@ class IsmLiveMessageField extends StatelessWidget {
                       padding: IsmLiveDimens.edgeInsets4,
                       margin: IsmLiveDimens.edgeInsets8_0,
                       decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(IsmLiveDimens.twelve),
+                        borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
                         color: Colors.white70,
                       ),
                       child: Row(
@@ -72,11 +71,9 @@ class IsmLiveMessageField extends StatelessWidget {
                     hintText: 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsets0,
                     fillColor: IsmLiveColors.white.withOpacity(0.3),
-                    hintStyle: context.textTheme.bodySmall
-                        ?.copyWith(color: Colors.white),
+                    hintStyle: context.textTheme.bodySmall?.copyWith(color: Colors.white),
                     borderColor: Colors.transparent,
-                    onchange: (value) =>
-                        controller.update([IsmLiveStreamView.updateId]),
+                    onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
                     textInputAction: TextInputAction.send,
                     onFieldSubmit: (value) => controller.sendTextMessage(
                       streamId: streamId,
@@ -88,8 +85,7 @@ class IsmLiveMessageField extends StatelessWidget {
                       onPressed: controller.messageFieldController.isNotEmpty
                           ? () => controller.sendTextMessage(
                                 streamId: streamId,
-                                body: controller.messageFieldController.text
-                                    .trim(),
+                                body: controller.messageFieldController.text.trim(),
                                 parentMessage: controller.parentMessage,
                               )
                           : null,
@@ -110,19 +106,19 @@ class IsmLiveMessageField extends StatelessWidget {
               ),
             ] else ...[
               IsmLiveDimens.boxWidth8,
-              if (controller.room!.localParticipant!.isScreenShareEnabled())
-                SizedBox.square(
-                  dimension: IsmLiveDimens.fortyFive,
-                  child: IsmLiveButton.icon(
-                    icon: Icons.cancel_presentation_rounded,
-                    onTap: controller.disableScreenShare,
-                  ),
-                )
-              else
-                SizedBox(
-                  width: Get.width * 0.4,
-                  child: const IsmLiveButton(label: 'Next Item >>'),
-                )
+              // if (controller.room!.localParticipant!.isScreenShareEnabled())
+              //   SizedBox.square(
+              //     dimension: IsmLiveDimens.fortyFive,
+              //     child: IsmLiveButton.icon(
+              //       icon: Icons.cancel_presentation_rounded,
+              //       onTap: controller.disableScreenShare,
+              //     ),
+              //   )
+              // else
+              SizedBox(
+                width: Get.width * 0.4,
+                child: const IsmLiveButton(label: 'Next Item >>'),
+              )
               // SizedBox.square(
               //   dimension: IsmLiveDimens.fortyFive,
               //   child: IsmLiveButton.icon(

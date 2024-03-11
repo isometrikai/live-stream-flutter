@@ -83,7 +83,7 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProv
         () => Offstage(
           offstage: isCompleted,
           child: Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.center,
             child: SizedBox(
               height: Get.height * 0.5,
               width: Get.width * 0.5,
