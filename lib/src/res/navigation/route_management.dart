@@ -117,4 +117,10 @@ abstract class IsmLiveRouteManagement {
       IsmLiveRoutes.addProduct,
     );
   }
+
+  static void goToTagProduct() {
+    Get.toNamed<void>(
+      IsmLiveRoutes.tagProduct,
+    );
+  }
 }

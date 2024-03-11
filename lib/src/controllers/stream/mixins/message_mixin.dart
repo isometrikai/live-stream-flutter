@@ -1,9 +1,10 @@
 part of '../stream_controller.dart';
 
+// This mixin provides utility functions related to handling chat messages in a stream.
 mixin StreamMessageMixin {
   IsmLiveStreamController get _controller =>
       Get.find<IsmLiveStreamController>();
-
+// Convert IsmLiveMessageModel to IsmLiveChatModel
   IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
       IsmLiveChatModel(
         streamId: message.streamId,
@@ -22,6 +23,7 @@ mixin StreamMessageMixin {
         isEvent: message.isEvent,
       );
 
+// Handle incoming message based on its type
   Future<void> handleMessage(
     IsmLiveMessageModel message, [
     bool isMqtt = true,
@@ -45,6 +47,7 @@ mixin StreamMessageMixin {
     }
   }
 
+  // Send a text message to the stream
   Future<void> sendTextMessage({
     required String streamId,
     required String body,
@@ -56,7 +59,7 @@ mixin StreamMessageMixin {
     _controller.messageFieldController.clear();
     _controller.parentMessage = null;
     _controller.update([IsmLiveMessageField.updateId]);
-
+// If there is a parent message, send a reply message
     if (parentMessage != null) {
       final isReply = await _controller.replyMessage(
         showLoading: false,
@@ -79,6 +82,7 @@ mixin StreamMessageMixin {
         _controller.update([IsmLiveMessageField.updateId]);
       }
     } else {
+      // If no parent message, send a normal message
       final isSent = await _controller.sendMessage(
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
@@ -97,6 +101,7 @@ mixin StreamMessageMixin {
     }
   }
 
+// Send a heart message to the stream
   Future<void> sendHeartMessage(String streamId) async {
     const body = 'heart';
     final isSent = await _controller.sendMessage(
@@ -114,6 +119,7 @@ mixin StreamMessageMixin {
     if (isSent) {}
   }
 
+  // Send a gift message to the stream
   Future<void> sendGiftMessage({
     required String streamId,
     required IsmLiveGifts gift,
@@ -134,6 +140,7 @@ mixin StreamMessageMixin {
     if (isSent) {}
   }
 
+  // Handle a message being removed
   Future<void> messageRemoved(String messageId, String userName) async {
     var message =
         _controller.streamMessagesList.cast<IsmLiveChatModel?>().firstWhere(
@@ -148,7 +155,7 @@ mixin StreamMessageMixin {
     if (index == -1) {
       return;
     }
-
+    // Update the message as deleted
     message = message.copyWith(
       isDeleted: true,
       body: userName,

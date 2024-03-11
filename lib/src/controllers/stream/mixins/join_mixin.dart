@@ -1,14 +1,15 @@
 part of '../stream_controller.dart';
 
+// This mixin provides methods for joining and initializing streams
 mixin StreamJoinMixin {
+  // Get references to the necessary controllers and wrappers using Get.find()
   IsmLiveStreamController get _controller => Get.find();
-
   IsmLiveDBWrapper get _dbWrapper => Get.find();
 
-  // bool isMeetingOn = false;
-
+  // Check if Go Live is enabled by checking if the description controller is not empty
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
 
+// Initialize the Go Live process by requesting camera permission and initializing the camera controller
   Future<void> initializationOfGoLive() async {
     await Permission.camera.request();
     _controller.cameraController = CameraController(
@@ -19,6 +20,7 @@ mixin StreamJoinMixin {
     _controller.update([IsmGoLiveView.updateId]);
   }
 
+// Initialize and join a stream
   Future<void> initializeAndJoinStream(
     IsmLiveStreamModel stream,
     bool isHost, {
@@ -28,10 +30,12 @@ mixin StreamJoinMixin {
     await joinStream(stream, isHost, joinByScrolling: joinByScrolling);
   }
 
+// Initialize the page controller
   void initialize(int index) {
     _controller.pageController = PageController(initialPage: index);
   }
 
+  // Enable the user's video
   Future<void> enableMyVideo() async {
     if (_controller.room == null) {
       return;
@@ -49,6 +53,7 @@ mixin StreamJoinMixin {
     ]);
   }
 
+// Toggle audio on/off
   Future<void> toggleAudio({
     bool? value,
   }) async {
@@ -65,11 +70,13 @@ mixin StreamJoinMixin {
     _controller.update();
   }
 
+// Join a stream
   Future<void> joinStream(
     IsmLiveStreamModel stream,
     bool isHost, {
     bool joinByScrolling = false,
   }) async {
+    // Get the token for the stream based on whether the user is a host or not
     var token = '';
     if (isHost) {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
@@ -87,6 +94,7 @@ mixin StreamJoinMixin {
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
 
+    // Connect to the stream
     await connectStream(
       token: token,
       streamId: stream.streamId!,
@@ -99,6 +107,7 @@ mixin StreamJoinMixin {
     );
   }
 
+// Start streaming
   Future<void> startStream() async {
     if (_controller.pickedImage == null) {
       final file = await _controller.cameraController?.takePicture();
@@ -113,7 +122,7 @@ mixin StreamJoinMixin {
         }
       }
     }
-
+    // Create a stream
     var data = await _controller.createStream();
     if (data == null) {
       return;
@@ -125,6 +134,7 @@ mixin StreamJoinMixin {
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
 
+    // Connect to the created stream
     await connectStream(
       token: stream.rtcToken,
       streamId: stream.streamId!,
@@ -135,6 +145,7 @@ mixin StreamJoinMixin {
     );
   }
 
+  // Connect to the stream
   Future<void> connectStream({
     required String token,
     required String streamId,
@@ -150,10 +161,12 @@ mixin StreamJoinMixin {
     // if (isMeetingOn) {
     //   return;
     // }
+    // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
     _controller.descriptionController.text =
         streamDiscription ?? _controller.descriptionController.text;
 
+    // Subscribe to the stream
     _controller.streamId = streamId;
     _controller.isHost = isHost;
     _controller.isCopublisher = isCopublisher;
@@ -163,6 +176,7 @@ mixin StreamJoinMixin {
       ),
     );
 
+// Show appropriate message based on the user's role
     final translation = Get.context?.liveTranslations.streamTranslations;
     var message = '';
     if (isHost) {
@@ -223,6 +237,7 @@ mixin StreamJoinMixin {
         return;
       }
 
+      // Set track subscription permissions
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
         trackPermissions: [
@@ -234,10 +249,11 @@ mixin StreamJoinMixin {
         ],
       );
 
+      // Enable video if the user is a host or copublisher
       if (isHost || isCopublisher) {
         await enableMyVideo();
       }
-
+      // Toggle audio if the user is a host or
       unawaited(
         _controller.toggleAudio(
           value: isHost || isCopublisher,

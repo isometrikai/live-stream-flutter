@@ -23,12 +23,12 @@ class IsmLiveAddProduct extends StatelessWidget {
         ),
         body: GetBuilder<IsmLiveStreamController>(
           id: updateId,
-          // initState: (state) {
-          //   var control = Get.find<IsmLiveStreamController>();
-          //   control.searchProductFieldController.clear();
-          //   control.productsList.clear();
-          //   control.fetchProducts();
-          // },
+          initState: (state) {
+            var control = Get.find<IsmLiveStreamController>();
+            control.searchProductFieldController.clear();
+            control.productsList.clear();
+            control.fetchProducts();
+          },
           builder: (controller) => controller.productsList.isEmpty
               ? const Center(
                   child: Text(

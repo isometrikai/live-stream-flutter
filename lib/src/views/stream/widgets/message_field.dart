@@ -119,13 +119,17 @@ class IsmLiveMessageField extends StatelessWidget {
                   ),
                 )
               else
-                SizedBox.square(
-                  dimension: IsmLiveDimens.fortyFive,
-                  child: IsmLiveButton.icon(
-                    icon: Icons.present_to_all_rounded,
-                    onTap: controller.enableScreenShare,
-                  ),
+                SizedBox(
+                  width: Get.width * 0.4,
+                  child: const IsmLiveButton(label: 'Next Item >>'),
                 )
+              // SizedBox.square(
+              //   dimension: IsmLiveDimens.fortyFive,
+              //   child: IsmLiveButton.icon(
+              //     icon: Icons.present_to_all_rounded,
+              //     onTap: controller.enableScreenShare,
+              //   ),
+              // )
             ],
           ],
         ),

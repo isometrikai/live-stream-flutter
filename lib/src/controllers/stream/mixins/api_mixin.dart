@@ -1,10 +1,15 @@
 part of '../stream_controller.dart';
 
+/// A mixin containing methods related to API calls for managing streams and users.
 mixin StreamAPIMixin {
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  /// Get the instance of IsmLiveStreamController using GetX.
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
 
+  /// Get the instance of IsmLiveDBWrapper using GetX.
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
+  // Debouncers for handling multiple API calls.
   final _memberDebouncer = IsmLiveDebouncer();
   final _viewerDebouncer = IsmLiveDebouncer();
   final _messagesDebouncer = IsmLiveDebouncer();
@@ -14,6 +19,7 @@ mixin StreamAPIMixin {
   final _moderatorsDebouncer = IsmLiveDebouncer();
   final _productsDebouncer = IsmLiveDebouncer();
 
+  /// Fetch user details from local storage.
   Future<void> getUserDetails() async {
     await _controller._viewModel.getUserDetails();
     _controller.user = UserDetails.fromJson(
@@ -22,6 +28,7 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveHeader.updateId]);
   }
 
+  /// Subscribe or unsubscribe the current user to/from the platform.
   Future<bool> _subscribeUser(
     bool isSubscribing,
   ) =>
@@ -29,6 +36,7 @@ mixin StreamAPIMixin {
         isSubscribing: isSubscribing,
       );
 
+  /// Get streams based on the specified type (e.g., featured, trending, etc.).
   Future<void> getStreams([
     IsmLiveStreamType? type,
   ]) async =>
@@ -36,6 +44,7 @@ mixin StreamAPIMixin {
         () => _getStreams(type),
       );
 
+  /// Internal method for getting streams based on the specified type.
   Future<void> _getStreams([
     IsmLiveStreamType? type,
   ]) async {
@@ -49,16 +58,19 @@ mixin StreamAPIMixin {
     });
   }
 
+  /// Get an RTC token for joining a stream.
   Future<IsmLiveRTCModel?> getRTCToken(
     String streamId,
   ) =>
       _controller._viewModel.getRTCToken(streamId);
 
+//Leaves a live stream.
   Future<bool> leaveStream(
     String streamId,
   ) =>
       _controller._viewModel.leaveStream(streamId);
 
+// Creates a new live stream with the provided details.
   Future<({IsmLiveRTCModel? model, String image})?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
     var type = _controller.pickedImage!.name.split('.').last;
@@ -75,7 +87,9 @@ mixin StreamAPIMixin {
               _controller.selectedProductsList.map((e) => e.productId).toList(),
           hdBroadcast: _controller.isHdBroadcast,
           enableRecording: _controller.isRecordingBroadcast,
-          streamDescription: _controller.descriptionController.isEmpty ? 'N/A' : _controller.descriptionController.text,
+          streamDescription: _controller.descriptionController.isEmpty
+              ? 'N/A'
+              : _controller.descriptionController.text,
           restream: _controller.isRestreamBroadcast,
         ),
       ),
@@ -83,6 +97,7 @@ mixin StreamAPIMixin {
     );
   }
 
+// Stops an ongoing live stream.
   Future<bool> stopStream(
     String streamId,
   ) =>
@@ -94,20 +109,24 @@ mixin StreamAPIMixin {
     int skip = 0,
     String? searchTag,
   }) async =>
-      _memberDebouncer.run(() => _getStreamMembers(
-            streamId: streamId,
-            limit: limit,
-            skip: skip,
-            searchTag: searchTag,
-          ));
+      _memberDebouncer.run(
+        () => _getStreamMembers(
+          streamId: streamId,
+          limit: limit,
+          skip: skip,
+          searchTag: searchTag,
+        ),
+      );
 
+// Fetches members of a particular live stream.
   Future<void> _getStreamMembers({
     required String streamId,
     required int limit,
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList = await _controller._viewModel.getStreamMembers(
+    _controller.streamMembersList =
+        await _controller._viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -122,6 +141,7 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveMembersSheet.updateId]);
   }
 
+//  Fetches viewers of a particular live stream.
   Future<void> getStreamViewer({
     required String streamId,
     int limit = 10,
@@ -137,6 +157,7 @@ mixin StreamAPIMixin {
         ),
       );
 
+//  Fetches viewers of a particular live stream.
   Future<void> _getStreamViewer({
     required String streamId,
     required int limit,
@@ -152,6 +173,7 @@ mixin StreamAPIMixin {
     await _controller.addViewers(res);
   }
 
+// Fetches messages related to a live stream.
   Future<void> fetchMessages({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
@@ -179,6 +201,8 @@ mixin StreamAPIMixin {
     }
   }
 
+// Fetches the count of messages related to a live stream.
+
   Future<void> fetchMessagesCount({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
@@ -189,6 +213,7 @@ mixin StreamAPIMixin {
     );
   }
 
+//Sends a message related to a live stream.
   Future<bool> sendMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
@@ -198,6 +223,7 @@ mixin StreamAPIMixin {
         getMessageModel: sendMessageModel,
       );
 
+//Replies to a message related to a live stream.
   Future<bool> replyMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
@@ -207,6 +233,7 @@ mixin StreamAPIMixin {
         getMessageModel: sendMessageModel,
       );
 
+//Kicks out a viewer from a live stream.
   Future<bool> kickoutViewer({
     required String streamId,
     required String viewerId,
@@ -215,7 +242,7 @@ mixin StreamAPIMixin {
         streamId: streamId,
         viewerId: viewerId,
       );
-
+//  Fetches users of the application.
   Future<void> fetchUsers({
     bool forceFetch = false,
     int limit = 15,
@@ -247,6 +274,7 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveUsersSheet.updateId]);
   }
 
+//Fetches moderators of a particular live stream.
   Future<void> fetchModerators({
     bool forceFetch = false,
     required String streamId,
@@ -285,6 +313,7 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveModeratorsSheet.updateId]);
   }
 
+//Deletes a message related to a live stream.
   Future<bool> deleteMessage({
     required String streamId,
     required String messageId,
@@ -294,13 +323,16 @@ mixin StreamAPIMixin {
         messageId: messageId,
       );
 
+//Uploads an image for a live stream.
   Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations.uploadingImage ?? IsmLiveStrings.uploadingImage,
+      Get.context?.liveTranslations.uploadingImage ??
+          IsmLiveStrings.uploadingImage,
     );
     var res = await _controller._viewModel.getPresignedUrl(
       showLoader: false,
-      userIdentifier: _controller.user?.userIdentifier ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      userIdentifier: _controller.user?.userIdentifier ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
       mediaExtension: mediaExtension,
     );
     if (res == null) {
@@ -321,6 +353,7 @@ mixin StreamAPIMixin {
     return res.mediaUrl ?? '';
   }
 
+//Makes a user a moderator of a live stream.
   Future<bool> makeModerator({
     required String streamId,
     required String moderatorId,
@@ -330,6 +363,7 @@ mixin StreamAPIMixin {
         moderatorId: moderatorId,
       );
 
+//Removes a moderator from a live stream.
   Future<bool> removeModerator({
     required String streamId,
     required String moderatorId,
@@ -339,7 +373,8 @@ mixin StreamAPIMixin {
       moderatorId: moderatorId,
     );
     if (res) {
-      _controller.moderatorsList.removeWhere((element) => element.userId == moderatorId);
+      _controller.moderatorsList
+          .removeWhere((element) => element.userId == moderatorId);
 
       _controller.update([IsmLiveModeratorsSheet.updateId]);
     }
@@ -347,6 +382,7 @@ mixin StreamAPIMixin {
     return res;
   }
 
+// Leaves the moderator status of a user from a live stream.
   Future<bool> leaveModerator(
     String streamId,
   ) async {
@@ -358,6 +394,7 @@ mixin StreamAPIMixin {
     return isLeave;
   }
 
+//  Requests to become a co-publisher of a live stream.
   Future<bool> requestCopublisher(
     String streamId,
   ) async {
@@ -367,6 +404,7 @@ mixin StreamAPIMixin {
     return isSend;
   }
 
+//  Fetches requests for co-publishing a live stream.
   Future<void> fetchCopublisherRequests({
     bool forceFetch = false,
     required String streamId,
@@ -400,11 +438,13 @@ mixin StreamAPIMixin {
         searchTag: searchTag,
       );
       _controller.copublisherRequestsList.addAll(list);
-      _controller.copublisherRequestsList = _controller.copublisherRequestsList.toSet().toList();
+      _controller.copublisherRequestsList =
+          _controller.copublisherRequestsList.toSet().toList();
     }
     _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
 
+// Fetches eligible members for co-publishing a live stream.
   Future<void> fetchEligibleMembers({
     bool forceFetch = false,
     required String streamId,
@@ -438,11 +478,13 @@ mixin StreamAPIMixin {
         searchTag: searchTag,
       );
       _controller.eligibleMembersList.addAll(list);
-      _controller.eligibleMembersList = _controller.eligibleMembersList.toSet().toList();
+      _controller.eligibleMembersList =
+          _controller.eligibleMembersList.toSet().toList();
     }
     _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
 
+//  Accepts a request for co-publishing a live stream.
   Future<bool> acceptCopublisherRequest({
     required String streamId,
     required String requestById,
@@ -452,7 +494,8 @@ mixin StreamAPIMixin {
       requestById: requestById,
     );
     if (res) {
-      _controller.copublisherRequestsList.removeWhere((element) => element.userId == requestById);
+      _controller.copublisherRequestsList
+          .removeWhere((element) => element.userId == requestById);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -460,6 +503,7 @@ mixin StreamAPIMixin {
     return res;
   }
 
+//Denies a request for co-publishing a live stream.
   Future<bool> denyCopublisherRequest({
     required String streamId,
     required String requestById,
@@ -469,7 +513,8 @@ mixin StreamAPIMixin {
       requestById: requestById,
     );
     if (res) {
-      _controller.copublisherRequestsList.removeWhere((element) => element.userId == requestById);
+      _controller.copublisherRequestsList
+          .removeWhere((element) => element.userId == requestById);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -477,6 +522,7 @@ mixin StreamAPIMixin {
     return res;
   }
 
+// Adds a member to a live stream.
   Future<bool> addMember({
     required String streamId,
     required String memberId,
@@ -486,7 +532,8 @@ mixin StreamAPIMixin {
       memberId: memberId,
     );
     if (res) {
-      _controller.eligibleMembersList.removeWhere((element) => element.userId == memberId);
+      _controller.eligibleMembersList
+          .removeWhere((element) => element.userId == memberId);
 
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
@@ -494,6 +541,7 @@ mixin StreamAPIMixin {
     return res;
   }
 
+// Removes a member from a live stream.
   Future<bool> removeMember({
     required String streamId,
     required String memberId,
@@ -503,13 +551,15 @@ mixin StreamAPIMixin {
       memberId: memberId,
     );
     if (res) {
-      _controller.streamMembersList.removeWhere((element) => element.userId == memberId);
+      _controller.streamMembersList
+          .removeWhere((element) => element.userId == memberId);
       _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
 
     return res;
   }
 
+//Leaves a live stream as a member.
   Future<bool> leaveMember({
     required String streamId,
   }) async {
@@ -517,7 +567,8 @@ mixin StreamAPIMixin {
       streamId: streamId,
     );
     if (res) {
-      _controller.streamMembersList.removeWhere((element) => element.userId == _controller.user?.userId);
+      _controller.streamMembersList
+          .removeWhere((element) => element.userId == _controller.user?.userId);
 
       _controller.update([IsmLiveMembersSheet.updateId]);
     }
@@ -525,6 +576,7 @@ mixin StreamAPIMixin {
     return res;
   }
 
+//  Fetches the status of a co-publisher request.
   Future<void> statusCopublisherRequest(
     String streamId,
   ) async {
@@ -540,13 +592,14 @@ mixin StreamAPIMixin {
     }
   }
 
+// Switches the viewer to a different live stream.
   Future<String?> switchViewer({
     required String streamId,
   }) =>
       _controller._viewModel.switchViewer(
         streamId: streamId,
       );
-
+// Fetches products associated with a live stream.
   Future<void> fetchProducts({
     bool forceFetch = false,
     int limit = 15,
@@ -581,9 +634,11 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveAddProduct.updateId]);
   }
 
-  Future<void> getRestreamChannels() => _controller._viewModel.getRestreamChannels();
+  Future<void> getRestreamChannels() =>
+      _controller._viewModel.getRestreamChannels();
 
-  Future<bool> enableRestreamChannel(bool enable) => _controller._viewModel.addRestreamChannel(
+  Future<bool> enableRestreamChannel(bool enable) =>
+      _controller._viewModel.addRestreamChannel(
         url: _controller.rtmlUrl.text.trim(),
         enable: enable,
       );

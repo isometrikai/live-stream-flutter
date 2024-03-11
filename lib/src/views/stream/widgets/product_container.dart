@@ -11,8 +11,10 @@ class IsmLiveProductContainer extends StatelessWidget {
     required this.price,
     required this.onPress,
     required this.imageUrl,
+    this.width,
   });
   final String productName;
+  final double? width;
   final String imageUrl;
   final String productDisc;
   final String currencyIcon;
@@ -21,7 +23,7 @@ class IsmLiveProductContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: Get.width * .3,
+        width: width ?? Get.width * .3,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
