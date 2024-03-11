@@ -373,6 +373,8 @@ class _ScheduleStream extends StatelessWidget {
                 controller: TextEditingController(
                   text: controller.scheduleLiveDate.formattedDate,
                 ),
+                readOnly: true,
+                onTap: () => controller.onChangeSchedule(false),
                 suffixIcon: const UnconstrainedBox(
                   child: IsmLiveImage.svg(
                     IsmLiveAssetConstants.calendar,
@@ -435,6 +437,7 @@ class _InputField extends StatelessWidget {
     required this.controller,
     this.readOnly = false,
     this.suffixIcon,
+    this.onTap,
   });
 
   final String label;
@@ -442,6 +445,7 @@ class _InputField extends StatelessWidget {
   final TextEditingController controller;
   final bool readOnly;
   final Widget? suffixIcon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -463,6 +467,7 @@ class _InputField extends StatelessWidget {
             style: context.textTheme.labelLarge?.copyWith(
               color: IsmLiveColors.white,
             ),
+            onTap: onTap,
             readOnly: readOnly,
             fillColor: Colors.white30,
             radius: IsmLiveDimens.twelve,

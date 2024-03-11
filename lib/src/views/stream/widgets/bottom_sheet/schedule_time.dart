@@ -36,6 +36,7 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
               height: Get.height * 0.3,
               child: GetBuilder<IsmLiveStreamController>(
                 builder: (controller) => CupertinoDatePicker(
+                  minimumDate: DateTime.now(),
                   onDateTimeChanged: (date) {
                     controller.scheduleLiveDate = date;
                   },

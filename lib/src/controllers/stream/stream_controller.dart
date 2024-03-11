@@ -288,8 +288,7 @@ class IsmLiveStreamController extends GetxController
     });
 
     productListController.addListener(() async {
-      if (productListController.position.maxScrollExtent * 0.8 <=
-          productListController.position.pixels) {
+      if (productListController.position.maxScrollExtent * 0.8 <= productListController.position.pixels) {
         if (isProductApiCall) {
           return;
         }
@@ -299,9 +298,7 @@ class IsmLiveStreamController extends GetxController
           limit: 10,
           skip: productsList.length,
           forceFetch: true,
-          searchTag: searchProductFieldController.text.trim().isEmpty
-              ? null
-              : searchProductFieldController.text.trim(),
+          searchTag: searchProductFieldController.text.trim().isEmpty ? null : searchProductFieldController.text.trim(),
         );
         isProductApiCall = false;
       }
@@ -462,7 +459,7 @@ class IsmLiveStreamController extends GetxController
   }
 
   void onChangeSchedule(bool value) async {
-    if (!isSchedulingBroadcast) {
+    if (!value) {
       await IsmLiveUtility.openBottomSheet(const IsmLiveScheduleTimeBottomSheet());
     }
     isSchedulingBroadcast = value;
