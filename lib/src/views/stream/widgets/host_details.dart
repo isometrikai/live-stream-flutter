@@ -6,13 +6,16 @@ class IsmLiveHostDetail extends StatelessWidget {
     super.key,
     required this.name,
     required this.imageUrl,
+    required this.description,
+    required this.isHost,
   });
 
   final String name;
   final String imageUrl;
+  final String description;
+  final bool isHost;
 
-  Color _color(BuildContext context) =>
-      context.liveTheme.backgroundColor ?? IsmLiveColors.white;
+  Color _color(BuildContext context) => context.liveTheme.backgroundColor ?? IsmLiveColors.white;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -26,7 +29,10 @@ class IsmLiveHostDetail extends StatelessWidget {
                 height: IsmLiveDimens.hundred,
                 width: IsmLiveDimens.hundred,
               ),
-              title: '@$name',
+              title: name,
+              subTitle: description.trim().isEmpty ? null : description,
+              buttonLable: isHost ? null : 'Follow',
+              onTap: isHost ? null : () {},
             ),
           );
         },

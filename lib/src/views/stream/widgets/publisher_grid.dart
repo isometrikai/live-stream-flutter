@@ -27,7 +27,11 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: controller.participantTracks.length < 5 ? 2 : 3,
-                        childAspectRatio: controller.participantTracks.length < 3 ? 0.6 : 0.8,
+                        childAspectRatio: controller.participantTracks.length < 3
+                            ? 0.5
+                            : controller.participantTracks.length < 5
+                                ? 0.9
+                                : 0.6,
                       ),
                       itemBuilder: (_, index) => ParticipantWidget.widgetFor(
                         controller.participantTracks[index],

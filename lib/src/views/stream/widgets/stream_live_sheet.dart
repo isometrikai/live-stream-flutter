@@ -24,6 +24,13 @@ class StreamLiveSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: Get.back,
+                icon: const Icon(Icons.close),
+              ),
+            ),
             widget ?? IsmLiveDimens.box0,
             IsmLiveDimens.boxHeight16,
             Text(

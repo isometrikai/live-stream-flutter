@@ -17,7 +17,7 @@ class IsmLiveChatView extends StatelessWidget {
         builder: (controller) => Container(
           padding: IsmLiveDimens.edgeInsets4_0,
           constraints: BoxConstraints(
-            maxHeight: Get.height * 0.4,
+            maxHeight: controller.participantTracks.length < 3 ? Get.height * 0.4 : Get.height * 0.25,
             maxWidth: Get.width * 0.5,
           ),
           child: ListView.separated(
@@ -77,20 +77,15 @@ class IsmLiveChatView extends StatelessWidget {
                                   IsmLiveDimens.boxWidth8,
                                   DecoratedBox(
                                     decoration: BoxDecoration(
-                                      color: (context.liveTheme.primaryColor ??
-                                              IsmLiveColors.primary)
-                                          .withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(
-                                          IsmLiveDimens.four),
+                                      color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(IsmLiveDimens.four),
                                     ),
                                     child: Padding(
                                       padding: IsmLiveDimens.edgeInsets6_2,
                                       child: Text(
                                         'Host',
-                                        style: context.textTheme.labelSmall
-                                            ?.copyWith(
-                                          color: IsmLiveColors.white
-                                              .withOpacity(0.7),
+                                        style: context.textTheme.labelSmall?.copyWith(
+                                          color: IsmLiveColors.white.withOpacity(0.7),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -108,8 +103,7 @@ class IsmLiveChatView extends StatelessWidget {
                                 ),
                               )
                             else ...[
-                              if (message.isReply &&
-                                  message.parentBody != null) ...[
+                              if (message.isReply && message.parentBody != null) ...[
                                 Text(
                                   'Reply to ${message.parentBody}',
                                   style: context.textTheme.labelSmall?.copyWith(
@@ -124,8 +118,7 @@ class IsmLiveChatView extends StatelessWidget {
                                 width: Get.width * 0.35,
                                 child: Text(
                                   message.body.trim(),
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
+                                  style: context.textTheme.labelMedium?.copyWith(
                                     color: IsmLiveColors.white,
                                   ),
                                   softWrap: true,
