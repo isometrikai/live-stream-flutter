@@ -32,7 +32,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
           textEditingController: controller.searchModeratorFieldController,
           hintText: 'Search Moderators',
           onchange: controller.searchModerators,
-          title: 'Moderatorsrs',
+          title: 'Moderators',
           controller: controller.moderatorListController,
           itemCount: controller.moderatorsList.length,
           itemBuilder: (context, index) {
@@ -45,7 +45,8 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
               ),
               title: Text(moderator.userName),
               subtitle: Text(moderator.userIdentifier),
-              trailing: (moderator.userId != controller.user?.userId && controller.isHost == true)
+              trailing: (moderator.userId != controller.user?.userId &&
+                      controller.isHost == true)
                   ? IsmLiveButton.icon(
                       icon: Icons.person_remove_rounded,
                       onTap: () {
@@ -59,7 +60,8 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                       ? IsmLiveButton.icon(
                           icon: Icons.exit_to_app_rounded,
                           onTap: () {
-                            controller.leaveModerator(controller.streamId ?? '');
+                            controller
+                                .leaveModerator(controller.streamId ?? '');
                           },
                         )
                       : null,

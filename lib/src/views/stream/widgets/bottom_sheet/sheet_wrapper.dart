@@ -16,6 +16,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
     this.controller,
     this.trailing,
     this.showCancelIcon = false,
+    this.separatedWidgat,
   });
 
   final String title;
@@ -30,6 +31,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
   final ScrollController? controller;
   final Widget? trailing;
   final bool showHeader;
+  final Widget? separatedWidgat;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -84,7 +86,8 @@ class IsmLiveScrollSheet extends StatelessWidget {
                 controller: controller,
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
-                separatorBuilder: (context, index) => IsmLiveDimens.box0,
+                separatorBuilder: (context, index) =>
+                    separatedWidgat ?? IsmLiveDimens.box0,
               ),
             ),
           ],

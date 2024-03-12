@@ -204,11 +204,11 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyAudio(IsmLiveAssetConstants.volume, 'Mute Volume', 'Unmute Volume'),
+  muteMyAudio(IsmLiveAssetConstants.volume, 'Mute', 'Unmute'),
   muteMyVideo(
-      IsmLiveAssetConstants.video_camera, 'Disable Video', 'Enable Video'),
-  block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),
-  report(IsmLiveAssetConstants.report, 'Report', '');
+      IsmLiveAssetConstants.video_camera, 'Turn Off Video', 'Trun On Video');
+  // block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),
+  // report(IsmLiveAssetConstants.report, 'Report', '');
   // muteRemoteVideo('Mute remote video', 'Unmute remote video'),
   // muteRemoteAudio('Mute remote audio', 'Unmute remote audio'),
   // showNetWorkStats('Show netWork stats', 'Hide netWork stats'),

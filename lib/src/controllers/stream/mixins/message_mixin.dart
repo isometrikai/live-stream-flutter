@@ -56,6 +56,7 @@ mixin StreamMessageMixin {
     if (body.trim().isEmpty) {
       return;
     }
+
     _controller.messageFieldController.clear();
     _controller.parentMessage = null;
     _controller.update([IsmLiveMessageField.updateId]);
@@ -65,7 +66,7 @@ mixin StreamMessageMixin {
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
           streamId: streamId,
-          body: body,
+          body: IsmLiveUtility.encodeString(body),
           searchableTags: [body],
           metaData: IsmLiveMetaData(
             parentMessageBody: parentMessage.body,
@@ -87,7 +88,7 @@ mixin StreamMessageMixin {
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
           streamId: streamId,
-          body: body,
+          body: IsmLiveUtility.encodeString(body),
           searchableTags: [body],
           metaData: const IsmLiveMetaData(),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',

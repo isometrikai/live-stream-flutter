@@ -403,6 +403,7 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.messageSent:
             if (_streamController.streamId == streamId) {
               final message = IsmLiveMessageModel.fromMap(payload);
+
               await _streamController.handleMessage(message);
               _updateStream();
             }

@@ -22,6 +22,9 @@ class IsmGoLiveView extends StatelessWidget {
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
+          controller.isSchedulingBroadcast = false;
+          controller.usePersistentStreamKey = false;
+          controller.isRestreamBroadcast = false;
         },
         dispose: (state) {
           var cons = Get.find<IsmLiveStreamController>();
