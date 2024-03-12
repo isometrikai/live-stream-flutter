@@ -5,6 +5,7 @@ import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,6 +34,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) => ScreenUtilInit(
         useInheritedMediaQuery: true,

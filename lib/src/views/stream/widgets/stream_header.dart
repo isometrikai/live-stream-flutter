@@ -31,6 +31,8 @@ class StreamHeader extends StatelessWidget {
               IsmLiveHostDetail(
                 imageUrl: imageUrl,
                 name: name,
+                description: description,
+                isHost: Get.find<IsmLiveStreamController>().isHost ?? false,
               ),
               IsmLiveDimens.boxHeight10,
               _LiveTimer(
@@ -41,8 +43,7 @@ class StreamHeader extends StatelessWidget {
                 width: Get.width * 0.6,
                 child: Text(
                   description,
-                  style: context.textTheme.bodySmall
-                      ?.copyWith(color: Colors.white),
+                  style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
                 ),
               ),
             ],
@@ -50,9 +51,7 @@ class StreamHeader extends StatelessWidget {
 
           Expanded(
             child: GetBuilder<IsmLiveStreamController>(
-              builder: (controller) => (controller.isMember ||
-                      (controller.isCopublisher ?? false) ||
-                      (controller.isHost ?? false))
+              builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false) || (controller.isHost ?? false))
                   ? IsmLiveTapHandler(
                       onTap: onTapModerators,
                       child: Container(
@@ -130,9 +129,7 @@ class _LiveTimer extends StatelessWidget {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected
-                  ? IsmLiveColors.green
-                  : IsmLiveColors.red,
+              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
             ),
             child: Padding(

@@ -68,8 +68,7 @@ class IsmLiveMessageField extends StatelessWidget {
                   ],
                   IsmLiveInputField(
                     cursorColor: Colors.white,
-                    style: context.textTheme.bodySmall
-                        ?.copyWith(color: Colors.white),
+                    style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsets0,
@@ -108,7 +107,7 @@ class IsmLiveMessageField extends StatelessWidget {
                 onTap: () => controller.sendHeartMessage(streamId),
               ),
             ] else ...[
-              IsmLiveDimens.boxWidth8,
+              // IsmLiveDimens.boxWidth8,
               // if (controller.room!.localParticipant!.isScreenShareEnabled())
               //   SizedBox.square(
               //     dimension: IsmLiveDimens.fortyFive,
@@ -118,10 +117,10 @@ class IsmLiveMessageField extends StatelessWidget {
               //     ),
               //   )
               // else
-              SizedBox(
-                width: Get.width * 0.4,
-                child: const IsmLiveButton(label: 'Next Item >>'),
-              )
+              // SizedBox(
+              //   width: Get.width * 0.4,
+              //   child: const IsmLiveButton(label: 'Next Item >>'),
+              // )
               // SizedBox.square(
               //   dimension: IsmLiveDimens.fortyFive,
               //   child: IsmLiveButton.icon(

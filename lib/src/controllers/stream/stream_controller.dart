@@ -459,7 +459,7 @@ class IsmLiveStreamController extends GetxController
   }
 
   void onChangeSchedule(bool value) async {
-    if (!value) {
+    if (value) {
       await IsmLiveUtility.openBottomSheet(const IsmLiveScheduleTimeBottomSheet());
     }
     isSchedulingBroadcast = value;
