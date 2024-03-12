@@ -36,51 +36,53 @@ class IsmLiveControlsWidget extends StatelessWidget {
               ? IsmLiveStreamOption.viewersOptions
               : IsmLiveStreamOption.hostOptions;
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                alignment: Alignment.bottomRight,
-                width: IsmLiveDimens.fifty,
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: options.length,
-                  separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
-                  itemBuilder: (context, index) => CustomIconButton(
-                    icon: IsmLiveImage.svg(
-                      controller.controlIcon(options[index]),
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  alignment: Alignment.bottomRight,
+                  width: IsmLiveDimens.fifty,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: options.length,
+                    separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
+                    itemBuilder: (context, index) => CustomIconButton(
+                      icon: IsmLiveImage.svg(
+                        controller.controlIcon(options[index]),
+                      ),
+                      onTap: () async {
+                        await controller.onOptionTap(options[index]);
+                        controller.update([IsmLiveControlsWidget.updateId]);
+                      },
+                      color: options[index] == IsmLiveStreamOption.multiLive
+                          ? !isHost && controller.isCopublisher != true
+                              ? controller.memberStatus.canEnableVideo
+                                  ? context.theme.primaryColor
+                                  : controller.memberStatus.didRequested
+                                      ? Colors.blueGrey
+                                      : null
+                              : null
+                          : null,
                     ),
-                    onTap: () async {
-                      await controller.onOptionTap(options[index]);
-                      controller.update([IsmLiveControlsWidget.updateId]);
-                    },
-                    color: options[index] == IsmLiveStreamOption.multiLive
-                        ? !isHost && controller.isCopublisher != true
-                            ? controller.memberStatus.canEnableVideo
-                                ? context.theme.primaryColor
-                                : controller.memberStatus.didRequested
-                                    ? Colors.blueGrey
-                                    : null
-                            : null
-                        : null,
                   ),
                 ),
-              ),
-              Container(
-                height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
-                width: Get.width * 0.4,
-                padding: IsmLiveDimens.edgeInsets0_4,
-                child: IsmLiveProductContainer(
-                  productName: 'SOLD',
-                  productDisc: 'hdshhdsfhjdsjsdj',
-                  currencyIcon: '\$',
-                  price: 33.33,
-                  onPress: () {},
-                  imageUrl: '',
-                ),
-              )
-            ],
+                Container(
+                  height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
+                  width: Get.width * 0.4,
+                  padding: IsmLiveDimens.edgeInsets0_4,
+                  child: IsmLiveProductContainer(
+                    productName: 'SOLD',
+                    productDisc: 'hdshhdsfhjdsjsdj',
+                    currencyIcon: '\$',
+                    price: 33.33,
+                    onPress: () {},
+                    imageUrl: '',
+                  ),
+                )
+              ],
+            ),
           );
         },
       );

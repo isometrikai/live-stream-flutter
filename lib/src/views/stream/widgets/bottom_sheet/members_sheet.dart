@@ -11,10 +11,10 @@ class IsmLiveMembersSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (_) {
-          final controller = Get.find<IsmLiveStreamController>();
-          controller.getStreamMembers(
-            streamId: controller.streamId ?? '',
-          );
+          // final controller = Get.find<IsmLiveStreamController>();
+          // controller.getStreamMembers(
+          //   streamId: controller.streamId ?? '',
+          // );
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,

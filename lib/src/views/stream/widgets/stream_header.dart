@@ -38,33 +38,38 @@ class StreamHeader extends StatelessWidget {
               ),
               IsmLiveDimens.boxHeight8,
               SizedBox(
-                width: Get.width * 0.7,
+                width: Get.width * 0.6,
                 child: Text(
                   description,
-                  style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+                  style: context.textTheme.bodySmall
+                      ?.copyWith(color: Colors.white),
                 ),
               ),
             ],
           ),
-          const Spacer(),
-          GetBuilder<IsmLiveStreamController>(
-            builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false))
-                ? IsmLiveTapHandler(
-                    onTap: onTapModerators,
-                    child: Container(
-                      padding: IsmLiveDimens.edgeInsets4,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white24,
+
+          Expanded(
+            child: GetBuilder<IsmLiveStreamController>(
+              builder: (controller) => (controller.isMember ||
+                      (controller.isCopublisher ?? false) ||
+                      (controller.isHost ?? false))
+                  ? IsmLiveTapHandler(
+                      onTap: onTapModerators,
+                      child: Container(
+                        padding: IsmLiveDimens.edgeInsets4,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white24,
+                        ),
+                        child: Icon(
+                          Icons.local_police_rounded,
+                          color: IsmLiveColors.white,
+                          size: IsmLiveDimens.sixteen,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.local_police_rounded,
-                        color: IsmLiveColors.white,
-                        size: IsmLiveDimens.sixteen,
-                      ),
-                    ),
-                  )
-                : IsmLiveDimens.box0,
+                    )
+                  : IsmLiveDimens.box0,
+            ),
           ),
           IsmLiveDimens.boxWidth10,
           IsmLiveTapHandler(
@@ -125,7 +130,9 @@ class _LiveTimer extends StatelessWidget {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+              color: Get.find<IsmLiveMqttController>().isConnected
+                  ? IsmLiveColors.green
+                  : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
             ),
             child: Padding(

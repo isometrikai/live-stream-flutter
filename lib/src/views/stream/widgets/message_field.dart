@@ -67,6 +67,9 @@ class IsmLiveMessageField extends StatelessWidget {
                     IsmLiveDimens.boxHeight2,
                   ],
                   IsmLiveInputField(
+                    cursorColor: Colors.white,
+                    style: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsets0,
