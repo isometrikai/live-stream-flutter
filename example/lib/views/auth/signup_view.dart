@@ -203,8 +203,25 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('login-signup'),
                             child: IsmLiveButton(
-                                label: TranslationKeys.signup.tr,
-                                onTap: controller.validateSignUp),
+                              label: TranslationKeys.signup.tr,
+                              onTap: controller.profileImage.isNotEmpty
+                                  ? controller.validateSignUp
+                                  : () {
+                                      Get.dialog(
+                                        AlertDialog(
+                                          title: const Text('Alert'),
+                                          content: const Text(
+                                              'Select Profile Image'),
+                                          actions: [
+                                            IsmLiveButton(
+                                              onTap: Get.back,
+                                              label: 'Okay',
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                            ),
                           ),
                           const SizedBox(
                             height: 20,
