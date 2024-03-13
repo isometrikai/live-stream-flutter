@@ -171,16 +171,21 @@ class _IsmLiveStreamView extends StatelessWidget {
                                           items: controller.streamViewersList,
                                           trailing: (_, viewer) => controller
                                                   .isModerator
-                                              ? IsmLiveButton.icon(
-                                                  icon: Icons
-                                                      .person_remove_rounded,
-                                                  onTap: () {
-                                                    controller.kickoutViewer(
-                                                      streamId: streamId,
-                                                      viewerId: viewer.userId,
-                                                    );
-                                                  },
-                                                )
+                                              ? viewer.userId ==
+                                                      controller.user?.userId
+                                                  ? IsmLiveDimens.box0
+                                                  : IsmLiveButton.icon(
+                                                      icon: Icons
+                                                          .person_remove_rounded,
+                                                      onTap: () {
+                                                        controller
+                                                            .kickoutViewer(
+                                                          streamId: streamId,
+                                                          viewerId:
+                                                              viewer.userId,
+                                                        );
+                                                      },
+                                                    )
                                               : const IsmLiveButton.icon(
                                                   icon: Icons.group_add_rounded,
                                                 ),

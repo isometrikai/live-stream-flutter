@@ -69,7 +69,6 @@ class IsmLiveUtility {
   }) async {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().showEmojiBoard = false;
-      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
     return await Get.bottomSheet<T>(
       SafeArea(child: child),

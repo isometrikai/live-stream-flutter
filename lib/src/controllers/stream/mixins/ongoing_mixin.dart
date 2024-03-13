@@ -9,6 +9,11 @@ mixin StreamOngoingMixin {
     required String streamId,
     required bool isHost,
   }) async {
+    _controller.messageFocusNode.addListener(() {
+      if (_controller.messageFocusNode.hasFocus) {
+        _controller.showEmojiBoard = false;
+      }
+    });
     // Pagination setup for the stream
     _controller.pagination(streamId);
     // Set up event listeners
@@ -35,7 +40,9 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10
+                  ? 0
+                  : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false,
             ),
@@ -206,12 +213,14 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add viewers to the stream
-  Future<void> addViewers(List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
+  Future<void> addViewers(
+      List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
     if (isFirstCall) {
       _controller.streamViewersList.clear();
     }
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList =
+        _controller.streamViewersList.toSet().toList();
   }
 
 // Function to add messages to the stream
@@ -219,15 +228,18 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats =
+        messages.map((e) => _controller.convertMessageToChat(e)).toList();
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList =
+        _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent + IsmLiveDimens.hundred,
+      _controller.messagesListController.position.maxScrollExtent +
+          IsmLiveDimens.hundred,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
@@ -267,7 +279,9 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
     final gift = message.customType!.path;
-    final child = gift.endsWith('gif') ? IsmLiveGif(path: gift) : IsmLiveImage.asset(gift);
+    final child = gift.endsWith('gif')
+        ? IsmLiveGif(path: gift)
+        : IsmLiveImage.asset(gift);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(
@@ -292,7 +306,8 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty || room.participants.values.first.audioTracks.isEmpty) {
+    if (room.participants.values.isEmpty ||
+        room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
 
@@ -415,7 +430,8 @@ mixin StreamOngoingMixin {
   void enableScreenShare() async {
     try {
       IsmLiveUtility.showLoader();
-      if (_controller.room == null || _controller.room!.localParticipant == null) {
+      if (_controller.room == null ||
+          _controller.room!.localParticipant == null) {
         return;
       }
 
@@ -492,6 +508,7 @@ mixin StreamOngoingMixin {
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
+
       await disconnectRoom();
       if (goBack) {
         closeStreamView(isHost);
@@ -500,12 +517,18 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom() async {
-    unawaited(_controller._mqttController?.unsubscribeStream(_controller.streamId!));
+    unawaited(
+        _controller._mqttController?.unsubscribeStream(_controller.streamId!));
     _controller.isHost = null;
     _controller.streamId = null;
     IsmLiveLog('${_controller.room}');
-    unawaited(_controller.getStreams());
-    await _controller.room?.disconnect();
+    // unawaited(_controller.getStreams());
+
+    try {
+      await _controller.room!.disconnect();
+    } catch (e) {
+      IsmLiveLog('room not disconnected $e');
+    }
   }
 
   void closeStreamView(bool isHost, [bool fromMqtt = false]) {

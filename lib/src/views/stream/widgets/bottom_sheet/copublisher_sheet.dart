@@ -22,6 +22,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 controller.fetchEligibleMembers(
                   streamId: controller.streamId ?? '',
                 );
+                controller.cobublisTabController.index = 0;
                 controller.copublisher = IsmLiveCopublisher.values[0];
               },
               builder: (controller) => TabBar(

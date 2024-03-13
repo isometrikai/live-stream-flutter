@@ -15,7 +15,8 @@ class IsmLiveHostDetail extends StatelessWidget {
   final String description;
   final bool isHost;
 
-  Color _color(BuildContext context) => context.liveTheme.backgroundColor ?? IsmLiveColors.white;
+  Color _color(BuildContext context) =>
+      context.liveTheme.backgroundColor ?? IsmLiveColors.white;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -34,6 +35,7 @@ class IsmLiveHostDetail extends StatelessWidget {
               buttonLable: isHost ? null : 'Follow',
               onTap: isHost ? null : () {},
             ),
+            isScrollController: true,
           );
         },
         child: Container(

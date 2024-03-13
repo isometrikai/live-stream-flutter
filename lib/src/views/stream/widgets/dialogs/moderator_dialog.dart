@@ -28,7 +28,9 @@ class IsmLiveModeratorDialog extends StatelessWidget {
             ),
             IsmLiveDimens.boxHeight8,
             Text(
-              (context.liveTranslations.addedModerator ?? IsmLiveStrings.addedModerator).trParams(
+              (context.liveTranslations.addedModerator ??
+                      IsmLiveStrings.addedModerator)
+                  .trParams(
                 {'name': hostName},
               ),
               style: context.textTheme.bodyMedium,
@@ -40,13 +42,15 @@ class IsmLiveModeratorDialog extends StatelessWidget {
               onTap: () {
                 IsmLiveUtility.closeDialog();
                 final controller = Get.find<IsmLiveStreamController>();
-                final stream = controller.streams.cast<IsmLiveStreamModel?>().firstWhere(
-                      (e) => e?.streamId == streamId,
-                      orElse: () => null,
-                    );
+                final stream =
+                    controller.streams.cast<IsmLiveStreamModel?>().firstWhere(
+                          (e) => e?.streamId == streamId,
+                          orElse: () => null,
+                        );
                 if (stream == null) {
                   return;
                 }
+                controller.initializeStream(isHost: false, streamId: streamId);
                 controller.initializeAndJoinStream(stream, false);
               },
             ),

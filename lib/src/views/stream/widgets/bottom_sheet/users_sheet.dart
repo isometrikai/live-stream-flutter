@@ -40,6 +40,8 @@ class IsmLiveUsersSheet extends StatelessWidget {
                     moderatorId: user.userId,
                     streamId: controller.streamId ?? '',
                   );
+
+                  Get.back();
                   Get.back();
                 },
               ),

@@ -120,6 +120,10 @@ class IsmLiveStreamController extends GetxController
   bool get audioOn => _audioOn.value;
   set audioOn(bool value) => _audioOn.value = value;
 
+  final RxBool _showEmojiBoard = false.obs;
+  bool get showEmojiBoard => _showEmojiBoard.value;
+  set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
+
   final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
       <IsmLiveMemberDetailsModel>[].obs;
   List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
@@ -569,12 +573,17 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  bool showEmojiBoard = false;
+  toggleEmojiBoard(BuildContext context) async {
+    if (messageFocusNode.hasFocus) {
+      // FocusScope.of(context).unfocus();
+      // FocusManager.instance.primaryFocus!.unfocus();
+      messageFocusNode.unfocus();
+      // await Future.delayed(
+      //   const Duration(milliseconds: 100),
+      // );
+    }
 
-  toggleEmojiBoard() async {
     showEmojiBoard = !showEmojiBoard;
-
-    update([IsmLiveStreamView.updateId]);
   }
 
   void searchMembers(String values) async {

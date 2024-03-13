@@ -66,7 +66,7 @@ mixin StreamMessageMixin {
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
           streamId: streamId,
-          body: IsmLiveUtility.encodeString(body),
+          body: body,
           searchableTags: [body],
           metaData: IsmLiveMetaData(
             parentMessageBody: parentMessage.body,
@@ -88,7 +88,7 @@ mixin StreamMessageMixin {
         showLoading: false,
         sendMessageModel: IsmLiveSendMessageModel(
           streamId: streamId,
-          body: IsmLiveUtility.encodeString(body),
+          body: body,
           searchableTags: [body],
           metaData: const IsmLiveMetaData(),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
