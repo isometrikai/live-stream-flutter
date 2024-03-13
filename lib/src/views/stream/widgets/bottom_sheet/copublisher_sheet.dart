@@ -22,6 +22,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 controller.fetchEligibleMembers(
                   streamId: controller.streamId ?? '',
                 );
+                controller.copublisher = IsmLiveCopublisher.values[0];
               },
               builder: (controller) => TabBar(
                 dividerHeight: 0,
@@ -34,7 +35,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 },
                 tabs: IsmLiveCopublisher.values.map(
                   (type) {
-                    var isSelected = type == controller.copublisher;
+                    var isSelected = (type == controller.copublisher);
                     return DecoratedBox(
                       decoration: BoxDecoration(
                         color: isSelected

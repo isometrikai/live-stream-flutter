@@ -12,6 +12,7 @@ class IsmLiveSettingsSheet extends StatelessWidget {
         builder: (controller) => Padding(
           padding: IsmLiveDimens.edgeInsets16_0,
           child: IsmLiveScrollSheet(
+            separatedWidgat: IsmLiveDimens.boxHeight24,
             title: 'Settings',
             showHeader: false,
             showCancelIcon: true,

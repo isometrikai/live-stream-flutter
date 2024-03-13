@@ -198,10 +198,10 @@ mixin StreamOngoingMixin {
       //   return option.muteValues;
       // case IsmLiveHostSettings.hideControlButtons:
       //   return option.muteValues;
-      case IsmLiveHostSettings.block:
-        return option.muteValues;
-      case IsmLiveHostSettings.report:
-        return option.muteValues;
+      // case IsmLiveHostSettings.block:
+      //   return option.muteValues;
+      // case IsmLiveHostSettings.report:
+      //   return option.muteValues;
     }
   }
 
@@ -369,12 +369,12 @@ mixin StreamOngoingMixin {
       case IsmLiveHostSettings.muteMyVideo:
         _controller.toggleVideo();
         break;
-      case IsmLiveHostSettings.block:
-        // TODO: Handle this case.
-        break;
-      case IsmLiveHostSettings.report:
-        // TODO: Handle this case.
-        break;
+      // case IsmLiveHostSettings.block:
+      //   // TODO: Handle this case.
+      //   break;
+      // case IsmLiveHostSettings.report:
+      //   // TODO: Handle this case.
+      //   break;
     }
   }
 

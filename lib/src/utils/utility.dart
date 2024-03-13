@@ -66,20 +66,25 @@ class IsmLiveUtility {
     bool enableDrag = true,
     bool isScrollController = false,
     Color? backgroundColor,
-  }) async =>
-      await Get.bottomSheet<T>(
-        SafeArea(child: child),
-        isDismissible: isDismissible,
-        isScrollControlled: isScrollController,
-        ignoreSafeArea: ignoreSafeArea,
-        enableDrag: enableDrag,
-        backgroundColor: backgroundColor ?? IsmLiveColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(IsmLiveDimens.thirty),
-          ),
+  }) async {
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().showEmojiBoard = false;
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+    return await Get.bottomSheet<T>(
+      SafeArea(child: child),
+      isDismissible: isDismissible,
+      isScrollControlled: isScrollController,
+      ignoreSafeArea: ignoreSafeArea,
+      enableDrag: enableDrag,
+      backgroundColor: backgroundColor ?? IsmLiveColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(IsmLiveDimens.thirty),
         ),
-      );
+      ),
+    );
+  }
 
   static Future<TimeOfDay> pickTime({
     required BuildContext context,
@@ -456,4 +461,16 @@ class IsmLiveUtility {
     'mod',
     'hevc'
   ];
+
+  /// this is for change decode string to encode string
+  static String encodeString(String value) => utf8.fuse(base64).encode(value);
+
+  /// this is for change encoded string to decode string
+  static String decodeString(String value) {
+    try {
+      return utf8.fuse(base64).decode(value);
+    } catch (e) {
+      return value;
+    }
+  }
 }

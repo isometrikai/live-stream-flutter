@@ -22,15 +22,19 @@ class IsmLiveControlsWidget extends StatelessWidget {
         initState: (state) {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.addListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.addListener(streamController.update);
         },
         dispose: (state) async {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.removeListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = !isHost ? IsmLiveStreamOption.viewersOptions : IsmLiveStreamOption.hostOptions;
+          var options = !isHost
+              ? IsmLiveStreamOption.viewersOptions
+              : IsmLiveStreamOption.hostOptions;
 
           return SingleChildScrollView(
             child: Column(
@@ -64,19 +68,20 @@ class IsmLiveControlsWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Container(
-                //   height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
-                //   width: Get.width * 0.4,
-                //   padding: IsmLiveDimens.edgeInsets0_4,
-                //   child: IsmLiveProductContainer(
-                //     productName: 'SOLD',
-                //     productDisc: 'hdshhdsfhjdsjsdj',
-                //     currencyIcon: '\$',
-                //     price: 33.33,
-                //     onPress: () {},
-                //     imageUrl: '',
-                //   ),
-                // )
+                // if (isHost)
+                //   Container(
+                //     height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
+                //     width: Get.width * 0.4,
+                //     padding: IsmLiveDimens.edgeInsets0_4,
+                //     child: IsmLiveProductContainer(
+                //       productName: 'SOLD',
+                //       productDisc: 'hdshhdsfhjdsjsdj',
+                //       currencyIcon: '\$',
+                //       price: 33.33,
+                //       onPress: () {},
+                //       imageUrl: '',
+                //     ),
+                //   )
               ],
             ),
           );

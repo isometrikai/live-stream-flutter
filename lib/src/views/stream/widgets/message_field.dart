@@ -30,7 +30,8 @@ class IsmLiveMessageField extends StatelessWidget {
                       padding: IsmLiveDimens.edgeInsets4,
                       margin: IsmLiveDimens.edgeInsets8_0,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
+                        borderRadius:
+                            BorderRadius.circular(IsmLiveDimens.twelve),
                         color: Colors.white70,
                       ),
                       child: Row(
@@ -67,15 +68,22 @@ class IsmLiveMessageField extends StatelessWidget {
                     IsmLiveDimens.boxHeight2,
                   ],
                   IsmLiveInputField(
+                    onTap: () {
+                      controller.showEmojiBoard = false;
+                      controller.update([IsmLiveStreamView.updateId]);
+                    },
+                    focusNode: controller.messageFocusNode,
                     cursorColor: Colors.white,
                     style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsets0,
                     fillColor: IsmLiveColors.white.withOpacity(0.3),
-                    hintStyle: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+                    hintStyle: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
                     borderColor: Colors.transparent,
-                    onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
+                    onchange: (value) =>
+                        controller.update([IsmLiveStreamView.updateId]),
                     textInputAction: TextInputAction.send,
                     onFieldSubmit: (value) => controller.sendTextMessage(
                       streamId: streamId,
@@ -87,15 +95,27 @@ class IsmLiveMessageField extends StatelessWidget {
                       onPressed: controller.messageFieldController.isNotEmpty
                           ? () => controller.sendTextMessage(
                                 streamId: streamId,
-                                body: controller.messageFieldController.text.trim(),
+                                body: controller.messageFieldController.text
+                                    .trim(),
                                 parentMessage: controller.parentMessage,
                               )
                           : null,
                     ),
-                    prefixIcon: const Icon(
-                      Icons.mood,
-                      color: Colors.white,
-                    ),
+                    prefixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.mood,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          // if (controller.showEmojiBoard) {
+                          //   // FocusScope.of(Get.context!).unfocus();
+                          //   FocusManager.instance.primaryFocus!.unfocus();
+                          // }
+                          controller.messageFocusNode.unfocus();
+                          await Future.delayed(
+                              const Duration(milliseconds: 100),
+                              controller.toggleEmojiBoard);
+                        }),
                   ),
                 ],
               ),

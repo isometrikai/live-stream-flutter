@@ -110,6 +110,7 @@ class _IsmLiveStreamView extends StatelessWidget {
         dispose: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
           await controller.room?.dispose();
+          controller.showEmojiBoard = false;
           controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.streamMessagesList.clear();
           controller.streamViewersList.clear();
@@ -133,12 +134,12 @@ class _IsmLiveStreamView extends StatelessWidget {
                 Obx(
                   () => (controller.room?.localParticipant != null)
                       ? SafeArea(
-                          child: Padding(
-                            padding: IsmLiveDimens.edgeInsets8,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                StreamHeader(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: IsmLiveDimens.edgeInsets8_0,
+                                child: StreamHeader(
                                   description:
                                       controller.descriptionController.text,
                                   name: controller.hostDetails?.userName ?? 'U',
@@ -188,7 +189,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                Expanded(
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: IsmLiveDimens.edgeInsets8_0,
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -206,14 +210,21 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                IsmLiveDimens.boxHeight8,
-                                IsmLiveMessageField(
+                              ),
+                              IsmLiveDimens.boxHeight8,
+                              Padding(
+                                padding: IsmLiveDimens.edgeInsets8_0,
+                                child: IsmLiveMessageField(
                                   streamId: streamId,
                                   isHost: (controller.isHost ?? false) ||
                                       (controller.isCopublisher ?? false),
                                 ),
-                              ],
-                            ),
+                              ),
+                              IsmLiveDimens.boxHeight8,
+                              controller.showEmojiBoard
+                                  ? const IsmLiveEmojis()
+                                  : IsmLiveDimens.box0,
+                            ],
                           ),
                         )
                       : const SizedBox.shrink(),

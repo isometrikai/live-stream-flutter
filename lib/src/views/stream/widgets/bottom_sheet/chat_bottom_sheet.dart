@@ -21,7 +21,9 @@ class ChatBottomSheet extends StatelessWidget {
                 label: 'Reply',
                 onTap: () {
                   controller.parentMessage = message;
+
                   controller.update([IsmLiveMessageField.updateId]);
+                  Get.back();
                 },
               ),
             ),
@@ -31,10 +33,13 @@ class ChatBottomSheet extends StatelessWidget {
                 width: Get.width * 0.4,
                 child: IsmLiveButton(
                   label: 'Delete',
-                  onTap: () => controller.deleteMessage(
-                    streamId: controller.streamId ?? '',
-                    messageId: message.messageId,
-                  ),
+                  onTap: () {
+                    controller.deleteMessage(
+                      streamId: controller.streamId ?? '',
+                      messageId: message.messageId,
+                    );
+                    Get.back();
+                  },
                 ),
               ),
             ],
