@@ -30,6 +30,7 @@ class IsmLiveProduct extends StatelessWidget {
             height: IsmLiveDimens.seventy,
             child: IsmLiveImage.network(
               imageUrl,
+              name:productName,
               radius: IsmLiveDimens.ten,
             ),
           ),

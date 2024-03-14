@@ -38,6 +38,7 @@ class IsmLiveMessageField extends StatelessWidget {
                         children: [
                           IsmLiveImage.network(
                             controller.parentMessage!.imageUrl,
+                            name: controller.parentMessage!.userName,
                             dimensions: IsmLiveDimens.twentyFour,
                             isProfileImage: true,
                           ),

@@ -31,6 +31,7 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
             else if (images.length == 1)
               IsmLiveImage.network(
                 images.first,
+                name: label,
                 height: IsmLiveDimens.hundred,
                 width: IsmLiveDimens.hundred,
                 isProfileImage: true,
@@ -50,6 +51,7 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                           right: e.$1 == 0 ? 0 : right,
                           child: IsmLiveImage.network(
                             e.$2,
+                            name: title,
                             height: IsmLiveDimens.hundred,
                             width: IsmLiveDimens.hundred,
                             isProfileImage: true,

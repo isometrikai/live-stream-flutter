@@ -40,6 +40,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
             return ListTile(
               leading: IsmLiveImage.network(
                 moderator.profileUrl,
+                name: moderator.userName,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,
               ),

@@ -84,6 +84,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                         return ListTile(
                           leading: IsmLiveImage.network(
                             copublisher.profileUrl,
+                            name: copublisher.userName,
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
@@ -132,6 +133,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                         return ListTile(
                           leading: IsmLiveImage.network(
                             members.profileUrl,
+                            name: members.userName,
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),

@@ -29,6 +29,7 @@ class IsmLiveMembersSheet extends StatelessWidget {
             return ListTile(
               leading: IsmLiveImage.network(
                 existingMember.userProfileImageUrl,
+                name: existingMember.userName,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,
               ),

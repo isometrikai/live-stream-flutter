@@ -23,11 +23,17 @@ class IsmLiveStreamBanner extends StatelessWidget {
               sigmaY: 10,
             ),
             child: streamImage != null
-                ? IsmLiveImage.network(streamImage!)
+                ? IsmLiveImage.network(
+                    streamImage!,
+                    name: 'U',
+                  )
                 : controller.pickedImage != null
-                    ? IsmLiveImage.file(controller.pickedImage!.path)
+                    ? IsmLiveImage.file(
+                        controller.pickedImage!.path,
+                      )
                     : ColoredBox(
-                        color: context.liveTheme.secondaryColor ?? IsmLiveColors.secondary,
+                        color: context.liveTheme.secondaryColor ??
+                            IsmLiveColors.secondary,
                       ),
           ),
         ),
