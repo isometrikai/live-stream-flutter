@@ -32,18 +32,6 @@ class SignupView extends StatelessWidget {
             bottom: false,
             top: false,
             child: Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                elevation: 0,
-                automaticallyImplyLeading: false,
-                backgroundColor: ColorsValue.primary,
-                title: Text(
-                  TranslationKeys.signup.tr,
-                  style: const TextStyle(
-                    color: ColorsValue.white,
-                  ),
-                ),
-              ),
               body: SingleChildScrollView(
                 child: Form(
                   key: controller.signFormKey,
@@ -54,6 +42,7 @@ class SignupView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          IsmLiveDimens.boxHeight32,
                           const Hero(
                             tag: ValueKey('logo_isometrik'),
                             child: Center(
@@ -125,6 +114,7 @@ class SignupView extends StatelessWidget {
                           Text(TranslationKeys.userName.tr),
                           IsmLiveDimens.boxHeight8,
                           IsmLiveInputField.userName(
+                            hintText: 'Enter Name',
                             controller: controller.userNameController,
                             validator: AppValidator.userName,
                           ),
@@ -139,6 +129,7 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('email_field'),
                             child: IsmLiveInputField.email(
+                              hintText: 'Enter Email',
                               controller: controller.emailController,
                               onchange: (value) {
                                 if (GetUtils.isEmail(value)) {
@@ -160,6 +151,7 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('password_field'),
                             child: IsmLiveInputField.password(
+                              hintText: 'Enter Password',
                               suffixIcon: IconButton(
                                 icon: Icon(!controller.showPassward
                                     ? Icons.visibility_outlined
@@ -180,6 +172,7 @@ class SignupView extends StatelessWidget {
                           Text(TranslationKeys.confirmPassword.tr),
                           IsmLiveDimens.boxHeight8,
                           IsmLiveInputField.password(
+                            hintText: 'Enter Confirm Password',
                             suffixIcon: IconButton(
                               icon: Icon(!controller.showConfirmPasswared
                                   ? Icons.visibility_outlined
