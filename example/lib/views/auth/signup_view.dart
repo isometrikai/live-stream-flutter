@@ -88,6 +88,7 @@ class SignupView extends StatelessWidget {
                                       : IsmLiveImage.network(
                                           width: 100,
                                           height: 100,
+                                          name: 'U',
                                           controller.profileImage,
                                           isProfileImage: true,
                                         ),

@@ -12,42 +12,42 @@ class IsmLiveEmojis extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => SizedBox(
-          height: IsmLiveDimens.twoHundredFifty,
-          width: Get.width,
-          child: EmojiPicker(
-            textEditingController: controller.messageFieldController,
-            config: const Config(
-              bottomActionBarConfig: BottomActionBarConfig(
-                showBackspaceButton: true,
-                enabled: true,
-                // customBottomActionBar: (config, state, showSearchView) {
-                // },
-                buttonIconColor: Colors.black,
-                buttonColor: Colors.white,
-                backgroundColor: Colors.white,
-              ),
-              categoryViewConfig: CategoryViewConfig(
-                indicatorColor: Colors.white,
-                iconColorSelected: Colors.white,
-                backspaceColor: Colors.white,
-              ),
-              skinToneConfig: SkinToneConfig(
-                dialogBackgroundColor: Colors.white,
-                indicatorColor: Colors.black,
-              ),
-              emojiViewConfig: EmojiViewConfig(
-                emojiSizeMax: 24,
-                columns: 8,
-                backgroundColor: Colors.white,
-              ),
+        builder: (controller) => EmojiPicker(
+          onEmojiSelected: (category, emoji) {
+            controller.update([IsmLiveStreamView.updateId]);
+          },
+          textEditingController: controller.messageFieldController,
+          config: const Config(
+            bottomActionBarConfig: BottomActionBarConfig(
+              showBackspaceButton: true,
+              enabled: true,
+              // customBottomActionBar: (config, state, showSearchView) {
+              // },
+              buttonIconColor: Colors.black,
+              buttonColor: Colors.white,
+              backgroundColor: Colors.white,
             ),
-            onBackspacePressed: () {
-              controller.messageFieldController.text = controller
-                  .messageFieldController.text
-                  .substring(0, controller.messageFieldController.text.length);
-            },
+            categoryViewConfig: CategoryViewConfig(
+              indicatorColor: Colors.white,
+              iconColorSelected: Colors.white,
+              backspaceColor: Colors.white,
+            ),
+            skinToneConfig: SkinToneConfig(
+              dialogBackgroundColor: Colors.white,
+              indicatorColor: Colors.black,
+            ),
+            emojiViewConfig: EmojiViewConfig(
+              emojiSizeMax: 24,
+              columns: 8,
+              backgroundColor: Colors.white,
+            ),
           ),
+          onBackspacePressed: () {
+            controller.messageFieldController.text = controller
+                .messageFieldController.text
+                .substring(0, controller.messageFieldController.text.length);
+            controller.update([IsmLiveStreamView.updateId]);
+          },
         ),
       );
 }

@@ -28,6 +28,7 @@ class IsmLiveUsersSheet extends StatelessWidget {
             return ListTile(
               leading: IsmLiveImage.network(
                 user.profileUrl,
+                name: user.userName,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,
               ),
@@ -40,6 +41,8 @@ class IsmLiveUsersSheet extends StatelessWidget {
                     moderatorId: user.userId,
                     streamId: controller.streamId ?? '',
                   );
+
+                  Get.back();
                   Get.back();
                 },
               ),

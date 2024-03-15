@@ -66,6 +66,7 @@ class IsmLivePinItem extends StatelessWidget {
             height: IsmLiveDimens.seventy,
             child: IsmLiveImage.network(
               '',
+              name: 'U',
               radius: IsmLiveDimens.ten,
             ),
           ),

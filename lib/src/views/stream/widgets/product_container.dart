@@ -35,7 +35,10 @@ class IsmLiveProductContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: IsmLiveImage.network(imageUrl),
+                  child: IsmLiveImage.network(
+                    imageUrl,
+                    name: productName,
+                  ),
                 ),
                 IsmLiveDimens.boxHeight10,
                 Padding(

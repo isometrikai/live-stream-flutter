@@ -38,6 +38,7 @@ class IsmLiveMessageField extends StatelessWidget {
                         children: [
                           IsmLiveImage.network(
                             controller.parentMessage!.imageUrl,
+                            name: controller.parentMessage!.userName,
                             dimensions: IsmLiveDimens.twentyFour,
                             isProfileImage: true,
                           ),
@@ -68,13 +69,10 @@ class IsmLiveMessageField extends StatelessWidget {
                     IsmLiveDimens.boxHeight2,
                   ],
                   IsmLiveInputField(
-                    onTap: () {
-                      controller.showEmojiBoard = false;
-                      controller.update([IsmLiveStreamView.updateId]);
-                    },
                     focusNode: controller.messageFocusNode,
                     cursorColor: Colors.white,
-                    style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+                    style: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsets0,
@@ -85,11 +83,13 @@ class IsmLiveMessageField extends StatelessWidget {
                     onchange: (value) =>
                         controller.update([IsmLiveStreamView.updateId]),
                     textInputAction: TextInputAction.send,
-                    onFieldSubmit: (value) => controller.sendTextMessage(
-                      streamId: streamId,
-                      body: value.trim(),
-                      parentMessage: controller.parentMessage,
-                    ),
+                    onFieldSubmit: (value) {
+                      controller.sendTextMessage(
+                        streamId: streamId,
+                        body: value.trim(),
+                        parentMessage: controller.parentMessage,
+                      );
+                    },
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.send),
                       onPressed: controller.messageFieldController.isNotEmpty
@@ -106,15 +106,8 @@ class IsmLiveMessageField extends StatelessWidget {
                           Icons.mood,
                           color: Colors.white,
                         ),
-                        onPressed: () async {
-                          // if (controller.showEmojiBoard) {
-                          //   // FocusScope.of(Get.context!).unfocus();
-                          //   FocusManager.instance.primaryFocus!.unfocus();
-                          // }
-                          controller.messageFocusNode.unfocus();
-                          await Future.delayed(
-                              const Duration(milliseconds: 100),
-                              controller.toggleEmojiBoard);
+                        onPressed: () {
+                          controller.toggleEmojiBoard(context);
                         }),
                   ),
                 ],

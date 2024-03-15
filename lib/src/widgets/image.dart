@@ -10,7 +10,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
     this.path, {
     super.key,
-    this.name,
+    this.name = 'U',
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -26,7 +26,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.svg(
     this.path, {
     super.key,
-    this.name,
+    this.name = 'U',
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -42,7 +42,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.network(
     this.path, {
     super.key,
-    this.name,
+    required this.name,
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -58,7 +58,7 @@ class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.file(
     this.path, {
     super.key,
-    this.name,
+    this.name = 'U',
     this.isProfileImage = true,
     this.dimensions,
     this.height,
@@ -72,7 +72,7 @@ class IsmLiveImage extends StatelessWidget {
         color = null;
 
   final String path;
-  final String? name;
+  final String name;
   final bool isProfileImage;
   final double? dimensions;
   final double? height;
@@ -105,7 +105,7 @@ class IsmLiveImage extends StatelessWidget {
           IsmLiveImageType.network => _Network(
               path,
               isProfileImage: isProfileImage,
-              name: name ?? 'U',
+              name: name,
               showError: showError,
             ),
         },
@@ -252,7 +252,7 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: !showError || isProfileImage
             ? Text(
-                name.isNotEmpty ? name[0] : 'U',
+                name[0],
                 style: !isProfileImage
                     ? context.textTheme.displayMedium?.copyWith(
                         color: IsmLiveColors.black,

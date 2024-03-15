@@ -46,7 +46,7 @@ class IsmLiveMessageModel {
         customType: map['customType'] != null
             ? IsmLiveGifts.fromName(map['customType'].toString())
             : null,
-        body: IsmLiveUtility.decodeString(map['body'] as String),
+        body: utf8.decode((map['body'] as String).runes.toList()),
         parentMessageId: map['parentMessageId'] as String?,
         parentMessageSenderId: map['parentMessageSenderId'] as String?,
       );
