@@ -26,7 +26,8 @@ class IsmLiveSettingsSheet extends StatelessWidget {
               child: Row(
                 children: [
                   IsmLiveImage.svg(
-                    IsmLiveHostSettings.values[index].icon,
+                    controller
+                        .controlSettingIcon(IsmLiveHostSettings.values[index]),
                   ),
                   IsmLiveDimens.boxWidth10,
                   Text(

@@ -6,7 +6,8 @@ class IsmLiveStreamRepository {
   const IsmLiveStreamRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  Future<IsmLiveResponseModel> getUserDetails() async => _apiWrapper.makeRequest(
+  Future<IsmLiveResponseModel> getUserDetails() async =>
+      _apiWrapper.makeRequest(
         IsmLiveApis.userDetails,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
@@ -377,6 +378,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.eligibleMembers}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
     );
   }
 

@@ -93,23 +93,27 @@ class _StreamListing extends StatelessWidget {
                   label: IsmLiveStrings.noStreams,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
                 )
-              : StaggeredGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: IsmLiveDimens.sixteen,
-                  crossAxisSpacing: IsmLiveDimens.sixteen,
-                  children: controller.streams.map(
-                    (e) {
-                      var isCreatedByMe =
-                          e.createdBy == controller.user?.userId;
-                      return IsmLiveTapHandler(
-                        onTap: () => controller.initializeAndJoinStream(e, isCreatedByMe),
-                        child: IsmLiveStreamCard(
-                          e,
-                          isCreatedByMe: isCreatedByMe,
-                        ),
-                      );
-                    },
-                  ).toList(),
+              : Padding(
+                  padding: IsmLiveDimens.edgeInsets16,
+                  child: StaggeredGrid.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: IsmLiveDimens.eight,
+                    mainAxisSpacing: IsmLiveDimens.eight,
+                    children: controller.streams.map(
+                      (e) {
+                        var isCreatedByMe =
+                            e.createdBy == controller.user?.userId;
+                        return IsmLiveTapHandler(
+                          onTap: () => controller.initializeAndJoinStream(
+                              e, isCreatedByMe),
+                          child: IsmLiveStreamCard(
+                            e,
+                            isCreatedByMe: isCreatedByMe,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
                 ),
         ),
       );

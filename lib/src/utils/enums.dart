@@ -204,9 +204,10 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyAudio(IsmLiveAssetConstants.volume, 'Mute', 'Unmute'),
-  muteMyVideo(
-      IsmLiveAssetConstants.video_camera, 'Turn Off Video', 'Trun On Video');
+  muteMyAudio(IsmLiveAssetConstants.micro_phone,
+      IsmLiveAssetConstants.micro_phone_off, 'Mute', 'Unmute'),
+  muteMyVideo(IsmLiveAssetConstants.video_camera,
+      IsmLiveAssetConstants.video_off, 'Turn Off Video', 'Trun On Video');
   // block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),
   // report(IsmLiveAssetConstants.report, 'Report', '');
   // muteRemoteVideo('Mute remote video', 'Unmute remote video'),
@@ -215,10 +216,12 @@ enum IsmLiveHostSettings {
   // hideChatMessages('Hide chat messages', 'Show chat messages'),
   // hideControlButtons('Hide control buttons', 'Show control buttons');
 
-  const IsmLiveHostSettings(this.icon, this.muteValues, this.unmuteValues);
+  const IsmLiveHostSettings(
+      this.icon, this.offIcon, this.muteValues, this.unmuteValues);
   final String muteValues;
   final String unmuteValues;
   final String icon;
+  final String offIcon;
 }
 
 enum IsmLiveMessageType {

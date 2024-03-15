@@ -18,6 +18,11 @@ class IsmLiveMembersSheet extends StatelessWidget {
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
+          onPressClearIcon: () {
+            controller.searchExistingMembesFieldController.clear();
+            controller.searchMember(
+                controller.searchExistingMembesFieldController.text);
+          },
           textEditingController: controller.searchExistingMembesFieldController,
           hintText: 'Search Copublisher',
           onchange: controller.searchMember,

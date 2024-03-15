@@ -70,12 +70,20 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                   children: [
                     IsmLiveScrollSheet(
                       showSearchBar: true,
+                      onPressClearIcon: () {
+                        controller.searchCopublisherFieldController.clear();
+                        controller.searchRequest(
+                            controller.searchCopublisherFieldController.text);
+                      },
                       showHeader: false,
                       textEditingController:
                           controller.searchCopublisherFieldController,
                       hintText: 'Search Request',
                       onchange: controller.searchRequest,
                       title: '',
+                      placeHolder:
+                          IsmLiveAssetConstants.user_request_placeholder,
+                      placeHolderText: 'No request users',
                       controller: controller.copublisherListController,
                       itemCount: controller.copublisherRequestsList.length,
                       itemBuilder: (context, index) {
@@ -120,6 +128,13 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                     ),
                     IsmLiveScrollSheet(
                       showSearchBar: true,
+                      placeHolder: IsmLiveAssetConstants.user_placeholder,
+                      placeHolderText: 'No users',
+                      onPressClearIcon: () {
+                        controller.searchMembersFieldController.clear();
+                        controller.searchMembers(
+                            controller.searchMembersFieldController.text);
+                      },
                       showHeader: false,
                       textEditingController:
                           controller.searchMembersFieldController,

@@ -17,6 +17,10 @@ class IsmLiveUsersSheet extends StatelessWidget {
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
+          onPressClearIcon: () {
+            controller.searchUserFieldController.clear();
+            controller.searchUser(controller.searchUserFieldController.text);
+          },
           textEditingController: controller.searchUserFieldController,
           hintText: 'Search Users',
           onchange: controller.searchUser,
