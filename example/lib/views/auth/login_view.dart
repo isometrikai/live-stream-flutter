@@ -12,7 +12,7 @@ class LoginView extends StatelessWidget {
   static const String route = AppRoutes.login;
 
   @override
-  Widget build(BuildContext context) => GetX<AuthController>(
+  Widget build(BuildContext context) => GetBuilder<AuthController>(
         initState: (_) {
           IsmLiveUtility.updateLater(() {
             Get.find<AuthController>()
@@ -23,15 +23,6 @@ class LoginView extends StatelessWidget {
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Text(
-              TranslationKeys.login.tr,
-              style: const TextStyle(color: Colors.white),
-            ),
-            backgroundColor: ColorsValue.primary,
-            centerTitle: true,
-            elevation: 0,
-          ),
           body: SingleChildScrollView(
             child: Form(
               key: controller.loginFormKey,
@@ -42,6 +33,7 @@ class LoginView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      IsmLiveDimens.boxHeight32,
                       const Hero(
                         tag: ValueKey('logo_isometrik'),
                         child: Center(
@@ -57,6 +49,12 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('email_field'),
                         child: IsmLiveInputField.email(
+                          hintText: 'Enter Email',
+                          onchange: (value) {
+                            if (value.length == 1 || value.isEmpty) {
+                              controller.update();
+                            }
+                          },
                           controller: controller.emailController,
                           validator: AppValidator.emailValidator,
                         ),
@@ -70,13 +68,26 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('password_field'),
                         child: IsmLiveInputField.password(
+                          hintText: 'Enter Password',
+                          onchange: (value) {
+                            if (value.length == 1 || value.isEmpty) {
+                              controller.update();
+                            }
+                          },
                           maxLines: 1,
-                          suffixIcon: IconButton(
-                            icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                            onPressed: () {
-                              controller.showPassward = !controller.showPassward;
-                            },
-                          ),
+                          suffixIcon: controller.passwordController.text
+                                  .trim()
+                                  .isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(!controller.showPassward
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined),
+                                  onPressed: () {
+                                    controller.showPassward =
+                                        !controller.showPassward;
+                                  },
+                                )
+                              : null,
                           obscureText: !controller.showPassward,
                           obscureCharacter: '*',
                           controller: controller.passwordController,
@@ -87,7 +98,14 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('login-signup'),
                         child: IsmLiveButton(
-                          onTap: controller.validateLogin,
+                          onTap: controller.passwordController.text
+                                      .trim()
+                                      .isNotEmpty &&
+                                  controller.emailController.text
+                                      .trim()
+                                      .isNotEmpty
+                              ? controller.validateLogin
+                              : null,
                           label: TranslationKeys.login.tr,
                         ),
                       ),
