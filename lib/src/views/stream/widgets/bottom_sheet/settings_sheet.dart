@@ -10,7 +10,7 @@ class IsmLiveSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) => Padding(
-          padding: IsmLiveDimens.edgeInsets16_0,
+          padding: IsmLiveDimens.edgeInsets16_0_16_20,
           child: IsmLiveScrollSheet(
             separatedWidgat: IsmLiveDimens.boxHeight24,
             title: 'Settings',

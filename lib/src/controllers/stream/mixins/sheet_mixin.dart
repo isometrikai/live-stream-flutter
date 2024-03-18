@@ -115,6 +115,20 @@ mixin StreamSheetMixin {
     );
   }
 
+  void copublishingNoRequestSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLiveCopublishingViewerSheet(
+        title: 'You can request again',
+        description:
+            'multirequests are not allow , Host only can make you copublisher  again',
+        label: '',
+        images: [
+          _controller.user?.profileUrl ?? '',
+        ],
+      ),
+    );
+  }
+
   // Function to handle showing copublishing host bottom sheet
   void copublishingHostSheet() async {
     await IsmLiveUtility.openBottomSheet(
