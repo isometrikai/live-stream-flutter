@@ -176,6 +176,7 @@ mixin StreamJoinMixin {
     } else {
       _controller.userRole?.leaveCopublishing();
     }
+    _controller.update([IsmGoLiveView.updateId]);
     unawaited(
       _controller._mqttController?.subscribeStream(
         streamId,
@@ -308,6 +309,9 @@ mixin StreamJoinMixin {
   }
 
   void startStreamTimer() {
+    if (_controller._streamTimer != null) {
+      return;
+    }
     _controller._streamTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {

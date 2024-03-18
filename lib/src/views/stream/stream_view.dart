@@ -121,8 +121,10 @@ class _IsmLiveStreamView extends StatelessWidget {
               children: [
                 IsmLiveStreamBanner(streamImage),
                 IsmLivePublisherGrid(streamImage: streamImage ?? ''),
-                ...controller.giftList,
+                const _TopDarkGradient(),
+                const _BottomDarkGradient(),
                 ...controller.heartList,
+                ...controller.giftList,
                 Obx(
                   () => (controller.room?.localParticipant != null)
                       ? SafeArea(
@@ -189,7 +191,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       ),
                                       const Spacer(),
                                       IsmLiveControlsWidget(
-                                        isHost: (controller.isHost) || (controller.isCopublisher),
+                                        isHost: controller.isPublishing,
                                         streamId: streamId,
                                       ),
                                     ],
@@ -201,11 +203,11 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 padding: IsmLiveDimens.edgeInsets8_0,
                                 child: IsmLiveMessageField(
                                   streamId: streamId,
-                                  isHost: (controller.isHost) || (controller.isCopublisher),
+                                  isHost: controller.isPublishing,
                                 ),
                               ),
                               IsmLiveDimens.boxHeight8,
-                              controller.showEmojiBoard ? const IsmLiveEmojis() : IsmLiveDimens.box0,
+                              if (controller.showEmojiBoard) const IsmLiveEmojis(),
                             ],
                           ),
                         )
@@ -222,6 +224,54 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
+class _TopDarkGradient extends StatelessWidget {
+  const _TopDarkGradient();
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: Get.height * 0.3,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black26,
+                Colors.transparent,
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
+class _BottomDarkGradient extends StatelessWidget {
+  const _BottomDarkGradient();
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: Get.height * 0.3,
+        child: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black26,
               ],
             ),
           ),

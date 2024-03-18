@@ -14,12 +14,9 @@ class IsmLiveChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
-        builder: (controller) => Container(
-          padding: IsmLiveDimens.edgeInsets4_0,
+        builder: (controller) => ConstrainedBox(
           constraints: BoxConstraints(
-            maxHeight: controller.participantTracks.length < 3
-                ? Get.height * 0.4
-                : Get.height * 0.25,
+            maxHeight: controller.participantTracks.length < 3 ? Get.height * 0.4 : Get.height * 0.25,
             maxWidth: isHost ? Get.width * 0.5 : Get.width * 0.75,
           ),
           child: ListView.separated(
@@ -42,114 +39,102 @@ class IsmLiveChatView extends StatelessWidget {
                       );
                     }
                   },
-                  child: Container(
-                    padding: IsmLiveDimens.edgeInsets5,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: Colors.black26,
                       borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        IsmLiveImage.network(
-                          height: IsmLiveDimens.twentyFour,
-                          message.imageUrl,
-                          name: message.userName,
-                          dimensions: IsmLiveDimens.thirtyTwo,
-                          isProfileImage: true,
-                        ),
-                        IsmLiveDimens.boxWidth4,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                  style: context.textTheme.labelSmall!.copyWith(
-                                    color: IsmLiveColors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                if (message.sentByHost) ...[
-                                  IsmLiveDimens.boxWidth8,
-                                  DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: (context.liveTheme.primaryColor ??
-                                              IsmLiveColors.primary)
-                                          .withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(
-                                          IsmLiveDimens.four),
+                    child: Padding(
+                      padding: IsmLiveDimens.edgeInsets8_4,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          IsmLiveImage.network(
+                            message.imageUrl,
+                            name: message.userName,
+                            dimensions: IsmLiveDimens.twentyFour,
+                            isProfileImage: true,
+                          ),
+                          IsmLiveDimens.boxWidth4,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                    style: context.textTheme.labelSmall!.copyWith(
+                                      color: IsmLiveColors.white,
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                    child: Padding(
-                                      padding: IsmLiveDimens.edgeInsets6_2,
-                                      child: Text(
-                                        'Host',
-                                        style: context.textTheme.labelSmall
-                                            ?.copyWith(
-                                          color: IsmLiveColors.white
-                                              .withOpacity(0.7),
-                                          fontWeight: FontWeight.w600,
+                                  ),
+                                  if (message.sentByHost) ...[
+                                    IsmLiveDimens.boxWidth8,
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: (context.liveTheme.primaryColor ?? IsmLiveColors.primary).withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+                                      ),
+                                      child: Padding(
+                                        padding: IsmLiveDimens.edgeInsets6_2,
+                                        child: Text(
+                                          'Host',
+                                          style: context.textTheme.labelSmall?.copyWith(
+                                            color: IsmLiveColors.white.withOpacity(0.7),
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ),
+                                  ],
+                                ],
+                              ),
+                              if (message.isDeleted)
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: isHost ? Get.width * 0.35 : Get.width * 0.6,
+                                  ),
+                                  child: Text(
+                                    ' ${message.body} Deleted Message',
+                                    style: context.textTheme.labelMedium?.copyWith(
+                                      color: context.liveTheme.unselectedTextColor,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                )
+                              else ...[
+                                if (message.isReply && message.parentBody != null) ...[
+                                  Text(
+                                    'Reply to ${message.parentBody}',
+                                    style: context.textTheme.labelSmall?.copyWith(
+                                      color: Colors.white70,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
-                              ],
-                            ),
-                            if (message.isDeleted)
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: isHost
-                                      ? Get.width * 0.35
-                                      : Get.width * 0.6,
-                                ),
-                                child: Text(
-                                  ' ${message.body} Deleted Message',
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
-                                    color:
-                                        context.liveTheme.unselectedTextColor,
-                                    fontWeight: FontWeight.w700,
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: isHost ? Get.width * 0.35 : Get.width * 0.6,
                                   ),
-                                ),
-                              )
-                            else ...[
-                              if (message.isReply &&
-                                  message.parentBody != null) ...[
-                                Text(
-                                  'Reply to ${message.parentBody}',
-                                  style: context.textTheme.labelSmall?.copyWith(
-                                    color: Colors.white70,
-                                    fontStyle: FontStyle.italic,
+                                  child: Text(
+                                    message.body,
+                                    style: context.textTheme.labelMedium?.copyWith(
+                                      color: IsmLiveColors.white,
+                                    ),
+                                    softWrap: true,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: isHost
-                                      ? Get.width * 0.35
-                                      : Get.width * 0.6,
-                                ),
-                                child: Text(
-                                  message.body,
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
-                                    color: IsmLiveColors.white,
-                                  ),
-                                  softWrap: true,
-                                ),
-                              ),
                             ],
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

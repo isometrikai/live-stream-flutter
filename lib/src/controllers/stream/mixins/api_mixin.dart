@@ -132,8 +132,7 @@ mixin StreamAPIMixin {
         (e) => e.isAdmin,
       );
     }
-    _controller.update([IsmLiveStreamView.updateId]);
-    _controller.update([IsmLiveMembersSheet.updateId]);
+    _controller.update([IsmLiveStreamView.updateId, IsmLiveMembersSheet.updateId]);
   }
 
 //  Fetches viewers of a particular live stream.
