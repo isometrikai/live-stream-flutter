@@ -23,11 +23,13 @@ class IsmLiveEndStreamContainer extends StatelessWidget {
           ),
           Text(
             title,
-            style: context.textTheme.bodyMedium,
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: Colors.grey,
+            ),
           ),
           Text(
             points,
-            style: context.textTheme.labelMedium,
+            style: context.textTheme.titleMedium,
           ),
         ],
       );

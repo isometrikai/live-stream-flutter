@@ -17,6 +17,9 @@ class IsmLiveScrollSheet extends StatelessWidget {
     this.trailing,
     this.showCancelIcon = false,
     this.separatedWidgat,
+    this.onPressClearIcon,
+    this.placeHolder,
+    this.placeHolderText,
   });
 
   final String title;
@@ -27,7 +30,10 @@ class IsmLiveScrollSheet extends StatelessWidget {
 
   final TextEditingController? textEditingController;
   final String? hintText;
+  final String? placeHolder;
+  final String? placeHolderText;
   final Function(String)? onchange;
+  final Function()? onPressClearIcon;
   final ScrollController? controller;
   final Widget? trailing;
   final bool showHeader;
@@ -64,6 +70,9 @@ class IsmLiveScrollSheet extends StatelessWidget {
                   controller: textEditingController ?? TextEditingController(),
                   hintText: hintText,
                   onchange: onchange,
+                  suffixIcon: IconButton(
+                      onPressed: onPressClearIcon,
+                      icon: const Icon(Icons.cancel)),
                 ),
               ),
             if (showCancelIcon)
@@ -80,16 +89,29 @@ class IsmLiveScrollSheet extends StatelessWidget {
                   ),
                 ),
               ),
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                controller: controller,
-                itemCount: itemCount,
-                itemBuilder: itemBuilder,
-                separatorBuilder: (context, index) =>
-                    separatedWidgat ?? IsmLiveDimens.box0,
-              ),
-            ),
+            IsmLiveDimens.boxHeight10,
+            itemCount == 0
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                          padding: IsmLiveDimens.edgeInsetsL20,
+                          child: IsmLiveImage.svg(placeHolder ?? '')),
+                      IsmLiveDimens.boxHeight2,
+                      Text(placeHolderText ?? ''),
+                    ],
+                  )
+                : Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      controller: controller,
+                      itemCount: itemCount,
+                      itemBuilder: itemBuilder,
+                      separatorBuilder: (context, index) =>
+                          separatedWidgat ?? IsmLiveDimens.box0,
+                    ),
+                  ),
           ],
         ),
       );

@@ -108,6 +108,15 @@ class IsmLiveAssetConstants {
   static const String youtube = '$_icons/youtube.svg';
   static const String calendar = '$_icons/calendar.svg';
   static const String search = '$_icons/search.svg';
+  static const String micro_phone = '$_icons/microphone.svg';
+  static const String micro_phone_off = '$_icons/microphone-slash.svg';
+  static const String video_off = '$_icons/video-slash.svg';
+  static const String user_placeholder = '$_icons/user-placeholder.svg';
+  static const String moderator_placeholder =
+      '$_icons/moderator-placeholder.svg';
+  static const String viewer_placeholder = '$_icons/viewer-placeholder.svg';
+  static const String user_request_placeholder =
+      '$_icons/user-request-placeholder.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
 }

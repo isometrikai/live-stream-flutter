@@ -188,6 +188,15 @@ mixin StreamOngoingMixin {
     }
   }
 
+  String controlSettingIcon(IsmLiveHostSettings option) {
+    switch (option) {
+      case IsmLiveHostSettings.muteMyVideo:
+        return _controller.videoOn ? option.icon : option.offIcon;
+      case IsmLiveHostSettings.muteMyAudio:
+        return _controller.audioOn ? option.icon : option.offIcon;
+    }
+  }
+
   // Function to handle actions on stream controls
   String controlSetting(IsmLiveHostSettings option) {
     switch (option) {

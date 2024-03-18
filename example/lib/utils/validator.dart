@@ -11,6 +11,7 @@ class AppValidator {
     if (!GetUtils.isEmail(value)) {
       return '${TranslationKeys.invalid.tr} ${TranslationKeys.email.tr}';
     }
+
     return null;
   }
 
@@ -26,7 +27,8 @@ class AppValidator {
       return TranslationKeys.required.tr;
     }
     if (value.length < 8) {
-      return TranslationKeys.passwordMustContain(TranslationKeys.lengthCharacters.tr);
+      return TranslationKeys.passwordMustContain(
+          TranslationKeys.lengthCharacters.tr);
     }
     if (!value.contains(RegExp('[a-z]'))) {
       return TranslationKeys.passwordMustContain(TranslationKeys.lowercase.tr);

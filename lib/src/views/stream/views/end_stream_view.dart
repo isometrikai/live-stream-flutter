@@ -10,40 +10,73 @@ class IsmLiveEndStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PopScope(
         canPop: false,
-        child: Scaffold(
-          appBar: AppBar(automaticallyImplyLeading: false, elevation: 0, actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.close,
-              ),
-              onPressed: Get.back,
-            ),
-          ]),
-          body: GetBuilder<IsmLiveStreamController>(
-            builder: (controller) => Padding(
-              padding: IsmLiveDimens.edgeInsets16,
+        child: GetBuilder<IsmLiveStreamController>(
+          builder: (controller) => Scaffold(
+            // appBar: PreferredSize(
+            //   preferredSize: Size(Get.width, 200),
+            //   child: AppBar(
+            //       backgroundColor: Colors.amber,
+            //       title: IsmLiveImage.network(
+            //         controller.user?.userProfileImageUrl ?? '',
+            //         name: controller.user?.userName ?? 'U',
+            //         height: IsmLiveDimens.ninty,
+            //         width: IsmLiveDimens.ninty,
+            //         isProfileImage: true,
+            //       ),
+            //       centerTitle: true,
+            //       automaticallyImplyLeading: false,
+            //       elevation: 0,
+            //       actions: [
+            //         IconButton(
+            //           icon: const Icon(
+            //             Icons.close,
+            //           ),
+            //           onPressed: Get.back,
+            //         ),
+            //       ]),
+            // ),
+            body: Padding(
+              padding: IsmLiveDimens.edgeInsets8,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  IsmLiveImage.network(
-                    controller.user?.userProfileImageUrl ?? '',
-                    name: controller.user?.userName ?? 'U',
-                    height: IsmLiveDimens.hundred,
-                    width: IsmLiveDimens.hundred,
-                    isProfileImage: true,
-                  ),
-                  IsmLiveDimens.boxHeight10,
-                  Text(
-                    'Live stream ended!',
-                    style: context.textTheme.headlineMedium,
+                  IsmLiveDimens.boxHeight32,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IsmLiveDimens.boxWidth50,
+                      IsmLiveImage.network(
+                        controller.user?.userProfileImageUrl ?? '',
+                        name: controller.user?.userName ?? 'U',
+                        height: IsmLiveDimens.ninty,
+                        width: IsmLiveDimens.ninty,
+                        isProfileImage: true,
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                        ),
+                        onPressed: Get.back,
+                      ),
+                    ],
                   ),
                   IsmLiveDimens.boxHeight16,
-                  const Divider(),
-                  IsmLiveDimens.boxHeight20,
+                  Text(
+                    'Live stream ended!',
+                    style: context.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IsmLiveDimens.boxHeight16,
+                  const Divider(
+                    thickness: 0.5,
+                  ),
                   GridView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 1.5,
                     ),
@@ -80,13 +113,15 @@ class IsmLiveEndStream extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(
+                  Divider(
                     thickness: 5,
+                    color: Colors.grey.shade300,
                   ),
-                  // IsmLiveListSheet(
-                  //   list: controller.streamViewersList,
-                  //   isHost: false,
-                  // ),
+                  IsmLiveListSheet(
+                    scrollController: controller.viewerListController,
+                    items: controller.streamViewersList,
+                    title: 'Viewer(${controller.streamViewersList.length})',
+                  ),
                 ],
               ),
             ),

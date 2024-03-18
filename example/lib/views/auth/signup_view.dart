@@ -15,14 +15,14 @@ class SignupView extends StatelessWidget {
   static const String route = AppRoutes.signup;
 
   @override
-  Widget build(BuildContext context) => GetX<AuthController>(
+  Widget build(BuildContext context) => GetBuilder<AuthController>(
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           Get.find<AuthController>()
             ..profileImage = ''
             ..userNameController.clear()
             ..emailController.clear()
-            ..passwordController.clear()
+            ..passwordControllerSignIn.clear()
             ..confirmPasswordController.clear()
             ..showPassward = false
             ..showConfirmPasswared = false;
@@ -115,6 +115,14 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight8,
                           IsmLiveInputField.userName(
                             hintText: 'Enter Name',
+                            onchange: (value) {
+                              // if (controller.signFormKey.currentState
+                              //         ?.validate() ??
+                              //     false) {
+                              //   controller.update();
+                              // }
+                              controller.update();
+                            },
                             controller: controller.userNameController,
                             validator: AppValidator.userName,
                           ),
@@ -137,6 +145,12 @@ class SignupView extends StatelessWidget {
                                 } else {
                                   controller.isEmailValid = false;
                                 }
+                                // if (controller.signFormKey.currentState
+                                //         ?.validate() ??
+                                //     false) {
+                                //   controller.update();
+                                // }
+                                controller.update();
                               },
                               validator: AppValidator.emailValidator,
                             ),
@@ -150,71 +164,108 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight8,
                           Hero(
                             tag: const ValueKey('password_field'),
-                            child: IsmLiveInputField.password(
-                              hintText: 'Enter Password',
-                              suffixIcon: IconButton(
-                                icon: Icon(!controller.showPassward
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined),
-                                onPressed: () {
-                                  controller.showPassward =
-                                      !controller.showPassward;
-                                  controller.update();
-                                },
-                              ),
-                              obscureText: !controller.showPassward,
-                              obscureCharacter: '*',
-                              controller: controller.passwordController,
-                              validator: AppValidator.passwordValidator,
-                            ),
+                            child: Obx(() => IsmLiveInputField.password(
+                                  hintText: 'Enter Password',
+                                  onchange: (value) {
+                                    // if (value.length == 1 ||
+                                    //     value.isEmpty ||
+                                    //     (controller.signFormKey.currentState
+                                    //             ?.validate() ??
+                                    //         false)) {
+                                    //   controller.update();
+                                    // }
+                                    controller.update();
+                                  },
+                                  suffixIcon: controller
+                                          .passwordControllerSignIn
+                                          .text
+                                          .isNotEmpty
+                                      ? IconButton(
+                                          icon: Icon(!controller.showPassward
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined),
+                                          onPressed: () {
+                                            controller.showPassward =
+                                                !controller.showPassward;
+                                            // controller.update();
+                                          },
+                                        )
+                                      : null,
+                                  obscureText: !controller.showPassward,
+                                  obscureCharacter: '*',
+                                  controller:
+                                      controller.passwordControllerSignIn,
+                                  validator: AppValidator.passwordValidator,
+                                )),
                           ),
                           IsmLiveDimens.boxHeight16,
                           Text(TranslationKeys.confirmPassword.tr),
                           IsmLiveDimens.boxHeight8,
-                          IsmLiveInputField.password(
-                            hintText: 'Enter Confirm Password',
-                            suffixIcon: IconButton(
-                              icon: Icon(!controller.showConfirmPasswared
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined),
-                              onPressed: () {
-                                controller.showConfirmPasswared =
-                                    !controller.showConfirmPasswared;
-                                controller.update();
-                              },
-                            ),
-                            obscureText: !controller.showConfirmPasswared,
-                            obscureCharacter: '*',
-                            validator: (value) {
-                              if (controller.passwordController.text == value) {
-                                return null;
-                              }
-                              return 'Should be same with Password';
-                            },
-                            controller: controller.confirmPasswordController,
-                          ),
+                          Obx(() => IsmLiveInputField.password(
+                                hintText: 'Enter Confirm Password',
+                                onchange: (value) {
+                                  // if (value.length == 1 ||
+                                  //     value.isEmpty ||
+                                  //     (controller.signFormKey.currentState
+                                  //             ?.validate() ??
+                                  //         false)) {
+                                  //   controller.update();
+                                  // }
+                                  controller.update();
+                                },
+                                suffixIcon: controller.confirmPasswordController
+                                        .text.isNotEmpty
+                                    ? IconButton(
+                                        icon: Icon(!controller
+                                                .showConfirmPasswared
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined),
+                                        onPressed: () {
+                                          controller.showConfirmPasswared =
+                                              !controller.showConfirmPasswared;
+                                          // controller.update();
+                                        },
+                                      )
+                                    : null,
+                                obscureText: !controller.showConfirmPasswared,
+                                obscureCharacter: '*',
+                                validator: (value) {
+                                  if (controller
+                                          .passwordControllerSignIn.text ==
+                                      value) {
+                                    return null;
+                                  }
+                                  return 'Should be same with Password';
+                                },
+                                controller:
+                                    controller.confirmPasswordController,
+                              )),
                           IsmLiveDimens.boxHeight32,
                           Hero(
                             tag: const ValueKey('login-signup'),
                             child: IsmLiveButton(
                               label: TranslationKeys.signup.tr,
-                              onTap: controller.profileImage.isNotEmpty
-                                  ? controller.validateSignUp
-                                  : () {
-                                      Get.dialog(
-                                        AlertDialog(
-                                          title: const Text('Alert'),
-                                          content: const Text(
-                                              'Select Profile Image'),
-                                          actions: [
-                                            IsmLiveButton(
-                                              onTap: Get.back,
-                                              label: 'Okay',
+                              onTap: controller.signFormKey.currentState
+                                          ?.validate() ??
+                                      false
+                                  ? controller.profileImage.isNotEmpty
+                                      ? controller.validateSignUp
+                                      : () {
+                                          Get.dialog(
+                                            AlertDialog(
+                                              title: const Text('Alert'),
+                                              content: const Text(
+                                                  'Select Profile Image'),
+                                              actions: [
+                                                IsmLiveButton(
+                                                  onTap: Get.back,
+                                                  label: 'Okay',
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
+                                          );
+                                        }
+                                  : null,
                             ),
                           ),
                           const SizedBox(

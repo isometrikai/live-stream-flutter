@@ -20,7 +20,6 @@ class IsmLiveStreamCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           height: IsmLiveDimens.twoHundredTwenty,
-          margin: IsmLiveDimens.edgeInsets8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
             color: Colors.black,
@@ -62,7 +61,8 @@ class IsmLiveStreamCard extends StatelessWidget {
                           padding: IsmLiveDimens.edgeInsets8_4,
                           decoration: BoxDecoration(
                             color: IsmLiveTheme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                            borderRadius:
+                                BorderRadius.circular(IsmLiveDimens.eight),
                           ),
                           child: Text(
                             'Continue',
@@ -75,7 +75,6 @@ class IsmLiveStreamCard extends StatelessWidget {
                     else
                       const SizedBox.shrink(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IsmLiveImage.network(
                           stream.initiatorImage ?? '',

@@ -29,6 +29,7 @@ class AuthController extends GetxController {
 
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+  var passwordControllerSignIn = TextEditingController();
   var userNameController = TextEditingController();
   var confirmPasswordController = TextEditingController();
 
@@ -108,7 +109,8 @@ class AuthController extends GetxController {
   void uploadImage(ImageSource imageSource) async {
     XFile? result;
     if (imageSource == ImageSource.gallery) {
-      result = await ImagePicker().pickImage(imageQuality: 25, source: ImageSource.gallery);
+      result = await ImagePicker()
+          .pickImage(imageQuality: 25, source: ImageSource.gallery);
     } else {
       result = await ImagePicker().pickImage(
         imageQuality: 25,
@@ -160,7 +162,8 @@ class AuthController extends GetxController {
 
   /// put Api for updatePresignedUrl...
   Future<int?> updatePresignedUrl(String presignedUrl, Uint8List bytes) async {
-    var response = await _viewModel.updatePresignedUrl(showLoading: false, presignedUrl: presignedUrl, file: bytes);
+    var response = await _viewModel.updatePresignedUrl(
+        showLoading: false, presignedUrl: presignedUrl, file: bytes);
     return response.statusCode;
   }
 }

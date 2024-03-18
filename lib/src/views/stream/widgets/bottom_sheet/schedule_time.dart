@@ -23,7 +23,8 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'Schedule Stream',
-                  style: context.textTheme.titleMedium,
+                  style: context.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),

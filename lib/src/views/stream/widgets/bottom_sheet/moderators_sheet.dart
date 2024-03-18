@@ -20,6 +20,13 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,
+          placeHolder: IsmLiveAssetConstants.moderator_placeholder,
+          placeHolderText: 'No Moderator',
+          onPressClearIcon: () {
+            controller.searchModeratorFieldController.clear();
+            controller.searchModerators(
+                controller.searchModeratorFieldController.text);
+          },
           trailing: controller.isHost == true
               ? IsmLiveButton.icon(
                   icon: Icons.person_add_rounded,

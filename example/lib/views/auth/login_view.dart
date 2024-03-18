@@ -51,9 +51,7 @@ class LoginView extends StatelessWidget {
                         child: IsmLiveInputField.email(
                           hintText: 'Enter Email',
                           onchange: (value) {
-                            if (value.length == 1 || value.isEmpty) {
-                              controller.update();
-                            }
+                            controller.update();
                           },
                           controller: controller.emailController,
                           validator: AppValidator.emailValidator,
@@ -67,43 +65,47 @@ class LoginView extends StatelessWidget {
                       IsmLiveDimens.boxHeight8,
                       Hero(
                         tag: const ValueKey('password_field'),
-                        child: IsmLiveInputField.password(
-                          hintText: 'Enter Password',
-                          onchange: (value) {
-                            if (value.length == 1 || value.isEmpty) {
+                        child: Obx(
+                          () => IsmLiveInputField.password(
+                            hintText: 'Enter Password',
+                            onchange: (value) {
+                              // if (value.length == 1 ||
+                              //     value.isEmpty ||
+                              //     (controller.loginFormKey.currentState
+                              //             ?.validate() ??
+                              //         false)) {
+                              //   controller.update();
+                              // }
                               controller.update();
-                            }
-                          },
-                          maxLines: 1,
-                          suffixIcon: controller.passwordController.text
-                                  .trim()
-                                  .isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(!controller.showPassward
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined),
-                                  onPressed: () {
-                                    controller.showPassward =
-                                        !controller.showPassward;
-                                  },
-                                )
-                              : null,
-                          obscureText: !controller.showPassward,
-                          obscureCharacter: '*',
-                          controller: controller.passwordController,
-                          validator: AppValidator.passwordValidator,
+                            },
+                            maxLines: 1,
+                            suffixIcon: controller.passwordController.text
+                                    .trim()
+                                    .isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(!controller.showPassward
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined),
+                                    onPressed: () {
+                                      controller.showPassward =
+                                          !controller.showPassward;
+                                    },
+                                  )
+                                : null,
+                            obscureText: !controller.showPassward,
+                            obscureCharacter: '*',
+                            controller: controller.passwordController,
+                            validator: AppValidator.passwordValidator,
+                          ),
                         ),
                       ),
                       IsmLiveDimens.boxHeight32,
                       Hero(
                         tag: const ValueKey('login-signup'),
                         child: IsmLiveButton(
-                          onTap: controller.passwordController.text
-                                      .trim()
-                                      .isNotEmpty &&
-                                  controller.emailController.text
-                                      .trim()
-                                      .isNotEmpty
+                          onTap: controller.loginFormKey.currentState
+                                      ?.validate() ??
+                                  false
                               ? controller.validateLogin
                               : null,
                           label: TranslationKeys.login.tr,
