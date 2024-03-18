@@ -32,7 +32,7 @@ class StreamHeader extends StatelessWidget {
                 imageUrl: imageUrl,
                 name: name,
                 description: description,
-                isHost: Get.find<IsmLiveStreamController>().isHost ?? false,
+                isHost: Get.find<IsmLiveStreamController>().isHost,
               ),
               IsmLiveDimens.boxHeight10,
               _LiveTimer(
@@ -51,7 +51,7 @@ class StreamHeader extends StatelessWidget {
 
           Expanded(
             child: GetBuilder<IsmLiveStreamController>(
-              builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false) || (controller.isHost ?? false))
+              builder: (controller) => (controller.isMember || (controller.isCopublisher) || (controller.isHost))
                   ? IsmLiveTapHandler(
                       onTap: onTapModerators,
                       child: Container(

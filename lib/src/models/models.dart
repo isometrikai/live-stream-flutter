@@ -12,3 +12,4 @@ export 'response_model.dart';
 export 'stream/stream.dart';
 export 'translations/translations.dart';
 export 'user_model.dart';
+export 'user_role.dart';
