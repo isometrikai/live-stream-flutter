@@ -19,14 +19,7 @@ part 'mixins/restream_mixin.dart';
 part 'mixins/sheet_mixin.dart';
 
 class IsmLiveStreamController extends GetxController
-    with
-        GetTickerProviderStateMixin,
-        StreamAPIMixin,
-        StreamJoinMixin,
-        StreamOngoingMixin,
-        StreamMessageMixin,
-        StreamSheetMixin,
-        RestreamMixin {
+    with GetTickerProviderStateMixin, StreamAPIMixin, StreamJoinMixin, StreamOngoingMixin, StreamMessageMixin, StreamSheetMixin, RestreamMixin {
   IsmLiveStreamController(this._viewModel);
 
   final IsmLiveStreamViewModel _viewModel;
@@ -95,14 +88,11 @@ class IsmLiveStreamController extends GetxController
   TextEditingController rtmlUrl = TextEditingController();
   TextEditingController streamKey = TextEditingController();
 
-  bool isModerator = false;
-
   String? streamId;
 
   IsmLiveChatModel? parentMessage;
 
-  final Rx<IsmLiveMemberStatus> _memberStatus =
-      IsmLiveMemberStatus.notMember.obs;
+  final Rx<IsmLiveMemberStatus> _memberStatus = IsmLiveMemberStatus.notMember.obs;
   IsmLiveMemberStatus get memberStatus => _memberStatus.value;
   set memberStatus(IsmLiveMemberStatus value) => _memberStatus.value = value;
 
@@ -124,22 +114,17 @@ class IsmLiveStreamController extends GetxController
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
 
-  final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
-      <IsmLiveMemberDetailsModel>[].obs;
+  final RxList<IsmLiveMemberDetailsModel> _streamMembersList = <IsmLiveMemberDetailsModel>[].obs;
   List<IsmLiveMemberDetailsModel> get streamMembersList => _streamMembersList;
-  set streamMembersList(List<IsmLiveMemberDetailsModel> value) =>
-      _streamMembersList.value = value;
+  set streamMembersList(List<IsmLiveMemberDetailsModel> value) => _streamMembersList.value = value;
 
-  final RxList<IsmLiveViewerModel> _streamViewersList =
-      <IsmLiveViewerModel>[].obs;
+  final RxList<IsmLiveViewerModel> _streamViewersList = <IsmLiveViewerModel>[].obs;
   List<IsmLiveViewerModel> get streamViewersList => _streamViewersList;
-  set streamViewersList(List<IsmLiveViewerModel> value) =>
-      _streamViewersList.value = value;
+  set streamViewersList(List<IsmLiveViewerModel> value) => _streamViewersList.value = value;
 
   final RxList<IsmLiveChatModel> _streamMessagesList = <IsmLiveChatModel>[].obs;
   List<IsmLiveChatModel> get streamMessagesList => _streamMessagesList;
-  set streamMessagesList(List<IsmLiveChatModel> value) =>
-      _streamMessagesList.value = value;
+  set streamMessagesList(List<IsmLiveChatModel> value) => _streamMessagesList.value = value;
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
@@ -167,11 +152,9 @@ class IsmLiveStreamController extends GetxController
 
   XFile? pickedImage;
 
-  final RxList<IsmLiveParticipantTrack> _participantTracks =
-      <IsmLiveParticipantTrack>[].obs;
+  final RxList<IsmLiveParticipantTrack> _participantTracks = <IsmLiveParticipantTrack>[].obs;
   List<IsmLiveParticipantTrack> get participantTracks => _participantTracks;
-  set participantTracks(List<IsmLiveParticipantTrack> value) =>
-      _participantTracks.value = value;
+  set participantTracks(List<IsmLiveParticipantTrack> value) => _participantTracks.value = value;
 
   CameraPosition position = CameraPosition.front;
 
@@ -215,8 +198,7 @@ class IsmLiveStreamController extends GetxController
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
 
-  RefreshController get streamRefreshController =>
-      _streamRefreshControllers[streamType]!;
+  RefreshController get streamRefreshController => _streamRefreshControllers[streamType]!;
 
   List<IsmLiveStreamModel> get streams => _streams[streamType]!;
 
@@ -232,12 +214,13 @@ class IsmLiveStreamController extends GetxController
 
   List<IsmLiveProductModel> selectedProductsList = [];
 
-  bool? isHost;
+  IsmLiveUserRole? userRole;
 
-  bool? isCopublisher;
+  bool get isHost => userRole?.isHost ?? false;
 
-  double positionX = 20;
-  double positionY = 20;
+  bool get isModerator => userRole?.isModerator ?? false;
+
+  bool get isCopublisher => userRole?.isCopublisher ?? false;
 
   final Rx<IsmLiveStreamType> _streamType = IsmLiveStreamType.all.obs;
   IsmLiveStreamType get streamType => _streamType.value;
@@ -298,22 +281,19 @@ class IsmLiveStreamController extends GetxController
   // Pagination method
   void pagination(String streamId) {
     viewerListController.addListener(() async {
-      if (viewerListController.position.maxScrollExtent * 0.8 <=
-          viewerListController.position.pixels) {
+      if (viewerListController.position.maxScrollExtent * 0.8 <= viewerListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
         isViewesApiCall = true;
 
-        await getStreamViewer(
-            streamId: streamId, limit: 10, skip: streamViewersList.length);
+        await getStreamViewer(streamId: streamId, limit: 10, skip: streamViewersList.length);
         isViewesApiCall = false;
       }
     });
 
     productListController.addListener(() async {
-      if (productListController.position.maxScrollExtent * 0.8 <=
-          productListController.position.pixels) {
+      if (productListController.position.maxScrollExtent * 0.8 <= productListController.position.pixels) {
         if (isProductApiCall) {
           return;
         }
@@ -323,17 +303,14 @@ class IsmLiveStreamController extends GetxController
           limit: 10,
           skip: productsList.length,
           forceFetch: true,
-          searchTag: searchProductFieldController.text.trim().isEmpty
-              ? null
-              : searchProductFieldController.text.trim(),
+          searchTag: searchProductFieldController.text.trim().isEmpty ? null : searchProductFieldController.text.trim(),
         );
         isProductApiCall = false;
       }
     });
 
     userListController.addListener(() async {
-      if (userListController.position.maxScrollExtent * 0.8 <=
-          userListController.position.pixels) {
+      if (userListController.position.maxScrollExtent * 0.8 <= userListController.position.pixels) {
         if (isUsersApiCall) {
           return;
         }
@@ -341,17 +318,14 @@ class IsmLiveStreamController extends GetxController
         await fetchUsers(
           forceFetch: true,
           skip: usersList.length,
-          searchTag: searchUserFieldController.text.trim().isEmpty
-              ? null
-              : searchUserFieldController.text.trim(),
+          searchTag: searchUserFieldController.text.trim().isEmpty ? null : searchUserFieldController.text.trim(),
         );
         isUsersApiCall = false;
       }
     });
 
     moderatorListController.addListener(() async {
-      if (moderatorListController.position.maxScrollExtent * 0.8 <=
-          moderatorListController.position.pixels) {
+      if (moderatorListController.position.maxScrollExtent * 0.8 <= moderatorListController.position.pixels) {
         if (isModeratorsApiCall) {
           return;
         }
@@ -360,17 +334,14 @@ class IsmLiveStreamController extends GetxController
           forceFetch: true,
           streamId: streamId,
           skip: moderatorsList.length,
-          searchTag: searchModeratorFieldController.text.trim().isEmpty
-              ? null
-              : searchModeratorFieldController.text.trim(),
+          searchTag: searchModeratorFieldController.text.trim().isEmpty ? null : searchModeratorFieldController.text.trim(),
         );
         isModeratorsApiCall = false;
       }
     });
 
     copublisherListController.addListener(() async {
-      if (copublisherListController.position.maxScrollExtent * 0.8 <=
-          copublisherListController.position.pixels) {
+      if (copublisherListController.position.maxScrollExtent * 0.8 <= copublisherListController.position.pixels) {
         if (isCopublisherApiCall) {
           return;
         }
@@ -379,17 +350,14 @@ class IsmLiveStreamController extends GetxController
           forceFetch: true,
           streamId: streamId,
           skip: copublisherRequestsList.length,
-          searchTag: searchCopublisherFieldController.text.trim().isEmpty
-              ? null
-              : searchCopublisherFieldController.text.trim(),
+          searchTag: searchCopublisherFieldController.text.trim().isEmpty ? null : searchCopublisherFieldController.text.trim(),
         );
         isCopublisherApiCall = false;
       }
     });
 
     existingMembersListController.addListener(() async {
-      if (existingMembersListController.position.maxScrollExtent * 0.8 <=
-          existingMembersListController.position.pixels) {
+      if (existingMembersListController.position.maxScrollExtent * 0.8 <= existingMembersListController.position.pixels) {
         if (isExistingMembersApiCall) {
           return;
         }
@@ -397,17 +365,14 @@ class IsmLiveStreamController extends GetxController
         await getStreamMembers(
           streamId: streamId,
           skip: streamMembersList.length,
-          searchTag: searchExistingMembesFieldController.text.trim().isEmpty
-              ? null
-              : searchExistingMembesFieldController.text.trim(),
+          searchTag: searchExistingMembesFieldController.text.trim().isEmpty ? null : searchExistingMembesFieldController.text.trim(),
         );
         isExistingMembersApiCall = false;
       }
     });
 
     membersListController.addListener(() async {
-      if (membersListController.position.maxScrollExtent * 0.8 <=
-          membersListController.position.pixels) {
+      if (membersListController.position.maxScrollExtent * 0.8 <= membersListController.position.pixels) {
         if (isMembersApiCall) {
           return;
         }
@@ -416,17 +381,14 @@ class IsmLiveStreamController extends GetxController
           forceFetch: true,
           streamId: streamId,
           skip: eligibleMembersList.length,
-          searchTag: searchMembersFieldController.text.trim().isEmpty
-              ? null
-              : searchMembersFieldController.text.trim(),
+          searchTag: searchMembersFieldController.text.trim().isEmpty ? null : searchMembersFieldController.text.trim(),
         );
         isMembersApiCall = false;
       }
     });
 
     messagesListController.addListener(() {
-      if (messagesListController.position.minScrollExtent ==
-          messagesListController.position.pixels) {
+      if (messagesListController.position.minScrollExtent == messagesListController.position.pixels) {
         if (isViewesApiCall) {
           return;
         }
@@ -440,9 +402,7 @@ class IsmLiveStreamController extends GetxController
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               skip: messagesCount < 10 ? 0 : (messagesCount - 10),
-              limit: _controller.messagesCount < 10
-                  ? _controller.messagesCount
-                  : 10,
+              limit: _controller.messagesCount < 10 ? _controller.messagesCount : 10,
               sort: 1,
             ),
           );
@@ -505,8 +465,7 @@ class IsmLiveStreamController extends GetxController
 
   void onChangeSchedule(bool value) async {
     if (value) {
-      await IsmLiveUtility.openBottomSheet(
-          const IsmLiveScheduleTimeBottomSheet());
+      await IsmLiveUtility.openBottomSheet(const IsmLiveScheduleTimeBottomSheet());
     }
     isSchedulingBroadcast = value;
 
@@ -602,23 +561,17 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  Future<void> askPublish(bool audioCall) async {
+  Future<void> askPublish() async {
     try {
-      if (room == null) {
+      if (room == null || room?.localParticipant == null) {
         return;
       }
-      if (!audioCall) {
-        await room?.localParticipant?.setCameraEnabled(true);
-      } else {
-        await room?.localParticipant?.setCameraEnabled(false);
-      }
-    } catch (error) {
-      IsmLiveLog('could not publish video: $error');
-    }
-    try {
-      await room?.localParticipant?.setMicrophoneEnabled(true);
-    } catch (error) {
-      IsmLiveLog('could not publish audio: $error');
+      await Future.wait([
+        room!.localParticipant!.setCameraEnabled(true),
+        room!.localParticipant!.setMicrophoneEnabled(true),
+      ]);
+    } catch (e) {
+      IsmLiveLog.error(e);
     }
   }
 
@@ -657,8 +610,7 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  Future<void> animateToPage(int index) async =>
-      await pageController?.animateToPage(
+  Future<void> animateToPage(int index) async => await pageController?.animateToPage(
         index,
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,

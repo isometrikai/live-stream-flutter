@@ -13,8 +13,8 @@ class IsmLivePages {
       name: IsmLiveStreamListing.route,
       transitionDuration: transitionDuration,
       page: IsmLiveStreamListing.new,
-      binding: IsmLiveStreamBinding(),
       bindings: [
+        IsmLiveStreamBinding(),
         IsmLiveMqttBinding(),
       ],
     ),
@@ -28,13 +28,11 @@ class IsmLivePages {
       name: IsmLiveRoutes.createMeetingScreen,
       transitionDuration: transitionDuration,
       page: CreateMeetingScreen.new,
-      // binding: MeetingBinding(),
     ),
     GetPage<SearchUserScreen>(
       name: IsmLiveRoutes.searchUserScreen,
       transitionDuration: transitionDuration,
       page: SearchUserScreen.new,
-      // binding: MeetingBinding(),
     ),
     GetPage<RoomPage>(
       name: IsmLiveRoutes.roomPage,
@@ -46,7 +44,10 @@ class IsmLivePages {
       name: IsmLiveStreamView.route,
       transitionDuration: transitionDuration,
       page: IsmLiveStreamView.new,
-      binding: IsmLiveStreamBinding(),
+      bindings: [
+        IsmLiveStreamBinding(),
+        IsmLiveBroadcastBinding(),
+      ],
     ),
     GetPage<IsmGoLiveView>(
       name: IsmLiveRoutes.goLive,
@@ -58,7 +59,10 @@ class IsmLivePages {
       name: IsmLiveRoutes.endStream,
       transitionDuration: transitionDuration,
       page: IsmLiveEndStream.new,
-      binding: IsmLiveStreamBinding(),
+      bindings: [
+        IsmLiveStreamBinding(),
+        IsmLiveBroadcastBinding(),
+      ],
     ),
     GetPage<IsmLiveRestreamView>(
       name: IsmLiveRoutes.restreamView,

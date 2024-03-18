@@ -71,8 +71,7 @@ mixin StreamJoinMixin {
     _controller.update();
   }
 
-  Future<void> unpublishTracks() =>
-      _controller.room!.localParticipant!.unpublishAllTracks();
+  Future<void> unpublishTracks() => _controller.room!.localParticipant!.unpublishAllTracks();
 
 // Join a stream
   Future<void> joinStream(
@@ -159,54 +158,48 @@ mixin StreamJoinMixin {
     required String streamId,
     String? streamImage,
     String? streamDiscription,
-    bool audioCallOnly = false,
     bool hdBroadcast = false,
     required bool isHost,
     bool isCopublisher = false,
     required bool isNewStream,
     bool joinByScrolling = false,
   }) async {
-    // if (isMeetingOn) {
-    //   return;
-    // }
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
-    _controller.descriptionController.text =
-        streamDiscription ?? _controller.descriptionController.text;
+    _controller.descriptionController.text = streamDiscription ?? _controller.descriptionController.text;
 
     // Subscribe to the stream
     _controller.streamId = streamId;
-    _controller.isHost = isHost;
-    _controller.isCopublisher = isCopublisher;
+    _controller.userRole = isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+    if (isCopublisher) {
+      _controller.userRole?.makeCopublisher();
+    } else {
+      _controller.userRole?.leaveCopublishing();
+    }
     unawaited(
       _controller._mqttController?.subscribeStream(
         streamId,
       ),
     );
 
-// Show appropriate message based on the user's role
+    // Show appropriate message based on the user's role
     final translation = Get.context?.liveTranslations.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ??
-            IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else if (isCopublisher) {
-      message =
-          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+      message = translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
     } else {
-      message =
-          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
     try {
-      final videoQuality = hdBroadcast
-          ? VideoParametersPresets.h720_169
-          : VideoParametersPresets.h540_169;
+      final videoQuality = hdBroadcast ? VideoParametersPresets.h720_169 : VideoParametersPresets.h540_169;
       var room = Room(
         roomOptions: RoomOptions(
           defaultCameraCaptureOptions: CameraCaptureOptions(
@@ -228,19 +221,20 @@ mixin StreamJoinMixin {
           ),
         ),
       );
+
       _controller.room = room;
 
-      // Create a Listener before connecting
-      final listener = room.createListener();
+      /// Dispose listener if it was active on `scroll` streams
+      await _controller.listener?.dispose();
 
-      _controller.listener = listener;
+      // Create a Listener before connecting
+      _controller.listener = room.createListener();
 
       // Try to connect to the room
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
       } catch (e, st) {
         IsmLiveLog.error(e, st);
-        // isMeetingOn = false;
         IsmLiveUtility.closeLoader();
         return;
       }
@@ -261,7 +255,7 @@ mixin StreamJoinMixin {
       if (isHost || isCopublisher) {
         await enableMyVideo();
       }
-      // Toggle audio if the user is a host or
+      // Toggle audio if the user is a host or copublisher
       unawaited(
         _controller.toggleAudio(
           value: isHost || isCopublisher,
@@ -286,7 +280,6 @@ mixin StreamJoinMixin {
       _controller.update([IsmLiveStreamView.updateId]);
 
       startStreamTimer();
-      // isMeetingOn = true;
 
       if (!joinByScrolling) {
         IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
@@ -298,9 +291,8 @@ mixin StreamJoinMixin {
             isNewStream: isNewStream,
             room: room,
             streamImage: streamImage,
-            listener: listener,
+            listener: _controller.listener!,
             streamId: streamId,
-            audioCallOnly: audioCallOnly,
           ),
         );
       }
@@ -310,20 +302,19 @@ mixin StreamJoinMixin {
           streamId,
         ),
       );
-      _controller.isHost = null;
-      // isMeetingOn = false;
+      _controller.userRole = null;
       IsmLiveLog.error(e, st);
     }
   }
 
   void startStreamTimer() {
     _controller._streamTimer = Timer.periodic(
-        const Duration(
+      const Duration(seconds: 1),
+      (timer) {
+        _controller.streamDuration += const Duration(
           seconds: 1,
-        ), (timer) {
-      _controller.streamDuration += const Duration(
-        seconds: 1,
-      );
-    });
+        );
+      },
+    );
   }
 }

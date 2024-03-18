@@ -159,25 +159,3 @@ class IsmLiveChatView extends StatelessWidget {
         ),
       );
 }
-
-class _TextButton extends StatelessWidget {
-  const _TextButton({
-    required this.label,
-    this.onTap,
-  });
-
-  final String label;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) => IsmLiveTapHandler(
-        onTap: onTap,
-        child: Text(
-          label,
-          style: context.textTheme.labelSmall?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      );
-}
