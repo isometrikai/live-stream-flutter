@@ -12,29 +12,6 @@ class IsmLiveEndStream extends StatelessWidget {
         canPop: false,
         child: GetBuilder<IsmLiveStreamController>(
           builder: (controller) => Scaffold(
-            // appBar: PreferredSize(
-            //   preferredSize: Size(Get.width, 200),
-            //   child: AppBar(
-            //       backgroundColor: Colors.amber,
-            //       title: IsmLiveImage.network(
-            //         controller.user?.userProfileImageUrl ?? '',
-            //         name: controller.user?.userName ?? 'U',
-            //         height: IsmLiveDimens.ninty,
-            //         width: IsmLiveDimens.ninty,
-            //         isProfileImage: true,
-            //       ),
-            //       centerTitle: true,
-            //       automaticallyImplyLeading: false,
-            //       elevation: 0,
-            //       actions: [
-            //         IconButton(
-            //           icon: const Icon(
-            //             Icons.close,
-            //           ),
-            //           onPressed: Get.back,
-            //         ),
-            //       ]),
-            // ),
             body: Padding(
               padding: IsmLiveDimens.edgeInsets8,
               child: Column(

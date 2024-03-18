@@ -38,7 +38,6 @@ class IsmLiveListSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              IsmLiveDimens.boxHeight16,
               if (items.isEmpty) ...[
                 const IsmLiveImage.svg(
                   IsmLiveAssetConstants.viewer_placeholder,
@@ -47,6 +46,7 @@ class IsmLiveListSheet extends StatelessWidget {
                 const Text('No Viewers'),
               ] else
                 ListView.builder(
+                  padding: IsmLiveDimens.edgeInsets0,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: items.length,
