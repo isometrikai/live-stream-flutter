@@ -222,6 +222,8 @@ class IsmLiveStreamController extends GetxController
 
   bool get isCopublisher => userRole?.isCopublisher ?? false;
 
+  bool get isPublishing => isHost || isCopublisher;
+
   final Rx<IsmLiveStreamType> _streamType = IsmLiveStreamType.all.obs;
   IsmLiveStreamType get streamType => _streamType.value;
   set streamType(IsmLiveStreamType value) => _streamType.value = value;

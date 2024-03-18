@@ -328,10 +328,6 @@ mixin StreamOngoingMixin {
     _controller.speakerOn
         ? await room.participants.values.first.audioTracks.first.enable()
         : await room.participants.values.first.audioTracks.first.disable();
-
-    //if above code is not working in iOS use this
-    // await Hardware.instance.setPreferSpeakerOutput(_controller.speakerOn);
-    // await Hardware.instance.setSpeakerphoneOn(_controller.speakerOn);
   }
 
   Future onOptionTap(IsmLiveStreamOption option) async {
@@ -340,7 +336,7 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-        if (!_controller.isModerator && (_controller.isCopublisher != true)) {
+        if (!_controller.isHost) {
           if (_controller.memberStatus.canEnableVideo) {
             _controller.copublishingStartVideoSheet();
           } else {
@@ -535,6 +531,8 @@ mixin StreamOngoingMixin {
         _controller._mqttController?.unsubscribeStream(_controller.streamId!));
     _controller.userRole = null;
     _controller.streamId = null;
+    _controller._streamTimer?.cancel();
+    _controller._streamTimer = null;
     unawaited(_controller.getStreams());
 
     try {

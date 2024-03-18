@@ -32,11 +32,26 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
               );
             },
             child: UnconstrainedBox(
-              child: IsmLiveImage.network(
-                controller.user?.profileUrl ?? '',
-                name: controller.user?.userName ?? 'U',
-                isProfileImage: true,
-                dimensions: IsmLiveDimens.forty,
+              child: Stack(
+                children: [
+                  IsmLiveImage.network(
+                    controller.user?.profileUrl ?? '',
+                    name: controller.user?.userName ?? 'U',
+                    isProfileImage: true,
+                    dimensions: IsmLiveDimens.forty,
+                  ),
+                  Positioned(
+                    right: 2,
+                    bottom: 2,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+                        borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+                      ),
+                      child: const SizedBox.square(dimension: 8),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
