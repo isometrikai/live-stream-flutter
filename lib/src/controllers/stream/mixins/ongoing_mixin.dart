@@ -503,6 +503,7 @@ mixin StreamOngoingMixin {
     required bool isHost,
     required String streamId,
     bool goBack = true,
+    bool endStream = true,
   }) async {
     var isEnded = false;
     if (isHost) {
@@ -512,7 +513,7 @@ mixin StreamOngoingMixin {
     } else {
       isEnded = await _controller.leaveStream(streamId);
     }
-    if (isEnded) {
+    if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
@@ -522,6 +523,22 @@ mixin StreamOngoingMixin {
       if (goBack) {
         closeStreamView(isHost);
       }
+    } else if (_controller.isCopublisher == true) {
+      await _controller.room!.disconnect();
+      var token = await _controller.getRTCToken(_controller.streamId ?? '');
+      if (token == null) {
+        return isEnded;
+      }
+      _controller.memberStatus = IsmLiveMemberStatus.notMember;
+      await _controller.connectStream(
+        token: token.rtcToken,
+        streamId: _controller.streamId ?? '',
+        isHost: false,
+        isNewStream: false,
+        isCopublisher: false,
+      );
+
+      await _controller.sortParticipants();
     }
     return isEnded;
   }

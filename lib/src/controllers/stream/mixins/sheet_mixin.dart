@@ -13,9 +13,18 @@ mixin StreamSheetMixin {
           title: isHost
               ? IsmLiveStrings.areYouSureEndStream
               : IsmLiveStrings.areYouSureLeaveStream,
-          leftLabel: 'Cancel',
-          rightLabel: isHost ? 'End Stream' : 'Leave Stram',
-          onLeft: Get.back,
+          leftLabel: isHost ? 'Cancel' : 'Leave Co-publishing',
+          rightLabel: isHost ? 'End Stream' : 'Leave stream',
+          onLeft: isHost
+              ? Get.back
+              : () async {
+                  Get.back();
+                  await _controller.disconnectStream(
+                    isHost: isHost,
+                    streamId: streamId,
+                    endStream: false,
+                  );
+                },
           onRight: () async {
             Get.back();
             await _controller.disconnectStream(
@@ -123,20 +132,6 @@ mixin StreamSheetMixin {
 
           await _controller.sortParticipants();
         },
-      ),
-    );
-  }
-
-  void copublishingNoRequestSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveCopublishingViewerSheet(
-        title: 'You can request again',
-        description:
-            'multirequests are not allow , Host only can make you copublisher  again',
-        label: '',
-        images: [
-          _controller.user?.profileUrl ?? '',
-        ],
       ),
     );
   }
