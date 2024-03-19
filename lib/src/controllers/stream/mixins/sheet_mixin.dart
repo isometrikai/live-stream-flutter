@@ -13,7 +13,7 @@ mixin StreamSheetMixin {
           title: isHost
               ? IsmLiveStrings.areYouSureEndStream
               : IsmLiveStrings.areYouSureLeaveStream,
-          leftLabel: isHost ? 'Cancel' : 'Leave Co-publishing',
+          leftLabel: isHost ? 'Cancel' : 'Stop stream',
           rightLabel: isHost ? 'End Stream' : 'Leave stream',
           onLeft: isHost
               ? Get.back

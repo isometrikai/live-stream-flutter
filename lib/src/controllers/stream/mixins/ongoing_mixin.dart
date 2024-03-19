@@ -336,8 +336,7 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-        if (_controller.isHost ||
-            (_controller.userRole?.isCopublisher ?? false)) {
+        if (_controller.isHost || _controller.isPublishing) {
           _controller.copublishingHostSheet();
         } else {
           if (_controller.memberStatus.canEnableVideo) {
@@ -508,7 +507,7 @@ mixin StreamOngoingMixin {
     var isEnded = false;
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
-    } else if (_controller.isCopublisher == true) {
+    } else if (_controller.isCopublisher) {
       isEnded = await _controller.leaveMember(streamId: streamId);
     } else {
       isEnded = await _controller.leaveStream(streamId);
@@ -523,7 +522,7 @@ mixin StreamOngoingMixin {
       if (goBack) {
         closeStreamView(isHost);
       }
-    } else if (_controller.isCopublisher == true) {
+    } else if (_controller.isCopublisher) {
       await _controller.room!.disconnect();
       var token = await _controller.getRTCToken(_controller.streamId ?? '');
       if (token == null) {
@@ -537,7 +536,6 @@ mixin StreamOngoingMixin {
         isNewStream: false,
         isCopublisher: false,
       );
-
       await _controller.sortParticipants();
     }
     return isEnded;
