@@ -22,7 +22,7 @@ mixin StreamOngoingMixin {
     ));
     // Clear moderators list and request status
     _controller.moderatorsList.clear();
-    unawaited(_controller.statusCopublisherRequest(streamId));
+    // unawaited(_controller.statusCopublisherRequest(streamId));
     // Manage moderator status
     _manageModerator(streamId);
     // Fetch message count and initial messages if not host
@@ -336,14 +336,14 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-        if (!_controller.isHost) {
+        if (_controller.isHost || _controller.isPublishing) {
+          _controller.copublishingHostSheet();
+        } else {
           if (_controller.memberStatus.canEnableVideo) {
             _controller.copublishingStartVideoSheet();
           } else {
             _controller.copublishingViewerSheet();
           }
-        } else {
-          _controller.copublishingHostSheet();
         }
 
         break;
@@ -502,17 +502,17 @@ mixin StreamOngoingMixin {
     required bool isHost,
     required String streamId,
     bool goBack = true,
+    bool endStream = true,
   }) async {
     var isEnded = false;
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
-    } else if (_controller.isCopublisher == true) {
+    } else if (_controller.isCopublisher) {
       isEnded = await _controller.leaveMember(streamId: streamId);
     } else {
       isEnded = await _controller.leaveStream(streamId);
     }
-    if (isEnded) {
-      _controller.memberStatus = IsmLiveMemberStatus.notMember;
+    if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
@@ -522,6 +522,21 @@ mixin StreamOngoingMixin {
       if (goBack) {
         closeStreamView(isHost);
       }
+    } else if (_controller.isCopublisher) {
+      await _controller.room!.disconnect();
+      var token = await _controller.getRTCToken(_controller.streamId ?? '');
+      if (token == null) {
+        return isEnded;
+      }
+      _controller.memberStatus = IsmLiveMemberStatus.notMember;
+      await _controller.connectStream(
+        token: token.rtcToken,
+        streamId: _controller.streamId ?? '',
+        isHost: false,
+        isNewStream: false,
+        isCopublisher: false,
+      );
+      await _controller.sortParticipants();
     }
     return isEnded;
   }
