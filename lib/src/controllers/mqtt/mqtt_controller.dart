@@ -59,6 +59,19 @@ class IsmLiveMqttController extends GetxController {
     _streamController.disconnectRoom();
   }
 
+  String? get _hostImageUrl => _streamController.hostDetails?.userProfileImageUrl;
+
+  String? _viewerImageUrl(String viewerId) =>
+      _streamController.streamViewersList.cast<IsmLiveViewerModel?>().firstWhere((e) => e!.userId == viewerId, orElse: () => null)?.imageUrl;
+
+  String? _moderatorImageUrl(String moderatorId) =>
+      _streamController.moderatorsList.cast<UserDetails?>().firstWhere((e) => e!.userId == moderatorId, orElse: () => null)?.profileUrl;
+
+  String? _memberImageUrl(String moderatorId) => _streamController.streamMembersList
+      .cast<IsmLiveMemberDetailsModel?>()
+      .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
+      ?.userProfileImageUrl;
+
   // ----------------- Functios -----------------------
 
   Future<void> setup(BuildContext context) async {
@@ -236,6 +249,7 @@ class IsmLiveMqttController extends GetxController {
                 streamId: streamId,
                 senderName: hostName,
                 senderIdentifier: '',
+                senderProfileImageUrl: _hostImageUrl,
                 senderId: hostId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
@@ -253,6 +267,7 @@ class IsmLiveMqttController extends GetxController {
                 streamId: streamId,
                 senderName: user.userName,
                 senderIdentifier: user.userIdentifier,
+                senderProfileImageUrl: user.profileUrl,
                 senderId: user.userId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
@@ -273,6 +288,7 @@ class IsmLiveMqttController extends GetxController {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: hostName,
+                senderProfileImageUrl: _hostImageUrl,
                 senderIdentifier: '',
                 senderId: hostId,
                 messageType: IsmLiveMessageType.normal,
@@ -289,6 +305,8 @@ class IsmLiveMqttController extends GetxController {
           case IsmLiveActions.memberAdded:
             final memberId = payload['memberId'] as String? ?? '';
             final memberName = payload['memberName'] as String? ?? '';
+            final memberIdentifier = payload['memberIdentifier'] as String? ?? '';
+            final memberProfilePic = payload['memberProfilePic'] as String? ?? '';
             final hostName = payload['initiatorName'] as String? ?? 'Host';
             final hostId = payload['initiatorId'] as String? ?? '';
             var body = '';
@@ -303,7 +321,8 @@ class IsmLiveMqttController extends GetxController {
             final message = IsmLiveMessageModel(
               streamId: streamId,
               senderName: hostName,
-              senderIdentifier: '',
+              senderProfileImageUrl: memberProfilePic,
+              senderIdentifier: memberIdentifier,
               senderId: hostId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
@@ -318,6 +337,7 @@ class IsmLiveMqttController extends GetxController {
             final message = IsmLiveMessageModel(
               streamId: streamId,
               senderName: member.userName,
+              senderProfileImageUrl: _memberImageUrl(member.userId),
               senderIdentifier: member.identifier,
               senderId: member.userId,
               messageType: IsmLiveMessageType.normal,
@@ -339,6 +359,7 @@ class IsmLiveMqttController extends GetxController {
                 streamId: streamId,
                 senderName: initiatorName,
                 senderIdentifier: '',
+                senderProfileImageUrl: _hostImageUrl,
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
                 messageId: '',
@@ -353,8 +374,6 @@ class IsmLiveMqttController extends GetxController {
               // }
               if (memberId == userId) {
                 unawaited(_streamController.unpublishTracks());
-                // Get.back();
-                // IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
               }
             }
             break;
@@ -412,10 +431,12 @@ class IsmLiveMqttController extends GetxController {
             final moderatorId = payload['moderatorId'] as String? ?? '';
             final moderatorName = payload['moderatorName'] as String? ?? '';
             final moderatorIdentifier = payload['moderatorIdentifier'] as String? ?? '';
+            final moderatorProfilePic = payload['moderatorProfilePic'] as String? ?? '';
             final message = IsmLiveMessageModel(
               streamId: streamId,
               senderName: moderatorName,
               senderIdentifier: moderatorIdentifier,
+              senderProfileImageUrl: moderatorProfilePic,
               senderId: moderatorId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
@@ -441,6 +462,7 @@ class IsmLiveMqttController extends GetxController {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: moderatorName,
+                senderProfileImageUrl: _moderatorImageUrl(moderatorId),
                 senderIdentifier: '',
                 senderId: moderatorId,
                 messageType: IsmLiveMessageType.normal,
@@ -464,6 +486,7 @@ class IsmLiveMqttController extends GetxController {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: initiatorName,
+                senderProfileImageUrl: _hostImageUrl,
                 senderIdentifier: '',
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,
@@ -509,6 +532,7 @@ class IsmLiveMqttController extends GetxController {
               var viewer = IsmLiveViewerModel.fromMap(payload);
               final message = IsmLiveMessageModel(
                 streamId: streamId,
+                senderProfileImageUrl: viewer.imageUrl,
                 senderName: viewer.userName,
                 senderIdentifier: viewer.identifier,
                 senderId: viewer.userId,
@@ -528,6 +552,7 @@ class IsmLiveMqttController extends GetxController {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: viewer.userName,
+                senderProfileImageUrl: _viewerImageUrl(viewer.userId),
                 senderIdentifier: viewer.identifier,
                 senderId: viewer.userId,
                 messageType: IsmLiveMessageType.normal,
@@ -551,6 +576,7 @@ class IsmLiveMqttController extends GetxController {
               final message = IsmLiveMessageModel(
                 streamId: streamId,
                 senderName: initiatorName,
+                senderProfileImageUrl: _hostImageUrl,
                 senderIdentifier: '',
                 senderId: initiatorId,
                 messageType: IsmLiveMessageType.normal,

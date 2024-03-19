@@ -26,7 +26,9 @@ class NoVideoWidget extends StatelessWidget {
             IsmLiveDimens.boxHeight10,
             Text(
               name,
-              style: IsmLiveStyles.blackBold16,
+              style: IsmLiveStyles.blackBold16.copyWith(
+                color: IsmLiveColors.white,
+              ),
             )
           ],
         ),

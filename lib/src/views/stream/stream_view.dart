@@ -47,7 +47,7 @@ class IsmLiveStreamView extends StatelessWidget {
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
         controller: controller.pageController,
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
         onPageChanged: (index) => controller.onStreamScroll(
@@ -87,15 +87,9 @@ class _IsmLiveStreamView extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
-          var streamController = Get.find<IsmLiveStreamController>()
-            ..initializeStream(
-              streamId: streamId,
-              isHost: isHost,
-            );
-
           IsmLiveUtility.updateLater(() {
             if (isHost) {
-              streamController.askPublish();
+              Get.find<IsmLiveStreamController>().askPublish();
             }
           });
         },
