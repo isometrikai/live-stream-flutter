@@ -40,6 +40,9 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       ),
                     ),
                   )
-            : NoVideoWidget(imageUrl: streamImage),
+            : NoVideoWidget(
+                imageUrl: controller.hostDetails?.userProfileImageUrl ?? streamImage,
+                name: controller.hostDetails?.userName ?? 'U',
+              ),
       );
 }

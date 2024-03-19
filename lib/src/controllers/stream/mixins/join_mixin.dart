@@ -277,6 +277,10 @@ mixin StreamJoinMixin {
           skip: 0,
         ),
       ]));
+      _controller.initializeStream(
+        streamId: streamId,
+        isHost: isHost,
+      );
 
       _controller.update([IsmLiveStreamView.updateId]);
 
