@@ -41,7 +41,8 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex =
+              controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -134,9 +135,12 @@ class _IsmLiveStreamView extends StatelessWidget {
                               Padding(
                                 padding: IsmLiveDimens.edgeInsets8_0,
                                 child: StreamHeader(
-                                  description: controller.descriptionController.text,
+                                  description:
+                                      controller.descriptionController.text,
                                   name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+                                  imageUrl: controller
+                                          .hostDetails?.userProfileImageUrl ??
+                                      '',
                                   onTapCross: () {
                                     FocusScope.of(context).unfocus();
 
@@ -155,18 +159,25 @@ class _IsmLiveStreamView extends StatelessWidget {
                                     IsmLiveUtility.openBottomSheet(
                                       GetBuilder<IsmLiveStreamController>(
                                         id: IsmLiveStreamView.updateId,
-                                        builder: (controller) => IsmLiveListSheet(
-                                          scrollController: controller.viewerListController,
+                                        builder: (controller) =>
+                                            IsmLiveListSheet(
+                                          scrollController:
+                                              controller.viewerListController,
                                           items: controller.streamViewersList,
-                                          trailing: (_, viewer) => controller.isModerator
-                                              ? viewer.userId == controller.user?.userId
+                                          trailing: (_, viewer) => controller
+                                                  .isModerator
+                                              ? viewer.userId ==
+                                                      controller.user?.userId
                                                   ? IsmLiveDimens.box0
                                                   : IsmLiveButton.icon(
-                                                      icon: Icons.person_remove_rounded,
+                                                      icon: Icons
+                                                          .person_remove_rounded,
                                                       onTap: () {
-                                                        controller.kickoutViewer(
+                                                        controller
+                                                            .kickoutViewer(
                                                           streamId: streamId,
-                                                          viewerId: viewer.userId,
+                                                          viewerId:
+                                                              viewer.userId,
                                                         );
                                                       },
                                                     )
@@ -207,7 +218,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveDimens.boxHeight8,
-                              if (controller.showEmojiBoard) const IsmLiveEmojis(),
+                              if (controller.showEmojiBoard)
+                                const IsmLiveEmojis(),
                             ],
                           ),
                         )

@@ -22,7 +22,7 @@ mixin StreamOngoingMixin {
     ));
     // Clear moderators list and request status
     _controller.moderatorsList.clear();
-    unawaited(_controller.statusCopublisherRequest(streamId));
+    // unawaited(_controller.statusCopublisherRequest(streamId));
     // Manage moderator status
     _manageModerator(streamId);
     // Fetch message count and initial messages if not host
@@ -336,14 +336,15 @@ mixin StreamOngoingMixin {
         _controller.giftsSheet();
         break;
       case IsmLiveStreamOption.multiLive:
-        if (!_controller.isHost) {
+        if (_controller.isHost ||
+            (_controller.userRole?.isCopublisher ?? false)) {
+          _controller.copublishingHostSheet();
+        } else {
           if (_controller.memberStatus.canEnableVideo) {
             _controller.copublishingStartVideoSheet();
           } else {
             _controller.copublishingViewerSheet();
           }
-        } else {
-          _controller.copublishingHostSheet();
         }
 
         break;
@@ -512,7 +513,6 @@ mixin StreamOngoingMixin {
       isEnded = await _controller.leaveStream(streamId);
     }
     if (isEnded) {
-      _controller.memberStatus = IsmLiveMemberStatus.notMember;
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
