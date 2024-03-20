@@ -42,9 +42,7 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
-  Future<IsmLiveResponseModel> getRTCToken(
-    String streamId,
-  ) =>
+  Future<IsmLiveResponseModel> getRTCToken(String streamId, bool showLoader) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.viewer,
         type: IsmLiveRequestType.post,
@@ -52,7 +50,7 @@ class IsmLiveStreamRepository {
         payload: {
           'streamId': streamId,
         },
-        showLoader: true,
+        showLoader: showLoader,
       );
 
   Future<IsmLiveResponseModel> leaveStream(

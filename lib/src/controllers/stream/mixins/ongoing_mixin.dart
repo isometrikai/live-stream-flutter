@@ -324,10 +324,31 @@ mixin StreamOngoingMixin {
     }
 
     _controller.speakerOn = value ?? !_controller.speakerOn;
-
-    _controller.speakerOn
-        ? await room.participants.values.first.audioTracks.first.enable()
-        : await room.participants.values.first.audioTracks.first.disable();
+    try {
+      if (_controller.speakerOn) {
+        for (var participantAudio = 0;
+            participantAudio < room.participants.values.length;
+            participantAudio++) {
+          room.participants.values
+              .elementAt(participantAudio)
+              .audioTracks
+              .first
+              .enable();
+        }
+      } else {
+        for (var participantAudio = 0;
+            participantAudio < room.participants.values.length;
+            participantAudio++) {
+          room.participants.values
+              .elementAt(participantAudio)
+              .audioTracks
+              .first
+              .disable();
+        }
+      }
+    } catch (e) {
+      IsmLiveLog('speaker error $e');
+    }
   }
 
   Future onOptionTap(IsmLiveStreamOption option) async {
@@ -517,25 +538,34 @@ mixin StreamOngoingMixin {
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
-
       await disconnectRoom();
+
       if (goBack) {
+        unawaited(_controller.getStreams());
         closeStreamView(isHost);
       }
     } else if (_controller.isCopublisher) {
-      await _controller.room!.disconnect();
-      var token = await _controller.getRTCToken(_controller.streamId ?? '');
-      if (token == null) {
-        return isEnded;
-      }
+      // await _controller.room?.localParticipant?.dispose();
+      await _controller.unpublishTracks();
+
+      _controller.userRole?.leaveCopublishing();
       _controller.memberStatus = IsmLiveMemberStatus.notMember;
-      await _controller.connectStream(
-        token: token.rtcToken,
-        streamId: _controller.streamId ?? '',
-        isHost: false,
-        isNewStream: false,
-        isCopublisher: false,
-      );
+
+      // await _controller.room!.disconnect();
+      await _controller.getRTCToken(_controller.streamId ?? '',
+          showLoader: false);
+
+      // if (token == null) {
+      //   return isEnded;
+      // }
+      // _controller.memberStatus = IsmLiveMemberStatus.notMember;
+      // await _controller.connectStream(
+      //   token: token.rtcToken,
+      //   streamId: _controller.streamId ?? '',
+      //   isHost: false,
+      //   isNewStream: false,
+      //   isCopublisher: false,
+      // );
       await _controller.sortParticipants();
     }
     return isEnded;
@@ -548,10 +578,10 @@ mixin StreamOngoingMixin {
     _controller.streamId = null;
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
-    unawaited(_controller.getStreams());
 
     try {
       await _controller.room!.disconnect();
+
     } catch (e) {
       IsmLiveLog('room not disconnected $e');
     }
@@ -559,6 +589,7 @@ mixin StreamOngoingMixin {
 
   void closeStreamView(bool isHost, [bool fromMqtt = false]) {
     _controller._streamTimer?.cancel();
+
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView();
     } else {
