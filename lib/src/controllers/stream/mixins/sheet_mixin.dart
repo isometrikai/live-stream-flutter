@@ -116,23 +116,24 @@ mixin StreamSheetMixin {
           _controller.user?.profileUrl ?? '',
         ],
         onTap: () async {
-          var token = await _controller.switchViewer(
-              streamId: _controller.streamId ?? '');
-          if (token == null) {
-            return;
+          if (_controller.room != null) {
+            var token = await _controller.switchViewer(
+                streamId: _controller.streamId ?? '');
+            if (token == null) {
+              return;
+            }
+            await _controller.room!.disconnect();
+
+            await _controller.connectStream(
+              token: token,
+              streamId: _controller.streamId ?? '',
+              isHost: false,
+              isNewStream: false,
+              isCopublisher: true,
+            );
+
+            await _controller.sortParticipants();
           }
-          await _controller.room!.disconnect();
-          await _controller.room!.dispose();
-
-          await _controller.connectStream(
-            token: token,
-            streamId: _controller.streamId ?? '',
-            isHost: false,
-            isNewStream: false,
-            isCopublisher: true,
-          );
-
-          await _controller.sortParticipants();
         },
       ),
     );

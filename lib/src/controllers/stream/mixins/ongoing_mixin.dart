@@ -326,24 +326,12 @@ mixin StreamOngoingMixin {
     _controller.speakerOn = value ?? !_controller.speakerOn;
     try {
       if (_controller.speakerOn) {
-        for (var participantAudio = 0;
-            participantAudio < room.participants.values.length;
-            participantAudio++) {
-          room.participants.values
-              .elementAt(participantAudio)
-              .audioTracks
-              .first
-              .enable();
+        for (var i = 0; i < room.participants.values.length; i++) {
+          room.participants.values.elementAt(i).audioTracks.first.enable();
         }
       } else {
-        for (var participantAudio = 0;
-            participantAudio < room.participants.values.length;
-            participantAudio++) {
-          room.participants.values
-              .elementAt(participantAudio)
-              .audioTracks
-              .first
-              .disable();
+        for (var i = 0; i < room.participants.values.length; i++) {
+          room.participants.values.elementAt(i).audioTracks.first.disable();
         }
       }
     } catch (e) {
@@ -545,27 +533,15 @@ mixin StreamOngoingMixin {
         closeStreamView(isHost);
       }
     } else if (_controller.isCopublisher) {
-      // await _controller.room?.localParticipant?.dispose();
       await _controller.unpublishTracks();
 
       _controller.userRole?.leaveCopublishing();
+
       _controller.memberStatus = IsmLiveMemberStatus.notMember;
 
-      // await _controller.room!.disconnect();
       await _controller.getRTCToken(_controller.streamId ?? '',
           showLoader: false);
 
-      // if (token == null) {
-      //   return isEnded;
-      // }
-      // _controller.memberStatus = IsmLiveMemberStatus.notMember;
-      // await _controller.connectStream(
-      //   token: token.rtcToken,
-      //   streamId: _controller.streamId ?? '',
-      //   isHost: false,
-      //   isNewStream: false,
-      //   isCopublisher: false,
-      // );
       await _controller.sortParticipants();
     }
     return isEnded;
@@ -581,7 +557,6 @@ mixin StreamOngoingMixin {
 
     try {
       await _controller.room!.disconnect();
-
     } catch (e) {
       IsmLiveLog('room not disconnected $e');
     }
