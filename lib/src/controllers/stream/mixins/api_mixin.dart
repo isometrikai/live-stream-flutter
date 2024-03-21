@@ -59,10 +59,9 @@ mixin StreamAPIMixin {
   }
 
   /// Get an RTC token for joining a stream.
-  Future<IsmLiveRTCModel?> getRTCToken(
-    String streamId,
-  ) =>
-      _controller._viewModel.getRTCToken(streamId);
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId,
+          {bool showLoader = true}) =>
+      _controller._viewModel.getRTCToken(streamId, showLoader);
 
 //Leaves a live stream.
   Future<bool> leaveStream(
@@ -639,7 +638,6 @@ mixin StreamAPIMixin {
       );
       _controller.productsList.addAll(list);
     }
-
     _controller.update([IsmLiveAddProduct.updateId]);
   }
 

@@ -54,9 +54,9 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveRTCModel?> getRTCToken(String streamId) async {
+  Future<IsmLiveRTCModel?> getRTCToken(String streamId, bool showLoader) async {
     try {
-      var res = await _repository.getRTCToken(streamId);
+      var res = await _repository.getRTCToken(streamId, showLoader);
       if (res.hasError) {
         return null;
       }
