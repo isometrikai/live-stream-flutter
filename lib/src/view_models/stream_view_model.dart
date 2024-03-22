@@ -701,4 +701,38 @@ class IsmLiveStreamViewModel {
       return [];
     }
   }
+
+  Future<IsmLiveStreamAnalytisModel?> streamAnalytics({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.streamAnalytics(
+        streamId: streamId,
+      );
+
+      if (!res.hasError) {
+        return IsmLiveStreamAnalytisModel.fromJson(res.data);
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return null;
+  }
+
+  Future<void> streamAnalyticsViewers({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.streamAnalyticsViewers(
+        streamId: streamId,
+      );
+
+      if (!res.hasError) {
+        IsmLiveLog('-------------- ${res.data}');
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return;
+  }
 }

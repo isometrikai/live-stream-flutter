@@ -644,6 +644,17 @@ mixin StreamAPIMixin {
   Future<void> getRestreamChannels() =>
       _controller._viewModel.getRestreamChannels();
 
+  Future<void> streamAnalytics(String streamId) async {
+    _controller.streamAnalytis =
+        await _controller._viewModel.streamAnalytics(streamId: streamId);
+    _controller.update([IsmLiveEndStream.updateId]);
+  }
+
+  Future<void> streamAnalyticsViewers(String streamId) async {
+    await _controller._viewModel.streamAnalyticsViewers(streamId: streamId);
+    // _controller.update([IsmLiveEndStream.updateId]);
+  }
+
   Future<bool> enableRestreamChannel(bool enable) =>
       _controller._viewModel.addRestreamChannel(
         url: _controller.rtmlUrl.text.trim(),

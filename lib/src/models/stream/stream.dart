@@ -8,6 +8,7 @@ export 'product_details_model.dart';
 export 'product_model.dart';
 export 'rtc_model.dart';
 export 'send_message_model.dart';
+export 'stream_analytics_model.dart';
 export 'stream_model.dart';
 export 'users_pile_model.dart';
 export 'viewer_details_model.dart';
