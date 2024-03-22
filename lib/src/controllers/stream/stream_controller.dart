@@ -99,7 +99,7 @@ class IsmLiveStreamController extends GetxController
 
   IsmLiveChatModel? parentMessage;
 
-  IsmLiveStreamAnalytisModel? streamAnalytis;
+  IsmLiveStreamAnalyticsModel? streamAnalytis;
 
   final Rx<IsmLiveMemberStatus> _memberStatus =
       IsmLiveMemberStatus.notMember.obs;
