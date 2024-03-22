@@ -702,7 +702,7 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<IsmLiveStreamAnalytisModel?> streamAnalytics({
+  Future<IsmLiveStreamAnalyticsModel?> streamAnalytics({
     required String streamId,
   }) async {
     try {
@@ -711,7 +711,7 @@ class IsmLiveStreamViewModel {
       );
 
       if (!res.hasError) {
-        return IsmLiveStreamAnalytisModel.fromJson(res.data);
+        return IsmLiveStreamAnalyticsModel.fromJson(res.data);
       }
     } catch (e, st) {
       IsmLiveLog.error(e, st);

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class IsmLiveStreamAnalytisModel {
-  IsmLiveStreamAnalytisModel({
+class IsmLiveStreamAnalyticsModel {
+  IsmLiveStreamAnalyticsModel({
     this.totalViewersCount,
     this.duration,
     this.productCount,
@@ -15,56 +15,56 @@ class IsmLiveStreamAnalytisModel {
     this.totalEarning,
   });
 
-  factory IsmLiveStreamAnalytisModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveStreamAnalytisModel(
+  factory IsmLiveStreamAnalyticsModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveStreamAnalyticsModel(
         totalViewersCount: map['totalViewersCount'] != null
-            ? map['totalViewersCount'] as num
+            ? map['totalViewersCount'] as int
             : null,
-        duration: map['duration'] != null ? map['duration'] as num : null,
+        duration: map['duration'] != null ? map['duration'] as double : null,
         productCount:
-            map['productCount'] != null ? map['productCount'] as num : null,
-        soldCount: map['soldCount'] != null ? map['soldCount'] as num : null,
+            map['productCount'] != null ? map['productCount'] as int : null,
+        soldCount: map['soldCount'] != null ? map['soldCount'] as int : null,
         newViewersCount: map['newViewersCount'] != null
-            ? map['newViewersCount'] as num
+            ? map['newViewersCount'] as int
             : null,
-        earnings: map['earnings'] != null ? map['earnings'] as num : null,
-        hearts: map['hearts'] != null ? map['hearts'] as num : null,
-        followers: map['followers'] != null ? map['followers'] as num : null,
-        giftsCount: map['giftsCount'] != null ? map['giftsCount'] as num : null,
-        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as num : null,
+        earnings: map['earnings'] != null ? map['earnings'] as double : null,
+        hearts: map['hearts'] != null ? map['hearts'] as int : null,
+        followers: map['followers'] != null ? map['followers'] as int : null,
+        giftsCount: map['giftsCount'] != null ? map['giftsCount'] as int : null,
+        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as int : null,
         totalEarning:
-            map['totalEarning'] != null ? map['totalEarning'] as num : null,
+            map['totalEarning'] != null ? map['totalEarning'] as double : null,
       );
 
-  factory IsmLiveStreamAnalytisModel.fromJson(String source) =>
-      IsmLiveStreamAnalytisModel.fromMap(
+  factory IsmLiveStreamAnalyticsModel.fromJson(String source) =>
+      IsmLiveStreamAnalyticsModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-  final num? totalViewersCount;
-  final num? duration;
-  final num? productCount;
-  final num? soldCount;
-  final num? newViewersCount;
-  final num? earnings;
-  final num? hearts;
-  final num? followers;
-  final num? giftsCount;
-  final num? coinsCount;
-  final num? totalEarning;
+  final int? totalViewersCount;
+  final double? duration;
+  final int? productCount;
+  final int? soldCount;
+  final int? newViewersCount;
+  final double? earnings;
+  final int? hearts;
+  final int? followers;
+  final int? giftsCount;
+  final int? coinsCount;
+  final double? totalEarning;
 
-  IsmLiveStreamAnalytisModel copyWith({
-    num? totalViewersCount,
-    num? duration,
-    num? productCount,
-    num? soldCount,
-    num? newViewersCount,
-    num? earnings,
-    num? hearts,
-    num? followers,
-    num? giftsCount,
-    num? coinsCount,
-    num? totalEarning,
+  IsmLiveStreamAnalyticsModel copyWith({
+    int? totalViewersCount,
+    double? duration,
+    int? productCount,
+    int? soldCount,
+    int? newViewersCount,
+    double? earnings,
+    int? hearts,
+    int? followers,
+    int? giftsCount,
+    int? coinsCount,
+    double? totalEarning,
   }) =>
-      IsmLiveStreamAnalytisModel(
+      IsmLiveStreamAnalyticsModel(
         totalViewersCount: totalViewersCount ?? this.totalViewersCount,
         duration: duration ?? this.duration,
         productCount: productCount ?? this.productCount,
@@ -96,10 +96,10 @@ class IsmLiveStreamAnalytisModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamAnalytisModel(totalViewersCount: $totalViewersCount, duration: $duration, productCount: $productCount, soldCount: $soldCount, newViewersCount: $newViewersCount, earnings: $earnings, hearts: $hearts, followers: $followers, giftsCount: $giftsCount, coinsCount: $coinsCount, totalEarning: $totalEarning)';
+      'IsmLiveStreamAnalyticsModel(totalViewersCount: $totalViewersCount, duration: $duration, productCount: $productCount, soldCount: $soldCount, newViewersCount: $newViewersCount, earnings: $earnings, hearts: $hearts, followers: $followers, giftsCount: $giftsCount, coinsCount: $coinsCount, totalEarning: $totalEarning)';
 
   @override
-  bool operator ==(covariant IsmLiveStreamAnalytisModel other) {
+  bool operator ==(covariant IsmLiveStreamAnalyticsModel other) {
     if (identical(this, other)) return true;
 
     return other.totalViewersCount == totalViewersCount &&
