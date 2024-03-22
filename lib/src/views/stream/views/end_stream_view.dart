@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveEndStream extends StatelessWidget {
-  const IsmLiveEndStream({
+  IsmLiveEndStream({
     super.key,
-  });
+  }) : streamId = Get.arguments['streamId'];
+  final String streamId;
+  static const String updateId = 'end-stream-view';
 
   @override
   Widget build(BuildContext context) => PopScope(
         canPop: false,
         child: GetBuilder<IsmLiveStreamController>(
+          id: updateId,
+          initState: (state) async {
+            var controller = Get.find<IsmLiveStreamController>();
+            await controller.streamAnalytics(streamId);
+            // controller.streamAnalyticsViewers(streamId);
+          },
           builder: (controller) => Scaffold(
             body: Padding(
               padding: IsmLiveDimens.edgeInsets8,
@@ -59,32 +67,34 @@ class IsmLiveEndStream extends StatelessWidget {
                     ),
                     children: [
                       IsmLiveEndStreamContainer(
-                        points: '${controller.hearts}',
+                        points: '${controller.streamAnalytis?.hearts ?? 0}',
                         title: 'Hearts',
                         assetConstant: IsmLiveAssetConstants.heartSvg,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '${controller.orders}',
+                        points: '${controller.streamAnalytis?.soldCount ?? 0}',
                         title: 'Order',
                         assetConstant: IsmLiveAssetConstants.box,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '${controller.streamViewersList.length}',
+                        points:
+                            '${controller.streamAnalytis?.totalViewersCount ?? 0}',
                         title: 'Viewers',
                         assetConstant: IsmLiveAssetConstants.eye,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '${controller.followers}',
+                        points: '${controller.streamAnalytis?.followers ?? 0}',
                         title: 'Followers',
                         assetConstant: IsmLiveAssetConstants.profileUser,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '\$${controller.earnings}',
+                        points: '\$${controller.streamAnalytis?.earnings ?? 0}',
                         title: 'Earnings',
                         assetConstant: IsmLiveAssetConstants.dollar,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: controller.duration.formattedTime,
+                        points:
+                            '${controller.streamAnalytis?.duration ?? '00:00'}',
                         title: 'Duration',
                         assetConstant: IsmLiveAssetConstants.clock,
                       ),

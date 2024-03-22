@@ -99,6 +99,8 @@ class IsmLiveStreamController extends GetxController
 
   IsmLiveChatModel? parentMessage;
 
+  IsmLiveStreamAnalyticsModel? streamAnalytis;
+
   final Rx<IsmLiveMemberStatus> _memberStatus =
       IsmLiveMemberStatus.notMember.obs;
   IsmLiveMemberStatus get memberStatus => _memberStatus.value;
@@ -145,17 +147,7 @@ class IsmLiveStreamController extends GetxController
 
   Uint8List? bytes;
 
-  int hearts = 0;
-
-  int orders = 0;
-
-  int followers = 0;
-
-  int earnings = 0;
-
   int messagesCount = 0;
-
-  Duration duration = Duration.zero;
 
   CameraController? cameraController;
 

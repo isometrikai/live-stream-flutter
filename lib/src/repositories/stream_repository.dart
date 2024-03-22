@@ -547,4 +547,35 @@ class IsmLiveStreamRepository {
       showDialog: true,
     );
   }
+
+  Future<IsmLiveResponseModel> streamAnalytics({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.streamAnalytics}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.devBaseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> streamAnalyticsViewers({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.devBaseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+    );
+  }
 }

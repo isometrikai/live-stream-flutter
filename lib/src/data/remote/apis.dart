@@ -4,6 +4,8 @@ class IsmLiveApis {
 
   static const String baseUrl = 'https://apis.isometrik.io';
 
+  static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
+
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String productDetails =
       'https://admin-apis.isometrik.io/v1/get_product_details';
@@ -14,6 +16,9 @@ class IsmLiveApis {
   static const String presignedurl = '$user/presignedurl/create';
 
   static const String userSubscription = '/gs/v2/subscription';
+
+  static const String streamAnalytics = '/v2/stream/analytics';
+  static const String streamAnalyticsViewers = '/v2/analytics/stream/viewers';
 
   // Streams
   static const String _streaming = '/streaming/v2';

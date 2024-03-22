@@ -27,6 +27,7 @@ mixin StreamSheetMixin {
                 },
           onRight: () async {
             Get.back();
+
             await _controller.disconnectStream(
               isHost: isHost,
               streamId: streamId,

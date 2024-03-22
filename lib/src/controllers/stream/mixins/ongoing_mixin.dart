@@ -530,7 +530,7 @@ mixin StreamOngoingMixin {
 
       if (goBack) {
         unawaited(_controller.getStreams());
-        closeStreamView(isHost);
+        closeStreamView(isHost, streamId: streamId);
       }
     } else if (_controller.isCopublisher) {
       await _controller.unpublishTracks();
@@ -550,6 +550,7 @@ mixin StreamOngoingMixin {
   Future<void> disconnectRoom() async {
     unawaited(
         _controller._mqttController?.unsubscribeStream(_controller.streamId!));
+
     _controller.userRole = null;
     _controller.streamId = null;
     _controller._streamTimer?.cancel();
@@ -562,11 +563,11 @@ mixin StreamOngoingMixin {
     }
   }
 
-  void closeStreamView(bool isHost, [bool fromMqtt = false]) {
+  void closeStreamView(bool isHost, {String? streamId, bool fromMqtt = false}) {
     _controller._streamTimer?.cancel();
 
     if (isHost) {
-      IsmLiveRouteManagement.goToEndStreamView();
+      IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
       Get.back();
       if (fromMqtt) {
