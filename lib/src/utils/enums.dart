@@ -10,6 +10,15 @@ enum IsmLiveRequestType {
   upload;
 }
 
+enum IsmLiveNavigation {
+  calling,
+  streaming;
+
+  bool get navigateToCalling => this == IsmLiveNavigation.calling;
+
+  bool get navigateToStreaming => this == IsmLiveNavigation.streaming;
+}
+
 enum IsmLiveConnectionState {
   connected,
   disconnected;

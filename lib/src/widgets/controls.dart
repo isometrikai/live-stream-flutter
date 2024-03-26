@@ -31,12 +31,14 @@ class ControlsWidget extends StatelessWidget {
       },
       builder: (controller) => Container(
             margin: IsmLiveDimens.edgeInsetsB20,
+            padding: IsmLiveDimens.edgeInsets10,
             width: Get.width,
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: IsmLiveDimens.thirty,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 CustomIconButton(
+                  dimension: IsmLiveDimens.fifty,
                   icon: Icon(
                     Icons.phone,
                     color: Colors.white,
@@ -50,6 +52,7 @@ class ControlsWidget extends StatelessWidget {
                 ),
                 participant.isMicrophoneEnabled()
                     ? CustomIconButton(
+                        dimension: IsmLiveDimens.fifty,
                         icon: Icon(
                           Icons.mic,
                           color: Colors.white,
@@ -60,6 +63,7 @@ class ControlsWidget extends StatelessWidget {
                         },
                       )
                     : CustomIconButton(
+                        dimension: IsmLiveDimens.fifty,
                         icon: Icon(
                           Icons.mic_off,
                           color: Colors.white,
@@ -72,6 +76,7 @@ class ControlsWidget extends StatelessWidget {
                 if (!audioCallOnly)
                   participant.isCameraEnabled()
                       ? CustomIconButton(
+                          dimension: IsmLiveDimens.fifty,
                           icon: Icon(
                             Icons.videocam_sharp,
                             color: Colors.white,
@@ -82,6 +87,7 @@ class ControlsWidget extends StatelessWidget {
                           },
                         )
                       : CustomIconButton(
+                          dimension: IsmLiveDimens.fifty,
                           icon: Icon(
                             Icons.videocam_off,
                             color: Colors.white,
@@ -93,6 +99,7 @@ class ControlsWidget extends StatelessWidget {
                         ),
                 if (!audioCallOnly)
                   CustomIconButton(
+                    dimension: IsmLiveDimens.fifty,
                     icon: Icon(
                       Icons.flip_camera_ios,
                       color: Colors.white,
