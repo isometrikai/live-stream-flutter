@@ -6,6 +6,7 @@ class UserController extends GetxController {
   DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   UserDetailsModel? userDetail;
+  AgentDetailsModel? agentDetail;
 
   Future<void> getUserData() async {
     var data = dbWrapper.getStringValue(LocalKeys.user);
@@ -14,5 +15,14 @@ class UserController extends GetxController {
       return;
     }
     userDetail = UserDetailsModel.fromJson(data);
+  }
+
+  Future<void> getAgentData() async {
+    var data = dbWrapper.getStringValue(LocalKeys.user);
+
+    if (data.trim().isEmpty) {
+      return;
+    }
+    agentDetail = AgentDetailsModel.fromJson(data);
   }
 }

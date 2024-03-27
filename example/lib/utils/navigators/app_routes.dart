@@ -5,6 +5,9 @@ part of 'app_pages.dart';
 class AppRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
+  static const String agentPhone = '/agentPhone';
+  static const String agentOtp = '/agentOtp';
+  static const String rampUp = '/rampup';
   static const String signup = '/signup';
   static const String home = '/home';
 }

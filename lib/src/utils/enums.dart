@@ -14,6 +14,16 @@ enum IsmLiveNavigation {
   calling,
   streaming;
 
+  factory IsmLiveNavigation.userTypr(String val) {
+    switch (val) {
+      case 'agent':
+        return IsmLiveNavigation.calling;
+      case 'user':
+        return IsmLiveNavigation.streaming;
+    }
+    return IsmLiveNavigation.streaming;
+  }
+
   bool get navigateToCalling => this == IsmLiveNavigation.calling;
 
   bool get navigateToStreaming => this == IsmLiveNavigation.streaming;

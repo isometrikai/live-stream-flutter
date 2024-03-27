@@ -23,9 +23,9 @@ class MyMeetingsView extends StatelessWidget {
           backgroundColor: IsmLiveTheme.of(context).backgroundColor,
           elevation: 0,
           leadingWidth: IsmLiveDimens.eighty,
-          leading: const TextButton(
-            onPressed: IsmLiveApp.logout,
-            child: Text(
+          leading: TextButton(
+            onPressed: () => IsmLiveApp.logout(false),
+            child: const Text(
               'LogOut',
               style: TextStyle(color: Colors.black),
             ),

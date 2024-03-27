@@ -10,14 +10,23 @@ class HomeController extends GetxController {
   DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
   late UserDetailsModel user;
+  late AgentDetailsModel agent;
+
+  late String userType;
 
   late IsmLiveConfigData configData;
+
+  late IsmLiveNavigation navigation;
 
   @override
   void onInit() {
     super.onInit();
 
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+    agent =
+        AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+    userType = dbWrapper.getStringValue(LocalKeys.userType);
+    navigation = IsmLiveNavigation.userTypr(userType);
 
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
@@ -30,11 +39,13 @@ class HomeController extends GetxController {
         deviceId: user.deviceId,
       ),
       userConfig: IsmLiveUserConfig(
-        userToken: user.userToken,
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userEmail: user.email,
+        userToken: navigation.navigateToCalling
+            ? agent.token.accessToken
+            : user.userToken,
+        userId: navigation.navigateToCalling ? agent.userId : user.userId,
+        firstName: navigation.navigateToCalling ? agent.name : user.firstName,
+        lastName: navigation.navigateToCalling ? agent.name : user.lastName,
+        userEmail: navigation.navigateToCalling ? '' : user.email,
         userProfile: '',
       ),
       mqttConfig: const IsmLiveMqttConfig(
@@ -55,6 +66,6 @@ class HomeController extends GetxController {
   void logout() async {
     await dbWrapper.deleteAllSecuredValues();
     dbWrapper.deleteBox();
-    RouteManagement.goToLogin();
+    RouteManagement.goToRampup();
   }
 }
