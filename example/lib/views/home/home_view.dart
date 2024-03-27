@@ -13,6 +13,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<HomeController>(
         builder: (controller) => IsmLiveApp(
+          navigationType: IsmLiveNavigation.calling,
           configuration: kConfigData.value ?? controller.configData,
           enableLog: true,
           onLogout: () {

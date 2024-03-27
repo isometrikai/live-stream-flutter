@@ -4,10 +4,18 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyMeetingsView extends StatelessWidget {
-  const MyMeetingsView({
+  MyMeetingsView({
     super.key,
   });
-
+  var controller = Get.put(
+    MeetingController(
+      MeetingViewModel(
+        MeetingRepository(
+          Get.find(),
+        ),
+      ),
+    ),
+  );
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: IsmLiveTheme.of(context).backgroundColor,

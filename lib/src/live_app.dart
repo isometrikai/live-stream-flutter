@@ -12,6 +12,7 @@ class IsmLiveApp extends StatelessWidget {
     this.onCallEnd,
     this.enableLog = true,
     this.onLogout,
+    this.navigationType = IsmLiveNavigation.streaming,
   }) {
     IsmLiveHandler.initialize();
     IsmLiveHandler.isLogsEnabled = enableLog;
@@ -19,9 +20,11 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) =>
+      IsmLiveHandler.isMqttConnected = value;
 
-  static Future<void> logout([VoidCallback? logoutCallback]) => IsmLiveHandler.logout(logoutCallback);
+  static Future<void> logout([VoidCallback? logoutCallback]) =>
+      IsmLiveHandler.logout(logoutCallback);
 
   static MapStreamSubscription addListener(
     MapFunction listener,
@@ -37,10 +40,13 @@ class IsmLiveApp extends StatelessWidget {
   final VoidCallback? onCallEnd;
   final bool enableLog;
   final VoidCallback? onLogout;
+  final IsmLiveNavigation navigationType;
 
   @override
   Widget build(BuildContext context) => IsmLiveConfig(
         data: configuration,
-        child: const IsmLiveStreamListing(),
+        child: navigationType.navigateToStreaming
+            ? const IsmLiveStreamListing()
+            : MyMeetingsView(),
       );
 }
