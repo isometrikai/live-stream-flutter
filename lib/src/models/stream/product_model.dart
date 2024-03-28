@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class IsmLiveProductModel {
@@ -80,11 +79,6 @@ class IsmLiveProductModel {
 }
 
 class IsmLiveProductMetaData {
-  final num? price;
-  final String? description;
-  final String? currencySymbol;
-  final String? category;
-  final String? productImageUrl;
   IsmLiveProductMetaData({
     this.price,
     this.description,
@@ -92,6 +86,29 @@ class IsmLiveProductMetaData {
     this.category,
     this.productImageUrl,
   });
+
+  factory IsmLiveProductMetaData.fromMap(Map<String, dynamic> map) =>
+      IsmLiveProductMetaData(
+        price: map['price'] != null ? map['price'] as num : null,
+        description:
+            map['description'] != null ? map['description'] as String : null,
+        currencySymbol: map['currencySymbol'] != null
+            ? map['currencySymbol'] as String
+            : null,
+        category: map['category'] != null ? map['category'] as String : null,
+        productImageUrl: map['productImageUrl'] != null
+            ? map['productImageUrl'] as String
+            : null,
+      );
+
+  factory IsmLiveProductMetaData.fromJson(String source) =>
+      IsmLiveProductMetaData.fromMap(
+          json.decode(source) as Map<String, dynamic>);
+  final num? price;
+  final String? description;
+  final String? currencySymbol;
+  final String? category;
+  final String? productImageUrl;
 
   IsmLiveProductMetaData copyWith({
     num? price,
@@ -116,25 +133,7 @@ class IsmLiveProductMetaData {
         'productImageUrl': productImageUrl,
       };
 
-  factory IsmLiveProductMetaData.fromMap(Map<String, dynamic> map) =>
-      IsmLiveProductMetaData(
-        price: map['price'] != null ? map['price'] as num : null,
-        description:
-            map['description'] != null ? map['description'] as String : null,
-        currencySymbol: map['currencySymbol'] != null
-            ? map['currencySymbol'] as String
-            : null,
-        category: map['category'] != null ? map['category'] as String : null,
-        productImageUrl: map['productImageUrl'] != null
-            ? map['productImageUrl'] as String
-            : null,
-      );
-
   String toJson() => json.encode(toMap());
-
-  factory IsmLiveProductMetaData.fromJson(String source) =>
-      IsmLiveProductMetaData.fromMap(
-          json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() =>

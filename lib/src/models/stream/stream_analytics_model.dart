@@ -18,51 +18,51 @@ class IsmLiveStreamAnalyticsModel {
   factory IsmLiveStreamAnalyticsModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveStreamAnalyticsModel(
         totalViewersCount: map['totalViewersCount'] != null
-            ? map['totalViewersCount'] as int
+            ? map['totalViewersCount'] as num
             : null,
-        duration: map['duration'] != null ? map['duration'] as double : null,
+        duration: map['duration'] != null ? map['duration'] as num : null,
         productCount:
-            map['productCount'] != null ? map['productCount'] as int : null,
-        soldCount: map['soldCount'] != null ? map['soldCount'] as int : null,
+            map['productCount'] != null ? map['productCount'] as num : null,
+        soldCount: map['soldCount'] != null ? map['soldCount'] as num : null,
         newViewersCount: map['newViewersCount'] != null
-            ? map['newViewersCount'] as int
+            ? map['newViewersCount'] as num
             : null,
-        earnings: map['earnings'] != null ? map['earnings'] as double : null,
-        hearts: map['hearts'] != null ? map['hearts'] as int : null,
-        followers: map['followers'] != null ? map['followers'] as int : null,
-        giftsCount: map['giftsCount'] != null ? map['giftsCount'] as int : null,
-        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as int : null,
+        earnings: map['earnings'] != null ? map['earnings'] as num : null,
+        hearts: map['hearts'] != null ? map['hearts'] as num : null,
+        followers: map['followers'] != null ? map['followers'] as num : null,
+        giftsCount: map['giftsCount'] != null ? map['giftsCount'] as num : null,
+        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as num : null,
         totalEarning:
-            map['totalEarning'] != null ? map['totalEarning'] as double : null,
+            map['totalEarning'] != null ? map['totalEarning'] as num : null,
       );
 
   factory IsmLiveStreamAnalyticsModel.fromJson(String source) =>
       IsmLiveStreamAnalyticsModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-  final int? totalViewersCount;
-  final double? duration;
-  final int? productCount;
-  final int? soldCount;
-  final int? newViewersCount;
-  final double? earnings;
-  final int? hearts;
-  final int? followers;
-  final int? giftsCount;
-  final int? coinsCount;
-  final double? totalEarning;
+  final num? totalViewersCount;
+  final num? duration;
+  final num? productCount;
+  final num? soldCount;
+  final num? newViewersCount;
+  final num? earnings;
+  final num? hearts;
+  final num? followers;
+  final num? giftsCount;
+  final num? coinsCount;
+  final num? totalEarning;
 
   IsmLiveStreamAnalyticsModel copyWith({
-    int? totalViewersCount,
-    double? duration,
-    int? productCount,
-    int? soldCount,
-    int? newViewersCount,
-    double? earnings,
-    int? hearts,
-    int? followers,
-    int? giftsCount,
-    int? coinsCount,
-    double? totalEarning,
+    num? totalViewersCount,
+    num? duration,
+    num? productCount,
+    num? soldCount,
+    num? newViewersCount,
+    num? earnings,
+    num? hearts,
+    num? followers,
+    num? giftsCount,
+    num? coinsCount,
+    num? totalEarning,
   }) =>
       IsmLiveStreamAnalyticsModel(
         totalViewersCount: totalViewersCount ?? this.totalViewersCount,
