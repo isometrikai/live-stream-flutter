@@ -44,6 +44,7 @@ class AuthViewModel {
         Future.wait([
           dbWrapper.saveValue(LocalKeys.user, userDetails.toJson()),
           dbWrapper.saveValue(LocalKeys.isLoggedIn, true),
+          dbWrapper.saveValue(LocalKeys.userType, 'user'),
         ]),
       );
 
@@ -60,7 +61,8 @@ class AuthViewModel {
     required Map<String, dynamic> createUser,
   }) async {
     try {
-      var res = await _repository.signup(isLoading: isLoading, createUser: createUser);
+      var res = await _repository.signup(
+          isLoading: isLoading, createUser: createUser);
       if (res.hasError) {
         return null;
       }
@@ -77,6 +79,7 @@ class AuthViewModel {
       await Future.wait([
         dbWrapper.saveValue(LocalKeys.user, userDetails.toJson()),
         dbWrapper.saveValue(LocalKeys.isLoggedIn, true),
+        dbWrapper.saveValue(LocalKeys.userType, 'user'),
       ]);
 
       return userDetails;

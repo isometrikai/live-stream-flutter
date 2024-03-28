@@ -18,11 +18,11 @@ class IsmLivePages {
         IsmLiveMqttBinding(),
       ],
     ),
-    GetPage<MyMeetingsView>(
+    GetPage<IsmLiveMeetingView>(
       name: IsmLiveRoutes.myMeetingsView,
       transitionDuration: transitionDuration,
-      page: MyMeetingsView.new,
-      binding: MeetingBinding(),
+      page: IsmLiveMeetingView.new,
+      binding: IsmLiveMeetingBinding(),
     ),
     GetPage<CreateMeetingScreen>(
       name: IsmLiveRoutes.createMeetingScreen,

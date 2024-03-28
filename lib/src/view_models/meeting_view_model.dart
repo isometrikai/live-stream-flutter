@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 
-class MeetingViewModel {
-  MeetingViewModel(this._repository);
-  final MeetingRepository _repository;
+class IsmLiveMeetingViewModel {
+  IsmLiveMeetingViewModel(this._repository);
+  final IsmLiveMeetingRepository _repository;
 
   Future<List<MyMeetingModel>?> getMeetingsList({
     required bool isLoading,

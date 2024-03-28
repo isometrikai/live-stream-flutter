@@ -5,6 +5,10 @@ part of 'app_pages.dart';
 class AppRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
+  static const String agentPhone = '/agentPhone';
+  static const String agentOtp = '/agentOtp';
+
+  static const String authWrapper = '/authWrapper';
   static const String signup = '/signup';
   static const String home = '/home';
 }

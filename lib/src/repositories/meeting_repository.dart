@@ -1,7 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 
-class MeetingRepository {
-  const MeetingRepository(this._apiWrapper);
+class IsmLiveMeetingRepository {
+  const IsmLiveMeetingRepository(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
   Future<IsmLiveResponseModel?> getMeetingsList({

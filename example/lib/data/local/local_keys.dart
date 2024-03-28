@@ -4,4 +4,5 @@ class LocalKeys {
   static const String dbname = 'appscrip_livestream_component_example';
   static const String user = 'user';
   static const String isLoggedIn = 'isLoggedIn';
+  static const String userType = 'userType';
 }

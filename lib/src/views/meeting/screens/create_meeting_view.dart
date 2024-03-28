@@ -13,7 +13,7 @@ class CreateMeetingScreen extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 0,
         ),
-        body: GetBuilder<MeetingController>(
+        body: GetBuilder<IsmLiveMeetingController>(
           builder: (controller) => Padding(
             padding: IsmLiveDimens.edgeInsets8,
             child: SingleChildScrollView(

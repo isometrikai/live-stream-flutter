@@ -13,8 +13,25 @@ abstract class RouteManagement {
     }
   }
 
+  static void goToAgentPhoneLogin() {
+    Get.offAllNamed<void>(
+      AppRoutes.agentPhone,
+    );
+  }
+
+  static void goToAgentOtp() {
+    Get.toNamed<void>(
+      AppRoutes.agentOtp,
+    );
+  }
+
   static void goToSignUp() {
-    Get.toNamed(AppRoutes.signup);
+    Get.offNamed(AppRoutes.signup);
+    // Get.offNamed(AppRoutes.signup);
+  }
+
+  static void goToAuthWrapper() {
+    Get.offNamed(AppRoutes.authWrapper);
     // Get.offNamed(AppRoutes.signup);
   }
 
