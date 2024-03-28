@@ -55,10 +55,10 @@ class AppPages {
       binding: AgentAuthBinding(),
       transition: Transition.rightToLeft,
     ),
-    GetPage<RampUpView>(
-      name: AppRoutes.rampUp,
+    GetPage<AuthWrapper>(
+      name: AppRoutes.authWrapper,
       transitionDuration: transitionDuration,
-      page: RampUpView.new,
+      page: AuthWrapper.new,
       transition: Transition.rightToLeft,
     ),
     GetPage<SignupView>(

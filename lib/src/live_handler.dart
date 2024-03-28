@@ -37,12 +37,13 @@ class IsmLiveHandler {
     return mqttController.actionStreamController.stream.listen(listener);
   }
 
-  static Future<void> logout(
-      {bool isStreaming = true, VoidCallback? logoutCallback}) async {
+  static Future<void> logout({
+    bool isStreaming = true,
+    VoidCallback? logoutCallback,
+  }) async {
     IsmLiveUtility.showLoader();
     if (isStreaming) {
-      var isUnsubscribed =
-          await Get.find<IsmLiveStreamController>().unsubscribeUser();
+      var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
       if (!isUnsubscribed) {
         return;
       }

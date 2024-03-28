@@ -1,6 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component_example/controllers/agent_auth/agent_controller.dart';
-import 'package:appscrip_live_stream_component_example/utils/navigators/app_pages.dart';
+import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
+import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -17,35 +17,47 @@ class AgentOtpView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                PinCodeTextField(
-                  enableActiveFill: true,
-                  enablePinAutofill: false,
-                  controller: controller.otpController,
-                  appContext: context,
-                  length: 6,
-                  onChanged: (value) {
-                    // Handle OTP input changes
-                  },
-                  onCompleted: (value) {
-                    // Handle OTP input completion
-                  },
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(5),
-                    fieldHeight: 50,
-                    fieldWidth: 40,
-                    activeFillColor: Colors.white,
-                    activeColor: Colors.blue,
-                    selectedColor: Colors.blue,
-                    inactiveColor: Colors.grey,
+                Text(
+                  'Enter Verification Code',
+                  style: context.textTheme.titleLarge,
+                ),
+                IsmLiveDimens.boxHeight20,
+                Text(
+                  'Enter the verification code sent to ${controller.phoneNoController.text}',
+                  style: context.textTheme.bodyLarge,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                ),
+                IsmLiveDimens.boxHeight20,
+                Padding(
+                  padding: IsmLiveDimens.edgeInsets16_0,
+                  child: PinCodeTextField(
+                    enableActiveFill: true,
+                    enablePinAutofill: false,
+                    controller: controller.otpController,
+                    appContext: context,
+                    length: 6,
+                    onCompleted: (value) {
+                      controller.agentLogin();
+                    },
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(20),
+                      fieldHeight: 50,
+                      fieldWidth: 40,
+                      activeFillColor: IsmLiveColors.white,
+                      activeColor: IsmLiveColors.black,
+                      selectedColor: IsmLiveColors.black,
+                      inactiveColor: IsmLiveColors.grey,
+                      selectedFillColor: IsmLiveColors.white,
+                      inactiveFillColor: IsmLiveColors.white,
+                    ),
                   ),
                 ),
                 IsmLiveDimens.boxHeight32,
                 IsmLiveButton(
-                  label: 'Submit',
-                  onTap: () {
-                    controller.agentLogin();
-                  },
+                  label: 'Verify',
+                  onTap: controller.agentLogin,
                 ),
               ],
             ),

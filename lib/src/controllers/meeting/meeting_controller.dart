@@ -7,19 +7,18 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class MeetingController extends GetxController {
-  MeetingController(this.viewModel);
+class IsmLiveMeetingController extends GetxController {
+  IsmLiveMeetingController(this.viewModel);
   List<MyMeetingModel> myMeetingList = [];
   List<UserDetails> userDetailsList = [];
   List<String> membersSelectedList = [];
   List<String> membersNameSelectedList = [];
-  final MeetingViewModel viewModel;
+  final IsmLiveMeetingViewModel viewModel;
   IsmLiveConfigData? configuration;
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
-  RefreshController userRefreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController userRefreshController = RefreshController(initialRefresh: false);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
   final IsmLiveDebouncer debouncer = IsmLiveDebouncer();
@@ -38,12 +37,8 @@ class MeetingController extends GetxController {
   }
 
   void createMeetingOnTap() async {
-    if (membersSelectedList.isNotEmpty &&
-        meetingTitleController.text.isNotEmpty) {
-      await createMeeting(
-          meetingDescription: meetingTitleController.text,
-          members: membersSelectedList,
-          audioOnly: selectedCallType.last);
+    if (membersSelectedList.isNotEmpty && meetingTitleController.text.isNotEmpty) {
+      await createMeeting(meetingDescription: meetingTitleController.text, members: membersSelectedList, audioOnly: selectedCallType.last);
     }
   }
 
@@ -97,8 +92,7 @@ class MeetingController extends GetxController {
   }
 
   bool isMeetingOn = false;
-  Future<void> connectMeeting(
-      String token, String meetingId, bool audioCallOnly) async {
+  Future<void> connectMeeting(String token, String meetingId, bool audioCallOnly) async {
     if (isMeetingOn) {
       return;
     }
@@ -142,20 +136,16 @@ class MeetingController extends GetxController {
       );
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [
-          const ParticipantTrackPermission('allowed-identity', true, null)
-        ],
+        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
       );
 
-      var localVideo =
-          await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
+      var localVideo = await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
         cameraPosition: CameraPosition.front,
         params: VideoParametersPresets.h720_169,
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsmLiveRouteManagement.goToRoomPage(
-          room, listener, meetingId, audioCallOnly);
+      await IsmLiveRouteManagement.goToRoomPage(room, listener, meetingId, audioCallOnly);
       isMeetingOn = false;
     } catch (e, st) {
       isMeetingOn = false;
@@ -203,10 +193,7 @@ class MeetingController extends GetxController {
   }
 
   bool isApicalling = false;
-  Future<void> getMembersList(
-      {required int skip,
-      required int limit,
-      required String searchTag}) async {
+  Future<void> getMembersList({required int skip, required int limit, required String searchTag}) async {
     if (isApicalling) {
       return;
     }

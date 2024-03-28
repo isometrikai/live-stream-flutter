@@ -4,9 +4,10 @@ import 'package:appscrip_live_stream_component_example/utils/navigators/routes_m
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RampUpView extends StatelessWidget {
-  const RampUpView({super.key});
-  static const String route = AppRoutes.rampUp;
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  static const String route = AppRoutes.authWrapper;
 
   @override
   Widget build(BuildContext context) => Scaffold(

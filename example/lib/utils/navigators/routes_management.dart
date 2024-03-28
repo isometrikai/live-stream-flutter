@@ -26,12 +26,12 @@ abstract class RouteManagement {
   }
 
   static void goToSignUp() {
-    Get.toNamed(AppRoutes.signup);
+    Get.offNamed(AppRoutes.signup);
     // Get.offNamed(AppRoutes.signup);
   }
 
-  static void goToRampup() {
-    Get.toNamed(AppRoutes.rampUp);
+  static void goToAuthWrapper() {
+    Get.offNamed(AppRoutes.authWrapper);
     // Get.offNamed(AppRoutes.signup);
   }
 

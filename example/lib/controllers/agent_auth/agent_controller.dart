@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/controllers/user/user_binding.dart';
 import 'package:appscrip_live_stream_component_example/controllers/user/user_controller.dart';
 import 'package:appscrip_live_stream_component_example/models/agent_model.dart';
-import 'package:appscrip_live_stream_component_example/utils/app_config.dart';
 import 'package:appscrip_live_stream_component_example/utils/navigators/routes_management.dart';
 import 'package:appscrip_live_stream_component_example/view_models/agent_auth_view_model.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +13,6 @@ class AgentAuthControlletr extends GetxController {
   final AgentAuthViewModel _viewModel;
   var phoneNoController = TextEditingController();
   var otpController = TextEditingController();
-
-  AppConfig get _appConfig => Get.find();
 
   UserController get userController {
     if (!Get.isRegistered<UserController>()) {
@@ -39,7 +35,6 @@ class AgentAuthControlletr extends GetxController {
     if (res == null) {
       return;
     }
-    IsmLiveLog('_______________  $res');
     unawaited(userController.getAgentData());
     RouteManagement.goToHome();
   }

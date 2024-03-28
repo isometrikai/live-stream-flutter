@@ -22,31 +22,31 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
-    agent =
-        AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
     userType = dbWrapper.getStringValue(LocalKeys.userType);
     navigation = IsmLiveNavigation.userTypr(userType);
+    if (navigation.isCalling) {
+      agent = AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+    } else {
+      user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+    }
 
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
-        accountId: AppConstants.accountId,
-        appSecret: AppConstants.appSecret,
-        userSecret: AppConstants.userSecret,
-        keySetId: AppConstants.keySetId,
-        licenseKey: AppConstants.licenseKey,
-        projectId: AppConstants.projectId,
-        deviceId: user.deviceId,
+        accountId: navigation.isCalling ? agent.accountId : AppConstants.accountId,
+        appSecret: navigation.isCalling ? agent.appSecret : AppConstants.appSecret,
+        userSecret: navigation.isCalling ? agent.userToken : AppConstants.userSecret,
+        keySetId: navigation.isCalling ? agent.keysetId : AppConstants.keySetId,
+        licenseKey: navigation.isCalling ? agent.licenseKey : AppConstants.licenseKey,
+        projectId: navigation.isCalling ? agent.projectId : AppConstants.projectId,
+        deviceId: navigation.isCalling ? '' : user.deviceId,
       ),
       userConfig: IsmLiveUserConfig(
-        userToken: navigation.navigateToCalling
-            ? agent.token.accessToken
-            : user.userToken,
-        userId: navigation.navigateToCalling ? agent.userId : user.userId,
-        firstName: navigation.navigateToCalling ? agent.name : user.firstName,
-        lastName: navigation.navigateToCalling ? agent.name : user.lastName,
-        userEmail: navigation.navigateToCalling ? '' : user.email,
-        userProfile: '',
+        userToken: navigation.isCalling ? agent.token.accessToken : user.userToken,
+        userId: navigation.isCalling ? agent.userId : user.userId,
+        firstName: navigation.isCalling ? agent.name : user.firstName,
+        lastName: navigation.isCalling ? agent.name : user.lastName,
+        userEmail: navigation.isCalling ? '' : user.email,
+        userProfile: navigation.isCalling ? agent.userProfileUrl : '',
       ),
       mqttConfig: const IsmLiveMqttConfig(
         hostName: AppConstants.mqttHost,
@@ -66,6 +66,6 @@ class HomeController extends GetxController {
   void logout() async {
     await dbWrapper.deleteAllSecuredValues();
     dbWrapper.deleteBox();
-    RouteManagement.goToRampup();
+    RouteManagement.goToAuthWrapper();
   }
 }
