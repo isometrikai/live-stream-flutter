@@ -4,13 +4,12 @@ class IsmLiveApis {
 
   static const String baseUrl = 'https://apis.isometrik.io';
 
-  static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
+  static const String devBaseUrl = 'https://admin-apis.isometrik.io';
+  // static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
 
   static const String wsUrl = 'wss://streaming.isometrik.io';
-  static const String productDetails =
-      'https://admin-apis.isometrik.io/v1/get_product_details';
-  static const String agentauthenticate =
-      'https://admin-apis.isometrik.io/v1/agent';
+  static const String productDetails = 'https://admin-apis.isometrik.io/v1/get_product_details';
+  static const String agentauthenticate = 'https://admin-apis.isometrik.io/v1/agent';
   static const String user = '/chat/user';
 
   static const String allUsers = '/chat/users';

@@ -27,6 +27,11 @@ class IsmLiveMeetingController extends GetxController {
     const Text('AudioCall'),
   ];
   final List<bool> selectedCallType = <bool>[true, false];
+
+  String get meetingId => '66055c57f6e3b60001cb9b0e';
+
+  IsmLiveUserConfig? userConfig;
+
   @override
   void onInit() async {
     super.onInit();
@@ -34,6 +39,12 @@ class IsmLiveMeetingController extends GetxController {
     if (lkPlatformIs(PlatformType.android)) {
       await _checkPremissions();
     }
+  }
+
+  void initialize(BuildContext context) {
+    configuration = IsmLiveConfig.of(context);
+    userConfig = configuration?.userConfig;
+    getMeetingList();
   }
 
   void createMeetingOnTap() async {
@@ -98,32 +109,32 @@ class IsmLiveMeetingController extends GetxController {
     }
     isMeetingOn = true;
     try {
-      IsmLiveLog('error  ====  $audioCallOnly');
       var room = Room(
         roomOptions: RoomOptions(
-            defaultCameraCaptureOptions: CameraCaptureOptions(
-              deviceId: configuration?.projectConfig.deviceId,
-              cameraPosition: CameraPosition.front,
-              params: VideoParametersPresets.h720_169,
-            ),
-            defaultAudioCaptureOptions: AudioCaptureOptions(
-              deviceId: configuration?.projectConfig.deviceId,
-              noiseSuppression: true,
-              echoCancellation: true,
-              autoGainControl: true,
-              highPassFilter: true,
-              typingNoiseDetection: true,
-            ),
-            defaultVideoPublishOptions: VideoPublishOptions(
-              videoEncoding: VideoParametersPresets.h720_169.encoding,
-              videoSimulcastLayers: [
-                VideoParametersPresets.h180_169,
-                VideoParametersPresets.h360_169,
-              ],
-            ),
-            defaultAudioPublishOptions: const AudioPublishOptions(
-              dtx: true,
-            )),
+          defaultCameraCaptureOptions: CameraCaptureOptions(
+            deviceId: configuration?.projectConfig.deviceId,
+            cameraPosition: CameraPosition.front,
+            params: VideoParametersPresets.h720_169,
+          ),
+          defaultAudioCaptureOptions: AudioCaptureOptions(
+            deviceId: configuration?.projectConfig.deviceId,
+            noiseSuppression: true,
+            echoCancellation: true,
+            autoGainControl: true,
+            highPassFilter: true,
+            typingNoiseDetection: true,
+          ),
+          defaultVideoPublishOptions: VideoPublishOptions(
+            videoEncoding: VideoParametersPresets.h720_169.encoding,
+            videoSimulcastLayers: [
+              VideoParametersPresets.h180_169,
+              VideoParametersPresets.h360_169,
+            ],
+          ),
+          defaultAudioPublishOptions: const AudioPublishOptions(
+            dtx: true,
+          ),
+        ),
       );
 
       // Create a Listener before connecting
@@ -154,12 +165,40 @@ class IsmLiveMeetingController extends GetxController {
   }
 
   Future<void> getMeetingList([bool isLoading = true]) async {
-    if (configuration != null) {
-      var res = await viewModel.getMeetingsList(
-        isLoading: isLoading,
-      );
-      myMeetingList = res ?? [];
-    }
+    // if (configuration != null) {
+    //   var res = await viewModel.getMeetingsList(
+    //     isLoading: isLoading,
+    //   );
+    //   myMeetingList = res ?? [];
+    // }
+    // update();
+    myMeetingList = [
+      MyMeetingModel(
+        selfHosted: false,
+        searchableTags: [],
+        metaData: const IsmLiveMetaData(),
+        membersPublishingCount: 0,
+        membersCount: 0,
+        meetingType: IsmLiveMeetingType.videoCall,
+        meetingImageUrl: '',
+        meetingId: meetingId,
+        meetingDescription: 'N/A',
+        initiatorName: 'Test User',
+        initiatorImageUrl: '',
+        initiatorIdentifier: 'test@mail.com',
+        hdMeeting: false,
+        enableRecording: false,
+        customType: 'customType',
+        creationTime: DateTime.now().millisecondsSinceEpoch,
+        createdBy: 'test_user',
+        conversationId: '',
+        config: IsmLiveMeetingConfig(pushNotifications: false),
+        autoTerminate: false,
+        audioOnly: false,
+        adminCount: 1,
+        privateOneToOne: 1,
+      ),
+    ];
     update();
   }
 

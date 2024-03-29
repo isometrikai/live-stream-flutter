@@ -26,102 +26,118 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: context.liveTheme.backgroundColor,
-        appBar: AppBar(
+  Widget build(BuildContext context) => GetBuilder<IsmLiveMeetingController>(
+        initState: (_) {
+          Get.find<IsmLiveMeetingController>().initialize(context);
+        },
+        builder: (controller) => Scaffold(
           backgroundColor: context.liveTheme.backgroundColor,
-          elevation: 0,
-          leadingWidth: IsmLiveDimens.eighty,
-          leading: TextButton(
-            onPressed: () => IsmLiveApp.logout(false),
-            child: const Text(
-              'LogOut',
-              style: TextStyle(color: Colors.black),
+          appBar: AppBar(
+            backgroundColor: context.liveTheme.backgroundColor,
+            elevation: 0,
+            title: Text(
+              'All Calls',
+              style: context.textTheme.titleLarge,
             ),
-          ),
-          title: Text(
-            'My Meetings',
-            style: IsmLiveStyles.black16,
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: IsmLiveRouteManagement.goToCreateMeetingScreen,
-              icon: Icon(
-                Icons.add,
-                color: IsmLiveTheme.of(context).primaryColor,
+            actions: [
+              // IconButton(
+              //   onPressed: IsmLiveRouteManagement.goToCreateMeetingScreen,
+              //   icon: Icon(
+              //     Icons.add,
+              //     color: IsmLiveTheme.of(context).primaryColor,
+              //   ),
+              // ),
+              IsmLiveTapHandler(
+                onTap: () {
+                  if (controller.userConfig == null) {
+                    return;
+                  }
+                  IsmLiveUtility.openBottomSheet(
+                    IsmLiveLogoutBottomSheet(user: controller.userConfig!.getDetails()),
+                  );
+                },
+                child: IsmLiveImage.network(
+                  controller.userConfig?.userProfile ?? '',
+                  name: controller.userConfig?.firstName ?? 'U',
+                  isProfileImage: true,
+                  dimensions: IsmLiveDimens.forty,
+                ),
               ),
-            ),
-          ],
-        ),
-        body: GetBuilder<IsmLiveMeetingController>(
-          initState: (state) async {
-            var cont = Get.find<IsmLiveMeetingController>();
-            cont.configuration = IsmLiveConfig.of(context);
-            await cont.getMeetingList();
-          },
-          builder: (controller) => SmartRefresher(
-            controller: controller.refreshController,
-            onRefresh: () async {
-              await controller.getMeetingList();
+              IsmLiveDimens.boxWidth10,
+            ],
+          ),
+          body: GetBuilder<IsmLiveMeetingController>(
+            builder: (controller) => SmartRefresher(
+              controller: controller.refreshController,
+              onRefresh: () async {
+                await controller.getMeetingList();
 
-              controller.refreshController.refreshCompleted();
-            },
-            child: controller.myMeetingList.isEmpty
-                ? const Center(
-                    child: Text('No meetings found'),
-                  )
-                : ListView.separated(
-                    padding: IsmLiveDimens.edgeInsets16,
-                    itemBuilder: (context, index) {
-                      final item = controller.myMeetingList[index].meetingId;
-                      return Dismissible(
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          child: const Center(child: Text('Delete')),
-                        ),
-                        key: UniqueKey(),
-                        onDismissed: (direction) async {
-                          var isDeleted = await controller.deleteMeeting(isLoading: false, meetingId: item);
-                          if (isDeleted) {
-                            controller.myMeetingList.removeAt(index);
-                            controller.update();
-                          } else {
-                            controller.update();
-                          }
-                        },
-                        child: Container(
-                          padding: IsmLiveDimens.edgeInsets4,
-                          color: IsmLiveColors.white,
-                          height: IsmLiveDimens.fifty,
-                          child: Row(
-                            children: [
-                              Text(controller.myMeetingList[index].meetingDescription),
-                              const Spacer(),
-                              SizedBox(
-                                width: IsmLiveDimens.hundred,
-                                child: IsmLiveButton(
-                                  onTap: () async {
-                                    var rtcTocken = await controller.joinMeeting(meetingId: controller.myMeetingList[index].meetingId);
-
-                                    IsmLiveLog(controller.myMeetingList[index].audioOnly);
-                                    if (rtcTocken != null) {
-                                      await controller.connectMeeting(
-                                          rtcTocken, controller.myMeetingList[index].meetingId, controller.myMeetingList[index].audioOnly);
-                                    }
-                                  },
-                                  label: 'Join',
-                                ),
-                              ),
-                            ],
+                controller.refreshController.refreshCompleted();
+              },
+              child: controller.myMeetingList.isEmpty
+                  ? const Center(
+                      child: Text('No meetings found'),
+                    )
+                  : ListView.separated(
+                      padding: IsmLiveDimens.edgeInsets16,
+                      itemCount: controller.myMeetingList.length,
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemBuilder: (_, index) {
+                        final meeting = controller.myMeetingList[index % controller.myMeetingList.length];
+                        return Dismissible(
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Colors.red,
+                            child: const Center(child: Text('Delete')),
                           ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: controller.myMeetingList.length,
-                  ),
+                          key: UniqueKey(),
+                          onDismissed: (direction) async {
+                            var isDeleted = await controller.deleteMeeting(
+                              isLoading: false,
+                              meetingId: meeting.meetingId,
+                            );
+                            if (isDeleted) {
+                              controller.myMeetingList.removeAt(index);
+                              controller.update();
+                            } else {
+                              controller.update();
+                            }
+                          },
+                          child: IsmLiveTapHandler(
+                            onTap: () async {
+                              var rtcTocken = await controller.joinMeeting(
+                                meetingId: meeting.meetingId,
+                              );
+
+                              if (rtcTocken != null) {
+                                await controller.connectMeeting(
+                                  rtcTocken,
+                                  meeting.meetingId,
+                                  meeting.audioOnly,
+                                );
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                IsmLiveImage.network(
+                                  meeting.meetingImageUrl,
+                                  name: meeting.initiatorName,
+                                  dimensions: IsmLiveDimens.forty,
+                                  isProfileImage: true,
+                                ),
+                                IsmLiveDimens.boxWidth8,
+                                Text(meeting.initiatorName),
+                                const Spacer(),
+                                Text(
+                                  DateTime.fromMillisecondsSinceEpoch(meeting.creationTime).formattedTime,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ),
         ),
       );
