@@ -1,4 +1,0 @@
-enum SendButtonVisibilityMode {
-  always,
-  editing,
-}
