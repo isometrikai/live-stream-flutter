@@ -122,4 +122,18 @@ extension IsmLiveDateExtensions on DateTime {
     final date = DateFormat('dd MMM yyyy, hh:mm aa');
     return date.format(this);
   }
+
+  String get formattedTime {
+    final date = DateFormat('hh:mm aa');
+    return date.format(this);
+  }
+}
+
+extension IsmLiveUserConfigExtensions on IsmLiveUserConfig {
+  UserDetails getDetails() => UserDetails(
+        userProfileImageUrl: userProfile ?? '',
+        userName: firstName,
+        userIdentifier: userEmail ?? '',
+        userId: userId,
+      );
 }

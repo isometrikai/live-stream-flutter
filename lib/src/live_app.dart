@@ -17,17 +17,18 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveHandler.initialize();
     IsmLiveHandler.isLogsEnabled = enableLog;
     IsmLiveHandler.onLogout = onLogout;
+    IsmLiveHandler.navigationType = navigationType;
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
 
   static Future<void> logout([
-    bool isStreaming = true,
+    bool? isStreaming,
     VoidCallback? logoutCallback,
   ]) =>
       IsmLiveHandler.logout(
-        isStreaming: isStreaming,
+        isStreaming: isStreaming ?? IsmLiveHandler.navigationType == IsmLiveNavigation.streaming,
         logoutCallback: logoutCallback,
       );
 

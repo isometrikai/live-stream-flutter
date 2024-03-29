@@ -68,11 +68,20 @@ class IsmLiveMeetingRepository {
   }) async {
     try {
       var url = '/meetings/v1/publish/start';
-      var res =
-          await _apiWrapper.makeRequest(url, showLoader: isLoading, type: IsmLiveRequestType.post, headers: IsmLiveUtility.tokenHeader(), payload: {
-        'meetingId': meetingId,
-        'deviceId': deviceId,
-      });
+      // var url = '/meetings/v1/join';
+      var token = IsmLiveUtility.tokenHeader();
+      IsmLiveLog(token);
+      var res = await _apiWrapper.makeRequest(
+        url,
+        // baseUrl: IsmLiveApis.devBaseUrl,
+        showLoader: isLoading,
+        type: IsmLiveRequestType.post,
+        headers: token,
+        payload: {
+          'meetingId': meetingId,
+          'deviceId': deviceId,
+        },
+      );
 
       return res;
     } catch (_) {

@@ -15,6 +15,10 @@ class IsmLiveCallingController extends GetxController {
 
   CameraPosition position = CameraPosition.front;
 
+  final RxBool _showFullScreen = false.obs;
+  bool get showFullScreen => _showFullScreen.value;
+  set showFullScreen(bool value) => _showFullScreen.value = value;
+
   // ----------- Functions -----------
 
   void onClick(int index) {
@@ -27,7 +31,7 @@ class IsmLiveCallingController extends GetxController {
   void onPan(details) {
     positionX += details.delta.dx;
     positionY += details.delta.dy;
-    update();
+    update(['room']);
   }
 
   Future<void> setUpListeners(

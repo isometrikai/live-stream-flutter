@@ -15,4 +15,8 @@ class IsmLiveProjectConfig {
   final String licenseKey;
   final String projectId;
   final String deviceId;
+
+  @override
+  String toString() =>
+      'IsmLiveProjectConfig(accountId: $accountId, appSecret: $appSecret, userSecret: $userSecret, keySetId: $keySetId, licenseKey: $licenseKey, projectId: $projectId, deviceId: $deviceId)';
 }

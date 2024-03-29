@@ -33,10 +33,9 @@ class MyMeetingModel {
   factory MyMeetingModel.fromMap(Map<String, dynamic> map) => MyMeetingModel(
         selfHosted: map['selfHosted'] as bool,
         searchableTags: List.from(map['searchableTags']),
-        metaData:
-            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
-        membersPublishingCount: map['membersPublishingCount'] as num,
-        membersCount: map['membersCount'] as num,
+        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        membersPublishingCount: map['membersPublishingCount'] as int,
+        membersCount: map['membersCount'] as int,
         meetingType: IsmLiveMeetingType.fromValue(map['meetingType'] as int),
         meetingImageUrl: map['meetingImageUrl'] as String,
         meetingId: map['meetingId'] as String,
@@ -47,24 +46,22 @@ class MyMeetingModel {
         hdMeeting: map['hdMeeting'] as bool,
         enableRecording: map['enableRecording'] as bool,
         customType: map['customType'] as String,
-        creationTime: map['creationTime'] as num,
+        creationTime: map['creationTime'] as int,
         createdBy: map['createdBy'] as String,
         conversationId: map['conversationId'] as String? ?? '',
-        config:
-            IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
+        config: IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
         autoTerminate: map['autoTerminate'] as bool,
         audioOnly: map['audioOnly'] as bool,
-        adminCount: map['adminCount'] as num,
+        adminCount: map['adminCount'] as int,
         privateOneToOne: map['privateOneToOne'] as dynamic,
       );
 
-  factory MyMeetingModel.fromJson(String source) =>
-      MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MyMeetingModel.fromJson(String source) => MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
   final bool selfHosted;
   final List searchableTags;
   final IsmLiveMetaData metaData;
-  final num membersPublishingCount;
-  final num membersCount;
+  final int membersPublishingCount;
+  final int membersCount;
   final IsmLiveMeetingType meetingType;
   final String meetingImageUrl;
   final String meetingId;
@@ -75,21 +72,21 @@ class MyMeetingModel {
   final bool hdMeeting;
   final bool enableRecording;
   final String customType;
-  final num creationTime;
+  final int creationTime;
   final String createdBy;
   final String conversationId;
   final IsmLiveMeetingConfig config;
   final bool autoTerminate;
   final bool audioOnly;
-  final num adminCount;
+  final int adminCount;
   final dynamic privateOneToOne;
 
   MyMeetingModel copyWith({
     bool? selfHosted,
     List? searchableTags,
     IsmLiveMetaData? metaData,
-    num? membersPublishingCount,
-    num? membersCount,
+    int? membersPublishingCount,
+    int? membersCount,
     IsmLiveMeetingType? meetingType,
     String? meetingImageUrl,
     String? meetingId,
@@ -100,21 +97,20 @@ class MyMeetingModel {
     bool? hdMeeting,
     bool? enableRecording,
     String? customType,
-    num? creationTime,
+    int? creationTime,
     String? createdBy,
     String? conversationId,
     IsmLiveMeetingConfig? config,
     bool? autoTerminate,
     bool? audioOnly,
-    num? adminCount,
+    int? adminCount,
     dynamic privateOneToOne,
   }) =>
       MyMeetingModel(
         selfHosted: selfHosted ?? this.selfHosted,
         searchableTags: searchableTags ?? this.searchableTags,
         metaData: metaData ?? this.metaData,
-        membersPublishingCount:
-            membersPublishingCount ?? this.membersPublishingCount,
+        membersPublishingCount: membersPublishingCount ?? this.membersPublishingCount,
         membersCount: membersCount ?? this.membersCount,
         meetingType: meetingType ?? this.meetingType,
         meetingImageUrl: meetingImageUrl ?? this.meetingImageUrl,

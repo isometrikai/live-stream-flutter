@@ -14,6 +14,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     IsmLiveParticipantTrack participantTrack, {
     String? imageUrl,
     bool showStatsLayer = false,
+    bool showFullVideo = false,
   }) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
@@ -22,6 +23,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         imageUrl: imageUrl,
+        showFullVideo: showFullVideo,
       );
     } else if (participantTrack.participant is RemoteParticipant) {
       return RemoteParticipantWidget(
@@ -30,6 +32,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         imageUrl: imageUrl,
+        showFullVideo: showFullVideo,
       );
     }
     throw UnimplementedError('Unknown participant type');
@@ -41,6 +44,7 @@ abstract class ParticipantWidget extends StatefulWidget {
   abstract final VideoTrack? videoTrack;
   abstract final bool isScreenShare;
   abstract final bool showStatsLayer;
+  abstract final bool showFullVideo;
   final VideoQuality quality;
 }
 
@@ -51,6 +55,7 @@ class LocalParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer, {
     this.imageUrl,
+    this.showFullVideo = false,
     super.key,
   });
   @override
@@ -63,6 +68,8 @@ class LocalParticipantWidget extends ParticipantWidget {
   final bool isScreenShare;
   @override
   final bool showStatsLayer;
+  @override
+  final bool showFullVideo;
 
   @override
   State<StatefulWidget> createState() => _LocalParticipantWidgetState();
@@ -75,6 +82,7 @@ class RemoteParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer, {
     this.imageUrl,
+    this.showFullVideo = false,
     super.key,
   });
   @override
@@ -87,6 +95,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
   final bool isScreenShare;
   @override
   final bool showStatsLayer;
+  @override
+  final bool showFullVideo;
 
   @override
   State<StatefulWidget> createState() => _RemoteParticipantWidgetState();
@@ -140,7 +150,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
             activeVideoTrack != null && !activeVideoTrack!.muted
                 ? VideoTrackRenderer(
                     activeVideoTrack!,
-                    fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    fit: widget.showFullVideo ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
                 : NoVideoWidget(
                     name: widget.participant.name,

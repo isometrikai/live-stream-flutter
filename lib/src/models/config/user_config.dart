@@ -14,4 +14,8 @@ class IsmLiveUserConfig {
   final String lastName;
   final String? userEmail;
   final String? userProfile;
+
+  @override
+  String toString() =>
+      'IsmLiveUserConfig(userToken: $userToken, userId: $userId, firstName: $firstName, lastName: $lastName, userEmail: $userEmail, userProfile: $userProfile)';
 }

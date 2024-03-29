@@ -17,6 +17,8 @@ class IsmLiveHandler {
 
   static VoidCallback? onLogout;
 
+  static IsmLiveNavigation? navigationType;
+
   static Future<void> initialize() async {
     unawaited(availableCameras().then((value) {
       IsmLiveUtility.cameras = value;

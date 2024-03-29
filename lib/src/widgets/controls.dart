@@ -132,6 +132,9 @@ class MyBackgroundScreen extends StatelessWidget {
   const MyBackgroundScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Text('This is my background screen!'));
+  Widget build(BuildContext context) => const Scaffold(
+        body: Center(
+          child: Text('This is my background screen!'),
+        ),
+      );
 }
