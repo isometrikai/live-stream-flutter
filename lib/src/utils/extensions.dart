@@ -70,7 +70,7 @@ extension IsmLiveEditingExtension on TextEditingController {
 extension IsmLiveContextExtension on BuildContext {
   IsmLiveThemeData get liveTheme => IsmLiveTheme.of(this);
 
-  IsmLiveConfigData get liveConfig => IsmLiveConfig.of(this);
+  IsmLiveConfigData get liveConfig => IsmLiveUtility.config;
 
   IsmLiveTranslationsData get liveTranslations => IsmLiveTranslations.of(this);
 

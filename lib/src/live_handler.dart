@@ -26,7 +26,7 @@ class IsmLiveHandler {
 
     Get.put(IsmLiveApiWrapper(Client()));
     Get.lazyPut(IsmLivePreferencesManager.new);
-    unawaited(Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init());
+    await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init();
   }
 
   static MapStreamSubscription addListener(

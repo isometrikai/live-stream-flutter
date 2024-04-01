@@ -27,35 +27,21 @@ class HomeController extends GetxController {
     userType = dbWrapper.getStringValue(LocalKeys.userType);
     navigation = IsmLiveNavigation.userTypr(userType);
     if (navigation.isCalling) {
-      agent =
-          AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+      agent = AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.agent));
     } else {
-      user =
-          UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
+      user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
     }
 
     // TODO: Check for creds from login API
 
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
-        accountId: navigation.isCalling
-            ? AppConstants.accountIdCallQwik
-            : AppConstants.accountId,
-        appSecret: navigation.isCalling
-            ? AppConstants.appSecretCallQwik
-            : AppConstants.appSecret,
-        userSecret: navigation.isCalling
-            ? AppConstants.userSecretCallQwik
-            : AppConstants.userSecret,
-        keySetId: navigation.isCalling
-            ? AppConstants.keySetIdCallQwik
-            : AppConstants.keySetId,
-        licenseKey: navigation.isCalling
-            ? AppConstants.licenseKeyCallQwik
-            : AppConstants.licenseKey,
-        projectId: navigation.isCalling
-            ? AppConstants.projectIdCallQwik
-            : AppConstants.projectId,
+        accountId: navigation.isCalling ? AppConstants.accountIdCallQwik : AppConstants.accountId,
+        appSecret: navigation.isCalling ? AppConstants.appSecretCallQwik : AppConstants.appSecret,
+        userSecret: navigation.isCalling ? AppConstants.userSecretCallQwik : AppConstants.userSecret,
+        keySetId: navigation.isCalling ? AppConstants.keySetIdCallQwik : AppConstants.keySetId,
+        licenseKey: navigation.isCalling ? AppConstants.licenseKeyCallQwik : AppConstants.licenseKey,
+        projectId: navigation.isCalling ? AppConstants.projectIdCallQwik : AppConstants.projectId,
         deviceId: navigation.isCalling ? _appConfig.deviceId! : user.deviceId,
       ),
       userConfig: IsmLiveUserConfig(
@@ -72,10 +58,7 @@ class HomeController extends GetxController {
       ),
     );
 
-    if (navigation.isCalling) {
-      IsmLiveLog(agent.appSecret);
-      IsmLiveLog.info(configData.projectConfig.appSecret);
-    }
+    IsmLiveApp.initialize(configData);
   }
 
   @override

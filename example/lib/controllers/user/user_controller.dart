@@ -18,7 +18,7 @@ class UserController extends GetxController {
   }
 
   Future<void> getAgentData() async {
-    var data = dbWrapper.getStringValue(LocalKeys.user);
+    var data = dbWrapper.getStringValue(LocalKeys.agent);
 
     if (data.trim().isEmpty) {
       return;

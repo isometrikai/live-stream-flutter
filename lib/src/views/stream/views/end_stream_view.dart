@@ -15,9 +15,8 @@ class IsmLiveEndStream extends StatelessWidget {
         child: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           initState: (state) async {
-            var controller = Get.find<IsmLiveStreamController>();
-            WidgetsBinding.instance.addPostFrameCallback(
-                (_) async => await controller.streamAnalytics(streamId));
+            // var controller = Get.find<IsmLiveStreamController>();
+            // await controller.streamAnalytics(streamId);
             // controller.streamAnalyticsViewers(streamId);
           },
           builder: (controller) => Scaffold(
@@ -61,8 +60,7 @@ class IsmLiveEndStream extends StatelessWidget {
                   GridView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: 1.5,
                     ),
@@ -78,8 +76,7 @@ class IsmLiveEndStream extends StatelessWidget {
                         assetConstant: IsmLiveAssetConstants.box,
                       ),
                       IsmLiveEndStreamContainer(
-                        points:
-                            '${controller.streamAnalytis?.totalViewersCount ?? 0}',
+                        points: '${controller.streamAnalytis?.totalViewersCount ?? 0}',
                         title: 'Viewers',
                         assetConstant: IsmLiveAssetConstants.eye,
                       ),
@@ -94,8 +91,7 @@ class IsmLiveEndStream extends StatelessWidget {
                         assetConstant: IsmLiveAssetConstants.dollar,
                       ),
                       IsmLiveEndStreamContainer(
-                        points:
-                            '${controller.streamAnalytis?.duration ?? '00:00'}',
+                        points: '${controller.streamAnalytis?.duration ?? '00:00'}',
                         title: 'Duration',
                         assetConstant: IsmLiveAssetConstants.clock,
                       ),

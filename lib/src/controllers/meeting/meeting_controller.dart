@@ -42,7 +42,7 @@ class IsmLiveMeetingController extends GetxController {
   }
 
   void initialize(BuildContext context) {
-    configuration = IsmLiveConfig.of(context);
+    configuration = IsmLiveUtility.config;
     userConfig = configuration?.userConfig;
     getMeetingList();
   }
