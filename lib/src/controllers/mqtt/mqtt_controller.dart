@@ -74,7 +74,7 @@ class IsmLiveMqttController extends GetxController {
 
   // ----------------- Functios -----------------------
 
-  Future<void> setup(BuildContext context) async {
+  Future<void> setup() async {
     _config = IsmLiveUtility.config;
     _topicPrefix = '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
 

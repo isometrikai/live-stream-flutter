@@ -21,7 +21,7 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
       IsmLiveMeetingBinding().dependencies();
     }
     IsmLiveUtility.updateLater(() {
-      Get.find<IsmLiveMqttController>().setup(context);
+      Get.find<IsmLiveMqttController>().setup();
     });
   }
 

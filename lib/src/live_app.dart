@@ -31,13 +31,24 @@ class IsmLiveApp extends StatelessWidget {
     await IsmLiveDelegate.instance.initialize(config);
   }
 
-  static Future<void> joinStream() async {
+  static Future<void> joinStream({
+    required IsmLiveStreamModel stream,
+    required bool isHost,
+  }) async {
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
     }
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
+    IsmLiveUtility.updateLater(() {
+      Get.find<IsmLiveMqttController>().setup();
+      Get.find<IsmLiveStreamController>().joinStream(
+        stream,
+        isHost,
+        joinByScrolling: false,
+      );
+    });
   }
 
   static Future<void> logout([
