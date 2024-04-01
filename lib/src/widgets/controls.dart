@@ -1,8 +1,8 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:pip_view/pip_view.dart';
 
 class ControlsWidget extends StatelessWidget {
   const ControlsWidget(
@@ -46,7 +46,10 @@ class ControlsWidget extends StatelessWidget {
                   size: IsmLiveDimens.twentyFive,
                 ),
                 onTap: () {
-                  PIPView.of(context)?.presentBelow(const MyBackgroundScreen());
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                  ]);
+                  // PIPView.of(context)?.presentBelow(Chat());
                 },
                 radius: IsmLiveDimens.fifty,
               ),

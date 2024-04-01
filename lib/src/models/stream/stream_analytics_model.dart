@@ -18,20 +18,22 @@ class IsmLiveStreamAnalyticsModel {
   factory IsmLiveStreamAnalyticsModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveStreamAnalyticsModel(
         totalViewersCount: map['totalViewersCount'] != null
-            ? map['totalViewersCount'] as int
+            ? map['totalViewersCount'] as double
             : null,
         duration: map['duration'] != null ? map['duration'] as double : null,
         productCount:
-            map['productCount'] != null ? map['productCount'] as int : null,
-        soldCount: map['soldCount'] != null ? map['soldCount'] as int : null,
+            map['productCount'] != null ? map['productCount'] as double : null,
+        soldCount: map['soldCount'] != null ? map['soldCount'] as double : null,
         newViewersCount: map['newViewersCount'] != null
-            ? map['newViewersCount'] as int
+            ? map['newViewersCount'] as double
             : null,
         earnings: map['earnings'] != null ? map['earnings'] as double : null,
-        hearts: map['hearts'] != null ? map['hearts'] as int : null,
-        followers: map['followers'] != null ? map['followers'] as int : null,
-        giftsCount: map['giftsCount'] != null ? map['giftsCount'] as int : null,
-        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as int : null,
+        hearts: map['hearts'] != null ? map['hearts'] as double : null,
+        followers: map['followers'] != null ? map['followers'] as double : null,
+        giftsCount:
+            map['giftsCount'] != null ? map['giftsCount'] as double : null,
+        coinsCount:
+            map['coinsCount'] != null ? map['coinsCount'] as double : null,
         totalEarning:
             map['totalEarning'] != null ? map['totalEarning'] as double : null,
       );
@@ -39,29 +41,29 @@ class IsmLiveStreamAnalyticsModel {
   factory IsmLiveStreamAnalyticsModel.fromJson(String source) =>
       IsmLiveStreamAnalyticsModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-  final int? totalViewersCount;
+  final double? totalViewersCount;
   final double? duration;
-  final int? productCount;
-  final int? soldCount;
-  final int? newViewersCount;
+  final double? productCount;
+  final double? soldCount;
+  final double? newViewersCount;
   final double? earnings;
-  final int? hearts;
-  final int? followers;
-  final int? giftsCount;
-  final int? coinsCount;
+  final double? hearts;
+  final double? followers;
+  final double? giftsCount;
+  final double? coinsCount;
   final double? totalEarning;
 
   IsmLiveStreamAnalyticsModel copyWith({
-    int? totalViewersCount,
+    double? totalViewersCount,
     double? duration,
-    int? productCount,
-    int? soldCount,
-    int? newViewersCount,
+    double? productCount,
+    double? soldCount,
+    double? newViewersCount,
     double? earnings,
-    int? hearts,
-    int? followers,
-    int? giftsCount,
-    int? coinsCount,
+    double? hearts,
+    double? followers,
+    double? giftsCount,
+    double? coinsCount,
     double? totalEarning,
   }) =>
       IsmLiveStreamAnalyticsModel(
