@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class IsmLiveDBWrapper {
   Future<void> init() async => await _preference.init();
 
-  final _flutterSecureStorage = const FlutterSecureStorageManager();
+  final _flutterSecureStorage = const IsmLiveFlutterSecureStorageManager();
   final _preference = Get.find<IsmLivePreferencesManager>();
 
   void clearData(String key) => _preference.delete(key);

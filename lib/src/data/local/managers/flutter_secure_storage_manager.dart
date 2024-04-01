@@ -1,8 +1,8 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class FlutterSecureStorageManager {
-  const FlutterSecureStorageManager();
+class IsmLiveFlutterSecureStorageManager {
+  const IsmLiveFlutterSecureStorageManager();
 
   /// initialize flutter secure storage
   final flutterSecureStorage = const FlutterSecureStorage();

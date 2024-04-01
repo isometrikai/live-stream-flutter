@@ -32,7 +32,7 @@ class AgentAuthViewModel {
 
       unawaited(
         Future.wait([
-          dbWrapper.saveValue(LocalKeys.user, data.toJson()),
+          dbWrapper.saveValue(LocalKeys.agent, data.toJson()),
           dbWrapper.saveValue(LocalKeys.isLoggedIn, true),
           dbWrapper.saveValue(LocalKeys.userType, 'agent'),
         ]),

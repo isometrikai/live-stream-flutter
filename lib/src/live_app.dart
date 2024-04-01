@@ -1,6 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 part 'live_data.dart';
 
@@ -14,7 +15,7 @@ class IsmLiveApp extends StatelessWidget {
     this.onLogout,
     this.navigationType = IsmLiveNavigation.streaming,
   }) {
-    IsmLiveHandler.initialize();
+    initialize(configuration);
     IsmLiveHandler.isLogsEnabled = enableLog;
     IsmLiveHandler.onLogout = onLogout;
     IsmLiveHandler.navigationType = navigationType;
@@ -22,6 +23,22 @@ class IsmLiveApp extends StatelessWidget {
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
+
+  static bool _initialized = false;
+
+  static Future<void> initialize(IsmLiveConfigData config) async {
+    _initialized = true;
+    await IsmLiveDelegate.instance.initialize(config);
+  }
+
+  static Future<void> joinStream() async {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+    if (!Get.isRegistered<IsmLiveMqttController>()) {
+      IsmLiveMqttBinding().dependencies();
+    }
+  }
 
   static Future<void> logout([
     bool? isStreaming,

@@ -10,16 +10,23 @@ import 'package:get/get.dart';
 class IsmLiveUtility {
   const IsmLiveUtility._();
 
+  static bool _initialized = false;
+
+  static Future<void> initialize() async {
+    _initialized = true;
+    _config ??= IsmLiveConfigData.fromJson(await Get.find<IsmLiveDBWrapper>().getSecuredValue(IsmLiveLocalKeys.configDetails));
+  }
+
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
-  static IsmLiveConfigData get _config {
-    IsmLiveConfigData? config;
-    if (Get.isRegistered<IsmLiveStreamController>()) {
-      config = Get.find<IsmLiveStreamController>().configuration ?? IsmLiveConfig.of(Get.context!);
-    } else {
-      config = IsmLiveConfig.of(Get.context!);
-    }
-    return config;
+  static IsmLiveConfigData? _config;
+
+  static IsmLiveConfigData get config {
+    assert(
+      _initialized,
+      'IsmLiveUtility is not initialized, initialize it using IsmLiveApp.initialize()',
+    );
+    return _config!;
   }
 
   static void updateLater(VoidCallback callback, [bool addDelay = true]) {
@@ -33,17 +40,17 @@ class IsmLiveUtility {
   static String jsonEncodePretty(Object? object) => JsonEncoder.withIndent(' ' * 4).convert(object);
 
   static Map<String, String> tokenHeader() => {
-        'userToken': _config.userConfig.userToken,
-        'licenseKey': _config.projectConfig.licenseKey,
-        'appSecret': _config.projectConfig.appSecret,
+        'userToken': config.userConfig.userToken,
+        'licenseKey': config.projectConfig.licenseKey,
+        'appSecret': config.projectConfig.appSecret,
         'Content-Type': 'application/json',
       };
 
   static Map<String, String> secretHeader() => {
         'Content-Type': 'application/json',
-        'userSecret': _config.projectConfig.userSecret,
-        'licenseKey': _config.projectConfig.licenseKey,
-        'appSecret': _config.projectConfig.appSecret,
+        'userSecret': config.projectConfig.userSecret,
+        'licenseKey': config.projectConfig.licenseKey,
+        'appSecret': config.projectConfig.appSecret,
       };
 
   /// Returns true if the internet connection is available.

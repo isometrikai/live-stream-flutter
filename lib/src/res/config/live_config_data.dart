@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/foundation.dart';
 
 /// This class will be used for providing all configuration
 /// for the live stream module
 class IsmLiveConfigData with Diagnosticable {
+  factory IsmLiveConfigData.fromMap(Map<String, dynamic> map) => IsmLiveConfigData(
+        userConfig: IsmLiveUserConfig.fromMap(map['userConfig'] as Map<String, dynamic>),
+        projectConfig: IsmLiveProjectConfig.fromMap(map['projectConfig'] as Map<String, dynamic>),
+        mqttConfig: IsmLiveMqttConfig.fromMap(map['mqttConfig'] as Map<String, dynamic>),
+        username: map['username'] != null ? map['username'] as String : null,
+        password: map['password'] != null ? map['password'] as String : null,
+      );
+
+  factory IsmLiveConfigData.fromJson(String source) => IsmLiveConfigData.fromMap(json.decode(source) as Map<String, dynamic>);
   IsmLiveConfigData({
     required this.userConfig,
     required this.projectConfig,
@@ -28,4 +39,14 @@ class IsmLiveConfigData with Diagnosticable {
   final IsmLiveMqttConfig mqttConfig;
   final String? username;
   final String? password;
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'userConfig': userConfig.toMap(),
+        'projectConfig': projectConfig.toMap(),
+        'mqttConfig': mqttConfig.toMap(),
+        'username': username,
+        'password': password,
+      };
+
+  String toJson() => json.encode(toMap());
 }
