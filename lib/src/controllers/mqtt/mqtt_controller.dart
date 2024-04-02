@@ -62,7 +62,7 @@ class IsmLiveMqttController extends GetxController {
       .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
       ?.userProfileImageUrl;
 
-  // ----------------- Functios -----------------------
+  // ----------------- Functions -----------------------
 
   Future<void> setup({
     List<String>? topics,
