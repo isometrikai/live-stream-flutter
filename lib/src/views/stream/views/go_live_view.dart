@@ -138,8 +138,7 @@ class IsmGoLiveView extends StatelessWidget {
                       value: controller.isRestreamBroadcast,
                     ),
                     const _Restream(),
-                    if (controller.selectedGoLiveTabItem ==
-                        IsmGoLiveTabItem.liveFromDevice) ...[
+                    if (controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice) ...[
                       IsmLiveRadioListTile(
                         title: 'Use Persistent RTMP Stream Key',
                         onChange: controller.onChangePersistent,
@@ -185,8 +184,7 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null ||
-                  controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
@@ -310,8 +308,7 @@ class _AddProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white30,
                           border: Border.all(color: IsmLiveColors.white),
-                          borderRadius:
-                              BorderRadius.circular(IsmLiveDimens.sixteen),
+                          borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -320,12 +317,12 @@ class _AddProduct extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.add_circle_outline_rounded,
-                              color: context.liveTheme.selectedTextColor,
+                              color: context.liveTheme?.selectedTextColor,
                             ),
                             Text(
                               'Add products',
                               style: context.textTheme.labelMedium?.copyWith(
-                                color: context.liveTheme.selectedTextColor,
+                                color: context.liveTheme?.selectedTextColor,
                               ),
                             ),
                           ],
@@ -360,7 +357,7 @@ class _Restream extends StatelessWidget {
                     ),
                     trailing: Icon(
                       Icons.keyboard_arrow_right_rounded,
-                      color: context.liveTheme.selectedTextColor,
+                      color: context.liveTheme?.selectedTextColor,
                     ),
                   ),
                   const Divider(),

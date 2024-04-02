@@ -12,4 +12,19 @@ class IsmLiveCounterProperties {
   final int? counterTime;
   final int? animationTime;
   final int? giftTime;
+
+  IsmLiveCounterProperties copyWith({
+    bool? showYoureLiveSheet,
+    bool? showYoureLiveText,
+    int? counterTime,
+    int? animationTime,
+    int? giftTime,
+  }) =>
+      IsmLiveCounterProperties(
+        showYoureLiveSheet: showYoureLiveSheet ?? this.showYoureLiveSheet,
+        showYoureLiveText: showYoureLiveText ?? this.showYoureLiveText,
+        counterTime: counterTime ?? this.counterTime,
+        animationTime: animationTime ?? this.animationTime,
+        giftTime: giftTime ?? this.giftTime,
+      );
 }

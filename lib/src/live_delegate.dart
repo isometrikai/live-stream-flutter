@@ -11,9 +11,9 @@ class IsmLiveDelegate {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find();
 
-  Future<void> initialize(IsmLiveConfigData config) async {
-    await IsmLiveHandler.initialize();
-    await _dbWrapper.saveValueSecurely(IsmLiveLocalKeys.configDetails, config.toJson());
-    await IsmLiveUtility.initialize();
-  }
+  Future<void> initialize(IsmLiveConfigData config) => Future.wait([
+        IsmLiveHandler.initialize(),
+        _dbWrapper.saveValueSecurely(IsmLiveLocalKeys.configDetails, config.toJson()),
+        IsmLiveUtility.initialize(config),
+      ]);
 }

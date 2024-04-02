@@ -35,6 +35,10 @@ class IsmLiveApp extends StatelessWidget {
     required IsmLiveStreamModel stream,
     required bool isHost,
   }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp is not initialized. Initialize it using IsmLiveApp.initialize(config)',
+    );
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
     }

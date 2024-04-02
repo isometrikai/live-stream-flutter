@@ -58,7 +58,7 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProv
 
   void setup() {
     startTime = DateTime.now();
-    streamProperties = context.liveProperties.streamProperties?.counterProperties;
+    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
   }
 
   void start() async {

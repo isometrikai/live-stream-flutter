@@ -29,8 +29,8 @@ class IsmLiveRadioListTile extends StatelessWidget {
               child: CupertinoSwitch(
                 value: value,
                 onChanged: onChange,
-                activeColor: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
-                trackColor: context.liveTheme.unselectedTextColor ?? IsmLiveColors.grey,
+                activeColor: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+                trackColor: context.liveTheme?.unselectedTextColor ?? IsmLiveColors.grey,
               ),
             ),
             IsmLiveDimens.boxWidth2,

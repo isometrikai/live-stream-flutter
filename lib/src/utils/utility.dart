@@ -12,9 +12,9 @@ class IsmLiveUtility {
 
   static bool _initialized = false;
 
-  static Future<void> initialize() async {
+  static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
-    _config ??= IsmLiveConfigData.fromJson(await Get.find<IsmLiveDBWrapper>().getSecuredValue(IsmLiveLocalKeys.configDetails));
+    _config ??= config;
   }
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
@@ -173,7 +173,7 @@ class IsmLiveUtility {
           width: IsmLiveDimens.percentWidth(1) - (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.context?.liveTheme.backgroundColor,
+              color: Get.context?.liveTheme?.backgroundColor,
               borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
             ),
             child: Padding(
