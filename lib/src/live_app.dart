@@ -34,6 +34,7 @@ class IsmLiveApp extends StatelessWidget {
   static Future<void> joinStream({
     required IsmLiveStreamModel stream,
     required bool isHost,
+    bool shouldConnectMqtt = true,
   }) async {
     assert(
       _initialized,
@@ -45,9 +46,11 @@ class IsmLiveApp extends StatelessWidget {
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
-    IsmLiveUtility.updateLater(() {
-      Get.find<IsmLiveMqttController>().setup();
-      Get.find<IsmLiveStreamController>().joinStream(
+    IsmLiveUtility.updateLater(() async {
+      if (shouldConnectMqtt) {
+        await Get.find<IsmLiveMqttController>().setup();
+      }
+      await Get.find<IsmLiveStreamController>().joinStream(
         stream,
         isHost,
         joinByScrolling: false,
