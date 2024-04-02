@@ -45,7 +45,7 @@ class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
                     bottom: 2,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+                        color: IsmLiveApp.isMqttConnected ? IsmLiveColors.green : IsmLiveColors.red,
                         borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                       ),
                       child: const SizedBox.square(dimension: 8),
