@@ -61,10 +61,10 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
   }
 
   void setup() {
-    streamProperties = context.liveProperties.streamProperties?.counterProperties;
+    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
     counter = widget.duration ?? streamProperties?.counterTime ?? IsmLiveConstants.counterTime;
     if (streamProperties?.showYoureLiveText ?? false) {
-      youreLiveText = context.liveTranslations.streamTranslations?.youreLive ?? IsmLiveStrings.youreLive;
+      youreLiveText = context.liveTranslations?.streamTranslations?.youreLive ?? IsmLiveStrings.youreLive;
     } else {
       finishTime = 1;
     }

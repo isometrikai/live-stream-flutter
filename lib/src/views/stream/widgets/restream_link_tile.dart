@@ -12,7 +12,7 @@ class IsmLiveRestreamLinkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: context.liveTheme.borderColor,
+          color: context.liveTheme?.borderColor,
           borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
         ),
         padding: IsmLiveDimens.edgeInsets12,

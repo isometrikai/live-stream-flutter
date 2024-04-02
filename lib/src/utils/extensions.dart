@@ -68,13 +68,15 @@ extension IsmLiveEditingExtension on TextEditingController {
 }
 
 extension IsmLiveContextExtension on BuildContext {
-  IsmLiveThemeData get liveTheme => IsmLiveTheme.of(this);
+  IsmLiveDataExtension? get liveExtension => Theme.of(this).extension<IsmLiveDataExtension>();
+
+  IsmLiveThemeData? get liveTheme => liveExtension?.theme;
 
   IsmLiveConfigData get liveConfig => IsmLiveUtility.config;
 
-  IsmLiveTranslationsData get liveTranslations => IsmLiveTranslations.of(this);
+  IsmLiveTranslationsData? get liveTranslations => liveExtension?.translations;
 
-  IsmLivePropertiesData get liveProperties => IsmLiveProperties.of(this);
+  IsmLivePropertiesData? get liveProperties => liveExtension?.properties;
 }
 
 extension IsmLiveMaterialStateExtension on Set<MaterialState> {

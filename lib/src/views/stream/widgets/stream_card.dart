@@ -60,9 +60,8 @@ class IsmLiveStreamCard extends StatelessWidget {
                         child: Container(
                           padding: IsmLiveDimens.edgeInsets8_4,
                           decoration: BoxDecoration(
-                            color: IsmLiveTheme.of(context).primaryColor,
-                            borderRadius:
-                                BorderRadius.circular(IsmLiveDimens.eight),
+                            color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+                            borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
                           ),
                           child: Text(
                             'Continue',

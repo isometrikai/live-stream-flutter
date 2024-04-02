@@ -12,14 +12,14 @@ class IsmLiveStreamEndDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            context.liveTranslations.attention ?? IsmLiveStrings.attention,
+            context.liveTranslations?.attention ?? IsmLiveStrings.attention,
             style: context.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
           IsmLiveDimens.boxHeight8,
           Text(
-            context.liveTranslations.streamEnded ?? IsmLiveStrings.streamEnded,
+            context.liveTranslations?.streamEnded ?? IsmLiveStrings.streamEnded,
             style: context.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),

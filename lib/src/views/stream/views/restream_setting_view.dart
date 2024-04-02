@@ -88,7 +88,7 @@ class _InputField extends StatelessWidget {
           Text(
             label,
             style: context.textTheme.labelMedium?.copyWith(
-              color: context.liveTheme.unselectedTextColor,
+              color: context.liveTheme?.unselectedTextColor,
             ),
           ),
           IsmLiveDimens.boxHeight4,
@@ -96,9 +96,9 @@ class _InputField extends StatelessWidget {
             controller: controller,
             hintText: 'Enter $label',
             radius: IsmLiveDimens.twelve,
-            borderColor: context.liveTheme.unselectedTextColor,
+            borderColor: context.liveTheme?.unselectedTextColor,
             hintStyle: context.textTheme.labelLarge?.copyWith(
-              color: context.liveTheme.unselectedTextColor,
+              color: context.liveTheme?.unselectedTextColor,
             ),
           ),
         ],

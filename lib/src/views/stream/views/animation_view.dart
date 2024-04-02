@@ -56,7 +56,7 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with Single
 
   void setup() {
     startTime = DateTime.now();
-    streamProperties = context.liveProperties.streamProperties?.counterProperties;
+    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
   }
 
   void start() async {

@@ -62,7 +62,7 @@ class IsmGoLiveNavBar extends StatelessWidget {
                             Text(
                               e.label,
                               style: context.textTheme.labelLarge?.copyWith(
-                                color: isSelected ? context.liveTheme.selectedTextColor : context.liveTheme.unselectedTextColor,
+                                color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
                               ),
                             ),
                             if (isSelected) ...[

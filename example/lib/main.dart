@@ -62,13 +62,16 @@ class _MyAppState extends State<MyApp> {
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
               ),
+              extensions: [
+                IsmLiveDataExtension(),
+              ],
             ),
-            builder: (context, child) => Obx(
-              () => IsmLiveData(
-                configurations: kConfigData.value,
-                child: child!,
-              ),
-            ),
+            // builder: (context, child) => Obx(
+            //   () => IsmLiveData(
+            //     configurations: kConfigData.value,
+            //     child: child!,
+            //   ),
+            // ),
             translations: TranslationsFile(),
             getPages: AppPages.pages,
             initialRoute: AppPages.initial,

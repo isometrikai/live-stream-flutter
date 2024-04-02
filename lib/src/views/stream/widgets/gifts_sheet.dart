@@ -60,7 +60,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   var isSelected = type == controller.giftType;
                   return DecoratedBox(
                     decoration: BoxDecoration(
-                      color: isSelected ? context.liveTheme.primaryColor : Colors.grey.shade100,
+                      color: isSelected ? context.liveTheme?.primaryColor : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
                     ),
                     child: Padding(
@@ -68,7 +68,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                       child: Text(
                         type.label,
                         style: context.textTheme.titleSmall?.copyWith(
-                          color: isSelected ? context.liveTheme.selectedTextColor : context.liveTheme.unselectedTextColor,
+                          color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
                         ),
                       ),
                     ),
@@ -127,7 +127,7 @@ class _GiftItem extends StatelessWidget {
   Widget build(BuildContext context) => CustomIconButton(
         onTap: onTap,
         radius: IsmLiveDimens.sixteen,
-        color: context.liveTheme.cardBackgroundColor,
+        color: context.liveTheme?.cardBackgroundColor,
         icon: Padding(
           padding: IsmLiveDimens.edgeInsets0_8,
           child: Column(

@@ -184,7 +184,7 @@ mixin StreamJoinMixin {
     );
 
     // Show appropriate message based on the user's role
-    final translation = Get.context?.liveTranslations.streamTranslations;
+    final translation = Get.context?.liveTranslations?.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {

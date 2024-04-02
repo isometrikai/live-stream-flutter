@@ -19,7 +19,7 @@ class IsmLiveEmptyScreen extends StatelessWidget {
           children: [
             IsmLiveImage.svg(
               placeHolder,
-              color: context.liveTheme.primaryColor ?? IsmLiveColors.primary,
+              color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
             ),
             IsmLiveDimens.boxHeight16,
             Text(

@@ -31,9 +31,9 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
           Get.find<IsmLiveMeetingController>().initialize(context);
         },
         builder: (controller) => Scaffold(
-          backgroundColor: context.liveTheme.backgroundColor,
+          backgroundColor: context.liveTheme?.backgroundColor,
           appBar: AppBar(
-            backgroundColor: context.liveTheme.backgroundColor,
+            backgroundColor: context.liveTheme?.backgroundColor,
             elevation: 0,
             title: Text(
               'All Calls',
@@ -44,7 +44,7 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
               //   onPressed: IsmLiveRouteManagement.goToCreateMeetingScreen,
               //   icon: Icon(
               //     Icons.add,
-              //     color: IsmLiveTheme.of(context).primaryColor,
+              //     color: IsmliveTheme?.of(context).primaryColor,
               //   ),
               // ),
               IsmLiveTapHandler(

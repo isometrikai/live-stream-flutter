@@ -55,6 +55,25 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(ColorProperty('cardBackgroundColor', cardBackgroundColor));
   }
 
+  IsmLiveThemeData lerp(covariant IsmLiveThemeData? other, double t) {
+    if (other is! IsmLiveThemeData) {
+      return this;
+    }
+    return IsmLiveThemeData(
+      primaryColor: Color.lerp(primaryColor, other.primaryColor, t),
+      secondaryColor: Color.lerp(secondaryColor, other.secondaryColor, t),
+      backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
+      borderColor: Color.lerp(borderColor, other.borderColor, t),
+      primaryButtonTheme: primaryButtonTheme?.lerp(other.primaryButtonTheme, t),
+      secondaryButtonTheme: secondaryButtonTheme?.lerp(other.secondaryButtonTheme, t),
+      selectedTextColor: Color.lerp(selectedTextColor, other.selectedTextColor, t),
+      unselectedTextColor: Color.lerp(unselectedTextColor, other.unselectedTextColor, t),
+      buttonRadius: BorderRadius.lerp(buttonRadius, other.buttonRadius, t),
+      iconButtonRadius: BorderRadius.lerp(iconButtonRadius, other.iconButtonRadius, t),
+      cardBackgroundColor: Color.lerp(cardBackgroundColor, other.cardBackgroundColor, t),
+    );
+  }
+
   IsmLiveThemeData copyWith({
     Color? primaryColor,
     Color? secondaryColor,

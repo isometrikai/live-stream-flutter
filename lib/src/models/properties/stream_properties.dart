@@ -6,4 +6,11 @@ class IsmLiveStreamProperties {
   });
 
   final IsmLiveCounterProperties? counterProperties;
+
+  IsmLiveStreamProperties copyWith({
+    IsmLiveCounterProperties? counterProperties,
+  }) =>
+      IsmLiveStreamProperties(
+        counterProperties: counterProperties ?? this.counterProperties,
+      );
 }
