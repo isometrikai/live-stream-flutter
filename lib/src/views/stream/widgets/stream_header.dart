@@ -129,7 +129,7 @@ class _LiveTimer extends StatelessWidget {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.find<IsmLiveMqttController>().isConnected ? IsmLiveColors.green : IsmLiveColors.red,
+              color: IsmLiveApp.isMqttConnected ? IsmLiveColors.green : IsmLiveColors.red,
               borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
             ),
             child: Padding(
