@@ -32,20 +32,30 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveConfigData config, {
     bool shouldInitializeMqtt = true,
     List<String>? mqttTopics,
+    List<String>? mqttTopicChannels,
   }) async {
     _initialized = true;
     await IsmLiveDelegate.instance.initialize(config);
     if (shouldInitializeMqtt) {
-      await initializeMqtt(mqttTopics);
+      await initializeMqtt(
+        topics: mqttTopics,
+        topicChannels: mqttTopicChannels,
+      );
     }
   }
 
-  static Future<void> initializeMqtt([List<String>? topics]) async {
+  static Future<void> initializeMqtt({
+    List<String>? topics,
+    List<String>? topicChannels,
+  }) async {
     _mqttInitialized = true;
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
-    await Get.find<IsmLiveMqttController>().setup(topics: topics);
+    await Get.find<IsmLiveMqttController>().setup(
+      topics: topics,
+      topicChannels: topicChannels,
+    );
   }
 
   static void handleMqttEvent(DynamicMap payload) {
