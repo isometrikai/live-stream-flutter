@@ -172,6 +172,8 @@ class IsmLiveMqttController extends GetxController {
     IsmLiveLog.success('MQTT Connected');
   }
 
+  void handleEventsExternally(Map<String, dynamic> payload) => _onEvent(payload);
+
   void _onEvent(Map<String, dynamic> payload) async {
     if (IsmLiveHandler.isLogsEnabled) {
       IsmLiveLog(IsmLiveUtility.jsonEncodePretty(payload));

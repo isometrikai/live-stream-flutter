@@ -50,6 +50,9 @@ class IsmLiveApp extends StatelessWidget {
 
   static void handleMqttEvent(DynamicMap payload) {
     assert(_initialized, 'IsmLiveApp must be initialized before using handleMqttEvent, call `IsmLiveApp.initialize(config)`');
+    assert(_mqttInitialized, 'IsmLiveMqtt must be initialized before using handleMqttEvent, call `IsmLiveApp.initializeMqtt()`');
+
+    Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
   }
 
   static Future<void> joinStream({
