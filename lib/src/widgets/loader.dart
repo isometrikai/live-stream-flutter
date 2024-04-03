@@ -16,15 +16,15 @@ class IsmLiveLoader extends StatelessWidget {
   Widget build(BuildContext context) => Center(
         child: Card(
           elevation: isDialog ? null : 0,
-          color: isDialog ? null : Colors.transparent,
+          color: context.liveTheme?.cardBackgroundColor ?? context.theme.cardColor,
           child: Padding(
             padding: isDialog && message != null ? IsmLiveDimens.edgeInsets12 : IsmLiveDimens.edgeInsets8,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(
-                  color: IsmLiveColors.primary,
+                CircularProgressIndicator(
+                  color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
                 ),
                 if (isDialog && message != null) ...[
                   IsmLiveDimens.boxWidth16,

@@ -26,30 +26,48 @@ class IsmLiveApp extends StatelessWidget {
 
   static bool _initialized = false;
 
-  static Future<void> initialize(IsmLiveConfigData config) async {
+  static bool _mqttInitialized = false;
+
+  static Future<void> initialize(
+    IsmLiveConfigData config, {
+    bool shouldInitializeMqtt = true,
+    List<String>? mqttTopics,
+  }) async {
     _initialized = true;
     await IsmLiveDelegate.instance.initialize(config);
+    if (shouldInitializeMqtt) {
+      await initializeMqtt(mqttTopics);
+    }
+  }
+
+  static Future<void> initializeMqtt([List<String>? topics]) async {
+    _mqttInitialized = true;
+    if (!Get.isRegistered<IsmLiveMqttController>()) {
+      IsmLiveMqttBinding().dependencies();
+    }
+    await Get.find<IsmLiveMqttController>().setup(topics: topics);
+  }
+
+  static void handleMqttEvent(DynamicMap payload) {
+    assert(_initialized, 'IsmLiveApp must be initialized before using handleMqttEvent, call `IsmLiveApp.initialize(config)`');
   }
 
   static Future<void> joinStream({
     required IsmLiveStreamModel stream,
     required bool isHost,
-    bool shouldConnectMqtt = true,
   }) async {
     assert(
       _initialized,
-      'IsmLiveApp is not initialized. Initialize it using IsmLiveApp.initialize(config)',
+      'IsmLiveApp is not initialized. Initialize it using `IsmLiveApp.initialize(config)`',
+    );
+    assert(
+      _mqttInitialized,
+      'IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initializeMqtt()`',
     );
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
     }
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
-    }
     IsmLiveUtility.updateLater(() async {
-      if (shouldConnectMqtt) {
-        await Get.find<IsmLiveMqttController>().setup();
-      }
       await Get.find<IsmLiveStreamController>().joinStream(
         stream,
         isHost,
