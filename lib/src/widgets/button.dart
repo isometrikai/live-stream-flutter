@@ -65,7 +65,7 @@ class IsmLiveButton extends StatelessWidget {
         BorderSide(
           color: type == IsmLiveButtonType.primary
               ? context.liveTheme?.primaryButtonTheme?.foregroundColor ?? IsmLiveColors.white
-              : context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.black,
+              : context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.primary,
         ),
       );
 
@@ -119,7 +119,7 @@ class _Primary extends StatelessWidget {
               if (states.isDisabled) {
                 return context.liveTheme?.primaryButtonTheme?.disableColor ?? IsmLiveColors.grey;
               }
-              return context.liveTheme?.primaryButtonTheme?.backgroundColor ?? IsmLiveColors.black;
+              return context.liveTheme?.primaryButtonTheme?.backgroundColor ?? context.liveTheme?.primaryColor ?? IsmLiveColors.primary;
             },
           ),
           foregroundColor: MaterialStateColor.resolveWith(
@@ -172,7 +172,7 @@ class _Secondary extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.white;
               }
-              return context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.black;
+              return context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.primary;
             },
           ),
           textStyle: IsmLiveButton._textStyle(context, small),
