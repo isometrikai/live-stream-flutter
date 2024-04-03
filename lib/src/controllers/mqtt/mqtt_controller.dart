@@ -79,7 +79,7 @@ class IsmLiveMqttController extends GetxController {
 
     userTopic = '$_topicPrefix/User/$userId';
 
-    var channelTopics = topicChannels?.map((e) => '$_topicPrefix/e/$userId').toList();
+    var channelTopics = topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
 
     _topics.addAll([
       ...?topics,
