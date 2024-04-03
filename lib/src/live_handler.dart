@@ -39,6 +39,15 @@ class IsmLiveHandler {
     return mqttController.actionStreamController.stream.listen(listener);
   }
 
+  static Future<void> removeListener(MapFunction listener) async {
+    var mqttController = Get.find<IsmLiveMqttController>();
+    mqttController.actionListeners.remove(listener);
+    await mqttController.actionStreamController.stream.drain();
+    for (var listener in mqttController.actionListeners) {
+      mqttController.actionStreamController.stream.listen(listener);
+    }
+  }
+
   static Future<void> logout({
     bool isStreaming = true,
     VoidCallback? logoutCallback,

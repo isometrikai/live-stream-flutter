@@ -18,6 +18,8 @@ class IsmLiveMqttController extends GetxController {
 
   final actionStreamController = StreamController<Map<String, dynamic>>.broadcast();
 
+  var actionListeners = <MapFunction>[];
+
   String _topicPrefix = '';
 
   IsmLiveConfigData? _config;
@@ -145,6 +147,10 @@ class IsmLiveMqttController extends GetxController {
     }
   }
 
+  void disconnect() {
+    _mqttHelper.disconnect();
+  }
+
   void _pong() {
     IsmLiveLog.info('MQTT pong');
   }
@@ -184,8 +190,8 @@ class IsmLiveMqttController extends GetxController {
       IsmLiveLog.success(payload['action']);
     }
 
+    actionStreamController.add(payload);
     if (payload['action'] != null) {
-      actionStreamController.add(payload);
       final action = IsmLiveActions.fromString(payload['action']);
       final streamId = payload['streamId'] as String;
       switch (action) {
