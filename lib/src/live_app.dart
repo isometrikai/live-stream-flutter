@@ -59,8 +59,10 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static void handleMqttEvent(DynamicMap payload) {
-    assert(_initialized, 'IsmLiveApp must be initialized before using handleMqttEvent, call `IsmLiveApp.initialize(config)`');
-    assert(_mqttInitialized, 'IsmLiveMqtt must be initialized before using handleMqttEvent, call `IsmLiveApp.initializeMqtt()`');
+    assert(
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
 
     Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
   }
@@ -70,12 +72,8 @@ class IsmLiveApp extends StatelessWidget {
     required bool isHost,
   }) async {
     assert(
-      _initialized,
-      'IsmLiveApp is not initialized. Initialize it using `IsmLiveApp.initialize(config)`',
-    );
-    assert(
-      _mqttInitialized,
-      'IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initializeMqtt()`',
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
@@ -89,6 +87,8 @@ class IsmLiveApp extends StatelessWidget {
     });
   }
 
+  static void disconnect() {}
+
   static Future<void> logout([
     bool? isStreaming,
     VoidCallback? logoutCallback,
@@ -100,8 +100,21 @@ class IsmLiveApp extends StatelessWidget {
 
   static MapStreamSubscription addListener(
     MapFunction listener,
-  ) =>
-      IsmLiveHandler.addListener(listener);
+  ) {
+    assert(
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    return IsmLiveHandler.addListener(listener);
+  }
+
+  static Future<void> removeListener(MapFunction listener) async {
+    assert(
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    await IsmLiveHandler.removeListener(listener);
+  }
 
   IsmLiveThemeData get themeData => _kThemeData;
 
