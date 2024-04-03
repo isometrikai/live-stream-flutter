@@ -66,6 +66,7 @@ class IsmLiveMqttController extends GetxController {
 
   Future<void> setup({
     List<String>? topics,
+    List<String>? topicChannels,
   }) async {
     _config = IsmLiveUtility.config;
     _topicPrefix = '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
@@ -76,8 +77,11 @@ class IsmLiveMqttController extends GetxController {
 
     userTopic = '$_topicPrefix/User/$userId';
 
+    var channelTopics = topicChannels?.map((e) => '$_topicPrefix/e/$userId').toList();
+
     _topics.addAll([
       ...?topics,
+      ...?channelTopics,
       userTopic,
     ]);
 
