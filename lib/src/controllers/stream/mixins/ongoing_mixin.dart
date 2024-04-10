@@ -532,7 +532,7 @@ mixin StreamOngoingMixin {
 
       await _controller.sortParticipants();
     }
-    IsmLiveApp.endStream();
+    IsmLiveApp.endStream?.call();
     return isEnded;
   }
 

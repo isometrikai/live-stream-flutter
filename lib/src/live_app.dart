@@ -91,7 +91,7 @@ class IsmLiveApp extends StatelessWidget {
     });
   }
 
-  static VoidCallback? endStream() => IsmLiveDelegate.endStream;
+  static VoidCallback? get endStream => IsmLiveDelegate.endStream;
 
   static void disconnect() {}
 
