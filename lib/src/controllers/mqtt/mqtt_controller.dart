@@ -199,7 +199,10 @@ class IsmLiveMqttController extends GetxController {
     actionStreamController.add(payload);
     if (payload['action'] != null) {
       final action = IsmLiveActions.fromString(payload['action']);
-      final streamId = payload['streamId'] as String;
+      final streamId = payload['streamId'] as String?;
+      if (streamId == null) {
+        return;
+      }
       switch (action) {
         case IsmLiveActions.copublishRequestAccepted:
           final memberId = payload['userId'] as String? ?? '';
