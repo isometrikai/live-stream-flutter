@@ -79,8 +79,13 @@ mixin StreamJoinMixin {
     bool isHost, {
     bool joinByScrolling = false,
     bool isInteractive = false,
+    VoidCallback? onCallEnd,
   }) async {
     // Get the token for the stream based on whether the user is a host or not
+    if (onCallEnd != null) {
+      IsmLiveApp.endStream = onCallEnd;
+    }
+
     var token = '';
     if (isHost) {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');

@@ -93,6 +93,8 @@ class IsmLiveApp extends StatelessWidget {
 
   static VoidCallback? get endStream => IsmLiveDelegate.endStream;
 
+  static set endStream(VoidCallback? callback) => IsmLiveDelegate.endStream = callback;
+
   static void disconnect() {}
 
   static Future<void> logout([
