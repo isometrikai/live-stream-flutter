@@ -8,6 +8,8 @@ import 'package:mqtt_helper/mqtt_helper.dart';
 class IsmLiveMqttController extends GetxController {
   final _mqttHelper = MqttHelper();
 
+  bool _isInitialized = false;
+
   late String userTopic;
 
   late String userId;
@@ -70,6 +72,10 @@ class IsmLiveMqttController extends GetxController {
     List<String>? topics,
     List<String>? topicChannels,
   }) async {
+    if (_isInitialized) {
+      return;
+    }
+    _isInitialized = true;
     _config = IsmLiveUtility.config;
     _topicPrefix = '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
 

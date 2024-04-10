@@ -6,18 +6,26 @@ class IsmLivePublisherGrid extends StatelessWidget {
   const IsmLivePublisherGrid({
     super.key,
     required this.streamImage,
+    this.isInteractive = false,
   });
 
   final String streamImage;
+  final bool isInteractive;
 
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) => controller.participantTracks.isNotEmpty
             ? controller.participantTracks.length == 1
-                ? ParticipantWidget.widgetFor(
-                    controller.participantTracks.first,
-                    imageUrl: controller.user?.profileUrl,
-                    showStatsLayer: false,
+                ? InteractiveViewer(
+                    maxScale: isInteractive ? 3 : 1,
+                    panEnabled: isInteractive,
+                    scaleEnabled: isInteractive,
+                    child: ParticipantWidget.widgetFor(
+                      controller.participantTracks.first,
+                      imageUrl: controller.user?.profileUrl,
+                      showStatsLayer: false,
+                      showFullVideo: isInteractive,
+                    ),
                   )
                 : Padding(
                     padding: IsmLiveDimens.edgeInsetsT100,

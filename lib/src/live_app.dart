@@ -33,9 +33,13 @@ class IsmLiveApp extends StatelessWidget {
     bool shouldInitializeMqtt = true,
     List<String>? mqttTopics,
     List<String>? mqttTopicChannels,
+    VoidCallback? onStreamEnd,
   }) async {
     _initialized = true;
-    await IsmLiveDelegate.instance.initialize(config);
+    await IsmLiveDelegate.instance.initialize(
+      config,
+      onStreamEnd: onStreamEnd,
+    );
     if (shouldInitializeMqtt) {
       await initializeMqtt(
         topics: mqttTopics,
@@ -86,6 +90,8 @@ class IsmLiveApp extends StatelessWidget {
       );
     });
   }
+
+  static VoidCallback? endStream() => IsmLiveDelegate.endStream;
 
   static void disconnect() {}
 
