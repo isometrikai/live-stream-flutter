@@ -74,6 +74,8 @@ class IsmLiveApp extends StatelessWidget {
   static Future<void> joinStream({
     required IsmLiveStreamModel stream,
     required bool isHost,
+    bool isInteractive = false,
+    VoidCallback? onCallEnd,
   }) async {
     assert(
       _initialized && _mqttInitialized,
@@ -87,6 +89,8 @@ class IsmLiveApp extends StatelessWidget {
         stream,
         isHost,
         joinByScrolling: false,
+        isInteractive: isInteractive,
+        onCallEnd: onCallEnd,
       );
     });
   }
