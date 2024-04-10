@@ -27,7 +27,6 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
     }
     IsmLiveUtility.updateLater(() {
       Get.find<IsmLiveMqttController>().setup();
-      Get.find<IsmLiveStreamController>().configuration = IsmLiveUtility.config;
     });
   }
 

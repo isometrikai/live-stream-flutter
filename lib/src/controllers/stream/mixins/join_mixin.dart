@@ -78,6 +78,7 @@ mixin StreamJoinMixin {
     IsmLiveStreamModel stream,
     bool isHost, {
     bool joinByScrolling = false,
+    bool isInteractive = false,
   }) async {
     // Get the token for the stream based on whether the user is a host or not
     var token = '';
@@ -111,6 +112,7 @@ mixin StreamJoinMixin {
       isNewStream: false,
       joinByScrolling: joinByScrolling,
       hdBroadcast: stream.hdBroadcast ?? false,
+      isInteractive: isInteractive,
     );
   }
 
@@ -163,6 +165,7 @@ mixin StreamJoinMixin {
     bool isCopublisher = false,
     required bool isNewStream,
     bool joinByScrolling = false,
+    bool isInteractive = false,
   }) async {
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
@@ -298,6 +301,7 @@ mixin StreamJoinMixin {
             streamImage: streamImage,
             listener: _controller.listener!,
             streamId: streamId,
+            isInteractive: isInteractive,
           ),
         );
       }

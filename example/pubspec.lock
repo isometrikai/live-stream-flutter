@@ -7,7 +7,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0+2"
+    version: "1.0.0+3"
   args:
     dependency: transitive
     description:
@@ -714,10 +714,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_helper
-      sha256: f5a1944819409370ea62de9280b34ddba7b1516414ca2c8b84e6a7ee3a29cda2
+      sha256: "55223e3b5dd2fb82655ae5ae270b53e44480d120ff9fe1baa52c330a39b66f2e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.3"
+    version: "0.0.5"
   nm:
     dependency: transitive
     description:

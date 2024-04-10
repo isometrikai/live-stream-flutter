@@ -32,6 +32,7 @@ abstract class IsmLiveRouteManagement {
     required bool isNewStream,
     required Room room,
     required String streamId,
+    bool isInteractive = false,
     String? streamImage,
   }) async {
     var arguments = {
@@ -41,6 +42,7 @@ abstract class IsmLiveRouteManagement {
       'streamId': streamId,
       'isHost': isHost,
       'isNewStream': isNewStream,
+      'isInteractive': isInteractive,
     };
 
     if (isHost && isNewStream) {
