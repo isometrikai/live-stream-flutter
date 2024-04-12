@@ -714,10 +714,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_helper
-      sha256: "55223e3b5dd2fb82655ae5ae270b53e44480d120ff9fe1baa52c330a39b66f2e"
+      sha256: "712b66a35be2e864ca2f7b4b7998fef5eaa350389232a80e20ec212cd24b0494"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.5"
+    version: "0.0.7"
   nm:
     dependency: transitive
     description:

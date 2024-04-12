@@ -18,7 +18,8 @@ class IsmLiveMqttController extends GetxController {
 
   final List<String> _topics = [];
 
-  final actionStreamController = StreamController<Map<String, dynamic>>.broadcast();
+  final actionStreamController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   var actionListeners = <MapFunction>[];
 
@@ -53,18 +54,26 @@ class IsmLiveMqttController extends GetxController {
     _streamController.disconnectRoom();
   }
 
-  String? get _hostImageUrl => _streamController.hostDetails?.userProfileImageUrl;
+  String? get _hostImageUrl =>
+      _streamController.hostDetails?.userProfileImageUrl;
 
   String? _viewerImageUrl(String viewerId) =>
-      _streamController.streamViewersList.cast<IsmLiveViewerModel?>().firstWhere((e) => e!.userId == viewerId, orElse: () => null)?.imageUrl;
+      _streamController.streamViewersList
+          .cast<IsmLiveViewerModel?>()
+          .firstWhere((e) => e!.userId == viewerId, orElse: () => null)
+          ?.imageUrl;
 
   String? _moderatorImageUrl(String moderatorId) =>
-      _streamController.moderatorsList.cast<UserDetails?>().firstWhere((e) => e!.userId == moderatorId, orElse: () => null)?.profileUrl;
+      _streamController.moderatorsList
+          .cast<UserDetails?>()
+          .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
+          ?.profileUrl;
 
-  String? _memberImageUrl(String moderatorId) => _streamController.streamMembersList
-      .cast<IsmLiveMemberDetailsModel?>()
-      .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
-      ?.userProfileImageUrl;
+  String? _memberImageUrl(String moderatorId) =>
+      _streamController.streamMembersList
+          .cast<IsmLiveMemberDetailsModel?>()
+          .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
+          ?.userProfileImageUrl;
 
   // ----------------- Functions -----------------------
 
@@ -77,7 +86,8 @@ class IsmLiveMqttController extends GetxController {
     }
     _isInitialized = true;
     _config = IsmLiveUtility.config;
-    _topicPrefix = '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
+    _topicPrefix =
+        '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
 
     deviceId = _config!.projectConfig.deviceId;
 
@@ -85,7 +95,8 @@ class IsmLiveMqttController extends GetxController {
 
     userTopic = '$_topicPrefix/User/$userId';
 
-    var channelTopics = topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
+    var channelTopics =
+        topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
 
     _topics.addAll([
       ...?topics,
@@ -120,8 +131,9 @@ class IsmLiveMqttController extends GetxController {
       topics: _topics,
     );
 
-    _mqttHelper.onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
-    _mqttHelper.onEvent(_onEvent);
+    _mqttHelper
+        .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
+    _mqttHelper.onData(_onEvent);
   }
 
   Future<void> subscribeStream(String streamId) async {
@@ -188,7 +200,8 @@ class IsmLiveMqttController extends GetxController {
     IsmLiveLog.success('MQTT Connected');
   }
 
-  void handleEventsExternally(Map<String, dynamic> payload) => _onEvent(payload);
+  void handleEventsExternally(Map<String, dynamic> payload) =>
+      _onEvent(payload);
 
   void _onEvent(Map<String, dynamic> payload) async {
     if (IsmLiveHandler.isLogsEnabled) {
@@ -208,7 +221,8 @@ class IsmLiveMqttController extends GetxController {
           final memberId = payload['userId'] as String? ?? '';
           final hostId = payload['initiatorId'] as String? ?? '';
           if (memberId == userId || hostId == userId) {
-            _streamController.memberStatus = IsmLiveMemberStatus.requestApproved;
+            _streamController.memberStatus =
+                IsmLiveMemberStatus.requestApproved;
             final hostName = payload['initiatorName'] as String? ?? 'Host';
             final userName = payload['userName'] as String? ?? 'User';
             final message = IsmLiveMessageModel(
@@ -219,7 +233,9 @@ class IsmLiveMqttController extends GetxController {
               senderId: hostId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
-              body: memberId == userId ? '$hostName has accepted your Co-publisher Request' : 'You\'ve accepted $userName\'s Co-publisher Request',
+              body: memberId == userId
+                  ? '$hostName has accepted your Co-publisher Request'
+                  : 'You\'ve accepted $userName\'s Co-publisher Request',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
@@ -259,7 +275,9 @@ class IsmLiveMqttController extends GetxController {
               senderId: hostId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
-              body: memberId == userId ? '$hostName has rejected your Co-publisher Request' : 'You\'ve rejected $userName\'s Co-publisher Request',
+              body: memberId == userId
+                  ? '$hostName has rejected your Co-publisher Request'
+                  : 'You\'ve rejected $userName\'s Co-publisher Request',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
@@ -312,7 +330,8 @@ class IsmLiveMqttController extends GetxController {
             isEvent: true,
           );
           unawaited(_streamController.handleMessage(message));
-          _streamController.streamMembersList.removeWhere((e) => e.userId == userId);
+          _streamController.streamMembersList
+              .removeWhere((e) => e.userId == userId);
           _updateStream();
           break;
         case IsmLiveActions.memberRemoved:
@@ -329,7 +348,9 @@ class IsmLiveMqttController extends GetxController {
               senderId: initiatorId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
-              body: userId == initiatorId ? 'You\'ve remove $memberName as a member' : '$initiatorName has remove $memberName as a member',
+              body: userId == initiatorId
+                  ? 'You\'ve remove $memberName as a member'
+                  : '$initiatorName has remove $memberName as a member',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
@@ -362,7 +383,8 @@ class IsmLiveMqttController extends GetxController {
             body: body,
             isEvent: true,
           );
-          _streamController.streamViewersList.removeWhere((element) => element.userId == memberId);
+          _streamController.streamViewersList
+              .removeWhere((element) => element.userId == memberId);
 
           await _streamController.getStreamMembers(
             streamId: streamId,
@@ -396,8 +418,10 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.moderatorAdded:
           final moderatorId = payload['moderatorId'] as String? ?? '';
           final moderatorName = payload['moderatorName'] as String? ?? '';
-          final moderatorIdentifier = payload['moderatorIdentifier'] as String? ?? '';
-          final moderatorProfilePic = payload['moderatorProfilePic'] as String? ?? '';
+          final moderatorIdentifier =
+              payload['moderatorIdentifier'] as String? ?? '';
+          final moderatorProfilePic =
+              payload['moderatorProfilePic'] as String? ?? '';
           final message = IsmLiveMessageModel(
             streamId: streamId,
             senderName: moderatorName,
@@ -437,8 +461,10 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
-            _streamController.moderatorsList.removeWhere((e) => e.userId == moderatorId);
-            _streamController.streamViewersList.removeWhere((e) => e.userId == moderatorId);
+            _streamController.moderatorsList
+                .removeWhere((e) => e.userId == moderatorId);
+            _streamController.streamViewersList
+                .removeWhere((e) => e.userId == moderatorId);
 
             _updateStream();
           }
@@ -457,12 +483,16 @@ class IsmLiveMqttController extends GetxController {
               senderId: initiatorId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
-              body: userId == initiatorId ? 'You\'ve remove $moderatorName' : '$initiatorName has remove $moderatorName',
+              body: userId == initiatorId
+                  ? 'You\'ve remove $moderatorName'
+                  : '$initiatorName has remove $moderatorName',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
-            _streamController.moderatorsList.removeWhere((e) => e.userId == moderatorId);
-            _streamController.streamViewersList.removeWhere((e) => e.userId == moderatorId);
+            _streamController.moderatorsList
+                .removeWhere((e) => e.userId == moderatorId);
+            _streamController.streamViewersList
+                .removeWhere((e) => e.userId == moderatorId);
             if (userId != initiatorId) {
               _disconnectRoom();
             }
@@ -529,7 +559,8 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
-            _streamController.streamViewersList.removeWhere((e) => e.userId == viewer.userId);
+            _streamController.streamViewersList
+                .removeWhere((e) => e.userId == viewer.userId);
             if (viewer.userId != _streamController.user?.userId) {
               _updateStream();
             }
@@ -549,11 +580,14 @@ class IsmLiveMqttController extends GetxController {
               senderId: initiatorId,
               messageType: IsmLiveMessageType.normal,
               messageId: DateTime.now().toString(),
-              body: userId == initiatorId ? 'You\'ve remove $viewerName' : '$initiatorName has remove $viewerName',
+              body: userId == initiatorId
+                  ? 'You\'ve remove $viewerName'
+                  : '$initiatorName has remove $viewerName',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message));
-            _streamController.streamViewersList.removeWhere((e) => e.userId == viewerId);
+            _streamController.streamViewersList
+                .removeWhere((e) => e.userId == viewerId);
             if (userId != initiatorId) {
               _disconnectRoom();
             }
