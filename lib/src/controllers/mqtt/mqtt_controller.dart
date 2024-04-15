@@ -355,11 +355,12 @@ class IsmLiveMqttController extends GetxController {
             );
             unawaited(_streamController.handleMessage(message));
             _updateStream([IsmLiveMembersSheet.updateId]);
-            // _streamController.streamMembersList
-            //     .removeWhere((e) => e.userId == memberId);
-            // if (userId != initiatorId) {
-            //   _disconnectRoom();
-            // }
+            _streamController.streamMembersList
+                .removeWhere((e) => e.userId == memberId);
+            if (userId != initiatorId) {
+              _disconnectRoom();
+              Get.back();
+            }
             if (memberId == userId) {
               unawaited(_streamController.unpublishTracks());
             }
