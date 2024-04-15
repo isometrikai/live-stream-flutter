@@ -331,7 +331,7 @@ class IsmLiveMqttController extends GetxController {
           );
           unawaited(_streamController.handleMessage(message));
           _streamController.streamMembersList
-              .removeWhere((e) => e.userId == userId);
+              .removeWhere((e) => e.userId == member.userId);
           _updateStream();
           break;
         case IsmLiveActions.memberRemoved:
@@ -355,7 +355,8 @@ class IsmLiveMqttController extends GetxController {
             );
             unawaited(_streamController.handleMessage(message));
             _updateStream([IsmLiveMembersSheet.updateId]);
-            // _streamController.streamMembersList.removeWhere((e) => e.userId == memberId);
+            // _streamController.streamMembersList
+            //     .removeWhere((e) => e.userId == memberId);
             // if (userId != initiatorId) {
             //   _disconnectRoom();
             // }

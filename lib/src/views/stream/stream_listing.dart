@@ -61,7 +61,8 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                   children: [
                     ...IsmLiveStreamType.values.map(
                       (e) => _StreamListing(
-                        key: ValueKey('${IsmLiveStreamListing.updateId}-${e.value}'),
+                        key: ValueKey(
+                            '${IsmLiveStreamListing.updateId}-${e.value}'),
                       ),
                     ),
                   ],
@@ -98,9 +99,11 @@ class _StreamListing extends StatelessWidget {
                     mainAxisSpacing: IsmLiveDimens.eight,
                     children: controller.streams.map(
                       (e) {
-                        var isCreatedByMe = e.createdBy == controller.user?.userId;
+                        var isCreatedByMe =
+                            e.createdBy == controller.user?.userId;
                         return IsmLiveTapHandler(
-                          onTap: () => controller.initializeAndJoinStream(e, isCreatedByMe),
+                          onTap: () => controller.initializeAndJoinStream(
+                              e, isCreatedByMe),
                           child: IsmLiveStreamCard(
                             e,
                             isCreatedByMe: isCreatedByMe,

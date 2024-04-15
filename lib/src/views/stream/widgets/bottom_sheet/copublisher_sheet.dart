@@ -37,18 +37,26 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 tabs: IsmLiveCopublisher.values.map(
                   (type) {
                     var isSelected = (type == controller.copublisher);
+
                     return DecoratedBox(
                       decoration: BoxDecoration(
-                        color: isSelected ? context.liveTheme?.primaryColor : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
+                        color: isSelected
+                            ? Colors.black //context.liveTheme?.primaryColor
+                            : Colors.grey.shade100,
+                        borderRadius:
+                            BorderRadius.circular(IsmLiveDimens.eighty),
                       ),
                       child: Padding(
                         padding: IsmLiveDimens.edgeInsets16_10,
                         child: Text(
                           type.label,
                           style: context.textTheme.titleSmall?.copyWith(
-                            color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
-                          ),
+                              color: isSelected
+                                  ? IsmLiveColors
+                                      .white //context.liveTheme?.selectedTextColor
+                                  : IsmLiveColors
+                                      .grey //context.liveTheme?.unselectedTextColor,
+                              ),
                         ),
                       ),
                     );
@@ -67,19 +75,23 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                       showSearchBar: true,
                       onPressClearIcon: () {
                         controller.searchCopublisherFieldController.clear();
-                        controller.searchRequest(controller.searchCopublisherFieldController.text);
+                        controller.searchRequest(
+                            controller.searchCopublisherFieldController.text);
                       },
                       showHeader: false,
-                      textEditingController: controller.searchCopublisherFieldController,
+                      textEditingController:
+                          controller.searchCopublisherFieldController,
                       hintText: 'Search Request',
                       onchange: controller.searchRequest,
                       title: '',
-                      placeHolder: IsmLiveAssetConstants.user_request_placeholder,
+                      placeHolder:
+                          IsmLiveAssetConstants.user_request_placeholder,
                       placeHolderText: 'No request users',
                       controller: controller.copublisherListController,
                       itemCount: controller.copublisherRequestsList.length,
                       itemBuilder: (context, index) {
-                        final copublisher = controller.copublisherRequestsList[index];
+                        final copublisher =
+                            controller.copublisherRequestsList[index];
                         return ListTile(
                           leading: IsmLiveImage.network(
                             copublisher.profileUrl,
@@ -123,10 +135,12 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                       placeHolderText: 'No users',
                       onPressClearIcon: () {
                         controller.searchMembersFieldController.clear();
-                        controller.searchMembers(controller.searchMembersFieldController.text);
+                        controller.searchMembers(
+                            controller.searchMembersFieldController.text);
                       },
                       showHeader: false,
-                      textEditingController: controller.searchMembersFieldController,
+                      textEditingController:
+                          controller.searchMembersFieldController,
                       hintText: 'Search User',
                       onchange: controller.searchMembers,
                       title: '',

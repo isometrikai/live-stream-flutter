@@ -34,12 +34,14 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       itemCount: controller.participantTracks.length,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: controller.participantTracks.length < 5 ? 2 : 3,
-                        childAspectRatio: controller.participantTracks.length < 3
-                            ? 0.5
-                            : controller.participantTracks.length < 5
-                                ? 0.9
-                                : 0.6,
+                        crossAxisCount:
+                            controller.participantTracks.length < 5 ? 2 : 3,
+                        childAspectRatio:
+                            controller.participantTracks.length < 3
+                                ? 0.6
+                                : controller.participantTracks.length < 5
+                                    ? 0.9
+                                    : 0.6,
                       ),
                       itemBuilder: (_, index) => ParticipantWidget.widgetFor(
                         controller.participantTracks[index],
@@ -49,7 +51,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     ),
                   )
             : NoVideoWidget(
-                imageUrl: controller.hostDetails?.userProfileImageUrl ?? streamImage,
+                imageUrl:
+                    controller.hostDetails?.userProfileImageUrl ?? streamImage,
                 name: controller.hostDetails?.userName ?? 'U',
               ),
       );
