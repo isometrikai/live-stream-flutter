@@ -7,9 +7,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
     super.key,
     required this.isHost,
     required this.streamId,
+    required this.isCopublishing,
   });
 
   final bool isHost;
+  final bool isCopublishing;
   final String streamId;
 
   static const String updateId = 'ism-live-controls';
@@ -20,15 +22,21 @@ class IsmLiveControlsWidget extends StatelessWidget {
         initState: (state) {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.addListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.addListener(streamController.update);
         },
         dispose: (state) async {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.removeListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = !isHost ? IsmLiveStreamOption.viewersOptions : IsmLiveStreamOption.hostOptions;
+          var options = !isHost
+              ? IsmLiveStreamOption.viewersOptions
+              : isCopublishing
+                  ? IsmLiveStreamOption.copublisherOptions
+                  : IsmLiveStreamOption.hostOptions;
 
           return SingleChildScrollView(
             child: Column(
