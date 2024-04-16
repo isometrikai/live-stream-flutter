@@ -18,6 +18,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
 
                 controller.fetchCopublisherRequests(
                   streamId: controller.streamId ?? '',
+                  forceFetch: true,
                 );
                 controller.fetchEligibleMembers(
                   streamId: controller.streamId ?? '',
@@ -101,31 +102,41 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                           ),
                           title: Text(copublisher.userName),
                           subtitle: Text(copublisher.userIdentifier),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IsmLiveButton.icon(
-                                icon: Icons.check_rounded,
-                                onTap: () {
-                                  controller.acceptCopublisherRequest(
-                                    requestById: copublisher.userId,
-                                    streamId: controller.streamId ?? '',
-                                  );
-                                },
-                              ),
-                              IsmLiveDimens.boxWidth4,
-                              IsmLiveButton.icon(
-                                icon: Icons.close_rounded,
-                                secondary: true,
-                                onTap: () {
-                                  controller.denyCopublisherRequest(
-                                    requestById: copublisher.userId,
-                                    streamId: controller.streamId ?? '',
-                                  );
-                                },
-                              )
-                            ],
-                          ),
+                          trailing: copublisher.pending ?? false
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IsmLiveButton.icon(
+                                      icon: Icons.check_rounded,
+                                      onTap: () {
+                                        controller.acceptCopublisherRequest(
+                                          requestById: copublisher.userId,
+                                          streamId: controller.streamId ?? '',
+                                        );
+                                      },
+                                    ),
+                                    IsmLiveDimens.boxWidth4,
+                                    IsmLiveButton.icon(
+                                      icon: Icons.close_rounded,
+                                      secondary: true,
+                                      onTap: () {
+                                        controller.denyCopublisherRequest(
+                                          requestById: copublisher.userId,
+                                          streamId: controller.streamId ?? '',
+                                        );
+                                      },
+                                    )
+                                  ],
+                                )
+                              : copublisher.accepted ?? false
+                                  ? const Text(
+                                      'accepted',
+                                      style: TextStyle(color: Colors.green),
+                                    )
+                                  : const Text(
+                                      'deny',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                         );
                       },
                     ),

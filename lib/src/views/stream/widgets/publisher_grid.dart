@@ -22,7 +22,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     scaleEnabled: isInteractive,
                     child: ParticipantWidget.widgetFor(
                       controller.participantTracks.first,
-                      imageUrl: controller.user?.profileUrl,
+                      imageUrl: controller.hostDetails?.userProfileImageUrl,
                       showStatsLayer: false,
                       showFullVideo: isInteractive,
                     ),
@@ -43,11 +43,22 @@ class IsmLivePublisherGrid extends StatelessWidget {
                                     ? 0.9
                                     : 0.6,
                       ),
-                      itemBuilder: (_, index) => ParticipantWidget.widgetFor(
-                        controller.participantTracks[index],
-                        imageUrl: controller.user?.profileUrl,
-                        showStatsLayer: false,
-                      ),
+                      itemBuilder: (_, index) {
+                        var url = '';
+                        for (var element in controller.streamMembersList) {
+                          if (element.userId ==
+                              controller.participantTracks[index].participant
+                                  .identity) {
+                            url = element.userProfileImageUrl;
+                          }
+                        }
+
+                        return ParticipantWidget.widgetFor(
+                          controller.participantTracks[index],
+                          imageUrl: url,
+                          showStatsLayer: false,
+                        );
+                      },
                     ),
                   )
             : NoVideoWidget(

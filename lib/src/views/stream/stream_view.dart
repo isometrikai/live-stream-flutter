@@ -116,6 +116,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchCopublisherFieldController.clear();
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
+          controller.copublisherRequestsList.clear();
         },
         builder: (controller) => PopScope(
           canPop: false,
