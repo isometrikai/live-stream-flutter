@@ -41,26 +41,6 @@ class AppPages {
       binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),
-    GetPage<AgentPhoneView>(
-      name: AppRoutes.agentPhone,
-      transitionDuration: transitionDuration,
-      page: AgentPhoneView.new,
-      binding: AgentAuthBinding(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage<AgentOtpView>(
-      name: AppRoutes.agentOtp,
-      transitionDuration: transitionDuration,
-      page: AgentOtpView.new,
-      binding: AgentAuthBinding(),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage<AuthWrapper>(
-      name: AppRoutes.authWrapper,
-      transitionDuration: transitionDuration,
-      page: AuthWrapper.new,
-      transition: Transition.rightToLeft,
-    ),
     GetPage<SignupView>(
       name: AppRoutes.signup,
       transitionDuration: transitionDuration,

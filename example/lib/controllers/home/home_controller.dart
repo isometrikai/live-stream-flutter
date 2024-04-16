@@ -16,8 +16,6 @@ class HomeController extends GetxController {
 
   late IsmLiveConfigData configData;
 
-  late IsmLiveNavigation navigation;
-
   AppConfig get _appConfig => Get.find();
 
   @override
@@ -25,32 +23,28 @@ class HomeController extends GetxController {
     super.onInit();
 
     userType = dbWrapper.getStringValue(LocalKeys.userType);
-    navigation = IsmLiveNavigation.userTypr(userType);
-    if (navigation.isCalling) {
-      agent = AgentDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.agent));
-    } else {
-      user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
-    }
+
+    user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
 
     // TODO: Check for creds from login API
 
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
-        accountId: navigation.isCalling ? AppConstants.accountIdCallQwik : AppConstants.accountId,
-        appSecret: navigation.isCalling ? AppConstants.appSecretCallQwik : AppConstants.appSecret,
-        userSecret: navigation.isCalling ? AppConstants.userSecretCallQwik : AppConstants.userSecret,
-        keySetId: navigation.isCalling ? AppConstants.keySetIdCallQwik : AppConstants.keySetId,
-        licenseKey: navigation.isCalling ? AppConstants.licenseKeyCallQwik : AppConstants.licenseKey,
-        projectId: navigation.isCalling ? AppConstants.projectIdCallQwik : AppConstants.projectId,
-        deviceId: navigation.isCalling ? _appConfig.deviceId! : user.deviceId,
+        accountId: AppConstants.accountId,
+        appSecret: AppConstants.appSecret,
+        userSecret: AppConstants.userSecret,
+        keySetId: AppConstants.keySetId,
+        licenseKey: AppConstants.licenseKey,
+        projectId: AppConstants.projectId,
+        deviceId: user.deviceId,
       ),
       userConfig: IsmLiveUserConfig(
-        userToken: navigation.isCalling ? agent.userToken : user.userToken,
-        userId: navigation.isCalling ? agent.userId : user.userId,
-        firstName: navigation.isCalling ? agent.name : user.firstName,
-        lastName: navigation.isCalling ? agent.name : user.lastName,
-        userEmail: navigation.isCalling ? '' : user.email,
-        userProfile: navigation.isCalling ? agent.userProfileUrl : '',
+        userToken: user.userToken,
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userEmail: user.email,
+        userProfile: '',
       ),
       mqttConfig: const IsmLiveMqttConfig(
         hostName: AppConstants.mqttHost,
@@ -72,6 +66,6 @@ class HomeController extends GetxController {
   void logout() async {
     await dbWrapper.deleteAllSecuredValues();
     dbWrapper.deleteBox();
-    RouteManagement.goToAuthWrapper();
+    RouteManagement.goToLogin();
   }
 }
