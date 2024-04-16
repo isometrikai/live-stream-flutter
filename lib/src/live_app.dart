@@ -13,16 +13,15 @@ class IsmLiveApp extends StatelessWidget {
     this.onCallEnd,
     this.enableLog = true,
     this.onLogout,
-    this.navigationType = IsmLiveNavigation.streaming,
   }) {
     initialize(configuration);
     IsmLiveHandler.isLogsEnabled = enableLog;
     IsmLiveHandler.onLogout = onLogout;
-    IsmLiveHandler.navigationType = navigationType;
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) =>
+      IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
 
@@ -97,7 +96,8 @@ class IsmLiveApp extends StatelessWidget {
 
   static VoidCallback? get endStream => IsmLiveDelegate.endStream;
 
-  static set endStream(VoidCallback? callback) => IsmLiveDelegate.endStream = callback;
+  static set endStream(VoidCallback? callback) =>
+      IsmLiveDelegate.endStream = callback;
 
   static void disconnect() {}
 
@@ -106,7 +106,6 @@ class IsmLiveApp extends StatelessWidget {
     VoidCallback? logoutCallback,
   ]) =>
       IsmLiveHandler.logout(
-        isStreaming: isStreaming ?? IsmLiveHandler.navigationType == IsmLiveNavigation.streaming,
         logoutCallback: logoutCallback,
       );
 
@@ -137,11 +136,10 @@ class IsmLiveApp extends StatelessWidget {
   final VoidCallback? onCallEnd;
   final bool enableLog;
   final VoidCallback? onLogout;
-  final IsmLiveNavigation navigationType;
 
   @override
   Widget build(BuildContext context) => IsmLiveConfig(
         data: configuration,
-        child: navigationType.isStreaming ? const IsmLiveStreamListing() : const IsmLiveMeetingView(),
+        child: const IsmLiveStreamListing(),
       );
 }

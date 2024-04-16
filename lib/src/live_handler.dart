@@ -17,8 +17,6 @@ class IsmLiveHandler {
 
   static VoidCallback? onLogout;
 
-  static IsmLiveNavigation? navigationType;
-
   static Future<void> initialize() async {
     unawaited(availableCameras().then((value) {
       IsmLiveUtility.cameras = value;
@@ -54,7 +52,8 @@ class IsmLiveHandler {
   }) async {
     IsmLiveUtility.showLoader();
     if (isStreaming) {
-      var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+      var isUnsubscribed =
+          await Get.find<IsmLiveStreamController>().unsubscribeUser();
       if (!isUnsubscribed) {
         return;
       }

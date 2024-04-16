@@ -24,7 +24,7 @@ class SplashController extends GetxController {
     if (isLoggedIn) {
       route = RouteManagement.goToHome;
     } else {
-      route = RouteManagement.goToAuthWrapper;
+      route = RouteManagement.goToLogin;
     }
     IsmLiveUtility.updateLater(() {
       route();

@@ -10,25 +10,6 @@ enum IsmLiveRequestType {
   upload;
 }
 
-enum IsmLiveNavigation {
-  calling,
-  streaming;
-
-  factory IsmLiveNavigation.userTypr(String val) {
-    switch (val) {
-      case 'agent':
-        return IsmLiveNavigation.calling;
-      case 'user':
-        return IsmLiveNavigation.streaming;
-    }
-    return IsmLiveNavigation.streaming;
-  }
-
-  bool get isCalling => this == IsmLiveNavigation.calling;
-
-  bool get isStreaming => this == IsmLiveNavigation.streaming;
-}
-
 enum IsmLiveConnectionState {
   connected,
   disconnected;
@@ -212,7 +193,7 @@ enum IsmLiveStreamOption {
 
   static List<IsmLiveStreamOption> get hostOptions => [
         IsmLiveStreamOption.members,
-        // IsmLiveStreamOption.vs,
+        IsmLiveStreamOption.vs,
         IsmLiveStreamOption.multiLive,
         IsmLiveStreamOption.product,
         IsmLiveStreamOption.share,
