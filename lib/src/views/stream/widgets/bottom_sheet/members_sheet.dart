@@ -20,7 +20,8 @@ class IsmLiveMembersSheet extends StatelessWidget {
           showSearchBar: true,
           onPressClearIcon: () {
             controller.searchExistingMembesFieldController.clear();
-            controller.searchMember(controller.searchExistingMembesFieldController.text);
+            controller.searchMember(
+                controller.searchExistingMembesFieldController.text);
           },
           textEditingController: controller.searchExistingMembesFieldController,
           hintText: 'Search Copublisher',
@@ -39,7 +40,8 @@ class IsmLiveMembersSheet extends StatelessWidget {
               ),
               title: Text(existingMember.userName),
               subtitle: Text(existingMember.userIdentifier),
-              trailing: (controller.isHost) && controller.user?.userId != existingMember.userId
+              trailing: (controller.isHost) &&
+                      controller.user?.userId != existingMember.userId
                   ? IsmLiveButton.icon(
                       icon: Icons.person_remove_rounded,
                       onTap: () {
@@ -49,7 +51,8 @@ class IsmLiveMembersSheet extends StatelessWidget {
                         );
                       },
                     )
-                  : (controller.user?.userId == existingMember.userId) && (controller.isHost == false)
+                  : (controller.user?.userId == existingMember.userId) &&
+                          (controller.isHost == false)
                       ? IsmLiveButton.icon(
                           icon: Icons.exit_to_app_rounded,
                           onTap: () {
@@ -57,6 +60,8 @@ class IsmLiveMembersSheet extends StatelessWidget {
                             controller.disconnectStream(
                               isHost: false,
                               streamId: controller.streamId ?? '',
+                              endStream: false,
+                              goBack: false,
                             );
                           },
                         )

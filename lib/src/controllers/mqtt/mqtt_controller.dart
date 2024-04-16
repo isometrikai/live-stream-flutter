@@ -335,14 +335,15 @@ class IsmLiveMqttController extends GetxController {
             );
             unawaited(_streamController.handleMessage(message));
             _updateStream([IsmLiveMembersSheet.updateId]);
-            // _streamController.streamMembersList
-            //     .removeWhere((e) => e.userId == memberId);
-            // if (userId != initiatorId) {
-            //   _disconnectRoom();
-            // }
-            if (memberId == userId) {
-              unawaited(_streamController.unpublishTracks());
+            _streamController.streamMembersList
+                .removeWhere((e) => e.userId == memberId);
+            if (userId != initiatorId && userId == memberId) {
+              _disconnectRoom();
+              Get.back();
             }
+            // if (memberId == userId) {
+            //   unawaited(_streamController.unpublishTracks());
+            // }
           }
           break;
         case IsmLiveActions.profileSwitched:
