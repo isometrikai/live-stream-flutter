@@ -139,3 +139,7 @@ extension IsmLiveUserConfigExtensions on IsmLiveUserConfig {
         userId: userId,
       );
 }
+
+extension IsmLiveAlignmentExtension on Alignment {
+  bool get isBottomAligned => [Alignment.bottomLeft, Alignment.bottomCenter, Alignment.bottomRight].contains(this);
+}
