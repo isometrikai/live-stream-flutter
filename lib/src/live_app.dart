@@ -20,8 +20,7 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) =>
-      IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
 
@@ -34,10 +33,13 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
   }) async {
+    if (_initialized) {
+      return;
+    }
     _initialized = true;
     await IsmLiveDelegate.instance.initialize(
       config,
-      onStreamEnd: onStreamEnd,
+      onEndStream: onStreamEnd,
     );
     if (shouldInitializeMqtt) {
       await initializeMqtt(
@@ -51,6 +53,9 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? topics,
     List<String>? topicChannels,
   }) async {
+    if (_mqttInitialized) {
+      return;
+    }
     _mqttInitialized = true;
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
@@ -60,6 +65,25 @@ class IsmLiveApp extends StatelessWidget {
       topicChannels: topicChannels,
     );
   }
+
+  static void configureInterface({
+    IsmLiveHeaderBuilder? streamHeader,
+    IsmLiveHeaderBuilder? bottomBuilder,
+    IsmLiveInputBuilder? inputBuilder,
+    bool showHeader = true,
+    Alignment? headerPosition,
+    Alignment? endStreamPosition,
+  }) {
+    assert(_initialized, 'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
+    IsmLiveDelegate.streamHeader = streamHeader;
+    IsmLiveDelegate.bottomBuilder = bottomBuilder;
+    IsmLiveDelegate.showHeader = showHeader;
+    IsmLiveDelegate.inputBuilder = inputBuilder;
+    IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
+    IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
+  }
+
+  static Future<void> endStream() => IsmLiveDelegate.endStream();
 
   static void handleMqttEvent(DynamicMap payload) {
     assert(
@@ -74,7 +98,7 @@ class IsmLiveApp extends StatelessWidget {
     required IsmLiveStreamModel stream,
     required bool isHost,
     bool isInteractive = false,
-    VoidCallback? onCallEnd,
+    VoidCallback? onStreamEnd,
   }) async {
     assert(
       _initialized && _mqttInitialized,
@@ -89,17 +113,28 @@ class IsmLiveApp extends StatelessWidget {
         isHost,
         joinByScrolling: false,
         isInteractive: isInteractive,
-        onCallEnd: onCallEnd,
+        onStreamEnd: onStreamEnd,
       );
     });
   }
 
-  static VoidCallback? get endStream => IsmLiveDelegate.endStream;
+  static VoidCallback? get onStreamEnd => IsmLiveDelegate.onStreamEnd;
 
-  static set endStream(VoidCallback? callback) =>
-      IsmLiveDelegate.endStream = callback;
+  static set onStreamEnd(VoidCallback? callback) => IsmLiveDelegate.onStreamEnd = callback;
 
-  static void disconnect() {}
+  static IsmLiveHeaderBuilder? get streamHeader => IsmLiveDelegate.streamHeader;
+
+  static IsmLiveHeaderBuilder? get bottomBuilder => IsmLiveDelegate.bottomBuilder;
+
+  static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
+
+  static bool get showHeader => IsmLiveDelegate.showHeader;
+
+  static Alignment get headerPosition => IsmLiveDelegate.headerPosition;
+
+  static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
+
+  // static void disconnect() {}
 
   static Future<void> logout([
     bool? isStreaming,

@@ -180,6 +180,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.settings:
       case IsmLiveStreamOption.rotateCamera:
       case IsmLiveStreamOption.product:
+      case IsmLiveStreamOption.heart:
         return option.icon;
       case IsmLiveStreamOption.speaker:
         if (_controller.speakerOn) {
@@ -368,6 +369,9 @@ mixin StreamOngoingMixin {
         break;
       case IsmLiveStreamOption.vs:
         break;
+      case IsmLiveStreamOption.heart:
+        unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));
+        break;
     }
   }
 
@@ -532,7 +536,7 @@ mixin StreamOngoingMixin {
 
       await _controller.sortParticipants();
     }
-    IsmLiveApp.endStream?.call();
+    IsmLiveApp.onStreamEnd?.call();
     return isEnded;
   }
 

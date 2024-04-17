@@ -24,7 +24,7 @@ mixin StreamAPIMixin {
     _controller.user = UserDetails.fromJson(
       _dbWrapper.getStringValue(IsmLiveLocalKeys.user),
     );
-    _controller.update([IsmLiveHeader.updateId]);
+    _controller.update([IsmLiveAppbar.updateId]);
   }
 
   /// Subscribe or unsubscribe the current user to/from the platform.

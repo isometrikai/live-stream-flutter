@@ -2,15 +2,15 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveHeader extends StatelessWidget implements PreferredSizeWidget {
-  const IsmLiveHeader({
+class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
+  const IsmLiveAppbar({
     super.key,
     this.height,
   });
 
   final double? height;
 
-  static const String updateId = 'ismlive-header';
+  static const String updateId = 'ismlive-appbar';
 
   @override
   Size get preferredSize => Size(Get.width, height ?? IsmLiveDimens.appBarHeight);

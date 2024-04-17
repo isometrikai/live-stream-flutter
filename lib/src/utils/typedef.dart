@@ -15,3 +15,11 @@ typedef ViewerBuilder = Widget Function(BuildContext, IsmLiveViewerModel);
 typedef FutureFunction = Future<void> Function();
 
 typedef RoomListener = EventsListener<RoomEvent>;
+
+typedef IsmLiveHeaderBuilder = Widget Function(
+  BuildContext,
+  IsmLiveMemberDetailsModel?,
+  String,
+);
+
+typedef IsmLiveInputBuilder = Widget Function(BuildContext, Widget);

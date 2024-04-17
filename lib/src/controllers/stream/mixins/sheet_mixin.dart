@@ -7,12 +7,12 @@ mixin StreamSheetMixin {
     required bool isHost,
     required String streamId,
   }) {
+    FocusScope.of(Get.context!).unfocus();
+
     if (isHost || (_controller.isCopublisher)) {
       IsmLiveUtility.openBottomSheet(
         IsmLiveCustomButtomSheet(
-          title: isHost
-              ? IsmLiveStrings.areYouSureEndStream
-              : IsmLiveStrings.areYouSureLeaveStream,
+          title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
           leftLabel: isHost ? 'Cancel' : 'Stop stream',
           rightLabel: isHost ? 'End Stream' : 'Leave stream',
           onLeft: isHost
@@ -68,11 +68,8 @@ mixin StreamSheetMixin {
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: Get.context?.liveTranslations?.requestCopublishingTitle ??
-            IsmLiveStrings.requestCopublishingTitle,
-        description:
-            Get.context?.liveTranslations?.requestCopublishingDescription ??
-                IsmLiveStrings.requestCopublishingDescription,
+        title: Get.context?.liveTranslations?.requestCopublishingTitle ?? IsmLiveStrings.requestCopublishingTitle,
+        description: Get.context?.liveTranslations?.requestCopublishingDescription ?? IsmLiveStrings.requestCopublishingDescription,
         label: _controller.memberStatus.isRejected
             ? 'Request denied by the host'
             : _controller.memberStatus.didRequested
@@ -82,8 +79,7 @@ mixin StreamSheetMixin {
           _controller.user?.profileUrl ?? '',
           _controller.hostDetails?.userProfileImageUrl ?? '',
         ],
-        onTap: _controller.memberStatus.didRequested ||
-                _controller.memberStatus.isRejected
+        onTap: _controller.memberStatus.didRequested || _controller.memberStatus.isRejected
             ? null
             : () async {
                 if (!_controller.isModerator) {
@@ -103,23 +99,17 @@ mixin StreamSheetMixin {
   void copublishingStartVideoSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title:
-            (Get.context?.liveTranslations?.hostAcceptedCopublishRequestTitle ??
-                    IsmLiveStrings.hostAcceptedCopublishRequestTitle)
-                .trParams({
+        title: (Get.context?.liveTranslations?.hostAcceptedCopublishRequestTitle ?? IsmLiveStrings.hostAcceptedCopublishRequestTitle).trParams({
           'name': _controller.hostDetails?.userName ?? 'Host',
         }),
-        description: Get.context?.liveTranslations
-                ?.hostAcceptedCopublishRequestDescription ??
-            IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description: Get.context?.liveTranslations?.hostAcceptedCopublishRequestDescription ?? IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: 'Start Video',
         images: [
           _controller.user?.profileUrl ?? '',
         ],
         onTap: () async {
           if (_controller.room != null) {
-            var token = await _controller.switchViewer(
-                streamId: _controller.streamId ?? '');
+            var token = await _controller.switchViewer(streamId: _controller.streamId ?? '');
             if (token == null) {
               return;
             }

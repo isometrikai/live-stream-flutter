@@ -12,14 +12,42 @@ class IsmLiveDelegate {
 
   IsmLiveDBWrapper get _dbWrapper => Get.find();
 
-  static VoidCallback? endStream;
+  static VoidCallback? onStreamEnd;
 
-  Future<void> initialize(IsmLiveConfigData config, {VoidCallback? onStreamEnd}) async {
-    endStream = onStreamEnd;
+  static IsmLiveHeaderBuilder? streamHeader;
+
+  static IsmLiveHeaderBuilder? bottomBuilder;
+
+  static IsmLiveInputBuilder? inputBuilder;
+
+  static bool showHeader = true;
+
+  static Alignment headerPosition = Alignment.topLeft;
+
+  static Alignment endStreamPosition = Alignment.topRight;
+
+  Future<void> initialize(
+    IsmLiveConfigData config, {
+    VoidCallback? onEndStream,
+  }) async {
+    onStreamEnd = onEndStream;
     await Future.wait([
       IsmLiveHandler.initialize(),
       _dbWrapper.saveValueSecurely(IsmLiveLocalKeys.configDetails, config.toJson()),
       IsmLiveUtility.initialize(config),
     ]);
+  }
+
+  static Future<void> endStream() async {
+    assert(Get.isRegistered<IsmLiveStreamController>(), 'StreamController is not initialized');
+    IsmLiveLog.error('Calling Leave API from Outside');
+    var controller = Get.find<IsmLiveStreamController>();
+    if (controller.streamId.isNullOrEmpty) {
+      return;
+    }
+    controller.onExit(
+      isHost: controller.isHost,
+      streamId: controller.streamId!,
+    );
   }
 }

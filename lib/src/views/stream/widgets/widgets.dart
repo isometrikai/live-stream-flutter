@@ -1,3 +1,4 @@
+export 'appbar.dart';
 export 'bottom_sheet/bottom_sheet.dart';
 export 'chat.dart';
 export 'chat_emojis.dart';
@@ -7,7 +8,6 @@ export 'dialogs/dialogs.dart';
 export 'end_stream_container.dart';
 export 'gifts_sheet.dart';
 export 'go_live_nav_bar.dart';
-export 'header.dart';
 export 'host_details.dart';
 export 'list_sheet.dart';
 export 'logout_bottom_sheet.dart';

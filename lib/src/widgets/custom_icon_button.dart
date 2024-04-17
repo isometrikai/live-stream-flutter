@@ -27,7 +27,7 @@ class CustomIconButton extends StatelessWidget {
             color: color ?? Colors.black12,
             shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
           ),
-          child: icon,
+          child: UnconstrainedBox(child: icon),
         ),
       );
 }

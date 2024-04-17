@@ -26,8 +26,6 @@ class HomeController extends GetxController {
 
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
 
-    // TODO: Check for creds from login API
-
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
         accountId: AppConstants.accountId,
@@ -51,8 +49,11 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
+    setupStream();
+  }
 
-    IsmLiveApp.initialize(configData);
+  void setupStream() async {
+    await IsmLiveApp.initialize(configData);
   }
 
   @override

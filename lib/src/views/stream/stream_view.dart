@@ -45,8 +45,7 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex =
-              controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -132,87 +131,65 @@ class _IsmLiveStreamView extends StatelessWidget {
                 const _BottomDarkGradient(),
                 ...controller.heartList,
                 ...controller.giftList,
+                Align(
+                  alignment: IsmLiveApp.headerPosition,
+                  child: Obx(
+                    () => (controller.room?.localParticipant != null) && IsmLiveApp.showHeader
+                        ? IsmLiveApp.streamHeader?.call(
+                              context,
+                              controller.hostDetails,
+                              controller.descriptionController.text,
+                            ) ??
+                            _StreamHeader(streamId: streamId)
+                        : IsmLiveDimens.box0,
+                  ),
+                ),
                 Obx(
                   () => (controller.room?.localParticipant != null)
                       ? SafeArea(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: IsmLiveDimens.edgeInsets8_0,
-                                child: StreamHeader(
-                                  description:
-                                      controller.descriptionController.text,
-                                  name: controller.hostDetails?.userName ?? 'U',
-                                  imageUrl: controller
-                                          .hostDetails?.userProfileImageUrl ??
-                                      '',
-                                  onTapCross: () {
-                                    FocusScope.of(context).unfocus();
-
-                                    controller.onExit(
-                                      isHost: controller.isHost,
-                                      streamId: streamId,
-                                    );
-                                  },
-                                  onTapModerators: () {
-                                    IsmLiveUtility.openBottomSheet(
-                                      const IsmLiveModeratorsSheet(),
-                                      isScrollController: true,
-                                    );
-                                  },
-                                  onTapViewers: () {
-                                    IsmLiveUtility.openBottomSheet(
-                                      GetBuilder<IsmLiveStreamController>(
-                                        id: IsmLiveStreamView.updateId,
-                                        builder: (controller) =>
-                                            IsmLiveListSheet(
-                                          scrollController:
-                                              controller.viewerListController,
-                                          items: controller.streamViewersList,
-                                          trailing: (_, viewer) => controller
-                                                      .isModerator ||
-                                                  controller.isHost
-                                              ? viewer.userId ==
-                                                      controller.user?.userId
-                                                  ? IsmLiveDimens.box0
-                                                  : IsmLiveButton.icon(
-                                                      icon: Icons
-                                                          .person_remove_rounded,
-                                                      onTap: () {
-                                                        controller
-                                                            .kickoutViewer(
-                                                          streamId: streamId,
-                                                          viewerId:
-                                                              viewer.userId,
-                                                        );
-                                                      },
-                                                    )
-                                              : const IsmLiveButton.icon(
-                                                  icon: Icons.group_add_rounded,
-                                                ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
                               Expanded(
                                 child: Padding(
                                   padding: IsmLiveDimens.edgeInsets8_0,
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      IsmLiveChatView(
-                                        isHost: controller.isHost,
-                                        streamId: streamId,
+                                      Expanded(
+                                        child: IsmLiveApp.bottomBuilder?.call(
+                                              context,
+                                              controller.hostDetails,
+                                              controller.descriptionController.text,
+                                            ) ??
+                                            Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                IsmLiveChatView(
+                                                  isHost: controller.isHost,
+                                                  streamId: streamId,
+                                                ),
+                                                IsmLiveDimens.boxHeight8,
+                                                IsmLiveApp.inputBuilder?.call(
+                                                      context,
+                                                      IsmLiveMessageField(
+                                                        streamId: streamId,
+                                                        isHost: controller.isPublishing,
+                                                      ),
+                                                    ) ??
+                                                    Padding(
+                                                      padding: IsmLiveDimens.edgeInsets8_0,
+                                                      child: IsmLiveMessageField(
+                                                        streamId: streamId,
+                                                        isHost: controller.isPublishing,
+                                                      ),
+                                                    ),
+                                              ],
+                                            ),
                                       ),
-                                      const Spacer(),
                                       IsmLiveControlsWidget(
                                         isHost: controller.isPublishing,
-                                        isCopublishing: controller
-                                                .participantTracks.length >
-                                            1,
+                                        isCopublishing: controller.participantTracks.length > 1,
                                         streamId: streamId,
                                       ),
                                     ],
@@ -220,20 +197,21 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveDimens.boxHeight8,
-                              Padding(
-                                padding: IsmLiveDimens.edgeInsets8_0,
-                                child: IsmLiveMessageField(
-                                  streamId: streamId,
-                                  isHost: controller.isPublishing,
-                                ),
-                              ),
-                              IsmLiveDimens.boxHeight8,
-                              if (controller.showEmojiBoard)
-                                const IsmLiveEmojis(),
+                              if (IsmLiveApp.endStreamPosition.isBottomAligned) ...[],
+                              if (controller.showEmojiBoard) const IsmLiveEmojis(),
                             ],
                           ),
                         )
                       : const SizedBox.shrink(),
+                ),
+                Align(
+                  alignment: IsmLiveApp.endStreamPosition,
+                  child: IsmLiveEndStreamButton(
+                    onTapExit: () => controller.onExit(
+                      isHost: controller.isHost,
+                      streamId: streamId,
+                    ),
+                  ),
                 ),
                 if (controller.isHost) ...[
                   Positioned(
@@ -247,6 +225,61 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                 ],
               ],
+            ),
+          ),
+        ),
+      );
+}
+
+class _StreamHeader extends StatelessWidget {
+  const _StreamHeader({
+    required this.streamId,
+  });
+
+  final String streamId;
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmLiveStreamView.updateId,
+        builder: (controller) => SafeArea(
+          child: Padding(
+            padding: IsmLiveDimens.edgeInsets8_0,
+            child: IsmLiveStreamHeader(
+              description: controller.descriptionController.text,
+              name: controller.hostDetails?.userName ?? 'U',
+              imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+              onTapModerators: () {
+                IsmLiveUtility.openBottomSheet(
+                  const IsmLiveModeratorsSheet(),
+                  isScrollController: true,
+                );
+              },
+              onTapViewers: () {
+                IsmLiveUtility.openBottomSheet(
+                  GetBuilder<IsmLiveStreamController>(
+                    id: IsmLiveStreamView.updateId,
+                    builder: (controller) => IsmLiveListSheet(
+                      scrollController: controller.viewerListController,
+                      items: controller.streamViewersList,
+                      trailing: (_, viewer) => controller.isModerator || controller.isHost
+                          ? viewer.userId == controller.user?.userId
+                              ? IsmLiveDimens.box0
+                              : IsmLiveButton.icon(
+                                  icon: Icons.person_remove_rounded,
+                                  onTap: () {
+                                    controller.kickoutViewer(
+                                      streamId: streamId,
+                                      viewerId: viewer.userId,
+                                    );
+                                  },
+                                )
+                          : const IsmLiveButton.icon(
+                              icon: Icons.group_add_rounded,
+                            ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
