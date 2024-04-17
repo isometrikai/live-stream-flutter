@@ -113,6 +113,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                           requestById: copublisher.userId,
                                           streamId: controller.streamId ?? '',
                                         );
+                                        Get.back();
                                       },
                                     ),
                                     IsmLiveDimens.boxWidth4,
@@ -124,6 +125,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                           requestById: copublisher.userId,
                                           streamId: controller.streamId ?? '',
                                         );
+                                        Get.back();
                                       },
                                     )
                                   ],

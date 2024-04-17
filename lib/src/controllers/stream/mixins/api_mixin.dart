@@ -504,7 +504,6 @@ mixin StreamAPIMixin {
     );
     if (res) {
       _controller.copublisherRequestsList.clear();
-      Get.back();
     }
 
     return res;
@@ -521,7 +520,6 @@ mixin StreamAPIMixin {
     );
     if (res) {
       _controller.copublisherRequestsList.clear();
-      Get.back();
     }
 
     return res;

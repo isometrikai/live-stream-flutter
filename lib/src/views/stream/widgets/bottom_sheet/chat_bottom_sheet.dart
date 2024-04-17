@@ -27,7 +27,8 @@ class ChatBottomSheet extends StatelessWidget {
                 },
               ),
             ),
-            if (controller.isModerator || controller.isHost) ...[
+            if ((controller.isModerator || controller.isHost) &&
+                message.isReply == false) ...[
               IsmLiveDimens.boxWidth8,
               SizedBox(
                 width: Get.width * 0.4,

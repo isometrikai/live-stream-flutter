@@ -23,6 +23,7 @@ class IsmLiveMessageModel {
     this.isEvent = false,
     this.parentMessageId,
     this.parentMessageSenderId,
+    this.isCopublisherRequest = false,
   });
 
   factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) =>
@@ -72,6 +73,7 @@ class IsmLiveMessageModel {
   final bool isEvent;
   final String? parentMessageId;
   final String? parentMessageSenderId;
+  final bool isCopublisherRequest;
 
   IsmLiveMessageModel copyWith({
     int? sentAt,

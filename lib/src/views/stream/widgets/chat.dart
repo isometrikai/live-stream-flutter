@@ -21,7 +21,8 @@ class IsmLiveChatView extends StatelessWidget {
                 : controller.participantTracks.length < 3
                     ? IsmLiveDimens.percentHeight(0.3)
                     : IsmLiveDimens.percentHeight(0.15),
-            maxWidth: isHost ? Get.width * 0.5 : Get.width * 0.75,
+            maxWidth: //isHost ? Get.width * 0.5 :
+                Get.width * 0.75,
           ),
           child: ListView.separated(
             controller: controller.messagesListController,
@@ -31,6 +32,7 @@ class IsmLiveChatView extends StatelessWidget {
             separatorBuilder: (_, __) => IsmLiveDimens.boxHeight10,
             itemBuilder: (_, index) {
               final message = controller.streamMessagesList[index];
+
               return UnconstrainedBox(
                 alignment: Alignment.centerLeft,
                 child: IsmLiveTapHandler(
@@ -137,17 +139,73 @@ class IsmLiveChatView extends StatelessWidget {
                                 ],
                                 ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    maxWidth: isHost
-                                        ? Get.width * 0.35
-                                        : Get.width * 0.6,
+                                    maxWidth: // isHost
+                                        //  ? Get.width * 0.35
+                                        //  :
+                                        Get.width * 0.6,
                                   ),
-                                  child: Text(
-                                    message.body,
-                                    style:
-                                        context.textTheme.labelMedium?.copyWith(
-                                      color: IsmLiveColors.white,
-                                    ),
-                                    softWrap: true,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        message.body,
+                                        style: context.textTheme.labelMedium
+                                            ?.copyWith(
+                                          color: IsmLiveColors.white,
+                                        ),
+                                        softWrap: true,
+                                      ),
+                                      if (message.isCopublisherRequest)
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(
+                                              width: IsmLiveDimens.hundred,
+                                              height: IsmLiveDimens.thirtyTwo +
+                                                  IsmLiveDimens.two,
+                                              child: IsmLiveButton(
+                                                label: 'accept',
+                                                onTap: () {
+                                                  controller
+                                                      .acceptCopublisherRequest(
+                                                    requestById: message.userId,
+                                                    streamId:
+                                                        controller.streamId ??
+                                                            '',
+                                                  );
+                                                  controller.streamMessagesList[
+                                                          index] =
+                                                      message.copyWith(
+                                                          isCopublisherRequest:
+                                                              false);
+                                                },
+                                              ),
+                                            ),
+                                            IsmLiveDimens.boxWidth2,
+                                            SizedBox(
+                                              width: IsmLiveDimens.hundred,
+                                              height: IsmLiveDimens.thirtyTwo +
+                                                  IsmLiveDimens.two,
+                                              child: IsmLiveButton(
+                                                label: 'deny',
+                                                onTap: () {
+                                                  controller
+                                                      .denyCopublisherRequest(
+                                                    requestById: message.userId,
+                                                    streamId:
+                                                        controller.streamId ??
+                                                            '',
+                                                  );
+                                                  controller.streamMessagesList[
+                                                          index] =
+                                                      message.copyWith(
+                                                          isCopublisherRequest:
+                                                              false);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                    ],
                                   ),
                                 ),
                               ],
