@@ -21,6 +21,7 @@ mixin StreamMessageMixin {
         parentId: message.parentMessageId,
         parentBody: message.metaData?.parentMessageBody,
         isEvent: message.isEvent,
+        isCopublisherRequest: message.isCopublisherRequest,
       );
 
 // Handle incoming message based on its type

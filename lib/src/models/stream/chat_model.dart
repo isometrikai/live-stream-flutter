@@ -17,9 +17,11 @@ class IsmLiveChatModel {
     this.sentByHost = false,
     this.parentBody,
     this.isEvent = false,
+    this.isCopublisherRequest = false,
   });
 
-  factory IsmLiveChatModel.fromMap(Map<String, dynamic> map) => IsmLiveChatModel(
+  factory IsmLiveChatModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveChatModel(
         streamId: map['streamId'] as String,
         messageId: map['messageId'] as String,
         parentId: map['parentId'] as String?,
@@ -37,7 +39,8 @@ class IsmLiveChatModel {
         isEvent: map['isEvent'] as bool? ?? false,
       );
 
-  factory IsmLiveChatModel.fromJson(String source) => IsmLiveChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveChatModel.fromJson(String source) =>
+      IsmLiveChatModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String streamId;
   final String messageId;
@@ -54,6 +57,7 @@ class IsmLiveChatModel {
   final bool sentByHost;
   final String? parentBody;
   final bool isEvent;
+  final bool isCopublisherRequest;
 
   IsmLiveChatModel copyWith({
     String? streamId,
@@ -71,6 +75,7 @@ class IsmLiveChatModel {
     bool? sentByHost,
     String? parentBody,
     bool? isEvent,
+    bool? isCopublisherRequest,
   }) =>
       IsmLiveChatModel(
         streamId: streamId ?? this.streamId,
@@ -88,6 +93,7 @@ class IsmLiveChatModel {
         sentByHost: sentByHost ?? this.sentByHost,
         parentBody: parentBody ?? this.parentBody,
         isEvent: isEvent ?? this.isEvent,
+        isCopublisherRequest: isCopublisherRequest ?? this.isCopublisherRequest,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -127,5 +133,11 @@ class IsmLiveChatModel {
   }
 
   @override
-  int get hashCode => streamId.hashCode ^ messageId.hashCode ^ parentId.hashCode ^ userId.hashCode ^ body.hashCode ^ parentBody.hashCode;
+  int get hashCode =>
+      streamId.hashCode ^
+      messageId.hashCode ^
+      parentId.hashCode ^
+      userId.hashCode ^
+      body.hashCode ^
+      parentBody.hashCode;
 }
