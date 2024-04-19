@@ -384,6 +384,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.bars:
         break;
       case IsmLiveStreamOption.vs:
+        _controller.pkSheet();
         break;
       case IsmLiveStreamOption.heart:
         unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));

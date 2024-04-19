@@ -22,12 +22,14 @@ class IsmLiveControlsWidget extends StatelessWidget {
         initState: (state) {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.addListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.addListener(streamController.update);
         },
         dispose: (state) async {
           final streamController = Get.find<IsmLiveStreamController>();
 
-          streamController.room?.localParticipant?.removeListener(streamController.update);
+          streamController.room?.localParticipant
+              ?.removeListener(streamController.update);
         },
         builder: (controller) {
           var options = !isHost
@@ -49,7 +51,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                     itemCount: options.length,
                     separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
                     itemBuilder: (context, index) => CustomIconButton(
-                      dimension: IsmLiveDimens.fortyFive,
+                      // dimension: IsmLiveDimens.fortyFive,
                       icon: IsmLiveImage.svg(
                         controller.controlIcon(options[index]),
                       ),

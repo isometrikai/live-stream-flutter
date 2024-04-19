@@ -15,8 +15,8 @@ class IsmLiveEndStream extends StatelessWidget {
         child: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           initState: (state) async {
-            // var controller = Get.find<IsmLiveStreamController>();
-            // await controller.streamAnalytics(streamId);
+            var controller = Get.find<IsmLiveStreamController>();
+            await controller.streamAnalytics(streamId);
             // controller.streamAnalyticsViewers(streamId);
           },
           builder: (controller) => Scaffold(
