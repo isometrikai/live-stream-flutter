@@ -113,8 +113,7 @@ class RemoteParticipantWidget extends ParticipantWidget {
   State<StatefulWidget> createState() => _RemoteParticipantWidgetState();
 }
 
-abstract class _ParticipantWidgetState<T extends ParticipantWidget>
-    extends State<T> {
+abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends State<T> {
   VideoTrack? get activeVideoTrack;
   TrackPublication? get videoPublication;
   TrackPublication? get firstAudioPublication;
@@ -155,16 +154,14 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
               : null,
         ),
         decoration: BoxDecoration(
-          color: Theme.of(ctx).cardColor,
+          color: context.liveTheme?.streamBackgroundColor ?? Theme.of(ctx).cardColor,
         ),
         child: Stack(
           children: [
             activeVideoTrack != null && !activeVideoTrack!.muted
                 ? VideoTrackRenderer(
                     activeVideoTrack!,
-                    fit: widget.showFullVideo
-                        ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
-                        : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    fit: widget.showFullVideo ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
                 : NoVideoWidget(
                     name: widget.participant.name,
@@ -184,9 +181,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                       ? widget.participant.name
                       : widget.participant.identity,
                   isHost: widget.isHost,
-                  title: widget.participant.name.isNotEmpty
-                      ? widget.participant.name
-                      : widget.participant.identity,
+                  title: widget.participant.name.isNotEmpty ? widget.participant.name : widget.participant.identity,
                 ),
               ),
           ],
@@ -194,33 +189,25 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
       );
 }
 
-class _LocalParticipantWidgetState
-    extends _ParticipantWidgetState<LocalParticipantWidget> {
+class _LocalParticipantWidgetState extends _ParticipantWidgetState<LocalParticipantWidget> {
   @override
   LocalTrackPublication<LocalVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks
-          .where((element) => element.sid == widget.videoTrack?.sid)
-          .firstOrNull;
+      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
 
   @override
-  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication =>
-      widget.participant.audioTracks.firstOrNull;
+  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
 }
 
-class _RemoteParticipantWidgetState
-    extends _ParticipantWidgetState<RemoteParticipantWidget> {
+class _RemoteParticipantWidgetState extends _ParticipantWidgetState<RemoteParticipantWidget> {
   @override
   RemoteTrackPublication<RemoteVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks
-          .where((element) => element.sid == widget.videoTrack?.sid)
-          .firstOrNull;
+      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
 
   @override
-  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication =>
-      widget.participant.audioTracks.firstOrNull;
+  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
