@@ -582,6 +582,9 @@ mixin StreamOngoingMixin {
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
+      if (Get.isBottomSheetOpen ?? false) {
+        Get.back();
+      }
       Get.back();
       if (fromMqtt) {
         IsmLiveUtility.showDialog(const IsmLiveStreamEndDialog());

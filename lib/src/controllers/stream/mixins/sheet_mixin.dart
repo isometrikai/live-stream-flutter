@@ -66,6 +66,18 @@ mixin StreamSheetMixin {
     );
   }
 
+  void pkInviteSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkInviteSheet(
+        description:
+            'You have received an invitation from @tavvi for the PK challenge. Do you want to continue?',
+        images: ['jj', 'iiii', 'ioo'],
+        label: '@tavvi1 invite you to link',
+        title: '@tavvi1 invite you to link',
+      ),
+    );
+  }
+
   // Function to handle showing copublishing viewer bottom sheet
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(

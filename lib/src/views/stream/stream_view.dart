@@ -118,6 +118,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
+          controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -236,6 +237,21 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
+                if (controller.leftValue)
+                  AnimatedBuilder(
+                    animation: controller.alignmentAnimation,
+                    builder: (context, child) => AnimatedAlign(
+                      alignment: controller.alignmentAnimation.value,
+                      duration: const Duration(
+                          seconds:
+                              1), // This can be set to a smaller duration to have smooth transitions
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

@@ -149,6 +149,8 @@ class IsmLiveStreamController extends GetxController
 
   int messagesCount = 0;
 
+  bool leftValue = false;
+
   CameraController? cameraController;
 
   final getStreamDebouncer = IsmLiveDebouncer();
@@ -259,6 +261,9 @@ class IsmLiveStreamController extends GetxController
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
 
+  late AnimationController animationController;
+  late Animation<Alignment> alignmentAnimation;
+
   @override
   void onInit() {
     super.onInit();
@@ -279,6 +284,21 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLivePk.values.length,
     );
+    animationController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // Define a Tween for Alignment
+    var alignmentTween = Tween<Alignment>(
+      begin: Alignment.centerLeft,
+      end: Alignment.center,
+    );
+
+    // Create an Animation with the Tween and the Controller
+    alignmentAnimation = alignmentTween.animate(animationController);
+
+    // Start the animation automatically
 
     generateVariables();
   }

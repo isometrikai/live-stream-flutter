@@ -4,14 +4,19 @@ class IsmLiveApis {
 
   static const String baseUrl = 'https://apis.isometrik.io';
 
-  static const String devBaseUrl = 'https://admin-apis.isometrik.io';
-  // static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
+  // static const String baseUrlStream = 'https://service-apis.isometrik.io';
+  static const String baseUrlStream = 'https://admin-apis.isometrik.io/live/v2';
+
+  // static const String devBaseUrl = 'https://admin-apis.isometrik.io';
+  static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
 
   static const String wsUrl = 'wss://streaming.isometrik.io';
-  static const String productDetails = 'https://admin-apis.isometrik.io/v1/get_product_details';
-  static const String agentauthenticate = 'https://admin-apis.isometrik.io/v1/agent';
+  static const String productDetails =
+      'https://admin-apis.isometrik.io/v1/get_product_details';
+  static const String agentauthenticate =
+      'https://admin-apis.isometrik.io/v1/agent';
   static const String user = '/chat/user';
-
+  static const String stream1 = '/stream';
   static const String allUsers = '/chat/users';
   static const String userDetails = '$user/details';
   static const String authenticate = '$user/authenticate';
@@ -23,6 +28,8 @@ class IsmLiveApis {
 
   static const String streamAnalytics = '/v2/stream/analytics';
   static const String streamAnalyticsViewers = '/v2/analytics/stream/viewers';
+  static const String getUsersToInviteForPK = '/v2/invite/users';
+  static const String sendInvitationToUserForPK = '/v2/invite/users';
 
   // Streams
   static const String _streaming = '/streaming/v2';
