@@ -118,7 +118,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-          controller.animationController.dispose();
+          // controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -126,6 +126,7 @@ class _IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 IsmLiveStreamBanner(streamImage),
+
                 IsmLivePublisherGrid(
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
@@ -237,21 +238,40 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
-                if (controller.leftValue)
-                  AnimatedBuilder(
-                    animation: controller.alignmentAnimation,
-                    builder: (context, child) => AnimatedAlign(
-                      alignment: controller.alignmentAnimation.value,
-                      duration: const Duration(
-                          seconds:
-                              1), // This can be set to a smaller duration to have smooth transitions
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
+                // if (controller.showPk)
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimation,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimation.value,
+                //       duration: const Duration(
+                //         milliseconds: 200,
+                //       ), // This can be set to a smaller duration to have smooth transitions
+                //       child: Container(
+                //         width: 50,
+                //         height: 50,
+                //         color: Colors.blue,
+                //       ),
+                //     ),
+                //   ),
+                // if (controller.showPk)
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimationRight,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimationRight.value,
+                //       duration: const Duration(
+                //           milliseconds:
+                //               200), // This can be set to a smaller duration to have smooth transitions
+                //       child: Container(
+                //         width: 50,
+                //         height: 50,
+                //         color: Colors.blue,
+                //       ),
+                //     ),
+                //   ),
+                // if (controller.showPkstart)
+                //   const Align(
+                //       alignment: Alignment.center,
+                //       child: IsmLiveButton(label: 'Start'))
               ],
             ),
           ),
@@ -276,6 +296,7 @@ class _StreamHeader extends StatelessWidget {
               description: controller.descriptionController.text,
               name: controller.hostDetails?.userName ?? 'U',
               imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+              isPk: true,
               onTapModerators: () {
                 IsmLiveUtility.openBottomSheet(
                   const IsmLiveModeratorsSheet(),

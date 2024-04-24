@@ -106,9 +106,7 @@ class IsmLivePkSheet extends StatelessWidget {
                                 child: IsmLiveButton.secondary(
                                   showBorder: true,
                                   label: 'invite',
-                                  onTap: () {
-                                    controller.pkInviteSheet();
-                                  },
+                                  onTap: () {},
                                 ),
                               ),
                             ),
@@ -137,7 +135,10 @@ class IsmLivePkSheet extends StatelessWidget {
                                 width: IsmLiveDimens.hundred,
                                 child: IsmLiveButton(
                                   label: 'Accept',
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.back();
+                                    controller.pkInviteSheet();
+                                  },
                                 ),
                               ),
                             ),

@@ -78,6 +78,8 @@ class IsmLiveStreamController extends GetxController
 
   bool isSchedulingBroadcast = false;
 
+  bool isPk = false;
+
   bool restreamFacebook = false;
   bool restreamYoutube = false;
   bool restreamInstagram = false;
@@ -96,6 +98,10 @@ class IsmLiveStreamController extends GetxController
   TextEditingController streamKey = TextEditingController();
 
   String? streamId;
+
+  final RxDouble _pkLoadingValue = 0.0.obs;
+  double get pkLoadingValue => _pkLoadingValue.value;
+  set pkLoadingValue(double value) => _pkLoadingValue.value = value;
 
   IsmLiveChatModel? parentMessage;
 
@@ -149,7 +155,8 @@ class IsmLiveStreamController extends GetxController
 
   int messagesCount = 0;
 
-  bool leftValue = false;
+  // bool showPk = false;
+  // bool showPkstart = false;
 
   CameraController? cameraController;
 
@@ -261,8 +268,9 @@ class IsmLiveStreamController extends GetxController
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
 
-  late AnimationController animationController;
-  late Animation<Alignment> alignmentAnimation;
+  // late AnimationController animationController;
+  // late Animation<Alignment> alignmentAnimation;
+  // late Animation<Alignment> alignmentAnimationRight;
 
   @override
   void onInit() {
@@ -284,19 +292,33 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLivePk.values.length,
     );
-    animationController = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
+    // animationController = AnimationController(
+    //   duration: const Duration(seconds: 2),
+    //   vsync: this,
+    // );
 
-    // Define a Tween for Alignment
-    var alignmentTween = Tween<Alignment>(
-      begin: Alignment.centerLeft,
-      end: Alignment.center,
-    );
+    // // Define a Tween for Alignment
+    // var alignmentTween = Tween<Alignment>(
+    //   begin: Alignment.centerLeft,
+    //   end: Alignment.center,
+    // );
+    // var alignmentTweenRight = Tween<Alignment>(
+    //   begin: Alignment.centerRight,
+    //   end: Alignment.center,
+    // );
 
-    // Create an Animation with the Tween and the Controller
-    alignmentAnimation = alignmentTween.animate(animationController);
+    // animationController.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     showPk = false;
+    //     showPkstart = true;
+    //     update([IsmLiveStreamView.updateId]);
+    //     animationController.reset();
+    //   }
+    // });
+
+    // // Create an Animation with the Tween and the Controller
+    // alignmentAnimation = alignmentTween.animate(animationController);
+    // alignmentAnimationRight = alignmentTweenRight.animate(animationController);
 
     // Start the animation automatically
 
@@ -675,4 +697,14 @@ class IsmLiveStreamController extends GetxController
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,
       );
+
+  void pkLoading(Timer? timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (pkLoadingValue > 1.0) {
+        timer.cancel();
+        Get.back();
+      }
+      pkLoadingValue = pkLoadingValue + 0.1;
+    });
+  }
 }

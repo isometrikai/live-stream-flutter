@@ -111,6 +111,7 @@ class IsmLiveAssetConstants {
   static const String micro_phone = '$_icons/microphone.svg';
   static const String micro_phone_off = '$_icons/microphone-slash.svg';
   static const String video_off = '$_icons/video-slash.svg';
+  static const String linking = '$_icons/linking.svg';
   static const String user_placeholder = '$_icons/user-placeholder.svg';
   static const String moderator_placeholder =
       '$_icons/moderator-placeholder.svg';

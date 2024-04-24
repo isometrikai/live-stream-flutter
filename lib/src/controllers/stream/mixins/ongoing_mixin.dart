@@ -364,6 +364,12 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
+        // _controller.showPk = true;
+        // _controller.update([IsmLiveStreamView.updateId]);
+        // Future.delayed(const Duration(milliseconds: 100), () {
+        //   _controller.animationController.forward();
+        // });
+
         break;
       case IsmLiveStreamOption.members:
         break;
