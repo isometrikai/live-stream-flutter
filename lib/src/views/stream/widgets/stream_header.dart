@@ -11,13 +11,14 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.onTapViewers,
     this.onTapModerators,
     required this.description,
-    required this.isPk,
+    required this.pk,
   });
 
   final String name;
   final String description;
   final String imageUrl;
-  final bool isPk;
+  final bool pk;
+
   final Function()? onTapExit;
   final Function()? onTapViewers;
   final Function()? onTapModerators;
@@ -32,6 +33,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              IsmLiveDimens.boxWidth10,
               IsmLiveHostDetail(
                 imageUrl: imageUrl,
                 name: name,
@@ -45,20 +47,36 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ],
           ),
           IsmLiveDimens.boxHeight10,
-          _LiveTimer(
-            onTapModerators: onTapModerators,
+          Padding(
+            padding: IsmLiveDimens.edgeInsets10_0,
+            child: _LiveTimer(
+              onTapModerators: onTapModerators,
+            ),
           ),
           IsmLiveDimens.boxHeight8,
-          if (isPk)
-            LinearProgressIndicator(
-              minHeight: IsmLiveDimens.ten,
-              backgroundColor: Colors.red,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-              value: 0.5,
-              borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-            )
+          if (pk)
+            name.isEmpty
+                ? LinearProgressIndicator(
+                    minHeight: IsmLiveDimens.ten,
+                    backgroundColor: Colors.red,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    value: 0.5,
+                  )
+                : Container(
+                    width: Get.width,
+                    color: Colors.purple,
+                    height: IsmLiveDimens.twenty,
+                    child: Text(
+                      'Congratulations to @taavi',
+                      style: context.textTheme.bodySmall
+                          ?.copyWith(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
           else
-            SizedBox(
+            Container(
+              margin: IsmLiveDimens.edgeInsets10_0,
               width: Get.width * 0.6,
               child: Text(
                 description,

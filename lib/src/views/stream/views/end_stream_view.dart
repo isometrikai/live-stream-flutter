@@ -69,6 +69,7 @@ class IsmLiveEndStream extends StatelessWidget {
                       IsmLiveEndStreamContainer(
                         points: '${controller.streamAnalytis?.hearts ?? 0}',
                         title: 'Hearts',
+                        color: Colors.black,
                         assetConstant: IsmLiveAssetConstants.heartSvg,
                       ),
                       IsmLiveEndStreamContainer(

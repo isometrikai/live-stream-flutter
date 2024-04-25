@@ -78,6 +78,23 @@ mixin StreamSheetMixin {
     );
   }
 
+  void pkChallengeSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkChallengeSheet(),
+    );
+  }
+
+  void pkChangeHostSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkChangeHostSheet(
+        description: 'New York, USA Female 34',
+        image: '',
+        lable: 'Change host',
+        title: '@taavi',
+      ),
+    );
+  }
+
   // Function to handle showing copublishing viewer bottom sheet
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(

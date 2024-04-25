@@ -171,6 +171,11 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     imageUrl: widget.imageUrl ?? '',
                   ),
             if (widget.showStatsLayer)
+              const Align(
+                alignment: Alignment.center,
+                child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
+              ),
+            if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ParticipantInfoWidget(
