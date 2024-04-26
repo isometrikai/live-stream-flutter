@@ -20,6 +20,8 @@ class IsmLiveDelegate {
 
   static IsmLiveInputBuilder? inputBuilder;
 
+  static Widget? endButton;
+
   static bool showHeader = true;
 
   static Alignment headerPosition = Alignment.topLeft;

@@ -20,7 +20,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
   final bool pk;
 
   final Function()? onTapExit;
-  final Function()? onTapViewers;
+  final void Function(List<IsmLiveViewerModel>)? onTapViewers;
   final Function()? onTapModerators;
 
   @override
@@ -126,11 +126,11 @@ class IsmLiveViewerCount extends StatelessWidget {
     this.onTap,
   });
 
-  final VoidCallback? onTap;
+  final void Function(List<IsmLiveViewerModel>)? onTap;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
-        onTap: onTap,
+        onTap: () => onTap?.call(Get.find<IsmLiveStreamController>().streamViewersList),
         child: Container(
           padding: IsmLiveDimens.edgeInsets4,
           decoration: BoxDecoration(

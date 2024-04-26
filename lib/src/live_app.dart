@@ -70,6 +70,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveHeaderBuilder? streamHeader,
     IsmLiveHeaderBuilder? bottomBuilder,
     IsmLiveInputBuilder? inputBuilder,
+    Widget? endButton,
     bool showHeader = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
@@ -79,6 +80,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
     IsmLiveDelegate.inputBuilder = inputBuilder;
+    IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
   }
@@ -128,13 +130,13 @@ class IsmLiveApp extends StatelessWidget {
 
   static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
 
+  static Widget? get endButton => IsmLiveDelegate.endButton;
+
   static bool get showHeader => IsmLiveDelegate.showHeader;
 
   static Alignment get headerPosition => IsmLiveDelegate.headerPosition;
 
   static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
-
-  // static void disconnect() {}
 
   static Future<void> logout([
     bool? isStreaming,

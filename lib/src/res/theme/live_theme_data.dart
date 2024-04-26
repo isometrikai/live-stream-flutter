@@ -7,6 +7,7 @@ class IsmLiveThemeData with Diagnosticable {
     this.primaryColor,
     this.secondaryColor,
     this.backgroundColor,
+    this.streamBackgroundColor,
     this.borderColor,
     this.primaryButtonTheme,
     this.secondaryButtonTheme,
@@ -20,6 +21,7 @@ class IsmLiveThemeData with Diagnosticable {
   final Color? primaryColor;
   final Color? secondaryColor;
   final Color? backgroundColor;
+  final Color? streamBackgroundColor;
   final Color? borderColor;
   final IsmLiveButtonThemeData? primaryButtonTheme;
   final IsmLiveButtonThemeData? secondaryButtonTheme;
@@ -35,6 +37,7 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(ColorProperty('primaryColor', primaryColor));
     properties.add(ColorProperty('secondaryColor', secondaryColor));
     properties.add(ColorProperty('backgroundColor', backgroundColor));
+    properties.add(ColorProperty('streamBackgroundColor', streamBackgroundColor));
     properties.add(ColorProperty('borderColor', borderColor));
     properties.add(
       DiagnosticsProperty<IsmLiveButtonThemeData>(
@@ -63,6 +66,7 @@ class IsmLiveThemeData with Diagnosticable {
       primaryColor: Color.lerp(primaryColor, other.primaryColor, t),
       secondaryColor: Color.lerp(secondaryColor, other.secondaryColor, t),
       backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
+      streamBackgroundColor: Color.lerp(streamBackgroundColor, other.streamBackgroundColor, t),
       borderColor: Color.lerp(borderColor, other.borderColor, t),
       primaryButtonTheme: primaryButtonTheme?.lerp(other.primaryButtonTheme, t),
       secondaryButtonTheme: secondaryButtonTheme?.lerp(other.secondaryButtonTheme, t),
@@ -78,6 +82,7 @@ class IsmLiveThemeData with Diagnosticable {
     Color? primaryColor,
     Color? secondaryColor,
     Color? backgroundColor,
+    Color? streamBackgroundColor,
     Color? borderColor,
     IsmLiveButtonThemeData? primaryButtonTheme,
     IsmLiveButtonThemeData? secondaryButtonTheme,
@@ -91,6 +96,7 @@ class IsmLiveThemeData with Diagnosticable {
         primaryColor: primaryColor ?? this.primaryColor,
         secondaryColor: secondaryColor ?? this.secondaryColor,
         backgroundColor: backgroundColor ?? this.backgroundColor,
+        streamBackgroundColor: streamBackgroundColor ?? this.streamBackgroundColor,
         borderColor: borderColor ?? this.borderColor,
         primaryButtonTheme: primaryButtonTheme ?? primaryButtonTheme,
         secondaryButtonTheme: secondaryButtonTheme ?? secondaryButtonTheme,
