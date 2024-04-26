@@ -8,11 +8,13 @@ class IsmLiveEndStreamContainer extends StatelessWidget {
     required this.title,
     required this.points,
     required this.assetConstant,
+    this.color,
   });
 
   final String title;
   final String points;
   final String assetConstant;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -20,6 +22,7 @@ class IsmLiveEndStreamContainer extends StatelessWidget {
         children: [
           IsmLiveImage.svg(
             assetConstant,
+            color: color,
           ),
           Text(
             title,

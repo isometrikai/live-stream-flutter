@@ -15,6 +15,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     String? imageUrl,
     bool showStatsLayer = false,
     bool showFullVideo = false,
+    bool isHost = false,
   }) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
@@ -22,6 +23,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.videoTrack,
         participantTrack.isScreenShare,
         showStatsLayer,
+        isHost,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
       );
@@ -31,6 +33,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.videoTrack,
         participantTrack.isScreenShare,
         showStatsLayer,
+        isHost,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
       );
@@ -45,6 +48,8 @@ abstract class ParticipantWidget extends StatefulWidget {
   abstract final bool isScreenShare;
   abstract final bool showStatsLayer;
   abstract final bool showFullVideo;
+  abstract final bool isHost;
+
   final VideoQuality quality;
 }
 
@@ -53,7 +58,8 @@ class LocalParticipantWidget extends ParticipantWidget {
     this.participant,
     this.videoTrack,
     this.isScreenShare,
-    this.showStatsLayer, {
+    this.showStatsLayer,
+    this.isHost, {
     this.imageUrl,
     this.showFullVideo = false,
     super.key,
@@ -70,6 +76,8 @@ class LocalParticipantWidget extends ParticipantWidget {
   final bool showStatsLayer;
   @override
   final bool showFullVideo;
+  @override
+  final bool isHost;
 
   @override
   State<StatefulWidget> createState() => _LocalParticipantWidgetState();
@@ -80,7 +88,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
     this.participant,
     this.videoTrack,
     this.isScreenShare,
-    this.showStatsLayer, {
+    this.showStatsLayer,
+    this.isHost, {
     this.imageUrl,
     this.showFullVideo = false,
     super.key,
@@ -97,6 +106,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
   final bool showStatsLayer;
   @override
   final bool showFullVideo;
+  @override
+  final bool isHost;
 
   @override
   State<StatefulWidget> createState() => _RemoteParticipantWidgetState();
@@ -160,10 +171,19 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     imageUrl: widget.imageUrl ?? '',
                   ),
             if (widget.showStatsLayer)
+              const Align(
+                alignment: Alignment.center,
+                child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
+              ),
+            if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.bottomCenter,
                 child: ParticipantInfoWidget(
-                  isMute: widget.participant.isMuted,
+                  imageUrl: widget.imageUrl ?? '',
+                  name: widget.participant.name.isNotEmpty
+                      ? widget.participant.name
+                      : widget.participant.identity,
+                  isHost: widget.isHost,
                   title: widget.participant.name.isNotEmpty
                       ? widget.participant.name
                       : widget.participant.identity,

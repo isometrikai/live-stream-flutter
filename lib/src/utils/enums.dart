@@ -15,7 +15,8 @@ enum IsmLiveConnectionState {
   disconnected;
 
   @override
-  String toString() => '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
+  String toString() =>
+      '${name[0].toUpperCase()}${name.substring(1).toLowerCase()}';
 }
 
 enum SimulateScenarioResult {
@@ -129,15 +130,20 @@ enum IsmLiveActions {
 
   factory IsmLiveActions.fromString(String action) =>
       <String, IsmLiveActions>{
-        IsmLiveActions.copublishRequestAccepted.value: IsmLiveActions.copublishRequestAccepted,
-        IsmLiveActions.copublishRequestAdded.value: IsmLiveActions.copublishRequestAdded,
-        IsmLiveActions.copublishRequestDenied.value: IsmLiveActions.copublishRequestDenied,
-        IsmLiveActions.copublishRequestRemoved.value: IsmLiveActions.copublishRequestRemoved,
+        IsmLiveActions.copublishRequestAccepted.value:
+            IsmLiveActions.copublishRequestAccepted,
+        IsmLiveActions.copublishRequestAdded.value:
+            IsmLiveActions.copublishRequestAdded,
+        IsmLiveActions.copublishRequestDenied.value:
+            IsmLiveActions.copublishRequestDenied,
+        IsmLiveActions.copublishRequestRemoved.value:
+            IsmLiveActions.copublishRequestRemoved,
         IsmLiveActions.memberAdded.value: IsmLiveActions.memberAdded,
         IsmLiveActions.memberLeft.value: IsmLiveActions.memberLeft,
         IsmLiveActions.memberRemoved.value: IsmLiveActions.memberRemoved,
         IsmLiveActions.messageRemoved.value: IsmLiveActions.messageRemoved,
-        IsmLiveActions.messageReplyRemoved.value: IsmLiveActions.messageReplyRemoved,
+        IsmLiveActions.messageReplyRemoved.value:
+            IsmLiveActions.messageReplyRemoved,
         IsmLiveActions.messageReplySent.value: IsmLiveActions.messageReplySent,
         IsmLiveActions.messageSent.value: IsmLiveActions.messageSent,
         IsmLiveActions.moderatorAdded.value: IsmLiveActions.moderatorAdded,
@@ -149,7 +155,8 @@ enum IsmLiveActions {
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
-        IsmLiveActions.streamStartPresence.value: IsmLiveActions.streamStartPresence,
+        IsmLiveActions.streamStartPresence.value:
+            IsmLiveActions.streamStartPresence,
         IsmLiveActions.viewerJoined.value: IsmLiveActions.viewerJoined,
         IsmLiveActions.viewerLeft.value: IsmLiveActions.viewerLeft,
         IsmLiveActions.viewerRemoved.value: IsmLiveActions.viewerRemoved,
@@ -210,8 +217,10 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyVideo(IsmLiveAssetConstants.video_camera, IsmLiveAssetConstants.video_off, 'Turn Off Video', 'Trun On Video'),
-  muteMyAudio(IsmLiveAssetConstants.micro_phone, IsmLiveAssetConstants.micro_phone_off, 'Mute', 'Unmute');
+  muteMyVideo(IsmLiveAssetConstants.video_camera,
+      IsmLiveAssetConstants.video_off, 'Turn Off Video', 'Trun On Video'),
+  muteMyAudio(IsmLiveAssetConstants.micro_phone,
+      IsmLiveAssetConstants.micro_phone_off, 'Mute', 'Unmute');
   // block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),
   // report(IsmLiveAssetConstants.report, 'Report', '');
   // muteRemoteVideo('Mute remote video', 'Unmute remote video'),
@@ -220,7 +229,8 @@ enum IsmLiveHostSettings {
   // hideChatMessages('Hide chat messages', 'Show chat messages'),
   // hideControlButtons('Hide control buttons', 'Show control buttons');
 
-  const IsmLiveHostSettings(this.icon, this.offIcon, this.muteValues, this.unmuteValues);
+  const IsmLiveHostSettings(
+      this.icon, this.offIcon, this.muteValues, this.unmuteValues);
   final String muteValues;
   final String unmuteValues;
   final String icon;
@@ -292,7 +302,8 @@ enum IsmLiveGifts {
   clapping(IsmLiveGiftType.animated, IsmLiveAssetConstants.clapping),
   coin(IsmLiveGiftType.animated, IsmLiveAssetConstants.coin),
   crown(IsmLiveGiftType.animated, IsmLiveAssetConstants.crown),
-  cryingLaughter(IsmLiveGiftType.animated, IsmLiveAssetConstants.cryingLaughter),
+  cryingLaughter(
+      IsmLiveGiftType.animated, IsmLiveAssetConstants.cryingLaughter),
   diamond(IsmLiveGiftType.animated, IsmLiveAssetConstants.diamond),
   goodLife(IsmLiveGiftType.animated, IsmLiveAssetConstants.goodLife),
   heartEyes(IsmLiveGiftType.animated, IsmLiveAssetConstants.heartEyes),
@@ -304,7 +315,8 @@ enum IsmLiveGifts {
   present(IsmLiveGiftType.animated, IsmLiveAssetConstants.present),
   rocketLaunch(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketLaunch),
   rocketSpin(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketSpin),
-  rollingLaughter(IsmLiveGiftType.animated, IsmLiveAssetConstants.rollingLaughter),
+  rollingLaughter(
+      IsmLiveGiftType.animated, IsmLiveAssetConstants.rollingLaughter),
   star(IsmLiveGiftType.animated, IsmLiveAssetConstants.star),
   thumb(IsmLiveGiftType.animated, IsmLiveAssetConstants.thumb),
   trophy(IsmLiveGiftType.animated, IsmLiveAssetConstants.trophy),
@@ -325,17 +337,24 @@ enum IsmLiveGifts {
   rocket(IsmLiveGiftType.threeD, IsmLiveAssetConstants.rocket),
   trophy3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.trophy3d);
 
-  factory IsmLiveGifts.fromName(String data) => IsmLiveGifts.values.firstWhere((e) => e.name == data, orElse: () => IsmLiveGifts.bell);
+  factory IsmLiveGifts.fromName(String data) => IsmLiveGifts.values
+      .firstWhere((e) => e.name == data, orElse: () => IsmLiveGifts.bell);
 
   const IsmLiveGifts(this.type, this.path);
   final String path;
   final IsmLiveGiftType type;
 
-  static List<IsmLiveGifts> get normal => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.normal).toList();
+  static List<IsmLiveGifts> get normal => IsmLiveGifts.values
+      .where((e) => e.type == IsmLiveGiftType.normal)
+      .toList();
 
-  static List<IsmLiveGifts> get threeD => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.threeD).toList();
+  static List<IsmLiveGifts> get threeD => IsmLiveGifts.values
+      .where((e) => e.type == IsmLiveGiftType.threeD)
+      .toList();
 
-  static List<IsmLiveGifts> get animated => IsmLiveGifts.values.where((e) => e.type == IsmLiveGiftType.animated).toList();
+  static List<IsmLiveGifts> get animated => IsmLiveGifts.values
+      .where((e) => e.type == IsmLiveGiftType.animated)
+      .toList();
 }
 
 enum IsmLiveCopublisher {
@@ -343,6 +362,14 @@ enum IsmLiveCopublisher {
   users(IsmLiveStrings.users);
 
   const IsmLiveCopublisher(this.label);
+  final String label;
+}
+
+enum IsmLivePk {
+  onlineList(IsmLiveStrings.onlineList),
+  inviteList(IsmLiveStrings.inviteList);
+
+  const IsmLivePk(this.label);
   final String label;
 }
 

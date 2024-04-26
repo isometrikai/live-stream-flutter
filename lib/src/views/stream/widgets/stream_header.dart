@@ -11,11 +11,14 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.onTapViewers,
     this.onTapModerators,
     required this.description,
+    required this.pk,
   });
 
   final String name;
   final String description;
   final String imageUrl;
+  final bool pk;
+
   final Function()? onTapExit;
   final Function()? onTapViewers;
   final Function()? onTapModerators;
@@ -30,6 +33,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              IsmLiveDimens.boxWidth10,
               IsmLiveHostDetail(
                 imageUrl: imageUrl,
                 name: name,
@@ -43,17 +47,43 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ],
           ),
           IsmLiveDimens.boxHeight10,
-          _LiveTimer(
-            onTapModerators: onTapModerators,
-          ),
-          IsmLiveDimens.boxHeight8,
-          SizedBox(
-            width: Get.width * 0.6,
-            child: Text(
-              description,
-              style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+          Padding(
+            padding: IsmLiveDimens.edgeInsets10_0,
+            child: _LiveTimer(
+              onTapModerators: onTapModerators,
             ),
           ),
+          IsmLiveDimens.boxHeight8,
+          if (pk)
+            name.isEmpty
+                ? LinearProgressIndicator(
+                    minHeight: IsmLiveDimens.ten,
+                    backgroundColor: Colors.red,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    value: 0.5,
+                  )
+                : Container(
+                    width: Get.width,
+                    color: Colors.purple,
+                    height: IsmLiveDimens.twenty,
+                    child: Text(
+                      'Congratulations to @taavi',
+                      style: context.textTheme.bodySmall
+                          ?.copyWith(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+          else
+            Container(
+              margin: IsmLiveDimens.edgeInsets10_0,
+              width: Get.width * 0.6,
+              child: Text(
+                description,
+                style:
+                    context.textTheme.bodySmall?.copyWith(color: Colors.white),
+              ),
+            ),
         ],
       );
 }
@@ -68,7 +98,9 @@ class IsmLiveModeratorCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => (controller.isMember || (controller.isCopublisher) || (controller.isHost))
+        builder: (controller) => (controller.isMember ||
+                (controller.isCopublisher) ||
+                (controller.isHost))
             ? IsmLiveTapHandler(
                 onTap: onTap,
                 child: Container(
@@ -256,7 +288,9 @@ class IsmLiveLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DecoratedBox(
         decoration: BoxDecoration(
-          color: IsmLiveApp.isMqttConnected ? IsmLiveColors.green : IsmLiveColors.red,
+          color: IsmLiveApp.isMqttConnected
+              ? IsmLiveColors.green
+              : IsmLiveColors.red,
           borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
         ),
         child: Padding(

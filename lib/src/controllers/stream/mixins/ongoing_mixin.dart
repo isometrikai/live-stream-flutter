@@ -364,6 +364,12 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
+        // _controller.showPk = true;
+        // _controller.update([IsmLiveStreamView.updateId]);
+        // Future.delayed(const Duration(milliseconds: 100), () {
+        //   _controller.animationController.forward();
+        // });
+
         break;
       case IsmLiveStreamOption.members:
         break;
@@ -384,6 +390,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.bars:
         break;
       case IsmLiveStreamOption.vs:
+        _controller.pkSheet();
         break;
       case IsmLiveStreamOption.heart:
         unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));
@@ -581,6 +588,9 @@ mixin StreamOngoingMixin {
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
+      if (Get.isBottomSheetOpen ?? false) {
+        Get.back();
+      }
       Get.back();
       if (fromMqtt) {
         IsmLiveUtility.showDialog(const IsmLiveStreamEndDialog());

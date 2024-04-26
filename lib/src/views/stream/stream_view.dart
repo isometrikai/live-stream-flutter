@@ -118,6 +118,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
+          // controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -125,6 +126,7 @@ class _IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 IsmLiveStreamBanner(streamImage),
+
                 IsmLivePublisherGrid(
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
@@ -236,6 +238,47 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
+                // if (controller.showPk)
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimation,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimation.value,
+                //       duration: const Duration(
+                //         milliseconds: 200,
+                //       ), // This can be set to a smaller duration to have smooth transitions
+                //       child: Container(
+                //         width: 50,
+                //         height: 50,
+                //         color: Colors.blue,
+                //       ),
+                //     ),
+                //   ),
+                // if (controller.showPk)
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimationRight,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimationRight.value,
+                //       duration: const Duration(
+                //           milliseconds:
+                //               200), // This can be set to a smaller duration to have smooth transitions
+                //       child: Container(
+                //         width: 50,
+                //         height: 50,
+                //         color: Colors.blue,
+                //       ),
+                //     ),
+                //   ),
+
+                if (controller.participantTracks.length > 1)
+                  Align(
+                    alignment: Alignment.center,
+                    child: IsmLiveTapHandler(
+                      onTap: controller.pkChallengeSheet,
+                      child: const IsmLiveImage.svg(
+                        IsmLiveAssetConstants.pkStart,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -254,49 +297,47 @@ class _StreamHeader extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
-          child: Padding(
-            padding: IsmLiveDimens.edgeInsets8_0,
-            child: IsmLiveStreamHeader(
-              description: controller.descriptionController.text,
-              name: controller.hostDetails?.userName ?? 'U',
-              imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
-              onTapModerators: () {
-                IsmLiveUtility.openBottomSheet(
-                  const IsmLiveModeratorsSheet(),
-                  isScrollController: true,
-                );
-              },
-              onTapViewers: () {
-                IsmLiveUtility.openBottomSheet(
-                  GetBuilder<IsmLiveStreamController>(
-                    id: IsmLiveStreamView.updateId,
-                    builder: (controller) => IsmLiveListSheet(
-                      scrollController: controller.viewerListController,
-                      items: controller.streamViewersList,
-                      trailing: (_, viewer) =>
-                          controller.isModerator || controller.isHost
-                              ? viewer.userId == controller.user?.userId
-                                  ? IsmLiveDimens.box0
-                                  : SizedBox(
-                                      width: IsmLiveDimens.hundred,
-                                      child: IsmLiveButton(
-                                        label: 'kick out',
-                                        onTap: () {
-                                          controller.kickoutViewer(
-                                            streamId: streamId,
-                                            viewerId: viewer.userId,
-                                          );
-                                        },
-                                      ),
-                                    )
-                              : const IsmLiveButton.icon(
-                                  icon: Icons.group_add_rounded,
-                                ),
-                    ),
+          child: IsmLiveStreamHeader(
+            pk: controller.participantTracks.length > 1,
+            description: controller.descriptionController.text,
+            name: controller.hostDetails?.userName ?? 'U',
+            imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+            onTapModerators: () {
+              IsmLiveUtility.openBottomSheet(
+                const IsmLiveModeratorsSheet(),
+                isScrollController: true,
+              );
+            },
+            onTapViewers: () {
+              IsmLiveUtility.openBottomSheet(
+                GetBuilder<IsmLiveStreamController>(
+                  id: IsmLiveStreamView.updateId,
+                  builder: (controller) => IsmLiveListSheet(
+                    scrollController: controller.viewerListController,
+                    items: controller.streamViewersList,
+                    trailing: (_, viewer) =>
+                        controller.isModerator || controller.isHost
+                            ? viewer.userId == controller.user?.userId
+                                ? IsmLiveDimens.box0
+                                : SizedBox(
+                                    width: IsmLiveDimens.hundred,
+                                    child: IsmLiveButton(
+                                      label: 'kick out',
+                                      onTap: () {
+                                        controller.kickoutViewer(
+                                          streamId: streamId,
+                                          viewerId: viewer.userId,
+                                        );
+                                      },
+                                    ),
+                                  )
+                            : const IsmLiveButton.icon(
+                                icon: Icons.group_add_rounded,
+                              ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       );

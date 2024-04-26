@@ -12,7 +12,9 @@ mixin StreamSheetMixin {
     if (isHost || (_controller.isCopublisher)) {
       IsmLiveUtility.openBottomSheet(
         IsmLiveCustomButtomSheet(
-          title: isHost ? IsmLiveStrings.areYouSureEndStream : IsmLiveStrings.areYouSureLeaveStream,
+          title: isHost
+              ? IsmLiveStrings.areYouSureEndStream
+              : IsmLiveStrings.areYouSureLeaveStream,
           leftLabel: isHost ? 'Cancel' : 'Stop stream',
           rightLabel: isHost ? 'End Stream' : 'Leave stream',
           onLeft: isHost
@@ -64,12 +66,44 @@ mixin StreamSheetMixin {
     );
   }
 
+  void pkInviteSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLivePkInviteSheet(
+        description:
+            'You have received an invitation from @tavvi for the PK challenge. Do you want to continue?',
+        images: const ['jj', 'iiii', 'ioo'],
+        label: '@tavvi1 invite you to link',
+        title: '@tavvi1 invite you to link',
+      ),
+    );
+  }
+
+  void pkChallengeSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkChallengeSheet(),
+    );
+  }
+
+  void pkChangeHostSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkChangeHostSheet(
+        description: 'New York, USA Female 34',
+        image: '',
+        lable: 'Change host',
+        title: '@taavi',
+      ),
+    );
+  }
+
   // Function to handle showing copublishing viewer bottom sheet
   void copublishingViewerSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: Get.context?.liveTranslations?.requestCopublishingTitle ?? IsmLiveStrings.requestCopublishingTitle,
-        description: Get.context?.liveTranslations?.requestCopublishingDescription ?? IsmLiveStrings.requestCopublishingDescription,
+        title: Get.context?.liveTranslations?.requestCopublishingTitle ??
+            IsmLiveStrings.requestCopublishingTitle,
+        description:
+            Get.context?.liveTranslations?.requestCopublishingDescription ??
+                IsmLiveStrings.requestCopublishingDescription,
         label: _controller.memberStatus.isRejected
             ? 'Request denied by the host'
             : _controller.memberStatus.didRequested
@@ -79,7 +113,8 @@ mixin StreamSheetMixin {
           _controller.user?.profileUrl ?? '',
           _controller.hostDetails?.userProfileImageUrl ?? '',
         ],
-        onTap: _controller.memberStatus.didRequested || _controller.memberStatus.isRejected
+        onTap: _controller.memberStatus.didRequested ||
+                _controller.memberStatus.isRejected
             ? null
             : () async {
                 if (!_controller.isModerator) {
@@ -99,17 +134,23 @@ mixin StreamSheetMixin {
   void copublishingStartVideoSheet() async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: (Get.context?.liveTranslations?.hostAcceptedCopublishRequestTitle ?? IsmLiveStrings.hostAcceptedCopublishRequestTitle).trParams({
+        title:
+            (Get.context?.liveTranslations?.hostAcceptedCopublishRequestTitle ??
+                    IsmLiveStrings.hostAcceptedCopublishRequestTitle)
+                .trParams({
           'name': _controller.hostDetails?.userName ?? 'Host',
         }),
-        description: Get.context?.liveTranslations?.hostAcceptedCopublishRequestDescription ?? IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description: Get.context?.liveTranslations
+                ?.hostAcceptedCopublishRequestDescription ??
+            IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: 'Start Video',
         images: [
           _controller.user?.profileUrl ?? '',
         ],
         onTap: () async {
           if (_controller.room != null) {
-            var token = await _controller.switchViewer(streamId: _controller.streamId ?? '');
+            var token = await _controller.switchViewer(
+                streamId: _controller.streamId ?? '');
             if (token == null) {
               return;
             }
@@ -135,6 +176,13 @@ mixin StreamSheetMixin {
   void copublishingHostSheet() async {
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveCopublishingHostSheet(),
+      isScrollController: true,
+    );
+  }
+
+  void pkSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLivePkSheet(),
       isScrollController: true,
     );
   }

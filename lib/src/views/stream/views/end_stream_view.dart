@@ -15,8 +15,8 @@ class IsmLiveEndStream extends StatelessWidget {
         child: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           initState: (state) async {
-            // var controller = Get.find<IsmLiveStreamController>();
-            // await controller.streamAnalytics(streamId);
+            var controller = Get.find<IsmLiveStreamController>();
+            await controller.streamAnalytics(streamId);
             // controller.streamAnalyticsViewers(streamId);
           },
           builder: (controller) => Scaffold(
@@ -69,6 +69,7 @@ class IsmLiveEndStream extends StatelessWidget {
                       IsmLiveEndStreamContainer(
                         points: '${controller.streamAnalytis?.hearts ?? 0}',
                         title: 'Hearts',
+                        color: Colors.black,
                         assetConstant: IsmLiveAssetConstants.heartSvg,
                       ),
                       IsmLiveEndStreamContainer(

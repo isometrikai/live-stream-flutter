@@ -33,6 +33,9 @@ class IsmLiveStrings {
   static const String users = 'Users';
   static const String members = 'Members';
 
+  static const String onlineList = 'Online List';
+  static const String inviteList = 'InviteList';
+
   static const String youreLive = 'You\'re Live';
 
   static const String preparingYourStream = 'Preparing your stream';
