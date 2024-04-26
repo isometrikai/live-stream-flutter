@@ -394,6 +394,10 @@ class IsmLiveMqttController extends GetxController {
           await _streamController.getStreamMembers(
             streamId: streamId,
           );
+
+          if (_streamController.isHost) {
+            _streamController.userRole?.makeCopublisher();
+          }
           unawaited(_streamController.handleMessage(message));
           _updateStream();
 

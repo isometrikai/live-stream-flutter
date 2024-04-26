@@ -373,6 +373,14 @@ enum IsmLivePk {
   final String label;
 }
 
+enum IsmLivePkViewers {
+  audiencelist(IsmLiveStrings.audiencelist),
+  contributionRanking(IsmLiveStrings.contributionRanking);
+
+  const IsmLivePkViewers(this.label);
+  final String label;
+}
+
 enum IsmLiveMemberStatus {
   notMember,
   gotRequest,

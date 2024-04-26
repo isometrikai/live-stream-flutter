@@ -105,6 +105,10 @@ mixin StreamOngoingMixin {
           sortParticipants();
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
+          if (_controller.participantTracks.length == 1 &&
+              _controller.isCopublisher) {
+            _controller.userRole?.leaveCopublishing();
+          }
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
         })
         ..on<RoomRecordingStatusChanged>((event) {})
@@ -364,11 +368,7 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
-        // _controller.showPk = true;
-        // _controller.update([IsmLiveStreamView.updateId]);
-        // Future.delayed(const Duration(milliseconds: 100), () {
-        //   _controller.animationController.forward();
-        // });
+        _controller.animationController.forward();
 
         break;
       case IsmLiveStreamOption.members:

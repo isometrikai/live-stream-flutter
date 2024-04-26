@@ -8,7 +8,8 @@ class IsmLiveUserRole {
 
   factory IsmLiveUserRole.host() => IsmLiveUserRole._([IsmLivePermission.host]);
 
-  factory IsmLiveUserRole.viewer() => IsmLiveUserRole._([IsmLivePermission.viewer]);
+  factory IsmLiveUserRole.viewer() =>
+      IsmLiveUserRole._([IsmLivePermission.viewer]);
 
   final List<IsmLivePermission> _permissions;
 
@@ -33,6 +34,7 @@ class IsmLiveUserRole {
 
   void makeCopublisher() {
     if (isHost) {
+      _permissions.add(IsmLivePermission.copublisher);
       return;
     }
     _permissions.remove(IsmLivePermission.viewer);
@@ -40,6 +42,10 @@ class IsmLiveUserRole {
   }
 
   void leaveCopublishing() {
+    if (isHost && isCopublisher) {
+      _permissions.remove(IsmLivePermission.copublisher);
+      return;
+    }
     _permissions.remove(IsmLivePermission.copublisher);
     _permissions.add(IsmLivePermission.viewer);
   }

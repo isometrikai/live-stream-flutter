@@ -36,6 +36,9 @@ class IsmLiveStrings {
   static const String onlineList = 'Online List';
   static const String inviteList = 'InviteList';
 
+  static const String audiencelist = 'Audience list';
+  static const String contributionRanking = 'Contribution Ranking';
+
   static const String youreLive = 'You\'re Live';
 
   static const String preparingYourStream = 'Preparing your stream';

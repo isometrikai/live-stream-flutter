@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/views/stream/stream.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -156,9 +155,6 @@ class IsmLiveStreamController extends GetxController
 
   int messagesCount = 0;
 
-  // bool showPk = false;
-  // bool showPkstart = false;
-
   CameraController? cameraController;
 
   final getStreamDebouncer = IsmLiveDebouncer();
@@ -179,6 +175,7 @@ class IsmLiveStreamController extends GetxController
   late TabController giftsTabController;
   late TabController cobublisTabController;
   late TabController pkTabController;
+  late TabController pkViewersTabController;
 
   var descriptionController = TextEditingController();
 
@@ -259,6 +256,10 @@ class IsmLiveStreamController extends GetxController
   IsmLivePk get pk => _pk.value;
   set pk(IsmLivePk value) => _pk.value = value;
 
+  final Rx<IsmLivePkViewers> _pkViewers = IsmLivePkViewers.audiencelist.obs;
+  IsmLivePkViewers get pkViewers => _pkViewers.value;
+  set pkViewers(IsmLivePkViewers value) => _pkViewers.value = value;
+
   bool isModerationWarningVisible = true;
 
   FocusNode messageFocusNode = FocusNode();
@@ -269,9 +270,9 @@ class IsmLiveStreamController extends GetxController
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
 
-  // late AnimationController animationController;
-  // late Animation<Alignment> alignmentAnimation;
-  // late Animation<Alignment> alignmentAnimationRight;
+  late AnimationController animationController;
+  late Animation<Alignment> alignmentAnimation;
+  late Animation<Alignment> alignmentAnimationRight;
 
   @override
   void onInit() {
@@ -293,33 +294,32 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLivePk.values.length,
     );
-    // animationController = AnimationController(
-    //   duration: const Duration(seconds: 2),
-    //   vsync: this,
-    // );
+    pkViewersTabController = TabController(
+      vsync: this,
+      length: IsmLivePkViewers.values.length,
+    );
+    animationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
 
-    // // Define a Tween for Alignment
-    // var alignmentTween = Tween<Alignment>(
-    //   begin: Alignment.centerLeft,
-    //   end: Alignment.center,
-    // );
-    // var alignmentTweenRight = Tween<Alignment>(
-    //   begin: Alignment.centerRight,
-    //   end: Alignment.center,
-    // );
+    // Define a Tween for Alignment
+    var alignmentTween = Tween<Alignment>(
+      begin: const Alignment(-1, -0.5),
+      end: const Alignment(-0.1, -0.5),
+    );
+    var alignmentTweenRight = Tween<Alignment>(
+      begin: const Alignment(1, -0.5),
+      end: const Alignment(0.1, -0.5),
+    );
 
     // animationController.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     showPk = false;
-    //     showPkstart = true;
-    //     update([IsmLiveStreamView.updateId]);
-    //     animationController.reset();
-    //   }
+    //   if (status == AnimationStatus.completed) {}
     // });
 
-    // // Create an Animation with the Tween and the Controller
-    // alignmentAnimation = alignmentTween.animate(animationController);
-    // alignmentAnimationRight = alignmentTweenRight.animate(animationController);
+    // Create an Animation with the Tween and the Controller
+    alignmentAnimation = alignmentTween.animate(animationController);
+    alignmentAnimationRight = alignmentTweenRight.animate(animationController);
 
     // Start the animation automatically
 
@@ -513,6 +513,9 @@ class IsmLiveStreamController extends GetxController
     });
     pkTabController.addListener(() {
       pk = IsmLivePk.values[pkTabController.index];
+    });
+    pkViewersTabController.addListener(() {
+      pkViewers = IsmLivePkViewers.values[pkViewersTabController.index];
     });
   }
 

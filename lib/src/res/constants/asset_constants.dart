@@ -116,6 +116,8 @@ class IsmLiveAssetConstants {
   static const String loser = '$_icons/loser.svg';
   static const String pkStart = '$_icons/pk-start.svg';
   static const String pk = '$_icons/pk.svg';
+  static const String v = '$_icons/v.svg';
+  static const String s = '$_icons/s.svg';
   static const String user_placeholder = '$_icons/user-placeholder.svg';
   static const String moderator_placeholder =
       '$_icons/moderator-placeholder.svg';
