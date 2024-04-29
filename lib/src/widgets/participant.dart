@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 abstract class ParticipantWidget extends StatefulWidget {
@@ -182,6 +183,29 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
                       : widget.participant.identity,
                   isHost: widget.isHost,
                   title: widget.participant.name.isNotEmpty ? widget.participant.name : widget.participant.identity,
+                ),
+              ),
+            if (widget.showStatsLayer && !widget.isHost)
+              Align(
+                alignment: Alignment.topLeft,
+                child: IsmLiveTapHandler(
+                  onTap: () {
+                    Get.find<IsmLiveStreamController>().pkChangeHostSheet();
+                  },
+                  child: Container(
+                    padding: IsmLiveDimens.edgeInsets5,
+                    margin: IsmLiveDimens.edgeInsets10,
+                    decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(
+                        IsmLiveDimens.eight,
+                      ),
+                    ),
+                    child: const Text(
+                      'Make Host',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ),
               ),
           ],
