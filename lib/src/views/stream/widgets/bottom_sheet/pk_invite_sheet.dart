@@ -57,8 +57,6 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      ///TODO
                       const Align(
                         alignment: Alignment.center,
                         child: IsmLiveImage.svg(
