@@ -30,7 +30,9 @@ class IsmLivePkChallengeSheet extends StatelessWidget {
                   color: Colors.green[100],
                   borderRadius: BorderRadius.circular(IsmLiveDimens.eight)),
               child: ListTile(
-                leading: const Icon(Icons.trolley),
+                leading: const IsmLiveImage.svg(
+                  IsmLiveAssetConstants.cup,
+                ),
                 title: Text(
                   'Winner takes all',
                   style: context.textTheme.bodyMedium

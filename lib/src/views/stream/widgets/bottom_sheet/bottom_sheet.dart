@@ -7,6 +7,7 @@ export 'pk_challenge_sheet.dart';
 export 'pk_change_host_sheet.dart';
 export 'pk_invite_sheet.dart';
 export 'pk_sheet.dart';
+export 'pk_viewers_sheet.dart';
 export 'product_discount_sheet.dart';
 export 'schedule_time.dart';
 export 'settings_sheet.dart';

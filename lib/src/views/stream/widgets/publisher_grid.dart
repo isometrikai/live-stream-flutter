@@ -57,8 +57,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           controller.participantTracks[index],
                           imageUrl: url,
                           isHost: index == 0 ? true : false,
-                          showStatsLayer: true,
-                          // controller.isPk,
+                          showStatsLayer: controller.isPk,
                         );
                       },
                     ),

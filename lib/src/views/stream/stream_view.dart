@@ -45,7 +45,8 @@ class IsmLiveStreamView extends StatelessWidget {
       initState: (_) {
         IsmLiveUtility.updateLater(() {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.previousStreamIndex = controller.pageController?.page?.toInt() ?? 0;
+          controller.previousStreamIndex =
+              controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
@@ -117,16 +118,16 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-          // controller.animationController.dispose();
+          controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
           child: Scaffold(
-            backgroundColor: context.liveTheme?.streamBackgroundColor ?? IsmLiveColors.black,
+            backgroundColor:
+                context.liveTheme?.streamBackgroundColor ?? IsmLiveColors.black,
             body: Stack(
               children: [
                 IsmLiveStreamBanner(streamImage),
-
                 IsmLivePublisherGrid(
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
@@ -138,7 +139,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                 Align(
                   alignment: IsmLiveApp.headerPosition,
                   child: Obx(
-                    () => (controller.room?.localParticipant != null) && IsmLiveApp.showHeader
+                    () => (controller.room?.localParticipant != null) &&
+                            IsmLiveApp.showHeader
                         ? IsmLiveApp.streamHeader?.call(
                               context,
                               controller.hostDetails,
@@ -164,7 +166,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                         child: IsmLiveApp.bottomBuilder?.call(
                                               context,
                                               controller.hostDetails,
-                                              controller.descriptionController.text,
+                                              controller
+                                                  .descriptionController.text,
                                             ) ??
                                             Column(
                                               mainAxisSize: MainAxisSize.min,
@@ -178,14 +181,18 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                       context,
                                                       IsmLiveMessageField(
                                                         streamId: streamId,
-                                                        isHost: controller.isPublishing,
+                                                        isHost: controller
+                                                            .isPublishing,
                                                       ),
                                                     ) ??
                                                     Padding(
-                                                      padding: IsmLiveDimens.edgeInsets8_0,
-                                                      child: IsmLiveMessageField(
+                                                      padding: IsmLiveDimens
+                                                          .edgeInsets8_0,
+                                                      child:
+                                                          IsmLiveMessageField(
                                                         streamId: streamId,
-                                                        isHost: controller.isPublishing,
+                                                        isHost: controller
+                                                            .isPublishing,
                                                       ),
                                                     ),
                                               ],
@@ -193,7 +200,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       ),
                                       IsmLiveControlsWidget(
                                         isHost: controller.isPublishing,
-                                        isCopublishing: controller.participantTracks.length > 1,
+                                        isCopublishing: controller
+                                                .participantTracks.length >
+                                            1,
                                         streamId: streamId,
                                       ),
                                     ],
@@ -201,8 +210,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveDimens.boxHeight8,
-                              if (IsmLiveApp.endStreamPosition.isBottomAligned) ...[],
-                              if (controller.showEmojiBoard) const IsmLiveEmojis(),
+                              if (IsmLiveApp.endStreamPosition.isBottomAligned)
+                                ...[],
+                              if (controller.showEmojiBoard)
+                                const IsmLiveEmojis(),
                             ],
                           ),
                         )
@@ -229,38 +240,30 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
-                // if (controller.showPk)
-                //   AnimatedBuilder(
-                //     animation: controller.alignmentAnimation,
-                //     builder: (context, child) => AnimatedAlign(
-                //       alignment: controller.alignmentAnimation.value,
-                //       duration: const Duration(
-                //         milliseconds: 200,
-                //       ), // This can be set to a smaller duration to have smooth transitions
-                //       child: Container(
-                //         width: 50,
-                //         height: 50,
-                //         color: Colors.blue,
-                //       ),
-                //     ),
-                //   ),
-                // if (controller.showPk)
-                //   AnimatedBuilder(
-                //     animation: controller.alignmentAnimationRight,
-                //     builder: (context, child) => AnimatedAlign(
-                //       alignment: controller.alignmentAnimationRight.value,
-                //       duration: const Duration(
-                //           milliseconds:
-                //               200), // This can be set to a smaller duration to have smooth transitions
-                //       child: Container(
-                //         width: 50,
-                //         height: 50,
-                //         color: Colors.blue,
-                //       ),
-                //     ),
-                //   ),
-
-                if (controller.participantTracks.length > 1)
+                if (controller.isPk &&
+                    !controller.animationController.isCompleted) ...[
+                  AnimatedBuilder(
+                    animation: controller.alignmentAnimation,
+                    builder: (context, child) => AnimatedAlign(
+                      alignment: controller.alignmentAnimation.value,
+                      duration: const Duration(
+                        milliseconds: 100,
+                      ), // This can be set to a smaller duration to have smooth transitions
+                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
+                    ),
+                  ),
+                  AnimatedBuilder(
+                    animation: controller.alignmentAnimationRight,
+                    builder: (context, child) => AnimatedAlign(
+                      alignment: controller.alignmentAnimationRight.value,
+                      duration: const Duration(
+                        milliseconds: 100,
+                      ), // This can be set to a smaller duration to have smooth transitions
+                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
+                    ),
+                  ),
+                ],
+                if (controller.animationController.isCompleted)
                   Align(
                     alignment: Alignment.center,
                     child: IsmLiveTapHandler(
@@ -289,7 +292,7 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
-            pk: controller.participantTracks.length > 1,
+            pk: false,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.userName ?? 'U',
             imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
@@ -300,35 +303,35 @@ class _StreamHeader extends StatelessWidget {
               );
             },
             onTapViewers: (viewerList) {
-                IsmLiveUtility.openBottomSheet(
-                  GetBuilder<IsmLiveStreamController>(
-                    id: IsmLiveStreamView.updateId,
-                    builder: (controller) => IsmLiveListSheet(
-                      scrollController: controller.viewerListController,
-                      items: controller.streamViewersList,
-                      trailing: (_, viewer) => controller.isModerator || controller.isHost
-                          ? viewer.userId == controller.user?.userId
-                              ? IsmLiveDimens.box0
-                              : SizedBox(
-                                  width: IsmLiveDimens.hundred,
-                                  child: IsmLiveButton(
-                                    label: 'kick out',
-                                    onTap: () {
-                                      controller.kickoutViewer(
-                                        streamId: streamId,
-                                        viewerId: viewer.userId,
-                                      );
-                                    },
-                                  ),
-                                )
-                          : const IsmLiveButton.icon(
-                              icon: Icons.group_add_rounded,
-                            ),
-                    ),
+              IsmLiveUtility.openBottomSheet(
+                GetBuilder<IsmLiveStreamController>(
+                  id: IsmLiveStreamView.updateId,
+                  builder: (controller) => IsmLiveListSheet(
+                    scrollController: controller.viewerListController,
+                    items: controller.streamViewersList,
+                    trailing: (_, viewer) =>
+                        controller.isModerator || controller.isHost
+                            ? viewer.userId == controller.user?.userId
+                                ? IsmLiveDimens.box0
+                                : SizedBox(
+                                    width: IsmLiveDimens.hundred,
+                                    child: IsmLiveButton(
+                                      label: 'kick out',
+                                      onTap: () {
+                                        controller.kickoutViewer(
+                                          streamId: streamId,
+                                          viewerId: viewer.userId,
+                                        );
+                                      },
+                                    ),
+                                  )
+                            : const IsmLiveButton.icon(
+                                icon: Icons.group_add_rounded,
+                              ),
                   ),
-                );
-              },
-
+                ),
+              );
+            },
           ),
         ),
       );
