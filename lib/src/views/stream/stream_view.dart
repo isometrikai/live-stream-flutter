@@ -292,7 +292,7 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
-            pk: controller.participantTracks.length > 1,
+            pk: false,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.userName ?? 'U',
             imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',

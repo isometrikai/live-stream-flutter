@@ -271,6 +271,7 @@ class IsmLiveStreamController extends GetxController
   set streamDuration(Duration value) => _streamDuration.value = value;
 
   late AnimationController animationController;
+
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
 
