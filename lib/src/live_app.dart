@@ -147,8 +147,11 @@ class IsmLiveApp extends StatelessWidget {
   static Future<void> logout([
     bool? isStreaming,
     VoidCallback? logoutCallback,
+    bool isLoading = true,
   ]) =>
       IsmLiveHandler.logout(
+        isLoading: isLoading,
+        isStreaming: isStreaming,
         logoutCallback: logoutCallback,
       );
 
