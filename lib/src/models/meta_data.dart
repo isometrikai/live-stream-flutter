@@ -7,6 +7,8 @@ class IsmLiveMetaData {
     this.openStream = false,
     this.secretMessage = false,
     this.profilePic,
+    this.firstName,
+    this.lastName,
     this.parentMessageBody,
   });
 
@@ -19,11 +21,14 @@ class IsmLiveMetaData {
         parentMessageBody: map['parentMessageBody'] as String?,
       );
 
-  factory IsmLiveMetaData.fromJson(String source) => IsmLiveMetaData.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveMetaData.fromJson(String source) =>
+      IsmLiveMetaData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String country;
   final bool openMeeting;
   final String? profilePic;
+  final String? firstName;
+  final String? lastName;
   final bool openStream;
   final bool secretMessage;
   final String? parentMessageBody;
@@ -32,6 +37,8 @@ class IsmLiveMetaData {
     String? country,
     bool? openMeeting,
     String? profilePic,
+    String? firstName,
+    String? lastName,
     bool? openStream,
     bool? secretMessage,
     String? parentMessageBody,
@@ -40,6 +47,8 @@ class IsmLiveMetaData {
         country: country ?? this.country,
         openMeeting: openMeeting ?? this.openMeeting,
         profilePic: profilePic ?? this.profilePic,
+        firstName: firstName ?? this.firstName,
+        lastName: lastName ?? this.lastName,
         openStream: openStream ?? this.openStream,
         secretMessage: secretMessage ?? this.secretMessage,
         parentMessageBody: parentMessageBody ?? this.parentMessageBody,
@@ -49,6 +58,8 @@ class IsmLiveMetaData {
         'country': country,
         'openMeeting': openMeeting,
         'profilePic': profilePic,
+        'firstName': firstName,
+        'lastName': lastName,
         'openStream': openStream,
         'secretMessage': secretMessage,
         'parentMessageBody': parentMessageBody,
@@ -58,7 +69,7 @@ class IsmLiveMetaData {
 
   @override
   String toString() =>
-      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, openStream: $openStream, secretMessage: $secretMessage, parentMessageBody: $parentMessageBody)';
+      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, openStream: $openStream, secretMessage: $secretMessage, parentMessageBody: $parentMessageBody)';
 
   @override
   bool operator ==(covariant IsmLiveMetaData other) {
@@ -67,6 +78,8 @@ class IsmLiveMetaData {
     return other.country == country &&
         other.openMeeting == openMeeting &&
         other.profilePic == profilePic &&
+        other.firstName == firstName &&
+        other.lastName == lastName &&
         other.openStream == openStream &&
         other.secretMessage == secretMessage &&
         parentMessageBody == other.parentMessageBody;
@@ -74,5 +87,12 @@ class IsmLiveMetaData {
 
   @override
   int get hashCode =>
-      country.hashCode ^ openMeeting.hashCode ^ profilePic.hashCode ^ openStream.hashCode ^ secretMessage.hashCode ^ parentMessageBody.hashCode;
+      country.hashCode ^
+      openMeeting.hashCode ^
+      profilePic.hashCode ^
+      firstName.hashCode ^
+      lastName.hashCode ^
+      openStream.hashCode ^
+      secretMessage.hashCode ^
+      parentMessageBody.hashCode;
 }

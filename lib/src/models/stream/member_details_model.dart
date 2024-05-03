@@ -23,6 +23,8 @@ class IsmLiveMemberDetailsModel {
     required this.isAdmin,
   });
 
+  String get name => metaData.firstName ?? userName;
+
   IsmLiveMemberDetailsModel copyWith({
     String? userProfileImageUrl,
     String? userName,

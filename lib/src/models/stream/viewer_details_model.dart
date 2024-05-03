@@ -15,19 +15,33 @@ class IsmLiveViewerModel {
     this.clubEmailNotifications,
   });
 
-  factory IsmLiveViewerModel.fromMap(Map<String, dynamic> map) => IsmLiveViewerModel(
-        imageUrl: map['userProfileImageUrl'] as String? ?? map['viewerProfilePic'] as String?,
-        userName: map['userName'] as String? ?? map['viewerName'] as String? ?? map['memberName'] as String? ?? '',
-        identifier: map['userIdentifier'] as String? ?? map['viewerIdentifier'] as String? ?? map['memberIdentifier'] as String? ?? '',
-        userId: map['userId'] as String? ?? map['viewerId'] as String? ?? map['memberId'] as String? ?? '',
+  factory IsmLiveViewerModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveViewerModel(
+        imageUrl: map['userProfileImageUrl'] as String? ??
+            map['viewerProfilePic'] as String?,
+        userName: map['userName'] as String? ??
+            map['viewerName'] as String? ??
+            map['memberName'] as String? ??
+            '',
+        identifier: map['userIdentifier'] as String? ??
+            map['viewerIdentifier'] as String? ??
+            map['memberIdentifier'] as String? ??
+            '',
+        userId: map['userId'] as String? ??
+            map['viewerId'] as String? ??
+            map['memberId'] as String? ??
+            '',
         startTime: map['sessionStartTime'] as int? ?? map['timestamp'] as int?,
-        metaData: map['metaData'] != null ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>) : null,
+        metaData: map['metaData'] != null
+            ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
+            : null,
         messageNotificationEmail: map['messageNotificationEmail'] as dynamic,
         emailNotifications: map['emailNotifications'] as bool?,
         clubEmailNotifications: map['clubEmailNotifications'] as bool?,
       );
 
-  factory IsmLiveViewerModel.fromJson(String source) => IsmLiveViewerModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveViewerModel.fromJson(String source) =>
+      IsmLiveViewerModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String? imageUrl;
   final String userName;
@@ -38,6 +52,9 @@ class IsmLiveViewerModel {
   final dynamic messageNotificationEmail;
   final bool? emailNotifications;
   final bool? clubEmailNotifications;
+
+  String get name => metaData?.firstName ?? userName;
+  String? get profile => metaData?.profilePic ?? imageUrl;
 
   IsmLiveViewerModel copyWith({
     String? imageUrl,
@@ -57,9 +74,11 @@ class IsmLiveViewerModel {
         userId: userId ?? this.userId,
         startTime: startTime ?? this.startTime,
         metaData: metaData ?? this.metaData,
-        messageNotificationEmail: messageNotificationEmail ?? this.messageNotificationEmail,
+        messageNotificationEmail:
+            messageNotificationEmail ?? this.messageNotificationEmail,
         emailNotifications: emailNotifications ?? this.emailNotifications,
-        clubEmailNotifications: clubEmailNotifications ?? this.clubEmailNotifications,
+        clubEmailNotifications:
+            clubEmailNotifications ?? this.clubEmailNotifications,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
