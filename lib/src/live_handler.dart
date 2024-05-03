@@ -18,12 +18,12 @@ class IsmLiveHandler {
   static VoidCallback? onLogout;
 
   static Future<void> initialize() async {
+    Get.put(IsmLiveApiWrapper(Client()), permanent: true);
+    Get.lazyPut(IsmLivePreferencesManager.new);
     unawaited(availableCameras().then((value) {
       IsmLiveUtility.cameras = value;
     }));
 
-    Get.put(IsmLiveApiWrapper(Client()));
-    Get.lazyPut(IsmLivePreferencesManager.new);
     await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init();
   }
 
@@ -48,9 +48,12 @@ class IsmLiveHandler {
 
   static Future<void> logout({
     bool isStreaming = true,
+    bool isLoading = true,
     VoidCallback? logoutCallback,
   }) async {
-    IsmLiveUtility.showLoader();
+    if (isLoading) {
+      IsmLiveUtility.showLoader();
+    }
     if (isStreaming) {
       var isUnsubscribed =
           await Get.find<IsmLiveStreamController>().unsubscribeUser();
@@ -59,9 +62,13 @@ class IsmLiveHandler {
       }
       var mqttController = Get.find<IsmLiveMqttController>();
       await mqttController.unsubscribeTopics();
+      mqttController.disconnect();
+
       await Get.delete<IsmLiveMqttController>(force: true);
     }
     (logoutCallback ?? onLogout)?.call();
-    IsmLiveUtility.closeLoader();
+    if (isLoading) {
+      IsmLiveUtility.closeLoader();
+    }
   }
 }

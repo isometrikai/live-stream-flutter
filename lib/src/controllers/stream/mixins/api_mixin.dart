@@ -12,6 +12,7 @@ mixin StreamAPIMixin {
   // Debouncers for handling multiple API calls.
   final _memberDebouncer = IsmLiveDebouncer();
   final _viewerDebouncer = IsmLiveDebouncer();
+
   final _messagesDebouncer = IsmLiveDebouncer();
   final _usersDebouncer = IsmLiveDebouncer();
   final _copublisherRequestsDebouncer = IsmLiveDebouncer();
@@ -64,10 +65,13 @@ mixin StreamAPIMixin {
       _controller._viewModel.getRTCToken(streamId, showLoader);
 
 //Leaves a live stream.
+
   Future<bool> leaveStream(
     String streamId,
-  ) =>
-      _controller._viewModel.leaveStream(streamId);
+  ) async =>
+      await _controller._viewModel.leaveStream(
+        streamId,
+      );
 
 // Creates a new live stream with the provided details.
   Future<({IsmLiveRTCModel? model, String image})?> createStream() async {

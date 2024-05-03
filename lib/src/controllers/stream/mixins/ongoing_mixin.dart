@@ -531,6 +531,7 @@ mixin StreamOngoingMixin {
     bool endStream = true,
   }) async {
     var isEnded = false;
+
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
     } else if (_controller.isCopublisher) {
