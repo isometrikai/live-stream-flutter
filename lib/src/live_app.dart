@@ -144,11 +144,11 @@ class IsmLiveApp extends StatelessWidget {
 
   static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
 
-  static Future<void> logout([
+  static Future<void> logout({
     bool? isStreaming,
     VoidCallback? logoutCallback,
     bool isLoading = true,
-  ]) =>
+  }) =>
       IsmLiveHandler.logout(
         isLoading: isLoading,
         isStreaming: isStreaming,
