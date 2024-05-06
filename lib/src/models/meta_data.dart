@@ -16,6 +16,8 @@ class IsmLiveMetaData {
         country: map['country'] as String? ?? '',
         openMeeting: map['open meeting'] as bool? ?? false,
         profilePic: map['profilePic'] as String?,
+        firstName: map['firstName'] as String?,
+        lastName: map['lastName'] as String?,
         openStream: map['open stream'] as bool? ?? false,
         secretMessage: map['secretMessage'] as bool? ?? false,
         parentMessageBody: map['parentMessageBody'] as String?,
