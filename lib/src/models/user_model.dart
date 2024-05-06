@@ -3,14 +3,19 @@ import 'dart:convert';
 import 'package:appscrip_live_stream_component/src/models/meta_data.dart';
 
 class UserDetails {
-  factory UserDetails.fromJson(String source) => UserDetails.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserDetails.fromJson(String source) =>
+      UserDetails.fromMap(json.decode(source) as Map<String, dynamic>);
 
   factory UserDetails.fromMap(Map<String, dynamic> map) => UserDetails(
-        userProfileImageUrl: map['userProfileImageUrl'] as String? ?? map['userProfilePic'] as String? ?? '',
+        userProfileImageUrl: map['userProfileImageUrl'] as String? ??
+            map['userProfilePic'] as String? ??
+            '',
         userName: map['userName'] as String? ?? '',
         userIdentifier: map['userIdentifier'] as String? ?? '',
         userId: map['userId'] as String? ?? '',
-        metaData: map['metaData'] == null ? const IsmLiveMetaData() : IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        metaData: map['metaData'] == null
+            ? const IsmLiveMetaData()
+            : IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         createdAt: map['createdAt'] as int? ?? 0,
         timestamp: map['timestamp'] as num?,
         pending: map['pending'] as bool?,
@@ -46,6 +51,7 @@ class UserDetails {
   final bool? accepted;
 
   String get profileUrl => metaData?.profilePic ?? userProfileImageUrl;
+  String get name => metaData?.firstName ?? userName;
 
   UserDetails copyWith({
     String? userProfileImageUrl,

@@ -524,12 +524,18 @@ mixin StreamOngoingMixin {
     IsmLiveUtility.closeLoader();
   }
 
+  bool isStopStreamCall = false;
+
   Future<bool> disconnectStream({
     required bool isHost,
     required String streamId,
     bool goBack = true,
     bool endStream = true,
   }) async {
+    if (isStopStreamCall) {
+      return false;
+    }
+    isStopStreamCall = true;
     var isEnded = false;
 
     if (isHost) {
@@ -563,6 +569,7 @@ mixin StreamOngoingMixin {
       await _controller.sortParticipants();
     }
     IsmLiveApp.onStreamEnd?.call();
+    isStopStreamCall = false;
     return isEnded;
   }
 
