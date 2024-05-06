@@ -71,6 +71,8 @@ mixin StreamMessageMixin {
           searchableTags: [body],
           metaData: IsmLiveMetaData(
             parentMessageBody: parentMessage.body,
+            firstName: _controller.user?.name,
+            profilePic: _controller.user?.profileUrl,
           ),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
           messageType: IsmLiveMessageType.normal,
@@ -91,7 +93,10 @@ mixin StreamMessageMixin {
           streamId: streamId,
           body: body,
           searchableTags: [body],
-          metaData: const IsmLiveMetaData(),
+          metaData: IsmLiveMetaData(
+            firstName: _controller.user?.name,
+            profilePic: _controller.user?.profileUrl,
+          ),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
           messageType: IsmLiveMessageType.normal,
         ),
