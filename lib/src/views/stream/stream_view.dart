@@ -294,8 +294,8 @@ class _StreamHeader extends StatelessWidget {
           child: IsmLiveStreamHeader(
             pk: false,
             description: controller.descriptionController.text,
-            name: controller.hostDetails?.userName ?? 'U',
-            imageUrl: controller.hostDetails?.userProfileImageUrl ?? '',
+            name: controller.hostDetails?.name ?? 'U',
+            imageUrl: controller.hostDetails?.image ?? '',
             onTapModerators: () {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),

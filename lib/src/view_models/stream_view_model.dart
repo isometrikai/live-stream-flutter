@@ -432,7 +432,6 @@ class IsmLiveStreamViewModel {
   Future<bool> leaveModerator(String streamId) async {
     try {
       var res = await _repository.leaveModerator(streamId);
-
       return !res.hasError;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
