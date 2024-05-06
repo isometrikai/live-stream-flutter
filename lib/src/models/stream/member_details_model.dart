@@ -24,6 +24,7 @@ class IsmLiveMemberDetailsModel {
   });
 
   String get name => metaData.firstName ?? userName;
+  String get image => metaData.profilePic ?? userProfileImageUrl;
 
   IsmLiveMemberDetailsModel copyWith({
     String? userProfileImageUrl,

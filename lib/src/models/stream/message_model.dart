@@ -75,6 +75,8 @@ class IsmLiveMessageModel {
   final String? parentMessageSenderId;
   final bool isCopublisherRequest;
 
+  String get name => metaData?.firstName ?? senderName;
+
   IsmLiveMessageModel copyWith({
     int? sentAt,
     String? streamId,
