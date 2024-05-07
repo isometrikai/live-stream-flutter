@@ -38,10 +38,10 @@ class IsmLivePublisherGrid extends StatelessWidget {
                             controller.participantTracks.length < 5 ? 2 : 3,
                         childAspectRatio:
                             controller.participantTracks.length < 3
-                                ? 0.6
+                                ? (Get.width / 2) / (Get.height * 0.43)
                                 : controller.participantTracks.length < 5
-                                    ? 0.9
-                                    : 0.6,
+                                    ? (Get.width / 3) / (Get.height / 3)
+                                    : 1,
                       ),
                       itemBuilder: (_, index) {
                         var url = '';
