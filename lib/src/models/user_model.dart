@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/models/meta_data.dart';
 
 class UserDetails {
@@ -51,7 +52,12 @@ class UserDetails {
   final bool? accepted;
 
   String get profileUrl => metaData?.profilePic ?? userProfileImageUrl;
-  String get name => metaData?.firstName ?? userName;
+  String get name {
+    if (metaData?.firstName?.isNotEmpty ?? false) {
+      return metaData?.firstName ?? '';
+    }
+    return userName;
+  }
 
   UserDetails copyWith({
     String? userProfileImageUrl,

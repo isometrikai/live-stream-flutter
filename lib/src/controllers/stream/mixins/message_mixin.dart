@@ -11,7 +11,7 @@ mixin StreamMessageMixin {
         messageId: message.messageId,
         userId: message.senderId,
         userIdentifier: message.senderIdentifier,
-        userName: message.senderName,
+        userName: message.name,
         imageUrl: message.senderProfileImageUrl ?? '',
         body: message.body,
         timeStamp: DateTime.fromMillisecondsSinceEpoch(message.sentAt),
