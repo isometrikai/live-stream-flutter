@@ -51,7 +51,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
                     itemCount: options.length,
                     separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
                     itemBuilder: (context, index) => CustomIconButton(
-                      // dimension: IsmLiveDimens.fortyFive,
+                      dimension: options[index] == IsmLiveStreamOption.heart
+                          ? IsmLiveDimens.fortyFive
+                          : null,
                       icon: IsmLiveImage.svg(
                         controller.controlIcon(options[index]),
                       ),
