@@ -49,7 +49,7 @@ class IsmLiveDelegate {
     if (controller.streamId.isNullOrEmpty) {
       return;
     }
-    await controller.onExit(
+    controller.onExit(
       isHost: controller.isHost,
       streamId: controller.streamId!,
     );

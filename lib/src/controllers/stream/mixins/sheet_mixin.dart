@@ -3,7 +3,7 @@ part of '../stream_controller.dart';
 mixin StreamSheetMixin {
   IsmLiveStreamController get _controller => Get.find();
   // Function to handle exit actions from the stream
-  Future<void> onExit({
+  void onExit({
     required bool isHost,
     required String streamId,
   }) async {
