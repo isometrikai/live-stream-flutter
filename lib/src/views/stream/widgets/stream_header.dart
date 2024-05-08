@@ -130,7 +130,8 @@ class IsmLiveViewerCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
-        onTap: () => onTap?.call(Get.find<IsmLiveStreamController>().streamViewersList),
+        onTap: () =>
+            onTap?.call(Get.find<IsmLiveStreamController>().streamViewersList),
         child: Container(
           padding: IsmLiveDimens.edgeInsets4,
           decoration: BoxDecoration(

@@ -54,7 +54,7 @@ class UserDetails {
   String get profileUrl => metaData?.profilePic ?? userProfileImageUrl;
   String get name {
     if (metaData?.firstName?.isNotEmpty ?? false) {
-      return metaData?.firstName ?? '';
+      return '${metaData?.firstName} ${metaData?.lastName ?? ''}';
     }
     return userName;
   }
