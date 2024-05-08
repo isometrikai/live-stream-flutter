@@ -28,6 +28,8 @@ class IsmLiveDelegate {
 
   static Alignment endStreamPosition = Alignment.topRight;
 
+  static List<IsmLiveStreamOption>? controlIcons;
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,

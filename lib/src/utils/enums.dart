@@ -187,10 +187,10 @@ enum IsmLiveStreamOption {
 
   final String icon;
   static List<IsmLiveStreamOption> get viewersOptions => [
-        // IsmLiveStreamOption.gift,
+        IsmLiveStreamOption.gift,
         IsmLiveStreamOption.share,
         IsmLiveStreamOption.speaker,
-        // IsmLiveStreamOption.multiLive,
+        IsmLiveStreamOption.multiLive,
         IsmLiveStreamOption.heart,
       ];
 

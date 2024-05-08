@@ -33,7 +33,8 @@ class IsmLiveControlsWidget extends StatelessWidget {
         },
         builder: (controller) {
           var options = !isHost
-              ? IsmLiveStreamOption.viewersOptions
+              ? IsmLiveDelegate.controlIcons ??
+                  IsmLiveStreamOption.viewersOptions
               : isCopublishing
                   ? IsmLiveStreamOption.copublisherOptions
                   : IsmLiveStreamOption.hostOptions;
