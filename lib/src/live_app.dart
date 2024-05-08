@@ -87,7 +87,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
   }
 
-  static Future<void> endStream() => IsmLiveDelegate.endStream();
+  static Future<void> endStream() async => await IsmLiveDelegate.endStream();
 
   static void handleMqttEvent(DynamicMap payload) {
     assert(

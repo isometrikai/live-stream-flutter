@@ -3,14 +3,14 @@ part of '../stream_controller.dart';
 mixin StreamSheetMixin {
   IsmLiveStreamController get _controller => Get.find();
   // Function to handle exit actions from the stream
-  void onExit({
+  Future<void> onExit({
     required bool isHost,
     required String streamId,
-  }) {
+  }) async {
     FocusScope.of(Get.context!).unfocus();
 
     if (isHost || (_controller.isCopublisher)) {
-      IsmLiveUtility.openBottomSheet(
+      await IsmLiveUtility.openBottomSheet(
         IsmLiveCustomButtomSheet(
           title: isHost
               ? IsmLiveStrings.areYouSureEndStream
@@ -39,7 +39,7 @@ mixin StreamSheetMixin {
         isDismissible: false,
       );
     } else {
-      _controller.disconnectStream(
+      await _controller.disconnectStream(
         isHost: isHost,
         streamId: streamId,
       );
