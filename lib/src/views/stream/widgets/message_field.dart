@@ -70,9 +70,11 @@ class IsmLiveMessageField extends StatelessWidget {
               hintText: 'Say Something…',
               contentPadding: IsmLiveDimens.edgeInsets0,
               fillColor: IsmLiveColors.white.withOpacity(0.3),
-              hintStyle: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+              hintStyle:
+                  context.textTheme.bodySmall?.copyWith(color: Colors.white),
               borderColor: Colors.transparent,
-              onchange: (value) => controller.update([IsmLiveStreamView.updateId]),
+              onchange: (value) =>
+                  controller.update([IsmLiveStreamView.updateId]),
               textInputAction: TextInputAction.send,
               onFieldSubmit: (value) {
                 controller.sendTextMessage(
@@ -82,7 +84,10 @@ class IsmLiveMessageField extends StatelessWidget {
                 );
               },
               suffixIcon: IconButton(
-                icon: const Icon(Icons.send),
+                icon: const Icon(
+                  Icons.send,
+                ),
+                color: Colors.white,
                 onPressed: controller.messageFieldController.isNotEmpty
                     ? () => controller.sendTextMessage(
                           streamId: streamId,

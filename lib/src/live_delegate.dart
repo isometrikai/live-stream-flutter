@@ -28,6 +28,8 @@ class IsmLiveDelegate {
 
   static Alignment endStreamPosition = Alignment.topRight;
 
+  static List<IsmLiveStreamOption>? controlIcons;
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
@@ -35,13 +37,15 @@ class IsmLiveDelegate {
     onStreamEnd = onEndStream;
     await Future.wait([
       IsmLiveHandler.initialize(),
-      _dbWrapper.saveValueSecurely(IsmLiveLocalKeys.configDetails, config.toJson()),
+      _dbWrapper.saveValueSecurely(
+          IsmLiveLocalKeys.configDetails, config.toJson()),
       IsmLiveUtility.initialize(config),
     ]);
   }
 
   static Future<void> endStream() async {
-    assert(Get.isRegistered<IsmLiveStreamController>(), 'StreamController is not initialized');
+    assert(Get.isRegistered<IsmLiveStreamController>(),
+        'StreamController is not initialized');
     IsmLiveLog.error('Calling Leave API from Outside');
     var controller = Get.find<IsmLiveStreamController>();
     if (controller.streamId.isNullOrEmpty) {

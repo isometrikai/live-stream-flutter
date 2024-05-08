@@ -75,6 +75,7 @@ class IsmLiveApp extends StatelessWidget {
     bool showHeader = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
+    List<IsmLiveStreamOption>? controlIcons,
   }) {
     assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -85,9 +86,10 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
+    IsmLiveDelegate.controlIcons = controlIcons;
   }
 
-  static Future<void> endStream() => IsmLiveDelegate.endStream();
+  static Future<void> endStream() async => await IsmLiveDelegate.endStream();
 
   static void handleMqttEvent(DynamicMap payload) {
     assert(

@@ -6,11 +6,11 @@ mixin StreamSheetMixin {
   void onExit({
     required bool isHost,
     required String streamId,
-  }) {
+  }) async {
     FocusScope.of(Get.context!).unfocus();
 
     if (isHost || (_controller.isCopublisher)) {
-      IsmLiveUtility.openBottomSheet(
+      await IsmLiveUtility.openBottomSheet(
         IsmLiveCustomButtomSheet(
           title: isHost
               ? IsmLiveStrings.areYouSureEndStream
@@ -39,7 +39,7 @@ mixin StreamSheetMixin {
         isDismissible: false,
       );
     } else {
-      _controller.disconnectStream(
+      await _controller.disconnectStream(
         isHost: isHost,
         streamId: streamId,
       );
