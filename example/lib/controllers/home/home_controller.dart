@@ -16,8 +16,6 @@ class HomeController extends GetxController {
 
   late IsmLiveConfigData configData;
 
-  AppConfig get _appConfig => Get.find();
-
   @override
   void onInit() {
     super.onInit();
