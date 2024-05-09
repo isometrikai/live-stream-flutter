@@ -54,20 +54,24 @@ class IsmLiveHandler {
     if (isLoading) {
       IsmLiveUtility.showLoader();
     }
+    IsmLiveLog('Step 1 - $isStreaming');
     if (isStreaming ?? false) {
+      IsmLiveLog('Step 2 - ${Get.isRegistered<IsmLiveStreamController>()}');
       if (Get.isRegistered<IsmLiveStreamController>()) {
         var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+        IsmLiveLog('Step 3 - $isUnsubscribed');
         if (!isUnsubscribed) {
           return;
         }
       }
-      if (Get.isRegistered<IsmLiveMqttController>()) {
-        var mqttController = Get.find<IsmLiveMqttController>();
-        await mqttController.unsubscribeTopics();
-        mqttController.disconnect();
+    }
+    IsmLiveLog.info('Step 4 = ${Get.isRegistered<IsmLiveMqttController>()}');
+    if (Get.isRegistered<IsmLiveMqttController>()) {
+      var mqttController = Get.find<IsmLiveMqttController>();
+      await mqttController.unsubscribeTopics();
+      mqttController.disconnect();
 
-        await Get.delete<IsmLiveMqttController>(force: true);
-      }
+      await Get.delete<IsmLiveMqttController>(force: true);
     }
     (logoutCallback ?? onLogout)?.call();
     if (isLoading) {
