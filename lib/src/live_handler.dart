@@ -61,13 +61,13 @@ class IsmLiveHandler {
           return;
         }
       }
-      if (Get.isRegistered<IsmLiveMqttController>()) {
-        var mqttController = Get.find<IsmLiveMqttController>();
-        await mqttController.unsubscribeTopics();
-        mqttController.disconnect();
+    }
+    if (Get.isRegistered<IsmLiveMqttController>()) {
+      var mqttController = Get.find<IsmLiveMqttController>();
+      await mqttController.unsubscribeTopics();
+      mqttController.disconnect();
 
-        await Get.delete<IsmLiveMqttController>(force: true);
-      }
+      await Get.delete<IsmLiveMqttController>(force: true);
     }
     (logoutCallback ?? onLogout)?.call();
     if (isLoading) {
