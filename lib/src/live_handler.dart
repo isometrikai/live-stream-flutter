@@ -55,15 +55,19 @@ class IsmLiveHandler {
       IsmLiveUtility.showLoader();
     }
     if (isStreaming ?? false) {
-      var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
-      if (!isUnsubscribed) {
-        return;
+      if (Get.isRegistered<IsmLiveStreamController>()) {
+        var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
+        if (!isUnsubscribed) {
+          return;
+        }
       }
-      var mqttController = Get.find<IsmLiveMqttController>();
-      await mqttController.unsubscribeTopics();
-      mqttController.disconnect();
+      if (Get.isRegistered<IsmLiveMqttController>()) {
+        var mqttController = Get.find<IsmLiveMqttController>();
+        await mqttController.unsubscribeTopics();
+        mqttController.disconnect();
 
-      await Get.delete<IsmLiveMqttController>(force: true);
+        await Get.delete<IsmLiveMqttController>(force: true);
+      }
     }
     (logoutCallback ?? onLogout)?.call();
     if (isLoading) {
