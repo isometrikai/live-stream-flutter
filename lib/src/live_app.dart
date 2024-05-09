@@ -20,8 +20,7 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) =>
-      IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
 
@@ -77,8 +76,7 @@ class IsmLiveApp extends StatelessWidget {
     Alignment? endStreamPosition,
     List<IsmLiveStreamOption>? controlIcons,
   }) {
-    assert(_initialized,
-        'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
+    assert(_initialized, 'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
@@ -128,13 +126,11 @@ class IsmLiveApp extends StatelessWidget {
 
   static VoidCallback? get onStreamEnd => IsmLiveDelegate.onStreamEnd;
 
-  static set onStreamEnd(VoidCallback? callback) =>
-      IsmLiveDelegate.onStreamEnd = callback;
+  static set onStreamEnd(VoidCallback? callback) => IsmLiveDelegate.onStreamEnd = callback;
 
   static IsmLiveHeaderBuilder? get streamHeader => IsmLiveDelegate.streamHeader;
 
-  static IsmLiveHeaderBuilder? get bottomBuilder =>
-      IsmLiveDelegate.bottomBuilder;
+  static IsmLiveHeaderBuilder? get bottomBuilder => IsmLiveDelegate.bottomBuilder;
 
   static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
 
@@ -146,16 +142,19 @@ class IsmLiveApp extends StatelessWidget {
 
   static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
 
-  static Future<void> logout({
+  static Future<void> dispose({
     bool? isStreaming,
     VoidCallback? logoutCallback,
     bool isLoading = true,
-  }) =>
-      IsmLiveHandler.logout(
-        isLoading: isLoading,
-        isStreaming: isStreaming,
-        logoutCallback: logoutCallback,
-      );
+  }) {
+    _initialized = false;
+    _mqttInitialized = false;
+    return IsmLiveHandler.dispose(
+      isLoading: isLoading,
+      isStreaming: isStreaming,
+      logoutCallback: logoutCallback,
+    );
+  }
 
   static MapStreamSubscription addListener(
     MapFunction listener,
