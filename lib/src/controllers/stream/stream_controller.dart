@@ -474,7 +474,7 @@ class IsmLiveStreamController extends GetxController
     messagesListController.addListener(() {
       if (messagesListController.position.minScrollExtent ==
           messagesListController.position.pixels) {
-        if (isViewesApiCall) {
+        if (isMessagesApiCall) {
           return;
         }
         isMessagesApiCall = true;
