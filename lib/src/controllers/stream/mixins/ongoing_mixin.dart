@@ -40,9 +40,7 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10
-                  ? 0
-                  : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false,
             ),
@@ -105,8 +103,7 @@ mixin StreamOngoingMixin {
           sortParticipants();
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
-          if (_controller.participantTracks.length == 1 &&
-              _controller.isCopublisher) {
+          if (_controller.participantTracks.length == 1 && _controller.isCopublisher) {
             _controller.userRole?.leaveCopublishing();
           }
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
@@ -230,14 +227,12 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add viewers to the stream
-  Future<void> addViewers(
-      List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
+  Future<void> addViewers(List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
     if (isFirstCall) {
       _controller.streamViewersList.clear();
     }
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList =
-        _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
   }
 
 // Function to add messages to the stream
@@ -245,19 +240,16 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats =
-        messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList =
-        _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent +
-          IsmLiveDimens.hundred,
+      _controller.messagesListController.position.maxScrollExtent + IsmLiveDimens.hundred,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
@@ -297,9 +289,7 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
     final gift = message.customType!.path;
-    final child = gift.endsWith('gif')
-        ? IsmLiveGif(path: gift)
-        : IsmLiveImage.asset(gift);
+    final child = gift.endsWith('gif') ? IsmLiveGif(path: gift) : IsmLiveImage.asset(gift);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(
@@ -324,8 +314,7 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty ||
-        room.participants.values.first.audioTracks.isEmpty) {
+    if (room.participants.values.isEmpty || room.participants.values.first.audioTracks.isEmpty) {
       return;
     }
 
@@ -333,16 +322,11 @@ mixin StreamOngoingMixin {
     try {
       if (_controller.speakerOn) {
         for (var i = 0; i < room.participants.values.length; i++) {
-          unawaited(
-              room.participants.values.elementAt(i).audioTracks.first.enable());
+          unawaited(room.participants.values.elementAt(i).audioTracks.first.enable());
         }
       } else {
         for (var i = 0; i < room.participants.values.length; i++) {
-          unawaited(room.participants.values
-              .elementAt(i)
-              .audioTracks
-              .first
-              .disable());
+          unawaited(room.participants.values.elementAt(i).audioTracks.first.disable());
         }
       }
     } catch (e) {
@@ -368,7 +352,7 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
-        _controller.animationController.forward();
+        unawaited(_controller.animationController.forward());
 
         break;
       case IsmLiveStreamOption.members:
@@ -462,8 +446,7 @@ mixin StreamOngoingMixin {
   void enableScreenShare() async {
     try {
       IsmLiveUtility.showLoader();
-      if (_controller.room == null ||
-          _controller.room!.localParticipant == null) {
+      if (_controller.room == null || _controller.room!.localParticipant == null) {
         return;
       }
 
@@ -563,8 +546,7 @@ mixin StreamOngoingMixin {
 
       _controller.memberStatus = IsmLiveMemberStatus.notMember;
 
-      await _controller.getRTCToken(_controller.streamId ?? '',
-          showLoader: false);
+      await _controller.getRTCToken(_controller.streamId ?? '', showLoader: false);
 
       await _controller.sortParticipants();
     }
@@ -574,8 +556,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom() async {
-    unawaited(
-        _controller._mqttController?.unsubscribeStream(_controller.streamId!));
+    unawaited(_controller._mqttController?.unsubscribeStream(_controller.streamId!));
 
     _controller.userRole = null;
     _controller.streamId = null;
