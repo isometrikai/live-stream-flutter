@@ -65,12 +65,46 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> createStream(
     IsmLiveCreateStreamModel streamModel,
+    UserDetails? user,
   ) =>
       _apiWrapper.makeRequest(
-        IsmLiveApis.stream,
+        IsmLiveApis.newStream,
+        baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
-        payload: streamModel.toMap(),
+        payload: {
+          "isRecorded": false,
+          "rtmpIngest": false,
+          "enableRecording": false,
+          "streamDescription": "My stream title custom",
+          "isScheduledStream": false,
+          "members": [],
+          "isometrikUserId": user?.userId,
+          "inviteId": "",
+          "country": "INDIA",
+          "persistRtmpIngestEndpoint": false,
+          "userName": user?.userName,
+          "productsLinked": false,
+          "restream": false,
+          "userType": 1,
+          "currency": "USD",
+          "audioOnly": false,
+          "isPublicStream": true,
+          "isPaid": false,
+          "lowLatencyMode": false,
+          "hdBroadcast": false,
+          "isGroupStream": true,
+          "isPublic": true,
+          "paymentType": 0,
+          "products": [],
+          "multiLive": true,
+          "isSelfHosted": true,
+          "userId": user?.userId,
+          "createdBy": user?.userId,
+          "streamImage":
+              "https:\/\/dubly.gumlet.io\/dubly\/Isometrik\/iOS\/streams\/64df4c2c768dfe8eec21d5ce\/1713790316618.jpeg",
+          "paymentAmount": 0
+        },
         showLoader: true,
       );
 

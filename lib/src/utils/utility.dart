@@ -41,6 +41,14 @@ class IsmLiveUtility {
   static String jsonEncodePretty(Object? object) =>
       JsonEncoder.withIndent(' ' * 4).convert(object);
 
+  static Map<String, String> newTokenHeader() => {
+        'userToken': config.userConfig.userToken,
+        'licenseKey': 'lic-IMKm3wNSIeSnxmdj/lOy4mB55sziy2A1NhU',
+        'appSecret':
+            'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1MmY5YWQzZTI0NDc3Y2NlNGEwMjVkNW0AAAAIa2V5c2V0SWRtAAAAJGIxN2IzODBkLTE1M2UtNDAxNy04YThmLTI2YjYxZjVjMjNjOG0AAAAJcHJvamVjdElkbQAAACQ4OGNhZDQ1OC1lOWEwLTQxMDktYTJkNi1kZjUyMGU1NmI0ZjdkAAZzaWduZWRuBgAyh_ZBiwE.u0RqujyPa8EB036aYWH50kME2sMLgjC7faUtYTJxHFM',
+        'Content-Type': 'application/json',
+      };
+
   static Map<String, String> tokenHeader() => {
         'userToken': config.userConfig.userToken,
         'licenseKey': config.projectConfig.licenseKey,

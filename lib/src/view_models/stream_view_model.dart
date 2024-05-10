@@ -80,9 +80,14 @@ class IsmLiveStreamViewModel {
   }
 
   Future<IsmLiveRTCModel?> createStream(
-      IsmLiveCreateStreamModel streamModel) async {
+    IsmLiveCreateStreamModel streamModel,
+    UserDetails? user,
+  ) async {
     try {
-      var res = await _repository.createStream(streamModel);
+      var res = await _repository.createStream(
+        streamModel,
+        user,
+      );
       if (res.hasError) {
         return null;
       }

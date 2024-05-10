@@ -95,6 +95,7 @@ mixin StreamAPIMixin {
               : _controller.descriptionController.text,
           restream: _controller.isRestreamBroadcast,
         ),
+        _controller.user,
       ),
       image: image,
     );

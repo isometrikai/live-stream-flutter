@@ -4,8 +4,8 @@ class IsmLiveApis {
 
   static const String baseUrl = 'https://apis.isometrik.io';
 
-  // static const String baseUrlStream = 'https://service-apis.isometrik.io';
-  static const String baseUrlStream = 'https://admin-apis.isometrik.io/live/v2';
+  static const String baseUrlStream = 'https://service-apis.isometrik.io';
+  // static const String baseUrlStream = 'https://admin-apis.isometrik.io/live/v2';
 
   // static const String devBaseUrl = 'https://admin-apis.isometrik.io';
   static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
@@ -16,7 +16,7 @@ class IsmLiveApis {
   static const String agentauthenticate =
       'https://admin-apis.isometrik.io/v1/agent';
   static const String user = '/chat/user';
-  static const String stream1 = '/stream';
+  static const String newStream = '/live/v2/stream';
   static const String allUsers = '/chat/users';
   static const String userDetails = '$user/details';
   static const String authenticate = '$user/authenticate';
