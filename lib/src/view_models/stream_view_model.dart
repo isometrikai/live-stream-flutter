@@ -739,23 +739,4 @@ class IsmLiveStreamViewModel {
     }
     return;
   }
-
-  Future<void> getUsersToInviteForPK({
-    required int skip,
-    required int limit,
-    String? searchTag,
-  }) async {
-    try {
-      var res = await _repository.getUsersToInviteForPK(
-        limit: limit,
-        skip: skip,
-        searchTag: searchTag,
-      );
-      if (res.hasError) {}
-
-      IsmLiveLog('_____________________---- pk $res');
-    } catch (e, st) {
-      IsmLiveLog.error(e, st);
-    }
-  }
 }

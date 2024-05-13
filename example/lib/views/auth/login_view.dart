@@ -54,7 +54,7 @@ class LoginView extends StatelessWidget {
                             controller.update();
                           },
                           controller: controller.emailController,
-                          validator: AppValidator.emailValidator,
+                          // validator: AppValidator.emailValidator,
                         ),
                       ),
                       IsmLiveDimens.boxHeight16,
@@ -103,11 +103,14 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('login-signup'),
                         child: IsmLiveButton(
-                          onTap: controller.loginFormKey.currentState
-                                      ?.validate() ??
-                                  false
-                              ? controller.validateLogin
-                              : null,
+                          onTap:
+                              //  controller.loginFormKey.currentState
+                              //             ?.validate() ??
+                              //         false
+                              //     ?
+                              controller.validateLogin
+                          // : null
+                          ,
                           label: TranslationKeys.login.tr,
                         ),
                       ),

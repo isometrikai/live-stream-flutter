@@ -60,9 +60,9 @@ class AuthController extends GetxController {
   // -------------------------------- Functions ------------------------------------
 
   void validateLogin() {
-    if (loginFormKey.currentState!.validate()) {
-      login();
-    }
+    // if (loginFormKey.currentState!.validate()) {
+    login();
+    // }
   }
 
   void validateSignUp() {

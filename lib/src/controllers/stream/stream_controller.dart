@@ -174,8 +174,6 @@ class IsmLiveStreamController extends GetxController
   late TabController tabController;
   late TabController giftsTabController;
   late TabController cobublisTabController;
-  late TabController pkTabController;
-  late TabController pkViewersTabController;
 
   var descriptionController = TextEditingController();
 
@@ -252,14 +250,6 @@ class IsmLiveStreamController extends GetxController
   IsmLiveCopublisher get copublisher => _copublisher.value;
   set copublisher(IsmLiveCopublisher value) => _copublisher.value = value;
 
-  final Rx<IsmLivePk> _pk = IsmLivePk.inviteList.obs;
-  IsmLivePk get pk => _pk.value;
-  set pk(IsmLivePk value) => _pk.value = value;
-
-  final Rx<IsmLivePkViewers> _pkViewers = IsmLivePkViewers.audiencelist.obs;
-  IsmLivePkViewers get pkViewers => _pkViewers.value;
-  set pkViewers(IsmLivePkViewers value) => _pkViewers.value = value;
-
   bool isModerationWarningVisible = true;
 
   FocusNode messageFocusNode = FocusNode();
@@ -291,14 +281,7 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLiveCopublisher.values.length,
     );
-    pkTabController = TabController(
-      vsync: this,
-      length: IsmLivePk.values.length,
-    );
-    pkViewersTabController = TabController(
-      vsync: this,
-      length: IsmLivePkViewers.values.length,
-    );
+
     animationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -511,12 +494,6 @@ class IsmLiveStreamController extends GetxController
     });
     cobublisTabController.addListener(() {
       copublisher = IsmLiveCopublisher.values[cobublisTabController.index];
-    });
-    pkTabController.addListener(() {
-      pk = IsmLivePk.values[pkTabController.index];
-    });
-    pkViewersTabController.addListener(() {
-      pkViewers = IsmLivePkViewers.values[pkViewersTabController.index];
     });
   }
 

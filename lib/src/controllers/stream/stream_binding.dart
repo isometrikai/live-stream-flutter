@@ -13,5 +13,17 @@ class IsmLiveStreamBinding implements Bindings {
         ),
       ),
     );
+    Get.put(
+      IsmLivePkController(
+        IsmLivePkViewModel(
+          IsmLivePkRepository(
+            IsmLivePkApis(
+              Get.find(),
+            ),
+          ),
+        ),
+      ),
+      permanent: true,
+    );
   }
 }

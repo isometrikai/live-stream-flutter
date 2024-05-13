@@ -73,37 +73,36 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
-          "isRecorded": false,
-          "rtmpIngest": false,
-          "enableRecording": false,
-          "streamDescription": "My stream title custom",
-          "isScheduledStream": false,
-          "members": [],
-          "isometrikUserId": user?.userId,
-          "inviteId": "",
-          "country": "INDIA",
-          "persistRtmpIngestEndpoint": false,
-          "userName": user?.userName,
-          "productsLinked": false,
-          "restream": false,
-          "userType": 1,
-          "currency": "USD",
-          "audioOnly": false,
-          "isPublicStream": true,
-          "isPaid": false,
-          "lowLatencyMode": false,
-          "hdBroadcast": false,
-          "isGroupStream": true,
-          "isPublic": true,
-          "paymentType": 0,
-          "products": [],
-          "multiLive": true,
-          "isSelfHosted": true,
-          "userId": user?.userId,
-          "createdBy": user?.userId,
-          "streamImage":
-              "https:\/\/dubly.gumlet.io\/dubly\/Isometrik\/iOS\/streams\/64df4c2c768dfe8eec21d5ce\/1713790316618.jpeg",
-          "paymentAmount": 0
+          'isRecorded': false,
+          'rtmpIngest': streamModel.rtmpIngest,
+          'enableRecording': streamModel.enableRecording,
+          'streamDescription': streamModel.streamDescription,
+          'isScheduledStream': false,
+          'members': streamModel.members,
+          'isometrikUserId': user?.userId,
+          'inviteId': '',
+          'country': streamModel.metaData?.country ?? 'INDIA',
+          'persistRtmpIngestEndpoint': streamModel.persistRtmpIngestEndpoint,
+          'userName': user?.userName,
+          'productsLinked': streamModel.productsLinked,
+          'restream': streamModel.restream,
+          'userType': 1,
+          'currency': streamModel.paymentCurrencyCode,
+          'audioOnly': streamModel.audioOnly,
+          'isPublicStream': streamModel.isPublic,
+          'isPaid': streamModel.isPaid,
+          'lowLatencyMode': streamModel.lowLatencyMode,
+          'hdBroadcast': streamModel.hdBroadcast,
+          'isGroupStream': true,
+          'isPublic': streamModel.isPublic,
+          'paymentType': streamModel.paymentType,
+          'products': streamModel.products,
+          'multiLive': streamModel.multiLive,
+          'isSelfHosted': streamModel.selfHosted,
+          'userId': user?.userId,
+          'createdBy': user?.userId,
+          'streamImage': streamModel.streamImage,
+          'paymentAmount': streamModel.paymentAmount,
         },
         showLoader: true,
       );
@@ -591,7 +590,7 @@ class IsmLiveStreamRepository {
 
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalytics}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.devBaseUrl,
+      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
@@ -606,49 +605,10 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.devBaseUrl,
+      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
-    );
-  }
-
-  Future<IsmLiveResponseModel> getUsersToInviteForPK({
-    required int skip,
-    required int limit,
-    String? searchTag,
-  }) async {
-    var payload = {
-      'skip': skip,
-      'limit': limit,
-      'q': searchTag,
-    };
-
-    return await _apiWrapper.makeRequest(
-      '${IsmLiveApis.getUsersToInviteForPK}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.devBaseUrl,
-      type: IsmLiveRequestType.get,
-      showDialog: false,
-      headers: IsmLiveUtility.tokenHeader(),
-    );
-  }
-
-  Future<IsmLiveResponseModel> sendInvitationToUserForPK({
-    required String reciverStreamId,
-    required String userId,
-    required String senderStreamId,
-  }) async {
-    var payload = {
-      'reciverStreamId': reciverStreamId,
-      'senderStreamId': senderStreamId,
-      'userId': userId
-    };
-    return await _apiWrapper.makeRequest(
-      IsmLiveApis.getUsersToInviteForPK,
-      baseUrl: IsmLiveApis.devBaseUrl,
-      type: IsmLiveRequestType.post,
-      payload: payload,
-      headers: IsmLiveUtility.tokenHeader(),
     );
   }
 }

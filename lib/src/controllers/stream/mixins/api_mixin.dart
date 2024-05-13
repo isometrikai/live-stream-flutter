@@ -659,17 +659,4 @@ mixin StreamAPIMixin {
         url: _controller.rtmlUrl.text.trim(),
         enable: enable,
       );
-
-  Future<void> getUsersToInviteForPK({
-    bool forceFetch = false,
-    int limit = 15,
-    int skip = 0,
-    String? searchTag,
-  }) async {
-    await _controller._viewModel.getUsersToInviteForPK(
-      limit: limit,
-      skip: skip,
-      searchTag: searchTag,
-    );
-  }
 }
