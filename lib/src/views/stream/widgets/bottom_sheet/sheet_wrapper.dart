@@ -95,9 +95,11 @@ class IsmLiveScrollSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
+                      if (placeHolder != null)
+                        Container(
                           padding: IsmLiveDimens.edgeInsetsL20,
-                          child: IsmLiveImage.svg(placeHolder ?? '')),
+                          child: IsmLiveImage.svg(placeHolder ?? ''),
+                        ),
                       IsmLiveDimens.boxHeight2,
                       Text(placeHolderText ?? ''),
                     ],

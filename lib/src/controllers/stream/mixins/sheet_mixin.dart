@@ -66,18 +66,6 @@ mixin StreamSheetMixin {
     );
   }
 
-  void pkInviteSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLivePkInviteSheet(
-        description:
-            'You have received an invitation from @tavvi for the PK challenge. Do you want to continue?',
-        images: const ['jj', 'iiii', 'ioo'],
-        label: '@tavvi1 invite you to link',
-        title: '@tavvi1 invite you to link',
-      ),
-    );
-  }
-
   void pkChallengeSheet() async {
     await IsmLiveUtility.openBottomSheet(
       const IsmLivePkChallengeSheet(),

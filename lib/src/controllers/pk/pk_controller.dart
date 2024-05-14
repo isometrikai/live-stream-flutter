@@ -8,6 +8,9 @@ class IsmLivePkController extends GetxController
 
   final IsmLivePkViewModel _viewModel;
 
+  final IsmLiveStreamController streamController =
+      Get.find<IsmLiveStreamController>();
+
   late TabController pkTabController;
   late TabController pkViewersTabController;
 
@@ -15,11 +18,17 @@ class IsmLivePkController extends GetxController
 
   TextEditingController pkInviteTextController = TextEditingController();
 
+  final _pkInviteDebouncer = IsmLiveDebouncer();
+
   final RxList<IsmLivePkInviteModel> _pkInviteList =
       <IsmLivePkInviteModel>[].obs;
   List<IsmLivePkInviteModel> get pkInviteList => _pkInviteList;
   set pkInviteList(List<IsmLivePkInviteModel> list) =>
       _pkInviteList.value = list;
+
+  final RxDouble _pkLoadingValue = 0.2.obs;
+  double get pkLoadingValue => _pkLoadingValue.value;
+  set pkLoadingValue(double value) => _pkLoadingValue.value = value;
 
   final Rx<IsmLivePk> _pk = IsmLivePk.inviteList.obs;
   IsmLivePk get pk => _pk.value;
@@ -31,7 +40,7 @@ class IsmLivePkController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    getUsersToInviteForPK();
+
     pkTabController = TabController(
       vsync: this,
       length: IsmLivePk.values.length,
@@ -67,10 +76,32 @@ class IsmLivePkController extends GetxController
         }
         isPkInviteApisCall = true;
 
-        await getUsersToInviteForPK(limit: 10, skip: pkInviteList.length);
+        await getUsersToInviteForPK(
+          limit: 10,
+          skip: pkInviteList.length,
+          searchTag: pkInviteTextController.text,
+        );
         isPkInviteApisCall = false;
       }
     });
+  }
+
+  void pkInviteSheet({
+    required List<String> images,
+    required String userName,
+    required String reciverName,
+    required String description,
+    required String title,
+  }) async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLivePkInviteSheet(
+        description: description,
+        images: images,
+        userName: userName,
+        reciverName: reciverName,
+        title: title,
+      ),
+    );
   }
 
   Future<void> getUsersToInviteForPK({
@@ -78,12 +109,54 @@ class IsmLivePkController extends GetxController
     int skip = 0,
     String? searchTag,
   }) async {
+    _pkInviteDebouncer.run(() async {
+      await _getUsersToInviteForPK(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+    });
+  }
+
+  Future<void> _getUsersToInviteForPK({
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) async {
     var res = await _viewModel.getUsersToInviteForPK(
       limit: limit,
       skip: skip,
       searchTag: searchTag,
     );
-
     pkInviteList.addAll(res);
+    pkInviteList = pkInviteList.toSet().toList();
+  }
+
+  Future<void> sendInvitationToUserForPK({
+    required IsmLivePkInviteModel reciverDetails,
+  }) async {
+    var res = await _viewModel.sendInvitationToUserForPK(
+      reciverStreamId: reciverDetails.streamId,
+      senderStreamId: streamController.streamId ?? '',
+      userId: streamController.user?.userId ?? '',
+    );
+
+    if (res) {
+      Get.back();
+      pkInviteSheet(
+          description:
+              'The PK challenge between you and ${reciverDetails.name} will start soon. Please wait…',
+          images: [
+            reciverDetails.profilePic ?? '',
+            streamController.user?.profileUrl ?? ''
+          ],
+          userName: streamController.user?.name ?? '',
+          reciverName: reciverDetails.name,
+          title: 'Linking...');
+
+      // pkInviteList.removeWhere(
+      //   (element) => element.streamId == reciverStreamId,
+      // );
+    }
   }
 }

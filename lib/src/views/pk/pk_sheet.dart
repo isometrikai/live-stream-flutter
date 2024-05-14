@@ -24,6 +24,7 @@ class IsmLivePkSheet extends StatelessWidget {
               GetX<IsmLivePkController>(
                 initState: (state) {
                   var controller = Get.find<IsmLivePkController>();
+                  controller.getUsersToInviteForPK();
                   controller.pkTabController.index = 0;
                   controller.pk = IsmLivePk.values[0];
                 },
@@ -68,8 +69,7 @@ class IsmLivePkSheet extends StatelessWidget {
               ),
               SizedBox(
                 height: Get.height * 0.4,
-                child: GetBuilder<IsmLivePkController>(
-                  id: updateId,
+                child: GetX<IsmLivePkController>(
                   builder: (controller) => TabBarView(
                     controller: controller.pkTabController,
                     children: [
@@ -84,7 +84,9 @@ class IsmLivePkSheet extends StatelessWidget {
                         textEditingController:
                             controller.pkInviteTextController,
                         hintText: 'search',
-                        onchange: (value) {},
+                        onchange: (value) {
+                          controller.getUsersToInviteForPK(searchTag: value);
+                        },
                         title: '',
                         placeHolderText: 'no data found',
                         itemCount: controller.pkInviteList.length,
@@ -106,11 +108,15 @@ class IsmLivePkSheet extends StatelessWidget {
                               ],
                             ),
                             trailing: SizedBox(
-                              width: 100,
+                              width: IsmLiveDimens.hundred,
                               child: IsmLiveButton.secondary(
                                 showBorder: true,
                                 label: 'invite',
-                                onTap: () {},
+                                onTap: () {
+                                  controller.sendInvitationToUserForPK(
+                                    reciverDetails: details,
+                                  );
+                                },
                               ),
                             ),
                           );
