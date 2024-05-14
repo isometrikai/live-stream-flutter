@@ -58,6 +58,7 @@ mixin StreamMessageMixin {
       return;
     }
 
+    var userName = _controller.user?.name.split('');
     _controller.messageFieldController.clear();
     _controller.parentMessage = null;
     _controller.update([IsmLiveMessageField.updateId]);
@@ -71,7 +72,8 @@ mixin StreamMessageMixin {
           searchableTags: [body],
           metaData: IsmLiveMetaData(
             parentMessageBody: parentMessage.body,
-            firstName: _controller.user?.name,
+            firstName: userName?.first,
+            lastName: userName?.last,
             profilePic: _controller.user?.profileUrl,
           ),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
@@ -94,7 +96,8 @@ mixin StreamMessageMixin {
           body: body,
           searchableTags: [body],
           metaData: IsmLiveMetaData(
-            firstName: _controller.user?.name,
+            firstName: userName?.first,
+            lastName: userName?.last,
             profilePic: _controller.user?.profileUrl,
           ),
           deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
