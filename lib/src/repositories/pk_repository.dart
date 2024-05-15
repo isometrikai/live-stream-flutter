@@ -14,4 +14,15 @@ class IsmLivePkRepository {
         skip: skip,
         searchTag: searchTag,
       );
+
+  Future<IsmLiveResponseModel> sendInvitationToUserForPK({
+    required String reciverStreamId,
+    required String userId,
+    required String senderStreamId,
+  }) async =>
+      await _api.sendInvitationToUserForPK(
+        reciverStreamId: reciverStreamId,
+        senderStreamId: senderStreamId,
+        userId: userId,
+      );
 }

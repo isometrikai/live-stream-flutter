@@ -33,4 +33,18 @@ class IsmLivePkViewModel {
       return [];
     }
   }
+
+  Future<bool> sendInvitationToUserForPK({
+    required String reciverStreamId,
+    required String userId,
+    required String senderStreamId,
+  }) async {
+    var res = await _repository.sendInvitationToUserForPK(
+      reciverStreamId: reciverStreamId,
+      senderStreamId: senderStreamId,
+      userId: userId,
+    );
+
+    return !res.hasError;
+  }
 }

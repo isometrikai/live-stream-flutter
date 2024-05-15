@@ -99,10 +99,6 @@ class IsmLiveStreamController extends GetxController
 
   String? streamId;
 
-  final RxDouble _pkLoadingValue = 0.0.obs;
-  double get pkLoadingValue => _pkLoadingValue.value;
-  set pkLoadingValue(double value) => _pkLoadingValue.value = value;
-
   IsmLiveChatModel? parentMessage;
 
   IsmLiveStreamAnalyticsModel? streamAnalytis;
@@ -679,14 +675,4 @@ class IsmLiveStreamController extends GetxController
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,
       );
-
-  void pkLoading(Timer? timer) {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (pkLoadingValue > 1.0) {
-        timer.cancel();
-        Get.back();
-      }
-      pkLoadingValue = pkLoadingValue + 0.1;
-    });
-  }
 }
