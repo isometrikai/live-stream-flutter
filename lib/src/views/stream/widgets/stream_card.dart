@@ -60,8 +60,10 @@ class IsmLiveStreamCard extends StatelessWidget {
                         child: Container(
                           padding: IsmLiveDimens.edgeInsets8_4,
                           decoration: BoxDecoration(
-                            color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
-                            borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                            color: context.liveTheme?.primaryColor ??
+                                IsmLiveColors.primary,
+                            borderRadius:
+                                BorderRadius.circular(IsmLiveDimens.eight),
                           ),
                           child: Text(
                             'Continue',
@@ -82,10 +84,13 @@ class IsmLiveStreamCard extends StatelessWidget {
                           isProfileImage: true,
                         ),
                         IsmLiveDimens.boxWidth10,
-                        Text(
-                          stream.initiatorName ?? '',
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            stream.initiatorName ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],

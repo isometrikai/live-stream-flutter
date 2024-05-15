@@ -22,20 +22,6 @@ class AppConstants {
   static const String projectId = '0113c44d-86d3-423d-b92a-1be6511f7b8f';
   static const String licenseKey = 'lic-IMK/+mao5KikRmifcmkjavAZa4vGnIwiRTz';
 
-  // static const String accountId = '652f9ad3e24477cce4a025d5';
-
-  // static const String projectId = '88cad458-e9a0-4109-a2d6-df520e56b4f7';
-
-  // static const String keySetId = 'b17b380d-153e-4017-8a8f-26b61f5c23c8';
-
-  // static const String licenseKey = 'lic-IMKm3wNSIeSnxmdj/lOy4mB55sziy2A1NhU';
-
-  // static const String appSecret =
-  //     'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1MmY5YWQzZTI0NDc3Y2NlNGEwMjVkNW0AAAAIa2V5c2V0SWRtAAAAJGIxN2IzODBkLTE1M2UtNDAxNy04YThmLTI2YjYxZjVjMjNjOG0AAAAJcHJvamVjdElkbQAAACQ4OGNhZDQ1OC1lOWEwLTQxMDktYTJkNi1kZjUyMGU1NmI0ZjdkAAZzaWduZWRuBgAyh_ZBiwE.u0RqujyPa8EB036aYWH50kME2sMLgjC7faUtYTJxHFM';
-
-  // static const String userSecret =
-  //     'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1MmY5YWQzZTI0NDc3Y2NlNGEwMjVkNW0AAAAIa2V5c2V0SWRtAAAAJGIxN2IzODBkLTE1M2UtNDAxNy04YThmLTI2YjYxZjVjMjNjOG0AAAAJcHJvamVjdElkbQAAACQ4OGNhZDQ1OC1lOWEwLTQxMDktYTJkNi1kZjUyMGU1NmI0ZjdkAAZzaWduZWRuBgAyh_ZBiwE.nWn8_aZvCwqH1smL9Mp8tgYeG4S04WWSrbwczusX5Cg';
-
   // static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
   // static const String keySetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
   // static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
