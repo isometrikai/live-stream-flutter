@@ -17,7 +17,7 @@ class IsmLiveEndStream extends StatelessWidget {
           initState: (state) async {
             var controller = Get.find<IsmLiveStreamController>();
             await controller.streamAnalytics(streamId);
-            // controller.streamAnalyticsViewers(streamId);
+            // await controller.streamAnalyticsViewers(streamId);
           },
           builder: (controller) => Scaffold(
             body: Padding(
@@ -95,7 +95,7 @@ class IsmLiveEndStream extends StatelessWidget {
                       ),
                       IsmLiveEndStreamContainer(
                         points:
-                            '${controller.streamAnalytis?.duration ?? '00:00'}',
+                            '${controller.streamAnalytis?.formattedDuration}',
                         title: 'Duration',
                         assetConstant: IsmLiveAssetConstants.clock,
                       ),

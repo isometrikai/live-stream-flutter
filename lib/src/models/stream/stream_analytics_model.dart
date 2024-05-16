@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class IsmLiveStreamAnalyticsModel {
   IsmLiveStreamAnalyticsModel({
     this.totalViewersCount,
@@ -91,6 +93,12 @@ class IsmLiveStreamAnalyticsModel {
         'coinsCount': coinsCount,
         'totalEarning': totalEarning,
       };
+
+  String get formattedDuration {
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(duration?.toInt() ?? 0);
+
+    return DateFormat('HH:mm').format(dateTime);
+  }
 
   String toJson() => json.encode(toMap());
 
