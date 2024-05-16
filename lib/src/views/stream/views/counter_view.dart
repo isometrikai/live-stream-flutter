@@ -20,7 +20,8 @@ class IsmLiveCounterView extends StatefulWidget {
   State<IsmLiveCounterView> createState() => _IsmLiveCounterViewState();
 }
 
-class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTickerProviderStateMixin {
+class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
+    with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
@@ -61,10 +62,14 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
   }
 
   void setup() {
-    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
-    counter = widget.duration ?? streamProperties?.counterTime ?? IsmLiveConstants.counterTime;
+    streamProperties =
+        context.liveProperties?.streamProperties?.counterProperties;
+    counter = widget.duration ??
+        streamProperties?.counterTime ??
+        IsmLiveConstants.counterTime;
     if (streamProperties?.showYoureLiveText ?? false) {
-      youreLiveText = context.liveTranslations?.streamTranslations?.youreLive ?? IsmLiveStrings.youreLive;
+      youreLiveText = context.liveTranslations?.streamTranslations?.youreLive ??
+          IsmLiveStrings.youreLive;
     } else {
       finishTime = 1;
     }
@@ -80,7 +85,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
         t.cancel();
         isCompleted = true;
         widget.onComplete?.call();
-        if ((streamProperties?.showYoureLiveSheet ?? false) && widget.onCompleteSheet != null) {
+        if ((streamProperties?.showYoureLiveSheet ?? false) &&
+            widget.onCompleteSheet != null) {
           IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!);
         }
         return;
@@ -118,7 +124,9 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView> with SingleTick
                       counter == 0 ? youreLiveText : counter.toString(),
                       style: context.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: counter == 0 ? IsmLiveColors.red : IsmLiveColors.white,
+                        color: counter == 0
+                            ? IsmLiveColors.red
+                            : IsmLiveColors.white,
                       ),
                     ),
                   ),
