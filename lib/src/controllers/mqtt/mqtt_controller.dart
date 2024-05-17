@@ -34,6 +34,13 @@ class IsmLiveMqttController extends GetxController {
     return Get.find<IsmLiveStreamController>();
   }
 
+  IsmLivePkController get _pkController {
+    if (!Get.isRegistered<IsmLivePkController>()) {
+      IsmLivePkBinding().dependencies();
+    }
+    return Get.find<IsmLivePkController>();
+  }
+
   void _updateStreamListing() {
     IsmLiveUtility.updateLater(() {
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -215,9 +222,11 @@ class IsmLiveMqttController extends GetxController {
     if (payload['action'] != null) {
       final action = IsmLiveActions.fromString(payload['action']);
       final streamId = payload['streamId'] as String?;
-      if (streamId == null) {
+      final messageType = payload['messageType'] as int?;
+      if (streamId == null && messageType != 4) {
         return;
       }
+
       switch (action) {
         case IsmLiveActions.copublishRequestAccepted:
           final memberId = payload['userId'] as String? ?? '';
@@ -228,7 +237,7 @@ class IsmLiveMqttController extends GetxController {
             final hostName = payload['initiatorName'] as String? ?? 'Host';
             final userName = payload['userName'] as String? ?? 'User';
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: hostName,
               senderIdentifier: '',
               senderProfileImageUrl: _hostImageUrl,
@@ -249,7 +258,7 @@ class IsmLiveMqttController extends GetxController {
           final user = UserDetails.fromMap(payload);
           if (_streamController.isHost) {
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: user.userName,
               senderIdentifier: user.userIdentifier,
               senderProfileImageUrl: user.profileUrl,
@@ -272,7 +281,7 @@ class IsmLiveMqttController extends GetxController {
             final hostName = payload['initiatorName'] as String? ?? 'Host';
             final userName = payload['userName'] as String? ?? 'User';
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: hostName,
               senderProfileImageUrl: _hostImageUrl,
               senderIdentifier: '',
@@ -307,7 +316,7 @@ class IsmLiveMqttController extends GetxController {
             body = '$hostName has added $memberName as a Co-publisher';
           }
           final message = IsmLiveMessageModel(
-            streamId: streamId,
+            streamId: streamId!,
             senderName: hostName,
             senderProfileImageUrl: memberProfilePic,
             senderIdentifier: memberIdentifier,
@@ -323,7 +332,7 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.memberLeft:
           var member = IsmLiveViewerModel.fromMap(payload);
           final message = IsmLiveMessageModel(
-            streamId: streamId,
+            streamId: streamId!,
             senderName: member.userName,
             senderProfileImageUrl: _memberImageUrl(member.userId),
             senderIdentifier: member.identifier,
@@ -345,7 +354,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorId = payload['initiatorId'] as String? ?? '';
           if (streamId == _streamController.streamId) {
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: initiatorName,
               senderIdentifier: '',
               senderProfileImageUrl: _hostImageUrl,
@@ -380,7 +389,7 @@ class IsmLiveMqttController extends GetxController {
             body = '$memberName has enabled his video';
           }
           final message = IsmLiveMessageModel(
-            streamId: streamId,
+            streamId: streamId!,
             senderName: memberName,
             senderIdentifier: '',
             senderId: memberId,
@@ -403,6 +412,32 @@ class IsmLiveMqttController extends GetxController {
           _updateStream();
 
           break;
+
+        case IsmLiveActions.pubsubMessagePublished:
+          final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
+          if (pkDetails.userId != _streamController.user?.userId) {
+            if (Get.isBottomSheetOpen ?? false) {
+              Get.back();
+            }
+
+            _pkController.pkInviteSheet(
+              images: [
+                pkDetails.userProfileImageUrl ?? '',
+                _streamController.user?.profileUrl ?? ''
+              ],
+              userName: pkDetails.userName ?? '',
+              reciverName: _streamController.user?.name ?? 'U',
+              description:
+                  'You have received an invitation from @${pkDetails.userName} for the PK challenge. Do you want to continue?',
+              title: '@${pkDetails.userName} invite you to link',
+              isInvite: true,
+              inviteId: pkDetails.metaData?.inviteId ?? '',
+              reciverStreamId: pkDetails.metaData?.inviteId,
+            );
+          }
+
+          break;
+
         case IsmLiveActions.messageRemoved:
           if (_streamController.streamId == streamId) {
             final messageId = payload['messageId'] as String?;
@@ -432,7 +467,7 @@ class IsmLiveMqttController extends GetxController {
           final moderatorProfilePic =
               payload['moderatorProfilePic'] as String? ?? '';
           final message = IsmLiveMessageModel(
-            streamId: streamId,
+            streamId: streamId!,
             senderName: moderatorName,
             senderIdentifier: moderatorIdentifier,
             senderProfileImageUrl: moderatorProfilePic,
@@ -459,7 +494,7 @@ class IsmLiveMqttController extends GetxController {
           final moderatorName = payload['moderatorName'] as String? ?? '';
           if (streamId == _streamController.streamId) {
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: moderatorName,
               senderProfileImageUrl: _moderatorImageUrl(moderatorId),
               senderIdentifier: '',
@@ -485,7 +520,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorId = payload['initiatorId'] as String? ?? '';
           if (streamId == _streamController.streamId) {
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: initiatorName,
               senderProfileImageUrl: _hostImageUrl,
               senderIdentifier: '',
@@ -538,7 +573,7 @@ class IsmLiveMqttController extends GetxController {
           if (streamId == _streamController.streamId) {
             var viewer = IsmLiveViewerModel.fromMap(payload);
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderProfileImageUrl: viewer.imageUrl,
               senderName: viewer.userName,
               senderIdentifier: viewer.identifier,
@@ -557,7 +592,7 @@ class IsmLiveMqttController extends GetxController {
           if (streamId == _streamController.streamId) {
             var viewer = IsmLiveViewerModel.fromMap(payload);
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: viewer.userName,
               senderProfileImageUrl: _viewerImageUrl(viewer.userId),
               senderIdentifier: viewer.identifier,
@@ -582,7 +617,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorId = payload['initiatorId'] as String? ?? '';
           if (streamId == _streamController.streamId) {
             final message = IsmLiveMessageModel(
-              streamId: streamId,
+              streamId: streamId!,
               senderName: initiatorName,
               senderProfileImageUrl: _hostImageUrl,
               senderIdentifier: '',

@@ -44,4 +44,23 @@ class IsmLivePkApis {
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
+
+  Future<IsmLiveResponseModel> invitationPK({
+    required String streamId,
+    required String inviteId,
+    required String response,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'inviteId': inviteId,
+      'response': response
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.invitaionPK,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
 }

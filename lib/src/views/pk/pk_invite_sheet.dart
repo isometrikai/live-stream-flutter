@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +11,9 @@ class IsmLivePkInviteSheet extends StatelessWidget {
     required this.title,
     required this.description,
     this.onTap,
-    this.isAccepted = true,
+    this.isInvite = false,
+    this.inviteId,
+    this.reciverStreamId,
   });
   final List<String> images;
   final String userName;
@@ -21,9 +21,12 @@ class IsmLivePkInviteSheet extends StatelessWidget {
   final VoidCallback? onTap;
   final String title;
   final String description;
-  Timer? timer;
-  bool isAccepted;
+  final String? inviteId;
+  final String? reciverStreamId;
+
+  final bool isInvite;
   static const String updateId = 'pk-invite-sheet';
+  var controller = Get.find<IsmLivePkController>();
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -70,7 +73,9 @@ class IsmLivePkInviteSheet extends StatelessWidget {
             IsmLiveDimens.boxHeight10,
             Text(
               title,
-              style: context.textTheme.titleMedium,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             IsmLiveDimens.boxHeight10,
@@ -80,7 +85,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             IsmLiveDimens.boxHeight20,
-            if (isAccepted == false)
+            if (isInvite)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -88,8 +93,13 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     width: Get.width * 0.4,
                     child: IsmLiveButton(
                       label: 'Reject',
-                      onTap: Get.back,
-                      showBorder: true,
+                      onTap: () {
+                        controller.invitationPk(
+                          inviteId: inviteId ?? '',
+                          reciverStreamId: reciverStreamId ?? '',
+                          response: IsmLivePkResponce.rejected.value,
+                        );
+                      },
                     ),
                   ),
                   SizedBox(
@@ -97,7 +107,11 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: 'Accept',
                       onTap: () {
-                        isAccepted = true;
+                        controller.invitationPk(
+                          inviteId: inviteId ?? '',
+                          reciverStreamId: reciverStreamId ?? '',
+                          response: IsmLivePkResponce.accepted.value,
+                        );
                       },
                     ),
                   )

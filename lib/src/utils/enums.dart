@@ -71,6 +71,14 @@ enum IsmLiveCallType {
   final String value;
 }
 
+enum IsmLivePkResponce {
+  accepted('Accepted'),
+  rejected('Rejected');
+
+  const IsmLivePkResponce(this.value);
+  final String value;
+}
+
 enum IsmLiveMeetingType {
   videoCall(0),
   audioCall(1);
@@ -120,6 +128,7 @@ enum IsmLiveActions {
   publisherTimeout('publisherTimeout'),
   publishStarted('publishStarted'),
   publishStopped('publishStopped'),
+  pubsubMessagePublished('pubsubMessagePublished'),
   streamStarted('streamStarted'),
   streamStopped('streamStopped'),
   streamStartPresence('streamStartPresence'),
@@ -153,6 +162,8 @@ enum IsmLiveActions {
         IsmLiveActions.publisherTimeout.value: IsmLiveActions.publisherTimeout,
         IsmLiveActions.publishStarted.value: IsmLiveActions.publishStarted,
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
+        IsmLiveActions.pubsubMessagePublished.value:
+            IsmLiveActions.pubsubMessagePublished,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
         IsmLiveActions.streamStartPresence.value:

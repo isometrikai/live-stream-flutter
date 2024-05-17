@@ -25,4 +25,15 @@ class IsmLivePkRepository {
         senderStreamId: senderStreamId,
         userId: userId,
       );
+
+  Future<IsmLiveResponseModel> invitationPK({
+    required String streamId,
+    required String inviteId,
+    required String response,
+  }) async =>
+      await _api.invitationPK(
+        inviteId: inviteId,
+        response: response,
+        streamId: streamId,
+      );
 }

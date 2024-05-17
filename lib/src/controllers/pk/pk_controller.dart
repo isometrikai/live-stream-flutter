@@ -37,10 +37,10 @@ class IsmLivePkController extends GetxController
   final Rx<IsmLivePkViewers> _pkViewers = IsmLivePkViewers.audiencelist.obs;
   IsmLivePkViewers get pkViewers => _pkViewers.value;
   set pkViewers(IsmLivePkViewers value) => _pkViewers.value = value;
+
   @override
   void onInit() {
     super.onInit();
-
     pkTabController = TabController(
       vsync: this,
       length: IsmLivePk.values.length,
@@ -49,7 +49,6 @@ class IsmLivePkController extends GetxController
       vsync: this,
       length: IsmLivePkViewers.values.length,
     );
-
     pkPagination();
   }
 
@@ -92,6 +91,9 @@ class IsmLivePkController extends GetxController
     required String reciverName,
     required String description,
     required String title,
+    bool isInvite = false,
+    String? inviteId,
+    String? reciverStreamId,
   }) async {
     await IsmLiveUtility.openBottomSheet(
       IsmLivePkInviteSheet(
@@ -100,6 +102,9 @@ class IsmLivePkController extends GetxController
         userName: userName,
         reciverName: reciverName,
         title: title,
+        isInvite: isInvite,
+        inviteId: inviteId,
+        reciverStreamId: reciverStreamId,
       ),
     );
   }
@@ -138,7 +143,7 @@ class IsmLivePkController extends GetxController
     var res = await _viewModel.sendInvitationToUserForPK(
       reciverStreamId: reciverDetails.streamId,
       senderStreamId: streamController.streamId ?? '',
-      userId: streamController.user?.userId ?? '',
+      userId: reciverDetails.userId,
     );
 
     if (res) {
@@ -153,10 +158,17 @@ class IsmLivePkController extends GetxController
           userName: streamController.user?.name ?? '',
           reciverName: reciverDetails.name,
           title: 'Linking...');
-
-      // pkInviteList.removeWhere(
-      //   (element) => element.streamId == reciverStreamId,
-      // );
     }
+  }
+
+  void invitationPk({
+    required String inviteId,
+    required String response,
+    required String reciverStreamId,
+  }) async {
+    var res = await _viewModel.invitationPk(
+        streamId: streamController.streamId ?? '',
+        inviteId: inviteId,
+        response: response);
   }
 }

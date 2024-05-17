@@ -39,12 +39,34 @@ class IsmLivePkViewModel {
     required String userId,
     required String senderStreamId,
   }) async {
-    var res = await _repository.sendInvitationToUserForPK(
-      reciverStreamId: reciverStreamId,
-      senderStreamId: senderStreamId,
-      userId: userId,
-    );
+    try {
+      var res = await _repository.sendInvitationToUserForPK(
+        reciverStreamId: reciverStreamId,
+        senderStreamId: senderStreamId,
+        userId: userId,
+      );
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 
-    return !res.hasError;
+  Future<void> invitationPk({
+    required String streamId,
+    required String inviteId,
+    required String response,
+  }) async {
+    try {
+      var res = await _repository.invitationPK(
+        inviteId: inviteId,
+        response: response,
+        streamId: streamId,
+      );
+
+      IsmLiveLog('------------------>invitpk  $res');
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
   }
 }

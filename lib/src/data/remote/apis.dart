@@ -31,6 +31,7 @@ class IsmLiveApis {
       '/live/v2/analytics/stream/viewers';
   static const String getUsersToInviteForPK = '/live/v2/invite/users';
   static const String sendInvitationToUserForPK = '/live/v2/invite/users';
+  static const String invitaionPK = '/live/v2/invites';
 
   // Streams
   static const String _streaming = '/streaming/v2';
