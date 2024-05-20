@@ -45,6 +45,8 @@ class IsmLiveStrings {
   static const String reconnecting = 'Reconnecting... Please wait';
   static const String joiningLiveStream = 'Joining the live stream';
   static const String enablingYourVideo = 'Enabling your video';
+  static const String pkMessage =
+      'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day. Warning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
 
   static const String uploadingImage = 'Uploading Image';
 

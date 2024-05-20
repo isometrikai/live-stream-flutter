@@ -455,6 +455,10 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.messageSent:
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
+            if (message.metaData?.isPk ?? false) {
+              Get.back();
+              break;
+            }
             await _streamController.handleMessage(message);
             _updateStream();
           }

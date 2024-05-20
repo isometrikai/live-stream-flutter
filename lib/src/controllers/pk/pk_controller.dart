@@ -167,8 +167,39 @@ class IsmLivePkController extends GetxController
     required String reciverStreamId,
   }) async {
     var res = await _viewModel.invitationPk(
-        streamId: streamController.streamId ?? '',
-        inviteId: inviteId,
-        response: response);
+      streamId: streamController.streamId ?? '',
+      inviteId: inviteId,
+      response: response,
+    );
+
+    if (res) {
+      publishPk(reciverStreamId: reciverStreamId);
+    }
+  }
+
+  void publishPk({
+    required String reciverStreamId,
+  }) async {
+    var token = await _viewModel.publishPk(
+      streamId: reciverStreamId,
+      startPublish: true,
+    );
+
+    if (token == null) {
+      return;
+    }
+    await streamController.room!.disconnect();
+    await streamController.room!.dispose();
+
+    await streamController.connectStream(
+      token: token,
+      streamId: reciverStreamId,
+      isHost: false,
+      isNewStream: false,
+      isCopublisher: false,
+      isPk: true,
+    );
+
+    await streamController.sortParticipants();
   }
 }

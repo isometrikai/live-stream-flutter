@@ -36,4 +36,13 @@ class IsmLivePkRepository {
         response: response,
         streamId: streamId,
       );
+
+  Future<IsmLiveResponseModel> publishPk({
+    required String streamId,
+    required bool startPublish,
+  }) async =>
+      await _api.publishPk(
+        startPublish: startPublish,
+        streamId: streamId,
+      );
 }

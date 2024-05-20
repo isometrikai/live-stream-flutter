@@ -63,4 +63,20 @@ class IsmLivePkApis {
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
+
+  Future<IsmLiveResponseModel> publishPk({
+    required String streamId,
+    required bool startPublish,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'startPublish': startPublish,
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.publish,
+      type: IsmLiveRequestType.put,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
 }

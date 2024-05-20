@@ -52,7 +52,7 @@ class IsmLivePkViewModel {
     }
   }
 
-  Future<void> invitationPk({
+  Future<bool> invitationPk({
     required String streamId,
     required String inviteId,
     required String response,
@@ -64,9 +64,38 @@ class IsmLivePkViewModel {
         streamId: streamId,
       );
 
+      var isRejected = jsonDecode(res.data)['message'] == 'Invite Rejected';
+
+      if (res.hasError || isRejected) {
+        return false;
+      }
       IsmLiveLog('------------------>invitpk  $res');
+      return true;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
+  Future<String?> publishPk({
+    required String streamId,
+    required bool startPublish,
+  }) async {
+    try {
+      var res = await _repository.publishPk(
+        startPublish: startPublish,
+        streamId: streamId,
+      );
+
+      if (res.hasError) {
+        return null;
+      }
+      var rtcToken = jsonDecode(res.data)['rtcToken'];
+
+      return rtcToken;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
     }
+    return null;
   }
 }

@@ -21,6 +21,16 @@ class IsmLiveUserRole {
 
   bool get isCopublisher => _permissions.any((e) => e.isCopublisher);
 
+  bool get isPk => _permissions.any((e) => e.isPk);
+
+  void makePk() {
+    _permissions.add(IsmLivePermission.pk);
+  }
+
+  void removePk() {
+    _permissions.remove(IsmLivePermission.pk);
+  }
+
   void makeModerator() {
     if (isHost) {
       return;

@@ -94,6 +94,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: 'Reject',
                       onTap: () {
+                        Get.back();
                         controller.invitationPk(
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',
@@ -107,6 +108,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: 'Accept',
                       onTap: () {
+                        Get.back();
                         controller.invitationPk(
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',
@@ -118,12 +120,9 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                 ],
               )
             else
-              GetX<IsmLivePkController>(
-                builder: (controller) => LinearProgressIndicator(
-                  minHeight: IsmLiveDimens.ten,
-                  value: controller.pkLoadingValue,
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                ),
+              LinearProgressIndicator(
+                minHeight: IsmLiveDimens.ten,
+                borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
               ),
           ],
         ),

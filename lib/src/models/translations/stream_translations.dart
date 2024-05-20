@@ -6,6 +6,7 @@ class IsmLiveStreamTranslations {
     this.reconnecting,
     this.joiningLiveStream,
     this.enablingYourVideo,
+    this.pkMessage,
   });
   final String? youreLive;
   final String? moderationWarning;
@@ -13,4 +14,5 @@ class IsmLiveStreamTranslations {
   final String? reconnecting;
   final String? joiningLiveStream;
   final String? enablingYourVideo;
+  final String? pkMessage;
 }

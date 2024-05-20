@@ -253,6 +253,7 @@ enum IsmLiveMessageType {
   heart(1),
   gift(2),
   remove(3),
+
   presence(4);
 
   factory IsmLiveMessageType.fromValue(int data) =>
@@ -433,6 +434,7 @@ enum IsmLivePermission {
   host,
   viewer,
   moderator,
+  pk,
   copublisher;
 
   bool get isHost => this == IsmLivePermission.host;
@@ -442,4 +444,6 @@ enum IsmLivePermission {
   bool get isModerator => this == IsmLivePermission.moderator;
 
   bool get isCopublisher => this == IsmLivePermission.copublisher;
+
+  bool get isPk => this == IsmLivePermission.pk;
 }

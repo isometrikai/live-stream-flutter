@@ -78,8 +78,6 @@ class IsmLiveStreamController extends GetxController
 
   bool isSchedulingBroadcast = false;
 
-  bool isPk = false;
-
   bool restreamFacebook = false;
   bool restreamYoutube = false;
   bool restreamInstagram = false;
@@ -233,6 +231,8 @@ class IsmLiveStreamController extends GetxController
   bool get isCopublisher => userRole?.isCopublisher ?? false;
 
   bool get isPublishing => isHost || isCopublisher;
+
+  bool get isPk => userRole?.isPk ?? false;
 
   final Rx<IsmLiveStreamType> _streamType = IsmLiveStreamType.all.obs;
   IsmLiveStreamType get streamType => _streamType.value;
