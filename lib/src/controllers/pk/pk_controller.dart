@@ -167,18 +167,26 @@ class IsmLivePkController extends GetxController
     required String reciverStreamId,
   }) async {
     var res = await _viewModel.invitationPk(
-      streamId: streamController.streamId ?? '',
+      streamId: reciverStreamId,
       inviteId: inviteId,
       response: response,
     );
 
-    if (res) {
-      publishPk(reciverStreamId: reciverStreamId);
+    if (res != null) {
+      publishPk(
+        reciverStreamId: res.streamData.streamId ?? '',
+        hdBroadcast: res.streamData.hdBroadcast ?? false,
+        streamDiscription: res.streamData.streamDescription,
+        streamImage: res.streamData.streamImage,
+      );
     }
   }
 
   void publishPk({
     required String reciverStreamId,
+    String? streamImage,
+    String? streamDiscription,
+    bool hdBroadcast = false,
   }) async {
     var token = await _viewModel.publishPk(
       streamId: reciverStreamId,
@@ -192,6 +200,9 @@ class IsmLivePkController extends GetxController
     await streamController.room!.dispose();
 
     await streamController.connectStream(
+      hdBroadcast: hdBroadcast,
+      streamDiscription: streamDiscription,
+      streamImage: streamImage,
       token: token,
       streamId: reciverStreamId,
       isHost: false,
@@ -201,5 +212,11 @@ class IsmLivePkController extends GetxController
     );
 
     await streamController.sortParticipants();
+  }
+
+  void pkStatus(String streamId) async {
+    await _viewModel.pkStatus(
+      streamId: streamId,
+    );
   }
 }

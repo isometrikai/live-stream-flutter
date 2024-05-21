@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/pk/pk_invite_responce_model.dart';
 import 'package:get/get.dart';
 
 class IsmLivePkViewModel {
@@ -52,7 +53,7 @@ class IsmLivePkViewModel {
     }
   }
 
-  Future<bool> invitationPk({
+  Future<IsmLivePkInviteResponceModel?> invitationPk({
     required String streamId,
     required String inviteId,
     required String response,
@@ -64,17 +65,13 @@ class IsmLivePkViewModel {
         streamId: streamId,
       );
 
-      var isRejected = jsonDecode(res.data)['message'] == 'Invite Rejected';
-
-      if (res.hasError || isRejected) {
-        return false;
+      if (!res.hasError) {
+        return IsmLivePkInviteResponceModel.fromJson(res.data);
       }
-      IsmLiveLog('------------------>invitpk  $res');
-      return true;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
-      return false;
     }
+    return null;
   }
 
   Future<String?> publishPk({
@@ -97,5 +94,22 @@ class IsmLivePkViewModel {
       IsmLiveLog.error(e, st);
     }
     return null;
+  }
+
+  Future<void> pkStatus({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.pkStatus(
+        streamId: streamId,
+      );
+
+      if (res.hasError) {
+        return;
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return;
   }
 }

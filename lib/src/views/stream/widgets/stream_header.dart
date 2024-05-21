@@ -12,12 +12,14 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.onTapModerators,
     required this.description,
     required this.pk,
+    required this.pkCompleted,
   });
 
   final String name;
   final String description;
   final String imageUrl;
   final bool pk;
+  final bool pkCompleted;
 
   final Function()? onTapExit;
   final void Function(List<IsmLiveViewerModel>)? onTapViewers;
@@ -55,7 +57,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
           ),
           IsmLiveDimens.boxHeight8,
           if (pk)
-            name.isEmpty
+            !pkCompleted
                 ? LinearProgressIndicator(
                     minHeight: IsmLiveDimens.ten,
                     backgroundColor: Colors.red,

@@ -79,4 +79,18 @@ class IsmLivePkApis {
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
+
+  Future<IsmLiveResponseModel> pkStatus({
+    required String streamId,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+    };
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.pkStatus}?${payload.makeQuery()}',
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
 }

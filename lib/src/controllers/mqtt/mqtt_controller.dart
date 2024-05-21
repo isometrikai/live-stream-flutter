@@ -432,7 +432,7 @@ class IsmLiveMqttController extends GetxController {
               title: '@${pkDetails.userName} invite you to link',
               isInvite: true,
               inviteId: pkDetails.metaData?.inviteId ?? '',
-              reciverStreamId: pkDetails.metaData?.inviteId,
+              reciverStreamId: pkDetails.metaData?.streamId,
             );
           }
 
@@ -456,7 +456,14 @@ class IsmLiveMqttController extends GetxController {
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
             if (message.metaData?.isPk ?? false) {
-              Get.back();
+              _streamController.pkStages = IsmLivePkStages.isPk();
+              unawaited(_streamController.getStreamMembers(
+                streamId: streamId ?? '',
+              ));
+              if (_streamController.userRole?.isHost ?? false) {
+                Get.back();
+              }
+              _updateStream();
               break;
             }
             await _streamController.handleMessage(message);

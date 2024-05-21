@@ -31,6 +31,7 @@ class IsmLiveApis {
   static const String sendInvitationToUserForPK = '$_live/invite/users';
   static const String invitaionPK = '$_live/invites';
   static const String publish = '$_streaming/publish';
+  static const String pkStatus = '$_live/pk/stream/stats';
 
   // Streams
   static const String _streaming = '/streaming/v2';

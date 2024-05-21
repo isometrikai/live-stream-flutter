@@ -45,4 +45,10 @@ class IsmLivePkRepository {
         startPublish: startPublish,
         streamId: streamId,
       );
+  Future<IsmLiveResponseModel> pkStatus({
+    required String streamId,
+  }) async =>
+      await _api.pkStatus(
+        streamId: streamId,
+      );
 }

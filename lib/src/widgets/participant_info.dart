@@ -8,12 +8,14 @@ class ParticipantInfoWidget extends StatelessWidget {
     this.imageUrl,
     required this.name,
     required this.isHost,
+    required this.isFirstIndex,
   });
   //
   final String? title;
   final String? imageUrl;
   final String name;
   final bool isHost;
+  final bool isFirstIndex;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -21,7 +23,7 @@ class ParticipantInfoWidget extends StatelessWidget {
         child: ListTile(
           contentPadding: IsmLiveDimens.edgeInsets10_0,
           horizontalTitleGap: IsmLiveDimens.five,
-          leading: isHost
+          leading: isFirstIndex
               ? SizedBox(
                   child: IsmLiveImage.network(
                     imageUrl ?? '',
@@ -35,10 +37,11 @@ class ParticipantInfoWidget extends StatelessWidget {
           title: Text(
             title ?? '',
             style: const TextStyle(color: Colors.white),
-            textAlign: isHost ? TextAlign.start : TextAlign.end,
+            textAlign: isFirstIndex ? TextAlign.start : TextAlign.end,
           ),
           subtitle: UnconstrainedBox(
-            alignment: isHost ? Alignment.centerLeft : Alignment.centerRight,
+            alignment:
+                isFirstIndex ? Alignment.centerLeft : Alignment.centerRight,
             child: Container(
               padding: IsmLiveDimens.edgeInsets2,
               decoration: BoxDecoration(
@@ -51,7 +54,7 @@ class ParticipantInfoWidget extends StatelessWidget {
               ),
             ),
           ),
-          trailing: isHost == false
+          trailing: isFirstIndex == false
               ? SizedBox(
                   child: IsmLiveImage.network(
                     imageUrl ?? '',

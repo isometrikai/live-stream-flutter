@@ -95,6 +95,8 @@ class _IsmLiveStreamView extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
+          var controller = Get.find<IsmLiveStreamController>();
+          controller.initAnimation();
           await WakelockPlus.enable();
           IsmLiveUtility.updateLater(() {
             if (isHost) {
@@ -118,7 +120,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-          // controller.animationController.dispose();
+          controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -241,7 +243,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                 ],
                 if (controller.isPk &&
-                    !controller.animationController.isCompleted) ...[
+                    !controller.animationController.isCompleted &&
+                    controller.participantTracks.length > 1) ...[
                   AnimatedBuilder(
                     animation: controller.alignmentAnimation,
                     builder: (context, child) => AnimatedAlign(
@@ -263,7 +266,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (controller.animationController.isCompleted)
+                if (controller.animationController.isCompleted &&
+                    (controller.userRole?.isHost ?? false))
                   Align(
                     alignment: Alignment.center,
                     child: IsmLiveTapHandler(
@@ -296,6 +300,7 @@ class _StreamHeader extends StatelessWidget {
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',
+            pkCompleted: false,
             onTapModerators: () {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),

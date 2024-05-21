@@ -172,6 +172,12 @@ mixin StreamOngoingMixin {
 
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
+
+    if (_controller.isPk) {
+      IsmLiveDebouncer(durationtime: 10000).run(() async {
+        await _controller.animationController.forward();
+      });
+    }
   }
 
   String controlIcon(IsmLiveStreamOption option) {
@@ -368,8 +374,6 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
-        unawaited(_controller.animationController.forward());
-
         break;
       case IsmLiveStreamOption.members:
         break;

@@ -182,13 +182,15 @@ mixin StreamJoinMixin {
 
     // Subscribe to the stream
     _controller.streamId = streamId;
+    _controller.pkStages = null;
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
     }
     if (isPk) {
-      _controller.userRole?.makePk();
+      _controller.pkStages = IsmLivePkStages.isPk();
+      _controller.userRole?.makePkGuest();
     } else {
       _controller.userRole?.leaveCopublishing();
     }

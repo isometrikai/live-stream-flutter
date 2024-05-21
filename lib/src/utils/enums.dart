@@ -221,7 +221,15 @@ enum IsmLiveStreamOption {
         IsmLiveStreamOption.multiLive,
 
         IsmLiveStreamOption.share,
-        // IsmLiveStreamOption.favourite,
+
+        IsmLiveStreamOption.rotateCamera,
+        IsmLiveStreamOption.settings,
+      ];
+
+  static List<IsmLiveStreamOption> get pkOptions => [
+        IsmLiveStreamOption.multiLive,
+        IsmLiveStreamOption.favourite,
+        IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];
@@ -434,7 +442,8 @@ enum IsmLivePermission {
   host,
   viewer,
   moderator,
-  pk,
+
+  pkGuest,
   copublisher;
 
   bool get isHost => this == IsmLivePermission.host;
@@ -445,5 +454,17 @@ enum IsmLivePermission {
 
   bool get isCopublisher => this == IsmLivePermission.copublisher;
 
-  bool get isPk => this == IsmLivePermission.pk;
+  bool get isPkGuest => this == IsmLivePermission.pkGuest;
+}
+
+enum IsmLiveStages {
+  pk,
+  pkStart,
+  pkEnd;
+
+  bool get isPkStart => this == IsmLiveStages.pkStart;
+
+  bool get isPk => this == IsmLiveStages.pk;
+
+  bool get isPkEnd => this == IsmLiveStages.pkEnd;
 }
