@@ -415,6 +415,7 @@ class IsmLiveMqttController extends GetxController {
 
         case IsmLiveActions.pubsubMessagePublished:
           final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
+          _pkController.inviteId = pkDetails.metaData?.inviteId ?? '';
           if (pkDetails.userId != _streamController.user?.userId) {
             if (Get.isBottomSheetOpen ?? false) {
               Get.back();
@@ -455,18 +456,12 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.messageSent:
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
-            if (message.metaData?.isPk ?? false) {
-              _streamController.pkStages = IsmLivePkStages.isPk();
-              unawaited(_streamController.getStreamMembers(
-                streamId: streamId ?? '',
-              ));
-              if (_streamController.userRole?.isHost ?? false) {
-                Get.back();
-              }
-              _updateStream();
-              break;
+            if (message.messageType == IsmLiveMessageType.pk ||
+                message.messageType == IsmLiveMessageType.pkStart) {
+              _pkController.pkEventHandler(payload);
+            } else {
+              await _streamController.handleMessage(message);
             }
-            await _streamController.handleMessage(message);
             _updateStream();
           }
           break;

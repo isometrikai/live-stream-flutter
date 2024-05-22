@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,9 +28,9 @@ class IsmLivePkController extends GetxController
   set pkInviteList(List<IsmLivePkInviteModel> list) =>
       _pkInviteList.value = list;
 
-  final RxDouble _pkLoadingValue = 0.2.obs;
-  double get pkLoadingValue => _pkLoadingValue.value;
-  set pkLoadingValue(double value) => _pkLoadingValue.value = value;
+  final RxString _pkSelectTime = ''.obs;
+  String get pkSelectTime => _pkSelectTime.value;
+  set pkSelectTime(String value) => _pkSelectTime.value = value;
 
   final Rx<IsmLivePk> _pk = IsmLivePk.inviteList.obs;
   IsmLivePk get pk => _pk.value;
@@ -37,6 +39,8 @@ class IsmLivePkController extends GetxController
   final Rx<IsmLivePkViewers> _pkViewers = IsmLivePkViewers.audiencelist.obs;
   IsmLivePkViewers get pkViewers => _pkViewers.value;
   set pkViewers(IsmLivePkViewers value) => _pkViewers.value = value;
+
+  String? inviteId;
 
   @override
   void onInit() {
@@ -63,6 +67,25 @@ class IsmLivePkController extends GetxController
         pkViewers = IsmLivePkViewers.values[pkViewersTabController.index];
       });
     });
+  }
+
+  void pkEventHandler(Map<String, dynamic> payload) async {
+    streamController.pkStages = IsmLivePkStages.isPk();
+    var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload);
+
+    if (pkDetails.message == IsmLiveStatus.pkStart) {
+      streamController.pkStages?.makePkStart();
+    }
+
+    unawaited(
+      streamController.getStreamMembers(
+        streamId: streamController.streamId ?? '',
+      ),
+    );
+    if ((streamController.userRole?.isHost ?? false) &&
+        (Get.isBottomSheetOpen ?? false)) {
+      Get.back();
+    }
   }
 
   bool isPkInviteApisCall = false;
@@ -95,6 +118,7 @@ class IsmLivePkController extends GetxController
     String? inviteId,
     String? reciverStreamId,
   }) async {
+    this.inviteId = inviteId;
     await IsmLiveUtility.openBottomSheet(
       IsmLivePkInviteSheet(
         description: description,
@@ -218,5 +242,14 @@ class IsmLivePkController extends GetxController
     await _viewModel.pkStatus(
       streamId: streamId,
     );
+  }
+
+  Future<void> startPkBattle() async {
+    if (pkSelectTime.isNotEmpty) {
+      await _viewModel.startPkBattle(
+        battleTimeInMin: pkSelectTime,
+        inviteId: inviteId ?? '',
+      );
+    }
   }
 }

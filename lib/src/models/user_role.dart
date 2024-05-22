@@ -85,12 +85,22 @@ class IsmLivePkStages {
 
   bool get isPk => _stages.any((e) => e.isPk);
 
+  bool get isPkStart => _stages.any((e) => e.isPkStart);
+
   void makePk() {
     _stages.add(IsmLiveStages.pk);
   }
 
   void removePk() {
     _stages.remove(IsmLiveStages.pk);
+  }
+
+  void makePkStart() {
+    _stages.add(IsmLiveStages.pkStart);
+  }
+
+  void removePkStart() {
+    _stages.remove(IsmLiveStages.pkStart);
   }
 
   @override

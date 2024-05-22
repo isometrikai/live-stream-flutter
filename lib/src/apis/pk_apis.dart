@@ -80,6 +80,24 @@ class IsmLivePkApis {
     );
   }
 
+  Future<IsmLiveResponseModel> startPkBattle({
+    required String inviteId,
+    required String battleTimeInMin,
+  }) async {
+    var payload = {
+      'inviteId': inviteId,
+      'battleTimeInMin': int.parse(battleTimeInMin),
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.pkStart,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
   Future<IsmLiveResponseModel> pkStatus({
     required String streamId,
   }) async {
@@ -91,6 +109,7 @@ class IsmLivePkApis {
       baseUrl: baseUrl,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
     );
   }
 }

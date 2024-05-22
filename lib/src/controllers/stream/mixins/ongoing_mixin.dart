@@ -2,6 +2,7 @@ part of '../stream_controller.dart';
 
 mixin StreamOngoingMixin {
   IsmLiveStreamController get _controller => Get.find();
+  IsmLivePkController get _pkController => Get.find();
 // Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
   // Function to initialize the stream
@@ -14,6 +15,8 @@ mixin StreamOngoingMixin {
         _controller.showEmojiBoard = false;
       }
     });
+
+    _pkController.pkStatus(streamId);
     // Pagination setup for the stream
     _controller.pagination(streamId);
     // Set up event listeners
@@ -50,6 +53,7 @@ mixin StreamOngoingMixin {
         );
       }
     }
+
     // Sort participants and update UI
     await sortParticipants();
     // Toggle speaker if on mobile platform

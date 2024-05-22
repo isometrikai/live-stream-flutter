@@ -45,6 +45,16 @@ class IsmLivePkRepository {
         startPublish: startPublish,
         streamId: streamId,
       );
+
+  Future<IsmLiveResponseModel> startPkBattle({
+    required String inviteId,
+    required String battleTimeInMin,
+  }) async =>
+      await _api.startPkBattle(
+        battleTimeInMin: battleTimeInMin,
+        inviteId: inviteId,
+      );
+
   Future<IsmLiveResponseModel> pkStatus({
     required String streamId,
   }) async =>

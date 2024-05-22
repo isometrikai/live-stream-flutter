@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/pk/pk_invite_responce_model.dart';
 import 'package:get/get.dart';
 
 class IsmLivePkViewModel {
@@ -103,6 +102,27 @@ class IsmLivePkViewModel {
       var res = await _repository.pkStatus(
         streamId: streamId,
       );
+
+      if (res.hasError) {
+        return;
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return;
+  }
+
+  Future<void> startPkBattle({
+    required String inviteId,
+    required String battleTimeInMin,
+  }) async {
+    try {
+      var res = await _repository.startPkBattle(
+        battleTimeInMin: battleTimeInMin,
+        inviteId: inviteId,
+      );
+
+      IsmLiveLog('-----------------------> $res');
 
       if (res.hasError) {
         return;

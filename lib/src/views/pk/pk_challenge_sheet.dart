@@ -56,21 +56,34 @@ class IsmLivePkChallengeSheet extends StatelessWidget {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: 4,
-                itemBuilder: (context, index) => Container(
-                  margin: IsmLiveDimens.edgeInsets10_0,
-                  width: IsmLiveDimens.seventy,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(IsmLiveDimens.fifty),
-                  ),
-                  child: Center(child: Text('$index min')),
-                ),
+                itemBuilder: (context, index) {
+                  var time = (index + 1 * 2).toString();
+                  return GetX<IsmLivePkController>(
+                      builder: (controller) => IsmLiveTapHandler(
+                            onTap: () {
+                              controller.pkSelectTime = time;
+                            },
+                            child: Container(
+                              margin: IsmLiveDimens.edgeInsets10_0,
+                              width: IsmLiveDimens.seventy,
+                              decoration: BoxDecoration(
+                                border: controller.pkSelectTime == time
+                                    ? Border.all(color: Colors.red)
+                                    : null,
+                                borderRadius:
+                                    BorderRadius.circular(IsmLiveDimens.fifty),
+                              ),
+                              child: Center(child: Text('$time min')),
+                            ),
+                          ));
+                },
               ),
             ),
             IsmLiveDimens.boxHeight32,
-            const IsmLiveButton(
-              label: 'confirm & start',
+            IsmLiveButton(
+              label: 'Confirm & Start',
               small: true,
+              onTap: Get.find<IsmLivePkController>().startPkBattle,
             ),
           ],
         ),

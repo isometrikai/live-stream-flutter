@@ -261,7 +261,8 @@ enum IsmLiveMessageType {
   heart(1),
   gift(2),
   remove(3),
-
+  pkStart(23),
+  pk(20),
   presence(4);
 
   factory IsmLiveMessageType.fromValue(int data) =>
@@ -271,6 +272,8 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.gift.value: IsmLiveMessageType.gift,
         IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
+        IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
+        IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
       }[data] ??
       IsmLiveMessageType.normal;
 
@@ -467,4 +470,21 @@ enum IsmLiveStages {
   bool get isPk => this == IsmLiveStages.pk;
 
   bool get isPkEnd => this == IsmLiveStages.pkEnd;
+}
+
+enum IsmLiveStatus {
+  pk('stream is mearged for Pk challenge'),
+  pkStart('pk started'),
+  pkEnd('pk Ended');
+
+  factory IsmLiveStatus.fromValue(String data) =>
+      <String, IsmLiveStatus>{
+        IsmLiveStatus.pkEnd.label: IsmLiveStatus.pkEnd,
+        IsmLiveStatus.pk.label: IsmLiveStatus.pk,
+        IsmLiveStatus.pkStart.label: IsmLiveStatus.pkStart,
+      }[data] ??
+      IsmLiveStatus.pk;
+
+  const IsmLiveStatus(this.label);
+  final String label;
 }

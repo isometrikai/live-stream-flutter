@@ -472,86 +472,86 @@ class IsmLivePkStreamDetails {
 }
 
 class IsmLivePkUserDetails {
-  final String? userid;
-  final String? username;
-  final String? firstname;
+  final String? userId;
+  final String? userName;
+  final String? firstName;
   final IsmLiveMetaData? userMetaData;
-  final String? lastname;
-  final String? profilepic;
+  final String? lastName;
+  final String? profilePic;
   final int? coins;
-  final String? streamimage;
-  final String? isometrikuserid;
-  final String? streamid;
+  final String? streamImage;
+  final String? isometrikUserId;
+  final String? streamId;
   IsmLivePkUserDetails({
-    this.userid,
-    this.username,
-    this.firstname,
+    this.userId,
+    this.userName,
+    this.firstName,
     this.userMetaData,
-    this.lastname,
-    this.profilepic,
+    this.lastName,
+    this.profilePic,
     this.coins,
-    this.streamimage,
-    this.isometrikuserid,
-    this.streamid,
+    this.streamImage,
+    this.isometrikUserId,
+    this.streamId,
   });
 
   IsmLivePkUserDetails copyWith({
-    String? userid,
-    String? username,
-    String? firstname,
+    String? userId,
+    String? userName,
+    String? firstName,
     IsmLiveMetaData? userMetaData,
-    String? lastname,
-    String? profilepic,
+    String? lastName,
+    String? profilePic,
     int? coins,
-    String? streamimage,
-    String? isometrikuserid,
-    String? streamid,
+    String? streamImage,
+    String? isometrikUserId,
+    String? streamId,
   }) =>
       IsmLivePkUserDetails(
-        userid: userid ?? this.userid,
-        username: username ?? this.username,
-        firstname: firstname ?? this.firstname,
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
+        firstName: firstName ?? this.firstName,
         userMetaData: userMetaData ?? this.userMetaData,
-        lastname: lastname ?? this.lastname,
-        profilepic: profilepic ?? this.profilepic,
+        lastName: lastName ?? this.lastName,
+        profilePic: profilePic ?? this.profilePic,
         coins: coins ?? this.coins,
-        streamimage: streamimage ?? this.streamimage,
-        isometrikuserid: isometrikuserid ?? this.isometrikuserid,
-        streamid: streamid ?? this.streamid,
+        streamImage: streamImage ?? this.streamImage,
+        isometrikUserId: isometrikUserId ?? this.isometrikUserId,
+        streamId: streamId ?? this.streamId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'userid': userid,
-        'username': username,
-        'firstname': firstname,
+        'userId': userId,
+        'userName': userName,
+        'firstName': firstName,
         'userMetaData': userMetaData?.toMap(),
-        'lastname': lastname,
-        'profilepic': profilepic,
+        'lastName': lastName,
+        'profilePic': profilePic,
         'coins': coins,
-        'streamimage': streamimage,
-        'isometrikuserid': isometrikuserid,
-        'streamid': streamid,
+        'streamImage': streamImage,
+        'isometrikUserId': isometrikUserId,
+        'streamId': streamId,
       };
 
   factory IsmLivePkUserDetails.fromMap(Map<String, dynamic> map) =>
       IsmLivePkUserDetails(
-        userid: map['userid'] != null ? map['userid'] as String : null,
-        username: map['username'] != null ? map['username'] as String : null,
-        firstname: map['firstname'] != null ? map['firstname'] as String : null,
+        userId: map['userId'] != null ? map['userId'] as String : null,
+        userName: map['userName'] != null ? map['userName'] as String : null,
+        firstName: map['firstName'] != null ? map['firstName'] as String : null,
         userMetaData: map['userMetaData'] != null
             ? IsmLiveMetaData.fromMap(
                 map['userMetaData'] as Map<String, dynamic>)
             : null,
-        lastname: map['lastname'] != null ? map['lastname'] as String : null,
-        profilepic:
-            map['profilepic'] != null ? map['profilepic'] as String : null,
+        lastName: map['lastName'] != null ? map['lastName'] as String : null,
+        profilePic:
+            map['profilePic'] != null ? map['profilePic'] as String : null,
         coins: map['coins'] != null ? map['coins'] as int : null,
-        streamimage:
-            map['streamimage'] != null ? map['streamimage'] as String : null,
-        isometrikuserid: map['isometrikuserid'] != null
-            ? map['isometrikuserid'] as String
+        streamImage:
+            map['streamImage'] != null ? map['streamImage'] as String : null,
+        isometrikUserId: map['isometrikUserId'] != null
+            ? map['isometrikUserId'] as String
             : null,
-        streamid: map['streamid'] != null ? map['streamid'] as String : null,
+        streamId: map['streamId'] != null ? map['streamId'] as String : null,
       );
 
   String toJson() => json.encode(toMap());
@@ -561,34 +561,34 @@ class IsmLivePkUserDetails {
 
   @override
   String toString() =>
-      'IsmLivePkUserDetails(userid: $userid, username: $username, firstname: $firstname, userMetaData: $userMetaData, lastname: $lastname, profilepic: $profilepic, coins: $coins, streamimage: $streamimage, isometrikuserid: $isometrikuserid, streamid: $streamid)';
+      'IsmLivePkUserDetails(userId: $userId, userName: $userName, firstName: $firstName, userMetaData: $userMetaData, lastName: $lastName, profilePic: $profilePic, coins: $coins, streamImage: $streamImage, isometrikUserId: $isometrikUserId, streamId: $streamId)';
 
   @override
   bool operator ==(covariant IsmLivePkUserDetails other) {
     if (identical(this, other)) return true;
 
-    return other.userid == userid &&
-        other.username == username &&
-        other.firstname == firstname &&
+    return other.userId == userId &&
+        other.userName == userName &&
+        other.firstName == firstName &&
         other.userMetaData == userMetaData &&
-        other.lastname == lastname &&
-        other.profilepic == profilepic &&
+        other.lastName == lastName &&
+        other.profilePic == profilePic &&
         other.coins == coins &&
-        other.streamimage == streamimage &&
-        other.isometrikuserid == isometrikuserid &&
-        other.streamid == streamid;
+        other.streamImage == streamImage &&
+        other.isometrikUserId == isometrikUserId &&
+        other.streamId == streamId;
   }
 
   @override
   int get hashCode =>
-      userid.hashCode ^
-      username.hashCode ^
-      firstname.hashCode ^
+      userId.hashCode ^
+      userName.hashCode ^
+      firstName.hashCode ^
       userMetaData.hashCode ^
-      lastname.hashCode ^
-      profilepic.hashCode ^
+      lastName.hashCode ^
+      profilePic.hashCode ^
       coins.hashCode ^
-      streamimage.hashCode ^
-      isometrikuserid.hashCode ^
-      streamid.hashCode;
+      streamImage.hashCode ^
+      isometrikUserId.hashCode ^
+      streamId.hashCode;
 }
