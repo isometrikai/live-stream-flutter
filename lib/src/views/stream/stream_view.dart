@@ -118,7 +118,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-          controller.animationController.dispose();
+          // controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -240,39 +240,39 @@ class _IsmLiveStreamView extends StatelessWidget {
                       onCompleteSheet: YourLiveSheet(),
                     ),
                 ],
-                if (controller.isPk &&
-                    !controller.animationController.isCompleted) ...[
-                  AnimatedBuilder(
-                    animation: controller.alignmentAnimation,
-                    builder: (context, child) => AnimatedAlign(
-                      alignment: controller.alignmentAnimation.value,
-                      duration: const Duration(
-                        milliseconds: 100,
-                      ), // This can be set to a smaller duration to have smooth transitions
-                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
-                    ),
-                  ),
-                  AnimatedBuilder(
-                    animation: controller.alignmentAnimationRight,
-                    builder: (context, child) => AnimatedAlign(
-                      alignment: controller.alignmentAnimationRight.value,
-                      duration: const Duration(
-                        milliseconds: 100,
-                      ), // This can be set to a smaller duration to have smooth transitions
-                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
-                    ),
-                  ),
-                ],
-                if (controller.animationController.isCompleted)
-                  Align(
-                    alignment: Alignment.center,
-                    child: IsmLiveTapHandler(
-                      onTap: controller.pkChallengeSheet,
-                      child: const IsmLiveImage.svg(
-                        IsmLiveAssetConstants.pkStart,
-                      ),
-                    ),
-                  ),
+                // if (controller.isPk &&
+                //     !controller.animationController.isCompleted) ...[
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimation,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimation.value,
+                //       duration: const Duration(
+                //         milliseconds: 100,
+                //       ), // This can be set to a smaller duration to have smooth transitions
+                //       child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
+                //     ),
+                //   ),
+                //   AnimatedBuilder(
+                //     animation: controller.alignmentAnimationRight,
+                //     builder: (context, child) => AnimatedAlign(
+                //       alignment: controller.alignmentAnimationRight.value,
+                //       duration: const Duration(
+                //         milliseconds: 100,
+                //       ), // This can be set to a smaller duration to have smooth transitions
+                //       child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
+                //     ),
+                //   ),
+                // ],
+                // if (controller.animationController.isCompleted)
+                //   Align(
+                //     alignment: Alignment.center,
+                //     child: IsmLiveTapHandler(
+                //       onTap: controller.pkChallengeSheet,
+                //       child: const IsmLiveImage.svg(
+                //         IsmLiveAssetConstants.pkStart,
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
           ),
