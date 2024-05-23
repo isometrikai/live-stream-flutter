@@ -98,6 +98,39 @@ class IsmLivePkApis {
     );
   }
 
+  Future<IsmLiveResponseModel> stopPkBattle({
+    required String pkId,
+    required String action,
+  }) async {
+    var payload = {
+      'pkId': pkId,
+      'action': action,
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.pkStop,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> pkWinner({
+    required String pkId,
+  }) async {
+    var payload = {
+      'pkId': pkId,
+    };
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.pkWinner}?${payload.makeQuery()}',
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
   Future<IsmLiveResponseModel> pkStatus({
     required String streamId,
   }) async {

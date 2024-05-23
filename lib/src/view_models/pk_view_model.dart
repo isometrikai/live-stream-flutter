@@ -122,7 +122,42 @@ class IsmLivePkViewModel {
         inviteId: inviteId,
       );
 
-      IsmLiveLog('-----------------------> $res');
+      if (res.hasError) {
+        return;
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return;
+  }
+
+  Future<bool> stopPkBattle({
+    required String action,
+    required String pkId,
+  }) async {
+    try {
+      var res = await _repository.stopPkBattle(
+        action: action,
+        pkId: pkId,
+      );
+
+      if (res.hasError) {
+        return false;
+      }
+      return true;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
+  Future<void> pkWinner({
+    required String pkId,
+  }) async {
+    try {
+      var res = await _repository.pkWinner(
+        pkId: pkId,
+      );
 
       if (res.hasError) {
         return;

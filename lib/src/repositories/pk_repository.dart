@@ -55,6 +55,22 @@ class IsmLivePkRepository {
         inviteId: inviteId,
       );
 
+  Future<IsmLiveResponseModel> stopPkBattle({
+    required String action,
+    required String pkId,
+  }) async =>
+      await _api.stopPkBattle(
+        action: action,
+        pkId: pkId,
+      );
+
+  Future<IsmLiveResponseModel> pkWinner({
+    required String pkId,
+  }) async =>
+      await _api.pkWinner(
+        pkId: pkId,
+      );
+
   Future<IsmLiveResponseModel> pkStatus({
     required String streamId,
   }) async =>

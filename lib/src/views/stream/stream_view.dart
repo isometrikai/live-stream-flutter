@@ -148,7 +148,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                               controller.hostDetails,
                               controller.descriptionController.text,
                             ) ??
-                            _StreamHeader(streamId: streamId)
+                            _StreamHeader(streamId: controller.streamId ?? '')
                         : IsmLiveDimens.box0,
                   ),
                 ),
@@ -182,7 +182,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                 IsmLiveApp.inputBuilder?.call(
                                                       context,
                                                       IsmLiveMessageField(
-                                                        streamId: streamId,
+                                                        streamId: controller
+                                                                .streamId ??
+                                                            '',
                                                         isHost: controller
                                                             .isPublishing,
                                                       ),
@@ -192,7 +194,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                           .edgeInsets8_0,
                                                       child:
                                                           IsmLiveMessageField(
-                                                        streamId: streamId,
+                                                        streamId: controller
+                                                                .streamId ??
+                                                            '',
                                                         isHost: controller
                                                             .isPublishing,
                                                       ),
@@ -205,7 +209,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                         isCopublishing: controller
                                                 .participantTracks.length >
                                             1,
-                                        streamId: streamId,
+                                        streamId: controller.streamId ?? '',
                                       ),
                                     ],
                                   ),
@@ -267,7 +271,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                   ),
                 ],
                 if (controller.animationController.isCompleted &&
-                    (controller.userRole?.isHost ?? false))
+                    (controller.userRole?.isHost ?? false) &&
+                    !(controller.pkStages?.isPkStart ?? false) &&
+                    controller.participantTracks.length == 2)
                   Align(
                     alignment: Alignment.center,
                     child: IsmLiveTapHandler(
@@ -276,6 +282,11 @@ class _IsmLiveStreamView extends StatelessWidget {
                         IsmLiveAssetConstants.pkStart,
                       ),
                     ),
+                  ),
+                if (controller.pkStages?.isPkStart ?? false)
+                  const Align(
+                    alignment: Alignment.center,
+                    child: IsmLivePkTimerContainer(),
                   ),
               ],
             ),

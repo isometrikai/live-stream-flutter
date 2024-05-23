@@ -51,6 +51,9 @@ mixin StreamMessageMixin {
       case IsmLiveMessageType.pkStart:
         IsmLiveLog.success('Pk Start Message');
         break;
+      case IsmLiveMessageType.pkAccepted:
+        IsmLiveLog.success('Pk Accpected Message');
+        break;
     }
   }
 

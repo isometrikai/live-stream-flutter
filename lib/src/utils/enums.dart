@@ -72,8 +72,15 @@ enum IsmLiveCallType {
 }
 
 enum IsmLivePkResponce {
-  accepted('Accepted'),
-  rejected('Rejected');
+  accepted('Invite Accepted'),
+  rejected('Invite Rejected');
+
+  factory IsmLivePkResponce.fromValue(String data) =>
+      {
+        IsmLivePkResponce.accepted.value: IsmLivePkResponce.accepted,
+        IsmLivePkResponce.rejected.value: IsmLivePkResponce.rejected,
+      }[data] ??
+      IsmLivePkResponce.rejected;
 
   const IsmLivePkResponce(this.value);
   final String value;
@@ -227,7 +234,8 @@ enum IsmLiveStreamOption {
       ];
 
   static List<IsmLiveStreamOption> get pkOptions => [
-        IsmLiveStreamOption.multiLive,
+        // IsmLiveStreamOption.multiLive,
+
         IsmLiveStreamOption.favourite,
         IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,
@@ -262,6 +270,7 @@ enum IsmLiveMessageType {
   gift(2),
   remove(3),
   pkStart(23),
+  pkAccepted(21),
   pk(20),
   presence(4);
 
@@ -273,6 +282,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
+        IsmLiveMessageType.pkAccepted.value: IsmLiveMessageType.pkAccepted,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
       }[data] ??
       IsmLiveMessageType.normal;

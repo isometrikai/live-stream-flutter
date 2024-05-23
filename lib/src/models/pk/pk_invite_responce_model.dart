@@ -5,7 +5,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/foundation.dart';
 
 class IsmLivePkInviteResponceModel {
-  final String message;
+  final IsmLivePkResponce message;
   final IsmLivePkStreamDetails streamData;
   IsmLivePkInviteResponceModel({
     required this.message,
@@ -13,7 +13,7 @@ class IsmLivePkInviteResponceModel {
   });
 
   IsmLivePkInviteResponceModel copyWith({
-    String? message,
+    IsmLivePkResponce? message,
     IsmLivePkStreamDetails? streamData,
   }) =>
       IsmLivePkInviteResponceModel(
@@ -28,7 +28,7 @@ class IsmLivePkInviteResponceModel {
 
   factory IsmLivePkInviteResponceModel.fromMap(Map<String, dynamic> map) =>
       IsmLivePkInviteResponceModel(
-        message: map['message'] as String,
+        message: IsmLivePkResponce.fromValue(map['message'] as String),
         streamData: IsmLivePkStreamDetails.fromMap(
             map['streamData'] as Map<String, dynamic>),
       );

@@ -175,24 +175,25 @@ mixin StreamJoinMixin {
     bool joinByScrolling = false,
     bool isInteractive = false,
   }) async {
+    // Subscribe to the stream
+    _controller.streamId = streamId;
+
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
     _controller.descriptionController.text =
         streamDiscription ?? _controller.descriptionController.text;
 
-    // Subscribe to the stream
-    _controller.streamId = streamId;
     _controller.pkStages = null;
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
-    }
-    if (isPk) {
-      _controller.pkStages = IsmLivePkStages.isPk();
-      _controller.userRole?.makePkGuest();
     } else {
       _controller.userRole?.leaveCopublishing();
+    }
+    if (isPk) {
+      _controller.pkStages ??= IsmLivePkStages.isPk();
+      _controller.userRole?.makePkGuest();
     }
     _controller.update([IsmGoLiveView.updateId]);
     unawaited(
@@ -306,9 +307,7 @@ mixin StreamJoinMixin {
         streamId: streamId,
         isHost: isHost,
       );
-
       _controller.update([IsmLiveStreamView.updateId]);
-
       startStreamTimer();
 
       if (!joinByScrolling) {

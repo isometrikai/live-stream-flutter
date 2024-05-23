@@ -457,7 +457,8 @@ class IsmLiveMqttController extends GetxController {
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
             if (message.messageType == IsmLiveMessageType.pk ||
-                message.messageType == IsmLiveMessageType.pkStart) {
+                message.messageType == IsmLiveMessageType.pkStart ||
+                message.messageType == IsmLiveMessageType.pkAccepted) {
               _pkController.pkEventHandler(payload);
             } else {
               await _streamController.handleMessage(message);
@@ -556,8 +557,13 @@ class IsmLiveMqttController extends GetxController {
           break;
 
         case IsmLiveActions.publisherTimeout:
+          break;
         case IsmLiveActions.publishStarted:
+          break;
         case IsmLiveActions.publishStopped:
+          _streamController.pkStages = null;
+          _pkController.pkTimer?.cancel();
+          _pkController.pkTimer = null;
           break;
         case IsmLiveActions.streamStartPresence:
           unawaited(_streamController.getStreams());

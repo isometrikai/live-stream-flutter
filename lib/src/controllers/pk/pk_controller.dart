@@ -40,7 +40,13 @@ class IsmLivePkController extends GetxController
   IsmLivePkViewers get pkViewers => _pkViewers.value;
   set pkViewers(IsmLivePkViewers value) => _pkViewers.value = value;
 
+  final Rx<Duration> _pkDuration = Duration.zero.obs;
+  Duration get pkDuration => _pkDuration.value;
+  set pkDuration(Duration value) => _pkDuration.value = value;
+
   String? inviteId;
+
+  Timer? pkTimer;
 
   @override
   void onInit() {
@@ -69,22 +75,44 @@ class IsmLivePkController extends GetxController
     });
   }
 
+  void startPkTimer({
+    required int time,
+    required String pkId,
+  }) {
+    if (pkTimer != null) {
+      return;
+    }
+
+    pkDuration = Duration(minutes: time);
+    pkTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        pkDuration -= const Duration(
+          seconds: 1,
+        );
+        if (pkDuration.inSeconds == 0) {
+          stopPkBattle(action: 'FORCE_STOP', pkId: pkId);
+          pkTimer?.cancel();
+          pkTimer = null;
+        }
+      },
+    );
+  }
+
   void pkEventHandler(Map<String, dynamic> payload) async {
-    streamController.pkStages = IsmLivePkStages.isPk();
-    var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload);
+    if (!streamController.isPk) {
+      unawaited(
+        streamController.getStreamMembers(
+          streamId: streamController.streamId ?? '',
+        ),
+      );
+    }
+    streamController.pkStages ??= IsmLivePkStages.isPk();
+    var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
 
     if (pkDetails.message == IsmLiveStatus.pkStart) {
       streamController.pkStages?.makePkStart();
-    }
-
-    unawaited(
-      streamController.getStreamMembers(
-        streamId: streamController.streamId ?? '',
-      ),
-    );
-    if ((streamController.userRole?.isHost ?? false) &&
-        (Get.isBottomSheetOpen ?? false)) {
-      Get.back();
+      startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
     }
   }
 
@@ -196,8 +224,8 @@ class IsmLivePkController extends GetxController
       response: response,
     );
 
-    if (res != null) {
-      publishPk(
+    if (res != null && res.message != IsmLivePkResponce.rejected) {
+      await publishPk(
         reciverStreamId: res.streamData.streamId ?? '',
         hdBroadcast: res.streamData.hdBroadcast ?? false,
         streamDiscription: res.streamData.streamDescription,
@@ -206,7 +234,7 @@ class IsmLivePkController extends GetxController
     }
   }
 
-  void publishPk({
+  Future<void> publishPk({
     required String reciverStreamId,
     String? streamImage,
     String? streamDiscription,
@@ -250,6 +278,28 @@ class IsmLivePkController extends GetxController
         battleTimeInMin: pkSelectTime,
         inviteId: inviteId ?? '',
       );
+
+      Get.back();
     }
+  }
+
+  Future<void> stopPkBattle({
+    required String pkId,
+    required String action,
+  }) async {
+    var res = await _viewModel.stopPkBattle(
+      action: action,
+      pkId: pkId,
+    );
+
+    if (res) {
+      await pkWinner(pkId);
+    }
+  }
+
+  Future<void> pkWinner(String pkId) async {
+    await _viewModel.pkWinner(
+      pkId: pkId,
+    );
   }
 }

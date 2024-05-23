@@ -17,7 +17,8 @@ class IsmLivePkEventMetaDataModel {
         timeInMin: map['timeInMin'] != null ? map['timeInMin'] as int : null,
         streamData: map['streamData'] != null
             ? List<IsmLivePkStreamDetails>.from(
-                (map['streamData'] as List<int>).map<IsmLivePkStreamDetails?>(
+                (map['streamData'] as List<dynamic>)
+                    .map<IsmLivePkStreamDetails?>(
                   (x) =>
                       IsmLivePkStreamDetails.fromMap(x as Map<String, dynamic>),
                 ),

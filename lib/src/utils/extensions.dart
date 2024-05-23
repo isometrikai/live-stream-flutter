@@ -16,7 +16,8 @@ extension IsmLiveMapExtension on Map<String, dynamic> {
       var k = entry.key;
       var v = entry.value;
       if (v != null) {
-        if (!v.runtimeType.toString().contains('List') && v.runtimeType.toString().contains('Map')) {
+        if (!v.runtimeType.toString().contains('List') &&
+            v.runtimeType.toString().contains('Map')) {
           result[k] = (v as Map<String, dynamic>).removeNullValues();
         } else {
           result[k] = v;
@@ -68,7 +69,8 @@ extension IsmLiveEditingExtension on TextEditingController {
 }
 
 extension IsmLiveContextExtension on BuildContext {
-  IsmLiveDataExtension? get liveExtension => Theme.of(this).extension<IsmLiveDataExtension>();
+  IsmLiveDataExtension? get liveExtension =>
+      Theme.of(this).extension<IsmLiveDataExtension>();
 
   IsmLiveThemeData? get liveTheme => liveExtension?.theme;
 
@@ -90,10 +92,17 @@ extension IsmLiveDurationExtension on Duration {
     final s = (inSeconds % 60).toString().padLeft(2, '0');
     return [h, m, s].join(':');
   }
+
+  String get formattedTimeInMin {
+    final m = (inMinutes % 60).toString().padLeft(2, '0');
+    final s = (inSeconds % 60).toString().padLeft(2, '0');
+    return [m, s].join(':');
+  }
 }
 
 extension IsmLiveIntExtensions on int {
-  double get sheetHeight => IsmLiveDimens.oneHundredTwenty + this * IsmLiveDimens.sixty;
+  double get sheetHeight =>
+      IsmLiveDimens.oneHundredTwenty + this * IsmLiveDimens.sixty;
 }
 
 extension IsmLiveDoubleExtensions on double {
@@ -141,5 +150,9 @@ extension IsmLiveUserConfigExtensions on IsmLiveUserConfig {
 }
 
 extension IsmLiveAlignmentExtension on Alignment {
-  bool get isBottomAligned => [Alignment.bottomLeft, Alignment.bottomCenter, Alignment.bottomRight].contains(this);
+  bool get isBottomAligned => [
+        Alignment.bottomLeft,
+        Alignment.bottomCenter,
+        Alignment.bottomRight
+      ].contains(this);
 }

@@ -177,8 +177,11 @@ mixin StreamOngoingMixin {
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
 
-    if (_controller.isPk) {
-      IsmLiveDebouncer(durationtime: 10000).run(() async {
+    if (_controller.isPk && _controller.participantTracks.length == 2) {
+      if (Get.isBottomSheetOpen ?? false) {
+        Get.back();
+      }
+      IsmLiveDebouncer(durationtime: 3000).run(() async {
         await _controller.animationController.forward();
       });
     }
@@ -587,6 +590,8 @@ mixin StreamOngoingMixin {
 
     _controller.userRole = null;
     _controller.streamId = null;
+    _pkController.pkTimer?.cancel();
+    _pkController.pkTimer = null;
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
 
@@ -600,6 +605,8 @@ mixin StreamOngoingMixin {
   void closeStreamView(bool isHost, {String? streamId, bool fromMqtt = false}) {
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
+    _pkController.pkTimer?.cancel();
+    _pkController.pkTimer = null;
 
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
