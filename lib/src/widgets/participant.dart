@@ -17,6 +17,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     bool showStatsLayer = false,
     bool showFullVideo = false,
     bool isHost = false,
+    bool isViewer = false,
     bool isFirstIndex = false,
   }) {
     if (participantTrack.participant is LocalParticipant) {
@@ -26,6 +27,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isViewer,
         isFirstIndex,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
@@ -37,6 +39,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isViewer,
         isFirstIndex,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
@@ -53,6 +56,7 @@ abstract class ParticipantWidget extends StatefulWidget {
   abstract final bool showStatsLayer;
   abstract final bool showFullVideo;
   abstract final bool isHost;
+  abstract final bool isViewer;
   abstract final bool isFirstIndex;
 
   final VideoQuality quality;
@@ -65,6 +69,7 @@ class LocalParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer,
     this.isHost,
+    this.isViewer,
     this.isFirstIndex, {
     this.imageUrl,
     this.showFullVideo = false,
@@ -85,6 +90,8 @@ class LocalParticipantWidget extends ParticipantWidget {
   @override
   final bool isHost;
   @override
+  final bool isViewer;
+  @override
   final bool isFirstIndex;
 
   @override
@@ -98,6 +105,7 @@ class RemoteParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer,
     this.isHost,
+    this.isViewer,
     this.isFirstIndex, {
     this.imageUrl,
     this.showFullVideo = false,
@@ -117,6 +125,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
   final bool showFullVideo;
   @override
   final bool isHost;
+  @override
+  final bool isViewer;
   @override
   final bool isFirstIndex;
 
@@ -202,7 +212,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                       : widget.participant.identity,
                 ),
               ),
-            if (widget.showStatsLayer && !widget.isHost)
+            if (widget.showStatsLayer && widget.isViewer)
               Align(
                 alignment: Alignment.topLeft,
                 child: IsmLiveTapHandler(

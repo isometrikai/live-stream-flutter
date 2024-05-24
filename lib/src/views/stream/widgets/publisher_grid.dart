@@ -61,6 +61,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           participantList[index],
                           imageUrl: url,
                           isFirstIndex: index == 0,
+                          isViewer: !(controller.userRole?.isHost ?? false) &&
+                              !(controller.userRole?.isPkGuest ?? false),
                           isHost: controller.hostDetails?.userId ==
                               participantList[index].participant.identity,
                           showStatsLayer: controller.isPk,
