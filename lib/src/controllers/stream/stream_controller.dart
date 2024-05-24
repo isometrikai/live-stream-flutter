@@ -78,8 +78,6 @@ class IsmLiveStreamController extends GetxController
 
   bool isSchedulingBroadcast = false;
 
-  bool isPk = false;
-
   bool restreamFacebook = false;
   bool restreamYoutube = false;
   bool restreamInstagram = false;
@@ -226,6 +224,8 @@ class IsmLiveStreamController extends GetxController
 
   IsmLiveUserRole? userRole;
 
+  IsmLivePkStages? pkStages;
+
   bool get isHost => userRole?.isHost ?? false;
 
   bool get isModerator => userRole?.isModerator ?? false;
@@ -233,6 +233,8 @@ class IsmLiveStreamController extends GetxController
   bool get isCopublisher => userRole?.isCopublisher ?? false;
 
   bool get isPublishing => isHost || isCopublisher;
+
+  bool get isPk => pkStages?.isPk ?? false;
 
   final Rx<IsmLiveStreamType> _streamType = IsmLiveStreamType.all.obs;
   IsmLiveStreamType get streamType => _streamType.value;
@@ -278,31 +280,6 @@ class IsmLiveStreamController extends GetxController
       length: IsmLiveCopublisher.values.length,
     );
 
-    animationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-
-    // Define a Tween for Alignment
-    var alignmentTween = Tween<Alignment>(
-      begin: const Alignment(-1, -0.5),
-      end: const Alignment(-0.1, -0.5),
-    );
-    var alignmentTweenRight = Tween<Alignment>(
-      begin: const Alignment(1, -0.5),
-      end: const Alignment(0.1, -0.5),
-    );
-
-    // animationController.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {}
-    // });
-
-    // Create an Animation with the Tween and the Controller
-    alignmentAnimation = alignmentTween.animate(animationController);
-    alignmentAnimationRight = alignmentTweenRight.animate(animationController);
-
-    // Start the animation automatically
-
     generateVariables();
   }
 
@@ -320,6 +297,26 @@ class IsmLiveStreamController extends GetxController
   bool isMessagesApiCall = false;
   bool isExistingMembersApiCall = false;
   bool isProductApiCall = false;
+
+  void initAnimation() {
+    animationController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // Define a Tween for Alignment
+    var alignmentTween = Tween<Alignment>(
+      begin: const Alignment(-1, -0.5),
+      end: const Alignment(-0.1, -0.5),
+    );
+    var alignmentTweenRight = Tween<Alignment>(
+      begin: const Alignment(1, -0.5),
+      end: const Alignment(0.1, -0.5),
+    );
+
+    alignmentAnimation = alignmentTween.animate(animationController);
+    alignmentAnimationRight = alignmentTweenRight.animate(animationController);
+  }
 
   // Pagination method
   void pagination(String streamId) {

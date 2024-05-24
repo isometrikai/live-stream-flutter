@@ -71,7 +71,8 @@ mixin StreamJoinMixin {
     _controller.update();
   }
 
-  Future<void> unpublishTracks() => _controller.room!.localParticipant!.unpublishAllTracks();
+  Future<void> unpublishTracks() =>
+      _controller.room!.localParticipant!.unpublishAllTracks();
 
 // Join a stream
   Future<void> joinStream(
@@ -169,21 +170,30 @@ mixin StreamJoinMixin {
     bool hdBroadcast = false,
     required bool isHost,
     bool isCopublisher = false,
+    bool isPk = false,
     required bool isNewStream,
     bool joinByScrolling = false,
     bool isInteractive = false,
   }) async {
-    // Show a loader while connecting
-    _controller.isModerationWarningVisible = true;
-    _controller.descriptionController.text = streamDiscription ?? _controller.descriptionController.text;
-
     // Subscribe to the stream
     _controller.streamId = streamId;
-    _controller.userRole = isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+
+    // Show a loader while connecting
+    _controller.isModerationWarningVisible = true;
+    _controller.descriptionController.text =
+        streamDiscription ?? _controller.descriptionController.text;
+
+    _controller.pkStages = null;
+    _controller.userRole =
+        isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
     } else {
       _controller.userRole?.leaveCopublishing();
+    }
+    if (isPk) {
+      _controller.pkStages ??= IsmLivePkStages.isPk();
+      _controller.userRole?.makePkGuest();
     }
     _controller.update([IsmGoLiveView.updateId]);
     unawaited(
@@ -197,19 +207,26 @@ mixin StreamJoinMixin {
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else if (isCopublisher) {
-      message = translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+      message =
+          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+    } else if (isPk) {
+      message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
     } else {
-      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
     try {
-      final videoQuality = hdBroadcast ? VideoParametersPresets.h720_169 : VideoParametersPresets.h540_169;
+      final videoQuality = hdBroadcast
+          ? VideoParametersPresets.h720_169
+          : VideoParametersPresets.h540_169;
       var room = Room(
         roomOptions: RoomOptions(
           defaultCameraCaptureOptions: CameraCaptureOptions(
@@ -262,7 +279,7 @@ mixin StreamJoinMixin {
       );
 
       // Enable video if the user is a host or copublisher
-      if (isHost || isCopublisher) {
+      if (isHost || isCopublisher || isPk) {
         await enableMyVideo();
       }
       // Toggle audio if the user is a host or copublisher
@@ -290,9 +307,7 @@ mixin StreamJoinMixin {
         streamId: streamId,
         isHost: isHost,
       );
-
       _controller.update([IsmLiveStreamView.updateId]);
-
       startStreamTimer();
 
       if (!joinByScrolling) {

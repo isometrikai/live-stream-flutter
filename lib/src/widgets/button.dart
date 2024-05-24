@@ -45,27 +45,39 @@ class IsmLiveButton extends StatelessWidget {
   final bool secondary;
   final bool showBorder;
 
-  static MaterialStateProperty<TextStyle?> _textStyle(BuildContext context, bool small) => MaterialStateProperty.all(
-        (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)?.copyWith(
+  static MaterialStateProperty<TextStyle?> _textStyle(
+          BuildContext context, bool small) =>
+      MaterialStateProperty.all(
+        (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)
+            ?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       );
 
-  static MaterialStateProperty<EdgeInsetsGeometry?> _padding(BuildContext context, bool small) => MaterialStateProperty.all(
+  static MaterialStateProperty<EdgeInsetsGeometry?> _padding(
+          BuildContext context, bool small) =>
+      MaterialStateProperty.all(
         small ? IsmLiveDimens.edgeInsets8_4 : IsmLiveDimens.edgeInsets16_8,
       );
 
-  static MaterialStateProperty<OutlinedBorder?> _borderRadius(BuildContext context) => MaterialStateProperty.all(
+  static MaterialStateProperty<OutlinedBorder?> _borderRadius(
+          BuildContext context) =>
+      MaterialStateProperty.all(
         RoundedRectangleBorder(
-          borderRadius: context.liveTheme?.buttonRadius ?? BorderRadius.circular(IsmLiveDimens.twentyFive),
+          borderRadius: context.liveTheme?.buttonRadius ??
+              BorderRadius.circular(IsmLiveDimens.twentyFive),
         ),
       );
 
-  static MaterialStateProperty<BorderSide?> _border(BuildContext context, IsmLiveButtonType type) => MaterialStateProperty.all(
+  static MaterialStateProperty<BorderSide?> _border(
+          BuildContext context, IsmLiveButtonType type) =>
+      MaterialStateProperty.all(
         BorderSide(
           color: type == IsmLiveButtonType.primary
-              ? context.liveTheme?.primaryButtonTheme?.foregroundColor ?? IsmLiveColors.white
-              : context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.primary,
+              ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+                  IsmLiveColors.white
+              : context.liveTheme?.secondaryButtonTheme?.foregroundColor ??
+                  IsmLiveColors.primary,
         ),
       );
 
@@ -113,13 +125,18 @@ class _Primary extends StatelessWidget {
         style: ButtonStyle(
           padding: IsmLiveButton._padding(context, small),
           shape: IsmLiveButton._borderRadius(context),
-          side: showBorder ? IsmLiveButton._border(context, IsmLiveButtonType.primary) : null,
+          side: showBorder
+              ? IsmLiveButton._border(context, IsmLiveButtonType.primary)
+              : null,
           backgroundColor: MaterialStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
-                return context.liveTheme?.primaryButtonTheme?.disableColor ?? IsmLiveColors.grey;
+                return context.liveTheme?.primaryButtonTheme?.disableColor ??
+                    IsmLiveColors.grey;
               }
-              return context.liveTheme?.primaryButtonTheme?.backgroundColor ?? context.liveTheme?.primaryColor ?? IsmLiveColors.primary;
+              return context.liveTheme?.primaryButtonTheme?.backgroundColor ??
+                  context.liveTheme?.primaryColor ??
+                  IsmLiveColors.primary;
             },
           ),
           foregroundColor: MaterialStateColor.resolveWith(
@@ -127,7 +144,8 @@ class _Primary extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.black;
               }
-              return context.liveTheme?.primaryButtonTheme?.foregroundColor ?? IsmLiveColors.white;
+              return context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+                  IsmLiveColors.white;
             },
           ),
           textStyle: IsmLiveButton._textStyle(context, small),
@@ -158,13 +176,17 @@ class _Secondary extends StatelessWidget {
         style: ButtonStyle(
           padding: IsmLiveButton._padding(context, small),
           shape: IsmLiveButton._borderRadius(context),
-          side: showBorder ? IsmLiveButton._border(context, IsmLiveButtonType.secondary) : null,
+          side: showBorder
+              ? IsmLiveButton._border(context, IsmLiveButtonType.secondary)
+              : null,
           backgroundColor: MaterialStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
-                return context.liveTheme?.secondaryButtonTheme?.disableColor ?? IsmLiveColors.grey;
+                return context.liveTheme?.secondaryButtonTheme?.disableColor ??
+                    IsmLiveColors.grey;
               }
-              return context.liveTheme?.secondaryButtonTheme?.backgroundColor ?? IsmLiveColors.white;
+              return context.liveTheme?.secondaryButtonTheme?.backgroundColor ??
+                  IsmLiveColors.white;
             },
           ),
           foregroundColor: MaterialStateColor.resolveWith(
@@ -172,7 +194,8 @@ class _Secondary extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.white;
               }
-              return context.liveTheme?.secondaryButtonTheme?.foregroundColor ?? IsmLiveColors.primary;
+              return context.liveTheme?.secondaryButtonTheme?.foregroundColor ??
+                  IsmLiveColors.primary;
             },
           ),
           textStyle: IsmLiveButton._textStyle(context, small),
@@ -202,7 +225,8 @@ class _Icon extends StatelessWidget {
           shape: context.theme.elevatedButtonTheme.style?.shape ??
               MaterialStateProperty.all(
                 RoundedRectangleBorder(
-                  borderRadius: context.liveTheme?.iconButtonRadius ?? BorderRadius.circular(IsmLiveDimens.sixteen),
+                  borderRadius: context.liveTheme?.iconButtonRadius ??
+                      BorderRadius.circular(IsmLiveDimens.sixteen),
                 ),
               ),
           backgroundColor: MaterialStateColor.resolveWith(
@@ -210,11 +234,14 @@ class _Icon extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.grey;
               }
-              final primaryColor = context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
+              final primaryColor = context
+                      .theme.elevatedButtonTheme.style?.backgroundColor
+                      ?.resolve(states) ??
                   context.liveTheme?.primaryColor ??
                   IsmLiveColors.primary;
 
-              final secondaryColor = context.liveTheme?.secondaryColor ?? IsmLiveColors.secondary;
+              final secondaryColor =
+                  context.liveTheme?.secondaryColor ?? IsmLiveColors.secondary;
 
               return secondary ? secondaryColor : primaryColor;
             },
@@ -224,10 +251,14 @@ class _Icon extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.black;
               }
-              final primaryColor = context.theme.elevatedButtonTheme.style?.foregroundColor?.resolve(states) ??
+              final primaryColor = context
+                      .theme.elevatedButtonTheme.style?.foregroundColor
+                      ?.resolve(states) ??
                   context.liveTheme?.backgroundColor ??
                   IsmLiveColors.white;
-              final secondaryColor = context.theme.elevatedButtonTheme.style?.backgroundColor?.resolve(states) ??
+              final secondaryColor = context
+                      .theme.elevatedButtonTheme.style?.backgroundColor
+                      ?.resolve(states) ??
                   context.liveTheme?.primaryColor ??
                   IsmLiveColors.primary;
 

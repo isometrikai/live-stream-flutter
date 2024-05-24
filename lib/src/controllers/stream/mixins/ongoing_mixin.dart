@@ -2,6 +2,7 @@ part of '../stream_controller.dart';
 
 mixin StreamOngoingMixin {
   IsmLiveStreamController get _controller => Get.find();
+  IsmLivePkController get _pkController => Get.find();
 // Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
   // Function to initialize the stream
@@ -14,6 +15,8 @@ mixin StreamOngoingMixin {
         _controller.showEmojiBoard = false;
       }
     });
+
+    _pkController.pkStatus(streamId);
     // Pagination setup for the stream
     _controller.pagination(streamId);
     // Set up event listeners
@@ -50,6 +53,7 @@ mixin StreamOngoingMixin {
         );
       }
     }
+
     // Sort participants and update UI
     await sortParticipants();
     // Toggle speaker if on mobile platform
@@ -172,6 +176,15 @@ mixin StreamOngoingMixin {
 
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
+
+    if (_controller.isPk && _controller.participantTracks.length == 2) {
+      if (Get.isBottomSheetOpen ?? false) {
+        Get.back();
+      }
+      IsmLiveDebouncer(durationtime: 3000).run(() async {
+        await _controller.animationController.forward();
+      });
+    }
   }
 
   String controlIcon(IsmLiveStreamOption option) {
@@ -368,8 +381,6 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
-        unawaited(_controller.animationController.forward());
-
         break;
       case IsmLiveStreamOption.members:
         break;
@@ -579,6 +590,8 @@ mixin StreamOngoingMixin {
 
     _controller.userRole = null;
     _controller.streamId = null;
+    _pkController.pkTimer?.cancel();
+    _pkController.pkTimer = null;
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
 
@@ -592,6 +605,8 @@ mixin StreamOngoingMixin {
   void closeStreamView(bool isHost, {String? streamId, bool fromMqtt = false}) {
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
+    _pkController.pkTimer?.cancel();
+    _pkController.pkTimer = null;
 
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);

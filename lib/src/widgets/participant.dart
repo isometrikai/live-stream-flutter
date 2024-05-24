@@ -17,6 +17,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     bool showStatsLayer = false,
     bool showFullVideo = false,
     bool isHost = false,
+    bool isFirstIndex = false,
   }) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
@@ -25,6 +26,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isFirstIndex,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
       );
@@ -35,6 +37,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isFirstIndex,
         imageUrl: imageUrl,
         showFullVideo: showFullVideo,
       );
@@ -50,6 +53,7 @@ abstract class ParticipantWidget extends StatefulWidget {
   abstract final bool showStatsLayer;
   abstract final bool showFullVideo;
   abstract final bool isHost;
+  abstract final bool isFirstIndex;
 
   final VideoQuality quality;
 }
@@ -60,7 +64,8 @@ class LocalParticipantWidget extends ParticipantWidget {
     this.videoTrack,
     this.isScreenShare,
     this.showStatsLayer,
-    this.isHost, {
+    this.isHost,
+    this.isFirstIndex, {
     this.imageUrl,
     this.showFullVideo = false,
     super.key,
@@ -79,6 +84,8 @@ class LocalParticipantWidget extends ParticipantWidget {
   final bool showFullVideo;
   @override
   final bool isHost;
+  @override
+  final bool isFirstIndex;
 
   @override
   State<StatefulWidget> createState() => _LocalParticipantWidgetState();
@@ -90,7 +97,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
     this.videoTrack,
     this.isScreenShare,
     this.showStatsLayer,
-    this.isHost, {
+    this.isHost,
+    this.isFirstIndex, {
     this.imageUrl,
     this.showFullVideo = false,
     super.key,
@@ -109,12 +117,15 @@ class RemoteParticipantWidget extends ParticipantWidget {
   final bool showFullVideo;
   @override
   final bool isHost;
+  @override
+  final bool isFirstIndex;
 
   @override
   State<StatefulWidget> createState() => _RemoteParticipantWidgetState();
 }
 
-abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends State<T> {
+abstract class _ParticipantWidgetState<T extends ParticipantWidget>
+    extends State<T> {
   VideoTrack? get activeVideoTrack;
   TrackPublication? get videoPublication;
   TrackPublication? get firstAudioPublication;
@@ -155,24 +166,27 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
               : null,
         ),
         decoration: BoxDecoration(
-          color: context.liveTheme?.streamBackgroundColor ?? Theme.of(ctx).cardColor,
+          color: context.liveTheme?.streamBackgroundColor ??
+              Theme.of(ctx).cardColor,
         ),
         child: Stack(
           children: [
             activeVideoTrack != null && !activeVideoTrack!.muted
                 ? VideoTrackRenderer(
                     activeVideoTrack!,
-                    fit: widget.showFullVideo ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    fit: widget.showFullVideo
+                        ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
+                        : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                   )
                 : NoVideoWidget(
                     name: widget.participant.name,
                     imageUrl: widget.imageUrl ?? '',
                   ),
-            if (widget.showStatsLayer)
-              const Align(
-                alignment: Alignment.center,
-                child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
-              ),
+            // if (widget.showStatsLayer)
+            //   const Align(
+            //     alignment: Alignment.center,
+            //     child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
+            //   ),
             if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.bottomCenter,
@@ -182,7 +196,10 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
                       ? widget.participant.name
                       : widget.participant.identity,
                   isHost: widget.isHost,
-                  title: widget.participant.name.isNotEmpty ? widget.participant.name : widget.participant.identity,
+                  isFirstIndex: widget.isFirstIndex,
+                  title: widget.participant.name.isNotEmpty
+                      ? widget.participant.name
+                      : widget.participant.identity,
                 ),
               ),
             if (widget.showStatsLayer && !widget.isHost)
@@ -213,25 +230,33 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
       );
 }
 
-class _LocalParticipantWidgetState extends _ParticipantWidgetState<LocalParticipantWidget> {
+class _LocalParticipantWidgetState
+    extends _ParticipantWidgetState<LocalParticipantWidget> {
   @override
   LocalTrackPublication<LocalVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
+      widget.participant.videoTracks
+          .where((element) => element.sid == widget.videoTrack?.sid)
+          .firstOrNull;
 
   @override
-  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
+  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication =>
+      widget.participant.audioTracks.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
 }
 
-class _RemoteParticipantWidgetState extends _ParticipantWidgetState<RemoteParticipantWidget> {
+class _RemoteParticipantWidgetState
+    extends _ParticipantWidgetState<RemoteParticipantWidget> {
   @override
   RemoteTrackPublication<RemoteVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
+      widget.participant.videoTracks
+          .where((element) => element.sid == widget.videoTrack?.sid)
+          .firstOrNull;
 
   @override
-  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
+  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication =>
+      widget.participant.audioTracks.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;

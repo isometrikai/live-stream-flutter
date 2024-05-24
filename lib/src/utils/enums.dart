@@ -71,6 +71,21 @@ enum IsmLiveCallType {
   final String value;
 }
 
+enum IsmLivePkResponce {
+  accepted('Invite Accepted'),
+  rejected('Invite Rejected');
+
+  factory IsmLivePkResponce.fromValue(String data) =>
+      {
+        IsmLivePkResponce.accepted.value: IsmLivePkResponce.accepted,
+        IsmLivePkResponce.rejected.value: IsmLivePkResponce.rejected,
+      }[data] ??
+      IsmLivePkResponce.rejected;
+
+  const IsmLivePkResponce(this.value);
+  final String value;
+}
+
 enum IsmLiveMeetingType {
   videoCall(0),
   audioCall(1);
@@ -120,6 +135,7 @@ enum IsmLiveActions {
   publisherTimeout('publisherTimeout'),
   publishStarted('publishStarted'),
   publishStopped('publishStopped'),
+  pubsubMessagePublished('pubsubMessagePublished'),
   streamStarted('streamStarted'),
   streamStopped('streamStopped'),
   streamStartPresence('streamStartPresence'),
@@ -153,6 +169,8 @@ enum IsmLiveActions {
         IsmLiveActions.publisherTimeout.value: IsmLiveActions.publisherTimeout,
         IsmLiveActions.publishStarted.value: IsmLiveActions.publishStarted,
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
+        IsmLiveActions.pubsubMessagePublished.value:
+            IsmLiveActions.pubsubMessagePublished,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
         IsmLiveActions.streamStartPresence.value:
@@ -210,7 +228,16 @@ enum IsmLiveStreamOption {
         IsmLiveStreamOption.multiLive,
 
         IsmLiveStreamOption.share,
-        // IsmLiveStreamOption.favourite,
+
+        IsmLiveStreamOption.rotateCamera,
+        IsmLiveStreamOption.settings,
+      ];
+
+  static List<IsmLiveStreamOption> get pkOptions => [
+        // IsmLiveStreamOption.multiLive,
+
+        IsmLiveStreamOption.favourite,
+        IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];
@@ -242,6 +269,9 @@ enum IsmLiveMessageType {
   heart(1),
   gift(2),
   remove(3),
+  pkStart(23),
+  pkAccepted(21),
+  pk(20),
   presence(4);
 
   factory IsmLiveMessageType.fromValue(int data) =>
@@ -251,6 +281,9 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.gift.value: IsmLiveMessageType.gift,
         IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
+        IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
+        IsmLiveMessageType.pkAccepted.value: IsmLiveMessageType.pkAccepted,
+        IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
       }[data] ??
       IsmLiveMessageType.normal;
 
@@ -422,6 +455,8 @@ enum IsmLivePermission {
   host,
   viewer,
   moderator,
+
+  pkGuest,
   copublisher;
 
   bool get isHost => this == IsmLivePermission.host;
@@ -431,4 +466,35 @@ enum IsmLivePermission {
   bool get isModerator => this == IsmLivePermission.moderator;
 
   bool get isCopublisher => this == IsmLivePermission.copublisher;
+
+  bool get isPkGuest => this == IsmLivePermission.pkGuest;
+}
+
+enum IsmLiveStages {
+  pk,
+  pkStart,
+  pkEnd;
+
+  bool get isPkStart => this == IsmLiveStages.pkStart;
+
+  bool get isPk => this == IsmLiveStages.pk;
+
+  bool get isPkEnd => this == IsmLiveStages.pkEnd;
+}
+
+enum IsmLiveStatus {
+  pk('stream is mearged for Pk challenge'),
+  pkStart('pk started'),
+  pkEnd('pk Ended');
+
+  factory IsmLiveStatus.fromValue(String data) =>
+      <String, IsmLiveStatus>{
+        IsmLiveStatus.pkEnd.label: IsmLiveStatus.pkEnd,
+        IsmLiveStatus.pk.label: IsmLiveStatus.pk,
+        IsmLiveStatus.pkStart.label: IsmLiveStatus.pkStart,
+      }[data] ??
+      IsmLiveStatus.pk;
+
+  const IsmLiveStatus(this.label);
+  final String label;
 }

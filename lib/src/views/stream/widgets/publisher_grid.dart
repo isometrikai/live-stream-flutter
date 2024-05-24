@@ -45,18 +45,24 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       ),
                       itemBuilder: (_, index) {
                         var url = '';
+                        var participantList = controller.userRole?.isHost ??
+                                false
+                            ? controller.participantTracks
+                            : controller.participantTracks.reversed.toList();
+
                         for (var element in controller.streamMembersList) {
                           if (element.userId ==
-                              controller.participantTracks[index].participant
-                                  .identity) {
+                              participantList[index].participant.identity) {
                             url = element.userProfileImageUrl;
                           }
                         }
 
                         return ParticipantWidget.widgetFor(
-                          controller.participantTracks[index],
+                          participantList[index],
                           imageUrl: url,
-                          isHost: index == 0 ? true : false,
+                          isFirstIndex: index == 0,
+                          isHost: controller.hostDetails?.userId ==
+                              participantList[index].participant.identity,
                           showStatsLayer: controller.isPk,
                         );
                       },

@@ -44,4 +44,105 @@ class IsmLivePkApis {
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
+
+  Future<IsmLiveResponseModel> invitationPK({
+    required String streamId,
+    required String inviteId,
+    required String response,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'inviteId': inviteId,
+      'response': response
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.invitaionPK,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
+  Future<IsmLiveResponseModel> publishPk({
+    required String streamId,
+    required bool startPublish,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+      'startPublish': startPublish,
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.publish,
+      type: IsmLiveRequestType.put,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
+  Future<IsmLiveResponseModel> startPkBattle({
+    required String inviteId,
+    required String battleTimeInMin,
+  }) async {
+    var payload = {
+      'inviteId': inviteId,
+      'battleTimeInMin': int.parse(battleTimeInMin),
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.pkStart,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> stopPkBattle({
+    required String pkId,
+    required String action,
+  }) async {
+    var payload = {
+      'pkId': pkId,
+      'action': action,
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.pkStop,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> pkWinner({
+    required String pkId,
+  }) async {
+    var payload = {
+      'pkId': pkId,
+    };
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.pkWinner}?${payload.makeQuery()}',
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> pkStatus({
+    required String streamId,
+  }) async {
+    var payload = {
+      'streamId': streamId,
+    };
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.pkStatus}?${payload.makeQuery()}',
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
 }

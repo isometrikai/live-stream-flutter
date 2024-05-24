@@ -4,19 +4,12 @@ class IsmLiveApis {
 
   static const String baseUrl = 'https://apis.isometrik.io';
 
-  static const String baseUrlStream = 'https://service-apis.isometrik.io';
-
-  // static const String baseUrlStream = 'https://admin-apis.isometrik.io/live/v2';
-//  static const String devBaseUrl = 'https://admin-apis.isometrik.io';
-  // static const String devBaseUrl = 'https://admin-apis.isometrik.io/live';
-
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String productDetails =
       'https://admin-apis.isometrik.io/v1/get_product_details';
   static const String agentauthenticate =
       'https://admin-apis.isometrik.io/v1/agent';
   static const String user = '/chat/user';
-  static const String newStream = '/live/v2/stream';
   static const String allUsers = '/chat/users';
   static const String userDetails = '$user/details';
   static const String authenticate = '$user/authenticate';
@@ -26,11 +19,22 @@ class IsmLiveApis {
 
   static const String userSubscription = '/gs/v2/subscription';
 
-  static const String streamAnalytics = '/live/v2/stream/analytics';
+//PK apis end point
+  static const String baseUrlStream = 'https://service-apis.isometrik.io';
+
+  static const String _live = '/live/v2';
+  static const String newStream = '$_live/stream';
+  static const String streamAnalytics = '$_live/stream/analytics';
   static const String streamAnalyticsViewers =
-      '/live/v2/analytics/stream/viewers';
-  static const String getUsersToInviteForPK = '/live/v2/invite/users';
-  static const String sendInvitationToUserForPK = '/live/v2/invite/users';
+      '$_live/analytics/stream/viewers';
+  static const String getUsersToInviteForPK = '$_live/invite/users';
+  static const String sendInvitationToUserForPK = '$_live/invite/users';
+  static const String invitaionPK = '$_live/invites';
+  static const String publish = '$_streaming/publish';
+  static const String pkStatus = '$_live/pk/stream/stats';
+  static const String pkStart = '$_live/pk/start';
+  static const String pkStop = '$_live/pk/stop';
+  static const String pkWinner = '$_live/pk/winner';
 
   // Streams
   static const String _streaming = '/streaming/v2';

@@ -45,6 +45,15 @@ mixin StreamMessageMixin {
       case IsmLiveMessageType.presence:
         IsmLiveLog.success('Presence Message');
         break;
+      case IsmLiveMessageType.pk:
+        IsmLiveLog.success('Pk Message');
+        break;
+      case IsmLiveMessageType.pkStart:
+        IsmLiveLog.success('Pk Start Message');
+        break;
+      case IsmLiveMessageType.pkAccepted:
+        IsmLiveLog.success('Pk Accpected Message');
+        break;
     }
   }
 

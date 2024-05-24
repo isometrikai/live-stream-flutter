@@ -33,11 +33,15 @@ class IsmLiveControlsWidget extends StatelessWidget {
         },
         builder: (controller) {
           var options = !isHost
-              ? IsmLiveDelegate.controlIcons ??
-                  IsmLiveStreamOption.viewersOptions
-              : isCopublishing
-                  ? IsmLiveStreamOption.copublisherOptions
-                  : IsmLiveStreamOption.hostOptions;
+              ? controller.userRole?.isPkGuest ?? false
+                  ? IsmLiveStreamOption.pkOptions
+                  : IsmLiveDelegate.controlIcons ??
+                      IsmLiveStreamOption.viewersOptions
+              : controller.isPk
+                  ? IsmLiveStreamOption.pkOptions
+                  : isCopublishing
+                      ? IsmLiveStreamOption.copublisherOptions
+                      : IsmLiveStreamOption.hostOptions;
 
           return SingleChildScrollView(
             child: Column(
