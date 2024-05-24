@@ -270,10 +270,10 @@ class IsmLiveStreamController extends GetxController
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
 
-  late AnimationController animationController;
+  // late AnimationController animationController;
 
-  late Animation<Alignment> alignmentAnimation;
-  late Animation<Alignment> alignmentAnimationRight;
+  // late Animation<Alignment> alignmentAnimation;
+  // late Animation<Alignment> alignmentAnimationRight;
 
   @override
   void onInit() {
@@ -299,28 +299,28 @@ class IsmLiveStreamController extends GetxController
       vsync: this,
       length: IsmLivePkViewers.values.length,
     );
-    animationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
+    // animationController = AnimationController(
+    //   duration: const Duration(seconds: 2),
+    //   vsync: this,
+    // );
 
-    // Define a Tween for Alignment
-    var alignmentTween = Tween<Alignment>(
-      begin: const Alignment(-1, -0.5),
-      end: const Alignment(-0.1, -0.5),
-    );
-    var alignmentTweenRight = Tween<Alignment>(
-      begin: const Alignment(1, -0.5),
-      end: const Alignment(0.1, -0.5),
-    );
+    // // Define a Tween for Alignment
+    // var alignmentTween = Tween<Alignment>(
+    //   begin: const Alignment(-1, -0.5),
+    //   end: const Alignment(-0.1, -0.5),
+    // );
+    // var alignmentTweenRight = Tween<Alignment>(
+    //   begin: const Alignment(1, -0.5),
+    //   end: const Alignment(0.1, -0.5),
+    // );
 
     // animationController.addStatusListener((status) {
     //   if (status == AnimationStatus.completed) {}
     // });
 
     // Create an Animation with the Tween and the Controller
-    alignmentAnimation = alignmentTween.animate(animationController);
-    alignmentAnimationRight = alignmentTweenRight.animate(animationController);
+    // alignmentAnimation = alignmentTween.animate(animationController);
+    // alignmentAnimationRight = alignmentTweenRight.animate(animationController);
 
     // Start the animation automatically
 

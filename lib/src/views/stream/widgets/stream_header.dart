@@ -54,36 +54,35 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ),
           ),
           IsmLiveDimens.boxHeight8,
-          if (pk)
-            name.isEmpty
-                ? LinearProgressIndicator(
-                    minHeight: IsmLiveDimens.ten,
-                    backgroundColor: Colors.red,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.blue),
-                    value: 0.5,
-                  )
-                : Container(
-                    width: Get.width,
-                    color: Colors.purple,
-                    height: IsmLiveDimens.twenty,
-                    child: Text(
-                      'Congratulations to @taavi',
-                      style: context.textTheme.bodySmall
-                          ?.copyWith(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-          else
-            Container(
-              margin: IsmLiveDimens.edgeInsets10_0,
-              width: Get.width * 0.6,
-              child: Text(
-                description,
-                style:
-                    context.textTheme.bodySmall?.copyWith(color: Colors.white),
-              ),
+          // if (pk)
+          //   name.isEmpty
+          //       ? LinearProgressIndicator(
+          //           minHeight: IsmLiveDimens.ten,
+          //           backgroundColor: Colors.red,
+          //           valueColor:
+          //               const AlwaysStoppedAnimation<Color>(Colors.blue),
+          //           value: 0.5,
+          //         )
+          //       : Container(
+          //           width: Get.width,
+          //           color: Colors.purple,
+          //           height: IsmLiveDimens.twenty,
+          //           child: Text(
+          //             'Congratulations to @taavi',
+          //             style: context.textTheme.bodySmall
+          //                 ?.copyWith(color: Colors.white),
+          //             textAlign: TextAlign.center,
+          //           ),
+          //         )
+          // else
+          Container(
+            margin: IsmLiveDimens.edgeInsets10_0,
+            width: Get.width * 0.6,
+            child: Text(
+              description,
+              style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
             ),
+          ),
         ],
       );
 }
