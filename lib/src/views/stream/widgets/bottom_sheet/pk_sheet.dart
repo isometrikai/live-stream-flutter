@@ -33,7 +33,7 @@ class IsmLivePkSheet extends StatelessWidget {
                       indicatorColor: Colors.transparent,
                       labelPadding: IsmLiveDimens.edgeInsets8_0,
                       overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
+                          WidgetStateProperty.all(Colors.transparent),
                       controller: controller.pkTabController,
                       onTap: (index) {
                         controller.pk = IsmLivePk.values[index];
