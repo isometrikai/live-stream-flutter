@@ -7,7 +7,7 @@ class IsmLivePkViewModel {
   const IsmLivePkViewModel(this._repository);
   final IsmLivePkRepository _repository;
 
-  IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
+  IsmLiveDBWrapper get dbWrapper => Get.find<IsmLiveDBWrapper>();
 
   Future<List<IsmLivePkInviteModel>> getUsersToInviteForPK({
     required int skip,

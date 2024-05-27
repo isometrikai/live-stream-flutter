@@ -31,7 +31,7 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                   dividerHeight: 0,
                   indicatorColor: Colors.transparent,
                   labelPadding: IsmLiveDimens.edgeInsets8_0,
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
                   controller: controller.pkViewersTabController,
                   onTap: (index) {
                     controller.pkViewers = IsmLivePkViewers.values[index];
