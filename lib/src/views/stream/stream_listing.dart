@@ -44,7 +44,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 dividerHeight: 0,
                 indicatorColor: Colors.transparent,
                 labelPadding: IsmLiveDimens.edgeInsets8_0,
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
                 controller: controller.tabController,
                 onTap: (index) {
                   controller.streamType = IsmLiveStreamType.values[index];
