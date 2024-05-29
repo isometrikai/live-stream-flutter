@@ -272,6 +272,7 @@ enum IsmLiveMessageType {
   pkStart(23),
   pkAccepted(21),
   pk(20),
+  pkStop(22),
   presence(4);
 
   factory IsmLiveMessageType.fromValue(int data) =>
@@ -284,6 +285,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
         IsmLiveMessageType.pkAccepted.value: IsmLiveMessageType.pkAccepted,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
+        IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
       }[data] ??
       IsmLiveMessageType.normal;
 

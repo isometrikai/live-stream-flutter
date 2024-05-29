@@ -44,7 +44,7 @@ class IsmLivePkController extends GetxController
   Duration get pkDuration => _pkDuration.value;
   set pkDuration(Duration value) => _pkDuration.value = value;
 
-  String? inviteId;
+  late String inviteId;
 
   Timer? pkTimer;
 
@@ -99,21 +99,10 @@ class IsmLivePkController extends GetxController
     );
   }
 
-  void pkEventHandler(Map<String, dynamic> payload) async {
-    if (!streamController.isPk) {
-      unawaited(
-        streamController.getStreamMembers(
-          streamId: streamController.streamId ?? '',
-        ),
-      );
-    }
-    streamController.pkStages ??= IsmLivePkStages.isPk();
+  void pkStartEvent(Map<String, dynamic> payload) async {
     var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
-
-    if (pkDetails.message == IsmLiveStatus.pkStart) {
-      streamController.pkStages?.makePkStart();
-      startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
-    }
+    streamController.pkStages?.makePkStart();
+    startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
   }
 
   bool isPkInviteApisCall = false;
@@ -146,7 +135,6 @@ class IsmLivePkController extends GetxController
     String? inviteId,
     String? reciverStreamId,
   }) async {
-    this.inviteId = inviteId;
     await IsmLiveUtility.openBottomSheet(
       IsmLivePkInviteSheet(
         description: description,
@@ -274,12 +262,11 @@ class IsmLivePkController extends GetxController
 
   Future<void> startPkBattle() async {
     if (pkSelectTime.isNotEmpty) {
+      Get.back();
       await _viewModel.startPkBattle(
         battleTimeInMin: pkSelectTime,
-        inviteId: inviteId ?? '',
+        inviteId: inviteId,
       );
-
-      Get.back();
     }
   }
 

@@ -108,6 +108,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
           await controller.room?.dispose();
+
           controller.showEmojiBoard = false;
           controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.streamMessagesList.clear();
@@ -305,51 +306,54 @@ class _StreamHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
-        builder: (controller) => SafeArea(
-          child: IsmLiveStreamHeader(
-            pk: controller.pkStages?.isPkStart ?? false,
-            description: controller.descriptionController.text,
-            name: controller.hostDetails?.name ?? 'U',
-            imageUrl: controller.hostDetails?.image ?? '',
-            pkCompleted: false,
-            onTapModerators: () {
-              IsmLiveUtility.openBottomSheet(
-                const IsmLiveModeratorsSheet(),
-                isScrollController: true,
-              );
-            },
-            onTapViewers: (viewerList) {
-              IsmLiveUtility.openBottomSheet(
-                GetBuilder<IsmLiveStreamController>(
-                  id: IsmLiveStreamView.updateId,
-                  builder: (controller) => IsmLiveListSheet(
-                    scrollController: controller.viewerListController,
-                    items: controller.streamViewersList,
-                    trailing: (_, viewer) =>
-                        controller.isModerator || controller.isHost
-                            ? viewer.userId == controller.user?.userId
-                                ? IsmLiveDimens.box0
-                                : SizedBox(
-                                    width: IsmLiveDimens.hundred,
-                                    child: IsmLiveButton(
-                                      label: 'kick out',
-                                      onTap: () {
-                                        controller.kickoutViewer(
-                                          streamId: streamId,
-                                          viewerId: viewer.userId,
-                                        );
-                                      },
-                                    ),
-                                  )
-                            : const IsmLiveButton.icon(
-                                icon: Icons.group_add_rounded,
-                              ),
+        builder: (controller) {
+          IsmLiveLog('__________  ${controller.pkStages?.isPk}');
+          return SafeArea(
+            child: IsmLiveStreamHeader(
+              pk: controller.pkStages?.isPkStart ?? false,
+              description: controller.descriptionController.text,
+              name: controller.hostDetails?.name ?? 'U',
+              imageUrl: controller.hostDetails?.image ?? '',
+              pkCompleted: false,
+              onTapModerators: () {
+                IsmLiveUtility.openBottomSheet(
+                  const IsmLiveModeratorsSheet(),
+                  isScrollController: true,
+                );
+              },
+              onTapViewers: (viewerList) {
+                IsmLiveUtility.openBottomSheet(
+                  GetBuilder<IsmLiveStreamController>(
+                    id: IsmLiveStreamView.updateId,
+                    builder: (controller) => IsmLiveListSheet(
+                      scrollController: controller.viewerListController,
+                      items: controller.streamViewersList,
+                      trailing: (_, viewer) =>
+                          controller.isModerator || controller.isHost
+                              ? viewer.userId == controller.user?.userId
+                                  ? IsmLiveDimens.box0
+                                  : SizedBox(
+                                      width: IsmLiveDimens.hundred,
+                                      child: IsmLiveButton(
+                                        label: 'kick out',
+                                        onTap: () {
+                                          controller.kickoutViewer(
+                                            streamId: streamId,
+                                            viewerId: viewer.userId,
+                                          );
+                                        },
+                                      ),
+                                    )
+                              : const IsmLiveButton.icon(
+                                  icon: Icons.group_add_rounded,
+                                ),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        ),
+                );
+              },
+            ),
+          );
+        },
       );
 }
 

@@ -250,7 +250,7 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
 
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
           break;
@@ -269,7 +269,7 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
               isCopublisherRequest: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
           break;
@@ -293,7 +293,7 @@ class IsmLiveMqttController extends GetxController {
                   : 'You\'ve rejected $userName\'s Co-publisher Request',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
           break;
@@ -326,7 +326,7 @@ class IsmLiveMqttController extends GetxController {
             body: body,
             isEvent: true,
           );
-          unawaited(_streamController.handleMessage(message));
+          unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);
           break;
         case IsmLiveActions.memberLeft:
@@ -342,7 +342,7 @@ class IsmLiveMqttController extends GetxController {
             body: '${member.userName} has stopped publishing and left',
             isEvent: true,
           );
-          unawaited(_streamController.handleMessage(message));
+          unawaited(_streamController.handleMessage(message: message));
           _streamController.streamMembersList
               .removeWhere((e) => e.userId == member.userId);
           _updateStream();
@@ -366,7 +366,7 @@ class IsmLiveMqttController extends GetxController {
                   : '$initiatorName has remove $memberName as a member',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveMembersSheet.updateId]);
             _streamController.streamMembersList
                 .removeWhere((e) => e.userId == memberId);
@@ -408,7 +408,7 @@ class IsmLiveMqttController extends GetxController {
           if (_streamController.isHost) {
             _streamController.userRole?.makeCopublisher();
           }
-          unawaited(_streamController.handleMessage(message));
+          unawaited(_streamController.handleMessage(message: message));
           _updateStream();
 
           break;
@@ -416,6 +416,10 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.pubsubMessagePublished:
           final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
           _pkController.inviteId = pkDetails.metaData?.inviteId ?? '';
+          IsmLiveLog('inviteId---------------->  ${_pkController.inviteId}');
+          IsmLiveLog(
+              'inviteId8888---------------->  ${pkDetails.metaData?.inviteId}');
+
           if (pkDetails.userId != _streamController.user?.userId) {
             if (Get.isBottomSheetOpen ?? false) {
               Get.back();
@@ -456,13 +460,10 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.messageSent:
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
-            if (message.messageType == IsmLiveMessageType.pk ||
-                message.messageType == IsmLiveMessageType.pkStart ||
-                message.messageType == IsmLiveMessageType.pkAccepted) {
-              _pkController.pkEventHandler(payload);
-            } else {
-              await _streamController.handleMessage(message);
-            }
+
+            await _streamController.handleMessage(
+                message: message, payload: payload);
+
             _updateStream();
           }
           break;
@@ -484,7 +485,7 @@ class IsmLiveMqttController extends GetxController {
             body: '$moderatorName is a moderator now',
             isEvent: true,
           );
-          unawaited(_streamController.handleMessage(message));
+          unawaited(_streamController.handleMessage(message: message));
           if (userId == moderatorId) {
             final hostName = payload['initiatorName'];
             IsmLiveUtility.showDialog(
@@ -511,7 +512,7 @@ class IsmLiveMqttController extends GetxController {
               body: '$moderatorName has left',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
             _streamController.streamViewersList
@@ -539,7 +540,7 @@ class IsmLiveMqttController extends GetxController {
                   : '$initiatorName has remove $moderatorName',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
             _streamController.streamViewersList
@@ -561,7 +562,6 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.publishStarted:
           break;
         case IsmLiveActions.publishStopped:
-          _streamController.pkStages = null;
           _pkController.pkTimer?.cancel();
           _pkController.pkTimer = null;
           break;
@@ -595,7 +595,7 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has joined',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             await _streamController.addViewers([viewer], false);
             _updateStream();
           }
@@ -614,7 +614,7 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has left',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewer.userId);
             if (viewer.userId != _streamController.user?.userId) {
@@ -641,7 +641,7 @@ class IsmLiveMqttController extends GetxController {
                   : '$initiatorName has remove $viewerName',
               isEvent: true,
             );
-            unawaited(_streamController.handleMessage(message));
+            unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewerId);
             if (userId != initiatorId) {

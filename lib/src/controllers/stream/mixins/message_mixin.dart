@@ -4,6 +4,7 @@ part of '../stream_controller.dart';
 mixin StreamMessageMixin {
   IsmLiveStreamController get _controller =>
       Get.find<IsmLiveStreamController>();
+  IsmLivePkController get _pkController => Get.find<IsmLivePkController>();
 // Convert IsmLiveMessageModel to IsmLiveChatModel
   IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
       IsmLiveChatModel(
@@ -25,10 +26,11 @@ mixin StreamMessageMixin {
       );
 
 // Handle incoming message based on its type
-  Future<void> handleMessage(
-    IsmLiveMessageModel message, [
+  Future<void> handleMessage({
+    required IsmLiveMessageModel message,
+    Map<String, dynamic>? payload,
     bool isMqtt = true,
-  ]) async {
+  }) async {
     switch (message.messageType) {
       case IsmLiveMessageType.normal:
         return await _controller.addMessages([message], isMqtt);
@@ -46,12 +48,22 @@ mixin StreamMessageMixin {
         IsmLiveLog.success('Presence Message');
         break;
       case IsmLiveMessageType.pk:
-        IsmLiveLog.success('Pk Message');
+        _controller.pkStages ??= IsmLivePkStages.isPk();
+        if (_controller.userRole?.isHost ?? false) {
+          unawaited(
+            _controller.getStreamMembers(
+              streamId: _controller.streamId ?? '',
+            ),
+          );
+        }
         break;
       case IsmLiveMessageType.pkStart:
-        IsmLiveLog.success('Pk Start Message');
+        _pkController.pkStartEvent(payload ?? {});
         break;
       case IsmLiveMessageType.pkAccepted:
+        IsmLiveLog.success('Pk Accpected Message');
+        break;
+      case IsmLiveMessageType.pkStop:
         IsmLiveLog.success('Pk Accpected Message');
         break;
     }

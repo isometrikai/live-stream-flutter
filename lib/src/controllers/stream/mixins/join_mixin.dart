@@ -192,7 +192,7 @@ mixin StreamJoinMixin {
       _controller.userRole?.leaveCopublishing();
     }
     if (isPk) {
-      _controller.pkStages ??= IsmLivePkStages.isPk();
+      _controller.pkStages = IsmLivePkStages.isPk();
       _controller.userRole?.makePkGuest();
     }
     _controller.update([IsmGoLiveView.updateId]);
@@ -307,25 +307,25 @@ mixin StreamJoinMixin {
         streamId: streamId,
         isHost: isHost,
       );
-      _controller.update([IsmLiveStreamView.updateId]);
+
       startStreamTimer();
 
       if (!joinByScrolling) {
         IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
         IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
 
-        unawaited(
-          IsmLiveRouteManagement.goToStreamView(
-            isHost: isHost,
-            isNewStream: isNewStream,
-            room: room,
-            streamImage: streamImage,
-            listener: _controller.listener!,
-            streamId: streamId,
-            isInteractive: isInteractive,
-          ),
+        await IsmLiveRouteManagement.goToStreamView(
+          isHost: isHost,
+          isNewStream: isNewStream,
+          room: room,
+          streamImage: streamImage,
+          listener: _controller.listener!,
+          streamId: streamId,
+          isInteractive: isInteractive,
         );
       }
+
+      // _controller.update([IsmLiveStreamView.updateId]);
     } catch (e, st) {
       unawaited(
         _controller._mqttController?.unsubscribeStream(
