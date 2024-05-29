@@ -475,13 +475,13 @@ enum IsmLivePermission {
 enum IsmLiveStages {
   pk,
   pkStart,
-  pkEnd;
+  pkStop;
 
   bool get isPkStart => this == IsmLiveStages.pkStart;
 
   bool get isPk => this == IsmLiveStages.pk;
 
-  bool get isPkEnd => this == IsmLiveStages.pkEnd;
+  bool get isPkStop => this == IsmLiveStages.pkStop;
 }
 
 enum IsmLiveStatus {

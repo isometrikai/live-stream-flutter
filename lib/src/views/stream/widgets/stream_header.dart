@@ -56,13 +56,12 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ),
           ),
           IsmLiveDimens.boxHeight8,
-          if (pk)
+          if (pk || pkCompleted)
             !pkCompleted
                 ? LinearProgressIndicator(
                     minHeight: IsmLiveDimens.ten,
-                    backgroundColor: Colors.red,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    backgroundColor: Colors.blue,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
                     value: 0.5,
                   )
                 : Container(

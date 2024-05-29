@@ -66,6 +66,10 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           isHost: controller.hostDetails?.userId ==
                               participantList[index].participant.identity,
                           showStatsLayer: controller.isPk,
+                          isWinner: controller.hostDetails?.userId ==
+                              participantList[index].participant.identity,
+                          isbattleFinish:
+                              controller.pkStages?.isPkStop ?? false,
                         );
                       },
                     ),
