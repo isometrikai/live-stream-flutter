@@ -154,9 +154,9 @@ class IsmLiveMqttController extends GetxController {
     }
   }
 
-  void disconnect() {
-    actionStreamController.stream.drain();
+  Future<void> disconnect() async {
     _mqttHelper.disconnect();
+    await actionStreamController.stream.drain();
   }
 
   void _pong() {

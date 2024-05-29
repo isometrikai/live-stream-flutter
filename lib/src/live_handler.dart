@@ -60,11 +60,11 @@ class IsmLiveHandler {
       ],
       if (Get.isRegistered<IsmLiveMqttController>()) ...[
         Get.find<IsmLiveMqttController>().unsubscribeTopics(),
+        Get.find<IsmLiveMqttController>().disconnect(),
       ],
     ]);
 
     if (Get.isRegistered<IsmLiveMqttController>()) {
-      Get.find<IsmLiveMqttController>().disconnect();
       unawaited(Get.delete<IsmLiveMqttController>(force: true));
     }
     (logoutCallback ?? onLogout)?.call();
