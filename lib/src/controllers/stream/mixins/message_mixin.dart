@@ -64,7 +64,8 @@ mixin StreamMessageMixin {
         IsmLiveLog.success('Pk Accpected Message');
         break;
       case IsmLiveMessageType.pkStop:
-        IsmLiveLog.success('Pk Accpected Message');
+        _pkController.pkStopEvent(payload ?? {});
+
         break;
     }
   }

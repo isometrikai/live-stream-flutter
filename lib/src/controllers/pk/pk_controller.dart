@@ -91,7 +91,9 @@ class IsmLivePkController extends GetxController
           seconds: 1,
         );
         if (pkDuration.inSeconds == 0) {
-          stopPkBattle(action: 'FORCE_STOP', pkId: pkId);
+          if (streamController.isHost) {
+            stopPkBattle(action: 'FORCE_STOP', pkId: pkId);
+          }
           pkTimer?.cancel();
           pkTimer = null;
         }
@@ -100,9 +102,26 @@ class IsmLivePkController extends GetxController
   }
 
   void pkStartEvent(Map<String, dynamic> payload) async {
-    var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
-    streamController.pkStages?.makePkStart();
-    startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
+    try {
+      var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+      streamController.pkStages?.makePkStart();
+      startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
+    } catch (e) {
+      IsmLiveLog(e);
+    }
+  }
+
+  void pkStopEvent(Map<String, dynamic> payload) async {
+    try {
+      var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+
+      streamController.pkStages?.removePkStart();
+      streamController.pkStages?.makePkStop();
+
+      await pkWinner(pkDetails.pkId ?? '');
+    } catch (e) {
+      IsmLiveLog(e);
+    }
   }
 
   bool isPkInviteApisCall = false;
@@ -279,14 +298,16 @@ class IsmLivePkController extends GetxController
       pkId: pkId,
     );
 
-    if (res) {
-      await pkWinner(pkId);
-    }
+    // if (res) {
+    //   await pkWinner(pkId);
+    // }
   }
 
   Future<void> pkWinner(String pkId) async {
     await _viewModel.pkWinner(
       pkId: pkId,
     );
+
+    streamController.update([IsmLiveControlsWidget.updateId]);
   }
 }

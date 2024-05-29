@@ -39,7 +39,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                 IsmLiveDimens.boxWidth4,
                 Text(
                   '135',
-                  style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                  style: context.textTheme.bodyLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -60,7 +61,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   var isSelected = type == controller.giftType;
                   return DecoratedBox(
                     decoration: BoxDecoration(
-                      color: isSelected ? context.liveTheme?.primaryColor : Colors.grey.shade100,
+                      color: isSelected
+                          ? context.liveTheme?.primaryColor
+                          : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
                     ),
                     child: Padding(
@@ -68,7 +71,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                       child: Text(
                         type.label,
                         style: context.textTheme.titleSmall?.copyWith(
-                          color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
+                          color: isSelected
+                              ? context.liveTheme?.selectedTextColor
+                              : context.liveTheme?.unselectedTextColor,
                         ),
                       ),
                     ),
@@ -138,7 +143,9 @@ class _GiftItem extends StatelessWidget {
                 height: IsmLiveDimens.forty,
                 width: IsmLiveDimens.forty,
                 // child: IsmLiveImage.asset(gift.path),
-                child: gift.path.endsWith('gif') ? IsmLiveGif(path: gift.path) : IsmLiveImage.asset(gift.path),
+                child: gift.path.endsWith('gif')
+                    ? IsmLiveGif(path: gift.path)
+                    : IsmLiveImage.asset(gift.path),
               ),
               IsmLiveDimens.boxHeight8,
               Row(

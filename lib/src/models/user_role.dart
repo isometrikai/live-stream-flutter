@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/foundation.dart';
 
@@ -76,16 +75,18 @@ class IsmLiveUserRole {
 }
 
 class IsmLivePkStages {
-  final List<IsmLiveStages> _stages;
   IsmLivePkStages._(
     List<IsmLiveStages> stages,
   ) : _stages = stages;
 
   factory IsmLivePkStages.isPk() => IsmLivePkStages._([IsmLiveStages.pk]);
+  final List<IsmLiveStages> _stages;
 
   bool get isPk => _stages.any((e) => e.isPk);
 
   bool get isPkStart => _stages.any((e) => e.isPkStart);
+
+  bool get isPkStop => _stages.any((e) => e.isPkStop);
 
   void makePk() {
     _stages.add(IsmLiveStages.pk);
@@ -101,6 +102,14 @@ class IsmLivePkStages {
 
   void removePkStart() {
     _stages.remove(IsmLiveStages.pkStart);
+  }
+
+  void makePkStop() {
+    _stages.add(IsmLiveStages.pkStop);
+  }
+
+  void removePkStop() {
+    _stages.remove(IsmLiveStages.pkStop);
   }
 
   @override

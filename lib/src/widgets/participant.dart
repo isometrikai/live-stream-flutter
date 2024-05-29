@@ -17,6 +17,8 @@ abstract class ParticipantWidget extends StatefulWidget {
     bool showStatsLayer = false,
     bool showFullVideo = false,
     bool isHost = false,
+    bool isbattleFinish = false,
+    bool isWinner = false,
     bool isViewer = false,
     bool isFirstIndex = false,
   }) {
@@ -27,6 +29,8 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isbattleFinish,
+        isWinner,
         isViewer,
         isFirstIndex,
         imageUrl: imageUrl,
@@ -39,6 +43,8 @@ abstract class ParticipantWidget extends StatefulWidget {
         participantTrack.isScreenShare,
         showStatsLayer,
         isHost,
+        isbattleFinish,
+        isWinner,
         isViewer,
         isFirstIndex,
         imageUrl: imageUrl,
@@ -56,6 +62,8 @@ abstract class ParticipantWidget extends StatefulWidget {
   abstract final bool showStatsLayer;
   abstract final bool showFullVideo;
   abstract final bool isHost;
+  abstract final bool isbattleFinish;
+  abstract final bool isWinner;
   abstract final bool isViewer;
   abstract final bool isFirstIndex;
 
@@ -69,6 +77,8 @@ class LocalParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer,
     this.isHost,
+    this.isbattleFinish,
+    this.isWinner,
     this.isViewer,
     this.isFirstIndex, {
     this.imageUrl,
@@ -90,6 +100,10 @@ class LocalParticipantWidget extends ParticipantWidget {
   @override
   final bool isHost;
   @override
+  final bool isbattleFinish;
+  @override
+  final bool isWinner;
+  @override
   final bool isViewer;
   @override
   final bool isFirstIndex;
@@ -105,6 +119,8 @@ class RemoteParticipantWidget extends ParticipantWidget {
     this.isScreenShare,
     this.showStatsLayer,
     this.isHost,
+    this.isbattleFinish,
+    this.isWinner,
     this.isViewer,
     this.isFirstIndex, {
     this.imageUrl,
@@ -125,6 +141,10 @@ class RemoteParticipantWidget extends ParticipantWidget {
   final bool showFullVideo;
   @override
   final bool isHost;
+  @override
+  final bool isbattleFinish;
+  @override
+  final bool isWinner;
   @override
   final bool isViewer;
   @override
@@ -192,11 +212,16 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     name: widget.participant.name,
                     imageUrl: widget.imageUrl ?? '',
                   ),
-            // if (widget.showStatsLayer)
-            //   const Align(
-            //     alignment: Alignment.center,
-            //     child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
-            //   ),
+            if (widget.isbattleFinish)
+              widget.isWinner
+                  ? const Align(
+                      alignment: Alignment.center,
+                      child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
+                    )
+                  : const Align(
+                      alignment: Alignment.center,
+                      child: IsmLiveImage.svg(IsmLiveAssetConstants.loser),
+                    ),
             if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.bottomCenter,
