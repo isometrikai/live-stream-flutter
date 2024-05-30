@@ -135,7 +135,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
                 ),
-                const _TopDarkGradient(),
+                const IgnorePointer(child: _TopDarkGradient()),
                 const _BottomDarkGradient(),
                 ...controller.heartList,
                 ...controller.giftList,

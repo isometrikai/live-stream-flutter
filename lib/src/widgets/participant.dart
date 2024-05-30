@@ -237,12 +237,17 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                       : widget.participant.identity,
                 ),
               ),
-            if (widget.showStatsLayer && widget.isViewer)
+            if (widget.showStatsLayer &&
+                widget.isViewer &&
+                !widget.isFirstIndex)
               Align(
-                alignment: Alignment.topLeft,
+                alignment: Alignment.topRight,
                 child: IsmLiveTapHandler(
                   onTap: () {
-                    Get.find<IsmLiveStreamController>().pkChangeHostSheet();
+                    Get.find<IsmLivePkController>().pkChangeHostSheet(
+                      userId: widget.participant.identity,
+                      name: widget.participant.name,
+                    );
                   },
                   child: Container(
                     padding: IsmLiveDimens.edgeInsets5,

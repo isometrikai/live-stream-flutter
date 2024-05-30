@@ -8,11 +8,17 @@ class IsmLivePkChangeHostSheet extends StatelessWidget {
       required this.image,
       required this.title,
       required this.description,
-      required this.lable});
+      required this.lable,
+      required this.coins,
+      required this.followers,
+      this.onTap});
   final String image;
   final String title;
   final String description;
   final String lable;
+  final String coins;
+  final String followers;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -49,16 +55,16 @@ class IsmLivePkChangeHostSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.person),
-                const Text('529'),
+                Text(followers),
                 IsmLiveDimens.boxWidth10,
                 const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                const Text('78k'),
+                Text(coins),
               ],
             ),
             IsmLiveDimens.boxHeight32,
             IsmLiveButton(
               label: lable,
-              onTap: Get.back,
+              onTap: onTap,
             ),
           ],
         ),

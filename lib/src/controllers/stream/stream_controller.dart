@@ -163,6 +163,12 @@ class IsmLiveStreamController extends GetxController
   set participantTracks(List<IsmLiveParticipantTrack> value) =>
       _participantTracks.value = value;
 
+  final RxList<IsmLiveParticipantTrack> _participantList =
+      <IsmLiveParticipantTrack>[].obs;
+  List<IsmLiveParticipantTrack> get participantList => _participantList;
+  set participantList(List<IsmLiveParticipantTrack> value) =>
+      _participantList.value = value;
+
   CameraPosition position = CameraPosition.front;
 
   late TabController tabController;
