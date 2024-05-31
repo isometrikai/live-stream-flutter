@@ -184,6 +184,7 @@ mixin StreamJoinMixin {
         streamDiscription ?? _controller.descriptionController.text;
 
     _controller.pkStages = null;
+
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     if (isCopublisher) {

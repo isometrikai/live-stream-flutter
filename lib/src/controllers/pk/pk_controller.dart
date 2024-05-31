@@ -78,12 +78,17 @@ class IsmLivePkController extends GetxController
   void startPkTimer({
     required int time,
     required String pkId,
+    bool inSec = false,
   }) {
     if (pkTimer != null) {
       return;
     }
 
-    pkDuration = Duration(minutes: time);
+    if (inSec) {
+      pkDuration = Duration(seconds: time);
+    } else {
+      pkDuration = Duration(minutes: time);
+    }
     pkTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -142,6 +147,26 @@ class IsmLivePkController extends GetxController
         isPkInviteApisCall = false;
       }
     });
+  }
+
+  void pkChangeHostSheet({required String userId, String? name}) async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLivePkChangeHostSheet(
+        followers: '',
+        coins: '',
+        description: 'New York, USA Female 34',
+        image: '',
+        lable: 'Change host',
+        title: '@$name',
+        onTap: () {
+          streamController.participantList =
+              streamController.participantList.reversed.toList();
+          streamController.update([IsmLivePublisherGrid.updateId]);
+
+          Get.back();
+        },
+      ),
+    );
   }
 
   void pkInviteSheet({
@@ -274,9 +299,19 @@ class IsmLivePkController extends GetxController
   }
 
   void pkStatus(String streamId) async {
-    await _viewModel.pkStatus(
+    var res = await _viewModel.pkStatus(
       streamId: streamId,
     );
+
+    if (res != null) {
+      streamController.pkStages = IsmLivePkStages.isPk();
+      streamController.pkStages?.makePkStart();
+      startPkTimer(
+        time: res.timeRemain ?? 0,
+        pkId: res.pkId ?? '',
+        inSec: true,
+      );
+    }
   }
 
   Future<void> startPkBattle() async {

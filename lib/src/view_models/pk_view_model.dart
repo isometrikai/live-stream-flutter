@@ -95,7 +95,7 @@ class IsmLivePkViewModel {
     return null;
   }
 
-  Future<void> pkStatus({
+  Future<IsmLivePkStatusModel?> pkStatus({
     required String streamId,
   }) async {
     try {
@@ -104,12 +104,16 @@ class IsmLivePkViewModel {
       );
 
       if (res.hasError) {
-        return;
+        return null;
       }
+
+      var data = jsonDecode(res.data)['data'];
+
+      return IsmLivePkStatusModel.fromMap(data);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
     }
-    return;
+    return null;
   }
 
   Future<void> startPkBattle({

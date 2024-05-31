@@ -12,71 +12,81 @@ class IsmLivePublisherGrid extends StatelessWidget {
   final String streamImage;
   final bool isInteractive;
 
+  static const String updateId = 'publisher-grid';
+
   @override
-  Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
-        builder: (controller) => controller.participantTracks.isNotEmpty
-            ? controller.participantTracks.length == 1
-                ? InteractiveViewer(
-                    maxScale: isInteractive ? 3 : 1,
-                    panEnabled: isInteractive,
-                    scaleEnabled: isInteractive,
-                    child: ParticipantWidget.widgetFor(
-                      controller.participantTracks.first,
-                      imageUrl: controller.hostDetails?.userProfileImageUrl,
-                      showStatsLayer: false,
-                      showFullVideo: isInteractive,
-                    ),
-                  )
-                : Padding(
-                    padding: IsmLiveDimens.edgeInsetsT100,
-                    child: GridView.builder(
-                      restorationId: '',
-                      itemCount: controller.participantTracks.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            controller.participantTracks.length < 5 ? 2 : 3,
-                        childAspectRatio:
-                            controller.participantTracks.length < 3
-                                ? (Get.width / 2) / (Get.height * 0.43)
-                                : controller.participantTracks.length < 5
-                                    ? (Get.width / 3) / (Get.height / 3)
-                                    : 1,
-                      ),
-                      itemBuilder: (_, index) {
-                        var url = '';
-                        var participantList = controller.userRole?.isHost ??
-                                false
-                            ? controller.participantTracks
-                            : controller.participantTracks.reversed.toList();
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+      id: updateId,
+      initState: (state) {
+        var controller = Get.find<IsmLiveStreamController>();
+        controller.participantList = controller.userRole?.isPkGuest ?? false
+            ? controller.participantTracks.reversed.toList()
+            : controller.participantTracks;
+      },
+      builder: (context) => GetX<IsmLiveStreamController>(
+            builder: (controller) => controller.participantTracks.isNotEmpty
+                ? controller.participantTracks.length == 1
+                    ? InteractiveViewer(
+                        maxScale: isInteractive ? 3 : 1,
+                        panEnabled: isInteractive,
+                        scaleEnabled: isInteractive,
+                        child: ParticipantWidget.widgetFor(
+                          controller.participantTracks.first,
+                          imageUrl: controller.hostDetails?.userProfileImageUrl,
+                          showStatsLayer: false,
+                          showFullVideo: isInteractive,
+                        ),
+                      )
+                    : Padding(
+                        padding: IsmLiveDimens.edgeInsetsT100,
+                        child: GridView.builder(
+                          restorationId: '',
+                          itemCount: controller.participantTracks.length,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                controller.participantTracks.length < 5 ? 2 : 3,
+                            childAspectRatio:
+                                controller.participantTracks.length < 3
+                                    ? (Get.width / 2) / (Get.height * 0.43)
+                                    : controller.participantTracks.length < 5
+                                        ? (Get.width / 3) / (Get.height / 3)
+                                        : 1,
+                          ),
+                          itemBuilder: (_, index) {
+                            var url = '';
 
-                        for (var element in controller.streamMembersList) {
-                          if (element.userId ==
-                              participantList[index].participant.identity) {
-                            url = element.userProfileImageUrl;
-                          }
-                        }
+                            for (var element in controller.streamMembersList) {
+                              if (element.userId ==
+                                  controller.participantList[index].participant
+                                      .identity) {
+                                url = element.userProfileImageUrl;
+                              }
+                            }
 
-                        return ParticipantWidget.widgetFor(
-                          participantList[index],
-                          imageUrl: url,
-                          isFirstIndex: index == 0,
-                          isViewer: !(controller.userRole?.isHost ?? false) &&
-                              !(controller.userRole?.isPkGuest ?? false),
-                          isHost: controller.hostDetails?.userId ==
-                              participantList[index].participant.identity,
-                          showStatsLayer: controller.isPk,
-                          isWinner: controller.hostDetails?.userId ==
-                              participantList[index].participant.identity,
-                          isbattleFinish:
-                              controller.pkStages?.isPkStop ?? false,
-                        );
-                      },
-                    ),
-                  )
-            : NoVideoWidget(
-                imageUrl: controller.hostDetails?.image ?? streamImage,
-                name: controller.hostDetails?.name ?? 'U',
-              ),
-      );
+                            return ParticipantWidget.widgetFor(
+                              controller.participantList[index],
+                              imageUrl: url,
+                              isFirstIndex: index == 0,
+                              isViewer: !(controller.userRole?.isHost ??
+                                      false) &&
+                                  !(controller.userRole?.isPkGuest ?? false) &&
+                                  !(controller.pkStages?.isPkStop ?? false),
+                              isHost: index == 0,
+                              showStatsLayer: controller.isPk,
+                              isWinner: controller.hostDetails?.userId ==
+                                  controller.participantList[index].participant
+                                      .identity,
+                              isbattleFinish:
+                                  controller.pkStages?.isPkStop ?? false,
+                            );
+                          },
+                        ),
+                      )
+                : NoVideoWidget(
+                    imageUrl: controller.hostDetails?.image ?? streamImage,
+                    name: controller.hostDetails?.name ?? 'U',
+                  ),
+          ));
 }
