@@ -171,4 +171,67 @@ class IsmLivePkViewModel {
     }
     return;
   }
+
+  Future<List<IsmLiveGiftGroupModel>> getGiftCategories({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.getGiftCategories(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      if (res.hasError) {
+        return [];
+      }
+
+      List data = jsonDecode(res.data)['data'];
+
+      return data
+          .map((e) => IsmLiveGiftGroupModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
+  Future<List<IsmLiveGiftsCategoryModel>> getGiftsForACategory({
+    required int skip,
+    required int limit,
+    required String giftGroupId,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.getGiftsForACategory(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+        giftGroupId: giftGroupId,
+      );
+      if (res.hasError) {
+        return [];
+      }
+      List data = jsonDecode(res.data)['data'];
+
+      return data
+          .map((e) =>
+              IsmLiveGiftsCategoryModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
+  Future<void> sendGiftToStreamer() async {
+    try {
+      var res = await _repository.sendGiftToStreamer();
+      if (res.hasError) {}
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+  }
 }

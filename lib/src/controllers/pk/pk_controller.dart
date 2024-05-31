@@ -21,12 +21,25 @@ class IsmLivePkController extends GetxController
   TextEditingController pkInviteTextController = TextEditingController();
 
   final _pkInviteDebouncer = IsmLiveDebouncer();
+  final _giftCategoriesDebouncer = IsmLiveDebouncer();
+  final _giftDebouncer = IsmLiveDebouncer();
 
   final RxList<IsmLivePkInviteModel> _pkInviteList =
       <IsmLivePkInviteModel>[].obs;
   List<IsmLivePkInviteModel> get pkInviteList => _pkInviteList;
   set pkInviteList(List<IsmLivePkInviteModel> list) =>
       _pkInviteList.value = list;
+
+  final RxList<IsmLiveGiftGroupModel> _giftCategoriesList =
+      <IsmLiveGiftGroupModel>[].obs;
+  List<IsmLiveGiftGroupModel> get giftCategoriesList => _giftCategoriesList;
+  set giftCategoriesList(List<IsmLiveGiftGroupModel> list) =>
+      _giftCategoriesList.value = list;
+
+  final RxList<IsmLiveGiftsCategoryModel> _giftList =
+      <IsmLiveGiftsCategoryModel>[].obs;
+  List<IsmLiveGiftsCategoryModel> get giftList => _giftList;
+  set giftList(List<IsmLiveGiftsCategoryModel> list) => _giftList.value = list;
 
   final RxString _pkSelectTime = ''.obs;
   String get pkSelectTime => _pkSelectTime.value;
@@ -328,14 +341,10 @@ class IsmLivePkController extends GetxController
     required String pkId,
     required String action,
   }) async {
-    var res = await _viewModel.stopPkBattle(
+    await _viewModel.stopPkBattle(
       action: action,
       pkId: pkId,
     );
-
-    // if (res) {
-    //   await pkWinner(pkId);
-    // }
   }
 
   Future<void> pkWinner(String pkId) async {
@@ -344,5 +353,67 @@ class IsmLivePkController extends GetxController
     );
 
     streamController.update([IsmLiveControlsWidget.updateId]);
+  }
+
+  Future<void> getGiftCategories({
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    _giftCategoriesDebouncer.run(() async {
+      await _getGiftCategories(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+    });
+  }
+
+  Future<void> _getGiftCategories({
+    required int limit,
+    required int skip,
+    String? searchTag,
+  }) async {
+    var res = await _viewModel.getGiftCategories(
+      limit: limit,
+      skip: skip,
+      searchTag: searchTag,
+    );
+
+    giftCategoriesList.addAll(res);
+    giftCategoriesList = giftCategoriesList.toSet().toList();
+  }
+
+  Future<void> getGiftsForACategory({
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+    required String giftGroupId,
+  }) async {
+    _giftCategoriesDebouncer.run(() async {
+      await _getGiftsForACategory(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+        giftGroupId: giftGroupId,
+      );
+    });
+  }
+
+  Future<void> _getGiftsForACategory({
+    required int limit,
+    required int skip,
+    required String giftGroupId,
+    String? searchTag,
+  }) async {
+    var res = await _viewModel.getGiftsForACategory(
+      limit: limit,
+      skip: skip,
+      searchTag: searchTag,
+      giftGroupId: giftGroupId,
+    );
+
+    giftList.addAll(res);
+    giftList = giftList.toSet().toList();
   }
 }
