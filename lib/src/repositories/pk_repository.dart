@@ -102,28 +102,8 @@ class IsmLivePkRepository {
         giftGroupId: giftGroupId,
       );
 
-  Future<IsmLiveResponseModel> sendGiftToStreamer() async =>
-      await _api.sendGiftToStreamer(payload: {
-        "messageStreamId": "661fc2b664c6660035a394b3",
-        "senderId": "65eafd54837d0500019f065e",
-        "giftThumbnailUrl":
-            "https:\/\/admin-media1.isometrik.io\/virtual_currency_gift_icon\/TOr7LK_Zjr.png",
-        "amount": 75,
-        "giftId": "65f2834f3098f1fbf4022d46",
-        "deviceId": "4B77871C-A748-41B7-81DF-55CFC8EA5FF0",
-        "giftUrl":
-            "https:\/\/admin-media1.isometrik.io\/virtual_currency_gift_animation\/ORZoL4_CYS.gif",
-        "receiverUserId": "65eaff66837d050001712bfb",
-        "reciverUserType": "publisher",
-        "receiverName": "monikahi",
-        "pkId": "",
-        "receiverStreamId": "661fc2b664c6660035a394b3",
-        "receiverCurrency": "INR",
-        "isometricToken":
-            "SFMyNTY.g3QAAAACZAAEZGF0YW0AAAAYNjVlYWZkNTQ4MzdkMDUwMDAxOWYwNjVlZAAGc2lnbmVkbgYARyB55o4B.ceGx2JoBHBppvYcmn6lGLxkUv0VOUoLEeMHENIgC8bo",
-        "giftTitle": "Cat Dancing",
-        "IsGiftVideo": false,
-        "currency": "COIN",
-        "isPk": false
-      });
+  Future<IsmLiveResponseModel> sendGiftToStreamer(
+          IsmLiveSendGiftModel payload) async =>
+      await _api.sendGiftToStreamer(
+          payload: payload.toMap().removeNullValues());
 }

@@ -226,9 +226,9 @@ class IsmLivePkViewModel {
     }
   }
 
-  Future<void> sendGiftToStreamer() async {
+  Future<void> sendGiftToStreamer(IsmLiveSendGiftModel payload) async {
     try {
-      var res = await _repository.sendGiftToStreamer();
+      var res = await _repository.sendGiftToStreamer(payload);
       if (res.hasError) {}
     } catch (e, st) {
       IsmLiveLog.error(e, st);

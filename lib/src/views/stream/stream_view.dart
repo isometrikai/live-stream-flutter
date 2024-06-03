@@ -285,7 +285,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (controller.pkStages?.isPkStart ?? false)
+                if ((controller.pkStages?.isPkStart ?? false) &&
+                    controller.participantTracks.length == 2)
                   const Align(
                     alignment: Alignment.center,
                     child: IsmLivePkTimerContainer(),
@@ -309,11 +310,13 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
-            pk: controller.pkStages?.isPkStart ?? false,
+            pk: (controller.pkStages?.isPkStart ?? false) &&
+                controller.participantTracks.length == 2,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',
-            pkCompleted: controller.pkStages?.isPkStop ?? false,
+            pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
+                controller.participantTracks.length == 2,
             onTapModerators: () {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),

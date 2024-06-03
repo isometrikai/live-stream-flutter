@@ -416,4 +416,26 @@ class IsmLivePkController extends GetxController
     giftList.addAll(res);
     giftList = giftList.toSet().toList();
   }
+
+  Future<void> sendGift() async {
+    var res = await _viewModel.sendGiftToStreamer(IsmLiveSendGiftModel(
+      isPk: true,
+      receiverStreamId: streamController.streamId,
+      receiverUserId:
+          streamController.participantList.first.participant.identity,
+      senderId: streamController.user?.userId,
+      receiverName: streamController.participantList.first.participant.name,
+      messageStreamId: streamController.streamId,
+      // pkId: ,
+      // amount: ,
+      // currency: ,
+      // receiverCurrency: ,
+      // reciverUserType: ,
+      // IsGiftVideo: ,
+      // deviceId: ,
+      // giftId: ,
+      // giftThumbnailUrl: ,giftTitle: ,
+      // isometricToken: ,giftUrl: ,
+    ));
+  }
 }
