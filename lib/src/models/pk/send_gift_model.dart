@@ -6,7 +6,7 @@ class IsmLiveSendGiftModel {
   final String? senderId;
   final String? giftThumbnailUrl;
 
-  final String? amount;
+  final int? amount;
   final String? giftId;
   final String? deviceId;
   final String? giftUrl;
@@ -46,7 +46,7 @@ class IsmLiveSendGiftModel {
     String? messageStreamId,
     String? senderId,
     String? giftThumbnailUrl,
-    String? amount,
+    int? amount,
     String? giftId,
     String? deviceId,
     String? giftUrl,
@@ -113,7 +113,7 @@ class IsmLiveSendGiftModel {
         giftThumbnailUrl: map['giftThumbnailUrl'] != null
             ? map['giftThumbnailUrl'] as String
             : null,
-        amount: map['amount'] != null ? map['amount'] as String : null,
+        amount: map['amount'] != null ? map['amount'] as int : 0,
         giftId: map['giftId'] != null ? map['giftId'] as String : null,
         deviceId: map['deviceId'] != null ? map['deviceId'] as String : null,
         giftUrl: map['giftUrl'] != null ? map['giftUrl'] as String : null,

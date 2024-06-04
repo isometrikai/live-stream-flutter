@@ -104,6 +104,7 @@ class IsmLivePkSheet extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(Icons.remove_red_eye),
+                                IsmLiveDimens.boxWidth4,
                                 Text('${details.viewerCount}'),
                               ],
                             ),
@@ -135,11 +136,12 @@ class IsmLivePkSheet extends StatelessWidget {
                             isProfileImage: true,
                           ),
                           title: const Text('@tayne22'),
-                          subtitle: const Row(
+                          subtitle: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.remove_red_eye),
-                              Text('123'),
+                              const Icon(Icons.remove_red_eye),
+                              IsmLiveDimens.boxWidth2,
+                              const Text('123'),
                             ],
                           ),
                           trailing: SizedBox(

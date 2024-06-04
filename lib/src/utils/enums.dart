@@ -198,6 +198,7 @@ enum IsmLiveStreamOption {
   speaker(IsmLiveAssetConstants.speakerOn),
   product(IsmLiveAssetConstants.product),
   vs(IsmLiveAssetConstants.vs),
+  pk(IsmLiveAssetConstants.pk),
   heart(IsmLiveAssetConstants.heartSvg),
   ;
 
@@ -234,8 +235,7 @@ enum IsmLiveStreamOption {
       ];
 
   static List<IsmLiveStreamOption> get pkOptions => [
-        // IsmLiveStreamOption.multiLive,
-
+        IsmLiveStreamOption.pk,
         IsmLiveStreamOption.favourite,
         IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,

@@ -59,6 +59,8 @@ class IsmLivePkController extends GetxController
 
   late String inviteId;
 
+  String? pkId;
+
   Timer? pkTimer;
 
   @override
@@ -90,7 +92,6 @@ class IsmLivePkController extends GetxController
 
   void startPkTimer({
     required int time,
-    required String pkId,
     bool inSec = false,
   }) {
     if (pkTimer != null) {
@@ -109,9 +110,7 @@ class IsmLivePkController extends GetxController
           seconds: 1,
         );
         if (pkDuration.inSeconds == 0) {
-          if (streamController.isHost) {
-            stopPkBattle(action: 'FORCE_STOP', pkId: pkId);
-          }
+          if (streamController.isHost) {}
           pkTimer?.cancel();
           pkTimer = null;
         }
@@ -123,7 +122,11 @@ class IsmLivePkController extends GetxController
     try {
       var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
       streamController.pkStages?.makePkStart();
-      startPkTimer(time: pkDetails.timeInMin ?? 0, pkId: pkDetails.pkId ?? '');
+
+      pkId = pkDetails.pkId;
+      startPkTimer(
+        time: pkDetails.timeInMin ?? 0,
+      );
     } catch (e) {
       IsmLiveLog(e);
     }
@@ -202,6 +205,27 @@ class IsmLivePkController extends GetxController
         isInvite: isInvite,
         inviteId: inviteId,
         reciverStreamId: reciverStreamId,
+      ),
+    );
+  }
+
+  void stopPkBattleSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLiveCustomButtomSheet(
+        title: streamController.pkStages?.isPkStart ?? false
+            ? 'You want to end pk battle'
+            : 'Pk battle not started',
+        leftLabel: 'cancel',
+        rightLabel: streamController.pkStages?.isPkStart ?? false
+            ? 'stop battle'
+            : 'back',
+        onLeft: Get.back,
+        onRight: () {
+          Get.back();
+          if (streamController.pkStages?.isPkStart ?? false) {
+            stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
+          }
+        },
       ),
     );
   }
@@ -321,7 +345,6 @@ class IsmLivePkController extends GetxController
       streamController.pkStages?.makePkStart();
       startPkTimer(
         time: res.timeRemain ?? 0,
-        pkId: res.pkId ?? '',
         inSec: true,
       );
     }
@@ -390,7 +413,7 @@ class IsmLivePkController extends GetxController
     String? searchTag,
     required String giftGroupId,
   }) async {
-    _giftCategoriesDebouncer.run(() async {
+    _giftDebouncer.run(() async {
       await _getGiftsForACategory(
         limit: limit,
         skip: skip,
@@ -426,16 +449,20 @@ class IsmLivePkController extends GetxController
       senderId: streamController.user?.userId,
       receiverName: streamController.participantList.first.participant.name,
       messageStreamId: streamController.streamId,
-      // pkId: ,
-      // amount: ,
-      // currency: ,
-      // receiverCurrency: ,
-      // reciverUserType: ,
-      // IsGiftVideo: ,
+      pkId: pkId,
+      amount: 10,
+      currency: 'COIN',
+      receiverCurrency: 'INR',
+      reciverUserType: 'publisher',
+      IsGiftVideo: false,
       // deviceId: ,
-      // giftId: ,
-      // giftThumbnailUrl: ,giftTitle: ,
-      // isometricToken: ,giftUrl: ,
+      giftId: '65f2834f3098f1fbf4022d46',
+      giftThumbnailUrl:
+          'https://admin-media1.isometrik.io/virtual_currency_gift_icon/TOr7LK_Zjr.png',
+      giftTitle: 'Cat Dancing',
+      isometricToken: IsmLiveUtility.config.userConfig.userToken,
+      giftUrl:
+          'https://admin-media1.isometrik.io/virtual_currency_gift_animation/ORZoL4_CYS.gif',
     ));
   }
 }

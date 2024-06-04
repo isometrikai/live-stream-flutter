@@ -199,6 +199,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.settings:
       case IsmLiveStreamOption.rotateCamera:
       case IsmLiveStreamOption.product:
+      case IsmLiveStreamOption.pk:
       case IsmLiveStreamOption.heart:
         return option.icon;
       case IsmLiveStreamOption.speaker:
@@ -405,6 +406,9 @@ mixin StreamOngoingMixin {
         break;
       case IsmLiveStreamOption.heart:
         unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));
+        break;
+      case IsmLiveStreamOption.pk:
+        _pkController.stopPkBattleSheet();
         break;
     }
   }

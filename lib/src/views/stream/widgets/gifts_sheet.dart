@@ -103,6 +103,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             gift: gift,
                             onTap: () {
                               Get.back();
+                              Get.find<IsmLivePkController>().sendGift();
                               onTap(gift);
                             },
                           );
