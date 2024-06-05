@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 class IsmLivePkBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<IsmLivePkController>(
-      () => IsmLivePkController(
+    Get.put(
+      IsmLivePkController(
         IsmLivePkViewModel(
           IsmLivePkRepository(
             IsmLivePkApis(
@@ -14,6 +14,7 @@ class IsmLivePkBinding implements Bindings {
           ),
         ),
       ),
+      permanent: true,
     );
   }
 }

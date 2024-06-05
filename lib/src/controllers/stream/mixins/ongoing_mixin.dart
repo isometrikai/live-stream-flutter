@@ -177,7 +177,10 @@ mixin StreamOngoingMixin {
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
 
-    if (_controller.isPk && _controller.participantTracks.length == 2) {
+    if (_controller.isPk &&
+        _controller.participantTracks.length == 2 &&
+        ((_controller.userRole?.isHost ?? false) ||
+            (_controller.userRole?.isPkGuest ?? false))) {
       if (Get.isBottomSheetOpen ?? false) {
         Get.back();
       }

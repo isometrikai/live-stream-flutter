@@ -155,7 +155,7 @@ class IsmLivePkViewModel {
     }
   }
 
-  Future<void> pkWinner({
+  Future<IsmLivePkWinnerModel?> pkWinner({
     required String pkId,
   }) async {
     try {
@@ -163,13 +163,15 @@ class IsmLivePkViewModel {
         pkId: pkId,
       );
 
-      if (res.hasError) {
-        return;
+      if (!res.hasError && res.statusCode != 204) {
+        var data = jsonDecode(res.data)['data'];
+        return IsmLivePkWinnerModel.fromMap(data);
       }
     } catch (e, st) {
       IsmLiveLog.error(e, st);
+      return null;
     }
-    return;
+    return null;
   }
 
   Future<List<IsmLiveGiftGroupModel>> getGiftCategories({

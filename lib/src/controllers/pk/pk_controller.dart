@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
@@ -57,9 +58,16 @@ class IsmLivePkController extends GetxController
   Duration get pkDuration => _pkDuration.value;
   set pkDuration(Duration value) => _pkDuration.value = value;
 
+  final RxDouble _pkBarPersentage = 0.5.obs;
+  double get pkBarPersentage => _pkBarPersentage.value;
+  set pkBarPersentage(double value) => _pkBarPersentage.value = value;
+
   late String inviteId;
 
   String? pkId;
+
+  int pkHostValue = 0;
+  int pkGustValue = 0;
 
   Timer? pkTimer;
 
@@ -103,6 +111,7 @@ class IsmLivePkController extends GetxController
     } else {
       pkDuration = Duration(minutes: time);
     }
+
     pkTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -110,7 +119,6 @@ class IsmLivePkController extends GetxController
           seconds: 1,
         );
         if (pkDuration.inSeconds == 0) {
-          if (streamController.isHost) {}
           pkTimer?.cancel();
           pkTimer = null;
         }
@@ -122,8 +130,11 @@ class IsmLivePkController extends GetxController
     try {
       var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
       streamController.pkStages?.makePkStart();
-
+      streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
+      pkBarPersentage = 0.5;
+      pkHostValue = 0;
+      pkGustValue = 0;
       startPkTimer(
         time: pkDetails.timeInMin ?? 0,
       );
@@ -135,11 +146,19 @@ class IsmLivePkController extends GetxController
   void pkStopEvent(Map<String, dynamic> payload) async {
     try {
       var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+      pkTimer?.cancel();
+      pkTimer = null;
 
       streamController.pkStages?.removePkStart();
       streamController.pkStages?.makePkStop();
-
       await pkWinner(pkDetails.pkId ?? '');
+      IsmLiveDebouncer(
+        durationtime: 6000,
+      ).run(() {
+        streamController.pkStages?.removePkStop();
+        streamController.update([IsmLivePublisherGrid.updateId]);
+        streamController.update([IsmLiveStreamView.updateId]);
+      });
     } catch (e) {
       IsmLiveLog(e);
     }
@@ -177,6 +196,13 @@ class IsmLivePkController extends GetxController
         onTap: () {
           streamController.participantList =
               streamController.participantList.reversed.toList();
+
+          var swap = pkHostValue;
+          pkHostValue = pkGustValue;
+          pkGustValue = swap;
+
+          pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
+
           streamController.update([IsmLivePublisherGrid.updateId]);
 
           Get.back();
@@ -216,15 +242,14 @@ class IsmLivePkController extends GetxController
             ? 'You want to end pk battle'
             : 'Pk battle not started',
         leftLabel: 'cancel',
-        rightLabel: streamController.pkStages?.isPkStart ?? false
-            ? 'stop battle'
-            : 'back',
+        rightLabel:
+            streamController.pkStages?.isPkStart ?? false ? 'stop battle' : '',
         onLeft: Get.back,
         onRight: () {
           Get.back();
           if (streamController.pkStages?.isPkStart ?? false) {
             stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
-          }
+          } else {}
         },
       ),
     );
@@ -335,12 +360,34 @@ class IsmLivePkController extends GetxController
     await streamController.sortParticipants();
   }
 
+  void pkBarStatus(Map<String, dynamic> payload) {
+    var data = jsonDecode(payload['body']);
+    IsmLiveLog('----------------------$data');
+
+    if (data['reciverId'] ==
+        streamController.participantList.first.participant.identity) {
+      pkHostValue = pkHostValue + data['totalCoinsRecived'] as int;
+
+      pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
+    } else {
+      pkGustValue = pkGustValue + data['totalCoinsRecived'] as int;
+
+      pkBarPersentage = 1 - pkPersentege(pkHostValue, pkGustValue);
+    }
+  }
+
+  double pkPersentege(int first, int secound) {
+    var total = first + secound;
+    return first / total;
+  }
+
   void pkStatus(String streamId) async {
     var res = await _viewModel.pkStatus(
       streamId: streamId,
     );
 
     if (res != null) {
+      pkId = res.pkId;
       streamController.pkStages = IsmLivePkStages.isPk();
       streamController.pkStages?.makePkStart();
       startPkTimer(
@@ -371,11 +418,13 @@ class IsmLivePkController extends GetxController
   }
 
   Future<void> pkWinner(String pkId) async {
-    await _viewModel.pkWinner(
+    var res = await _viewModel.pkWinner(
       pkId: pkId,
     );
 
-    streamController.update([IsmLiveControlsWidget.updateId]);
+    if (res != null) {
+      streamController.pkWinnerId = res.winnerId;
+    }
   }
 
   Future<void> getGiftCategories({
@@ -453,9 +502,13 @@ class IsmLivePkController extends GetxController
       amount: 10,
       currency: 'COIN',
       receiverCurrency: 'INR',
-      reciverUserType: 'publisher',
+      reciverUserType:
+          streamController.participantList.first.participant.identity ==
+                  streamController.hostDetails?.userId
+              ? 'publisher'
+              : 'co-publisher',
       IsGiftVideo: false,
-      // deviceId: ,
+      deviceId: IsmLiveUtility.config.projectConfig.deviceId,
       giftId: '65f2834f3098f1fbf4022d46',
       giftThumbnailUrl:
           'https://admin-media1.isometrik.io/virtual_currency_gift_icon/TOr7LK_Zjr.png',

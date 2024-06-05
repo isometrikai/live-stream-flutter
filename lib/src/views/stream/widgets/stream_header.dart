@@ -58,18 +58,23 @@ class IsmLiveStreamHeader extends StatelessWidget {
           IsmLiveDimens.boxHeight8,
           if (pk || pkCompleted)
             !pkCompleted
-                ? LinearProgressIndicator(
-                    minHeight: IsmLiveDimens.ten,
-                    backgroundColor: Colors.blue,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-                    value: 0.5,
+                ? GetX<IsmLivePkController>(
+                    builder: (controller) => LinearProgressIndicator(
+                      minHeight: IsmLiveDimens.ten,
+                      backgroundColor: Colors.blue,
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.red),
+                      value: controller.pkBarPersentage,
+                    ),
                   )
                 : Container(
                     width: Get.width,
                     color: Colors.purple,
                     height: IsmLiveDimens.twenty,
                     child: Text(
-                      'Congratulations to @taavi',
+                      Get.find<IsmLiveStreamController>().pkWinnerId != null
+                          ? 'Congratulations to @${Get.find<IsmLiveStreamController>().pkWinnerId}'
+                          : 'Bettle Tie',
                       style: context.textTheme.bodySmall
                           ?.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,

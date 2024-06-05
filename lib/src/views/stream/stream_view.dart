@@ -107,6 +107,10 @@ class _IsmLiveStreamView extends StatelessWidget {
         dispose: (_) async {
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
+          var pkcontroller = Get.find<IsmLivePkController>();
+          pkcontroller.pkBarPersentage = 0.5;
+          pkcontroller.pkHostValue = 0;
+          pkcontroller.pkGustValue = 0;
           await controller.room?.dispose();
 
           controller.showEmojiBoard = false;
@@ -121,6 +125,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
+
           controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
@@ -248,8 +253,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                 ],
                 if (controller.isPk &&
+                    ((controller.userRole?.isHost ?? false) ||
+                        (controller.userRole?.isPkGuest ?? false)) &&
                     !controller.animationController.isCompleted &&
-                    controller.participantTracks.length > 1) ...[
+                    controller.participantTracks.length == 2) ...[
                   AnimatedBuilder(
                     animation: controller.alignmentAnimation,
                     builder: (context, child) => AnimatedAlign(
