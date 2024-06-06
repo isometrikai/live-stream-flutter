@@ -33,8 +33,8 @@ mixin StreamMessageMixin {
   }) async {
     switch (message.messageType) {
       case IsmLiveMessageType.normal:
-        return await _controller.addMessages([message], isMqtt);
-
+        await _controller.addMessages([message], isMqtt);
+        break;
       case IsmLiveMessageType.heart:
         _controller.addHeart(message);
         break;
@@ -65,8 +65,7 @@ mixin StreamMessageMixin {
         IsmLiveLog.success('Pk Accpected Message');
         break;
       case IsmLiveMessageType.pkStop:
-        _pkController.pkStopEvent(payload ?? {});
-
+        _pkController.pkStopEvent(payload ?? {}, true);
         break;
     }
   }

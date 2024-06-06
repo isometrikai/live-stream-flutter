@@ -136,6 +136,7 @@ enum IsmLiveActions {
   publishStarted('publishStarted'),
   publishStopped('publishStopped'),
   pubsubMessagePublished('pubsubMessagePublished'),
+  pubsubDirectMessagePublished('pubsubDirectMessagePublished'),
   streamStarted('streamStarted'),
   streamStopped('streamStopped'),
   streamStartPresence('streamStartPresence'),
@@ -169,6 +170,8 @@ enum IsmLiveActions {
         IsmLiveActions.publisherTimeout.value: IsmLiveActions.publisherTimeout,
         IsmLiveActions.publishStarted.value: IsmLiveActions.publishStarted,
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
+        IsmLiveActions.pubsubDirectMessagePublished.value:
+            IsmLiveActions.pubsubDirectMessagePublished,
         IsmLiveActions.pubsubMessagePublished.value:
             IsmLiveActions.pubsubMessagePublished,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,

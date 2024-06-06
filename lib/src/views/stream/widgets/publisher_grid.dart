@@ -51,12 +51,6 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           itemBuilder: (_, index) {
                             var url = '';
 
-                            if (controller.userRole?.isPkGuest ?? false) {
-                              controller.participantList = controller
-                                  .participantTracks.reversed
-                                  .toList();
-                            }
-
                             for (var element in controller.streamMembersList) {
                               if (element.userId ==
                                   controller.participantList[index].participant

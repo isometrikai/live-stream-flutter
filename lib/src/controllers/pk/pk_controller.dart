@@ -129,6 +129,10 @@ class IsmLivePkController extends GetxController
   void pkStartEvent(Map<String, dynamic> payload) async {
     try {
       var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+      if (pkTimer != null) {
+        pkTimer?.cancel();
+        pkTimer = null;
+      }
       streamController.pkStages?.makePkStart();
       streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
@@ -143,15 +147,23 @@ class IsmLivePkController extends GetxController
     }
   }
 
-  void pkStopEvent(Map<String, dynamic> payload) async {
+  void pkStopEvent(Map<String, dynamic> payload, bool isForceStop) async {
     try {
-      var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+      IsmLivePkEventMetaDataModel? pkDetails;
+      String stopPkId;
+      if (isForceStop) {
+        pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
+        stopPkId = pkDetails.pkId ?? '';
+      } else {
+        stopPkId = payload['payload']['pkId'];
+      }
+
       pkTimer?.cancel();
       pkTimer = null;
 
       streamController.pkStages?.removePkStart();
       streamController.pkStages?.makePkStop();
-      await pkWinner(pkDetails.pkId ?? '');
+      await pkWinner(stopPkId);
       IsmLiveDebouncer(
         durationtime: 6000,
       ).run(() {
@@ -362,17 +374,16 @@ class IsmLivePkController extends GetxController
 
   void pkBarStatus(Map<String, dynamic> payload) {
     var data = jsonDecode(payload['body']);
-    IsmLiveLog('----------------------$data');
 
     if (data['reciverId'] ==
         streamController.participantList.first.participant.identity) {
-      pkHostValue = pkHostValue + data['totalCoinsRecived'] as int;
+      pkHostValue = data['totalCoinsRecived'] as int;
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     } else {
-      pkGustValue = pkGustValue + data['totalCoinsRecived'] as int;
+      pkGustValue = data['totalCoinsRecived'] as int;
 
-      pkBarPersentage = 1 - pkPersentege(pkHostValue, pkGustValue);
+      pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     }
   }
 
@@ -423,8 +434,10 @@ class IsmLivePkController extends GetxController
     );
 
     if (res != null) {
-      streamController.pkWinnerId = res.winnerId;
+      streamController.pkWinnerId = res.winnerId ?? '';
     }
+
+    streamController.update([IsmLiveStreamView.updateId]);
   }
 
   Future<void> getGiftCategories({
