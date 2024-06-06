@@ -223,7 +223,9 @@ class IsmLiveMqttController extends GetxController {
       final action = IsmLiveActions.fromString(payload['action']);
       final streamId = payload['streamId'] as String?;
       final messageType = payload['messageType'] as int?;
-      if (streamId == null && messageType != 4) {
+      if (streamId == null &&
+          messageType != 4 &&
+          action != IsmLiveActions.pubsubDirectMessagePublished) {
         return;
       }
 
@@ -416,9 +418,6 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.pubsubMessagePublished:
           final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
           _pkController.inviteId = pkDetails.metaData?.inviteId ?? '';
-          IsmLiveLog('inviteId---------------->  ${_pkController.inviteId}');
-          IsmLiveLog(
-              'inviteId8888---------------->  ${pkDetails.metaData?.inviteId}');
 
           if (pkDetails.userId != _streamController.user?.userId) {
             if (Get.isBottomSheetOpen ?? false) {
@@ -440,6 +439,10 @@ class IsmLiveMqttController extends GetxController {
               reciverStreamId: pkDetails.metaData?.streamId,
             );
           }
+
+          break;
+        case IsmLiveActions.pubsubDirectMessagePublished:
+          _pkController.pkStopEvent(payload, false);
 
           break;
 

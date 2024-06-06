@@ -177,7 +177,10 @@ mixin StreamOngoingMixin {
     _controller.participantTracks = [...userMediaTracks];
     _controller.update([IsmLiveStreamView.updateId]);
 
-    if (_controller.isPk && _controller.participantTracks.length == 2) {
+    if (_controller.isPk &&
+        _controller.participantTracks.length == 2 &&
+        ((_controller.userRole?.isHost ?? false) ||
+            (_controller.userRole?.isPkGuest ?? false))) {
       if (Get.isBottomSheetOpen ?? false) {
         Get.back();
       }
@@ -199,6 +202,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.settings:
       case IsmLiveStreamOption.rotateCamera:
       case IsmLiveStreamOption.product:
+      case IsmLiveStreamOption.pk:
       case IsmLiveStreamOption.heart:
         return option.icon;
       case IsmLiveStreamOption.speaker:
@@ -405,6 +409,9 @@ mixin StreamOngoingMixin {
         break;
       case IsmLiveStreamOption.heart:
         unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));
+        break;
+      case IsmLiveStreamOption.pk:
+        _pkController.stopPkBattleSheet();
         break;
     }
   }

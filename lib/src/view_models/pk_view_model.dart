@@ -155,7 +155,7 @@ class IsmLivePkViewModel {
     }
   }
 
-  Future<void> pkWinner({
+  Future<IsmLivePkWinnerModel?> pkWinner({
     required String pkId,
   }) async {
     try {
@@ -163,12 +163,77 @@ class IsmLivePkViewModel {
         pkId: pkId,
       );
 
-      if (res.hasError) {
-        return;
+      if (!res.hasError && res.statusCode != 204) {
+        var data = jsonDecode(res.data)['data'];
+        return IsmLivePkWinnerModel.fromMap(data);
       }
     } catch (e, st) {
       IsmLiveLog.error(e, st);
+      return null;
     }
-    return;
+    return null;
+  }
+
+  Future<List<IsmLiveGiftGroupModel>> getGiftCategories({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.getGiftCategories(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+      if (res.hasError) {
+        return [];
+      }
+
+      List data = jsonDecode(res.data)['data'];
+
+      return data
+          .map((e) => IsmLiveGiftGroupModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
+  Future<List<IsmLiveGiftsCategoryModel>> getGiftsForACategory({
+    required int skip,
+    required int limit,
+    required String giftGroupId,
+    String? searchTag,
+  }) async {
+    try {
+      var res = await _repository.getGiftsForACategory(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+        giftGroupId: giftGroupId,
+      );
+      if (res.hasError) {
+        return [];
+      }
+      List data = jsonDecode(res.data)['data'];
+
+      return data
+          .map((e) =>
+              IsmLiveGiftsCategoryModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
+  Future<void> sendGiftToStreamer(IsmLiveSendGiftModel payload) async {
+    try {
+      var res = await _repository.sendGiftToStreamer(payload);
+      if (res.hasError) {}
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
   }
 }

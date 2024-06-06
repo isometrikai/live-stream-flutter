@@ -13,7 +13,8 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
   static const String updateId = 'ismlive-appbar';
 
   @override
-  Size get preferredSize => Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
+  Size get preferredSize =>
+      Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -45,7 +46,9 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                     bottom: 2,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: IsmLiveApp.isMqttConnected ? IsmLiveColors.green : IsmLiveColors.red,
+                        color: IsmLiveApp.isMqttConnected
+                            ? IsmLiveColors.green
+                            : IsmLiveColors.red,
                         borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                       ),
                       child: const SizedBox.square(dimension: 8),

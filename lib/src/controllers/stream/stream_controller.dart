@@ -232,6 +232,8 @@ class IsmLiveStreamController extends GetxController
 
   IsmLivePkStages? pkStages;
 
+  String? pkWinnerId;
+
   bool get isHost => userRole?.isHost ?? false;
 
   bool get isModerator => userRole?.isModerator ?? false;

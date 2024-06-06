@@ -35,6 +35,10 @@ class IsmLiveApis {
   static const String pkStart = '$_live/pk/start';
   static const String pkStop = '$_live/pk/stop';
   static const String pkWinner = '$_live/pk/winner';
+  static const String getGiftCategories = '/v1/app/giftGroup';
+  static const String getGiftsForACategory = '/v1/app/virtualGifts';
+  static const String sendGiftToStreamer = '/live/v4/giftTransfer';
+  static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
 
   // Streams
   static const String _streaming = '/streaming/v2';

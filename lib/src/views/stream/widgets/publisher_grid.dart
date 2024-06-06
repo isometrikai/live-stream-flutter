@@ -17,14 +17,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
       id: updateId,
-      initState: (state) {
-        var controller = Get.find<IsmLiveStreamController>();
-        controller.participantList = controller.userRole?.isPkGuest ?? false
-            ? controller.participantTracks.reversed.toList()
-            : controller.participantTracks;
-      },
-      builder: (context) => GetX<IsmLiveStreamController>(
-            builder: (controller) => controller.participantTracks.isNotEmpty
+      builder: (controller) => Obx(
+            () => controller.participantTracks.isNotEmpty
                 ? controller.participantTracks.length == 1
                     ? InteractiveViewer(
                         maxScale: isInteractive ? 3 : 1,
@@ -72,14 +66,15 @@ class IsmLivePublisherGrid extends StatelessWidget {
                               isViewer: !(controller.userRole?.isHost ??
                                       false) &&
                                   !(controller.userRole?.isPkGuest ?? false) &&
-                                  !(controller.pkStages?.isPkStop ?? false),
+                                  (controller.pkStages?.isPkStart ?? false),
                               isHost: index == 0,
                               showStatsLayer: controller.isPk,
-                              isWinner: controller.hostDetails?.userId ==
+                              isWinner: controller.pkWinnerId ==
                                   controller.participantList[index].participant
                                       .identity,
                               isbattleFinish:
-                                  controller.pkStages?.isPkStop ?? false,
+                                  (controller.pkStages?.isPkStop ?? false) &&
+                                      controller.pkWinnerId != null,
                             );
                           },
                         ),

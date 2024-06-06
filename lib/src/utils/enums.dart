@@ -136,6 +136,7 @@ enum IsmLiveActions {
   publishStarted('publishStarted'),
   publishStopped('publishStopped'),
   pubsubMessagePublished('pubsubMessagePublished'),
+  pubsubDirectMessagePublished('pubsubDirectMessagePublished'),
   streamStarted('streamStarted'),
   streamStopped('streamStopped'),
   streamStartPresence('streamStartPresence'),
@@ -169,6 +170,8 @@ enum IsmLiveActions {
         IsmLiveActions.publisherTimeout.value: IsmLiveActions.publisherTimeout,
         IsmLiveActions.publishStarted.value: IsmLiveActions.publishStarted,
         IsmLiveActions.publishStopped.value: IsmLiveActions.publishStopped,
+        IsmLiveActions.pubsubDirectMessagePublished.value:
+            IsmLiveActions.pubsubDirectMessagePublished,
         IsmLiveActions.pubsubMessagePublished.value:
             IsmLiveActions.pubsubMessagePublished,
         IsmLiveActions.streamStarted.value: IsmLiveActions.streamStarted,
@@ -198,6 +201,7 @@ enum IsmLiveStreamOption {
   speaker(IsmLiveAssetConstants.speakerOn),
   product(IsmLiveAssetConstants.product),
   vs(IsmLiveAssetConstants.vs),
+  pk(IsmLiveAssetConstants.pk),
   heart(IsmLiveAssetConstants.heartSvg),
   ;
 
@@ -234,8 +238,7 @@ enum IsmLiveStreamOption {
       ];
 
   static List<IsmLiveStreamOption> get pkOptions => [
-        // IsmLiveStreamOption.multiLive,
-
+        IsmLiveStreamOption.pk,
         IsmLiveStreamOption.favourite,
         IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,

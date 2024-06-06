@@ -77,4 +77,33 @@ class IsmLivePkRepository {
       await _api.pkStatus(
         streamId: streamId,
       );
+
+  Future<IsmLiveResponseModel> getGiftCategories({
+    required int skip,
+    required int limit,
+    String? searchTag,
+  }) async =>
+      await _api.getGiftCategories(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+
+  Future<IsmLiveResponseModel> getGiftsForACategory({
+    required int skip,
+    required int limit,
+    required String giftGroupId,
+    String? searchTag,
+  }) async =>
+      await _api.getGiftsForACategory(
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+        giftGroupId: giftGroupId,
+      );
+
+  Future<IsmLiveResponseModel> sendGiftToStreamer(
+          IsmLiveSendGiftModel payload) async =>
+      await _api.sendGiftToStreamer(
+          payload: payload.toMap().removeNullValues());
 }

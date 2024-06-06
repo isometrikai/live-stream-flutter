@@ -96,6 +96,9 @@ class _IsmLiveStreamView extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
+
+          controller.participantList = controller.participantTracks;
+
           controller.initAnimation();
           await WakelockPlus.enable();
           IsmLiveUtility.updateLater(() {
@@ -107,6 +110,10 @@ class _IsmLiveStreamView extends StatelessWidget {
         dispose: (_) async {
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
+          var pkcontroller = Get.find<IsmLivePkController>();
+          pkcontroller.pkBarPersentage = 0.5;
+          pkcontroller.pkHostValue = 0;
+          pkcontroller.pkGustValue = 0;
           await controller.room?.dispose();
 
           controller.showEmojiBoard = false;
@@ -121,6 +128,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
+
           controller.animationController.dispose();
         },
         builder: (controller) => PopScope(
@@ -248,8 +256,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                 ],
                 if (controller.isPk &&
+                    ((controller.userRole?.isHost ?? false) ||
+                        (controller.userRole?.isPkGuest ?? false)) &&
                     !controller.animationController.isCompleted &&
-                    controller.participantTracks.length > 1) ...[
+                    controller.participantTracks.length == 2) ...[
                   AnimatedBuilder(
                     animation: controller.alignmentAnimation,
                     builder: (context, child) => AnimatedAlign(
@@ -285,7 +295,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (controller.pkStages?.isPkStart ?? false)
+                if ((controller.pkStages?.isPkStart ?? false) &&
+                    controller.participantTracks.length == 2)
                   const Align(
                     alignment: Alignment.center,
                     child: IsmLivePkTimerContainer(),
@@ -309,11 +320,13 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
-            pk: controller.pkStages?.isPkStart ?? false,
+            pk: (controller.pkStages?.isPkStart ?? false) &&
+                controller.participantTracks.length == 2,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',
-            pkCompleted: controller.pkStages?.isPkStop ?? false,
+            pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
+                controller.participantTracks.length == 2,
             onTapModerators: () {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
