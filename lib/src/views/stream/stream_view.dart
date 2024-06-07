@@ -256,8 +256,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                 ],
                 if (controller.isPk &&
-                    ((controller.userRole?.isHost ?? false) ||
-                        (controller.userRole?.isPkGuest ?? false)) &&
+                    !(controller.pkStages?.isPkStart ?? false) &&
+                    !(controller.pkStages?.isPkStart ?? false) &&
                     !controller.animationController.isCompleted &&
                     controller.participantTracks.length == 2) ...[
                   AnimatedBuilder(
@@ -281,7 +281,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (controller.animationController.isCompleted &&
+                if ((controller.pkStages?.isPk ?? false) &&
+                    controller.animationController.isCompleted &&
                     (controller.userRole?.isHost ?? false) &&
                     !(controller.pkStages?.isPkStart ?? false) &&
                     controller.participantTracks.length == 2 &&

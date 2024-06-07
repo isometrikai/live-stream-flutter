@@ -236,4 +236,14 @@ class IsmLivePkViewModel {
       IsmLiveLog.error(e, st);
     }
   }
+
+  Future<bool> pkEnd(String inviteId) async {
+    try {
+      var res = await _repository.pkEnd(inviteId: inviteId);
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
 }

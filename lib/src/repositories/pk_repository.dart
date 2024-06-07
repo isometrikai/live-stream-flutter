@@ -105,5 +105,13 @@ class IsmLivePkRepository {
   Future<IsmLiveResponseModel> sendGiftToStreamer(
           IsmLiveSendGiftModel payload) async =>
       await _api.sendGiftToStreamer(
-          payload: payload.toMap().removeNullValues());
+        payload: payload.toMap().removeNullValues(),
+      );
+
+  Future<IsmLiveResponseModel> pkEnd({
+    required String inviteId,
+  }) async =>
+      await _api.pkEnd(
+        inviteId: inviteId,
+      );
 }
