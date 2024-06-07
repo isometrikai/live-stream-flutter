@@ -56,6 +56,14 @@ enum IsmLiveStatsType {
   videoReceiver,
 }
 
+enum IsmLivePkUserType {
+  publisher('publisher'),
+  copublisher('co-publisher');
+
+  const IsmLivePkUserType(this.value);
+  final String value;
+}
+
 enum IsmLiveCallType {
   videoCall('VideoCall'),
   audioCall('AudioCall');

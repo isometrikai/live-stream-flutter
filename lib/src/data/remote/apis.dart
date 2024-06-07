@@ -34,6 +34,7 @@ class IsmLiveApis {
   static const String pkStatus = '$_live/pk/stream/stats';
   static const String pkStart = '$_live/pk/start';
   static const String pkStop = '$_live/pk/stop';
+  static const String pkEnd = '$_live/pk/end';
   static const String pkWinner = '$_live/pk/winner';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';

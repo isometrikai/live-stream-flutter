@@ -199,4 +199,22 @@ class IsmLivePkApis {
         payload: payload,
         headers: IsmLiveUtility.tokenHeader(),
       );
+
+  Future<IsmLiveResponseModel> pkEnd({
+    required String inviteId,
+  }) async {
+    var payload = {
+      'InviteId': inviteId,
+      'action': 'END',
+      'intentToStop': false,
+    };
+    return await _apiWrapper.makeRequest(
+      IsmLiveApis.pkEnd,
+      baseUrl: baseUrl,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showDialog: false,
+    );
+  }
 }

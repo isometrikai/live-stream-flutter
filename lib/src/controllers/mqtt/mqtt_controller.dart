@@ -344,6 +344,7 @@ class IsmLiveMqttController extends GetxController {
             body: '${member.userName} has stopped publishing and left',
             isEvent: true,
           );
+          _streamController.pkStages = null;
           unawaited(_streamController.handleMessage(message: message));
           _streamController.streamMembersList
               .removeWhere((e) => e.userId == member.userId);

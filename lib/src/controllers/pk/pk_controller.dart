@@ -251,17 +251,31 @@ class IsmLivePkController extends GetxController
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCustomButtomSheet(
         title: streamController.pkStages?.isPkStart ?? false
-            ? 'You want to end pk battle'
-            : 'Pk battle not started',
+            ? 'You want to stop pk battle'
+            : 'You want to end Pk',
         leftLabel: 'cancel',
         rightLabel:
-            streamController.pkStages?.isPkStart ?? false ? 'stop battle' : '',
+            streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
         onLeft: Get.back,
         onRight: () {
           Get.back();
           if (streamController.pkStages?.isPkStart ?? false) {
             stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
-          } else {}
+          } else {
+            pkEnd();
+            if (streamController.userRole?.isHost ?? false) {
+              streamController.removeMember(
+                streamId: streamController.streamId ?? '',
+                memberId:
+                    streamController.participantTracks[1].participant.identity,
+              );
+            } else {
+              streamController.disconnectStream(
+                isHost: false,
+                streamId: streamController.streamId ?? '',
+              );
+            }
+          }
         },
       ),
     );
@@ -345,10 +359,11 @@ class IsmLivePkController extends GetxController
     String? streamImage,
     String? streamDiscription,
     bool hdBroadcast = false,
+    bool startPublish = true,
   }) async {
     var token = await _viewModel.publishPk(
       streamId: reciverStreamId,
-      startPublish: true,
+      startPublish: startPublish,
     );
 
     if (token == null) {
@@ -440,6 +455,15 @@ class IsmLivePkController extends GetxController
     streamController.update([IsmLiveStreamView.updateId]);
   }
 
+  Future<void> pkEnd() async {
+    var res = await _viewModel.pkEnd(
+      inviteId,
+    );
+    if (res) {
+      streamController.pkStages = null;
+    }
+  }
+
   Future<void> getGiftCategories({
     int limit = 15,
     int skip = 0,
@@ -518,8 +542,8 @@ class IsmLivePkController extends GetxController
       reciverUserType:
           streamController.participantList.first.participant.identity ==
                   streamController.hostDetails?.userId
-              ? 'publisher'
-              : 'co-publisher',
+              ? IsmLivePkUserType.publisher.value
+              : IsmLivePkUserType.copublisher.value,
       IsGiftVideo: false,
       deviceId: IsmLiveUtility.config.projectConfig.deviceId,
       giftId: '65f2834f3098f1fbf4022d46',

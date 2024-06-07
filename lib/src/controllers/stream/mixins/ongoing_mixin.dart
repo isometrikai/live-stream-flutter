@@ -140,6 +140,10 @@ mixin StreamOngoingMixin {
 
   Future<void> sortParticipants() async {
     _participantDebouncer.run(_sortParticipants);
+
+    // if (_controller.participantTracks.length != 2) {
+    //   _controller.pkStages = null;
+    // }
   }
 
   Future<void> _sortParticipants() async {
@@ -558,7 +562,8 @@ mixin StreamOngoingMixin {
 
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
-    } else if (_controller.isCopublisher) {
+    } else if (_controller.isCopublisher ||
+        (_controller.userRole?.isPkGuest ?? false)) {
       isEnded = await _controller.leaveMember(streamId: streamId);
     } else {
       isEnded = await _controller.leaveStream(streamId);
