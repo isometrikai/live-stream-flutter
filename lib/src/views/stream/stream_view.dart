@@ -256,8 +256,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                 ],
                 if (controller.isPk &&
                     !(controller.pkStages?.isPkStart ?? false) &&
-                    (controller.userRole?.isPkGuest ?? false) &&
-                    (controller.userRole?.isHost ?? false) &&
+                    ((controller.userRole?.isPkGuest ?? false) ||
+                        (controller.userRole?.isHost ?? false)) &&
                     !controller.animationController.isCompleted &&
                     controller.participantTracks.length == 2) ...[
                   AnimatedBuilder(
