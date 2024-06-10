@@ -39,7 +39,9 @@ mixin StreamMessageMixin {
         _controller.addHeart(message);
         break;
       case IsmLiveMessageType.gift:
-        _pkController.pkBarStatus(payload ?? {});
+        if (_controller.pkStages?.isPk ?? false) {
+          _pkController.pkBarStatus(payload ?? {});
+        }
         _controller.addGift(message);
         break;
       case IsmLiveMessageType.remove:

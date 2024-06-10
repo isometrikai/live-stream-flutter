@@ -20,7 +20,8 @@ class IsmLiveGiftView extends StatefulWidget {
   State<IsmLiveGiftView> createState() => _IsmLiveGiftViewState();
 }
 
-class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProviderStateMixin {
+class _IsmLiveGiftViewState extends State<IsmLiveGiftView>
+    with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
@@ -32,7 +33,10 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProv
 
   Timer? timer;
 
-  int get duration => widget.duration ?? streamProperties?.giftTime ?? IsmLiveConstants.giftTime;
+  int get duration =>
+      widget.duration ??
+      streamProperties?.giftTime ??
+      IsmLiveConstants.giftTime;
 
   late DateTime startTime;
 
@@ -58,7 +62,8 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView> with SingleTickerProv
 
   void setup() {
     startTime = DateTime.now();
-    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
+    streamProperties =
+        context.liveProperties?.streamProperties?.counterProperties;
   }
 
   void start() async {

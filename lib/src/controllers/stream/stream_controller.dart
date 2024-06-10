@@ -681,10 +681,10 @@ class IsmLiveStreamController extends GetxController
         curve: Curves.easeInOut,
       );
 
-  String findWinner(String? id) {
-    if (id != null) {
+  String findWinner(String? winnerId) {
+    if (winnerId != null && pkStages?.isPkStop != null) {
       var data = participantTracks.firstWhere(
-        (element) => element.participant.identity == id,
+        (element) => element.participant.identity == winnerId,
       );
 
       return data.participant.name;

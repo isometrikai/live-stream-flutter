@@ -529,32 +529,34 @@ class IsmLivePkController extends GetxController
   }
 
   Future<void> sendGift() async {
-    var res = await _viewModel.sendGiftToStreamer(IsmLiveSendGiftModel(
-      isPk: true,
-      receiverStreamId: streamController.streamId,
-      receiverUserId:
-          streamController.participantList.first.participant.identity,
-      senderId: streamController.user?.userId,
-      receiverName: streamController.participantList.first.participant.name,
-      messageStreamId: streamController.streamId,
-      pkId: pkId,
-      amount: 10,
-      currency: 'COIN',
-      receiverCurrency: 'INR',
-      reciverUserType:
-          streamController.participantList.first.participant.identity ==
-                  streamController.hostDetails?.userId
-              ? IsmLivePkUserType.publisher.value
-              : IsmLivePkUserType.copublisher.value,
-      IsGiftVideo: false,
-      deviceId: IsmLiveUtility.config.projectConfig.deviceId,
-      giftId: '65f2834f3098f1fbf4022d46',
-      giftThumbnailUrl:
-          'https://admin-media1.isometrik.io/virtual_currency_gift_icon/TOr7LK_Zjr.png',
-      giftTitle: 'Cat Dancing',
-      isometricToken: IsmLiveUtility.config.userConfig.userToken,
-      giftUrl:
-          'https://admin-media1.isometrik.io/virtual_currency_gift_animation/ORZoL4_CYS.gif',
-    ));
+    await _viewModel.sendGiftToStreamer(
+      IsmLiveSendGiftModel(
+        isPk: true,
+        receiverStreamId: streamController.streamId,
+        receiverUserId:
+            streamController.participantList.first.participant.identity,
+        senderId: streamController.user?.userId,
+        receiverName: streamController.participantList.first.participant.name,
+        messageStreamId: streamController.streamId,
+        pkId: pkId,
+        amount: 10,
+        currency: 'COIN',
+        receiverCurrency: 'INR',
+        reciverUserType:
+            streamController.participantList.first.participant.identity ==
+                    streamController.hostDetails?.userId
+                ? IsmLivePkUserType.publisher.value
+                : IsmLivePkUserType.copublisher.value,
+        IsGiftVideo: false,
+        deviceId: IsmLiveUtility.config.projectConfig.deviceId,
+        giftId: '65f2834f3098f1fbf4022d46',
+        giftThumbnailUrl:
+            'https://admin-media1.isometrik.io/virtual_currency_gift_icon/TOr7LK_Zjr.png',
+        giftTitle: 'Cat Dancing',
+        isometricToken: IsmLiveUtility.config.userConfig.userToken,
+        giftUrl:
+            'https://admin-media1.isometrik.io/virtual_currency_gift_animation/ORZoL4_CYS.gif',
+      ),
+    );
   }
 }

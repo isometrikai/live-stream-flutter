@@ -145,8 +145,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                   isInteractive: isInteractive,
                 ),
                 const _BottomDarkGradient(),
-                ...controller.heartList,
-                ...controller.giftList,
+
                 Align(
                   alignment: IsmLiveApp.headerPosition,
                   child: Obx(
@@ -257,7 +256,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                 ],
                 if (controller.isPk &&
                     !(controller.pkStages?.isPkStart ?? false) &&
-                    !(controller.pkStages?.isPkStart ?? false) &&
+                    !(controller.userRole?.isViewer ?? false) &&
                     !controller.animationController.isCompleted &&
                     controller.participantTracks.length == 2) ...[
                   AnimatedBuilder(
@@ -302,6 +301,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: IsmLivePkTimerContainer(),
                   ),
+                ...controller.heartList,
+                ...controller.giftList,
               ],
             ),
           ),

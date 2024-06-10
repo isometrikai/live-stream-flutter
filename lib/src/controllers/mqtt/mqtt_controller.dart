@@ -222,10 +222,11 @@ class IsmLiveMqttController extends GetxController {
     if (payload['action'] != null) {
       final action = IsmLiveActions.fromString(payload['action']);
       final streamId = payload['streamId'] as String?;
-      final messageType = payload['messageType'] as int?;
+
       if (streamId == null &&
-          messageType != 4 &&
-          action != IsmLiveActions.pubsubDirectMessagePublished) {
+          action != IsmLiveActions.pubsubMessagePublished &&
+          action != IsmLiveActions.pubsubDirectMessagePublished &&
+          action != IsmLiveActions.pubsubMessageOnTopicPublished) {
         return;
       }
 
@@ -443,6 +444,11 @@ class IsmLiveMqttController extends GetxController {
 
           break;
         case IsmLiveActions.pubsubDirectMessagePublished:
+          _pkController.pkStopEvent(payload, false);
+
+          break;
+
+        case IsmLiveActions.pubsubMessageOnTopicPublished:
           _pkController.pkStopEvent(payload, false);
 
           break;
