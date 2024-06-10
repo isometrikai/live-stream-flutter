@@ -55,9 +55,11 @@ class IsmLivePkChangeHostSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.person),
+                IsmLiveDimens.boxWidth2,
                 Text(followers),
-                IsmLiveDimens.boxWidth10,
+                IsmLiveDimens.boxWidth32,
                 const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                IsmLiveDimens.boxWidth2,
                 Text(coins),
               ],
             ),

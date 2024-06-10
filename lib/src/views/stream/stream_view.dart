@@ -139,11 +139,11 @@ class _IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 IsmLiveStreamBanner(streamImage),
+                // const IgnorePointer(child: _TopDarkGradient()),
                 IsmLivePublisherGrid(
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
                 ),
-                const IgnorePointer(child: _TopDarkGradient()),
                 const _BottomDarkGradient(),
                 ...controller.heartList,
                 ...controller.giftList,
@@ -266,7 +266,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                       alignment: controller.alignmentAnimation.value,
                       duration: const Duration(
                         milliseconds: 100,
-                      ), // This can be set to a smaller duration to have smooth transitions
+                      ),
                       child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
                     ),
                   ),
@@ -276,7 +276,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                       alignment: controller.alignmentAnimationRight.value,
                       duration: const Duration(
                         milliseconds: 100,
-                      ), // This can be set to a smaller duration to have smooth transitions
+                      ),
                       child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
                     ),
                   ),
@@ -321,6 +321,8 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
+            isBattleTie: controller.pkWinnerId != null,
+            winnerName: controller.findWinner(controller.pkWinnerId),
             pk: (controller.pkStages?.isPkStart ?? false) &&
                 controller.participantTracks.length == 2,
             description: controller.descriptionController.text,

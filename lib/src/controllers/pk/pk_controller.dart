@@ -133,6 +133,7 @@ class IsmLivePkController extends GetxController
         pkTimer?.cancel();
         pkTimer = null;
       }
+      streamController.pkStages ??= IsmLivePkStages.isPk();
       streamController.pkStages?.makePkStart();
       streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
@@ -196,15 +197,16 @@ class IsmLivePkController extends GetxController
     });
   }
 
-  void pkChangeHostSheet({required String userId, String? name}) async {
+  void pkChangeHostSheet(
+      {required String userId, String? name, required String image}) async {
     await IsmLiveUtility.openBottomSheet(
       IsmLivePkChangeHostSheet(
-        followers: '',
-        coins: '',
+        followers: '0',
+        coins: pkGustValue.formatWithKAndL(),
         description: 'New York, USA Female 34',
-        image: '',
+        image: image,
         lable: 'Change host',
-        title: '@$name',
+        title: '$name',
         onTap: () {
           streamController.participantList =
               streamController.participantList.reversed.toList();

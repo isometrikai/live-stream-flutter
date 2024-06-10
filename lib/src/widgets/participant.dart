@@ -247,6 +247,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     Get.find<IsmLivePkController>().pkChangeHostSheet(
                       userId: widget.participant.identity,
                       name: widget.participant.name,
+                      image: widget.imageUrl ?? '',
                     );
                   },
                   child: Container(

@@ -680,4 +680,15 @@ class IsmLiveStreamController extends GetxController
         duration: IsmLiveConstants.animationDuration,
         curve: Curves.easeInOut,
       );
+
+  String findWinner(String? id) {
+    if (id != null) {
+      var data = participantTracks.firstWhere(
+        (element) => element.participant.identity == id,
+      );
+
+      return data.participant.name;
+    }
+    return 'Tie';
+  }
 }

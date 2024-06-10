@@ -13,13 +13,17 @@ class IsmLiveStreamHeader extends StatelessWidget {
     required this.description,
     required this.pk,
     required this.pkCompleted,
+    required this.isBattleTie,
+    this.winnerName,
   });
 
   final String name;
+  final String? winnerName;
   final String description;
   final String imageUrl;
   final bool pk;
   final bool pkCompleted;
+  final bool isBattleTie;
 
   final Function()? onTapExit;
   final void Function(List<IsmLiveViewerModel>)? onTapViewers;
@@ -72,8 +76,8 @@ class IsmLiveStreamHeader extends StatelessWidget {
                     color: Colors.purple,
                     height: IsmLiveDimens.twenty,
                     child: Text(
-                      Get.find<IsmLiveStreamController>().pkWinnerId != null
-                          ? 'Congratulations to @${Get.find<IsmLiveStreamController>().pkWinnerId}'
+                      isBattleTie
+                          ? 'Congratulations to @$winnerName'
                           : 'Bettle Tie',
                       style: context.textTheme.bodySmall
                           ?.copyWith(color: Colors.white),

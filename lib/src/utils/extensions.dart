@@ -103,6 +103,18 @@ extension IsmLiveDurationExtension on Duration {
 extension IsmLiveIntExtensions on int {
   double get sheetHeight =>
       IsmLiveDimens.oneHundredTwenty + this * IsmLiveDimens.sixty;
+
+  String formatWithKAndL() {
+    if (this >= 100000) {
+      var lakhs = this / 100000;
+      return '${lakhs.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}L';
+    } else if (this >= 1000) {
+      var thousands = this / 1000;
+      return '${thousands.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}K';
+    } else {
+      return toString();
+    }
+  }
 }
 
 extension IsmLiveDoubleExtensions on double {
