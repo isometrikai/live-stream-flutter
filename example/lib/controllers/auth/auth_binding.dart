@@ -7,8 +7,8 @@ import 'package:http/http.dart' show Client;
 class AuthBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AuthController>(
-      () => AuthController(
+    Get.put(
+      AuthController(
         AuthViewModel(
           AuthRepository(
             Client(),
