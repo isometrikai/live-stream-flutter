@@ -153,10 +153,13 @@ class AuthController extends GetxController {
       IsmLiveUtility.closeLoader();
       return;
     }
+
     var urlResponse = await updatePresignedUrl(res.presignedUrl ?? '', bytes);
+
     if (urlResponse == 200) {
       profileImage = res.mediaUrl ?? '';
     }
+    update();
     IsmLiveUtility.closeLoader();
   }
 

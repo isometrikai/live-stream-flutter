@@ -322,6 +322,7 @@ class IsmLivePkController extends GetxController
 
     if (res) {
       Get.back();
+
       pkInviteSheet(
           description:
               'The PK challenge between you and ${reciverDetails.name} will start soon. Please wait…',

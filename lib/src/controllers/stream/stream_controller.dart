@@ -682,13 +682,11 @@ class IsmLiveStreamController extends GetxController
       );
 
   String findWinner(String? winnerId) {
-    if (winnerId != null && pkStages?.isPkStop != null) {
-      var data = participantTracks.firstWhere(
-        (element) => element.participant.identity == winnerId,
-      );
-
-      return data.participant.name;
+    for (var i in participantList) {
+      if (i.participant.identity == winnerId) {
+        return i.participant.name;
+      }
     }
-    return 'Tie';
+    return '';
   }
 }

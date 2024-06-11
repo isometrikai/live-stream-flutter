@@ -36,7 +36,8 @@ class SignupView extends StatelessWidget {
                 child: Form(
                   key: controller.signFormKey,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Center(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,22 +46,17 @@ class SignupView extends StatelessWidget {
                           const Hero(
                             tag: ValueKey('logo_isometrik'),
                             child: Center(
-                              child: IsmLiveImage.asset(AssetConstants.isometrik),
+                              child:
+                                  IsmLiveImage.asset(AssetConstants.isometrik),
                             ),
                           ),
                           Center(
                             child: GestureDetector(
                               onTap: () {
-                                Get.bottomSheet<void>(
+                                IsmLiveUtility.openBottomSheet(
                                   const _PickImageBottomSheet(),
-                                  elevation: 25,
-                                  enableDrag: true,
-                                  backgroundColor: Colors.white,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(25),
-                                    ),
-                                  ),
+                                  // enableDrag: true,
+                                  // backgroundColor: Colors.white,
                                 );
                               },
                               child: Stack(
@@ -151,7 +147,8 @@ class SignupView extends StatelessWidget {
                           IsmLiveDimens.boxHeight16,
                           Hero(
                             tag: const ValueKey('password_label'),
-                            child: IsmLiveAnimatedText(TranslationKeys.password.tr),
+                            child: IsmLiveAnimatedText(
+                                TranslationKeys.password.tr),
                           ),
                           IsmLiveDimens.boxHeight8,
                           Hero(
@@ -168,18 +165,25 @@ class SignupView extends StatelessWidget {
                                     // }
                                     controller.update();
                                   },
-                                  suffixIcon: controller.passwordControllerSignIn.text.isNotEmpty
+                                  suffixIcon: controller
+                                          .passwordControllerSignIn
+                                          .text
+                                          .isNotEmpty
                                       ? IconButton(
-                                          icon: Icon(!controller.showPassward ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                          icon: Icon(!controller.showPassward
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined),
                                           onPressed: () {
-                                            controller.showPassward = !controller.showPassward;
+                                            controller.showPassward =
+                                                !controller.showPassward;
                                             // controller.update();
                                           },
                                         )
                                       : null,
                                   obscureText: !controller.showPassward,
                                   obscureCharacter: '*',
-                                  controller: controller.passwordControllerSignIn,
+                                  controller:
+                                      controller.passwordControllerSignIn,
                                   validator: AppValidator.passwordValidator,
                                 )),
                           ),
@@ -198,11 +202,16 @@ class SignupView extends StatelessWidget {
                                   // }
                                   controller.update();
                                 },
-                                suffixIcon: controller.confirmPasswordController.text.isNotEmpty
+                                suffixIcon: controller.confirmPasswordController
+                                        .text.isNotEmpty
                                     ? IconButton(
-                                        icon: Icon(!controller.showConfirmPasswared ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                                        icon: Icon(!controller
+                                                .showConfirmPasswared
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined),
                                         onPressed: () {
-                                          controller.showConfirmPasswared = !controller.showConfirmPasswared;
+                                          controller.showConfirmPasswared =
+                                              !controller.showConfirmPasswared;
                                           // controller.update();
                                         },
                                       )
@@ -210,26 +219,32 @@ class SignupView extends StatelessWidget {
                                 obscureText: !controller.showConfirmPasswared,
                                 obscureCharacter: '*',
                                 validator: (value) {
-                                  if (controller.passwordControllerSignIn.text == value) {
+                                  if (controller
+                                          .passwordControllerSignIn.text ==
+                                      value) {
                                     return null;
                                   }
                                   return 'Should be same with Password';
                                 },
-                                controller: controller.confirmPasswordController,
+                                controller:
+                                    controller.confirmPasswordController,
                               )),
                           IsmLiveDimens.boxHeight32,
                           Hero(
                             tag: const ValueKey('login-signup'),
                             child: IsmLiveButton(
                               label: TranslationKeys.signup.tr,
-                              onTap: controller.signFormKey.currentState?.validate() ?? false
+                              onTap: controller.signFormKey.currentState
+                                          ?.validate() ??
+                                      false
                                   ? controller.profileImage.isNotEmpty
                                       ? controller.validateSignUp
                                       : () {
                                           Get.dialog(
                                             AlertDialog(
                                               title: const Text('Alert'),
-                                              content: const Text('Select Profile Image'),
+                                              content: const Text(
+                                                  'Select Profile Image'),
                                               actions: [
                                                 IsmLiveButton(
                                                   onTap: Get.back,
@@ -267,73 +282,77 @@ class _PickImageBottomSheet extends StatelessWidget {
   const _PickImageBottomSheet();
 
   @override
-  Widget build(BuildContext context) => GetBuilder<AuthController>(
-        builder: (controller) => Container(
-          padding: const EdgeInsets.all(20),
-          height: 180,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () {
-                  Get.back<void>();
-                  controller.uploadImage(ImageSource.camera);
-                },
-                child: Row(
-                  children: [
-                    Container(
-                      // padding: IsmIsmLiveDimens.edgeInsets8,
-                      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(50)), color: Colors.blueAccent),
-                      width: 50,
-                      height: 50,
-                      child: const Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 25,
-                      ),
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(20),
+        height: 180,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              onTap: () {
+                Get.back<void>();
+
+                Get.find<AuthController>().uploadImage(ImageSource.camera);
+              },
+              child: Row(
+                children: [
+                  Container(
+                    padding: IsmLiveDimens.edgeInsets8,
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                        color: Colors.blueAccent),
+                    width: 50,
+                    height: 50,
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 25,
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Camera',
-                      style: TextStyle(color: Colors.black, fontSize: 20),
-                    )
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    'Camera',
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  )
+                ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                onTap: () {
-                  Get.back<void>();
-                  controller.uploadImage(ImageSource.gallery);
-                },
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: Colors.purpleAccent),
-                      width: 50,
-                      height: 50,
-                      child: const Icon(
-                        Icons.photo,
-                        color: Colors.white,
-                        size: 25,
-                      ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
+                Get.back<void>();
+
+                Get.find<AuthController>().uploadImage(ImageSource.gallery);
+              },
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.purpleAccent),
+                    width: 50,
+                    height: 50,
+                    child: const Icon(
+                      Icons.photo,
+                      color: Colors.white,
+                      size: 25,
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    const Text(
-                      'Gallery',
-                      style: TextStyle(color: Colors.black, fontSize: 20),
-                    )
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    'Gallery',
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
 }
