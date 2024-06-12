@@ -51,7 +51,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
               dividerHeight: 0,
               indicatorColor: Colors.transparent,
               labelPadding: IsmLiveDimens.edgeInsets8_0,
-              overlayColor: WidgetStateProperty.all(Colors.transparent),
+              overlayColor: MaterialStateProperty.all(Colors.transparent),
               controller: controller.giftsTabController,
               onTap: (index) {
                 controller.giftType = IsmLiveGiftType.values[index];

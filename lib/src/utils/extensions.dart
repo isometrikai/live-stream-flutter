@@ -81,8 +81,8 @@ extension IsmLiveContextExtension on BuildContext {
   IsmLivePropertiesData? get liveProperties => liveExtension?.properties;
 }
 
-extension IsmLiveMaterialStateExtension on Set<WidgetState> {
-  bool get isDisabled => any((e) => [WidgetState.disabled].contains(e));
+extension IsmLiveMaterialStateExtension on Set<MaterialState> {
+  bool get isDisabled => any((e) => [MaterialState.disabled].contains(e));
 }
 
 extension IsmLiveDurationExtension on Duration {
