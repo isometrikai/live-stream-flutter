@@ -54,20 +54,18 @@ class IsmLiveHandler {
     if (isLoading) {
       IsmLiveUtility.showLoader();
     }
-    if (isStreaming ?? false) {
-      if (Get.isRegistered<IsmLiveStreamController>()) {
-        var isUnsubscribed = await Get.find<IsmLiveStreamController>().unsubscribeUser();
-        if (!isUnsubscribed) {
-          return;
-        }
-      }
-    }
-    if (Get.isRegistered<IsmLiveMqttController>()) {
-      var mqttController = Get.find<IsmLiveMqttController>();
-      await mqttController.unsubscribeTopics();
-      mqttController.disconnect();
+    await Future.wait([
+      if ((isStreaming ?? false) && Get.isRegistered<IsmLiveStreamController>()) ...[
+        Get.find<IsmLiveStreamController>().unsubscribeUser(),
+      ],
+      if (Get.isRegistered<IsmLiveMqttController>()) ...[
+        Get.find<IsmLiveMqttController>().unsubscribeTopics(),
+        Get.find<IsmLiveMqttController>().disconnect(),
+      ],
+    ]);
 
-      await Get.delete<IsmLiveMqttController>(force: true);
+    if (Get.isRegistered<IsmLiveMqttController>()) {
+      unawaited(Get.delete<IsmLiveMqttController>(force: true));
     }
     (logoutCallback ?? onLogout)?.call();
     if (isLoading) {
