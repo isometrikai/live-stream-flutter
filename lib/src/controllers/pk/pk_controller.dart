@@ -177,6 +177,57 @@ class IsmLivePkController extends GetxController
     }
   }
 
+  void pkInviteEvent(Map<String, dynamic> payload) {
+    final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
+    inviteId = pkDetails.metaData?.inviteId ?? '';
+
+    if (pkDetails.userId != streamController.user?.userId) {
+      if (Get.isBottomSheetOpen ?? false) {
+        Get.back();
+      }
+
+      if (pkDetails.metaData?.status ==
+          IsmLivePkResponceToSend.rejected.value) {
+        IsmLiveUtility.openBottomSheet(
+          IsmLiveCustomButtomSheet(
+            title: 'Request for pk is rejected',
+            leftLabel: 'cancel',
+            rightLabel: 'ReSend',
+            onLeft: Get.back,
+            onRight: () {
+              sendInvitationToUserForPK(
+                reciverDetails: IsmLivePkInviteModel(
+                  streamId: pkDetails.userIdentifier ?? '',
+                  userId: pkDetails.userId ?? '',
+                  profilePic: pkDetails.userProfileImageUrl,
+                  userName: pkDetails.userName,
+                  isometrikUserId: '',
+                  streamPic: '',
+                  viewerCount: 0,
+                ),
+              );
+            },
+          ),
+        );
+      } else {
+        pkInviteSheet(
+          images: [
+            pkDetails.userProfileImageUrl ?? '',
+            streamController.user?.profileUrl ?? ''
+          ],
+          userName: pkDetails.userName ?? '',
+          reciverName: streamController.user?.name ?? 'U',
+          description:
+              'You have received an invitation from @${pkDetails.userName} for the PK challenge. Do you want to continue?',
+          title: '@${pkDetails.userName} invite you to link',
+          isInvite: true,
+          inviteId: pkDetails.metaData?.inviteId ?? '',
+          reciverStreamId: pkDetails.metaData?.streamId,
+        );
+      }
+    }
+  }
+
   bool isPkInviteApisCall = false;
   void pkPagination() {
     pkInviteListController.addListener(() async {
@@ -372,6 +423,7 @@ class IsmLivePkController extends GetxController
     if (token == null) {
       return;
     }
+
     await streamController.room!.disconnect();
     await streamController.room!.dispose();
 

@@ -167,6 +167,7 @@ class IsmLivePkInvitationModel {
 class IsmLivePkMetaData {
   IsmLivePkMetaData({
     this.userName,
+    this.status,
     this.userMetaData,
     this.userId,
     this.streamId,
@@ -187,6 +188,7 @@ class IsmLivePkMetaData {
         profilepic:
             map['profilepic'] != null ? map['profilepic'] as String : null,
         lastName: map['lastName'] != null ? map['lastName'] as String : null,
+        status: map['status'] != null ? map['status'] as String : null,
         isStar: map['isStar'] != null ? map['isStar'] as bool : null,
         inviteId: map['inviteId'] != null ? map['inviteId'] as String : null,
         firstName: map['firstName'] != null ? map['firstName'] as String : null,
@@ -200,6 +202,7 @@ class IsmLivePkMetaData {
   final String? streamId;
   final String? profilepic;
   final String? lastName;
+  final String? status;
   final bool? isStar;
   final String? inviteId;
   final String? firstName;
@@ -211,6 +214,7 @@ class IsmLivePkMetaData {
     String? streamId,
     String? profilepic,
     String? lastName,
+    String? status,
     bool? isStar,
     String? inviteId,
     String? firstName,
@@ -222,6 +226,7 @@ class IsmLivePkMetaData {
         streamId: streamId ?? this.streamId,
         profilepic: profilepic ?? this.profilepic,
         lastName: lastName ?? this.lastName,
+        status: lastName ?? this.status,
         isStar: isStar ?? this.isStar,
         inviteId: inviteId ?? this.inviteId,
         firstName: firstName ?? this.firstName,
@@ -234,6 +239,7 @@ class IsmLivePkMetaData {
         'streamId': streamId,
         'profilepic': profilepic,
         'lastName': lastName,
+        'status': status,
         'isStar': isStar,
         'inviteId': inviteId,
         'firstName': firstName,
@@ -243,7 +249,7 @@ class IsmLivePkMetaData {
 
   @override
   String toString() =>
-      'IsmLivePkMetaData(userName: $userName, userMetaData: $userMetaData, userId: $userId, streamId: $streamId, profilepic: $profilepic, lastName: $lastName, isStar: $isStar, inviteId: $inviteId, firstName: $firstName)';
+      'IsmLivePkMetaData(userName: $userName, userMetaData: $userMetaData, userId: $userId, streamId: $streamId, profilepic: $profilepic, lastName: $lastName, status: $status, isStar: $isStar, inviteId: $inviteId, firstName: $firstName)';
 
   @override
   bool operator ==(covariant IsmLivePkMetaData other) {
@@ -255,6 +261,7 @@ class IsmLivePkMetaData {
         other.streamId == streamId &&
         other.profilepic == profilepic &&
         other.lastName == lastName &&
+        other.status == status &&
         other.isStar == isStar &&
         other.inviteId == inviteId &&
         other.firstName == firstName;
@@ -268,6 +275,7 @@ class IsmLivePkMetaData {
       streamId.hashCode ^
       profilepic.hashCode ^
       lastName.hashCode ^
+      status.hashCode ^
       isStar.hashCode ^
       inviteId.hashCode ^
       firstName.hashCode;

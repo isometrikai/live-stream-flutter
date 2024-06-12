@@ -418,30 +418,7 @@ class IsmLiveMqttController extends GetxController {
           break;
 
         case IsmLiveActions.pubsubMessagePublished:
-          final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
-          _pkController.inviteId = pkDetails.metaData?.inviteId ?? '';
-
-          if (pkDetails.userId != _streamController.user?.userId) {
-            if (Get.isBottomSheetOpen ?? false) {
-              Get.back();
-            }
-
-            _pkController.pkInviteSheet(
-              images: [
-                pkDetails.userProfileImageUrl ?? '',
-                _streamController.user?.profileUrl ?? ''
-              ],
-              userName: pkDetails.userName ?? '',
-              reciverName: _streamController.user?.name ?? 'U',
-              description:
-                  'You have received an invitation from @${pkDetails.userName} for the PK challenge. Do you want to continue?',
-              title: '@${pkDetails.userName} invite you to link',
-              isInvite: true,
-              inviteId: pkDetails.metaData?.inviteId ?? '',
-              reciverStreamId: pkDetails.metaData?.streamId,
-            );
-          }
-
+          _pkController.pkInviteEvent(payload);
           break;
         case IsmLiveActions.pubsubDirectMessagePublished:
           _pkController.pkStopEvent(payload, false);
