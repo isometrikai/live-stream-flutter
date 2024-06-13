@@ -94,6 +94,14 @@ enum IsmLivePkResponce {
   final String value;
 }
 
+enum IsmLivePkResponceToSend {
+  accepted('Accepted'),
+  rejected('Rejected');
+
+  const IsmLivePkResponceToSend(this.value);
+  final String value;
+}
+
 enum IsmLiveMeetingType {
   videoCall(0),
   audioCall(1);
