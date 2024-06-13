@@ -80,7 +80,6 @@ class IsmLiveStreamRepository {
           'isScheduledStream': false,
           'members': streamModel.members,
           'isometrikUserId': user?.userId,
-          'inviteId': '',
           'country': streamModel.metaData?.country ?? 'INDIA',
           'persistRtmpIngestEndpoint': streamModel.persistRtmpIngestEndpoint,
           'userName': user?.userName,
@@ -609,6 +608,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+      showDialog: false,
     );
   }
 }
