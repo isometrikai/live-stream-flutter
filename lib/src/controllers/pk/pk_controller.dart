@@ -180,6 +180,9 @@ class IsmLivePkController extends GetxController
   void pkInviteEvent(Map<String, dynamic> payload) {
     final pkDetails = IsmLivePkInvitationModel.fromMap(payload);
     inviteId = pkDetails.metaData?.inviteId ?? '';
+    if (pkDetails.metaData?.status == IsmLivePkResponceToSend.accepted.value) {
+      return;
+    }
 
     if (pkDetails.userId != streamController.user?.userId) {
       if (Get.isBottomSheetOpen ?? false) {

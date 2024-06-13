@@ -23,10 +23,11 @@ class IsmLivePkSheet extends StatelessWidget {
               IsmLiveDimens.boxHeight10,
               GetX<IsmLivePkController>(
                 initState: (state) {
-                  var controller = Get.find<IsmLivePkController>();
-                  controller.getUsersToInviteForPK();
-                  controller.pkTabController.index = 0;
-                  controller.pk = IsmLivePk.values[0];
+                  Get.find<IsmLivePkController>()
+                    ..pkInviteList.clear()
+                    ..getUsersToInviteForPK()
+                    ..pkTabController.index = 0
+                    ..pk = IsmLivePk.values[0];
                 },
                 builder: (controller) => TabBar(
                   dividerHeight: 0,
