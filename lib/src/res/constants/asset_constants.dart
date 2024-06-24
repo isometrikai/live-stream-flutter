@@ -115,6 +115,7 @@ class IsmLiveAssetConstants {
   static const String winner = '$_icons/winner.svg';
   static const String loser = '$_icons/loser.svg';
   static const String pkStart = '$_icons/pk-start.svg';
+  static const String draw = '$_icons/draw.svg';
   static const String pk = '$_icons/pk.svg';
   static const String cup = '$_icons/cup.svg';
   static const String v = '$_icons/v.svg';

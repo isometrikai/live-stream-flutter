@@ -54,20 +54,24 @@ class IsmLiveHandler {
     if (isLoading) {
       IsmLiveUtility.showLoader();
     }
+
     await Future.wait([
-      if ((isStreaming ?? false) && Get.isRegistered<IsmLiveStreamController>()) ...[
+      if ((isStreaming ?? false) &&
+          Get.isRegistered<IsmLiveStreamController>()) ...[
         Get.find<IsmLiveStreamController>().unsubscribeUser(),
       ],
       if (Get.isRegistered<IsmLiveMqttController>()) ...[
         Get.find<IsmLiveMqttController>().unsubscribeTopics(),
-        Get.find<IsmLiveMqttController>().disconnect(),
+        // Get.find<IsmLiveMqttController>().disconnect(),
       ],
     ]);
 
     if (Get.isRegistered<IsmLiveMqttController>()) {
       unawaited(Get.delete<IsmLiveMqttController>(force: true));
     }
+
     (logoutCallback ?? onLogout)?.call();
+
     if (isLoading) {
       IsmLiveUtility.closeLoader();
     }
