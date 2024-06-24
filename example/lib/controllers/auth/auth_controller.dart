@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:appscrip_live_stream_component_example/view_models/view_models.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +16,12 @@ class AuthController extends GetxController {
 
   AppConfig get _appConfig => Get.find();
 
-  UserController get userController {
-    if (!Get.isRegistered<UserController>()) {
-      UserBinding().dependencies();
-    }
-    return Get.find<UserController>();
-  }
+  // UserController get userController {
+  //   if (!Get.isRegistered<UserController>()) {
+  //     UserBinding().dependencies();
+  //   }
+  //   return Get.find<UserController>();
+  // }
 
   var loginFormKey = GlobalKey<FormState>();
   var signFormKey = GlobalKey<FormState>();
@@ -82,7 +81,7 @@ class AuthController extends GetxController {
       return;
     }
 
-    unawaited(userController.getUserData());
+    // unawaited(userController.getUserData());
     RouteManagement.goToHome();
   }
 
@@ -102,7 +101,7 @@ class AuthController extends GetxController {
     if (res == null) {
       return;
     }
-    unawaited(userController.getUserData());
+    // unawaited(userController.getUserData());
     RouteManagement.goToHome();
   }
 

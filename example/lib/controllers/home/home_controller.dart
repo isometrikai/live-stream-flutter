@@ -20,8 +20,10 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
 
-    userType = dbWrapper.getStringValue(LocalKeys.userType);
+    setupStream();
+  }
 
+  void setupStream() async {
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
 
     configData = IsmLiveConfigData(
@@ -47,10 +49,6 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
-    setupStream();
-  }
-
-  void setupStream() async {
     await IsmLiveApp.initialize(configData);
   }
 
@@ -63,8 +61,10 @@ class HomeController extends GetxController {
   }
 
   void logout() async {
-    await dbWrapper.deleteAllSecuredValues();
     dbWrapper.deleteBox();
+
+    await dbWrapper.deleteAllSecuredValues();
+
     RouteManagement.goToLogin();
   }
 }

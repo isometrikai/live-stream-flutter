@@ -40,13 +40,9 @@ class AuthViewModel {
         userName: userName,
       );
 
-      unawaited(
-        Future.wait([
-          dbWrapper.saveValue(LocalKeys.user, userDetails.toJson()),
-          dbWrapper.saveValue(LocalKeys.isLoggedIn, true),
-          dbWrapper.saveValue(LocalKeys.userType, 'user'),
-        ]),
-      );
+      await dbWrapper.saveValue(LocalKeys.user, userDetails.toJson());
+      await dbWrapper.saveValue(LocalKeys.isLoggedIn, true);
+      // dbWrapper.saveValue(LocalKeys.userType, 'user'),
 
       return userDetails;
     } catch (e, st) {

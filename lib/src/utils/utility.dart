@@ -14,7 +14,7 @@ class IsmLiveUtility {
 
   static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
-    _config ??= config;
+    _config = config;
   }
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();

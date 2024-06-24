@@ -78,7 +78,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
                     child: Text(
                       isBattleTie
                           ? 'Congratulations to @$winnerName'
-                          : 'Bettle Tie',
+                          : 'It\'s a Draw!',
                       style: context.textTheme.bodySmall?.copyWith(
                           color: Colors.white, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
