@@ -19,6 +19,8 @@ class IsmLivePkController extends GetxController
 
   ScrollController pkInviteListController = ScrollController();
 
+  ScrollController giftController = ScrollController();
+
   TextEditingController pkInviteTextController = TextEditingController();
 
   final _pkInviteDebouncer = IsmLiveDebouncer();
@@ -232,6 +234,7 @@ class IsmLivePkController extends GetxController
   }
 
   bool isPkInviteApisCall = false;
+  bool isGiftApiCall = false;
   void pkPagination() {
     pkInviteListController.addListener(() async {
       if (pkInviteListController.position.maxScrollExtent * 0.8 <=
@@ -247,6 +250,24 @@ class IsmLivePkController extends GetxController
           searchTag: pkInviteTextController.text,
         );
         isPkInviteApisCall = false;
+      }
+    });
+
+    giftController.addListener(() async {
+      if (giftController.position.maxScrollExtent * 0.8 <=
+          giftController.position.pixels) {
+        if (isGiftApiCall) {
+          return;
+        }
+        isGiftApiCall = true;
+
+        await getGiftsForACategory(
+          limit: 10,
+          skip: giftList.length,
+          giftGroupId: giftCategoriesList[streamController.giftType].id ?? '',
+          fetchMore: true,
+        );
+        isGiftApiCall = false;
       }
     });
   }
@@ -549,18 +570,26 @@ class IsmLivePkController extends GetxController
 
     giftCategoriesList.addAll(res);
     giftCategoriesList = giftCategoriesList.toSet().toList();
+
+    if (giftCategoriesList.isNotEmpty) {
+      await getGiftsForACategory(
+          giftGroupId: giftCategoriesList.first.id ?? '');
+    }
+    streamController.update([IsmLiveGiftsSheet.updateId]);
   }
 
   Future<void> getGiftsForACategory({
     int limit = 15,
     int skip = 0,
     String? searchTag,
+    bool fetchMore = false,
     required String giftGroupId,
   }) async {
     _giftDebouncer.run(() async {
       await _getGiftsForACategory(
         limit: limit,
         skip: skip,
+        fetchMore: fetchMore,
         searchTag: searchTag,
         giftGroupId: giftGroupId,
       );
@@ -571,6 +600,7 @@ class IsmLivePkController extends GetxController
     required int limit,
     required int skip,
     required String giftGroupId,
+    required bool fetchMore,
     String? searchTag,
   }) async {
     var res = await _viewModel.getGiftsForACategory(
@@ -579,15 +609,25 @@ class IsmLivePkController extends GetxController
       searchTag: searchTag,
       giftGroupId: giftGroupId,
     );
+    if (fetchMore) {
+      giftList.addAll(res);
+    } else {
+      giftList = res;
+    }
 
-    giftList.addAll(res);
     giftList = giftList.toSet().toList();
   }
 
-  Future<void> sendGift() async {
+  Future<void> sendGift({
+    required String giftId,
+    required String giftImage,
+    required String giftTitle,
+    required String giftAnimationImage,
+    required int amount,
+  }) async {
     await _viewModel.sendGiftToStreamer(
       IsmLiveSendGiftModel(
-        isPk: true,
+        isPk: streamController.pkStages?.isPkStart ?? false,
         receiverStreamId: streamController.streamId,
         receiverUserId:
             streamController.participantList.first.participant.identity,
@@ -595,7 +635,7 @@ class IsmLivePkController extends GetxController
         receiverName: streamController.participantList.first.participant.name,
         messageStreamId: streamController.streamId,
         pkId: pkId,
-        amount: 10,
+        amount: amount,
         currency: 'COIN',
         receiverCurrency: 'INR',
         reciverUserType:
@@ -605,13 +645,11 @@ class IsmLivePkController extends GetxController
                 : IsmLivePkUserType.copublisher.value,
         IsGiftVideo: false,
         deviceId: IsmLiveUtility.config.projectConfig.deviceId,
-        giftId: '65f2834f3098f1fbf4022d46',
-        giftThumbnailUrl:
-            'https://admin-media1.isometrik.io/virtual_currency_gift_icon/TOr7LK_Zjr.png',
-        giftTitle: 'Cat Dancing',
+        giftId: giftId,
+        giftThumbnailUrl: giftImage,
+        giftTitle: giftTitle,
         isometricToken: IsmLiveUtility.config.userConfig.userToken,
-        giftUrl:
-            'https://admin-media1.isometrik.io/virtual_currency_gift_animation/ORZoL4_CYS.gif',
+        giftUrl: giftAnimationImage,
       ),
     );
   }
