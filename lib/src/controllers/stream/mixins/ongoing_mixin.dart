@@ -142,7 +142,7 @@ mixin StreamOngoingMixin {
     }
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    final localParticipantTracks = room.localParticipant?.videoTracks;
+    final localParticipantTracks = room.localParticipant?.videoTrackPublications;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(
@@ -155,8 +155,8 @@ mixin StreamOngoingMixin {
       }
     }
 
-    for (var participant in room.participants.values) {
-      for (var t in participant.videoTracks) {
+    for (var participant in room.remoteParticipants.values) {
+      for (var t in participant.videoTrackPublications) {
         userMediaTracks.add(
           IsmLiveParticipantTrack(
             participant: participant,
@@ -314,19 +314,19 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.participants.values.isEmpty || room.participants.values.first.audioTracks.isEmpty) {
+    if (room.remoteParticipants.values.isEmpty || room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
       return;
     }
 
     _controller.speakerOn = value ?? !_controller.speakerOn;
     try {
       if (_controller.speakerOn) {
-        for (var i = 0; i < room.participants.values.length; i++) {
-          unawaited(room.participants.values.elementAt(i).audioTracks.first.enable());
+        for (var i = 0; i < room.remoteParticipants.values.length; i++) {
+          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.enable());
         }
       } else {
-        for (var i = 0; i < room.participants.values.length; i++) {
-          unawaited(room.participants.values.elementAt(i).audioTracks.first.disable());
+        for (var i = 0; i < room.remoteParticipants.values.length; i++) {
+          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.disable());
         }
       }
     } catch (e) {
