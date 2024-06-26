@@ -317,10 +317,12 @@ mixin StreamOngoingMixin {
       return;
     }
     final key = ValueKey(message.messageId);
-    final gift = message.customType!.path;
-    final child = gift.endsWith('gif')
-        ? IsmLiveGif(path: gift)
-        : IsmLiveImage.asset(gift);
+
+    final image = jsonDecode(message.body);
+    // final gift = message.customType!.path;
+    IsmLiveLog('+++++ $image');
+
+    final child = IsmLiveGif(path: image['giftThumbnailUrl']);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(

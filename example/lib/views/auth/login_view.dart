@@ -11,6 +11,13 @@ class LoginView extends StatelessWidget {
 
   static const String route = AppRoutes.login;
 
+  static const List<Map<String, String>> userList = [
+    {'user': '6583075c0308465abfea17fe', 'password': ' 6583075c0308Da\$'},
+    {'user': '64df4c2c768dfe8eec21d5ce', 'password': '64df4c2c768dDa\$'},
+    {'user': '654b37e21b05bd7a84c763b4', 'password': '654b37e21b05Da\$'},
+    {'user': '61fb7c4a2835ede6283c77f4', 'password': '61fb7c4a2835Da\$'}
+  ];
+
   @override
   Widget build(BuildContext context) => GetBuilder<AuthController>(
         initState: (_) {
@@ -120,6 +127,27 @@ class LoginView extends StatelessWidget {
                         child: IsmLiveButton.secondary(
                           onTap: RouteManagement.goToSignUp,
                           label: TranslationKeys.signup.tr,
+                        ),
+                      ),
+
+                      ///TODO remove later
+                      SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          itemBuilder: (context, index) => IsmLiveTapHandler(
+                            onTap: () {
+                              controller.emailController.text =
+                                  userList[index]['user'] ?? '';
+                              controller.passwordController.text =
+                                  userList[index]['password'] ?? '';
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child:
+                                  Text('UserId = ${userList[index]['user']}'),
+                            ),
+                          ),
+                          itemCount: userList.length,
                         ),
                       ),
                     ],

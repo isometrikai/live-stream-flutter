@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -172,7 +173,7 @@ class IsmLiveStreamController extends GetxController
   CameraPosition position = CameraPosition.front;
 
   late TabController tabController;
-  late TabController giftsTabController;
+  // late TabController giftsTabController;
   late TabController cobublisTabController;
 
   var descriptionController = TextEditingController();
@@ -248,9 +249,7 @@ class IsmLiveStreamController extends GetxController
   IsmLiveStreamType get streamType => _streamType.value;
   set streamType(IsmLiveStreamType value) => _streamType.value = value;
 
-  final Rx<IsmLiveGiftType> _giftType = IsmLiveGiftType.normal.obs;
-  IsmLiveGiftType get giftType => _giftType.value;
-  set giftType(IsmLiveGiftType value) => _giftType.value = value;
+  int giftType = 0;
 
   final Rx<IsmLiveCopublisher> _copublisher = IsmLiveCopublisher.users.obs;
   IsmLiveCopublisher get copublisher => _copublisher.value;
@@ -273,15 +272,15 @@ class IsmLiveStreamController extends GetxController
   @override
   void onInit() {
     super.onInit();
+
     configuration = IsmLiveUtility.config;
     tabController = TabController(
       vsync: this,
       length: IsmLiveStreamType.values.length,
     );
-    giftsTabController = TabController(
-      vsync: this,
-      length: IsmLiveGiftType.values.length,
-    );
+    // giftsTabController = TabController(
+    //     vsync: this, length: 4 // _pkController.giftCategoriesList.length,
+    //     );
     cobublisTabController = TabController(
       vsync: this,
       length: IsmLiveCopublisher.values.length,
@@ -489,9 +488,10 @@ class IsmLiveStreamController extends GetxController
     tabController.addListener(() {
       streamType = IsmLiveStreamType.values[tabController.index];
     });
-    giftsTabController.addListener(() {
-      giftType = IsmLiveGiftType.values[giftsTabController.index];
-    });
+    // giftsTabController.addListener(() {
+    //   giftType =
+    //       _pkController.giftCategoriesList[giftsTabController.index].id ?? '';
+    // });
     cobublisTabController.addListener(() {
       copublisher = IsmLiveCopublisher.values[cobublisTabController.index];
     });

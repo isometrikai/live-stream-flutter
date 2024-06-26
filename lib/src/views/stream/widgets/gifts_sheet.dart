@@ -3,119 +3,117 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveGiftsSheet extends StatelessWidget {
-  const IsmLiveGiftsSheet({
+  IsmLiveGiftsSheet({
     super.key,
     required this.onTap,
   });
   final void Function(IsmLiveGifts) onTap;
+  var pkController = Get.find<IsmLivePkController>();
+  static const updateId = 'gift-sheet';
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          IsmLiveDimens.boxHeight16,
-          ListTile(
-            title: Text(
-              'My Balance',
-              style: context.textTheme.headlineSmall,
-            ),
-            trailing: SizedBox(
-              width: IsmLiveDimens.oneHundredTwenty,
-              height: IsmLiveDimens.forty,
-              child: const IsmLiveButton(
-                label: 'Add Coins',
-                // onTap: () {},
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: updateId,
+        initState: (state) async {
+          Get.find<IsmLiveStreamController>().giftType = 0;
+          pkController.giftList = [];
+          await pkController.getGiftCategories();
+        },
+        builder: (controller) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IsmLiveDimens.boxHeight16,
+            ListTile(
+              title: Text(
+                'My Balance',
+                style: context.textTheme.headlineSmall,
+              ),
+              trailing: SizedBox(
+                width: IsmLiveDimens.oneHundredTwenty,
+                height: IsmLiveDimens.forty,
+                child: const IsmLiveButton(
+                  label: 'Add Coins',
+                  // onTap: () {},
+                ),
+              ),
+              subtitle: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: IsmLiveDimens.twentyFive,
+                    width: IsmLiveDimens.twentyFive,
+                    child:
+                        const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                  ),
+                  IsmLiveDimens.boxWidth4,
+                  Text(
+                    '135',
+                    style: context.textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-            subtitle: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: IsmLiveDimens.twentyFive,
-                  width: IsmLiveDimens.twentyFive,
-                  child: const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                ),
-                IsmLiveDimens.boxWidth4,
-                Text(
-                  '135',
-                  style: context.textTheme.bodyLarge!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          IsmLiveDimens.boxHeight10,
-          GetX<IsmLiveStreamController>(
-            builder: (controller) => TabBar(
-              dividerHeight: 0,
-              indicatorColor: Colors.transparent,
-              labelPadding: IsmLiveDimens.edgeInsets8_0,
-              overlayColor: MaterialStateProperty.all(Colors.transparent),
-              controller: controller.giftsTabController,
-              onTap: (index) {
-                controller.giftType = IsmLiveGiftType.values[index];
-              },
-              tabs: IsmLiveGiftType.values.map(
-                (type) {
-                  var isSelected = type == controller.giftType;
-                  return DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? context.liveTheme?.primaryColor
-                          : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
-                    ),
-                    child: Padding(
-                      padding: IsmLiveDimens.edgeInsets16_10,
-                      child: Text(
-                        type.label,
-                        style: context.textTheme.titleSmall?.copyWith(
-                          color: isSelected
-                              ? context.liveTheme?.selectedTextColor
-                              : context.liveTheme?.unselectedTextColor,
-                        ),
-                      ),
+            IsmLiveDimens.boxHeight10,
+            SizedBox(
+              height: IsmLiveDimens.hundred,
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  var categoryDetails = pkController.giftCategoriesList[index];
+                  return IsmLiveTapHandler(
+                    onTap: () async {
+                      controller.giftType = index;
+                      await pkController.getGiftsForACategory(
+                          giftGroupId: categoryDetails.id ?? '');
+                      controller.update([updateId]);
+                    },
+                    child: CategoryType(
+                      giftImage: categoryDetails.giftImage ?? '',
+                      giftTitle: categoryDetails.giftTitle ?? '',
+                      isSelected: controller.giftType == index,
                     ),
                   );
                 },
-              ).toList(),
-            ),
-          ),
-          SizedBox(
-            height: Get.height * 0.4,
-            child: GetBuilder<IsmLiveStreamController>(
-              builder: (controller) => TabBarView(
-                controller: controller.giftsTabController,
-                children: IsmLiveGiftType.values
-                    .map(
-                      (e) => GridView.builder(
-                        padding: IsmLiveDimens.edgeInsets16,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing: IsmLiveDimens.eight,
-                          mainAxisSpacing: IsmLiveDimens.eight,
-                          crossAxisCount: 3,
-                        ),
-                        itemBuilder: (_, index) {
-                          final gift = e.gifts[index];
-                          return _GiftItem(
-                            key: ValueKey(gift),
-                            gift: gift,
-                            onTap: () {
-                              Get.back();
-                              Get.find<IsmLivePkController>().sendGift();
-                              // onTap(gift);
-                            },
-                          );
-                        },
-                        itemCount: e.gifts.length,
-                      ),
-                    )
-                    .toList(),
+                itemCount: pkController.giftCategoriesList.length,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              height: Get.height * 0.4,
+              child: GetX<IsmLivePkController>(
+                builder: (pcontroller) => GridView.builder(
+                  controller: pcontroller.giftController,
+                  padding: IsmLiveDimens.edgeInsets16,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: IsmLiveDimens.eight,
+                    mainAxisSpacing: IsmLiveDimens.eight,
+                    crossAxisCount: 3,
+                  ),
+                  itemBuilder: (_, index) {
+                    final gift = pcontroller.giftList[index];
+                    return _GiftItem(
+                      key: ValueKey(gift),
+                      gift: gift,
+                      onTap: () {
+                        Get.back();
+                        IsmLiveLog('----> $gift');
+                        pcontroller.sendGift(
+                            giftAnimationImage: gift.giftAnimationImage ?? '',
+                            giftId: gift.id ?? '',
+                            amount: gift.virtualCurrency ?? 0,
+                            giftImage: gift.giftImage ?? '',
+                            giftTitle: gift.giftTitle ?? '');
+                      },
+                    );
+                  },
+                  itemCount: pkController.giftList.length,
+                ),
+              ),
+            ),
+          ],
+        ),
       );
 }
 
@@ -126,7 +124,7 @@ class _GiftItem extends StatelessWidget {
     required this.onTap,
   });
 
-  final IsmLiveGifts gift;
+  final IsmLiveGiftsCategoryModel gift;
   final VoidCallback onTap;
 
   @override
@@ -143,10 +141,8 @@ class _GiftItem extends StatelessWidget {
               SizedBox(
                 height: IsmLiveDimens.forty,
                 width: IsmLiveDimens.forty,
-                // child: IsmLiveImage.asset(gift.path),
-                child: gift.path.endsWith('gif')
-                    ? IsmLiveGif(path: gift.path)
-                    : IsmLiveImage.asset(gift.path),
+                child: IsmLiveImage.network(gift.giftImage ?? '',
+                    name: gift.giftTitle ?? ''),
               ),
               IsmLiveDimens.boxHeight8,
               Row(
@@ -154,11 +150,59 @@ class _GiftItem extends StatelessWidget {
                 children: [
                   const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                   IsmLiveDimens.boxWidth4,
-                  const Text('10'),
+                  Text('${gift.virtualCurrency}'),
                 ],
               ),
             ],
           ),
+        ),
+      );
+}
+
+class CategoryType extends StatelessWidget {
+  const CategoryType({
+    super.key,
+    required this.giftTitle,
+    required this.giftImage,
+    required this.isSelected,
+  });
+  final String giftTitle;
+  final String giftImage;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: IsmLiveDimens.hundred,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            giftImage.isEmpty
+                ? SizedBox(
+                    height: IsmLiveDimens.fifty,
+                    width: IsmLiveDimens.sixty,
+                  )
+                : Container(
+                    height: IsmLiveDimens.fifty,
+                    width: IsmLiveDimens.fifty,
+                    color: Colors.white,
+                    child: IsmLiveImage.network(
+                      giftImage,
+                      name: giftTitle,
+                    ),
+                  ),
+            IsmLiveDimens.boxHeight5,
+            Text(
+              giftTitle,
+              style: context.textTheme.bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (isSelected)
+              const Divider(
+                color: Colors.black,
+                thickness: 2,
+              ),
+          ],
         ),
       );
 }
