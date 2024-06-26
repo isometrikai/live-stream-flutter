@@ -302,7 +302,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: IsmLivePkTimerContainer(),
                   ),
-                if (controller.pkStages?.isPkStop ?? false)
+                if ((controller.pkStages?.isPkStop ?? false) &&
+                    controller.pkWinnerId == null)
                   const Align(
                     alignment: Alignment.center,
                     child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),

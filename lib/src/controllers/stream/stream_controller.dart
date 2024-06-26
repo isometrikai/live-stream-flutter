@@ -210,12 +210,12 @@ class IsmLiveStreamController extends GetxController
 
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
 
-  final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
+  final _streams = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
 
   RefreshController get streamRefreshController =>
       _streamRefreshControllers[streamType]!;
 
-  List<IsmLiveStreamModel> get streams => _streams[streamType]!;
+  List<IsmLiveStreamDataModel> get streams => _streams[streamType]!;
 
   List<UserDetails> usersList = [];
 

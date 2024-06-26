@@ -461,6 +461,7 @@ class IsmLivePkController extends GetxController
       isNewStream: false,
       isCopublisher: false,
       isPk: true,
+      isPkGust: true,
     );
 
     await streamController.sortParticipants();
@@ -483,6 +484,7 @@ class IsmLivePkController extends GetxController
 
   double pkPersentege(int first, int secound) {
     var total = first + secound;
+
     return first / total;
   }
 
@@ -548,6 +550,7 @@ class IsmLivePkController extends GetxController
     int skip = 0,
     String? searchTag,
   }) async {
+    giftList.clear();
     _giftCategoriesDebouncer.run(() async {
       await _getGiftCategories(
         limit: limit,
