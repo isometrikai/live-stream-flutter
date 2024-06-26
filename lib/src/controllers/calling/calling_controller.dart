@@ -61,8 +61,8 @@ class IsmLiveCallingController extends GetxController {
           var decoded = 'Failed to decode';
           try {
             decoded = utf8.decode(event.data);
-          } catch (_) {
-            IsmLiveLog('$decoded: $_');
+          } catch (e) {
+            IsmLiveLog('$decoded: $e');
           }
         })
         ..on<AudioPlaybackStatusChanged>((event) async {
@@ -80,8 +80,8 @@ class IsmLiveCallingController extends GetxController {
   ) async {
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    for (var participant in room.participants.values) {
-      for (var t in participant.videoTracks) {
+    for (var participant in room.remoteParticipants.values) {
+      for (var t in participant.videoTrackPublications) {
         userMediaTracks.add(IsmLiveParticipantTrack(
           participant: participant,
           videoTrack: t.track,
@@ -112,7 +112,7 @@ class IsmLiveCallingController extends GetxController {
       return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
-    final localParticipantTracks = room.localParticipant?.videoTracks;
+    final localParticipantTracks = room.localParticipant?.videoTrackPublications;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(IsmLiveParticipantTrack(
@@ -185,7 +185,7 @@ class IsmLiveCallingController extends GetxController {
   }
 
   void toggleCamera(LocalParticipant participant) async {
-    final track = participant.videoTracks.firstOrNull?.track;
+    final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 
     try {

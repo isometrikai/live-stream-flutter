@@ -31,15 +31,13 @@ class IsmLiveUtility {
 
   static void updateLater(VoidCallback callback, [bool addDelay = true]) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(
-          addDelay ? const Duration(milliseconds: 10) : Duration.zero, () {
+      Future.delayed(addDelay ? const Duration(milliseconds: 10) : Duration.zero, () {
         callback();
       });
     });
   }
 
-  static String jsonEncodePretty(Object? object) =>
-      JsonEncoder.withIndent(' ' * 4).convert(object);
+  static String jsonEncodePretty(Object? object) => JsonEncoder.withIndent(' ' * 4).convert(object);
 
   static Map<String, String> tokenHeader() => {
         'userToken': config.userConfig.userToken,
@@ -58,11 +56,11 @@ class IsmLiveUtility {
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {
     final result = await Connectivity().checkConnectivity();
-    return [
-      ConnectivityResult.mobile,
-      ConnectivityResult.wifi,
-      ConnectivityResult.ethernet,
-    ].contains(result);
+    return result.any((e) => [
+          ConnectivityResult.mobile,
+          ConnectivityResult.wifi,
+          ConnectivityResult.ethernet,
+        ].contains(e));
   }
 
   static Future<T?> openBottomSheet<T>(
@@ -172,8 +170,7 @@ class IsmLiveUtility {
     await Get.dialog(
       UnconstrainedBox(
         child: SizedBox(
-          width: IsmLiveDimens.percentWidth(1) -
-              (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
+          width: IsmLiveDimens.percentWidth(1) - (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Get.context?.liveTheme?.backgroundColor ?? Colors.white,

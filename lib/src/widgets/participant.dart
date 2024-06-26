@@ -178,9 +178,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
                 alignment: Alignment.bottomCenter,
                 child: ParticipantInfoWidget(
                   imageUrl: widget.imageUrl ?? '',
-                  name: widget.participant.name.isNotEmpty
-                      ? widget.participant.name
-                      : widget.participant.identity,
+                  name: widget.participant.name.isNotEmpty ? widget.participant.name : widget.participant.identity,
                   isHost: widget.isHost,
                   title: widget.participant.name.isNotEmpty ? widget.participant.name : widget.participant.identity,
                 ),
@@ -216,10 +214,10 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
 class _LocalParticipantWidgetState extends _ParticipantWidgetState<LocalParticipantWidget> {
   @override
   LocalTrackPublication<LocalVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
+      widget.participant.videoTrackPublications.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
 
   @override
-  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
+  LocalTrackPublication<LocalAudioTrack>? get firstAudioPublication => widget.participant.audioTrackPublications.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
@@ -228,10 +226,10 @@ class _LocalParticipantWidgetState extends _ParticipantWidgetState<LocalParticip
 class _RemoteParticipantWidgetState extends _ParticipantWidgetState<RemoteParticipantWidget> {
   @override
   RemoteTrackPublication<RemoteVideoTrack>? get videoPublication =>
-      widget.participant.videoTracks.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
+      widget.participant.videoTrackPublications.where((element) => element.sid == widget.videoTrack?.sid).firstOrNull;
 
   @override
-  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication => widget.participant.audioTracks.firstOrNull;
+  RemoteTrackPublication<RemoteAudioTrack>? get firstAudioPublication => widget.participant.audioTrackPublications.firstOrNull;
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;

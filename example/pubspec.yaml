@@ -16,25 +16,24 @@ environment:
 dependencies:
   appscrip_live_stream_component:
     path: ../
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
   cupertino_icons: ^1.0.2
-  device_info_plus: ^9.0.3
+  device_info_plus: ^10.1.0
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.0
   flutter_secure_storage: ^9.0.0
   get: ^4.6.6
   google_fonts: ^6.1.0
-  http: ^1.1.2
-  image_cropper: ^5.0.1
-  image_picker: ^1.0.5
-  package_info_plus: ^7.0.0
+  http: ^1.2.1
+  image_cropper: ^7.0.5
+  image_picker: ^1.1.2
+  package_info_plus: ^8.0.0
   pin_code_fields: ^8.0.1
-  shared_preferences: ^2.2.2
- 
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
   integration_test:
