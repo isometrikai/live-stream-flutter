@@ -224,7 +224,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     ),
             if (widget.showStatsLayer)
               Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.topCenter,
                 child: ParticipantInfoWidget(
                   imageUrl: widget.imageUrl ?? '',
                   name: widget.participant.name.isNotEmpty

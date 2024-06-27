@@ -1,5 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
+import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
 
 class ParticipantInfoWidget extends StatelessWidget {
   const ParticipantInfoWidget({
@@ -21,7 +23,9 @@ class ParticipantInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         color: Colors.black.withOpacity(0.3),
         child: ListTile(
-          contentPadding: IsmLiveDimens.edgeInsets10_0,
+          contentPadding: isFirstIndex
+              ? IsmLiveDimens.edgeInsetsL10
+              : IsmLiveDimens.edgeInsetsR10,
           horizontalTitleGap: IsmLiveDimens.five,
           leading: isFirstIndex
               ? SizedBox(
@@ -35,26 +39,48 @@ class ParticipantInfoWidget extends StatelessWidget {
                 )
               : null,
           title: Text(
-            title ?? '',
+            '@$title',
             style: const TextStyle(color: Colors.white),
             textAlign: isFirstIndex ? TextAlign.start : TextAlign.end,
           ),
-          subtitle: UnconstrainedBox(
-            alignment:
-                isFirstIndex ? Alignment.centerLeft : Alignment.centerRight,
-            child: Container(
-              padding: IsmLiveDimens.edgeInsets2,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(IsmLiveDimens.five),
-                color: isHost ? Colors.red : Colors.purple,
+          subtitle: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RoundedProgressBar(
+                childLeft: isFirstIndex
+                    ? const Text(
+                        '0',
+                      )
+                    : null,
+                childRight: !isFirstIndex
+                    ? const Text(
+                        '0',
+                      )
+                    : null,
+                paddingChildLeft:
+                    isFirstIndex ? IsmLiveDimens.edgeInsets4_0 : null,
+                paddingChildRight:
+                    !isFirstIndex ? IsmLiveDimens.edgeInsets4_0 : null,
+                height: IsmLiveDimens.twenty,
+                style: RoundedProgressBarStyle(
+                    borderWidth: 0,
+                    widthShadow: 0,
+                    backgroundProgress: Colors.blue,
+                    colorProgress: Colors.red),
+                borderRadius: isFirstIndex
+                    ? BorderRadius.only(
+                        bottomLeft: Radius.circular(IsmLiveDimens.ten),
+                        topLeft: Radius.circular(IsmLiveDimens.ten),
+                      )
+                    : BorderRadius.only(
+                        bottomRight: Radius.circular(IsmLiveDimens.ten),
+                        topRight: Radius.circular(IsmLiveDimens.ten),
+                      ),
+                percent: isFirstIndex ? 20 : 0,
               ),
-              child: Text(
-                isHost ? 'Host' : 'Guest',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
+            ],
           ),
-          trailing: isFirstIndex == false
+          trailing: !isFirstIndex
               ? SizedBox(
                   child: IsmLiveImage.network(
                     imageUrl ?? '',

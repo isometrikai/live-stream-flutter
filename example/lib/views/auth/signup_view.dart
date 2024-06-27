@@ -46,10 +46,10 @@ class SignupView extends StatelessWidget {
                           const Hero(
                             tag: ValueKey('logo_isometrik'),
                             child: Center(
-                              child:
-                                  IsmLiveImage.asset(AssetConstants.isometrik),
+                              child: IsmLiveImage.svg(AssetConstants.isometrik),
                             ),
                           ),
+                          IsmLiveDimens.boxHeight32,
                           Center(
                             child: GestureDetector(
                               onTap: () {

@@ -16,7 +16,7 @@ class SplashView extends StatelessWidget {
           body: Center(
             child: Hero(
               tag: ValueKey('logo_isometrik'),
-              child: IsmLiveImage.asset(AssetConstants.isometrik),
+              child: IsmLiveImage.svg(AssetConstants.isometrik),
             ),
           ),
         ),

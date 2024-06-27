@@ -220,7 +220,7 @@ mixin StreamJoinMixin {
     } else if (isCopublisher) {
       message =
           translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
-    } else if (isPk) {
+    } else if (isPkGust) {
       message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
     } else {
       message =

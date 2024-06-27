@@ -485,7 +485,11 @@ class IsmLivePkController extends GetxController
   double pkPersentege(int first, int secound) {
     var total = first + secound;
 
-    return first / total;
+    if (total != 0) {
+      return first / total;
+    } else {
+      return pkBarPersentage;
+    }
   }
 
   void pkStatus(String streamId) async {
