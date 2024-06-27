@@ -68,6 +68,7 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView>
 
   void start() async {
     unawaited(controller.forward());
+
     Future.delayed(Duration(seconds: duration), () {
       controller.reverse().then((value) {
         isCompleted = true;

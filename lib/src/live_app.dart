@@ -103,7 +103,7 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static Future<void> joinStream({
-    required IsmLiveStreamModel stream,
+    required IsmLiveStreamDataModel stream,
     required bool isHost,
     bool isInteractive = false,
     VoidCallback? onStreamEnd,

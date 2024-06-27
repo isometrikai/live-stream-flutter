@@ -53,7 +53,7 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       child: const SizedBox.square(dimension: 8),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

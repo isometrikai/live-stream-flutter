@@ -39,7 +39,8 @@ class IsmLiveStreamModel {
     this.members,
   });
 
-  factory IsmLiveStreamModel.fromMap(Map<String, dynamic> map) => IsmLiveStreamModel(
+  factory IsmLiveStreamModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveStreamModel(
         viewersCount: map['viewersCount'] as int? ?? 0,
         streamImage: map['streamImage'] as String? ?? '',
         streamId: map['streamId'] as String? ?? '',
@@ -59,10 +60,12 @@ class IsmLiveStreamModel {
         restream: map['restream'] as bool? ?? false,
         productsLinked: map['productsLinked'] as bool? ?? false,
         productsCount: map['productsCount'] as int? ?? 0,
-        persistRtmpIngestEndpoint: map['persistRtmpIngestEndpoint'] as bool? ?? false,
+        persistRtmpIngestEndpoint:
+            map['persistRtmpIngestEndpoint'] as bool? ?? false,
         multiLive: map['multiLive'] as bool? ?? false,
         moderatorsCount: map['moderatorsCount'] as int? ?? 0,
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>? ?? {}),
+        metaData: IsmLiveMetaData.fromMap(
+            map['metaData'] as Map<String, dynamic>? ?? {}),
         membersPublishingCount: map['membersPublishingCount'] as int? ?? 0,
         membersCount: map['membersCount'] as int? ?? 0,
         lowLatencyMode: map['lowLatencyMode'] as bool? ?? false,
@@ -74,13 +77,15 @@ class IsmLiveStreamModel {
         featuringProduct: map['featuringProduct'] as dynamic,
         enableRecording: map['enableRecording'] as bool? ?? false,
         customType: map['customType'] as dynamic,
-        createdBy: map['createdBy'] as String? ?? map['initiatorId'] as String? ?? '',
+        createdBy:
+            map['createdBy'] as String? ?? map['initiatorId'] as String? ?? '',
         copublishRequestsCount: map['copublishRequestsCount'] as int? ?? 0,
         canPublish: map['canPublish'] as bool? ?? false,
         audioOnly: map['audioOnly'] as bool? ?? false,
       );
 
-  factory IsmLiveStreamModel.fromJson(String source) => IsmLiveStreamModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveStreamModel.fromJson(String source) =>
+      IsmLiveStreamModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final int? viewersCount;
   final String? streamImage;
@@ -157,15 +162,18 @@ class IsmLiveStreamModel {
         selfHosted: selfHosted ?? this.selfHosted,
         searchableTags: searchableTags ?? this.searchableTags,
         rtmpIngest: rtmpIngest ?? this.rtmpIngest,
-        restreamChannelsCount: restreamChannelsCount ?? this.restreamChannelsCount,
+        restreamChannelsCount:
+            restreamChannelsCount ?? this.restreamChannelsCount,
         restream: restream ?? this.restream,
         productsLinked: productsLinked ?? this.productsLinked,
         productsCount: productsCount ?? this.productsCount,
-        persistRtmpIngestEndpoint: persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
+        persistRtmpIngestEndpoint:
+            persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
         multiLive: multiLive ?? this.multiLive,
         moderatorsCount: moderatorsCount ?? this.moderatorsCount,
         metaData: metaData ?? this.metaData,
-        membersPublishingCount: membersPublishingCount ?? this.membersPublishingCount,
+        membersPublishingCount:
+            membersPublishingCount ?? this.membersPublishingCount,
         membersCount: membersCount ?? this.membersCount,
         lowLatencyMode: lowLatencyMode ?? this.lowLatencyMode,
         isPublic: isPublic ?? this.isPublic,
@@ -177,7 +185,8 @@ class IsmLiveStreamModel {
         enableRecording: enableRecording ?? this.enableRecording,
         customType: customType ?? this.customType,
         createdBy: createdBy ?? this.createdBy,
-        copublishRequestsCount: copublishRequestsCount ?? this.copublishRequestsCount,
+        copublishRequestsCount:
+            copublishRequestsCount ?? this.copublishRequestsCount,
         canPublish: canPublish ?? this.canPublish,
         audioOnly: audioOnly ?? this.audioOnly,
       );

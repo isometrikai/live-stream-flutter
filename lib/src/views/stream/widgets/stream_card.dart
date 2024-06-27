@@ -11,7 +11,7 @@ class IsmLiveStreamCard extends StatelessWidget {
     this.isCreatedByMe = false,
   });
 
-  final IsmLiveStreamModel stream;
+  final IsmLiveStreamDataModel stream;
   final VoidCallback? onTap;
   final bool isCreatedByMe;
 
@@ -78,15 +78,15 @@ class IsmLiveStreamCard extends StatelessWidget {
                     Row(
                       children: [
                         IsmLiveImage.network(
-                          stream.initiatorImage ?? '',
-                          name: stream.initiatorName ?? 'U',
+                          stream.userDetails?.userProfile ?? '',
+                          name: stream.userDetails?.userName ?? 'U',
                           dimensions: IsmLiveDimens.thirtyTwo,
                           isProfileImage: true,
                         ),
                         IsmLiveDimens.boxWidth10,
                         Flexible(
                           child: Text(
-                            stream.initiatorName ?? '',
+                            stream.userDetails?.userName ?? 'U',
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.bodyLarge?.copyWith(
                               color: Colors.white,

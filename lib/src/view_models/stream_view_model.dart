@@ -33,12 +33,12 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<List<IsmLiveStreamModel>> getStreams({
+  Future<List<IsmLiveStreamDataModel>> getStreams({
     required IsmLiveStreamQueryModel queryModel,
   }) async {
     try {
-      // var res = await _repository.getStreams();
-      var res = await _repository.getStreams(queryModel: queryModel);
+      var res = await _repository.getStreams();
+      // var res = await _repository.getStreams(queryModel: queryModel);
 
       if (res.hasError) {
         return [];
@@ -47,7 +47,7 @@ class IsmLiveStreamViewModel {
       var list = jsonDecode(res.data)['streams'] as List? ?? [];
 
       return list
-          .map((e) => IsmLiveStreamModel.fromMap(e as Map<String, dynamic>))
+          .map((e) => IsmLiveStreamDataModel.fromMap(e as Map<String, dynamic>))
           .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);

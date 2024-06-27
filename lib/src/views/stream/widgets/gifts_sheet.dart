@@ -16,7 +16,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           Get.find<IsmLiveStreamController>().giftType = 0;
-          pkController.giftList = [];
+
           await pkController.getGiftCategories();
         },
         builder: (controller) => Column(
