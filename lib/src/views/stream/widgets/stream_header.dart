@@ -11,7 +11,6 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.onTapViewers,
     this.onTapModerators,
     required this.description,
-    required this.pk,
     required this.pkCompleted,
     required this.isBattleTie,
     this.winnerName,
@@ -21,7 +20,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
   final String? winnerName;
   final String description;
   final String imageUrl;
-  final bool pk;
+
   final bool pkCompleted;
   final bool isBattleTie;
 
@@ -60,30 +59,20 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ),
           ),
           IsmLiveDimens.boxHeight8,
-          if (pk || pkCompleted)
-            !pkCompleted
-                ? GetX<IsmLivePkController>(
-                    builder: (controller) => LinearProgressIndicator(
-                      minHeight: IsmLiveDimens.ten,
-                      backgroundColor: Colors.purple,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.red),
-                      value: controller.pkBarPersentage,
-                    ),
-                  )
-                : Container(
-                    width: Get.width,
-                    color: Colors.blue,
-                    height: IsmLiveDimens.twenty,
-                    child: Text(
-                      isBattleTie
-                          ? 'Congratulations to @$winnerName'
-                          : 'It\'s a Draw!',
-                      style: context.textTheme.bodySmall?.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
+          if (pkCompleted)
+            Container(
+              width: Get.width,
+              color: Colors.blue,
+              height: IsmLiveDimens.twenty,
+              child: Text(
+                isBattleTie
+                    ? 'Congratulations to @$winnerName'
+                    : 'It\'s a Draw!',
+                style: context.textTheme.bodySmall?.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            )
           else
             Container(
               margin: IsmLiveDimens.edgeInsets10_0,
