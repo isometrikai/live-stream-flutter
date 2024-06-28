@@ -6,5 +6,5 @@
 class AssetConstants {
   const AssetConstants._();
 
-  static const String isometrik = 'assets/logo/isometrik.png';
+  static const String isometrik = 'assets/logo/Isometrik.svg';
 }

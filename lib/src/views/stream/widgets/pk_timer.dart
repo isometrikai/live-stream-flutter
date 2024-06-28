@@ -6,37 +6,27 @@ class IsmLivePkTimerContainer extends StatelessWidget {
   const IsmLivePkTimerContainer({super.key});
 
   @override
-  Widget build(BuildContext context) => Container(
-        width: IsmLiveDimens.eighty,
-        height: IsmLiveDimens.eighty,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.yellow, Colors.green, Colors.blue],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          shape: BoxShape.circle,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'VS',
-              style: context.textTheme.bodyLarge
-                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+  Widget build(BuildContext context) => Stack(
+        children: [
+          Align(
+            alignment:
+                Alignment(0, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+            child: const IsmLiveImage.svg(
+              IsmLiveAssetConstants.timerContainer,
             ),
-            IsmLiveDimens.boxHeight2,
-            GetX<IsmLivePkController>(
+          ),
+          Align(
+            alignment:
+                Alignment(0, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+            child: GetX<IsmLivePkController>(
               builder: (controller) => Text(
                 controller.pkDuration.formattedTimeInMin,
                 style: context.textTheme.bodyLarge?.copyWith(
-                  color: Colors.white,
+                  color: Colors.yellow,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
 }

@@ -38,6 +38,16 @@ class IsmLiveUtility {
     });
   }
 
+  static double alignY(double higthDistance) {
+    var halfHight = Get.height / 2;
+    return (higthDistance / halfHight) - 1;
+  }
+
+  static double alignX(double widthDistance) {
+    var halfHight = Get.width / 2;
+    return (widthDistance / halfHight) - 1;
+  }
+
   static String jsonEncodePretty(Object? object) =>
       JsonEncoder.withIndent(' ' * 4).convert(object);
 

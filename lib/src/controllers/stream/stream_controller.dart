@@ -312,12 +312,12 @@ class IsmLiveStreamController extends GetxController
 
     // Define a Tween for Alignment
     var alignmentTween = Tween<Alignment>(
-      begin: const Alignment(-1, -0.5),
-      end: const Alignment(-0.1, -0.5),
+      begin: Alignment(-1, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+      end: Alignment(-0.1, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
     );
     var alignmentTweenRight = Tween<Alignment>(
-      begin: const Alignment(1, -0.5),
-      end: const Alignment(0.1, -0.5),
+      begin: Alignment(1, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+      end: Alignment(0.1, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
     );
 
     alignmentAnimation = alignmentTween.animate(animationController);

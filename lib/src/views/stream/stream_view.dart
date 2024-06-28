@@ -292,16 +292,14 @@ class _IsmLiveStreamView extends StatelessWidget {
                     child: IsmLiveTapHandler(
                       onTap: controller.pkChallengeSheet,
                       child: const IsmLiveImage.svg(
-                        IsmLiveAssetConstants.pkStart,
+                        IsmLiveAssetConstants.start,
                       ),
                     ),
                   ),
                 if ((controller.pkStages?.isPkStart ?? false) &&
                     controller.participantTracks.length == 2)
-                  const Align(
-                    alignment: Alignment.center,
-                    child: IsmLivePkTimerContainer(),
-                  ),
+                  const IsmLivePkTimerContainer(),
+
                 if ((controller.pkStages?.isPkStop ?? false) &&
                     controller.pkWinnerId == null)
                   const Align(
@@ -331,8 +329,6 @@ class _StreamHeader extends StatelessWidget {
           child: IsmLiveStreamHeader(
             isBattleTie: controller.pkWinnerId != null,
             winnerName: controller.findWinner(controller.pkWinnerId),
-            pk: (controller.pkStages?.isPkStart ?? false) &&
-                controller.participantTracks.length == 2,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',

@@ -60,9 +60,15 @@ class IsmLivePkController extends GetxController
   Duration get pkDuration => _pkDuration.value;
   set pkDuration(Duration value) => _pkDuration.value = value;
 
-  final RxDouble _pkBarPersentage = 0.5.obs;
-  double get pkBarPersentage => _pkBarPersentage.value;
-  set pkBarPersentage(double value) => _pkBarPersentage.value = value;
+  double pkBarPersentage = 0.0;
+
+  final RxDouble _pkBarHostPersentage = 100.0.obs;
+  double get pkBarHostPersentage => _pkBarHostPersentage.value;
+  set pkBarHostPersentage(double value) => _pkBarHostPersentage.value = value;
+
+  final RxDouble _pkBarGustPersentage = 100.0.obs;
+  double get pkBarGustPersentage => _pkBarGustPersentage.value;
+  set pkBarGustPersentage(double value) => _pkBarGustPersentage.value = value;
 
   late String inviteId;
 
@@ -139,7 +145,9 @@ class IsmLivePkController extends GetxController
       streamController.pkStages?.makePkStart();
       streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
-      pkBarPersentage = 0.5;
+      pkBarPersentage = 0.0;
+      pkBarGustPersentage = 100;
+      pkBarHostPersentage = 100;
       pkHostValue = 0;
       pkGustValue = 0;
       startPkTimer(
@@ -448,8 +456,8 @@ class IsmLivePkController extends GetxController
       return;
     }
 
-    await streamController.room!.disconnect();
-    await streamController.room!.dispose();
+    await streamController.room?.disconnect();
+    await streamController.room?.dispose();
 
     await streamController.connectStream(
       hdBroadcast: hdBroadcast,
@@ -480,12 +488,25 @@ class IsmLivePkController extends GetxController
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     }
+
+    if (pkBarPersentage.isLowerThan(50)) {
+      pkBarGustPersentage = 100;
+      pkBarHostPersentage = pkBarPersentage * 2;
+    } else {
+      pkBarHostPersentage = 100;
+
+      pkBarGustPersentage = (100 - pkBarPersentage) * 2;
+    }
   }
 
   double pkPersentege(int first, int secound) {
     var total = first + secound;
 
-    return first / total;
+    if (total != 0) {
+      return (first / total) * 100;
+    } else {
+      return pkBarPersentage;
+    }
   }
 
   void pkStatus(String streamId) async {
