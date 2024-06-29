@@ -28,6 +28,9 @@ dependencies:
   http: ^1.1.2
   image_cropper: ^5.0.1
   image_picker: ^1.0.5
+  in_app_purchase: ^3.2.0
+  in_app_purchase_android: ^0.3.6+1
+  in_app_purchase_storekit: ^0.3.17
   package_info_plus: ^7.0.0
   pin_code_fields: ^8.0.1
   shared_preferences: ^2.2.2
