@@ -249,7 +249,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 widget.isViewer &&
                 !widget.isFirstIndex)
               Align(
-                alignment: Alignment.topRight,
+                alignment: Alignment.bottomRight,
                 child: IsmLiveTapHandler(
                   onTap: () {
                     pkController.pkChangeHostSheet(

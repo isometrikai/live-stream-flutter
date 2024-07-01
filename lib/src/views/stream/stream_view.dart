@@ -111,7 +111,9 @@ class _IsmLiveStreamView extends StatelessWidget {
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
           var pkcontroller = Get.find<IsmLivePkController>();
-          pkcontroller.pkBarPersentage = 0.5;
+          pkcontroller.pkBarPersentage = 0;
+          pkcontroller.pkBarGustPersentage = 100;
+          pkcontroller.pkBarHostPersentage = 100;
           pkcontroller.pkHostValue = 0;
           pkcontroller.pkGustValue = 0;
           await controller.room?.dispose();

@@ -185,6 +185,7 @@ class IsmLivePkApis {
       type: IsmLiveRequestType.get,
       showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
     );
   }
 

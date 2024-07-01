@@ -9,15 +9,13 @@ class IsmLivePkTimerContainer extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         children: [
           Align(
-            alignment:
-                Alignment(0, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+            alignment: Alignment(0, IsmLiveUtility.alignY(200)),
             child: const IsmLiveImage.svg(
               IsmLiveAssetConstants.timerContainer,
             ),
           ),
           Align(
-            alignment:
-                Alignment(0, IsmLiveUtility.alignY(IsmLiveDimens.twoHundred)),
+            alignment: Alignment(0, IsmLiveUtility.alignY(200)),
             child: GetX<IsmLivePkController>(
               builder: (controller) => Text(
                 controller.pkDuration.formattedTimeInMin,
