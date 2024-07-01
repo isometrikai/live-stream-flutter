@@ -297,8 +297,11 @@ class IsmLivePkController extends GetxController
           var swap = pkHostValue;
           pkHostValue = pkGustValue;
           pkGustValue = swap;
+          var swapBarValue = pkBarGustPersentage;
+          pkBarGustPersentage = pkBarHostPersentage;
+          pkBarHostPersentage = swapBarValue;
 
-          pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
+          // pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
 
           streamController.update([IsmLivePublisherGrid.updateId]);
 
@@ -488,7 +491,6 @@ class IsmLivePkController extends GetxController
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     }
-
     if (pkBarPersentage.isLowerThan(50)) {
       pkBarGustPersentage = 100;
       pkBarHostPersentage = pkBarPersentage * 2;
