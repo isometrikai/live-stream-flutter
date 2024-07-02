@@ -60,9 +60,17 @@ class IsmLivePkController extends GetxController
   Duration get pkDuration => _pkDuration.value;
   set pkDuration(Duration value) => _pkDuration.value = value;
 
-  final RxDouble _pkBarPersentage = 0.5.obs;
-  double get pkBarPersentage => _pkBarPersentage.value;
-  set pkBarPersentage(double value) => _pkBarPersentage.value = value;
+  double pkBarPersentage = 0.0;
+
+  final RxDouble _pkBarHostPersentage = 100.0.obs;
+  double get pkBarHostPersentage => _pkBarHostPersentage.value;
+  set pkBarHostPersentage(double value) => _pkBarHostPersentage.value = value;
+
+  final RxDouble _pkBarGustPersentage = 100.0.obs;
+  double get pkBarGustPersentage => _pkBarGustPersentage.value;
+  set pkBarGustPersentage(double value) => _pkBarGustPersentage.value = value;
+
+  List<List<IsmLiveGiftsCategoryModel>?>? localGift;
 
   late String inviteId;
 
@@ -139,7 +147,9 @@ class IsmLivePkController extends GetxController
       streamController.pkStages?.makePkStart();
       streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
-      pkBarPersentage = 0.5;
+      pkBarPersentage = 0.0;
+      pkBarGustPersentage = 100;
+      pkBarHostPersentage = 100;
       pkHostValue = 0;
       pkGustValue = 0;
       startPkTimer(
@@ -289,8 +299,11 @@ class IsmLivePkController extends GetxController
           var swap = pkHostValue;
           pkHostValue = pkGustValue;
           pkGustValue = swap;
+          var swapBarValue = pkBarGustPersentage;
+          pkBarGustPersentage = pkBarHostPersentage;
+          pkBarHostPersentage = swapBarValue;
 
-          pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
+          // pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
 
           streamController.update([IsmLivePublisherGrid.updateId]);
 
@@ -448,8 +461,8 @@ class IsmLivePkController extends GetxController
       return;
     }
 
-    await streamController.room!.disconnect();
-    await streamController.room!.dispose();
+    await streamController.room?.disconnect();
+    await streamController.room?.dispose();
 
     await streamController.connectStream(
       hdBroadcast: hdBroadcast,
@@ -461,6 +474,7 @@ class IsmLivePkController extends GetxController
       isNewStream: false,
       isCopublisher: false,
       isPk: true,
+      isPkGust: true,
     );
 
     await streamController.sortParticipants();
@@ -479,11 +493,24 @@ class IsmLivePkController extends GetxController
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     }
+    if (pkBarPersentage.isLowerThan(50)) {
+      pkBarGustPersentage = 100;
+      pkBarHostPersentage = pkBarPersentage * 2;
+    } else {
+      pkBarHostPersentage = 100;
+
+      pkBarGustPersentage = (100 - pkBarPersentage) * 2;
+    }
   }
 
   double pkPersentege(int first, int secound) {
     var total = first + secound;
-    return first / total;
+
+    if (total != 0) {
+      return (first / total) * 100;
+    } else {
+      return pkBarPersentage;
+    }
   }
 
   void pkStatus(String streamId) async {
@@ -548,6 +575,7 @@ class IsmLivePkController extends GetxController
     int skip = 0,
     String? searchTag,
   }) async {
+    giftList.clear();
     _giftCategoriesDebouncer.run(() async {
       await _getGiftCategories(
         limit: limit,
@@ -570,7 +598,7 @@ class IsmLivePkController extends GetxController
 
     giftCategoriesList.addAll(res);
     giftCategoriesList = giftCategoriesList.toSet().toList();
-
+    localGift = List.filled(giftCategoriesList.length, []);
     if (giftCategoriesList.isNotEmpty) {
       await getGiftsForACategory(
           giftGroupId: giftCategoriesList.first.id ?? '');
@@ -616,6 +644,9 @@ class IsmLivePkController extends GetxController
     }
 
     giftList = giftList.toSet().toList();
+
+    localGift?[streamController.giftType] = giftList;
+    streamController.update([IsmLiveGiftsSheet.updateId]);
   }
 
   Future<void> sendGift({
@@ -629,20 +660,24 @@ class IsmLivePkController extends GetxController
       IsmLiveSendGiftModel(
         isPk: streamController.pkStages?.isPkStart ?? false,
         receiverStreamId: streamController.streamId,
-        receiverUserId:
-            streamController.participantList.first.participant.identity,
+        receiverUserId: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.identity
+            : streamController.hostDetails?.userId,
         senderId: streamController.user?.userId,
-        receiverName: streamController.participantList.first.participant.name,
+        receiverName: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.name
+            : streamController.hostDetails?.userName,
         messageStreamId: streamController.streamId,
         pkId: pkId,
         amount: amount,
         currency: 'COIN',
         receiverCurrency: 'INR',
-        reciverUserType:
-            streamController.participantList.first.participant.identity ==
+        reciverUserType: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.identity ==
                     streamController.hostDetails?.userId
                 ? IsmLivePkUserType.publisher.value
-                : IsmLivePkUserType.copublisher.value,
+                : IsmLivePkUserType.copublisher.value
+            : IsmLivePkUserType.publisher.value,
         isGiftVideo: false,
         deviceId: IsmLiveUtility.config.projectConfig.deviceId,
         giftId: giftId,

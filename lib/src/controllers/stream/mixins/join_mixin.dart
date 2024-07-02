@@ -22,7 +22,7 @@ mixin StreamJoinMixin {
 
 // Initialize and join a stream
   Future<void> initializeAndJoinStream(
-    IsmLiveStreamModel stream,
+    IsmLiveStreamDataModel stream,
     bool isHost, {
     bool joinByScrolling = false,
   }) async {
@@ -76,7 +76,7 @@ mixin StreamJoinMixin {
 
 // Join a stream
   Future<void> joinStream(
-    IsmLiveStreamModel stream,
+    IsmLiveStreamDataModel stream,
     bool isHost, {
     bool joinByScrolling = false,
     bool isInteractive = false,
@@ -107,7 +107,7 @@ mixin StreamJoinMixin {
     }
 
     var now = DateTime.now();
-    _controller.streamDuration = now.difference(stream.startTime ?? now);
+    _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 
     // Connect to the stream
     await connectStream(
@@ -117,6 +117,7 @@ mixin StreamJoinMixin {
       streamDiscription: stream.streamDescription,
       isHost: isHost,
       isNewStream: false,
+      isPk: stream.isPkChallenge ?? false,
       joinByScrolling: joinByScrolling,
       hdBroadcast: stream.hdBroadcast ?? false,
       isInteractive: isInteractive,
@@ -171,6 +172,7 @@ mixin StreamJoinMixin {
     required bool isHost,
     bool isCopublisher = false,
     bool isPk = false,
+    bool isPkGust = false,
     required bool isNewStream,
     bool joinByScrolling = false,
     bool isInteractive = false,
@@ -194,7 +196,9 @@ mixin StreamJoinMixin {
     }
     if (isPk) {
       _controller.pkStages = IsmLivePkStages.isPk();
-      _controller.userRole?.makePkGuest();
+      if (isPkGust) {
+        _controller.userRole?.makePkGuest();
+      }
     }
     _controller.update([IsmGoLiveView.updateId]);
     unawaited(
@@ -216,7 +220,7 @@ mixin StreamJoinMixin {
     } else if (isCopublisher) {
       message =
           translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
-    } else if (isPk) {
+    } else if (isPkGust) {
       message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
     } else {
       message =
@@ -280,7 +284,7 @@ mixin StreamJoinMixin {
       );
 
       // Enable video if the user is a host or copublisher
-      if (isHost || isCopublisher || isPk) {
+      if (isHost || isCopublisher || isPkGust) {
         await enableMyVideo();
       }
       // Toggle audio if the user is a host or copublisher

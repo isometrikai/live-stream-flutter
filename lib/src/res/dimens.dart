@@ -14,7 +14,17 @@ class IsmLiveDimens {
 
   static final double appBarElevation = 8.sp;
 
+  static final double pointOne = 0.1.sp;
+  static final double pointTwo = 0.2.sp;
+  static final double pointThree = 0.3.sp;
+  static final double pointFour = 0.4.sp;
+  static final double pointFive = 0.5.sp;
+  static final double pointSix = 0.6.sp;
+  static final double pointSeven = 0.7.sp;
+  static final double pointEigth = 0.8.sp;
+  static final double pointNign = 0.9.sp;
   static final double zero = 0.sp;
+
   static final double one = 1.sp;
   static final double two = 2.sp;
   static final double four = 4.sp;

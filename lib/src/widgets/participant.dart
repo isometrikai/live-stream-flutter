@@ -159,6 +159,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
   VideoTrack? get activeVideoTrack;
   TrackPublication? get videoPublication;
   TrackPublication? get firstAudioPublication;
+  var pkController = Get.find<IsmLivePkController>();
 
   @override
   void initState() {
@@ -224,7 +225,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     ),
             if (widget.showStatsLayer)
               Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.topCenter,
                 child: ParticipantInfoWidget(
                   imageUrl: widget.imageUrl ?? '',
                   name: widget.participant.name.isNotEmpty
@@ -235,16 +236,23 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                   title: widget.participant.name.isNotEmpty
                       ? widget.participant.name
                       : widget.participant.identity,
+                  hostCoins: pkController.pkHostValue,
+                  battleStart:
+                      pkController.streamController.pkStages?.isPkStart ??
+                          false,
+                  gustCoins: pkController.pkGustValue,
+                  hostper: pkController.pkBarHostPersentage,
+                  gustper: pkController.pkBarGustPersentage,
                 ),
               ),
             if (widget.showStatsLayer &&
                 widget.isViewer &&
                 !widget.isFirstIndex)
               Align(
-                alignment: Alignment.topRight,
+                alignment: Alignment.bottomRight,
                 child: IsmLiveTapHandler(
                   onTap: () {
-                    Get.find<IsmLivePkController>().pkChangeHostSheet(
+                    pkController.pkChangeHostSheet(
                       userId: widget.participant.identity,
                       name: widget.participant.name,
                       image: widget.imageUrl ?? '',

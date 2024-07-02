@@ -111,7 +111,9 @@ class _IsmLiveStreamView extends StatelessWidget {
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
           var pkcontroller = Get.find<IsmLivePkController>();
-          pkcontroller.pkBarPersentage = 0.5;
+          pkcontroller.pkBarPersentage = 0;
+          pkcontroller.pkBarGustPersentage = 100;
+          pkcontroller.pkBarHostPersentage = 100;
           pkcontroller.pkHostValue = 0;
           pkcontroller.pkGustValue = 0;
           await controller.room?.dispose();
@@ -292,17 +294,16 @@ class _IsmLiveStreamView extends StatelessWidget {
                     child: IsmLiveTapHandler(
                       onTap: controller.pkChallengeSheet,
                       child: const IsmLiveImage.svg(
-                        IsmLiveAssetConstants.pkStart,
+                        IsmLiveAssetConstants.start,
                       ),
                     ),
                   ),
                 if ((controller.pkStages?.isPkStart ?? false) &&
-                    controller.participantTracks.length == 2)
-                  const Align(
-                    alignment: Alignment.center,
-                    child: IsmLivePkTimerContainer(),
-                  ),
-                if (controller.pkStages?.isPkStop ?? false)
+                    controller.participantTracks.length > 1)
+                  const IsmLivePkTimerContainer(),
+
+                if ((controller.pkStages?.isPkStop ?? false) &&
+                    controller.pkWinnerId == null)
                   const Align(
                     alignment: Alignment.center,
                     child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),
@@ -330,8 +331,6 @@ class _StreamHeader extends StatelessWidget {
           child: IsmLiveStreamHeader(
             isBattleTie: controller.pkWinnerId != null,
             winnerName: controller.findWinner(controller.pkWinnerId),
-            pk: (controller.pkStages?.isPkStart ?? false) &&
-                controller.participantTracks.length == 2,
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',

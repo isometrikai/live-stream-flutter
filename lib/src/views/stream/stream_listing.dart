@@ -42,9 +42,9 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 dividerHeight: 0,
-                indicatorColor: Colors.transparent,
+                indicatorColor: Colors.black,
                 labelPadding: IsmLiveDimens.edgeInsets8_0,
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                overlayColor: const WidgetStatePropertyAll(Colors.transparent),
                 controller: controller.tabController,
                 onTap: (index) {
                   controller.streamType = IsmLiveStreamType.values[index];
@@ -57,6 +57,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
               ),
               Expanded(
                 child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
                   controller: controller.tabController,
                   children: [
                     ...IsmLiveStreamType.values.map(
@@ -99,8 +100,7 @@ class _StreamListing extends StatelessWidget {
                     mainAxisSpacing: IsmLiveDimens.eight,
                     children: controller.streams.map(
                       (e) {
-                        var isCreatedByMe =
-                            e.createdBy == controller.user?.userId;
+                        var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
                           onTap: () => controller.initializeAndJoinStream(
                               e, isCreatedByMe),

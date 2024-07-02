@@ -42,11 +42,12 @@ class IsmLiveModeratorDialog extends StatelessWidget {
               onTap: () {
                 IsmLiveUtility.closeDialog();
                 final controller = Get.find<IsmLiveStreamController>();
-                final stream =
-                    controller.streams.cast<IsmLiveStreamModel?>().firstWhere(
-                          (e) => e?.streamId == streamId,
-                          orElse: () => null,
-                        );
+                final stream = controller.streams
+                    .cast<IsmLiveStreamDataModel?>()
+                    .firstWhere(
+                      (e) => e?.streamId == streamId,
+                      orElse: () => null,
+                    );
                 if (stream == null) {
                   return;
                 }

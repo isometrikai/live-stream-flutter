@@ -40,11 +40,11 @@ class LoginView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IsmLiveDimens.boxHeight32,
+                      IsmLiveDimens.boxHeight50,
                       const Hero(
                         tag: ValueKey('logo_isometrik'),
                         child: Center(
-                          child: IsmLiveImage.asset(AssetConstants.isometrik),
+                          child: IsmLiveImage.svg(AssetConstants.isometrik),
                         ),
                       ),
                       IsmLiveDimens.boxHeight32,

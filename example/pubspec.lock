@@ -317,6 +317,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.2"
+  flutter_callkit_incoming:
+    dependency: transitive
+    description:
+      name: flutter_callkit_incoming
+      sha256: "911978c1db30d2cf886daf80c874ac0beac8482682769b397c0dc3190f3f6cef"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.4+1"
   flutter_driver:
     dependency: transitive
     description: flutter
@@ -334,10 +342,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: c6b0b4c05c458e1c01ad9bcc14041dd7b1f6783d487be4386f793f47a8a4d03e
+      sha256: "8cf40eebf5dec866a6d1956ad7b4f7016e6c0cc69847ab946833b7d43743809f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.20"
+    version: "2.0.19"
+  flutter_rounded_progress_bar:
+    dependency: transitive
+    description:
+      name: flutter_rounded_progress_bar
+      sha256: c35e3eb01467052c4ad441c227cb91d5a8f748fef5926ee572c548fec91e0aec
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2"
   flutter_screenutil:
     dependency: "direct main"
     description:

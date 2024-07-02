@@ -319,11 +319,15 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
 
-    final image = jsonDecode(message.body);
+    final data = jsonDecode(message.body);
     // final gift = message.customType!.path;
-    IsmLiveLog('+++++ $image');
+    IsmLiveLog('+++++ $data');
 
-    final child = IsmLiveGif(path: image['giftThumbnailUrl']);
+    // final child = IsmLiveImage.network(
+    //   image['giftThumbnailUrl'],
+    //   name: 'U',
+    // );
+    final child = IsmLiveGif(path: data['message']);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(

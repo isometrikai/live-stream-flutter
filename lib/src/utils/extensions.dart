@@ -60,6 +60,8 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
         return model.copyWith(hdBroadcast: true);
       case IsmLiveStreamType.recorded:
         return model.copyWith(recorded: true);
+      case IsmLiveStreamType.pk:
+        return model.copyWith(recorded: true);
     }
   }
 }

@@ -210,12 +210,12 @@ class IsmLiveStreamController extends GetxController
 
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
 
-  final _streams = <IsmLiveStreamType, List<IsmLiveStreamModel>>{};
+  final _streams = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
 
   RefreshController get streamRefreshController =>
       _streamRefreshControllers[streamType]!;
 
-  List<IsmLiveStreamModel> get streams => _streams[streamType]!;
+  List<IsmLiveStreamDataModel> get streams => _streams[streamType]!;
 
   List<UserDetails> usersList = [];
 
@@ -312,12 +312,12 @@ class IsmLiveStreamController extends GetxController
 
     // Define a Tween for Alignment
     var alignmentTween = Tween<Alignment>(
-      begin: const Alignment(-1, -0.5),
-      end: const Alignment(-0.1, -0.5),
+      begin: const Alignment(-1, -0.4),
+      end: const Alignment(-0.1, -0.4),
     );
     var alignmentTweenRight = Tween<Alignment>(
-      begin: const Alignment(1, -0.5),
-      end: const Alignment(0.1, -0.5),
+      begin: const Alignment(1, -0.4),
+      end: const Alignment(0.1, -0.4),
     );
 
     alignmentAnimation = alignmentTween.animate(animationController);

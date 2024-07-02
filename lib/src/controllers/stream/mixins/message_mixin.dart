@@ -82,8 +82,8 @@ mixin StreamMessageMixin {
       return;
     }
 
-    var userName = _controller.user?.name.split('');
-    var lastName = userName?.sublist(1).join(' ');
+    var userName = _controller.user?.name.split(' ');
+    var lastName = userName?.sublist(1).join('');
     _controller.messageFieldController.clear();
     _controller.parentMessage = null;
     _controller.update([IsmLiveMessageField.updateId]);

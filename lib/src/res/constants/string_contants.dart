@@ -19,6 +19,7 @@ class IsmLiveStrings {
   static const String all = 'All';
   static const String audioOnly = 'Audio Only';
   static const String multiLive = 'Multi Live';
+  static const String pk = 'pk';
   static const String private = 'Private';
   static const String ecommerce = 'Ecommerce';
   static const String reStream = 'Restream';

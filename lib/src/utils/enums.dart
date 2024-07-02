@@ -120,12 +120,13 @@ enum IsmLiveMeetingType {
 enum IsmLiveStreamType {
   all(0, IsmLiveStrings.all),
   audioOnly(1, IsmLiveStrings.audioOnly),
-  multilive(2, IsmLiveStrings.multiLive),
+  pk(2, IsmLiveStrings.pk),
   private(3, IsmLiveStrings.private),
   ecommerce(4, IsmLiveStrings.ecommerce),
   restream(5, IsmLiveStrings.reStream),
   hd(6, IsmLiveStrings.hd),
-  recorded(7, IsmLiveStrings.recorded);
+  recorded(7, IsmLiveStrings.recorded),
+  multilive(8, IsmLiveStrings.multiLive);
 
   const IsmLiveStreamType(this.value, this.label);
   final int value;
