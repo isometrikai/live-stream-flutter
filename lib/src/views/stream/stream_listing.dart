@@ -42,7 +42,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 dividerHeight: 0,
-                indicatorColor: Colors.transparent,
+                indicatorColor: Colors.black,
                 labelPadding: IsmLiveDimens.edgeInsets8_0,
                 overlayColor: const WidgetStatePropertyAll(Colors.transparent),
                 controller: controller.tabController,

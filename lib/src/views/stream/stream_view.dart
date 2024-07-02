@@ -299,7 +299,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                     ),
                   ),
                 if ((controller.pkStages?.isPkStart ?? false) &&
-                    controller.participantTracks.length == 2)
+                    controller.participantTracks.length > 1)
                   const IsmLivePkTimerContainer(),
 
                 if ((controller.pkStages?.isPkStop ?? false) &&

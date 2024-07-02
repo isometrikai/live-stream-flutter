@@ -162,6 +162,7 @@ class IsmLivePkApis {
       baseUrl: baseUrl,
       type: IsmLiveRequestType.get,
       showDialog: false,
+      showLoader: true,
       headers: IsmLiveUtility.tokenHeader(),
     );
   }
@@ -185,7 +186,6 @@ class IsmLivePkApis {
       type: IsmLiveRequestType.get,
       showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
     );
   }
 

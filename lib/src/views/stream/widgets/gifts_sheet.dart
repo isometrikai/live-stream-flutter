@@ -16,7 +16,6 @@ class IsmLiveGiftsSheet extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           Get.find<IsmLiveStreamController>().giftType = 0;
-
           await pkController.getGiftCategories();
         },
         builder: (controller) => Column(
@@ -48,7 +47,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   ),
                   IsmLiveDimens.boxWidth4,
                   Text(
-                    '135',
+                    '0',
                     style: context.textTheme.bodyLarge
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
@@ -64,8 +63,11 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   return IsmLiveTapHandler(
                     onTap: () async {
                       controller.giftType = index;
+
+                      // IsmLiveLog('-----> 11 ${controller.giftType}');
                       await pkController.getGiftsForACategory(
-                          giftGroupId: categoryDetails.id ?? '');
+                        giftGroupId: categoryDetails.id ?? '',
+                      );
                       controller.update([updateId]);
                     },
                     child: CategoryType(
@@ -82,35 +84,39 @@ class IsmLiveGiftsSheet extends StatelessWidget {
             ),
             SizedBox(
               height: Get.height * 0.4,
-              child: GetX<IsmLivePkController>(
-                builder: (pcontroller) => GridView.builder(
-                  controller: pcontroller.giftController,
-                  padding: IsmLiveDimens.edgeInsets16,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: IsmLiveDimens.eight,
-                    mainAxisSpacing: IsmLiveDimens.eight,
-                    crossAxisCount: 3,
-                  ),
-                  itemBuilder: (_, index) {
-                    final gift = pcontroller.giftList[index];
-                    return _GiftItem(
-                      key: ValueKey(gift),
-                      gift: gift,
-                      onTap: () {
-                        Get.back();
-                        IsmLiveLog('----> $gift');
-                        pcontroller.sendGift(
-                            giftAnimationImage: gift.giftAnimationImage ?? '',
-                            giftId: gift.id ?? '',
-                            amount: gift.virtualCurrency ?? 0,
-                            giftImage: gift.giftImage ?? '',
-                            giftTitle: gift.giftTitle ?? '');
+              child: pkController.localGift?[controller.giftType]?.isEmpty ??
+                      true
+                  ? const Center(child: Text('No data'))
+                  : GridView.builder(
+                      controller: pkController.giftController,
+                      padding: IsmLiveDimens.edgeInsets16,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisSpacing: IsmLiveDimens.eight,
+                        mainAxisSpacing: IsmLiveDimens.eight,
+                        crossAxisCount: 3,
+                      ),
+                      itemBuilder: (_, index) {
+                        final gift = pkController
+                            .localGift?[controller.giftType]?[index];
+                        return _GiftItem(
+                          key: ValueKey(gift),
+                          gift: gift!,
+                          onTap: () {
+                            Get.back();
+
+                            pkController.sendGift(
+                                giftAnimationImage:
+                                    gift.giftAnimationImage ?? '',
+                                giftId: gift.id ?? '',
+                                amount: gift.virtualCurrency ?? 0,
+                                giftImage: gift.giftImage ?? '',
+                                giftTitle: gift.giftTitle ?? '');
+                          },
+                        );
                       },
-                    );
-                  },
-                  itemCount: pkController.giftList.length,
-                ),
-              ),
+                      itemCount:
+                          pkController.localGift?[controller.giftType]?.length,
+                    ),
             ),
           ],
         ),
@@ -180,15 +186,15 @@ class CategoryType extends StatelessWidget {
                 ? SizedBox(
                     height: IsmLiveDimens.fifty,
                     width: IsmLiveDimens.sixty,
-                  )
-                : Container(
-                    height: IsmLiveDimens.fifty,
-                    width: IsmLiveDimens.fifty,
-                    color: Colors.white,
-                    child: IsmLiveImage.network(
-                      giftImage,
-                      name: giftTitle,
+                    child: const IsmLiveImage.svg(
+                      IsmLiveAssetConstants.defaultGift,
                     ),
+                  )
+                : IsmLiveImage.network(
+                    giftImage,
+                    name: giftTitle,
+                    width: IsmLiveDimens.fifty,
+                    height: IsmLiveDimens.fifty,
                   ),
             IsmLiveDimens.boxHeight5,
             Text(

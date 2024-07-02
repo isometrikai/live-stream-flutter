@@ -70,6 +70,8 @@ class IsmLivePkController extends GetxController
   double get pkBarGustPersentage => _pkBarGustPersentage.value;
   set pkBarGustPersentage(double value) => _pkBarGustPersentage.value = value;
 
+  List<List<IsmLiveGiftsCategoryModel>?>? localGift;
+
   late String inviteId;
 
   String? pkId;
@@ -596,7 +598,7 @@ class IsmLivePkController extends GetxController
 
     giftCategoriesList.addAll(res);
     giftCategoriesList = giftCategoriesList.toSet().toList();
-
+    localGift = List.filled(giftCategoriesList.length, []);
     if (giftCategoriesList.isNotEmpty) {
       await getGiftsForACategory(
           giftGroupId: giftCategoriesList.first.id ?? '');
@@ -642,6 +644,9 @@ class IsmLivePkController extends GetxController
     }
 
     giftList = giftList.toSet().toList();
+
+    localGift?[streamController.giftType] = giftList;
+    streamController.update([IsmLiveGiftsSheet.updateId]);
   }
 
   Future<void> sendGift({
@@ -655,20 +660,24 @@ class IsmLivePkController extends GetxController
       IsmLiveSendGiftModel(
         isPk: streamController.pkStages?.isPkStart ?? false,
         receiverStreamId: streamController.streamId,
-        receiverUserId:
-            streamController.participantList.first.participant.identity,
+        receiverUserId: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.identity
+            : streamController.hostDetails?.userId,
         senderId: streamController.user?.userId,
-        receiverName: streamController.participantList.first.participant.name,
+        receiverName: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.name
+            : streamController.hostDetails?.userName,
         messageStreamId: streamController.streamId,
         pkId: pkId,
         amount: amount,
         currency: 'COIN',
         receiverCurrency: 'INR',
-        reciverUserType:
-            streamController.participantList.first.participant.identity ==
+        reciverUserType: (streamController.pkStages?.isPkStart ?? false)
+            ? streamController.participantList.first.participant.identity ==
                     streamController.hostDetails?.userId
                 ? IsmLivePkUserType.publisher.value
-                : IsmLivePkUserType.copublisher.value,
+                : IsmLivePkUserType.copublisher.value
+            : IsmLivePkUserType.publisher.value,
         IsGiftVideo: false,
         deviceId: IsmLiveUtility.config.projectConfig.deviceId,
         giftId: giftId,
