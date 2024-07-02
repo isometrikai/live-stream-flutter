@@ -1,55 +1,40 @@
-// To parse this JSON data, do
-//
-//     final coinsPlansWalletModel = coinsPlansWalletModelFromJson(jsonString);
-
 import 'dart:convert';
 
 import 'package:get/get.dart';
 
-CoinsPlansWalletModel coinsPlansWalletModelFromJson(String str) =>
-    CoinsPlansWalletModel.fromJson(json.decode(str));
+CoinPlansModel coinsPlansWalletModelFromJson(String str) =>
+    CoinPlansModel.fromJson(json.decode(str));
 
-String coinsPlansWalletModelToJson(CoinsPlansWalletModel data) =>
-    json.encode(data.toJson());
-
-class CoinsPlansWalletModel {
-  CoinsPlansWalletModel({
+class CoinPlansModel {
+  const CoinPlansModel({
     this.status = '',
     this.message = '',
-    List<CoinPlansWalletRes>? data,
+    this.data = const [],
     this.totalCount = 0,
-  }) : data = data ?? [];
+  });
 
-  factory CoinsPlansWalletModel.fromJson(Map<String, dynamic> json) =>
-      CoinsPlansWalletModel(
-        status: json['status'],
-        message: json['message'],
-        data: List<CoinPlansWalletRes>.from(
-          json['data'].map(
-            (x) => CoinPlansWalletRes.fromJson(x as Map<String, dynamic>),
-          ),
-        ),
-        totalCount: json['totalCount'],
+  factory CoinPlansModel.fromJson(Map<String, dynamic> json) => CoinPlansModel(
+        status: json['status'] as String? ?? '',
+        message: json['message'] as String? ?? '',
+        data: List<CoinPlan>.from((json['data'] as List? ?? [])
+            .map((x) => CoinPlan.fromJson(x as Map<String, dynamic>))),
+        totalCount: json['totalCount'] as int? ?? 0,
       );
   final String status;
   final String message;
-  final List<CoinPlansWalletRes> data;
+  final List<CoinPlan> data;
   final int totalCount;
 
   Map<String, dynamic> toJson() => {
         'status': status,
         'message': message,
-        'data': List.from(
-          data.map(
-            (x) => x.toJson(),
-          ),
-        ),
+        'data': List.from(data.map((x) => x.toJson())),
         'totalCount': totalCount,
       };
 }
 
-class CoinPlansWalletRes {
-  const CoinPlansWalletRes({
+class CoinPlan {
+  const CoinPlan({
     this.id = '',
     this.currencyPlanImage = '',
     this.baseCurrencyValue = 0,
@@ -67,28 +52,29 @@ class CoinPlansWalletRes {
     this.status = '',
   });
 
-  factory CoinPlansWalletRes.fromJson(Map<String, dynamic> json) =>
-      CoinPlansWalletRes(
-        id: json['id'],
-        currencyPlanImage: json['currencyPlanImage'],
-        baseCurrencyValue: json['baseCurrencyValue']?.toDouble(),
-        numberOfUnits: json['numberOfUnits'],
-        appStoreProductIdentifier: json['appStoreProductIdentifier'],
-        googlePlayProductIdentifier: json['googlePlayProductIdentifier'],
-        planDescription: json['planDescription'],
-        planId: json['planId'],
-        planName: json['planName'],
-        applicationId: json['applicationId'],
-        clientName: json['clientName'],
-        baseCurrency: json['baseCurrency'],
-        unitSymbol: json['unitSymbol'],
-        baseCurrencySymbol: json['baseCurrencySymbol'],
-        status: json['status'],
+  factory CoinPlan.fromJson(Map<String, dynamic> json) => CoinPlan(
+        id: json['id'] as String? ?? '',
+        currencyPlanImage: json['currencyPlanImage'] as String? ?? '',
+        baseCurrencyValue: json['baseCurrencyValue'] as num? ?? 0,
+        numberOfUnits: json['numberOfUnits'] as num? ?? 0,
+        appStoreProductIdentifier:
+            json['appStoreProductIdentifier'] as String? ?? '',
+        googlePlayProductIdentifier:
+            json['googlePlayProductIdentifier'] as String? ?? '',
+        planDescription: json['planDescription'] as String? ?? '',
+        planId: json['planId'] as String? ?? '',
+        planName: json['planName'] as String? ?? '',
+        applicationId: json['applicationId'] as String? ?? '',
+        clientName: json['clientName'] as String? ?? '',
+        baseCurrency: json['baseCurrency'] as String? ?? '',
+        unitSymbol: json['unitSymbol'] as String? ?? '',
+        baseCurrencySymbol: json['baseCurrencySymbol'] as String? ?? '',
+        status: json['status'] as String? ?? '',
       );
   final String id;
   final String currencyPlanImage;
-  final double baseCurrencyValue;
-  final int numberOfUnits;
+  final num baseCurrencyValue;
+  final num numberOfUnits;
   final String appStoreProductIdentifier;
   final String googlePlayProductIdentifier;
   final String planDescription;
@@ -102,10 +88,9 @@ class CoinPlansWalletRes {
   final String status;
 
   String get platformPlanId {
-    if (GetPlatform.isAndroid) {
-      return googlePlayProductIdentifier;
-    }
-    return appStoreProductIdentifier;
+    if (GetPlatform.isAndroid) return googlePlayProductIdentifier;
+    if (GetPlatform.isIOS) return appStoreProductIdentifier;
+    return '';
   }
 
   Map<String, dynamic> toJson() => {
@@ -125,39 +110,4 @@ class CoinPlansWalletRes {
         'baseCurrencySymbol': baseCurrencySymbol,
         'status': status,
       };
-}
-
-class PurchaseBody {
-  PurchaseBody({
-    required this.planId,
-    required this.transactionId,
-    required this.deviceType,
-    required this.packageName,
-    required this.productId,
-    required this.purchaseToken,
-  });
-  final String planId;
-  final String transactionId;
-  final String deviceType;
-  final String packageName;
-  final String productId;
-  final String purchaseToken;
-
-  Map<String, dynamic> toJson() => {
-        'planId': planId,
-        'transactionId': transactionId,
-        'deviceType': deviceType,
-        'packageName': packageName,
-        'productId': productId,
-        'purchaseToken': purchaseToken,
-      };
-
-  static PurchaseBody fromJson(Map<String, dynamic> json) => PurchaseBody(
-        planId: json['planId'],
-        transactionId: json['transactionId'],
-        deviceType: json['deviceType'],
-        packageName: json['packageName'],
-        productId: json['productId'],
-        purchaseToken: json['purchaseToken'],
-      );
 }

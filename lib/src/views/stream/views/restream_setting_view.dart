@@ -39,7 +39,8 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
                 IsmLiveRadioListTile(
                   title: 'Enable stream on ${type.label}',
                   isDark: false,
-                  onChange: (value) => controller.onChangeRestreamType(type, value),
+                  onChange: (value) =>
+                      controller.onChangeRestreamType(type, value),
                   value: controller.isRestreamType(type),
                 ),
                 IsmLiveDimens.boxHeight8,

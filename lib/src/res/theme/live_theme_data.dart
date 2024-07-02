@@ -37,7 +37,8 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(ColorProperty('primaryColor', primaryColor));
     properties.add(ColorProperty('secondaryColor', secondaryColor));
     properties.add(ColorProperty('backgroundColor', backgroundColor));
-    properties.add(ColorProperty('streamBackgroundColor', streamBackgroundColor));
+    properties
+        .add(ColorProperty('streamBackgroundColor', streamBackgroundColor));
     properties.add(ColorProperty('borderColor', borderColor));
     properties.add(
       DiagnosticsProperty<IsmLiveButtonThemeData>(
@@ -53,8 +54,10 @@ class IsmLiveThemeData with Diagnosticable {
     );
     properties.add(ColorProperty('selectedTextColor', selectedTextColor));
     properties.add(ColorProperty('unselectedTextColor', unselectedTextColor));
-    properties.add(DiagnosticsProperty<BorderRadius>('buttonRadius', buttonRadius));
-    properties.add(DiagnosticsProperty<BorderRadius>('iconButtonRadius', iconButtonRadius));
+    properties
+        .add(DiagnosticsProperty<BorderRadius>('buttonRadius', buttonRadius));
+    properties.add(DiagnosticsProperty<BorderRadius>(
+        'iconButtonRadius', iconButtonRadius));
     properties.add(ColorProperty('cardBackgroundColor', cardBackgroundColor));
   }
 
@@ -66,15 +69,21 @@ class IsmLiveThemeData with Diagnosticable {
       primaryColor: Color.lerp(primaryColor, other.primaryColor, t),
       secondaryColor: Color.lerp(secondaryColor, other.secondaryColor, t),
       backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
-      streamBackgroundColor: Color.lerp(streamBackgroundColor, other.streamBackgroundColor, t),
+      streamBackgroundColor:
+          Color.lerp(streamBackgroundColor, other.streamBackgroundColor, t),
       borderColor: Color.lerp(borderColor, other.borderColor, t),
       primaryButtonTheme: primaryButtonTheme?.lerp(other.primaryButtonTheme, t),
-      secondaryButtonTheme: secondaryButtonTheme?.lerp(other.secondaryButtonTheme, t),
-      selectedTextColor: Color.lerp(selectedTextColor, other.selectedTextColor, t),
-      unselectedTextColor: Color.lerp(unselectedTextColor, other.unselectedTextColor, t),
+      secondaryButtonTheme:
+          secondaryButtonTheme?.lerp(other.secondaryButtonTheme, t),
+      selectedTextColor:
+          Color.lerp(selectedTextColor, other.selectedTextColor, t),
+      unselectedTextColor:
+          Color.lerp(unselectedTextColor, other.unselectedTextColor, t),
       buttonRadius: BorderRadius.lerp(buttonRadius, other.buttonRadius, t),
-      iconButtonRadius: BorderRadius.lerp(iconButtonRadius, other.iconButtonRadius, t),
-      cardBackgroundColor: Color.lerp(cardBackgroundColor, other.cardBackgroundColor, t),
+      iconButtonRadius:
+          BorderRadius.lerp(iconButtonRadius, other.iconButtonRadius, t),
+      cardBackgroundColor:
+          Color.lerp(cardBackgroundColor, other.cardBackgroundColor, t),
     );
   }
 
@@ -96,7 +105,8 @@ class IsmLiveThemeData with Diagnosticable {
         primaryColor: primaryColor ?? this.primaryColor,
         secondaryColor: secondaryColor ?? this.secondaryColor,
         backgroundColor: backgroundColor ?? this.backgroundColor,
-        streamBackgroundColor: streamBackgroundColor ?? this.streamBackgroundColor,
+        streamBackgroundColor:
+            streamBackgroundColor ?? this.streamBackgroundColor,
         borderColor: borderColor ?? this.borderColor,
         primaryButtonTheme: primaryButtonTheme ?? primaryButtonTheme,
         secondaryButtonTheme: secondaryButtonTheme ?? secondaryButtonTheme,

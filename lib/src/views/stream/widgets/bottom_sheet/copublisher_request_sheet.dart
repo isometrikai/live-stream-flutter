@@ -45,7 +45,8 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                   children: [
                     ...images.indexed.map(
                       (e) {
-                        final right = e.$1 * (IsmLiveDimens.twoHundred / (images.length + 1));
+                        final right = e.$1 *
+                            (IsmLiveDimens.twoHundred / (images.length + 1));
                         return Positioned(
                           right: e.$1 == 0 ? 0 : right,
                           child: IsmLiveImage.network(
@@ -80,7 +81,8 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                 child: Text(
                   label,
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+                    color: context.liveTheme?.primaryColor ??
+                        IsmLiveColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

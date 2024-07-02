@@ -138,7 +138,8 @@ class IsmGoLiveView extends StatelessWidget {
                       value: controller.isRestreamBroadcast,
                     ),
                     const _Restream(),
-                    if (controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice) ...[
+                    if (controller.selectedGoLiveTabItem ==
+                        IsmGoLiveTabItem.liveFromDevice) ...[
                       IsmLiveRadioListTile(
                         title: 'Use Persistent RTMP Stream Key',
                         onChange: controller.onChangePersistent,
@@ -184,7 +185,8 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null || controller.pickedImage!.path.isNullOrEmpty
+          child: controller.pickedImage == null ||
+                  controller.pickedImage!.path.isNullOrEmpty
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
@@ -308,7 +310,8 @@ class _AddProduct extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white30,
                           border: Border.all(color: IsmLiveColors.white),
-                          borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+                          borderRadius:
+                              BorderRadius.circular(IsmLiveDimens.sixteen),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,

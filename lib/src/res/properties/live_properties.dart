@@ -8,8 +8,10 @@ class IsmLiveProperties extends StatelessWidget {
     required this.child,
   });
 
-  static IsmLivePropertiesData? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_InheritedLiveProperties>()?.properties.data;
+  static IsmLivePropertiesData? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_InheritedLiveProperties>()
+      ?.properties
+      .data;
 
   static IsmLivePropertiesData of(BuildContext context) {
     final result = maybeOf(context);
@@ -36,7 +38,8 @@ class _InheritedLiveProperties extends InheritedTheme {
   final IsmLiveProperties properties;
 
   @override
-  bool updateShouldNotify(covariant _InheritedLiveProperties oldWidget) => oldWidget.properties.data != properties.data;
+  bool updateShouldNotify(covariant _InheritedLiveProperties oldWidget) =>
+      oldWidget.properties.data != properties.data;
 
   @override
   Widget wrap(BuildContext context, Widget child) => IsmLiveProperties(

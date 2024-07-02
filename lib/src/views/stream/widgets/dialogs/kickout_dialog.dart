@@ -19,7 +19,8 @@ class IsmLiveKickoutDialog extends StatelessWidget {
           ),
           IsmLiveDimens.boxHeight8,
           Text(
-            context.liveTranslations?.kickoutMessage ?? IsmLiveStrings.kickoutMessage,
+            context.liveTranslations?.kickoutMessage ??
+                IsmLiveStrings.kickoutMessage,
             style: context.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),

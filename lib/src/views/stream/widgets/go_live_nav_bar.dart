@@ -17,7 +17,8 @@ class IsmGoLiveNavBar extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: IsmLiveColors.red,
-                    borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
+                    borderRadius:
+                        BorderRadius.circular(IsmLiveDimens.twentyFive),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -62,7 +63,9 @@ class IsmGoLiveNavBar extends StatelessWidget {
                             Text(
                               e.label,
                               style: context.textTheme.labelLarge?.copyWith(
-                                color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
+                                color: isSelected
+                                    ? context.liveTheme?.selectedTextColor
+                                    : context.liveTheme?.unselectedTextColor,
                               ),
                             ),
                             if (isSelected) ...[

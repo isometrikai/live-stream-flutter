@@ -5,27 +5,33 @@ class CoinsPlansWalletViewMode {
   final CoinsPlansWalletRepository _coinsPlansWalletRepository;
 
   /// to get the coins plans
-  Future<CoinsPlansWalletModel> getCoinsPlans({
+  Future<CoinPlansModel> getCoinsPlans({
     required bool showLoader,
   }) async {
     try {
       final res = await _coinsPlansWalletRepository.getCoinsPlans(
           showLoader: showLoader);
-      if (res.hasError) return CoinsPlansWalletModel();
+      if (res.hasError) return const CoinPlansModel();
       return coinsPlansWalletModelFromJson(res.data);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
-      return CoinsPlansWalletModel();
+      return const CoinPlansModel();
     }
   }
 
   ///  for request to purchase the coins plans ...
-  Future<bool> purchaseCoinsPlans({
+  Future<IsmLiveResponseModel?> purchaseCoinsPlans({
     required Map<String, dynamic> data,
   }) async {
-    final res =
-        await _coinsPlansWalletRepository.purchaseCoinsPlans(data: data);
-    if (res.hasError) return !res.hasError;
-    return res.hasError;
+    try {
+      final res =
+          await _coinsPlansWalletRepository.purchaseCoinsPlans(data: data);
+      if (res.hasError) {
+        await IsmLiveUtility.showInfoDialog(res);
+      } else {
+        return res;
+      }
+    } catch (_) {}
+    return null;
   }
 }

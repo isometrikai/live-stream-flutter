@@ -119,7 +119,6 @@ class AuthController extends GetxController {
     if (result != null) {
       var croppedFile = await ImageCropper().cropImage(
         sourcePath: result.path,
-        cropStyle: CropStyle.circle,
         compressQuality: 100,
         uiSettings: [
           AndroidUiSettings(
@@ -128,10 +127,9 @@ class AuthController extends GetxController {
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
+            cropStyle: CropStyle.circle,
           ),
-          IOSUiSettings(
-            title: 'Cropper',
-          )
+          IOSUiSettings(title: 'Cropper', cropStyle: CropStyle.circle)
         ],
       );
       bytes = File(croppedFile!.path).readAsBytesSync();

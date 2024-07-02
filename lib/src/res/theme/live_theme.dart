@@ -11,7 +11,10 @@ class IsmLiveTheme extends StatelessWidget {
   final IsmLiveThemeData data;
   final Widget child;
 
-  static IsmLiveThemeData? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<_InheritedLiveTheme>()?.theme.data;
+  static IsmLiveThemeData? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_InheritedLiveTheme>()
+      ?.theme
+      .data;
 
   static IsmLiveThemeData of(BuildContext context) {
     final result = maybeOf(context);
@@ -35,7 +38,8 @@ class _InheritedLiveTheme extends InheritedTheme {
   final IsmLiveTheme theme;
 
   @override
-  bool updateShouldNotify(covariant _InheritedLiveTheme oldWidget) => oldWidget.theme.data != theme.data;
+  bool updateShouldNotify(covariant _InheritedLiveTheme oldWidget) =>
+      oldWidget.theme.data != theme.data;
 
   @override
   Widget wrap(BuildContext context, Widget child) => IsmLiveTheme(

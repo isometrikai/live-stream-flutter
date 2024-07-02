@@ -20,7 +20,8 @@ class IsmLiveButtonThemeData with Diagnosticable {
     properties.add(ColorProperty('disableColor', disableColor));
   }
 
-  IsmLiveButtonThemeData lerp(covariant IsmLiveButtonThemeData? other, double t) {
+  IsmLiveButtonThemeData lerp(
+      covariant IsmLiveButtonThemeData? other, double t) {
     if (other is! IsmLiveButtonThemeData) {
       return this;
     }

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveGiftsSheet extends StatelessWidget {
-  IsmLiveGiftsSheet({
+  const IsmLiveGiftsSheet({
     super.key,
     required this.onTap,
   });
   final void Function(IsmLiveGifts) onTap;
-  var pkController = Get.find<IsmLivePkController>();
+  IsmLivePkController get pkController => Get.find<IsmLivePkController>();
   static const updateId = 'gift-sheet';
 
   @override

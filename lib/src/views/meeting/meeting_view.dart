@@ -53,7 +53,8 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
                     return;
                   }
                   IsmLiveUtility.openBottomSheet(
-                    IsmLiveLogoutBottomSheet(user: controller.userConfig!.getDetails()),
+                    IsmLiveLogoutBottomSheet(
+                        user: controller.userConfig!.getDetails()),
                   );
                 },
                 child: IsmLiveImage.network(
@@ -83,7 +84,8 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
                       itemCount: controller.myMeetingList.length,
                       separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (_, index) {
-                        final meeting = controller.myMeetingList[index % controller.myMeetingList.length];
+                        final meeting = controller.myMeetingList[
+                            index % controller.myMeetingList.length];
                         return Dismissible(
                           direction: DismissDirection.endToStart,
                           background: Container(
@@ -129,7 +131,9 @@ class _IsmLiveMeetingViewState extends State<IsmLiveMeetingView> {
                                 Text(meeting.initiatorName),
                                 const Spacer(),
                                 Text(
-                                  DateTime.fromMillisecondsSinceEpoch(meeting.creationTime).formattedTime,
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                          meeting.creationTime)
+                                      .formattedTime,
                                 ),
                               ],
                             ),

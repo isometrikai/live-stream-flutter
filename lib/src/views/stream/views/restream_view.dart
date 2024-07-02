@@ -33,7 +33,8 @@ class IsmLiveRestreamView extends StatelessWidget {
                     title: 'Restream on ${type.label}',
                     isDark: false,
                     showIcon: true,
-                    onChange: (value) => controller.onTapRestreamType(type, value),
+                    onChange: (value) =>
+                        controller.onTapRestreamType(type, value),
                     value: controller.isRestreamType(type),
                   ),
                 ),

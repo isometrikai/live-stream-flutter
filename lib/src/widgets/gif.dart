@@ -26,7 +26,8 @@ class IsmLiveGif extends StatefulWidget {
   State<IsmLiveGif> createState() => _IsmLiveGifState();
 }
 
-class _IsmLiveGifState extends State<IsmLiveGif> with SingleTickerProviderStateMixin {
+class _IsmLiveGifState extends State<IsmLiveGif>
+    with SingleTickerProviderStateMixin {
   late final GifController controller;
 
   @override

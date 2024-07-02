@@ -92,7 +92,6 @@ class FileManager {
   static Future<XFile?> cropImage(String sourcePath) async {
     var croppedFile = await ImageCropper().cropImage(
       sourcePath: sourcePath,
-      cropStyle: CropStyle.rectangle,
       compressQuality: 100,
       uiSettings: [
         AndroidUiSettings(
@@ -101,10 +100,9 @@ class FileManager {
           toolbarWidgetColor: IsmLiveColors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
+          cropStyle: CropStyle.rectangle,
         ),
-        IOSUiSettings(
-          title: 'Cropper',
-        )
+        IOSUiSettings(title: 'Cropper', cropStyle: CropStyle.rectangle)
       ],
     );
 

@@ -32,7 +32,8 @@ class IsmLiveStreamBanner extends StatelessWidget {
                         controller.pickedImage!.path,
                       )
                     : ColoredBox(
-                        color: context.liveTheme?.secondaryColor ?? IsmLiveColors.secondary,
+                        color: context.liveTheme?.secondaryColor ??
+                            IsmLiveColors.secondary,
                       ),
           ),
         ),

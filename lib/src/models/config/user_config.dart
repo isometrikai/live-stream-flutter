@@ -1,16 +1,19 @@
 import 'dart:convert';
 
 class IsmLiveUserConfig {
-  factory IsmLiveUserConfig.fromMap(Map<String, dynamic> map) => IsmLiveUserConfig(
+  factory IsmLiveUserConfig.fromMap(Map<String, dynamic> map) =>
+      IsmLiveUserConfig(
         userToken: map['userToken'] as String,
         userId: map['userId'] as String,
         firstName: map['firstName'] as String,
         lastName: map['lastName'] as String,
         userEmail: map['userEmail'] != null ? map['userEmail'] as String : null,
-        userProfile: map['userProfile'] != null ? map['userProfile'] as String : null,
+        userProfile:
+            map['userProfile'] != null ? map['userProfile'] as String : null,
       );
 
-  factory IsmLiveUserConfig.fromJson(String source) => IsmLiveUserConfig.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveUserConfig.fromJson(String source) =>
+      IsmLiveUserConfig.fromMap(json.decode(source) as Map<String, dynamic>);
 
   const IsmLiveUserConfig({
     required this.userToken,

@@ -9,7 +9,8 @@ class IsmLiveMemberModel {
     required this.memberName,
   });
 
-  factory IsmLiveMemberModel.fromMap(Map<String, dynamic> map) => IsmLiveMemberModel(
+  factory IsmLiveMemberModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveMemberModel(
         isAdmin: map['isAdmin'] as bool,
         isPublishing: map['isPublishing'] as bool,
         memberId: map['memberId'] as String,
@@ -17,7 +18,8 @@ class IsmLiveMemberModel {
         memberName: map['memberName'] as String,
       );
 
-  factory IsmLiveMemberModel.fromJson(String source) => IsmLiveMemberModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveMemberModel.fromJson(String source) =>
+      IsmLiveMemberModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final bool isAdmin;
   final bool isPublishing;
@@ -66,5 +68,10 @@ class IsmLiveMemberModel {
   }
 
   @override
-  int get hashCode => isAdmin.hashCode ^ isPublishing.hashCode ^ memberId.hashCode ^ memberIdentifier.hashCode ^ memberName.hashCode;
+  int get hashCode =>
+      isAdmin.hashCode ^
+      isPublishing.hashCode ^
+      memberId.hashCode ^
+      memberIdentifier.hashCode ^
+      memberName.hashCode;
 }

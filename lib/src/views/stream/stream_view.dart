@@ -378,8 +378,8 @@ class _StreamHeader extends StatelessWidget {
       );
 }
 
-class _TopDarkGradient extends StatelessWidget {
-  const _TopDarkGradient();
+class TopDarkGradient extends StatelessWidget {
+  const TopDarkGradient({super.key});
 
   @override
   Widget build(BuildContext context) => Positioned(

@@ -22,8 +22,9 @@ class SearchUserScreen extends StatelessWidget {
         body: GetBuilder<IsmLiveMeetingController>(
           initState: (_) {
             Get.find<IsmLiveMeetingController>().userDetailsList.clear();
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) async => await Get.find<IsmLiveMeetingController>().getMembersList(skip: 0, limit: 30, searchTag: ''));
+            WidgetsBinding.instance.addPostFrameCallback((_) async =>
+                await Get.find<IsmLiveMeetingController>()
+                    .getMembersList(skip: 0, limit: 30, searchTag: ''));
           },
           builder: (controller) => Column(
             children: [
@@ -35,7 +36,8 @@ class SearchUserScreen extends StatelessWidget {
                   onchange: (value) async {
                     controller.debouncer.run(() async {
                       controller.userDetailsList.clear();
-                      await controller.getMembersList(skip: 0, limit: 30, searchTag: value);
+                      await controller.getMembersList(
+                          skip: 0, limit: 30, searchTag: value);
                     });
                   },
                 ),
@@ -52,11 +54,15 @@ class SearchUserScreen extends StatelessWidget {
                         controller: controller.userRefreshController,
                         onRefresh: () async {
                           controller.userDetailsList.clear();
-                          await controller.getMembersList(skip: 0, limit: 30, searchTag: '');
+                          await controller.getMembersList(
+                              skip: 0, limit: 30, searchTag: '');
                           controller.userRefreshController.refreshCompleted();
                         },
                         onLoading: () async {
-                          await controller.getMembersList(skip: controller.userDetailsList.length, limit: 30, searchTag: '');
+                          await controller.getMembersList(
+                              skip: controller.userDetailsList.length,
+                              limit: 30,
+                              searchTag: '');
                           controller.userRefreshController.refreshCompleted();
                           controller.userRefreshController.loadComplete();
                         },
@@ -67,17 +73,24 @@ class SearchUserScreen extends StatelessWidget {
                             padding: IsmLiveDimens.edgeInsets16,
                             shrinkWrap: true,
                             itemBuilder: (context, index) => CheckboxListTile(
-                              title: Text(controller.userDetailsList[index].userName),
-                              value: controller.membersSelectedList.contains(controller.userDetailsList[index].userId),
+                              title: Text(
+                                  controller.userDetailsList[index].userName),
+                              value: controller.membersSelectedList.contains(
+                                  controller.userDetailsList[index].userId),
                               onChanged: (value) {
-                                IsmLiveLog('length ${controller.userDetailsList.length}');
+                                IsmLiveLog(
+                                    'length ${controller.userDetailsList.length}');
                                 if (value != null) {
                                   controller.onMemberSelected(
-                                      value, controller.userDetailsList[index].userId, controller.userDetailsList[index].userName);
+                                      value,
+                                      controller.userDetailsList[index].userId,
+                                      controller
+                                          .userDetailsList[index].userName);
                                 }
                               },
                             ),
-                            separatorBuilder: (context, index) => const Divider(),
+                            separatorBuilder: (context, index) =>
+                                const Divider(),
                             itemCount: controller.userDetailsList.length,
                           ),
                         ),

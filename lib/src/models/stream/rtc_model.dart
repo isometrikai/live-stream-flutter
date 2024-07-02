@@ -18,16 +18,20 @@ class IsmLiveRTCModel {
         uid: map['uid'] as int? ?? 0,
         streamKey: map['streamKey'] as String?,
         streamId: map['streamId'] as String?,
-        startTime: map['startTime'] != null ? DateTime.fromMillisecondsSinceEpoch(map['startTime'] as int) : null,
+        startTime: map['startTime'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(map['startTime'] as int)
+            : null,
         rtcToken: map['rtcToken'] as String? ?? '',
         playbackUrl: map['playbackUrl'] as String?,
         numberOfViewers: map['numberOfViewers'] as int?,
         isModerator: map['isModerator'] as bool?,
-        restreamEndpoints: (map['restreamEndpoints'] as List<dynamic>?)?.cast<String>(),
+        restreamEndpoints:
+            (map['restreamEndpoints'] as List<dynamic>?)?.cast<String>(),
         ingestEndpoint: map['ingestEndpoint'] as String?,
       );
 
-  factory IsmLiveRTCModel.fromJson(String source) => IsmLiveRTCModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveRTCModel.fromJson(String source) =>
+      IsmLiveRTCModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final int uid;
   final String? streamKey;

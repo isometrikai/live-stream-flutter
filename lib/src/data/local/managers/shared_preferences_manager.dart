@@ -29,11 +29,14 @@ class IsmLivePreferencesManager {
   }
 
   /// return bool value
-  bool getBoolValue(String key, bool defaultValue) => sharedPreferences?.getBool(key) ?? defaultValue;
+  bool getBoolValue(String key, bool defaultValue) =>
+      sharedPreferences?.getBool(key) ?? defaultValue;
 
   /// return string value
-  String getStringValue(String key, String defaultValue) => sharedPreferences?.getString(key) ?? defaultValue;
+  String getStringValue(String key, String defaultValue) =>
+      sharedPreferences?.getString(key) ?? defaultValue;
 
   /// return int value
-  int getIntValue(String key, int defaultValue) => sharedPreferences?.getInt(key) ?? defaultValue;
+  int getIntValue(String key, int defaultValue) =>
+      sharedPreferences?.getInt(key) ?? defaultValue;
 }

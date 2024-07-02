@@ -643,7 +643,7 @@ class IsmLivePkController extends GetxController
                     streamController.hostDetails?.userId
                 ? IsmLivePkUserType.publisher.value
                 : IsmLivePkUserType.copublisher.value,
-        IsGiftVideo: false,
+        isGiftVideo: false,
         deviceId: IsmLiveUtility.config.projectConfig.deviceId,
         giftId: giftId,
         giftThumbnailUrl: giftImage,

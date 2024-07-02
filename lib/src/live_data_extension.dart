@@ -2,7 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 
 class IsmLiveDataExtension extends ThemeExtension<IsmLiveDataExtension> {
-  IsmLiveDataExtension({
+  const IsmLiveDataExtension({
     this.theme,
     this.translations,
     this.properties,
@@ -25,7 +25,8 @@ class IsmLiveDataExtension extends ThemeExtension<IsmLiveDataExtension> {
       );
 
   @override
-  ThemeExtension<IsmLiveDataExtension> lerp(covariant ThemeExtension<IsmLiveDataExtension>? other, double t) {
+  ThemeExtension<IsmLiveDataExtension> lerp(
+      covariant ThemeExtension<IsmLiveDataExtension>? other, double t) {
     if (other is! IsmLiveDataExtension) {
       return this;
     }

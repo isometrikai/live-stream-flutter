@@ -8,8 +8,10 @@ class IsmLiveTranslations extends StatelessWidget {
     required this.child,
   });
 
-  static IsmLiveTranslationsData? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_InheritedLiveTranslations>()?.translations.data;
+  static IsmLiveTranslationsData? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_InheritedLiveTranslations>()
+      ?.translations
+      .data;
 
   static IsmLiveTranslationsData of(BuildContext context) {
     final result = maybeOf(context);
@@ -36,7 +38,8 @@ class _InheritedLiveTranslations extends InheritedTheme {
   final IsmLiveTranslations translations;
 
   @override
-  bool updateShouldNotify(covariant _InheritedLiveTranslations oldWidget) => oldWidget.translations.data != translations.data;
+  bool updateShouldNotify(covariant _InheritedLiveTranslations oldWidget) =>
+      oldWidget.translations.data != translations.data;
 
   @override
   Widget wrap(BuildContext context, Widget child) => IsmLiveTranslations(

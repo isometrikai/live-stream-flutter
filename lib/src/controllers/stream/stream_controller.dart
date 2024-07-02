@@ -659,7 +659,7 @@ class IsmLiveStreamController extends GetxController
     if (participant == null) {
       return;
     }
-    final track = participant.videoTracks.firstOrNull?.track;
+    final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 
     try {

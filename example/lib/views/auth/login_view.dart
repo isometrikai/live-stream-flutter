@@ -129,8 +129,6 @@ class LoginView extends StatelessWidget {
                           label: TranslationKeys.signup.tr,
                         ),
                       ),
-
-                      ///TODO remove later
                       SizedBox(
                         height: 200,
                         child: ListView.builder(
