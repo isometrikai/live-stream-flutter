@@ -1,3 +1,4 @@
+export 'coins_plans_wallet_model.dart';
 export 'config/config.dart';
 export 'config_model.dart';
 export 'create_meeting_model.dart';

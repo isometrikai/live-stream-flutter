@@ -41,6 +41,7 @@ class IsmLiveApis {
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
   static const String sendGiftToStreamer = '/live/v4/giftTransfer';
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
+  static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
 
   // Streams
   static const String _streaming = '/streaming/v2';
@@ -69,7 +70,6 @@ class IsmLiveApis {
   static const String member = '$_streaming/member';
   static const String leaveMember = '$_streaming/member/leave';
   static const String products = '$_streaming/ecommerce/products';
-
   // static const String getEndStream = '$_streaming/analytics';
   static const String restreamChannel = '$_streaming/restream/channel';
 }

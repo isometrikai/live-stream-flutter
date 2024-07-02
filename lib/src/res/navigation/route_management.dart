@@ -127,4 +127,7 @@ abstract class IsmLiveRouteManagement {
       IsmLiveRoutes.tagProduct,
     );
   }
+
+  static void goToCoinsPlanWallet() =>
+      Get.toNamed(IsmLiveRoutes.coinsPlansWalletView);
 }
