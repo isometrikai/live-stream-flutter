@@ -49,8 +49,7 @@ class ParticipantInfoWidget extends StatelessWidget {
                   : null,
               title: Text(
                 '@$title',
-                style: TextStyle(
-                    color: Colors.white, fontSize: IsmLiveDimens.fourteen),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 textAlign: isFirstIndex ? TextAlign.start : TextAlign.end,
               ),
               subtitle: Column(
@@ -63,18 +62,18 @@ class ParticipantInfoWidget extends StatelessWidget {
                       childLeft: isFirstIndex
                           ? Text(
                               ' $hostCoins',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: IsmLiveDimens.twelve,
+                                fontSize: 12,
                               ),
                             )
                           : null,
                       childRight: !isFirstIndex
                           ? Text(
                               ' $gustCoins',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: IsmLiveDimens.twelve,
+                                fontSize: 12,
                               ),
                             )
                           : null,
@@ -82,7 +81,7 @@ class ParticipantInfoWidget extends StatelessWidget {
                           isFirstIndex ? IsmLiveDimens.edgeInsets4_0 : null,
                       paddingChildRight:
                           !isFirstIndex ? IsmLiveDimens.edgeInsets4_0 : null,
-                      height: IsmLiveDimens.twenty,
+                      height: 18,
                       style: RoundedProgressBarStyle(
                         borderWidth: 0,
                         widthShadow: 0,
@@ -91,13 +90,13 @@ class ParticipantInfoWidget extends StatelessWidget {
                         colorProgress: isFirstIndex ? Colors.red : Colors.blue,
                       ),
                       borderRadius: isFirstIndex
-                          ? BorderRadius.only(
-                              bottomLeft: Radius.circular(IsmLiveDimens.ten),
-                              topLeft: Radius.circular(IsmLiveDimens.ten),
+                          ? const BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
                             )
-                          : BorderRadius.only(
-                              bottomRight: Radius.circular(IsmLiveDimens.ten),
-                              topRight: Radius.circular(IsmLiveDimens.ten),
+                          : const BorderRadius.only(
+                              bottomRight: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
                       reverse: !isFirstIndex,
                       milliseconds: 0,
@@ -112,9 +111,8 @@ class ParticipantInfoWidget extends StatelessWidget {
                       ),
                       child: Text(
                         isHost ? 'Host' : 'Guest',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: IsmLiveDimens.twelve),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
                 ],
@@ -130,30 +128,29 @@ class ParticipantInfoWidget extends StatelessWidget {
           ),
           if (battleStart) ...[
             Positioned(
-              bottom: IsmLiveDimens.eight,
-              left: isHost ? -IsmLiveDimens.eight : null,
-              right: !isHost ? -IsmLiveDimens.eight : null,
+              bottom: 5,
+              left: isHost ? -8 : null,
+              right: !isHost ? -8 : null,
               child: IsmLiveImage.svg(
                 isHost
                     ? IsmLiveAssetConstants.hostRing
                     : IsmLiveAssetConstants.gustRing,
-                height: IsmLiveDimens.fiftyFive,
+                height: 55,
               ),
             ),
             Positioned(
-              bottom: IsmLiveDimens.five,
-              left: isHost ? IsmLiveDimens.sixteen : null,
-              right: isHost ? null : IsmLiveDimens.twelve,
+              bottom: 5,
+              left: isHost ? 16 : null,
+              right: isHost ? null : 12,
               child: Container(
                 padding: IsmLiveDimens.edgeInsets2_0,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(IsmLiveDimens.five),
+                  borderRadius: BorderRadius.circular(5),
                   color: isHost ? Colors.red : Colors.purple,
                 ),
                 child: Text(
                   isHost ? 'Host' : 'Guest',
-                  style: TextStyle(
-                      color: Colors.white, fontSize: IsmLiveDimens.twelve),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
             ),
@@ -177,8 +174,8 @@ class IsmLiveProfileView extends StatelessWidget {
   Widget build(BuildContext context) => IsmLiveImage.network(
         imageUrl,
         name: name,
-        height: IsmLiveDimens.forty,
-        width: IsmLiveDimens.forty,
+        height: 40,
+        width: 40,
         isProfileImage: true,
       );
 }

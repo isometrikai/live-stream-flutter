@@ -100,6 +100,7 @@ class IsmLiveAssetConstants {
   static const String start = '$_icons/Start.svg';
   static const String timerContainer = '$_icons/timer_container.svg';
   static const String hostRing = '$_icons/hostRing.svg';
+  static const String defaultGift = '$_icons/default_gift.svg';
 
   static const String speakerOff = '$_icons/speaker_off.svg';
   static const String speakerOn = '$_icons/speaker_on.svg';
