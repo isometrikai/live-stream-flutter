@@ -20,7 +20,9 @@ class IsmLiveModerationWarning extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    context.liveTranslations?.streamTranslations?.moderationWarning ?? IsmLiveStrings.moderationWarning,
+                    context.liveTranslations?.streamTranslations
+                            ?.moderationWarning ??
+                        IsmLiveStrings.moderationWarning,
                     style: context.textTheme.labelMedium?.copyWith(
                       color: IsmLiveColors.white,
                     ),

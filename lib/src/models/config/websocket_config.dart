@@ -11,12 +11,15 @@ class IsmLiveWebSocketConfig {
           'if useWebsocket is set to true, the websocket protocols must be specified',
         );
 
-  factory IsmLiveWebSocketConfig.fromMap(Map<String, dynamic> map) => IsmLiveWebSocketConfig(
+  factory IsmLiveWebSocketConfig.fromMap(Map<String, dynamic> map) =>
+      IsmLiveWebSocketConfig(
         useWebsocket: map['useWebsocket'] as bool,
         websocketProtocols: (map['websocketProtocols'] as List).cast(),
       );
 
-  factory IsmLiveWebSocketConfig.fromJson(String source) => IsmLiveWebSocketConfig.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveWebSocketConfig.fromJson(String source) =>
+      IsmLiveWebSocketConfig.fromMap(
+          json.decode(source) as Map<String, dynamic>);
 
   final bool useWebsocket;
   final List<String> websocketProtocols;
@@ -38,13 +41,15 @@ class IsmLiveWebSocketConfig {
   String toJson() => json.encode(toMap());
 
   @override
-  String toString() => 'IsmLiveWebSocketConfig(useWebsocket: $useWebsocket, websocketProtocols: $websocketProtocols)';
+  String toString() =>
+      'IsmLiveWebSocketConfig(useWebsocket: $useWebsocket, websocketProtocols: $websocketProtocols)';
 
   @override
   bool operator ==(covariant IsmLiveWebSocketConfig other) {
     if (identical(this, other)) return true;
 
-    return other.useWebsocket == useWebsocket && listEquals(other.websocketProtocols, websocketProtocols);
+    return other.useWebsocket == useWebsocket &&
+        listEquals(other.websocketProtocols, websocketProtocols);
   }
 
   @override

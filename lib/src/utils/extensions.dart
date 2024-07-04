@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 
 extension IsmLiveNullString on String? {
@@ -169,4 +171,19 @@ extension IsmLiveAlignmentExtension on Alignment {
         Alignment.bottomCenter,
         Alignment.bottomRight
       ].contains(this);
+}
+
+extension InAppProductExtension on ProductDetails {
+  String toJson() {
+    final data = {
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'rawPrice': rawPrice,
+      'currencyCode': currencyCode,
+      'currencySymbol': currencySymbol,
+    };
+    return jsonEncode(data);
+  }
 }

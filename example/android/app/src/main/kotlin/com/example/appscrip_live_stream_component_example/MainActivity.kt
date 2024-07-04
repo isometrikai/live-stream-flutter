@@ -1,4 +1,4 @@
-package com.flutterISMStream.com
+package com.dubly.androidapp
 
 import io.flutter.embedding.android.FlutterActivity
 

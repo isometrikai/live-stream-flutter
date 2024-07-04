@@ -53,7 +53,8 @@ class RoomPage extends StatelessWidget {
                   controller.participantTracks.isNotEmpty
                       ? GestureDetector(
                           onDoubleTap: () {
-                            controller.showFullScreen = !controller.showFullScreen;
+                            controller.showFullScreen =
+                                !controller.showFullScreen;
                           },
                           child: Obx(
                             () => ParticipantWidget.widgetFor(
@@ -87,13 +88,17 @@ class RoomPage extends StatelessWidget {
                         child: ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: math.max(0, controller.participantTracks.length - 1),
-                          itemBuilder: (BuildContext context, int index) => Container(
+                          itemCount: math.max(
+                              0, controller.participantTracks.length - 1),
+                          itemBuilder: (BuildContext context, int index) =>
+                              Container(
                             margin: IsmLiveDimens.edgeInsets4_8,
-                            width: IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
+                            width:
+                                IsmLiveDimens.twoHundred - IsmLiveDimens.fifty,
                             height: IsmLiveDimens.twoHundred,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(IsmLiveDimens.twenty),
+                              borderRadius:
+                                  BorderRadius.circular(IsmLiveDimens.twenty),
                               child: GestureDetector(
                                 onTap: () {
                                   controller.onClick(index);

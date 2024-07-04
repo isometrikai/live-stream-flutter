@@ -16,7 +16,9 @@ class IsmLiveTabButton extends StatelessWidget {
           var isSelected = type == controller.streamType;
           return DecoratedBox(
             decoration: BoxDecoration(
-              color: isSelected ? context.liveTheme?.primaryColor : Colors.grey.shade100,
+              color: isSelected
+                  ? context.liveTheme?.primaryColor
+                  : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
             ),
             child: Padding(
@@ -24,7 +26,9 @@ class IsmLiveTabButton extends StatelessWidget {
               child: Text(
                 type.label,
                 style: context.textTheme.titleSmall?.copyWith(
-                  color: isSelected ? context.liveTheme?.selectedTextColor : context.liveTheme?.unselectedTextColor,
+                  color: isSelected
+                      ? context.liveTheme?.selectedTextColor
+                      : context.liveTheme?.unselectedTextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),

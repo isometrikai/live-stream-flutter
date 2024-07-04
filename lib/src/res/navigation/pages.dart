@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:get/get.dart';
 
 part 'routes.dart';
@@ -88,6 +89,13 @@ class IsmLivePages {
       transitionDuration: transitionDuration,
       page: IsmLiveTagProducts.new,
       binding: IsmLiveStreamBinding(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage<CoinsPlansWalletView>(
+      name: IsmLiveRoutes.coinsPlansWalletView,
+      transitionDuration: transitionDuration,
+      page: CoinsPlansWalletView.new,
+      binding: CoinsPlansWalletBinding(),
       transition: Transition.rightToLeft,
     ),
   ];

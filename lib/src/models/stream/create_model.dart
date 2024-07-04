@@ -28,16 +28,19 @@ class IsmLiveCreateStreamModel {
     this.isPaid = false,
   });
 
-  factory IsmLiveCreateStreamModel.fromMap(Map<String, dynamic> map) => IsmLiveCreateStreamModel(
+  factory IsmLiveCreateStreamModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveCreateStreamModel(
         streamImage: map['streamImage'] as String,
         streamDescription: map['streamDescription'] as String,
         selfHosted: map['selfHosted'] as bool,
-        searchableTags: (map['searchableTags'] as List<dynamic>?)?.cast<String>(),
+        searchableTags:
+            (map['searchableTags'] as List<dynamic>?)?.cast<String>(),
         restream: map['restream'] as bool,
         productsLinked: map['productsLinked'] as bool,
         products: (map['products'] as List<dynamic>).cast<String>(),
         multiLive: map['multiLive'] as bool,
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         members: (map['members'] as List<dynamic>).cast<String>(),
         lowLatencyMode: map['lowLatencyMode'] as bool,
         isPublic: map['isPublic'] as bool,
@@ -52,7 +55,9 @@ class IsmLiveCreateStreamModel {
         isPaid: map['isPaid'] as bool,
       );
 
-  factory IsmLiveCreateStreamModel.fromJson(String source) => IsmLiveCreateStreamModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveCreateStreamModel.fromJson(String source) =>
+      IsmLiveCreateStreamModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
 
   final String streamImage;
   final String streamDescription;
@@ -116,7 +121,8 @@ class IsmLiveCreateStreamModel {
         enableRecording: enableRecording ?? this.enableRecording,
         audioOnly: audioOnly ?? this.audioOnly,
         rtmpIngest: rtmpIngest ?? this.rtmpIngest,
-        persistRtmpIngestEndpoint: persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
+        persistRtmpIngestEndpoint:
+            persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
         paymentCurrencyCode: paymentCurrencyCode ?? this.paymentCurrencyCode,
         paymentAmount: paymentAmount ?? this.paymentAmount,
         paymentType: paymentType ?? this.paymentType,

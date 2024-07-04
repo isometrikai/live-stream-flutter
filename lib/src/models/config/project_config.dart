@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 class IsmLiveProjectConfig {
-  factory IsmLiveProjectConfig.fromMap(Map<String, dynamic> map) => IsmLiveProjectConfig(
+  factory IsmLiveProjectConfig.fromMap(Map<String, dynamic> map) =>
+      IsmLiveProjectConfig(
         accountId: map['accountId'] as String,
         appSecret: map['appSecret'] as String,
         userSecret: map['userSecret'] as String,
@@ -11,7 +12,8 @@ class IsmLiveProjectConfig {
         deviceId: map['deviceId'] as String,
       );
 
-  factory IsmLiveProjectConfig.fromJson(String source) => IsmLiveProjectConfig.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveProjectConfig.fromJson(String source) =>
+      IsmLiveProjectConfig.fromMap(json.decode(source) as Map<String, dynamic>);
 
   const IsmLiveProjectConfig({
     required this.accountId,

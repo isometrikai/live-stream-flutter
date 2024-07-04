@@ -33,7 +33,8 @@ class MyMeetingModel {
   factory MyMeetingModel.fromMap(Map<String, dynamic> map) => MyMeetingModel(
         selfHosted: map['selfHosted'] as bool,
         searchableTags: List.from(map['searchableTags']),
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         membersPublishingCount: map['membersPublishingCount'] as int,
         membersCount: map['membersCount'] as int,
         meetingType: IsmLiveMeetingType.fromValue(map['meetingType'] as int),
@@ -49,14 +50,16 @@ class MyMeetingModel {
         creationTime: map['creationTime'] as int,
         createdBy: map['createdBy'] as String,
         conversationId: map['conversationId'] as String? ?? '',
-        config: IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
+        config:
+            IsmLiveMeetingConfig.fromMap(map['config'] as Map<String, dynamic>),
         autoTerminate: map['autoTerminate'] as bool,
         audioOnly: map['audioOnly'] as bool,
         adminCount: map['adminCount'] as int,
         privateOneToOne: map['privateOneToOne'] as dynamic,
       );
 
-  factory MyMeetingModel.fromJson(String source) => MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MyMeetingModel.fromJson(String source) =>
+      MyMeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
   final bool selfHosted;
   final List searchableTags;
   final IsmLiveMetaData metaData;
@@ -110,7 +113,8 @@ class MyMeetingModel {
         selfHosted: selfHosted ?? this.selfHosted,
         searchableTags: searchableTags ?? this.searchableTags,
         metaData: metaData ?? this.metaData,
-        membersPublishingCount: membersPublishingCount ?? this.membersPublishingCount,
+        membersPublishingCount:
+            membersPublishingCount ?? this.membersPublishingCount,
         membersCount: membersCount ?? this.membersCount,
         meetingType: meetingType ?? this.meetingType,
         meetingImageUrl: meetingImageUrl ?? this.meetingImageUrl,

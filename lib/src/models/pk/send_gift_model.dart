@@ -18,7 +18,7 @@ class IsmLiveSendGiftModel {
   final String? receiverCurrency;
   final String? isometricToken;
   final String? giftTitle;
-  final bool? IsGiftVideo;
+  final bool? isGiftVideo;
   final String? currency;
   final bool? isPk;
   IsmLiveSendGiftModel({
@@ -37,7 +37,7 @@ class IsmLiveSendGiftModel {
     this.receiverCurrency,
     this.isometricToken,
     this.giftTitle,
-    this.IsGiftVideo,
+    this.isGiftVideo,
     this.currency,
     this.isPk,
   });
@@ -58,7 +58,7 @@ class IsmLiveSendGiftModel {
     String? receiverCurrency,
     String? isometricToken,
     String? giftTitle,
-    bool? IsGiftVideo,
+    bool? isGiftVideo,
     String? currency,
     bool? isPk,
   }) =>
@@ -78,7 +78,7 @@ class IsmLiveSendGiftModel {
         receiverCurrency: receiverCurrency ?? this.receiverCurrency,
         isometricToken: isometricToken ?? this.isometricToken,
         giftTitle: giftTitle ?? this.giftTitle,
-        IsGiftVideo: IsGiftVideo ?? this.IsGiftVideo,
+        isGiftVideo: isGiftVideo ?? isGiftVideo,
         currency: currency ?? this.currency,
         isPk: isPk ?? this.isPk,
       );
@@ -99,7 +99,7 @@ class IsmLiveSendGiftModel {
         'receiverCurrency': receiverCurrency,
         'isometricToken': isometricToken,
         'giftTitle': giftTitle,
-        'IsGiftVideo': IsGiftVideo,
+        'IsGiftVideo': isGiftVideo,
         'currency': currency,
         'isPk': isPk,
       };
@@ -136,7 +136,7 @@ class IsmLiveSendGiftModel {
             ? map['isometricToken'] as String
             : null,
         giftTitle: map['giftTitle'] != null ? map['giftTitle'] as String : null,
-        IsGiftVideo:
+        isGiftVideo:
             map['IsGiftVideo'] != null ? map['IsGiftVideo'] as bool : null,
         currency: map['currency'] != null ? map['currency'] as String : null,
         isPk: map['isPk'] != null ? map['isPk'] as bool : null,
@@ -149,7 +149,7 @@ class IsmLiveSendGiftModel {
 
   @override
   String toString() =>
-      'IsmLiveSendGiftModel(messageStreamId: $messageStreamId, senderId: $senderId, giftThumbnailUrl: $giftThumbnailUrl, amount: $amount, giftId: $giftId, deviceId: $deviceId, giftUrl: $giftUrl, receiverUserId: $receiverUserId, reciverUserType: $reciverUserType, receiverName: $receiverName, pkId: $pkId, receiverStreamId: $receiverStreamId, receiverCurrency: $receiverCurrency, isometricToken: $isometricToken, giftTitle: $giftTitle, IsGiftVideo: $IsGiftVideo, currency: $currency, isPk: $isPk)';
+      'IsmLiveSendGiftModel(messageStreamId: $messageStreamId, senderId: $senderId, giftThumbnailUrl: $giftThumbnailUrl, amount: $amount, giftId: $giftId, deviceId: $deviceId, giftUrl: $giftUrl, receiverUserId: $receiverUserId, reciverUserType: $reciverUserType, receiverName: $receiverName, pkId: $pkId, receiverStreamId: $receiverStreamId, receiverCurrency: $receiverCurrency, isometricToken: $isometricToken, giftTitle: $giftTitle, IsGiftVideo: $isGiftVideo, currency: $currency, isPk: $isPk)';
 
   @override
   bool operator ==(covariant IsmLiveSendGiftModel other) {
@@ -170,7 +170,7 @@ class IsmLiveSendGiftModel {
         other.receiverCurrency == receiverCurrency &&
         other.isometricToken == isometricToken &&
         other.giftTitle == giftTitle &&
-        other.IsGiftVideo == IsGiftVideo &&
+        other.isGiftVideo == isGiftVideo &&
         other.currency == currency &&
         other.isPk == isPk;
   }
@@ -192,7 +192,7 @@ class IsmLiveSendGiftModel {
       receiverCurrency.hashCode ^
       isometricToken.hashCode ^
       giftTitle.hashCode ^
-      IsGiftVideo.hashCode ^
+      isGiftVideo.hashCode ^
       currency.hashCode ^
       isPk.hashCode;
 }

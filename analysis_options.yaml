@@ -1,8 +1,3 @@
-# Removed implicit casts and dynamic feature
-# to force typed variables and methods/functions
-
-include: package:flutter_lints/flutter.yaml
-
 analyzer:
   errors:
     close_sinks: ignore

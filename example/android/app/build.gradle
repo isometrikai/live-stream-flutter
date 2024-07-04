@@ -23,8 +23,15 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def configPropertiesFile = rootProject.file('config.properties')
+def configProperties = new Properties()
+if (configPropertiesFile.exists()) {
+    configProperties.load(new FileInputStream(configPropertiesFile))
+}
+
 android {
-    namespace "com.flutterISMStream.com"
+    // namespace "com.flutterISMStream.com"
+    namespace "com.dubly.androidapp"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
@@ -43,15 +50,16 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.flutterISMStream.com"
+        // applicationId "com.flutterISMStream.com"
+        applicationId "com.dubly.androidapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
         // minSdkVersion flutter.minSdkVersion
         targetSdkVersion 33
         // targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode configProperties['VERSION_CODE'].toInteger()
+        versionName configProperties['VERSION_NAME'].toString()
         multiDexEnabled true
     }
 

@@ -18,7 +18,8 @@ class IsmLiveMeetingController extends GetxController {
   final String wsUrl = IsmLiveApis.wsUrl;
   ScrollController userListController = ScrollController();
   RefreshController refreshController = RefreshController();
-  RefreshController userRefreshController = RefreshController(initialRefresh: false);
+  RefreshController userRefreshController =
+      RefreshController(initialRefresh: false);
   TextEditingController meetingTitleController = TextEditingController();
   TextEditingController selecteMemberController = TextEditingController();
   final IsmLiveDebouncer debouncer = IsmLiveDebouncer();
@@ -48,8 +49,12 @@ class IsmLiveMeetingController extends GetxController {
   }
 
   void createMeetingOnTap() async {
-    if (membersSelectedList.isNotEmpty && meetingTitleController.text.isNotEmpty) {
-      await createMeeting(meetingDescription: meetingTitleController.text, members: membersSelectedList, audioOnly: selectedCallType.last);
+    if (membersSelectedList.isNotEmpty &&
+        meetingTitleController.text.isNotEmpty) {
+      await createMeeting(
+          meetingDescription: meetingTitleController.text,
+          members: membersSelectedList,
+          audioOnly: selectedCallType.last);
     }
   }
 
@@ -103,7 +108,8 @@ class IsmLiveMeetingController extends GetxController {
   }
 
   bool isMeetingOn = false;
-  Future<void> connectMeeting(String token, String meetingId, bool audioCallOnly) async {
+  Future<void> connectMeeting(
+      String token, String meetingId, bool audioCallOnly) async {
     if (isMeetingOn) {
       return;
     }
@@ -147,16 +153,20 @@ class IsmLiveMeetingController extends GetxController {
       );
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
-        trackPermissions: [const ParticipantTrackPermission('allowed-identity', true, null)],
+        trackPermissions: [
+          const ParticipantTrackPermission('allowed-identity', true, null)
+        ],
       );
 
-      var localVideo = await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
+      var localVideo =
+          await LocalVideoTrack.createCameraTrack(const CameraCaptureOptions(
         cameraPosition: CameraPosition.front,
         params: VideoParametersPresets.h720_169,
       ));
       await room.localParticipant?.publishVideoTrack(localVideo);
 
-      await IsmLiveRouteManagement.goToRoomPage(room, listener, meetingId, audioCallOnly);
+      await IsmLiveRouteManagement.goToRoomPage(
+          room, listener, meetingId, audioCallOnly);
       isMeetingOn = false;
     } catch (e, st) {
       isMeetingOn = false;
@@ -232,7 +242,10 @@ class IsmLiveMeetingController extends GetxController {
   }
 
   bool isApicalling = false;
-  Future<void> getMembersList({required int skip, required int limit, required String searchTag}) async {
+  Future<void> getMembersList(
+      {required int skip,
+      required int limit,
+      required String searchTag}) async {
     if (isApicalling) {
       return;
     }

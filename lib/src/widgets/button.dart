@@ -45,33 +45,33 @@ class IsmLiveButton extends StatelessWidget {
   final bool secondary;
   final bool showBorder;
 
-  static MaterialStateProperty<TextStyle?> _textStyle(
+  static WidgetStateProperty<TextStyle?> _textStyle(
           BuildContext context, bool small) =>
-      MaterialStateProperty.all(
+      WidgetStateProperty.all(
         (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)
             ?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       );
 
-  static MaterialStateProperty<EdgeInsetsGeometry?> _padding(
+  static WidgetStateProperty<EdgeInsetsGeometry?> _padding(
           BuildContext context, bool small) =>
-      MaterialStateProperty.all(
+      WidgetStateProperty.all(
         small ? IsmLiveDimens.edgeInsets8_4 : IsmLiveDimens.edgeInsets16_8,
       );
 
-  static MaterialStateProperty<OutlinedBorder?> _borderRadius(
+  static WidgetStateProperty<OutlinedBorder?> _borderRadius(
           BuildContext context) =>
-      MaterialStateProperty.all(
+      WidgetStateProperty.all(
         RoundedRectangleBorder(
           borderRadius: context.liveTheme?.buttonRadius ??
               BorderRadius.circular(IsmLiveDimens.twentyFive),
         ),
       );
 
-  static MaterialStateProperty<BorderSide?> _border(
+  static WidgetStateProperty<BorderSide?> _border(
           BuildContext context, IsmLiveButtonType type) =>
-      MaterialStateProperty.all(
+      WidgetStateProperty.all(
         BorderSide(
           color: type == IsmLiveButtonType.primary
               ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??
@@ -128,7 +128,7 @@ class _Primary extends StatelessWidget {
           side: showBorder
               ? IsmLiveButton._border(context, IsmLiveButtonType.primary)
               : null,
-          backgroundColor: MaterialStateColor.resolveWith(
+          backgroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return context.liveTheme?.primaryButtonTheme?.disableColor ??
@@ -139,7 +139,7 @@ class _Primary extends StatelessWidget {
                   IsmLiveColors.primary;
             },
           ),
-          foregroundColor: MaterialStateColor.resolveWith(
+          foregroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return IsmLiveColors.black;
@@ -179,7 +179,7 @@ class _Secondary extends StatelessWidget {
           side: showBorder
               ? IsmLiveButton._border(context, IsmLiveButtonType.secondary)
               : null,
-          backgroundColor: MaterialStateColor.resolveWith(
+          backgroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return context.liveTheme?.secondaryButtonTheme?.disableColor ??
@@ -189,7 +189,7 @@ class _Secondary extends StatelessWidget {
                   IsmLiveColors.white;
             },
           ),
-          foregroundColor: MaterialStateColor.resolveWith(
+          foregroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return IsmLiveColors.white;
@@ -223,13 +223,13 @@ class _Icon extends StatelessWidget {
   Widget build(BuildContext context) => IconButton(
         style: ButtonStyle(
           shape: context.theme.elevatedButtonTheme.style?.shape ??
-              MaterialStateProperty.all(
+              WidgetStateProperty.all(
                 RoundedRectangleBorder(
                   borderRadius: context.liveTheme?.iconButtonRadius ??
                       BorderRadius.circular(IsmLiveDimens.sixteen),
                 ),
               ),
-          backgroundColor: MaterialStateColor.resolveWith(
+          backgroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return IsmLiveColors.grey;
@@ -246,7 +246,7 @@ class _Icon extends StatelessWidget {
               return secondary ? secondaryColor : primaryColor;
             },
           ),
-          foregroundColor: MaterialStateColor.resolveWith(
+          foregroundColor: WidgetStateColor.resolveWith(
             (states) {
               if (states.isDisabled) {
                 return IsmLiveColors.black;

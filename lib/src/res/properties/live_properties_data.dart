@@ -11,7 +11,8 @@ class IsmLivePropertiesData with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<IsmLiveStreamProperties>('streamProperties', streamProperties));
+    properties.add(DiagnosticsProperty<IsmLiveStreamProperties>(
+        'streamProperties', streamProperties));
   }
 
   IsmLivePropertiesData copyWith({

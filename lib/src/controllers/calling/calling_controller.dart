@@ -55,7 +55,8 @@ class IsmLiveCallingController extends GetxController {
         ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants(room))
         ..on<TrackE2EEStateEvent>(onE2EEStateEvent)
         ..on<ParticipantNameUpdatedEvent>((event) {
-          IsmLiveLog('Participant name updated: ${event.participant.identity}, name => ${event.name}');
+          IsmLiveLog(
+              'Participant name updated: ${event.participant.identity}, name => ${event.name}');
         })
         ..on<DataReceivedEvent>((event) {
           var decoded = 'Failed to decode';
@@ -80,8 +81,8 @@ class IsmLiveCallingController extends GetxController {
   ) async {
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    for (var participant in room.participants.values) {
-      for (var t in participant.videoTracks) {
+    for (var participant in room.remoteParticipants.values) {
+      for (var t in participant.videoTrackPublications) {
         userMediaTracks.add(IsmLiveParticipantTrack(
           participant: participant,
           videoTrack: t.track,
@@ -109,10 +110,12 @@ class IsmLiveCallingController extends GetxController {
         return a.participant.hasVideo ? -1 : 1;
       }
 
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+      return a.participant.joinedAt.millisecondsSinceEpoch -
+          b.participant.joinedAt.millisecondsSinceEpoch;
     });
 
-    final localParticipantTracks = room.localParticipant?.videoTracks;
+    final localParticipantTracks =
+        room.localParticipant?.videoTrackPublications;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(IsmLiveParticipantTrack(
@@ -185,7 +188,7 @@ class IsmLiveCallingController extends GetxController {
   }
 
   void toggleCamera(LocalParticipant participant) async {
-    final track = participant.videoTracks.firstOrNull?.track;
+    final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 
     try {

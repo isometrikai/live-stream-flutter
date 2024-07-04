@@ -23,7 +23,8 @@ class MeetingModel {
   factory MeetingModel.fromMap(Map<String, dynamic> map) => MeetingModel(
         selfHosted: map['selfHosted'] as bool,
         pushNotifications: map['pushNotifications'] as bool,
-        metaData: IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
+        metaData:
+            IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
         members: List<String>.from(map['members'] as List<dynamic>),
         meetingImageUrl: map['meetingImageUrl'] as String,
         meetingDescription: map['meetingDescription'] as String,
@@ -36,7 +37,8 @@ class MeetingModel {
         audioOnly: map['audioOnly'] as bool,
       );
 
-  factory MeetingModel.fromJson(String source) => MeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MeetingModel.fromJson(String source) =>
+      MeetingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final bool selfHosted;
   final bool pushNotifications;

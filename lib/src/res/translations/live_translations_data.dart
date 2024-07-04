@@ -51,7 +51,8 @@ class IsmLiveTranslationsData with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<IsmLiveStreamTranslations>('streamTranslations', streamTranslations));
+    properties.add(DiagnosticsProperty<IsmLiveStreamTranslations>(
+        'streamTranslations', streamTranslations));
     properties.add(StringProperty('uploadingImage', uploadingImage));
     properties.add(StringProperty('kickoutMessage', kickoutMessage));
     properties.add(StringProperty('addedModerator', addedModerator));
@@ -94,9 +95,14 @@ class IsmLiveTranslationsData with Diagnosticable {
         addedModerator: addedModerator ?? this.addedModerator,
         streamEnded: streamEnded ?? this.streamEnded,
         attention: attention ?? this.attention,
-        requestCopublishingTitle: requestCopublishingTitle ?? this.requestCopublishingTitle,
-        requestCopublishingDescription: requestCopublishingDescription ?? this.requestCopublishingDescription,
-        hostAcceptedCopublishRequestTitle: hostAcceptedCopublishRequestTitle ?? this.hostAcceptedCopublishRequestTitle,
-        hostAcceptedCopublishRequestDescription: hostAcceptedCopublishRequestDescription ?? this.hostAcceptedCopublishRequestDescription,
+        requestCopublishingTitle:
+            requestCopublishingTitle ?? this.requestCopublishingTitle,
+        requestCopublishingDescription: requestCopublishingDescription ??
+            this.requestCopublishingDescription,
+        hostAcceptedCopublishRequestTitle: hostAcceptedCopublishRequestTitle ??
+            this.hostAcceptedCopublishRequestTitle,
+        hostAcceptedCopublishRequestDescription:
+            hostAcceptedCopublishRequestDescription ??
+                this.hostAcceptedCopublishRequestDescription,
       );
 }

@@ -23,15 +23,19 @@ class IsmLiveParticipantTrack {
       );
 
   @override
-  String toString() => 'IsmLiveParticipantTrack(videoTrack: $videoTrack, participant: $participant, isScreenShare: $isScreenShare)';
+  String toString() =>
+      'IsmLiveParticipantTrack(videoTrack: $videoTrack, participant: $participant, isScreenShare: $isScreenShare)';
 
   @override
   bool operator ==(covariant IsmLiveParticipantTrack other) {
     if (identical(this, other)) return true;
 
-    return other.videoTrack == videoTrack && other.participant == participant && other.isScreenShare == isScreenShare;
+    return other.videoTrack == videoTrack &&
+        other.participant == participant &&
+        other.isScreenShare == isScreenShare;
   }
 
   @override
-  int get hashCode => videoTrack.hashCode ^ participant.hashCode ^ isScreenShare.hashCode;
+  int get hashCode =>
+      videoTrack.hashCode ^ participant.hashCode ^ isScreenShare.hashCode;
 }

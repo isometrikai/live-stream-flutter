@@ -98,22 +98,26 @@ class IsmLiveMeetingRepository {
   }) async {
     try {
       var url = '/meetings/v1/meeting';
-      var res =
-          await _apiWrapper.makeRequest(url, showLoader: isLoading, type: IsmLiveRequestType.post, headers: IsmLiveUtility.tokenHeader(), payload: {
-        'selfHosted': true,
-        'pushNotifications': true,
-        'metaData': {'open meeting': true},
-        'members': members,
-        'meetingImageUrl': 'https://d1q6f0aelx0por.cloudfront.net/product-logos/cb773227-1c2c-42a4-a527-12e6f827c1d2-elixir.png',
-        'meetingDescription': meetingDescription,
-        'hdMeeting': false,
-        'enableRecording': false,
-        'deviceId': deviceId,
-        'customType': audioOnly ? 'AudioCall' : 'VideoCall',
-        'meetingType': 0,
-        'autoTerminate': true,
-        'audioOnly': audioOnly
-      });
+      var res = await _apiWrapper.makeRequest(url,
+          showLoader: isLoading,
+          type: IsmLiveRequestType.post,
+          headers: IsmLiveUtility.tokenHeader(),
+          payload: {
+            'selfHosted': true,
+            'pushNotifications': true,
+            'metaData': {'open meeting': true},
+            'members': members,
+            'meetingImageUrl':
+                'https://d1q6f0aelx0por.cloudfront.net/product-logos/cb773227-1c2c-42a4-a527-12e6f827c1d2-elixir.png',
+            'meetingDescription': meetingDescription,
+            'hdMeeting': false,
+            'enableRecording': false,
+            'deviceId': deviceId,
+            'customType': audioOnly ? 'AudioCall' : 'VideoCall',
+            'meetingType': 0,
+            'autoTerminate': true,
+            'audioOnly': audioOnly
+          });
 
       return res;
     } catch (_) {

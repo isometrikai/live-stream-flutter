@@ -66,11 +66,10 @@ class IsmLiveUtility {
   /// Returns true if the internet connection is available.
   static Future<bool> get isNetworkAvailable async {
     final result = await Connectivity().checkConnectivity();
-    return [
-      ConnectivityResult.mobile,
-      ConnectivityResult.wifi,
-      ConnectivityResult.ethernet,
-    ].contains(result);
+
+    return result.contains(ConnectivityResult.mobile) ||
+        result.contains(ConnectivityResult.wifi) ||
+        result.contains(ConnectivityResult.ethernet);
   }
 
   static Future<T?> openBottomSheet<T>(

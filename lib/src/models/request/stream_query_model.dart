@@ -22,28 +22,46 @@ class IsmLiveStreamQueryModel {
     this.canPublish,
   });
 
-  factory IsmLiveStreamQueryModel.fromMap(Map<String, dynamic> map) => IsmLiveStreamQueryModel(
+  factory IsmLiveStreamQueryModel.fromMap(Map<String, dynamic> map) =>
+      IsmLiveStreamQueryModel(
         ids: map['ids'] != null ? map['ids'] as String : null,
-        customType: map['customType'] != null ? map['customType'] as String : null,
+        customType:
+            map['customType'] != null ? map['customType'] as String : null,
         searchTag: map['searchTag'] != null ? map['searchTag'] as String : null,
-        membersIncluded: map['membersIncluded'] != null ? map['membersIncluded'] as String : null,
-        membersExactly: map['membersExactly'] != null ? map['membersExactly'] as String : null,
+        membersIncluded: map['membersIncluded'] != null
+            ? map['membersIncluded'] as String
+            : null,
+        membersExactly: map['membersExactly'] != null
+            ? map['membersExactly'] as String
+            : null,
         sort: map['sort'] != null ? map['sort'] as int : null,
-        includeMembers: map['includeMembers'] != null ? map['includeMembers'] as bool : null,
-        membersSkip: map['membersSkip'] != null ? map['membersSkip'] as int : null,
-        membersLimit: map['membersLimit'] != null ? map['membersLimit'] as int : null,
-        hdBroadcast: map['hdBroadcast'] != null ? map['hdBroadcast'] as bool : null,
-        lowLatencyMode: map['lowLatencyMode'] != null ? map['lowLatencyMode'] as bool : null,
+        includeMembers: map['includeMembers'] != null
+            ? map['includeMembers'] as bool
+            : null,
+        membersSkip:
+            map['membersSkip'] != null ? map['membersSkip'] as int : null,
+        membersLimit:
+            map['membersLimit'] != null ? map['membersLimit'] as int : null,
+        hdBroadcast:
+            map['hdBroadcast'] != null ? map['hdBroadcast'] as bool : null,
+        lowLatencyMode: map['lowLatencyMode'] != null
+            ? map['lowLatencyMode'] as bool
+            : null,
         recorded: map['recorded'] != null ? map['recorded'] as bool : null,
         public: map['public'] != null ? map['public'] as bool : null,
-        productsLinked: map['productsLinked'] != null ? map['productsLinked'] as bool : null,
+        productsLinked: map['productsLinked'] != null
+            ? map['productsLinked'] as bool
+            : null,
         multiLive: map['multiLive'] != null ? map['multiLive'] as bool : null,
         audioOnly: map['audioOnly'] != null ? map['audioOnly'] as bool : null,
         reStream: map['reStream'] != null ? map['reStream'] as bool : null,
-        canPublish: map['canPublish'] != null ? map['canPublish'] as bool : null,
+        canPublish:
+            map['canPublish'] != null ? map['canPublish'] as bool : null,
       );
 
-  factory IsmLiveStreamQueryModel.fromJson(String source) => IsmLiveStreamQueryModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory IsmLiveStreamQueryModel.fromJson(String source) =>
+      IsmLiveStreamQueryModel.fromMap(
+          json.decode(source) as Map<String, dynamic>);
 
   final String? ids;
   final String? customType;

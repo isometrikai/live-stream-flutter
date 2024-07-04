@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="71" height="72" viewBox="0 0 71 72">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#bfd0ff"/>
+      <stop offset="1" stop-color="#104dda"/>
+    </linearGradient>
+  </defs>
+  <g id="Document" transform="translate(-0.273 0.23)">
+    <ellipse id="Ellipse_752" data-name="Ellipse 752" cx="35.5" cy="36" rx="35.5" ry="36" transform="translate(0.273 -0.23)" fill="url(#linear-gradient)"/>
+    <g id="google-docs" transform="translate(23.252 18.781)">
+      <path id="Path_365" data-name="Path 365" d="M63.973,33.825H83.792a2.976,2.976,0,0,0,2.973-2.973V9.91H79.828a2.976,2.976,0,0,1-2.973-2.973V0H63.973A2.976,2.976,0,0,0,61,2.973V30.852A2.976,2.976,0,0,0,63.973,33.825ZM67.937,13.94H79.828a.991.991,0,1,1,0,1.982H67.937a.991.991,0,0,1,0-1.982Zm0,3.964H79.828a.991.991,0,1,1,0,1.982H67.937a.991.991,0,0,1,0-1.982Zm0,3.964H79.828a.991.991,0,1,1,0,1.982H67.937a.991.991,0,0,1,0-1.982Zm0,3.964h7.928a.991.991,0,1,1,0,1.982H67.937a.991.991,0,0,1,0-1.982Z" transform="translate(-61)" fill="#fff"/>
+      <path id="Path_366" data-name="Path 366" d="M331.991,16.136h6.356L331,8.789v6.356A.992.992,0,0,0,331.991,16.136Z" transform="translate(-313.163 -8.208)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

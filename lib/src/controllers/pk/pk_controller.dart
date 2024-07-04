@@ -678,7 +678,7 @@ class IsmLivePkController extends GetxController
                 ? IsmLivePkUserType.publisher.value
                 : IsmLivePkUserType.copublisher.value
             : IsmLivePkUserType.publisher.value,
-        IsGiftVideo: false,
+        isGiftVideo: false,
         deviceId: IsmLiveUtility.config.projectConfig.deviceId,
         giftId: giftId,
         giftThumbnailUrl: giftImage,
