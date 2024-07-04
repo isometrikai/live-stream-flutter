@@ -29,6 +29,12 @@ if (configPropertiesFile.exists()) {
     configProperties.load(new FileInputStream(configPropertiesFile))
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     // namespace "com.flutterISMStream.com"
     namespace "com.dubly.androidapp"
@@ -63,11 +69,17 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+    }
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
     // ndkVersion "25.1.8937393" 
