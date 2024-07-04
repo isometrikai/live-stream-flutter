@@ -109,11 +109,11 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                     IsmLiveButton.icon(
                                       icon: Icons.check_rounded,
                                       onTap: () {
+                                        Get.back();
                                         controller.acceptCopublisherRequest(
                                           requestById: copublisher.userId,
                                           streamId: controller.streamId ?? '',
                                         );
-                                        Get.back();
                                       },
                                     ),
                                     IsmLiveDimens.boxWidth4,
@@ -121,11 +121,11 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                                       icon: Icons.close_rounded,
                                       secondary: true,
                                       onTap: () {
+                                        Get.back();
                                         controller.denyCopublisherRequest(
                                           requestById: copublisher.userId,
                                           streamId: controller.streamId ?? '',
                                         );
-                                        Get.back();
                                       },
                                     )
                                   ],

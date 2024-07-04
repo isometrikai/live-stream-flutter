@@ -54,8 +54,9 @@ class IsmGoLiveView extends StatelessWidget {
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }
-                  final ratio1 = MediaQuery.of(context).size.aspectRatio;
-                  final scale = 1 / ratio1;
+                  // final ratio1 = MediaQuery.of(context).size.aspectRatio;
+                  final scale = MediaQuery.of(context).size.height /
+                      MediaQuery.of(context).size.width;
 
                   return Transform.scale(
                     scale: scale,
