@@ -321,8 +321,6 @@ mixin StreamOngoingMixin {
 
     final data = jsonDecode(message.body);
     // final gift = message.customType!.path;
-    IsmLiveLog('+++++ $data');
-
     // final child = IsmLiveImage.network(
     //   image['giftThumbnailUrl'],
     //   name: 'U',
