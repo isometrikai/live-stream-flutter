@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\Users\ps723\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\ps723\OneDrive\Documents\GitHub\flutter_livekit_call\example"
+export "FLUTTER_ROOT=C:\Users\salim\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\salim\flutter_livekit_clone\flutter_livekit_call\example"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.2"
