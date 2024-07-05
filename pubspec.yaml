@@ -47,6 +47,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   pull_to_refresh: ^2.0.0
   shared_preferences: ^2.2.3
+  timezone: ^0.9.4
   wakelock_plus: ^1.2.5
 
 dependency_overrides:
