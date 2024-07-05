@@ -36,6 +36,7 @@ class IsmLiveDelegate {
   }) async {
     onStreamEnd = onEndStream;
     await Future.wait([
+      LocalNotificationService().init(),
       IsmLiveHandler.initialize(),
       _dbWrapper.saveValueSecurely(
           IsmLiveLocalKeys.configDetails, config.toJson()),

@@ -272,6 +272,11 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
               isCopublisherRequest: true,
             );
+
+            LocalNotificationService.showBasicNotification(
+                body: message.body,
+                title: 'Co-publishing requested',
+                payload: '');
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
@@ -296,6 +301,10 @@ class IsmLiveMqttController extends GetxController {
                   : 'You\'ve rejected $userName\'s Co-publisher Request',
               isEvent: true,
             );
+            LocalNotificationService.showBasicNotification(
+                body: message.body,
+                title: 'Co-publishing requested rejected',
+                payload: '');
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
@@ -329,6 +338,9 @@ class IsmLiveMqttController extends GetxController {
             body: body,
             isEvent: true,
           );
+
+          LocalNotificationService.showBasicNotification(
+              body: message.body, title: 'Member Added', payload: '');
           unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);
           break;
@@ -419,15 +431,14 @@ class IsmLiveMqttController extends GetxController {
 
         case IsmLiveActions.pubsubMessagePublished:
           _pkController.pkInviteEvent(payload);
+
           break;
         case IsmLiveActions.pubsubDirectMessagePublished:
           _pkController.pkStopEvent(payload, false);
-
           break;
 
         case IsmLiveActions.pubsubMessageOnTopicPublished:
           _pkController.pkStopEvent(payload, false);
-
           break;
 
         case IsmLiveActions.messageRemoved:
@@ -472,6 +483,8 @@ class IsmLiveMqttController extends GetxController {
             body: '$moderatorName is a moderator now',
             isEvent: true,
           );
+          LocalNotificationService.showBasicNotification(
+              body: message.body, title: 'Moderator Added', payload: '');
           unawaited(_streamController.handleMessage(message: message));
           if (userId == moderatorId) {
             final hostName = payload['initiatorName'];

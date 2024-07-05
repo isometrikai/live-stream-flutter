@@ -225,6 +225,10 @@ class IsmLivePkController extends GetxController
           ),
         );
       } else {
+        LocalNotificationService.showBasicNotification(
+            body: '@${pkDetails.userName} invite you to link',
+            title: 'pk requested',
+            payload: '');
         pkInviteSheet(
           images: [
             pkDetails.userProfileImageUrl ?? '',

@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   cached_network_image: ^3.3.1
-  camera: ^0.11.0+1
+  camera: ^0.10.5+7
   connectivity_plus: ^6.0.3
   emoji_picker_flutter: ^2.2.0
   file_picker: ^8.0.6
@@ -23,6 +23,7 @@ dependencies:
     sdk: flutter
   flutter_background: ^1.2.0
   flutter_callkit_incoming: ^2.0.0+2
+  flutter_local_notifications: ^17.2.1
   flutter_rounded_progress_bar: ^0.3.2
   flutter_screenutil: ^5.9.0
   flutter_secure_storage: ^9.0.0
@@ -46,6 +47,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   pull_to_refresh: ^2.0.0
   shared_preferences: ^2.2.3
+  timezone: ^0.9.4
   wakelock_plus: ^1.2.5
 
 dependency_overrides:
