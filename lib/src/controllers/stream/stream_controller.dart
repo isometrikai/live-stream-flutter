@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -141,6 +141,12 @@ class IsmLiveStreamController extends GetxController
   List<IsmLiveChatModel> get streamMessagesList => _streamMessagesList;
   set streamMessagesList(List<IsmLiveChatModel> value) =>
       _streamMessagesList.value = value;
+
+  final RxList<IsmLiveAnalyticViewerModel> _analyticsViewers =
+      <IsmLiveAnalyticViewerModel>[].obs;
+  List<IsmLiveAnalyticViewerModel> get analyticsViewers => _analyticsViewers;
+  set analyticsViewers(List<IsmLiveAnalyticViewerModel> value) =>
+      _analyticsViewers.value = value;
 
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 

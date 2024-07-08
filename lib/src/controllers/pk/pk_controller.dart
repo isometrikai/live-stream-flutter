@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
@@ -76,8 +75,10 @@ class IsmLivePkController extends GetxController
 
   String? pkId;
 
-  int pkHostValue = 0;
-  int pkGustValue = 0;
+  String? get getstreamId => streamController.streamId;
+
+  num pkHostValue = 0;
+  num pkGustValue = 0;
 
   Timer? pkTimer;
 
@@ -406,9 +407,10 @@ class IsmLivePkController extends GetxController
   Future<void> sendInvitationToUserForPK({
     required IsmLivePkInviteModel reciverDetails,
   }) async {
+    IsmLiveLog('======================= $getstreamId');
     var res = await _viewModel.sendInvitationToUserForPK(
       reciverStreamId: reciverDetails.streamId,
-      senderStreamId: streamController.streamId ?? '',
+      senderStreamId: getstreamId ?? '',
       userId: reciverDetails.userId,
     );
 
@@ -485,15 +487,15 @@ class IsmLivePkController extends GetxController
   }
 
   void pkBarStatus(Map<String, dynamic> payload) {
-    var data = jsonDecode(payload['body']);
+    var data = payload['metaData'];
 
     if (data['reciverId'] ==
         streamController.participantList.first.participant.identity) {
-      pkHostValue = data['totalCoinsRecived'] as int;
+      pkHostValue = data['totalCoinsRecived'] as num;
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     } else {
-      pkGustValue = data['totalCoinsRecived'] as int;
+      pkGustValue = data['totalCoinsRecived'] as num;
 
       pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
     }
@@ -507,7 +509,7 @@ class IsmLivePkController extends GetxController
     }
   }
 
-  double pkPersentege(int first, int secound) {
+  double pkPersentege(num first, num secound) {
     var total = first + secound;
 
     if (total != 0) {

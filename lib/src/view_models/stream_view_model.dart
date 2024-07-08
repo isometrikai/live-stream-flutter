@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
@@ -724,20 +725,29 @@ class IsmLiveStreamViewModel {
     return null;
   }
 
-  Future<void> streamAnalyticsViewers({
+  Future<List<IsmLiveAnalyticViewerModel>> streamAnalyticsViewers({
     required String streamId,
+    required int skip,
+    required int limit,
   }) async {
     try {
       var res = await _repository.streamAnalyticsViewers(
         streamId: streamId,
+        limit: limit,
+        skip: skip,
       );
 
       if (!res.hasError) {
-        IsmLiveLog('-------------- ${res.data}');
+        List list = jsonDecode(res.data)['viewers'];
+
+        return list
+            .map((e) =>
+                IsmLiveAnalyticViewerModel.fromMap(e as Map<String, dynamic>))
+            .toList();
       }
     } catch (e, st) {
       IsmLiveLog.error(e, st);
     }
-    return;
+    return [];
   }
 }

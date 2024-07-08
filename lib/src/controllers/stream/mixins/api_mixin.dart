@@ -644,13 +644,22 @@ mixin StreamAPIMixin {
       _controller._viewModel.getRestreamChannels();
 
   Future<void> streamAnalytics(String streamId) async {
-    _controller.streamAnalytis =
-        await _controller._viewModel.streamAnalytics(streamId: streamId);
+    _controller.streamAnalytis = await _controller._viewModel.streamAnalytics(
+      streamId: streamId,
+    );
     _controller.update([IsmLiveEndStream.updateId]);
   }
 
-  Future<void> streamAnalyticsViewers(String streamId) async {
-    await _controller._viewModel.streamAnalyticsViewers(streamId: streamId);
+  Future<void> streamAnalyticsViewers(
+      {required String streamId, int limit = 15, int skip = 0}) async {
+    var list = await _controller._viewModel.streamAnalyticsViewers(
+      streamId: streamId,
+      limit: limit,
+      skip: skip,
+    );
+
+    _controller.analyticsViewers = list;
+
     // _controller.update([IsmLiveEndStream.updateId]);
   }
 

@@ -236,11 +236,11 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                   title: widget.participant.name.isNotEmpty
                       ? widget.participant.name
                       : widget.participant.identity,
-                  hostCoins: pkController.pkHostValue,
+                  hostCoins: pkController.pkHostValue.toInt(),
                   battleStart:
                       pkController.streamController.pkStages?.isPkStart ??
                           false,
-                  gustCoins: pkController.pkGustValue,
+                  gustCoins: pkController.pkGustValue.toInt(),
                   hostper: pkController.pkBarHostPersentage,
                   gustper: pkController.pkBarGustPersentage,
                 ),

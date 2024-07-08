@@ -42,7 +42,7 @@ mixin StreamMessageMixin {
         if (_controller.pkStages?.isPk ?? false) {
           _pkController.pkBarStatus(payload ?? {});
         }
-        _controller.addGift(message);
+        _controller.addGift(message, payload ?? {});
         break;
       case IsmLiveMessageType.remove:
         IsmLiveLog.success('Message Removed');
