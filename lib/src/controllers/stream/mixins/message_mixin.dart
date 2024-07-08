@@ -58,7 +58,7 @@ mixin StreamMessageMixin {
       return;
     }
 
-    var userName = _controller.user?.name.split('');
+    var userName = _controller.user?.name.split(' ');
     var lastName = userName?.sublist(1).join(' ');
     _controller.messageFieldController.clear();
     _controller.parentMessage = null;
