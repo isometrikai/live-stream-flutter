@@ -122,31 +122,34 @@ class IsmLiveListSheetTwo extends StatelessWidget {
                 IsmLiveDimens.boxHeight2,
                 const Text('No Viewers'),
               ] else
-                ListView.builder(
-                  padding: IsmLiveDimens.edgeInsets0,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    var viewer = items[index];
-                    return ListTile(
-                      contentPadding: IsmLiveDimens.edgeInsets0,
-                      leading: IsmLiveImage.network(
-                        viewer.profilePic ?? '',
-                        name: viewer.userName ?? '',
-                        dimensions: IsmLiveDimens.forty,
-                        isProfileImage: true,
-                      ),
-                      title: Text(
-                        '@${viewer.userName}',
-                        style: context.textTheme.titleMedium,
-                      ),
-                      subtitle: Text(
-                        viewer.timestamp.toString(),
-                        style: context.textTheme.bodySmall,
-                      ),
-                    );
-                  },
+                SizedBox(
+                  height: Get.height * 0.3,
+                  child: ListView.builder(
+                    padding: IsmLiveDimens.edgeInsets0,
+                    shrinkWrap: true,
+                    // physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      var viewer = items[index];
+                      return ListTile(
+                        contentPadding: IsmLiveDimens.edgeInsets0,
+                        leading: IsmLiveImage.network(
+                          viewer.profilePic ?? '',
+                          name: viewer.userName ?? '',
+                          dimensions: IsmLiveDimens.forty,
+                          isProfileImage: true,
+                        ),
+                        title: Text(
+                          '@${viewer.userName}',
+                          style: context.textTheme.titleMedium,
+                        ),
+                        subtitle: Text(
+                          viewer.timestamp.toString(),
+                          style: context.textTheme.bodySmall,
+                        ),
+                      );
+                    },
+                  ),
                 ),
             ],
           ),

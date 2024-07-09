@@ -104,9 +104,12 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<bool> stopStream(String streamId) async {
+  Future<bool> stopStream(
+    String streamId,
+    String isometrikUserId,
+  ) async {
     try {
-      var res = await _repository.stopStream(streamId);
+      var res = await _repository.stopStream(streamId, isometrikUserId);
 
       unawaited(_dbWrapper.deleteSecuredValue(streamId));
 
@@ -669,6 +672,31 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<bool> sendHearts({
+    required String streamId,
+    required String senderId,
+    required String senderImage,
+    required String senderName,
+    required String deviceId,
+    required String customType,
+  }) async {
+    try {
+      var res = await _repository.sendHearts(
+        streamId: streamId,
+        customType: customType,
+        deviceId: deviceId,
+        senderImage: senderImage,
+        senderId: senderId,
+        senderName: senderName,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
   Future<IsmLiveProductDetailModel?> fetchProductDetails() async {
     try {
       var res = await _repository.fetchProductDetails();
@@ -725,6 +753,25 @@ class IsmLiveStreamViewModel {
     return null;
   }
 
+  Future<void> totalWalletCoins({
+    required int skip,
+    required int limit,
+  }) async {
+    try {
+      var res = await _repository.totalWalletCoins(
+        limit: limit,
+        skip: skip,
+      );
+
+      if (!res.hasError) {
+        IsmLiveLog('----------> $res');
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return null;
+  }
+
   Future<List<IsmLiveAnalyticViewerModel>> streamAnalyticsViewers({
     required String streamId,
     required int skip,
@@ -737,7 +784,7 @@ class IsmLiveStreamViewModel {
         skip: skip,
       );
 
-      if (!res.hasError) {
+      if (!res.hasError && res.statusCode != 204) {
         List list = jsonDecode(res.data)['viewers'];
 
         return list

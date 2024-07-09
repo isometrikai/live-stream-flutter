@@ -138,20 +138,29 @@ mixin StreamMessageMixin {
 
 // Send a heart message to the stream
   Future<void> sendHeartMessage(String streamId) async {
-    const body = 'heart';
-    final isSent = await _controller.sendMessage(
-      showLoading: false,
-      sendMessageModel: IsmLiveSendMessageModel(
-        streamId: streamId,
-        body: body,
-        searchableTags: [body],
-        metaData: const IsmLiveMetaData(),
-        deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
-        messageType: IsmLiveMessageType.heart,
-      ),
-    );
+    // const body = 'heart';
+    // final isSent = await _controller.sendMessage(
+    //   showLoading: false,
+    //   sendMessageModel: IsmLiveSendMessageModel(
+    //     streamId: streamId,
+    //     body: body,
+    //     searchableTags: [body],
+    //     metaData: const IsmLiveMetaData(),
+    //     deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+    //     messageType: IsmLiveMessageType.heart,
+    //   ),
+    // );
 
-    if (isSent) {}
+    // if (isSent) {}
+
+    await _controller.sendHearts(
+      customType: 'like',
+      deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
+      senderId: _controller.user?.userId ?? '',
+      senderImage: _controller.user?.userProfileImageUrl ?? '',
+      senderName: _controller.user?.userName ?? '',
+      streamId: streamId,
+    );
   }
 
   // Send a gift message to the stream

@@ -125,13 +125,16 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> stopStream(
     String streamId,
+    String isometrikUserId,
   ) =>
       _apiWrapper.makeRequest(
-        IsmLiveApis.stream,
-        type: IsmLiveRequestType.put,
+        IsmLiveApis.newStream,
+        baseUrl: IsmLiveApis.baseUrlStream,
+        type: IsmLiveRequestType.patch,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
           'streamId': streamId,
+          'isometrikUserId': isometrikUserId,
         },
         showLoader: true,
       );
@@ -597,6 +600,31 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> sendHearts({
+    required String streamId,
+    required String senderId,
+    required String senderImage,
+    required String senderName,
+    required String deviceId,
+    required String customType,
+  }) {
+    final payload = {
+      'streamId': streamId,
+      'senderImage': senderImage,
+      'senderName': senderName,
+      'deviceId': deviceId,
+      'customType': customType,
+      'senderId': senderId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.sendHearts,
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
   Future<IsmLiveResponseModel> streamAnalytics({
     required String streamId,
   }) {
@@ -625,6 +653,26 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> totalWalletCoins({
+    required int skip,
+    required int limit,
+  }) {
+    var payload = {
+      'currency': 'USD',
+      'getUserWallets': true,
+      'skip': skip,
+      'limit': limit,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
       baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
