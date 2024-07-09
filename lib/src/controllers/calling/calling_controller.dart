@@ -62,8 +62,8 @@ class IsmLiveCallingController extends GetxController {
           var decoded = 'Failed to decode';
           try {
             decoded = utf8.decode(event.data);
-          } catch (_) {
-            IsmLiveLog('$decoded: $_');
+          } catch (e) {
+            IsmLiveLog('$decoded: $e');
           }
         })
         ..on<AudioPlaybackStatusChanged>((event) async {

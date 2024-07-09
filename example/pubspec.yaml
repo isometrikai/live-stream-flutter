@@ -9,7 +9,8 @@ environment:
 dependencies:
   appscrip_live_stream_component:
     path: ../
-  cupertino_icons: ^1.0.8
+  cached_network_image: ^3.3.1
+  cupertino_icons: ^1.0.2
   device_info_plus: ^10.1.0
   flutter:
     sdk: flutter
@@ -28,7 +29,7 @@ dependencies:
   shared_preferences: ^2.2.3
  
 dev_dependencies:
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
   integration_test:
