@@ -289,9 +289,9 @@ enum IsmLiveHostSettings {
 
 enum IsmLiveMessageType {
   normal(0),
-  heart(1),
+  heart(3),
   gift(2),
-  remove(3),
+  remove(1),
   pkStart(23),
   pkAccepted(21),
   pk(20),

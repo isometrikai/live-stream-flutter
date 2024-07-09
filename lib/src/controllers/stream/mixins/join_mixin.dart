@@ -92,7 +92,8 @@ mixin StreamJoinMixin {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
 
       if (token.trim().isEmpty) {
-        await _controller.stopStream(stream.streamId ?? '');
+        await _controller.stopStream(
+            stream.streamId ?? '', _controller.user?.userId ?? '');
       }
       if (token.trim().isEmpty) {
         return;

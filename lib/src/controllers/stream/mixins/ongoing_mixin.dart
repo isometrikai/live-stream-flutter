@@ -288,21 +288,20 @@ mixin StreamOngoingMixin {
 // Function to add heart message to the stream
   void addHeart(IsmLiveMessageModel message) {
     final key = ValueKey(message.messageId);
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _controller.heartList.insert(
-        0,
-        IsmLiveAnimationView(
-          key: key,
-          child: Transform.scale(
-            scale: 0.6,
-            child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
-          ),
-          onComplete: () {
-            _controller.heartList.removeWhere((e) => e.key == key);
-          },
+
+    _controller.heartList.insert(
+      0,
+      IsmLiveAnimationView(
+        key: key,
+        child: Transform.scale(
+          scale: 0.6,
+          child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
         ),
-      );
-    });
+        onComplete: () {
+          _controller.heartList.removeWhere((e) => e.key == key);
+        },
+      ),
+    );
   }
 
   // Function to add gift message to the stream
@@ -325,7 +324,7 @@ mixin StreamOngoingMixin {
     //   image['giftThumbnailUrl'],
     //   name: 'U',
     // );
-    IsmLiveLog.info('------------------->$data');
+
     final child = IsmLiveGif(path: data['message']);
     _controller.giftList.insert(
       0,
@@ -570,7 +569,8 @@ mixin StreamOngoingMixin {
     var isEnded = false;
 
     if (isHost) {
-      isEnded = await _controller.stopStream(streamId);
+      isEnded = await _controller.stopStream(
+          streamId, _controller.user?.userId ?? '');
     } else if (_controller.isCopublisher ||
         (_controller.userRole?.isPkGuest ?? false)) {
       isEnded = await _controller.leaveMember(streamId: streamId);
