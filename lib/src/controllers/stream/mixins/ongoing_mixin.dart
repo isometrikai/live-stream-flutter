@@ -306,25 +306,26 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add gift message to the stream
-  void addGift(IsmLiveMessageModel message) {
+  void addGift(IsmLiveMessageModel message, Map<String, dynamic> payload) {
     _controller.giftMessages.add(message);
     if (_controller.giftMessages.length == 1) {
-      _handleGift(message);
+      _handleGift(message, payload);
     }
   }
 
-  void _handleGift(IsmLiveMessageModel message) {
+  void _handleGift(IsmLiveMessageModel message, Map<String, dynamic> payload) {
     if (message.customType == null) {
       return;
     }
     final key = ValueKey(message.messageId);
 
-    final data = jsonDecode(message.body);
+    final data = payload['metaData'];
     // final gift = message.customType!.path;
     // final child = IsmLiveImage.network(
     //   image['giftThumbnailUrl'],
     //   name: 'U',
     // );
+    IsmLiveLog.info('------------------->$data');
     final child = IsmLiveGif(path: data['message']);
     _controller.giftList.insert(
       0,
@@ -335,7 +336,7 @@ mixin StreamOngoingMixin {
           _controller.giftList.removeWhere((e) => e.key == key);
           _controller.giftMessages.removeAt(0);
           if (_controller.giftMessages.isNotEmpty) {
-            _handleGift(_controller.giftMessages.first);
+            _handleGift(_controller.giftMessages.first, payload);
           }
           _controller.update([IsmLiveStreamView.updateId]);
         },

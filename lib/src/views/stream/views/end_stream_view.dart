@@ -18,7 +18,7 @@ class IsmLiveEndStream extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Get.find<IsmLiveStreamController>()
                 ..streamAnalytics(streamId)
-                ..streamAnalyticsViewers(streamId);
+                ..streamAnalyticsViewers(streamId: streamId);
             });
           },
           builder: (controller) => Scaffold(
@@ -75,7 +75,8 @@ class IsmLiveEndStream extends StatelessWidget {
                         assetConstant: IsmLiveAssetConstants.heartSvg,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '${controller.streamAnalytis?.soldCount ?? 0}',
+                        points:
+                            '${controller.streamAnalytis?.productCount ?? 0}',
                         title: 'Order',
                         assetConstant: IsmLiveAssetConstants.box,
                       ),
@@ -91,7 +92,8 @@ class IsmLiveEndStream extends StatelessWidget {
                         assetConstant: IsmLiveAssetConstants.profileUser,
                       ),
                       IsmLiveEndStreamContainer(
-                        points: '\$${controller.streamAnalytis?.earnings ?? 0}',
+                        points:
+                            '\$${controller.streamAnalytis?.totalEarning ?? 0}',
                         title: 'Earnings',
                         assetConstant: IsmLiveAssetConstants.dollar,
                       ),
@@ -107,11 +109,11 @@ class IsmLiveEndStream extends StatelessWidget {
                     thickness: 5,
                     color: Colors.grey.shade300,
                   ),
-                  IsmLiveListSheet(
-                    scrollController: controller.viewerListController,
-                    items: controller.streamViewersList,
-                    title: 'Viewer(${controller.streamViewersList.length})',
-                  ),
+                  Obx(() => IsmLiveListSheetTwo(
+                        scrollController: controller.viewerListController,
+                        items: controller.analyticsViewers,
+                        title: 'Viewer(${controller.analyticsViewers.length})',
+                      )),
                 ],
               ),
             ),

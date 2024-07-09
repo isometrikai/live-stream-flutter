@@ -615,9 +615,13 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> streamAnalyticsViewers({
     required String streamId,
+    required int skip,
+    required int limit,
   }) {
     var payload = {
       'streamId': streamId,
+      'skip': skip,
+      'limit': limit,
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
