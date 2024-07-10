@@ -1,22 +1,69 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class CoinsPlansWalletController extends GetxController {
+class CoinsPlansWalletController extends GetxController
+    with GetTickerProviderStateMixin {
   CoinsPlansWalletController(this._coinsPlansWalletViewMode);
   final CoinsPlansWalletViewMode _coinsPlansWalletViewMode;
 
   @override
   void onInit() {
     super.onInit();
-    getCoinsPlans();
+    coninTranscationTabController = TabController(
+      vsync: this,
+      length: IsmLiveCoinTransactionType.values.length,
+    );
+
+    IsmLiveUtility.updateLater(
+      () {
+        totalWalletCoins();
+        getCoinsPlans();
+      },
+    );
+
+    for (var type in IsmLiveCoinTransactionType.values) {
+      _refreshControllers[type] = RefreshController();
+      _transactions[type] = [];
+    }
   }
 
-  /// show the loader ...
-  var isPlansLoading = false;
+  @override
+  void onReady() {
+    super.onReady();
+    IsmLiveUtility.updateLater(() {
+      coninTranscationTabController.addListener(() {
+        coinTransactionType = IsmLiveCoinTransactionType
+            .values[coninTranscationTabController.index];
+      });
+
+      unawaited(fetchTransactions());
+    });
+  }
+
+  final _transactions =
+      <IsmLiveCoinTransactionType, List<IsmLiveCoinTransactionModel>>{};
+
+  final _refreshControllers = <IsmLiveCoinTransactionType, RefreshController>{};
+
+  RefreshController get refreshController =>
+      _refreshControllers[coinTransactionType]!;
+
+  List<IsmLiveCoinTransactionModel> get transactions =>
+      _transactions[coinTransactionType]!;
+
+  final Rx<IsmLiveCoinTransactionType> _coinTransactionType =
+      IsmLiveCoinTransactionType.debit.obs;
+  IsmLiveCoinTransactionType get coinTransactionType =>
+      _coinTransactionType.value;
+  set coinTransactionType(IsmLiveCoinTransactionType value) =>
+      _coinTransactionType.value = value;
 
   /// to get the api plans and store in this
   final apiPlans = <CoinPlan>[];
@@ -24,10 +71,12 @@ class CoinsPlansWalletController extends GetxController {
   /// get the plans from the store and store in this..
   final storePlans = <ProductDetails>[];
 
+  late TabController coninTranscationTabController;
+
+  int coinBalance = 0;
+
   /// to fetch coins plans
   Future<void> getCoinsPlans() async {
-    isPlansLoading = true;
-    update(['coin-plans-wallet-view']);
     final data = await _coinsPlansWalletViewMode.getCoinsPlans(
       showLoader: true,
     );
@@ -46,8 +95,8 @@ class CoinsPlansWalletController extends GetxController {
     apiPlans.removeWhere((apiPlan) =>
         !storePlans.map((e) => e.id).contains(apiPlan.platformPlanId));
     apiPlans.sort((a, b) => a.baseCurrencyValue.compareTo(b.baseCurrencyValue));
-    isPlansLoading = false;
-    update(['coin-plans-wallet-view']);
+
+    update([CoinsPlansWalletView.updateId]);
   }
 
   /// to purchase the coin plans...
@@ -103,5 +152,23 @@ class CoinsPlansWalletController extends GetxController {
         storePlan: storePlan,
       ),
     );
+  }
+
+  Future<void> totalWalletCoins() async {
+    var res = await _coinsPlansWalletViewMode.totalWalletCoins();
+    if (res != null) {
+      coinBalance = res.balance ?? 0;
+    }
+  }
+
+  Future<void> fetchTransactions([IsmLiveCoinTransactionType? type]) async {
+    var txnType = type ?? coinTransactionType;
+    _transactions[txnType] = await _coinsPlansWalletViewMode.fetchTransactions(
+      txnType.label.toUpperCase(),
+    );
+    _refreshControllers[txnType]!.refreshCompleted();
+    IsmLiveUtility.updateLater(() {
+      update([IsmLiveCoinTransactions.updateId]);
+    });
   }
 }

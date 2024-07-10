@@ -110,11 +110,11 @@ extension IsmLiveIntExtensions on num {
 
   String formatWithKAndL() {
     if (this >= 100000) {
-      var lakhs = this / 100000;
-      return '${lakhs.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}L';
+      var lakhs = this ~/ 100000;
+      return '${lakhs.toString().replaceAll(RegExp(r'\.0$'), '')} L';
     } else if (this >= 1000) {
       var thousands = this / 1000;
-      return '${thousands.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '')}K';
+      return '${thousands.toString().replaceAll(RegExp(r'\.0$'), '')} K';
     } else {
       return toString();
     }

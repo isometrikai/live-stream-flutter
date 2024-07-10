@@ -753,25 +753,6 @@ class IsmLiveStreamViewModel {
     return null;
   }
 
-  Future<void> totalWalletCoins({
-    required int skip,
-    required int limit,
-  }) async {
-    try {
-      var res = await _repository.totalWalletCoins(
-        limit: limit,
-        skip: skip,
-      );
-
-      if (!res.hasError) {
-        IsmLiveLog('----------> $res');
-      }
-    } catch (e, st) {
-      IsmLiveLog.error(e, st);
-    }
-    return null;
-  }
-
   Future<List<IsmLiveAnalyticViewerModel>> streamAnalyticsViewers({
     required String streamId,
     required int skip,

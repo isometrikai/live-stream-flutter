@@ -1,3 +1,5 @@
+export 'coin_balance_model.dart';
+export 'coin_transaction_model.dart';
 export 'coins_plans_wallet_model.dart';
 export 'config/config.dart';
 export 'config_model.dart';

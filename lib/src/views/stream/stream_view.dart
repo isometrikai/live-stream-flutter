@@ -119,7 +119,6 @@ class _IsmLiveStreamView extends StatelessWidget {
           await controller.room?.dispose();
 
           controller.showEmojiBoard = false;
-          controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.streamMessagesList.clear();
           controller.streamViewersList.clear();
           controller.searchUserFieldController.clear();
@@ -132,6 +131,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.copublisherRequestsList.clear();
 
           controller.animationController.dispose();
+          controller.memberStatus = IsmLiveMemberStatus.notMember;
         },
         builder: (controller) => PopScope(
           canPop: false,

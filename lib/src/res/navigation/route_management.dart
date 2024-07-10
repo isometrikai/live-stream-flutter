@@ -130,4 +130,7 @@ abstract class IsmLiveRouteManagement {
 
   static void goToCoinsPlanWallet() =>
       Get.toNamed(IsmLiveRoutes.coinsPlansWalletView);
+
+  static void goToCoinTransaction() =>
+      Get.toNamed(IsmLiveRoutes.coinTransactionsView);
 }

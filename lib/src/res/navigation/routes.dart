@@ -22,4 +22,5 @@ class IsmLiveRoutes {
   static const String restreamSettingsView = '/restream-settings-view';
 
   static const String coinsPlansWalletView = '/coins-plans-wallet-view';
+  static const String coinTransactionsView = '/coins-transactions-view';
 }

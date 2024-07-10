@@ -98,5 +98,12 @@ class IsmLivePages {
       binding: CoinsPlansWalletBinding(),
       transition: Transition.rightToLeft,
     ),
+    GetPage<IsmLiveCoinTransactions>(
+      name: IsmLiveRoutes.coinTransactionsView,
+      transitionDuration: transitionDuration,
+      page: IsmLiveCoinTransactions.new,
+      binding: CoinsPlansWalletBinding(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 }
