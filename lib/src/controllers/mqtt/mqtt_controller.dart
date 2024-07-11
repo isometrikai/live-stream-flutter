@@ -252,6 +252,10 @@ class IsmLiveMqttController extends GetxController {
                   : 'You\'ve accepted $userName\'s Co-publisher Request',
               isEvent: true,
             );
+            LocalNotificationService.showBasicNotification(
+                body: message.body,
+                title: 'Co-publishing request',
+                payload: '');
 
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
@@ -303,7 +307,7 @@ class IsmLiveMqttController extends GetxController {
             );
             LocalNotificationService.showBasicNotification(
                 body: message.body,
-                title: 'Co-publishing requested rejected',
+                title: 'Co-publishing request',
                 payload: '');
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
@@ -595,6 +599,8 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has joined',
               isEvent: true,
             );
+            LocalNotificationService.showBasicNotification(
+                body: message.body, title: 'viewer', payload: '');
             unawaited(_streamController.handleMessage(message: message));
             await _streamController.addViewers([viewer], false);
             _updateStream();
@@ -614,6 +620,8 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has left',
               isEvent: true,
             );
+            LocalNotificationService.showBasicNotification(
+                body: message.body, title: 'viewer', payload: '');
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewer.userId);
@@ -641,6 +649,8 @@ class IsmLiveMqttController extends GetxController {
                   : '$initiatorName has remove $viewerName',
               isEvent: true,
             );
+            LocalNotificationService.showBasicNotification(
+                body: message.body, title: 'viewer', payload: '');
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewerId);

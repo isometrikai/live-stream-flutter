@@ -69,7 +69,7 @@ class IsmLiveHandler {
     if (Get.isRegistered<IsmLiveMqttController>()) {
       unawaited(Get.delete<IsmLiveMqttController>(force: true));
     }
-
+    IsmLiveUtility.config = null;
     (logoutCallback ?? onLogout)?.call();
 
     if (isLoading) {

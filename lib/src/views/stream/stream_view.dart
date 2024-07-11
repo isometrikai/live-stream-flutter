@@ -52,7 +52,7 @@ class IsmLiveStreamView extends StatelessWidget {
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
         controller: controller.pageController,
-        // physics: const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
         onPageChanged: (index) => controller.onStreamScroll(
@@ -96,7 +96,7 @@ class _IsmLiveStreamView extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
-
+          controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.participantList = controller.participantTracks;
 
           controller.initAnimation();
@@ -116,7 +116,6 @@ class _IsmLiveStreamView extends StatelessWidget {
           pkcontroller.pkBarHostPersentage = 100;
           pkcontroller.pkHostValue = 0;
           pkcontroller.pkGustValue = 0;
-          await controller.room?.dispose();
 
           controller.showEmojiBoard = false;
           controller.streamMessagesList.clear();
@@ -129,9 +128,9 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-
           controller.animationController.dispose();
-          controller.memberStatus = IsmLiveMemberStatus.notMember;
+
+          await controller.room?.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,
@@ -141,13 +140,12 @@ class _IsmLiveStreamView extends StatelessWidget {
             body: Stack(
               children: [
                 IsmLiveStreamBanner(streamImage),
-                // const IgnorePointer(child: _TopDarkGradient()),
+                const _TopDarkGradient(),
                 IsmLivePublisherGrid(
                   streamImage: streamImage ?? '',
                   isInteractive: isInteractive,
                 ),
                 const _BottomDarkGradient(),
-
                 Align(
                   alignment: IsmLiveApp.headerPosition,
                   child: Obx(
@@ -301,7 +299,6 @@ class _IsmLiveStreamView extends StatelessWidget {
                 if ((controller.pkStages?.isPkStart ?? false) &&
                     controller.participantTracks.length > 1)
                   const IsmLivePkTimerContainer(),
-
                 if ((controller.pkStages?.isPkStop ?? false) &&
                     controller.pkWinnerId == null)
                   const Align(
@@ -377,8 +374,8 @@ class _StreamHeader extends StatelessWidget {
       );
 }
 
-class TopDarkGradient extends StatelessWidget {
-  const TopDarkGradient({super.key});
+class _TopDarkGradient extends StatelessWidget {
+  const _TopDarkGradient({super.key});
 
   @override
   Widget build(BuildContext context) => Positioned(

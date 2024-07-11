@@ -407,7 +407,6 @@ class IsmLivePkController extends GetxController
   Future<void> sendInvitationToUserForPK({
     required IsmLivePkInviteModel reciverDetails,
   }) async {
-    IsmLiveLog('======================= $getstreamId');
     var res = await _viewModel.sendInvitationToUserForPK(
       reciverStreamId: reciverDetails.streamId,
       senderStreamId: getstreamId ?? '',
@@ -467,7 +466,7 @@ class IsmLivePkController extends GetxController
       return;
     }
 
-    await streamController.room?.disconnect();
+    // await streamController.room?.disconnect();
     await streamController.room?.dispose();
 
     await streamController.connectStream(

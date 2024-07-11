@@ -52,12 +52,16 @@ class CoinsPlansWalletViewMode {
     return null;
   }
 
-  Future<List<IsmLiveCoinTransactionModel>> fetchTransactions(
-      String txnType) async {
+  Future<List<IsmLiveCoinTransactionModel>> fetchTransactions({
+    required String txnType,
+    required int skip,
+    required int limit,
+  }) async {
     try {
-      var res = await _coinsPlansWalletRepository.fetchTransactions(txnType);
+      var res = await _coinsPlansWalletRepository.fetchTransactions(
+          limit: limit, skip: skip, txnType: txnType);
 
-      if (!res.hasError) {
+      if (!res.hasError && res.statusCode != 204) {
         List data = jsonDecode(res.data)['data'];
         return data
             .map((e) =>

@@ -14,7 +14,6 @@ class IsmLivePkBinding implements Bindings {
           ),
         ),
       ),
-      permanent: true,
     );
   }
 }
