@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 
 class CoinsPlansWalletViewMode {
@@ -33,5 +35,38 @@ class CoinsPlansWalletViewMode {
       }
     } catch (_) {}
     return null;
+  }
+
+  Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {
+    try {
+      var res = await _coinsPlansWalletRepository.totalWalletCoins();
+
+      var data = jsonDecode(res.data)['data'];
+
+      if (!res.hasError) {
+        return IsmLiveCoinBalanceModel.fromMap(data);
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return null;
+  }
+
+  Future<List<IsmLiveCoinTransactionModel>> fetchTransactions(
+      String txnType) async {
+    try {
+      var res = await _coinsPlansWalletRepository.fetchTransactions(txnType);
+
+      if (!res.hasError) {
+        List data = jsonDecode(res.data)['data'];
+        return data
+            .map((e) =>
+                IsmLiveCoinTransactionModel.fromMap(e as Map<String, dynamic>))
+            .toList();
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return [];
   }
 }

@@ -660,24 +660,4 @@ class IsmLiveStreamRepository {
       showDialog: false,
     );
   }
-
-  Future<IsmLiveResponseModel> totalWalletCoins({
-    required int skip,
-    required int limit,
-  }) {
-    var payload = {
-      'currency': 'USD',
-      'getUserWallets': true,
-      'skip': skip,
-      'limit': limit,
-    };
-    return _apiWrapper.makeRequest(
-      '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
-      type: IsmLiveRequestType.get,
-      headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
-      showDialog: false,
-    );
-  }
 }

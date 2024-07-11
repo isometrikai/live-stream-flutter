@@ -133,6 +133,16 @@ enum IsmLiveStreamType {
   final String label;
 }
 
+enum IsmLiveCoinTransactionType {
+  debit(1, IsmLiveStrings.debit),
+
+  credit(2, IsmLiveStrings.credit);
+
+  const IsmLiveCoinTransactionType(this.value, this.label);
+  final int value;
+  final String label;
+}
+
 enum IsmLiveActions {
   copublishRequestAccepted('copublishRequestAccepted'),
   copublishRequestAdded('copublishRequestAdded'),

@@ -1,14 +1,20 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveGiftsSheet extends StatelessWidget {
-  const IsmLiveGiftsSheet({
+  IsmLiveGiftsSheet({
     super.key,
     required this.onTap,
-  });
+  }) {
+    CoinsPlansWalletBinding().dependencies();
+  }
   final void Function(IsmLiveGifts) onTap;
   IsmLivePkController get pkController => Get.find<IsmLivePkController>();
+  CoinsPlansWalletController get walletController =>
+      Get.find<CoinsPlansWalletController>();
+
   static const updateId = 'gift-sheet';
 
   @override
@@ -16,7 +22,10 @@ class IsmLiveGiftsSheet extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           Get.find<IsmLiveStreamController>().giftType = 0;
-          await pkController.getGiftCategories();
+
+          IsmLiveUtility.updateLater(() {
+            pkController.getGiftCategories();
+          });
         },
         builder: (controller) => Column(
           mainAxisSize: MainAxisSize.min,
@@ -33,7 +42,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                 height: IsmLiveDimens.forty,
                 child: const IsmLiveButton(
                   label: 'Add Coins',
-                  // onTap: () {},
+                  onTap: IsmLiveRouteManagement.goToCoinsPlanWallet,
                 ),
               ),
               subtitle: Row(
@@ -47,7 +56,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   ),
                   IsmLiveDimens.boxWidth4,
                   Text(
-                    '0',
+                    walletController.coinBalance.formatWithKAndL(),
                     style: context.textTheme.bodyLarge
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
@@ -64,7 +73,6 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                     onTap: () async {
                       controller.giftType = index;
 
-                      // IsmLiveLog('-----> 11 ${controller.giftType}');
                       await pkController.getGiftsForACategory(
                         giftGroupId: categoryDetails.id ?? '',
                       );

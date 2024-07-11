@@ -14,6 +14,7 @@ class CoinsPlansWalletRepository {
         baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
+        showLoader: showLoader,
       );
 
   ///  for request to purchase the coins plans ...
@@ -27,4 +28,34 @@ class CoinsPlansWalletRepository {
         headers: IsmLiveUtility.tokenHeader(),
         payload: data,
       );
+
+  Future<IsmLiveResponseModel> totalWalletCoins() {
+    var payload = {
+      'currency': 'COIN',
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> fetchTransactions(String txnType) {
+    var payload = {
+      'currency': 'COIN',
+      'txnType': txnType,
+      'txnSpecific': true,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchTransactions}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
 }

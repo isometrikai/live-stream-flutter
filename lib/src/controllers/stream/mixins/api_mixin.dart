@@ -664,13 +664,6 @@ mixin StreamAPIMixin {
     // _controller.update([IsmLiveEndStream.updateId]);
   }
 
-  Future<void> totalWalletCoins({int limit = 15, int skip = 0}) async {
-    await _controller._viewModel.totalWalletCoins(
-      limit: limit,
-      skip: skip,
-    );
-  }
-
   Future<bool> enableRestreamChannel(bool enable) =>
       _controller._viewModel.addRestreamChannel(
         url: _controller.rtmlUrl.text.trim(),

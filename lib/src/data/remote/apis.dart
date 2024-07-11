@@ -29,7 +29,8 @@ class IsmLiveApis {
   // static const String streamAnalyticsViewers =
   //     '$_live/analytics/stream/viewers';
   static const String streamAnalyticsViewers = '$_live/stream/viewer';
-  static const String fetchCoins = '/v1/wallet';
+  static const String fetchCoins = '/v1/wallet/user';
+  static const String fetchTransactions = '/v1/transaction/user';
   static const String getUsersToInviteForPK = '$_live/invite/users';
   static const String sendInvitationToUserForPK = '$_live/invite/users';
   static const String invitaionPK = '$_live/invites';
