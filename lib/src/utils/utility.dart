@@ -14,6 +14,7 @@ class IsmLiveUtility {
 
   static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
+
     _config ??= config;
   }
 
@@ -27,6 +28,10 @@ class IsmLiveUtility {
       'IsmLiveUtility is not initialized, initialize it using IsmLiveApp.initialize()',
     );
     return _config!;
+  }
+
+  static set config(IsmLiveConfigData? configData) {
+    _config = configData;
   }
 
   static void updateLater(VoidCallback callback, [bool addDelay = true]) {

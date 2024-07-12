@@ -47,6 +47,7 @@ class CoinsPlansWalletController extends GetxController
     });
   }
 
+  final _transactionDebouncer = IsmLiveDebouncer();
   final _transactions =
       <IsmLiveCoinTransactionType, List<IsmLiveCoinTransactionModel>>{};
 
@@ -161,12 +162,41 @@ class CoinsPlansWalletController extends GetxController
     }
   }
 
-  Future<void> fetchTransactions([IsmLiveCoinTransactionType? type]) async {
+  Future<void> fetchTransactions({
+    IsmLiveCoinTransactionType? type,
+    bool moreFetch = false,
+    int limit = 15,
+    int skip = 0,
+    String? searchTag,
+  }) async =>
+      _transactionDebouncer.run(
+        () => _fetchTransactions(
+          type: type,
+          moreFetch: moreFetch,
+          limit: limit,
+          skip: skip,
+        ),
+      );
+
+  Future<void> _fetchTransactions({
+    IsmLiveCoinTransactionType? type,
+    required bool moreFetch,
+    required int skip,
+    required int limit,
+  }) async {
     var txnType = type ?? coinTransactionType;
-    _transactions[txnType] = await _coinsPlansWalletViewMode.fetchTransactions(
-      txnType.label.toUpperCase(),
+    var txnlist = await _coinsPlansWalletViewMode.fetchTransactions(
+      txnType: txnType.label.toUpperCase(),
+      limit: limit,
+      skip: skip,
     );
-    _refreshControllers[txnType]!.refreshCompleted();
+
+    if (moreFetch) {
+      _transactions[txnType]?.addAll(txnlist);
+    } else {
+      _transactions[txnType] = txnlist;
+    }
+
     IsmLiveUtility.updateLater(() {
       update([IsmLiveCoinTransactions.updateId]);
     });

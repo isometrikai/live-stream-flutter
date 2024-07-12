@@ -52,29 +52,30 @@ class IsmLiveStreamCard extends StatelessWidget {
               Padding(
                 padding: IsmLiveDimens.edgeInsets8,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (isCreatedByMe)
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: IsmLiveDimens.edgeInsets8_4,
-                          decoration: BoxDecoration(
-                            color: context.liveTheme?.primaryColor ??
-                                IsmLiveColors.primary,
-                            borderRadius:
-                                BorderRadius.circular(IsmLiveDimens.eight),
-                          ),
-                          child: Text(
-                            'Continue',
-                            style: context.textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            padding: IsmLiveDimens.edgeInsets8_4,
+                            decoration: BoxDecoration(
+                              color: context.liveTheme?.primaryColor ??
+                                  IsmLiveColors.primary,
+                              borderRadius:
+                                  BorderRadius.circular(IsmLiveDimens.eight),
+                            ),
+                            child: Text(
+                              'Continue',
+                              style: context.textTheme.labelSmall?.copyWith(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      )
-                    else
-                      const SizedBox.shrink(),
+                      ),
                     Row(
                       children: [
                         IsmLiveImage.network(
@@ -94,6 +95,14 @@ class IsmLiveStreamCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                    Text(
+                      stream.streamDescription ?? '',
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: Colors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

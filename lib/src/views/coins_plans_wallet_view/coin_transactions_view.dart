@@ -70,8 +70,19 @@ class _CoinTransactionsListing extends StatelessWidget {
         builder: (controller) => SmartRefresher(
           controller: controller.refreshController,
           enablePullDown: true,
-          onRefresh: () =>
-              controller.fetchTransactions(controller.coinTransactionType),
+          enablePullUp: true,
+          onLoading: () {
+            controller.refreshController.loadComplete();
+            controller.fetchTransactions(
+              type: controller.coinTransactionType,
+              skip: controller.transactions.length,
+              moreFetch: true,
+            );
+          },
+          onRefresh: () {
+            controller.refreshController.refreshCompleted();
+            controller.fetchTransactions(type: controller.coinTransactionType);
+          },
           child: controller.transactions.isEmpty
               ? const IsmLiveEmptyScreen(
                   label: 'No Data',

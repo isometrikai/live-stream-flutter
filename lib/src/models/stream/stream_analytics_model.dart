@@ -95,9 +95,10 @@ class IsmLiveStreamAnalyticsModel {
       };
 
   String get formattedDuration {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(duration?.toInt() ?? 0);
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(duration?.toInt() ?? 0,
+        isUtc: true);
 
-    return DateFormat('HH:mm').format(dateTime);
+    return DateFormat('HH:mm:ss').format(dateTime);
   }
 
   String toJson() => json.encode(toMap());
