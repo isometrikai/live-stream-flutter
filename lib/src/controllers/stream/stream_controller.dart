@@ -233,6 +233,8 @@ class IsmLiveStreamController extends GetxController
 
   List<IsmLiveProductModel> productsList = [];
 
+  List<IsmLiveReStreamModel> restreamChannels = [];
+
   List<IsmLiveProductModel> selectedProductsList = [];
 
   IsmLiveUserRole? userRole;

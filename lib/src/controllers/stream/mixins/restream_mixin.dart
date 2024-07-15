@@ -23,7 +23,7 @@ mixin RestreamMixin {
     _controller.update([IsmLiveRestreamSettingsView.updateId]);
   }
 
-  void onSaveRestreamSettings() async {
+  void onSaveRestreamSettings(bool) async {
     if (_controller.rtmlUrl.isEmpty) {
       return;
     }

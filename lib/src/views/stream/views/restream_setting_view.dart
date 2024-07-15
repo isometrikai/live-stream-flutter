@@ -44,28 +44,30 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
                   value: controller.isRestreamType(type),
                 ),
                 IsmLiveDimens.boxHeight8,
-                _InputField(
-                  label: 'RTML URL',
-                  controller: controller.rtmlUrl,
-                ),
-                IsmLiveDimens.boxHeight16,
-                _InputField(
-                  label: 'Stream key',
-                  controller: controller.streamKey,
-                ),
-                IsmLiveDimens.boxHeight8,
-                Text.rich(
-                  TextSpan(
-                    text: 'You have to enter the youtube stream url here,\n',
-                    children: [
-                      TextSpan(
-                        text: 'click here to know more.',
-                        style: const TextStyle().copyWith(color: Colors.blue),
-                      ),
-                    ],
+                if (controller.isRestreamType(type)) ...[
+                  _InputField(
+                    label: 'RTML URL',
+                    controller: controller.rtmlUrl,
                   ),
-                  style: context.textTheme.labelMedium,
-                ),
+                  IsmLiveDimens.boxHeight16,
+                  _InputField(
+                    label: 'Stream key',
+                    controller: controller.streamKey,
+                  ),
+                  IsmLiveDimens.boxHeight8,
+                  Text.rich(
+                    TextSpan(
+                      text: 'You have to enter the youtube stream url here,\n',
+                      children: [
+                        TextSpan(
+                          text: 'click here to know more.',
+                          style: const TextStyle().copyWith(color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                    style: context.textTheme.labelMedium,
+                  ),
+                ]
               ],
             ),
           ),

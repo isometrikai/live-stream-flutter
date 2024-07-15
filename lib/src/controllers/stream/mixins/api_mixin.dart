@@ -641,14 +641,17 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveAddProduct.updateId]);
   }
 
-  Future<void> getRestreamChannels() =>
-      _controller._viewModel.getRestreamChannels();
+  Future<void> getRestreamChannels() async {
+    var res = await _controller._viewModel.getRestreamChannels();
+    _controller.restreamChannels.addAll(res);
+  }
 
   Future<void> streamAnalytics(String streamId) async {
     _controller.streamAnalytis = await _controller._viewModel.streamAnalytics(
       streamId: streamId,
     );
-    _controller.update([IsmLiveEndStream.updateId]);
+    _controller
+        .update([IsmLiveEndStream.updateId, IsmliveAnalyticsSheet.updateId]);
   }
 
   Future<void> streamAnalyticsViewers(
@@ -664,10 +667,17 @@ mixin StreamAPIMixin {
     // _controller.update([IsmLiveEndStream.updateId]);
   }
 
-  Future<bool> enableRestreamChannel(bool enable) =>
+  Future<String> enableRestreamChannel({
+    required bool enable,
+    required String channelName,
+    required int channeltype,
+  }) =>
       _controller._viewModel.addRestreamChannel(
-        url: _controller.rtmlUrl.text.trim(),
+        url:
+            '${_controller.rtmlUrl.text.trim()}/${_controller.streamKey.text.trim()}',
         enable: enable,
+        channelName: channelName,
+        channelType: channeltype,
       );
 
   Future<bool> sendHearts({

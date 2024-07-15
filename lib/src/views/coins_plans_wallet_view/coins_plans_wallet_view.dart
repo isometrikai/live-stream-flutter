@@ -18,7 +18,11 @@ class CoinsPlansWalletView extends StatelessWidget {
             backgroundColor: IsmLiveColors.transparent,
             automaticallyImplyLeading: false,
             centerTitle: true,
-            title: Text('Coins Wallet', style: IsmLiveStyles.black16),
+            title: Text(
+              'Coins Wallet',
+              style: context.textTheme.bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
             leading: InkWell(
               onTap: Get.back,
               child: const Icon(Icons.arrow_back),

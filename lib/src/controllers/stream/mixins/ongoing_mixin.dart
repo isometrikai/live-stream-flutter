@@ -399,6 +399,11 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.share:
         break;
       case IsmLiveStreamOption.members:
+        await IsmLiveUtility.openBottomSheet(
+          IsmliveAnalyticsSheet(
+            streamId: _controller.streamId ?? '',
+          ),
+        );
         break;
       case IsmLiveStreamOption.favourite:
         break;
