@@ -88,11 +88,13 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                     title: 'Earnings',
                     assetConstant: IsmLiveAssetConstants.dollar,
                   ),
-                  // IsmLiveEndStreamContainer(
-                  //   points: '${controller.streamAnalytis?.formattedDuration}',
-                  //   title: 'Duration',
-                  //   assetConstant: IsmLiveAssetConstants.clock,
-                  // ),
+                  GetX<IsmLiveStreamController>(
+                    builder: (controller) => IsmLiveEndStreamContainer(
+                      points: controller.streamDuration.formattedTime,
+                      title: 'Duration',
+                      assetConstant: IsmLiveAssetConstants.clock,
+                    ),
+                  ),
                 ],
               ),
             ],

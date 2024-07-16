@@ -643,7 +643,22 @@ mixin StreamAPIMixin {
 
   Future<void> getRestreamChannels() async {
     var res = await _controller._viewModel.getRestreamChannels();
-    _controller.restreamChannels.addAll(res);
+    _controller.restreamChannels = res;
+
+    _controller.restreamFacebook = false;
+    _controller.restreamYoutube = false;
+    _controller.restreamInstagram = false;
+
+    if (res.isNotEmpty) {
+      for (var i in res) {
+        _controller.onChangeRestreamType(
+          IsmLiveRestreamType.channelType(i.channelType ?? -1),
+          true,
+        );
+      }
+    }
+
+    _controller.update([IsmLiveRestreamView.updateId]);
   }
 
   Future<void> streamAnalytics(String streamId) async {
@@ -678,6 +693,21 @@ mixin StreamAPIMixin {
         enable: enable,
         channelName: channelName,
         channelType: channeltype,
+      );
+
+  Future<bool> editRestreamChannel({
+    required bool enable,
+    required String channelName,
+    required int channeltype,
+    required String channelId,
+  }) =>
+      _controller._viewModel.editRestreamChannel(
+        url:
+            '${_controller.rtmlUrl.text.trim()}/${_controller.streamKey.text.trim()}',
+        enable: enable,
+        channelName: channelName,
+        channelType: channeltype,
+        channelId: channelId,
       );
 
   Future<bool> sendHearts({

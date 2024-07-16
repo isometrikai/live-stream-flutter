@@ -41,8 +41,20 @@ mixin StreamJoinMixin {
     if (_controller.room == null) {
       return;
     }
+    VideoParameters? videoFilter;
+    if (_controller.isRestreamBroadcast) {
+      videoFilter = const VideoParameters(
+        dimensions: VideoDimensions(480, 640),
+        encoding: VideoEncoding(
+          maxFramerate: 30,
+          maxBitrate: 2500000,
+        ),
+      );
+    }
+
     final tracks = await Future.wait([
-      LocalVideoTrack.createCameraTrack(),
+      LocalVideoTrack.createCameraTrack(CameraCaptureOptions(
+          params: videoFilter ?? VideoParametersPresets.h720_169)),
       LocalAudioTrack.create(),
     ]);
     var localVideo = tracks[0] as LocalVideoTrack;
@@ -160,6 +172,7 @@ mixin StreamJoinMixin {
       isHost: true,
       isNewStream: true,
       hdBroadcast: _controller.isHdBroadcast,
+      restream: _controller.isRestreamBroadcast,
     );
   }
 
@@ -170,6 +183,7 @@ mixin StreamJoinMixin {
     String? streamImage,
     String? streamDiscription,
     bool hdBroadcast = false,
+    bool restream = false,
     required bool isHost,
     bool isCopublisher = false,
     bool isPk = false,
@@ -230,8 +244,14 @@ mixin StreamJoinMixin {
     IsmLiveUtility.showLoader(message);
 
     try {
-      final videoQuality = hdBroadcast
-          ? VideoParametersPresets.h720_169
+      final videoQuality = hdBroadcast || restream
+          ? const VideoParameters(
+              dimensions: VideoDimensions(480, 640),
+              encoding: VideoEncoding(
+                maxFramerate: 30,
+                maxBitrate: 2500000,
+              ),
+            )
           : VideoParametersPresets.h540_169;
       var room = Room(
         roomOptions: RoomOptions(

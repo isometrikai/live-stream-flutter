@@ -595,7 +595,7 @@ class IsmLiveStreamRepository {
     return _apiWrapper.makeRequest(
       IsmLiveApis.restreamChannel,
       type: IsmLiveRequestType.post,
-      payload: payload.removeNullValues,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: true,
@@ -619,7 +619,7 @@ class IsmLiveStreamRepository {
     return _apiWrapper.makeRequest(
       IsmLiveApis.restreamChannel,
       type: IsmLiveRequestType.patch,
-      payload: payload.removeNullValues,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: true,
@@ -663,7 +663,6 @@ class IsmLiveStreamRepository {
       baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
     );
   }
 

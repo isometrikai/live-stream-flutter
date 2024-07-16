@@ -319,11 +319,6 @@ mixin StreamOngoingMixin {
     final key = ValueKey(message.messageId);
 
     final data = payload['metaData'];
-    // final gift = message.customType!.path;
-    // final child = IsmLiveImage.network(
-    //   image['giftThumbnailUrl'],
-    //   name: 'U',
-    // );
 
     final child = IsmLiveGif(path: data['message']);
     _controller.giftList.insert(
