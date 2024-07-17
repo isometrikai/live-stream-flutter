@@ -131,9 +131,9 @@ class CoinsPlansWalletController extends GetxController
     };
     data.removeWhere((key, value) => value == null || value.isEmpty);
     final res = await _coinsPlansWalletViewMode.purchaseCoinsPlans(data: data);
-    if (res == null) {
-      await InAppPurchase.instance.completePurchase(purchaseDetails);
-    }
+    await InAppPurchase.instance.completePurchase(purchaseDetails);
+    if (res == null || res.statusCode != 200) return;
+    await totalWalletCoins();
   }
 
   void onTapBuyPlan({
@@ -159,6 +159,7 @@ class CoinsPlansWalletController extends GetxController
     var res = await _coinsPlansWalletViewMode.totalWalletCoins();
     if (res != null) {
       coinBalance = res.balance ?? 0;
+      update([CoinsPlansWalletView.updateId]);
     }
   }
 

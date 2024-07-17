@@ -21,9 +21,7 @@ class IsmLiveSendMessageModel {
         searchableTags: map['searchableTags'] as dynamic,
         metaData:
             IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
-        customType: map['customType'] != null
-            ? IsmLiveGifts.fromName(map['customType'].toString())
-            : null,
+        customType: map['customType'] != null ? map['customType'] : null,
         deviceId: map['deviceId'] as String,
         parentMessageId: map['parentMessageId'] as String?,
         messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
@@ -37,7 +35,7 @@ class IsmLiveSendMessageModel {
   final String body;
   final dynamic searchableTags;
   final IsmLiveMetaData metaData;
-  final IsmLiveGifts? customType;
+  final String? customType;
   final String deviceId;
   final String? parentMessageId;
   final IsmLiveMessageType messageType;
@@ -47,7 +45,7 @@ class IsmLiveSendMessageModel {
     String? body,
     dynamic searchableTags,
     IsmLiveMetaData? metaData,
-    IsmLiveGifts? customType,
+    String? customType,
     String? deviceId,
     String? parentMessageId,
     IsmLiveMessageType? messageType,
@@ -68,7 +66,7 @@ class IsmLiveSendMessageModel {
         'body': body,
         'searchableTags': searchableTags,
         'metaData': metaData.toMap(),
-        'customType': customType?.name,
+        'customType': customType,
         'deviceId': deviceId,
         'parentMessageId': parentMessageId,
         'messageType': messageType.value,

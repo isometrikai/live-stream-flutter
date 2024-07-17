@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,10 +7,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
     super.key,
     required this.onTap,
   });
-  final void Function(IsmLiveGifts) onTap;
+  final void Function(IsmLiveGiftsCategoryModel) onTap;
   IsmLivePkController get pkController => Get.find<IsmLivePkController>();
-  CoinsPlansWalletController get walletController =>
-      Get.find<CoinsPlansWalletController>();
 
   static const updateId = 'gift-sheet';
 
@@ -19,7 +16,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (state) async {
-          Get.find<IsmLiveStreamController>().giftType = 0;
+          Get.find<IsmLiveStreamController>()..totalWalletCoins();
 
           IsmLiveUtility.updateLater(() {
             pkController.getGiftCategories();
@@ -53,11 +50,11 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                         const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                   ),
                   IsmLiveDimens.boxWidth4,
-                  Text(
-                    walletController.coinBalance.formatWithKAndL(),
-                    style: context.textTheme.bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
+                  Obx(() => Text(
+                        controller.giftcoinBalance.formatWithKAndL(),
+                        style: context.textTheme.bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      )),
                 ],
               ),
             ),
@@ -104,11 +101,19 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                       itemBuilder: (_, index) {
                         final gift = pkController
                             .localGift?[controller.giftType]?[index];
+                        final giftCategory = pkController
+                            .giftCategoriesList[controller.giftType];
                         return _GiftItem(
                           key: ValueKey(gift),
                           gift: gift!,
                           onTap: () {
                             Get.back();
+                            IsmLiveLog(
+                                '*********************---> ${gift.giftTitle}');
+                            if (giftCategory.giftTitle == '3D') {
+                              IsmLiveLog('********************************');
+                              onTap(gift);
+                            }
 
                             pkController.sendGift(
                                 giftAnimationImage:

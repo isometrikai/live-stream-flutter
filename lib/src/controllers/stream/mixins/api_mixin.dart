@@ -84,17 +84,19 @@ mixin StreamAPIMixin {
     return (
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
-          streamImage: image,
-          productsLinked: _controller.selectedProductsList.isNotEmpty,
-          products:
-              _controller.selectedProductsList.map((e) => e.productId).toList(),
-          hdBroadcast: _controller.isHdBroadcast,
-          enableRecording: _controller.isRecordingBroadcast,
-          streamDescription: _controller.descriptionController.isEmpty
-              ? 'N/A'
-              : _controller.descriptionController.text,
-          restream: _controller.isRestreamBroadcast,
-        ),
+            streamImage: image,
+            productsLinked: _controller.selectedProductsList.isNotEmpty,
+            products: _controller.selectedProductsList
+                .map((e) => e.productId)
+                .toList(),
+            hdBroadcast: _controller.isHdBroadcast,
+            enableRecording: _controller.isRecordingBroadcast,
+            streamDescription: _controller.descriptionController.isEmpty
+                ? 'N/A'
+                : _controller.descriptionController.text,
+            restream: _controller.isRestreamBroadcast,
+            rtmpIngest: _controller.selectedGoLiveTabItem ==
+                IsmGoLiveTabItem.liveFromDevice),
         _controller.user,
       ),
       image: image,
@@ -726,4 +728,11 @@ mixin StreamAPIMixin {
         senderId: senderId,
         senderName: senderName,
       );
+
+  Future<void> totalWalletCoins() async {
+    var res = await _controller._viewModel.totalWalletCoins();
+    if (res != null) {
+      _controller.giftcoinBalance = res.balance ?? 0;
+    }
+  }
 }

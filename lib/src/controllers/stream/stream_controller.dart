@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -124,6 +125,10 @@ class IsmLiveStreamController extends GetxController
   final RxBool _showEmojiBoard = false.obs;
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
+
+  final RxInt _giftcoinBalance = 0.obs;
+  int get giftcoinBalance => _giftcoinBalance.value;
+  set giftcoinBalance(int value) => _giftcoinBalance.value = value;
 
   final RxList<IsmLiveMemberDetailsModel> _streamMembersList =
       <IsmLiveMemberDetailsModel>[].obs;

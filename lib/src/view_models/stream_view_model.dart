@@ -808,4 +808,19 @@ class IsmLiveStreamViewModel {
     }
     return [];
   }
+
+  Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {
+    try {
+      var res = await _repository.totalWalletCoins();
+
+      var data = jsonDecode(res.data)['data'];
+
+      if (!res.hasError) {
+        return IsmLiveCoinBalanceModel.fromMap(data);
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return null;
+  }
 }

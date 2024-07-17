@@ -685,4 +685,18 @@ class IsmLiveStreamRepository {
       showDialog: false,
     );
   }
+
+  Future<IsmLiveResponseModel> totalWalletCoins() {
+    var payload = {
+      'currency': 'COIN',
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
 }

@@ -305,15 +305,18 @@ mixin StreamJoinMixin {
       );
 
       // Enable video if the user is a host or copublisher
-      if (isHost || isCopublisher || isPkGust) {
-        await enableMyVideo();
+      if (_controller.selectedGoLiveTabItem !=
+          IsmGoLiveTabItem.liveFromDevice) {
+        if (isHost || isCopublisher || isPkGust) {
+          await enableMyVideo();
+        }
+        // Toggle audio if the user is a host or copublisher
+        unawaited(
+          _controller.toggleAudio(
+            value: isHost || isCopublisher,
+          ),
+        );
       }
-      // Toggle audio if the user is a host or copublisher
-      unawaited(
-        _controller.toggleAudio(
-          value: isHost || isCopublisher,
-        ),
-      );
 
       IsmLiveUtility.closeLoader();
 

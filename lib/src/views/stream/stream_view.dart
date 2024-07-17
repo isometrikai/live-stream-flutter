@@ -129,6 +129,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
           controller.animationController.dispose();
+          controller.giftType = 0;
 
           await controller.room?.dispose();
         },
