@@ -85,6 +85,7 @@ class IsmLiveAssetConstants {
   static const String favourite = '$_icons/favourite.svg';
   static const String settings = '$_icons/settings.svg';
   static const String gift = '$_icons/gift.svg';
+  static const String analytics = '$_icons/analytics.svg';
   static const String share = '$_icons/share.svg';
   static const String mute = '$_icons/mute.svg';
   static const String multi = '$_icons/multi.svg';
@@ -112,6 +113,8 @@ class IsmLiveAssetConstants {
   static const String bars = '$_icons/bars.svg';
   static const String product = '$_icons/product.svg';
   static const String youtube = '$_icons/youtube.svg';
+  static const String facebook = '$_icons/facebook.svg';
+  static const String instagram = '$_icons/instagram.svg';
   static const String calendar = '$_icons/calendar.svg';
   static const String search = '$_icons/search.svg';
   static const String micro_phone = '$_icons/microphone.svg';

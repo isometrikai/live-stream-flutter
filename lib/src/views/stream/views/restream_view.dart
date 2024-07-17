@@ -30,13 +30,12 @@ class IsmLiveRestreamView extends StatelessWidget {
                 (type) => Padding(
                   padding: IsmLiveDimens.edgeInsets4,
                   child: IsmLiveRadioListTile(
-                    title: 'Restream on ${type.label}',
-                    isDark: false,
-                    showIcon: true,
-                    onChange: (value) =>
-                        controller.onTapRestreamType(type, value),
-                    value: controller.isRestreamType(type),
-                  ),
+                      title: 'Restream on ${type.label}',
+                      isDark: false,
+                      showIcon: true,
+                      onChange: (value) =>
+                          controller.onTapRestreamType(type, value),
+                      value: controller.isRestreamType(type)),
                 ),
               ),
             ],

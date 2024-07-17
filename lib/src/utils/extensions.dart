@@ -139,9 +139,19 @@ extension IsmLiveDoubleExtensions on double {
 }
 
 extension IsmLiveRestreamExtensions on IsmLiveRestreamType {
-  String get icon => IsmLiveAssetConstants.youtube;
+  String get icon {
+    switch (value) {
+      case 2:
+        return IsmLiveAssetConstants.instagram;
+      case 1:
+        return IsmLiveAssetConstants.youtube;
 
-  String get linkPreview => 'www.youtube.com';
+      default:
+        return IsmLiveAssetConstants.facebook;
+    }
+  }
+
+  String get linkPreview => 'www.$name.com';
 }
 
 extension IsmLiveDateExtensions on DateTime {

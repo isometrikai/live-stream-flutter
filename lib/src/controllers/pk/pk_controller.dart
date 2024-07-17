@@ -14,6 +14,7 @@ class IsmLivePkController extends GetxController
       Get.find<IsmLiveStreamController>();
 
   late TabController pkTabController;
+
   late TabController pkViewersTabController;
 
   ScrollController pkInviteListController = ScrollController();
@@ -23,7 +24,9 @@ class IsmLivePkController extends GetxController
   TextEditingController pkInviteTextController = TextEditingController();
 
   final _pkInviteDebouncer = IsmLiveDebouncer();
+
   final _giftCategoriesDebouncer = IsmLiveDebouncer();
+
   final _giftDebouncer = IsmLiveDebouncer();
 
   final RxList<IsmLivePkInviteModel> _pkInviteList =
@@ -99,14 +102,20 @@ class IsmLivePkController extends GetxController
   @override
   void onReady() {
     super.onReady();
-    IsmLiveUtility.updateLater(() {
-      pkTabController.addListener(() {
-        pk = IsmLivePk.values[pkTabController.index];
-      });
-      pkViewersTabController.addListener(() {
-        pkViewers = IsmLivePkViewers.values[pkViewersTabController.index];
-      });
-    });
+    IsmLiveUtility.updateLater(
+      () {
+        pkTabController.addListener(
+          () {
+            pk = IsmLivePk.values[pkTabController.index];
+          },
+        );
+        pkViewersTabController.addListener(
+          () {
+            pkViewers = IsmLivePkViewers.values[pkViewersTabController.index];
+          },
+        );
+      },
+    );
   }
 
   void startPkTimer({
@@ -171,10 +180,8 @@ class IsmLivePkController extends GetxController
       } else {
         stopPkId = payload['payload']['pkId'];
       }
-
       pkTimer?.cancel();
       pkTimer = null;
-
       streamController.pkStages?.removePkStart();
       streamController.pkStages?.makePkStop();
       await pkWinner(stopPkId);
@@ -308,8 +315,6 @@ class IsmLivePkController extends GetxController
           pkBarGustPersentage = pkBarHostPersentage;
           pkBarHostPersentage = swapBarValue;
 
-          // pkBarPersentage = pkPersentege(pkHostValue, pkGustValue);
-
           streamController.update([IsmLivePublisherGrid.updateId]);
 
           Get.back();
@@ -381,13 +386,15 @@ class IsmLivePkController extends GetxController
     int skip = 0,
     String? searchTag,
   }) async {
-    _pkInviteDebouncer.run(() async {
-      await _getUsersToInviteForPK(
-        limit: limit,
-        skip: skip,
-        searchTag: searchTag,
-      );
-    });
+    _pkInviteDebouncer.run(
+      () async {
+        await _getUsersToInviteForPK(
+          limit: limit,
+          skip: skip,
+          searchTag: searchTag,
+        );
+      },
+    );
   }
 
   Future<void> _getUsersToInviteForPK({
@@ -417,15 +424,16 @@ class IsmLivePkController extends GetxController
       Get.back();
 
       pkInviteSheet(
-          description:
-              'The PK challenge between you and ${reciverDetails.name} will start soon. Please wait…',
-          images: [
-            reciverDetails.profilePic ?? '',
-            streamController.user?.profileUrl ?? ''
-          ],
-          userName: streamController.user?.name ?? '',
-          reciverName: reciverDetails.name,
-          title: 'Linking...');
+        description:
+            'The PK challenge between you and ${reciverDetails.name} will start soon. Please wait…',
+        images: [
+          reciverDetails.profilePic ?? '',
+          streamController.user?.profileUrl ?? ''
+        ],
+        userName: streamController.user?.name ?? '',
+        reciverName: reciverDetails.name,
+        title: 'Linking...',
+      );
     }
   }
 
@@ -503,7 +511,6 @@ class IsmLivePkController extends GetxController
       pkBarHostPersentage = pkBarPersentage * 2;
     } else {
       pkBarHostPersentage = 100;
-
       pkBarGustPersentage = (100 - pkBarPersentage) * 2;
     }
   }
@@ -562,7 +569,6 @@ class IsmLivePkController extends GetxController
     if (res != null) {
       streamController.pkWinnerId = res.winnerId ?? '';
     }
-
     streamController.update([IsmLiveStreamView.updateId]);
   }
 
@@ -581,13 +587,15 @@ class IsmLivePkController extends GetxController
     String? searchTag,
   }) async {
     giftList.clear();
-    _giftCategoriesDebouncer.run(() async {
-      await _getGiftCategories(
-        limit: limit,
-        skip: skip,
-        searchTag: searchTag,
-      );
-    });
+    _giftCategoriesDebouncer.run(
+      () async {
+        await _getGiftCategories(
+          limit: limit,
+          skip: skip,
+          searchTag: searchTag,
+        );
+      },
+    );
   }
 
   Future<void> _getGiftCategories({

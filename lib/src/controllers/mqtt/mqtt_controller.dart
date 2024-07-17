@@ -343,8 +343,6 @@ class IsmLiveMqttController extends GetxController {
             isEvent: true,
           );
 
-          LocalNotificationService.showBasicNotification(
-              body: message.body, title: 'Member Added', payload: '');
           unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);
           break;
@@ -487,8 +485,7 @@ class IsmLiveMqttController extends GetxController {
             body: '$moderatorName is a moderator now',
             isEvent: true,
           );
-          LocalNotificationService.showBasicNotification(
-              body: message.body, title: 'Moderator Added', payload: '');
+
           unawaited(_streamController.handleMessage(message: message));
           if (userId == moderatorId) {
             final hostName = payload['initiatorName'];
@@ -599,11 +596,12 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has joined',
               isEvent: true,
             );
-            LocalNotificationService.showBasicNotification(
-                body: message.body, title: 'viewer', payload: '');
-            unawaited(_streamController.handleMessage(message: message));
-            await _streamController.addViewers([viewer], false);
-            _updateStream();
+
+            if (viewer.userId != _streamController.user?.userId) {
+              unawaited(_streamController.handleMessage(message: message));
+              await _streamController.addViewers([viewer], false);
+              _updateStream();
+            }
           }
           break;
         case IsmLiveActions.viewerLeft:
@@ -620,8 +618,7 @@ class IsmLiveMqttController extends GetxController {
               body: '${viewer.userName} has left',
               isEvent: true,
             );
-            LocalNotificationService.showBasicNotification(
-                body: message.body, title: 'viewer', payload: '');
+
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewer.userId);
@@ -649,8 +646,7 @@ class IsmLiveMqttController extends GetxController {
                   : '$initiatorName has remove $viewerName',
               isEvent: true,
             );
-            LocalNotificationService.showBasicNotification(
-                body: message.body, title: 'viewer', payload: '');
+
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewerId);

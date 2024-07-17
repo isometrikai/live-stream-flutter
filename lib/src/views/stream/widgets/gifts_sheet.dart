@@ -7,9 +7,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
   IsmLiveGiftsSheet({
     super.key,
     required this.onTap,
-  }) {
-    CoinsPlansWalletBinding().dependencies();
-  }
+  });
   final void Function(IsmLiveGifts) onTap;
   IsmLivePkController get pkController => Get.find<IsmLivePkController>();
   CoinsPlansWalletController get walletController =>

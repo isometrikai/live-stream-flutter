@@ -641,28 +641,58 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<dynamic> getRestreamChannels() async {
+  Future<List<IsmLiveReStreamModel>> getRestreamChannels() async {
     try {
       var res = await _repository.getRestreamChannels();
       if (res.hasError) {
-        return null;
+        return [];
       }
+      List list = jsonDecode(res.data)['restreamChannels'];
 
-      return res;
+      return list
+          .map((e) => IsmLiveReStreamModel.fromMap(e as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
       IsmLiveLog.error(e, st);
-      return null;
+      return [];
     }
   }
 
-  Future<bool> addRestreamChannel({
+  Future<String> addRestreamChannel({
     required String url,
+    required String channelName,
+    required int channelType,
     required bool enable,
   }) async {
     try {
       var res = await _repository.addRestreamChannel(
         url: url,
         enable: enable,
+        channelName: channelName,
+        channelType: channelType,
+      );
+
+      return res.data;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return '';
+    }
+  }
+
+  Future<bool> editRestreamChannel({
+    required String url,
+    required String channelId,
+    required String channelName,
+    required int channelType,
+    required bool enable,
+  }) async {
+    try {
+      var res = await _repository.editRestreamChannel(
+        url: url,
+        enable: enable,
+        channelName: channelName,
+        channelType: channelType,
+        channelId: channelId,
       );
 
       return !res.hasError;

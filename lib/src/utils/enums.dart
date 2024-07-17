@@ -224,7 +224,7 @@ enum IsmLiveStreamOption {
   bars(IsmLiveAssetConstants.bars),
   multiLive(IsmLiveAssetConstants.multi),
   share(IsmLiveAssetConstants.share),
-  members(IsmLiveAssetConstants.members),
+  members(IsmLiveAssetConstants.analytics),
   favourite(IsmLiveAssetConstants.favourite),
   settings(IsmLiveAssetConstants.settings),
   rotateCamera(IsmLiveAssetConstants.rotateCamera),
@@ -471,9 +471,23 @@ enum IsmLiveMemberStatus {
 }
 
 enum IsmLiveRestreamType {
-  facebook,
-  youtube,
-  instagram;
+  facebook(0),
+  youtube(1),
+  instagram(2);
+
+  factory IsmLiveRestreamType.channelType(int data) {
+    switch (data) {
+      case 2:
+        return IsmLiveRestreamType.instagram;
+      case 1:
+        return IsmLiveRestreamType.youtube;
+      default:
+        return IsmLiveRestreamType.facebook;
+    }
+  }
+
+  const IsmLiveRestreamType(this.value);
+  final int value;
 
   String get label => name.capitalizeFirst!;
 }

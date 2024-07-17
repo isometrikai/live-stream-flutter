@@ -582,17 +582,43 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> addRestreamChannel({
     required String url,
+    required String channelName,
+    required int channelType,
     required bool enable,
   }) {
     final payload = {
       'ingestUrl': url,
       'enabled': enable,
-      'channelType': 1,
-      'channelName': 'Youtube',
+      'channelType': channelType,
+      'channelName': channelName,
     };
     return _apiWrapper.makeRequest(
       IsmLiveApis.restreamChannel,
       type: IsmLiveRequestType.post,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: true,
+    );
+  }
+
+  Future<IsmLiveResponseModel> editRestreamChannel({
+    required String url,
+    required String channelId,
+    required String channelName,
+    required int channelType,
+    required bool enable,
+  }) {
+    final payload = {
+      'ingestUrl': url,
+      'enabled': enable,
+      'channelType': channelType,
+      'channelName': channelName,
+      'channelId': channelId,
+    };
+    return _apiWrapper.makeRequest(
+      IsmLiveApis.restreamChannel,
+      type: IsmLiveRequestType.patch,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
@@ -637,7 +663,6 @@ class IsmLiveStreamRepository {
       baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
     );
   }
 

@@ -54,7 +54,16 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView>
     ).animate(CurvedAnimation(
       parent: controller,
       curve: Curves.ease,
-    ));
+    ))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          IsmLiveLog.error('Animation completed');
+          widget.onComplete?.call();
+        } else if (status == AnimationStatus.dismissed) {
+          IsmLiveLog.error('Animation Dismissed');
+        }
+      });
+
     if (mounted) {
       IsmLiveUtility.updateLater(start, false);
     }

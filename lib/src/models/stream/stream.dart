@@ -6,6 +6,7 @@ export 'member_model.dart';
 export 'message_model.dart';
 export 'product_details_model.dart';
 export 'product_model.dart';
+export 'restream_channel_model.dart';
 export 'rtc_model.dart';
 export 'send_message_model.dart';
 export 'stream_analytics_model.dart';

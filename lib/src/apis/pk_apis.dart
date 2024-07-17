@@ -196,7 +196,7 @@ class IsmLivePkApis {
         IsmLiveApis.sendGiftToStreamer,
         baseUrl: baseUrl,
         type: IsmLiveRequestType.post,
-        showDialog: false,
+        showDialog: true,
         payload: payload,
         headers: IsmLiveUtility.tokenHeader(),
       );
