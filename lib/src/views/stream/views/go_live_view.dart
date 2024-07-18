@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class IsmGoLiveView extends StatelessWidget {
@@ -17,13 +18,14 @@ class IsmGoLiveView extends StatelessWidget {
           var controller = Get.find<IsmLiveStreamController>();
           controller.cameraFuture = null;
           unawaited(controller.initializationOfGoLive());
+          unawaited(controller.userDetails());
 
           controller.pickedImage = null;
           controller.descriptionController.clear();
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
           controller.isSchedulingBroadcast = false;
-          controller.usePersistentStreamKey = false;
+
           controller.isRestreamBroadcast = false;
         },
         dispose: (state) {
@@ -139,15 +141,14 @@ class IsmGoLiveView extends StatelessWidget {
                       value: controller.isRestreamBroadcast,
                     ),
                     const _Restream(),
-                    if (controller.selectedGoLiveTabItem ==
-                        IsmGoLiveTabItem.liveFromDevice) ...[
+                    if (controller.isRtmp) ...[
                       IsmLiveRadioListTile(
                         title: 'Use Persistent RTMP Stream Key',
                         onChange: controller.onChangePersistent,
                         value: controller.usePersistentStreamKey,
                       ),
+                      const _PersistentStream(),
                     ],
-                    const _PersistentStream(),
                     _AddProduct(
                       selectedProducts: controller.selectedProductsList,
                       onRemoveProduct: (index) {
@@ -407,14 +408,27 @@ class _PersistentStream extends StatelessWidget {
                 children: [
                   _InputField(
                     label: 'RTML URL',
-                    controller: TextEditingController(),
+                    readOnly: true,
+                    controller: controller.rtmlUrlDevice,
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: controller.rtmlUrlDevice.text),
+                      );
+                    },
+                    suffixIcon: const Icon(Icons.copy),
                   ),
                   IsmLiveDimens.boxHeight10,
                   _InputField(
                     label: 'Stream Key',
                     hint: 'Key will be generated after you start a new stream',
                     readOnly: true,
-                    controller: TextEditingController(),
+                    controller: controller.streamKeyDevice,
+                    onTap: () {
+                      Clipboard.setData(
+                        ClipboardData(text: controller.streamKeyDevice.text),
+                      );
+                    },
+                    suffixIcon: const Icon(Icons.copy),
                   ),
                   IsmLiveDimens.boxHeight10,
                   Text.rich(

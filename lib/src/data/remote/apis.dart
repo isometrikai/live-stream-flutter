@@ -61,6 +61,7 @@ class IsmLiveApis {
   static const String messagesCount = '$_streaming/messages/count';
   static const String replyMessage = '$_streaming/message/reply';
   static const String getUsers = '$_streaming/users';
+  static const String getUserDetails = '$_streaming/user/details';
   static const String moderator = '$_streaming/moderator';
   static const String leaveModerator = '$moderator/leave';
   static const String getModerators = '$_streaming/moderators';

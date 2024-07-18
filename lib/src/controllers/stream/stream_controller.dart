@@ -78,6 +78,8 @@ class IsmLiveStreamController extends GetxController
 
   bool usePersistentStreamKey = false;
 
+  bool isRtmp = false;
+
   bool isSchedulingBroadcast = false;
 
   bool restreamFacebook = false;
@@ -96,6 +98,9 @@ class IsmLiveStreamController extends GetxController
 
   TextEditingController rtmlUrl = TextEditingController();
   TextEditingController streamKey = TextEditingController();
+
+  TextEditingController rtmlUrlDevice = TextEditingController();
+  TextEditingController streamKeyDevice = TextEditingController();
 
   String? streamId;
 
@@ -532,6 +537,12 @@ class IsmLiveStreamController extends GetxController
 
   void onChangePersistent(bool value) {
     usePersistentStreamKey = value;
+
+    update([IsmGoLiveView.updateId]);
+  }
+
+  void onChangeRtmp(bool value) {
+    isRtmp = value;
 
     update([IsmGoLiveView.updateId]);
   }

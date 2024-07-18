@@ -13,6 +13,12 @@ class IsmLiveStreamRepository {
         headers: IsmLiveUtility.tokenHeader(),
       );
 
+  Future<IsmLiveResponseModel> userDetails() async => _apiWrapper.makeRequest(
+        IsmLiveApis.getUserDetails,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+      );
+
   Future<IsmLiveResponseModel> subscribeUser({
     required bool isSubscribing,
   }) {

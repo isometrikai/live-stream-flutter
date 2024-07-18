@@ -29,6 +29,27 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveAppbar.updateId]);
   }
 
+  Future<void> userDetails() async {
+    var res = await _controller._viewModel.userDetails();
+
+    if (res != null && res.rtmpIngestUrl != null) {
+      var lastSlashIndex = res.rtmpIngestUrl?.lastIndexOf('/') ?? 0;
+
+      _controller.rtmlUrlDevice.text =
+          res.rtmpIngestUrl?.substring(0, lastSlashIndex) ?? '';
+      _controller.streamKeyDevice.text =
+          res.rtmpIngestUrl?.substring(lastSlashIndex + 1) ?? '';
+
+      _controller.usePersistentStreamKey = true;
+    } else {
+      _controller.rtmlUrlDevice.clear();
+      _controller.streamKeyDevice.clear();
+
+      _controller.usePersistentStreamKey = false;
+    }
+    _controller.update([IsmGoLiveView.updateId]);
+  }
+
   /// Subscribe or unsubscribe the current user to/from the platform.
   Future<bool> _subscribeUser(
     bool isSubscribing,
@@ -95,8 +116,8 @@ mixin StreamAPIMixin {
                 ? 'N/A'
                 : _controller.descriptionController.text,
             restream: _controller.isRestreamBroadcast,
-            rtmpIngest: _controller.selectedGoLiveTabItem ==
-                IsmGoLiveTabItem.liveFromDevice),
+            rtmpIngest: _controller.isRtmp,
+            persistRtmpIngestEndpoint: _controller.usePersistentStreamKey),
         _controller.user,
       ),
       image: image,

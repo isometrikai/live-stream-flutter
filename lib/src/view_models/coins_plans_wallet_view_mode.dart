@@ -37,9 +37,9 @@ class CoinsPlansWalletViewMode {
     return null;
   }
 
-  Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {
+  Future<IsmLiveCoinBalanceModel?> totalWalletCoins(String currency) async {
     try {
-      var res = await _coinsPlansWalletRepository.totalWalletCoins();
+      var res = await _coinsPlansWalletRepository.totalWalletCoins(currency);
 
       var data = jsonDecode(res.data)['data'];
 

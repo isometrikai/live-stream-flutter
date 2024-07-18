@@ -256,6 +256,17 @@ enum IsmLiveStreamOption {
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];
+
+  static List<IsmLiveStreamOption> get rtmpOptions => [
+        IsmLiveStreamOption.members,
+        IsmLiveStreamOption.vs,
+        IsmLiveStreamOption.multiLive,
+        IsmLiveStreamOption.product,
+        // IsmLiveStreamOption.share,
+        // // IsmLiveStreamOption.favourite,
+        // IsmLiveStreamOption.rotateCamera,
+        // IsmLiveStreamOption.settings,
+      ];
   static List<IsmLiveStreamOption> get copublisherOptions => [
         IsmLiveStreamOption.members,
         // IsmLiveStreamOption.vs,

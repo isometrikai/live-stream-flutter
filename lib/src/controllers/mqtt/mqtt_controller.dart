@@ -342,6 +342,8 @@ class IsmLiveMqttController extends GetxController {
             body: body,
             isEvent: true,
           );
+          LocalNotificationService.showBasicNotification(
+              body: message.body, title: 'Co-publishing added', payload: '');
 
           unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);

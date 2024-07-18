@@ -20,6 +20,19 @@ class IsmLiveStreamViewModel {
     return;
   }
 
+  Future<UserDetails?> userDetails() async {
+    try {
+      var res = await _repository.userDetails();
+
+      var user = UserDetails.fromJson(res.data);
+
+      return user;
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+    return null;
+  }
+
   Future<bool> subscribeUser({
     required bool isSubscribing,
   }) async {
