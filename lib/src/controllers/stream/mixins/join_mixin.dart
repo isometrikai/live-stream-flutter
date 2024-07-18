@@ -119,6 +119,7 @@ mixin StreamJoinMixin {
       token = data.rtcToken;
     }
 
+    _controller.isRtmp = stream.rtmpIngest ?? false;
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 
@@ -160,9 +161,13 @@ mixin StreamJoinMixin {
     if (data.model == null) {
       return;
     }
+
     final stream = data.model!;
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
+
+    _controller.rtmlUrlDevice.text = stream.ingestEndpoint ?? '';
+    _controller.streamKeyDevice.text = stream.streamKey ?? '';
 
     // Connect to the created stream
     await connectStream(
@@ -305,15 +310,17 @@ mixin StreamJoinMixin {
       );
 
       // Enable video if the user is a host or copublisher
-      if (isHost || isCopublisher || isPkGust) {
-        await enableMyVideo();
+      if (!_controller.isRtmp) {
+        if (isHost || isCopublisher || isPkGust) {
+          await enableMyVideo();
+        }
+        // Toggle audio if the user is a host or copublisher
+        unawaited(
+          _controller.toggleAudio(
+            value: isHost || isCopublisher,
+          ),
+        );
       }
-      // Toggle audio if the user is a host or copublisher
-      unawaited(
-        _controller.toggleAudio(
-          value: isHost || isCopublisher,
-        ),
-      );
 
       IsmLiveUtility.closeLoader();
 

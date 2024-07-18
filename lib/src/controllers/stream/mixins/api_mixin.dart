@@ -29,6 +29,27 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveAppbar.updateId]);
   }
 
+  Future<void> userDetails() async {
+    var res = await _controller._viewModel.userDetails();
+
+    if (res != null && res.rtmpIngestUrl != null) {
+      var lastSlashIndex = res.rtmpIngestUrl?.lastIndexOf('/') ?? 0;
+
+      _controller.rtmlUrlDevice.text =
+          res.rtmpIngestUrl?.substring(0, lastSlashIndex) ?? '';
+      _controller.streamKeyDevice.text =
+          res.rtmpIngestUrl?.substring(lastSlashIndex + 1) ?? '';
+
+      _controller.usePersistentStreamKey = true;
+    } else {
+      _controller.rtmlUrlDevice.clear();
+      _controller.streamKeyDevice.clear();
+
+      _controller.usePersistentStreamKey = false;
+    }
+    _controller.update([IsmGoLiveView.updateId]);
+  }
+
   /// Subscribe or unsubscribe the current user to/from the platform.
   Future<bool> _subscribeUser(
     bool isSubscribing,
@@ -84,17 +105,19 @@ mixin StreamAPIMixin {
     return (
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
-          streamImage: image,
-          productsLinked: _controller.selectedProductsList.isNotEmpty,
-          products:
-              _controller.selectedProductsList.map((e) => e.productId).toList(),
-          hdBroadcast: _controller.isHdBroadcast,
-          enableRecording: _controller.isRecordingBroadcast,
-          streamDescription: _controller.descriptionController.isEmpty
-              ? 'N/A'
-              : _controller.descriptionController.text,
-          restream: _controller.isRestreamBroadcast,
-        ),
+            streamImage: image,
+            productsLinked: _controller.selectedProductsList.isNotEmpty,
+            products: _controller.selectedProductsList
+                .map((e) => e.productId)
+                .toList(),
+            hdBroadcast: _controller.isHdBroadcast,
+            enableRecording: _controller.isRecordingBroadcast,
+            streamDescription: _controller.descriptionController.isEmpty
+                ? 'N/A'
+                : _controller.descriptionController.text,
+            restream: _controller.isRestreamBroadcast,
+            rtmpIngest: _controller.isRtmp,
+            persistRtmpIngestEndpoint: _controller.usePersistentStreamKey),
         _controller.user,
       ),
       image: image,
@@ -726,4 +749,11 @@ mixin StreamAPIMixin {
         senderId: senderId,
         senderName: senderName,
       );
+
+  Future<void> totalWalletCoins() async {
+    var res = await _controller._viewModel.totalWalletCoins();
+    if (res != null) {
+      _controller.giftcoinBalance = res.balance ?? 0;
+    }
+  }
 }

@@ -103,7 +103,11 @@ class _IsmLiveStreamView extends StatelessWidget {
           await WakelockPlus.enable();
           IsmLiveUtility.updateLater(() {
             if (isHost) {
-              Get.find<IsmLiveStreamController>().askPublish();
+              if (controller.isRtmp && !controller.usePersistentStreamKey) {
+                controller.rtmpSheet();
+              } else {
+                Get.find<IsmLiveStreamController>().askPublish();
+              }
             }
           });
         },
@@ -129,6 +133,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
           controller.animationController.dispose();
+          controller.giftType = 0;
 
           await controller.room?.dispose();
         },

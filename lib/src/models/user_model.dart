@@ -14,6 +14,10 @@ class UserDetails {
         userName: map['userName'] as String? ?? '',
         userIdentifier: map['userIdentifier'] as String? ?? '',
         userId: map['userId'] as String? ?? '',
+        updatedAt: map['updatedAt'] as int?,
+        rtmpIngestUrl: map['rtmpIngestUrl'] as String?,
+        restreamChannels: map['restreamChannels'] as String?,
+        msg: map['msg'] as String?,
         metaData: map['metaData'] == null
             ? const IsmLiveMetaData()
             : IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>),
@@ -35,6 +39,10 @@ class UserDetails {
     this.isAdmin,
     this.createdAt,
     this.timestamp,
+    this.updatedAt,
+    this.rtmpIngestUrl,
+    this.restreamChannels,
+    this.msg,
     this.pending,
     this.accepted,
   });
@@ -43,6 +51,10 @@ class UserDetails {
   final String userName;
   final String userIdentifier;
   final String userId;
+  final int? updatedAt;
+  final String? rtmpIngestUrl;
+  final String? restreamChannels;
+  final String? msg;
   final IsmLiveMetaData? metaData;
   final bool? notification;
   final bool? isAdmin;
@@ -64,6 +76,10 @@ class UserDetails {
     String? userName,
     String? userIdentifier,
     String? userId,
+    int? updatedAt,
+    String? rtmpIngestUrl,
+    String? restreamChannels,
+    String? msg,
     IsmLiveMetaData? metaData,
     bool? notification,
     bool? isAdmin,
@@ -76,6 +92,10 @@ class UserDetails {
         userName: userName ?? this.userName,
         userIdentifier: userIdentifier ?? this.userIdentifier,
         userId: userId ?? this.userId,
+        msg: msg ?? this.msg,
+        restreamChannels: restreamChannels ?? this.restreamChannels,
+        rtmpIngestUrl: rtmpIngestUrl ?? this.rtmpIngestUrl,
+        updatedAt: updatedAt ?? this.updatedAt,
         metaData: metaData ?? this.metaData,
         notification: notification ?? this.notification,
         accepted: accepted ?? this.accepted,
@@ -89,6 +109,10 @@ class UserDetails {
         'userName': userName,
         'userIdentifier': userIdentifier,
         'userId': userId,
+        'updatedAt': updatedAt,
+        'msg': msg,
+        'restreamChannels': restreamChannels,
+        'rtmpIngestUrl': rtmpIngestUrl,
         'metaData': metaData?.toMap(),
         'notification': notification,
         'timestamp': timestamp,
@@ -101,7 +125,7 @@ class UserDetails {
 
   @override
   String toString() =>
-      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, userIdentifier: $userIdentifier, userId: $userId,notification: $notification,isAdmin: $isAdmin,accepted: $accepted,timestamp: $timestamp,pending$pending,metaData : $metaData)';
+      'UserDetails(userProfileImageUrl: $userProfileImageUrl, userName: $userName, updatedAt: $updatedAt, msg: $msg, restreamChannels: $restreamChannels, rtmpIngestUrl: $rtmpIngestUrl, userIdentifier: $userIdentifier, userId: $userId,notification: $notification,isAdmin: $isAdmin,accepted: $accepted,timestamp: $timestamp,pending$pending,metaData : $metaData)';
 
   @override
   bool operator ==(covariant UserDetails other) {
@@ -111,6 +135,10 @@ class UserDetails {
         other.userName == userName &&
         other.userIdentifier == userIdentifier &&
         other.userId == userId &&
+        other.rtmpIngestUrl == rtmpIngestUrl &&
+        other.updatedAt == updatedAt &&
+        other.msg == msg &&
+        other.restreamChannels == restreamChannels &&
         other.metaData == metaData &&
         other.isAdmin == isAdmin &&
         other.pending == pending &&
@@ -125,6 +153,10 @@ class UserDetails {
       userName.hashCode ^
       userIdentifier.hashCode ^
       userId.hashCode ^
+      restreamChannels.hashCode ^
+      updatedAt.hashCode ^
+      rtmpIngestUrl.hashCode ^
+      msg.hashCode ^
       metaData.hashCode ^
       isAdmin.hashCode ^
       timestamp.hashCode ^

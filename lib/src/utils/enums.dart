@@ -256,6 +256,17 @@ enum IsmLiveStreamOption {
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
       ];
+
+  static List<IsmLiveStreamOption> get rtmpOptions => [
+        IsmLiveStreamOption.members,
+        IsmLiveStreamOption.vs,
+        IsmLiveStreamOption.multiLive,
+        IsmLiveStreamOption.product,
+        // IsmLiveStreamOption.share,
+        // // IsmLiveStreamOption.favourite,
+        // IsmLiveStreamOption.rotateCamera,
+        // IsmLiveStreamOption.settings,
+      ];
   static List<IsmLiveStreamOption> get copublisherOptions => [
         IsmLiveStreamOption.members,
         // IsmLiveStreamOption.vs,
@@ -301,6 +312,7 @@ enum IsmLiveMessageType {
   normal(0),
   heart(3),
   gift(2),
+  gift3D(10),
   remove(1),
   pkStart(23),
   pkAccepted(21),
@@ -313,6 +325,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.normal.value: IsmLiveMessageType.normal,
         IsmLiveMessageType.heart.value: IsmLiveMessageType.heart,
         IsmLiveMessageType.gift.value: IsmLiveMessageType.gift,
+        IsmLiveMessageType.gift3D.value: IsmLiveMessageType.gift3D,
         IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,

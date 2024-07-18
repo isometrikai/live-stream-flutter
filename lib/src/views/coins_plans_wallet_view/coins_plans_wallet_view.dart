@@ -71,12 +71,12 @@ class CoinsPlansWalletView extends StatelessWidget {
                               ),
                               IsmLiveDimens.boxHeight2,
                               Text(
-                                'My Balance',
+                                '\$ ${controller.balance.formatWithKAndL()} ',
                                 style: IsmLiveStyles.blackBold16.copyWith(
                                   color: const Color(0xffB1B6D1),
                                   fontSize: IsmLiveDimens.twelve,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           IsmLiveDimens.boxWidth50,

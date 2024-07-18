@@ -51,7 +51,12 @@ class IsmGoLiveNavBar extends StatelessWidget {
                     child: IsmLiveTapHandler(
                       onTap: () {
                         controller.selectedGoLiveTabItem = e;
+
+                        controller.onChangeRtmp(
+                            controller.selectedGoLiveTabItem ==
+                                IsmGoLiveTabItem.liveFromDevice);
                         controller.onChangePersistent(false);
+
                         controller.update([IsmGoLiveView.updateId]);
                       },
                       child: Padding(

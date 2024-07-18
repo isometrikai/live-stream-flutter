@@ -29,9 +29,9 @@ class CoinsPlansWalletRepository {
         payload: data,
       );
 
-  Future<IsmLiveResponseModel> totalWalletCoins() {
+  Future<IsmLiveResponseModel> totalWalletCoins(String currency) {
     var payload = {
-      'currency': 'COIN',
+      'currency': currency.toUpperCase(),
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',

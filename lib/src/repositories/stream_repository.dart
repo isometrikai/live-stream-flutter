@@ -13,6 +13,12 @@ class IsmLiveStreamRepository {
         headers: IsmLiveUtility.tokenHeader(),
       );
 
+  Future<IsmLiveResponseModel> userDetails() async => _apiWrapper.makeRequest(
+        IsmLiveApis.getUserDetails,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+      );
+
   Future<IsmLiveResponseModel> subscribeUser({
     required bool isSubscribing,
   }) {
@@ -682,6 +688,20 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> totalWalletCoins() {
+    var payload = {
+      'currency': 'COIN',
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
       showDialog: false,
     );
   }

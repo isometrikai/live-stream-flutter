@@ -614,7 +614,7 @@ class IsmLivePkController extends GetxController
     localGift = List.filled(giftCategoriesList.length, []);
     if (giftCategoriesList.isNotEmpty) {
       await getGiftsForACategory(
-          giftGroupId: giftCategoriesList.first.id ?? '');
+          giftGroupId: giftCategoriesList[streamController.giftType].id ?? '');
     }
     streamController.update([IsmLiveGiftsSheet.updateId]);
   }

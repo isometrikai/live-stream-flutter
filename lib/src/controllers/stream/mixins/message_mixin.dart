@@ -71,6 +71,8 @@ mixin StreamMessageMixin {
       case IsmLiveMessageType.pkStop:
         _pkController.pkStopEvent(payload ?? {}, true);
         break;
+      case IsmLiveMessageType.gift3D:
+        break;
     }
   }
 
@@ -168,18 +170,18 @@ mixin StreamMessageMixin {
   // Send a gift message to the stream
   Future<void> sendGiftMessage({
     required String streamId,
-    required IsmLiveGifts gift,
+    required IsmLiveGiftsCategoryModel gift,
   }) async {
     final isSent = await _controller.sendMessage(
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
         streamId: streamId,
-        body: gift.name,
-        searchableTags: [gift.name],
+        body: jsonEncode(gift),
+        searchableTags: ['gift'],
         metaData: const IsmLiveMetaData(),
         deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
-        messageType: IsmLiveMessageType.gift,
-        customType: gift,
+        messageType: IsmLiveMessageType.gift3D,
+        customType: 'gift',
       ),
     );
 
