@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -80,6 +79,8 @@ class IsmLiveStreamController extends GetxController
 
   bool isRtmp = false;
 
+  bool isPremium = false;
+
   bool isSchedulingBroadcast = false;
 
   bool restreamFacebook = false;
@@ -89,6 +90,8 @@ class IsmLiveStreamController extends GetxController
   DateTime scheduleLiveDate = DateTime.now();
 
   IsmGoLiveTabItem selectedGoLiveTabItem = IsmGoLiveTabItem.defaultLive;
+
+  IsmLiveStreamTypes selectedGoLiveStream = IsmLiveStreamTypes.free;
 
   bool isRestreamType(IsmLiveRestreamType type) => switch (type) {
         IsmLiveRestreamType.facebook => restreamFacebook,
@@ -207,6 +210,8 @@ class IsmLiveStreamController extends GetxController
   var searchUserFieldController = TextEditingController();
 
   var searchProductFieldController = TextEditingController();
+
+  var premiumStreamCoinsController = TextEditingController();
 
   ScrollController viewerListController = ScrollController();
 

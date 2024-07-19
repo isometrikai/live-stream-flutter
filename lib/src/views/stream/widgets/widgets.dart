@@ -2,6 +2,7 @@ export 'appbar.dart';
 export 'bottom_sheet/bottom_sheet.dart';
 export 'chat.dart';
 export 'chat_emojis.dart';
+export 'coins.dart';
 export 'controls.dart';
 export 'create_stream_fab.dart';
 export 'dialogs/dialogs.dart';

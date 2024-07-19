@@ -140,6 +140,10 @@ mixin StreamJoinMixin {
 
 // Start streaming
   Future<void> startStream() async {
+    if (_controller.isPremium &&
+        _controller.premiumStreamCoinsController.isEmpty) {
+      return;
+    }
     if (_controller.pickedImage == null) {
       final file = await _controller.cameraController?.takePicture();
       if (file != null) {

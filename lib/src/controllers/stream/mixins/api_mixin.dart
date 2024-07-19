@@ -105,7 +105,10 @@ mixin StreamAPIMixin {
     return (
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
+            paymentAmount:
+                double.parse(_controller.premiumStreamCoinsController.text),
             streamImage: image,
+            isPaid: _controller.isPremium,
             productsLinked: _controller.selectedProductsList.isNotEmpty,
             products: _controller.selectedProductsList
                 .map((e) => e.productId)

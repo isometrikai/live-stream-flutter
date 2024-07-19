@@ -14,12 +14,14 @@ class IsmLiveStreamHeader extends StatelessWidget {
     required this.pkCompleted,
     required this.isBattleTie,
     this.winnerName,
+    required this.streamCoins,
   });
 
   final String name;
   final String? winnerName;
   final String description;
   final String imageUrl;
+  final String streamCoins;
 
   final bool pkCompleted;
   final bool isBattleTie;
@@ -56,6 +58,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
             padding: IsmLiveDimens.edgeInsets10_0,
             child: _LiveTimer(
               onTapModerators: onTapModerators,
+              streamCoins: streamCoins,
             ),
           ),
           IsmLiveDimens.boxHeight8,
@@ -185,8 +188,9 @@ class IsmLiveEndStreamButton extends StatelessWidget {
 class _LiveTimer extends StatelessWidget {
   const _LiveTimer({
     this.onTapModerators,
+    required this.streamCoins,
   });
-
+  final String streamCoins;
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
@@ -202,6 +206,10 @@ class _LiveTimer extends StatelessWidget {
               const IsmLiveMembersSheet(),
               isScrollController: true,
             ),
+          ),
+          IsmLiveDimens.boxWidth10,
+          IsmLiveCoins(
+            coins: streamCoins,
           ),
           // IsmLiveDimens.boxWidth8,
           // GetBuilder<IsmLiveStreamController>(

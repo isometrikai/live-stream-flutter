@@ -39,13 +39,14 @@ class CoinsPlansWalletView extends StatelessWidget {
                   toolbarHeight: Get.height * .11,
                   automaticallyImplyLeading: false,
                   pinned: true,
-                  backgroundColor: IsmLiveColors.transparent,
-                  surfaceTintColor: IsmLiveColors.transparent,
+                  backgroundColor: IsmLiveColors.white,
+                  surfaceTintColor: IsmLiveColors.white,
                   flexibleSpace: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: const Color(0xffE4E4F7),
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                    ),
+                        color: IsmLiveColors.white,
+                        borderRadius:
+                            BorderRadius.circular(IsmLiveDimens.eight),
+                        border: Border.all(color: Colors.purple.shade100)),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: IsmLiveDimens.fifteen,
@@ -60,22 +61,22 @@ class CoinsPlansWalletView extends StatelessWidget {
                               IsmLiveAssetConstants.coinSvg,
                             ),
                           ),
-                          IsmLiveDimens.boxWidth20,
+                          IsmLiveDimens.boxWidth8,
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${controller.coinBalance.formatWithKAndL()} Coins',
-                                style: IsmLiveStyles.blackBold16,
-                              ),
-                              IsmLiveDimens.boxHeight2,
-                              Text(
-                                '\$ ${controller.balance.formatWithKAndL()} ',
+                                'Total Coins',
                                 style: IsmLiveStyles.blackBold16.copyWith(
                                   color: const Color(0xffB1B6D1),
                                   fontSize: IsmLiveDimens.twelve,
                                 ),
+                              ),
+                              IsmLiveDimens.boxHeight2,
+                              Text(
+                                '${controller.coinBalance.formatWithKAndL()} Coins',
+                                style: IsmLiveStyles.blackBold16,
                               ),
                             ],
                           ),
@@ -92,6 +93,62 @@ class CoinsPlansWalletView extends StatelessWidget {
                     ),
                   ),
                 ),
+                SliverAppBar(
+                  toolbarHeight: Get.height * .11,
+                  automaticallyImplyLeading: false,
+                  pinned: true,
+                  backgroundColor: IsmLiveColors.transparent,
+                  surfaceTintColor: IsmLiveColors.transparent,
+                  flexibleSpace: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: IsmLiveColors.white,
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                      border: Border.all(color: Colors.purple.shade100),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: IsmLiveDimens.fifteen,
+                        vertical: IsmLiveDimens.twelve,
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: IsmLiveDimens.thirty,
+                            height: IsmLiveDimens.thirty,
+                            child: SvgPicture.asset(
+                              IsmLiveAssetConstants.cash,
+                            ),
+                          ),
+                          IsmLiveDimens.boxWidth8,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Total Money',
+                                style: IsmLiveStyles.blackBold16.copyWith(
+                                  color: const Color(0xffB1B6D1),
+                                  fontSize: IsmLiveDimens.twelve,
+                                ),
+                              ),
+                              IsmLiveDimens.boxHeight2,
+                              Text(
+                                '\$ ${controller.balance.formatWithKAndL()} ',
+                                style: IsmLiveStyles.blackBold16,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // IsmLiveDimens.boxHeight10,
+                // Text(
+                //   'Select a plan',
+                //   style: context.textTheme.bodyMedium
+                //       ?.copyWith(fontWeight: FontWeight.bold),
+                // ),
                 SliverGrid.builder(
                   itemCount: controller.storePlans.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -164,7 +221,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                       ),
                     );
                   },
-                )
+                ),
               ],
             ),
           ),

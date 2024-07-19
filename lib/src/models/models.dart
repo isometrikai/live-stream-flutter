@@ -4,6 +4,7 @@ export 'coins_plans_wallet_model.dart';
 export 'config/config.dart';
 export 'config_model.dart';
 export 'create_meeting_model.dart';
+export 'gift_model.dart';
 export 'meeting_model.dart';
 export 'meta_data.dart';
 export 'my_meeting_model.dart';

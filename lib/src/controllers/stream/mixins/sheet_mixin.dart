@@ -170,4 +170,19 @@ mixin StreamSheetMixin {
       isScrollController: true,
     );
   }
+
+  void premiumStreamSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLivePremiumStreamSheet(
+        textController: _controller.premiumStreamCoinsController,
+        onTap: () {
+          if (_controller.premiumStreamCoinsController.isNotEmpty) {
+            Get.back();
+            _controller.update([IsmGoLiveView.updateId]);
+          }
+        },
+      ),
+      isScrollController: true,
+    );
+  }
 }

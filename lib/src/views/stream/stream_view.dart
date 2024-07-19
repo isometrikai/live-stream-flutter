@@ -134,6 +134,8 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.copublisherRequestsList.clear();
           controller.animationController.dispose();
           controller.giftType = 0;
+          controller.premiumStreamCoinsController.clear();
+          controller.isPremium = false;
 
           await controller.room?.dispose();
         },
@@ -331,6 +333,7 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
+            streamCoins: controller.premiumStreamCoinsController.text,
             isBattleTie: controller.pkWinnerId != null,
             winnerName: controller.findWinner(controller.pkWinnerId),
             description: controller.descriptionController.text,

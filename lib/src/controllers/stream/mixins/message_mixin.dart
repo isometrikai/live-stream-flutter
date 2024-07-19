@@ -176,7 +176,13 @@ mixin StreamMessageMixin {
       showLoading: false,
       sendMessageModel: IsmLiveSendMessageModel(
         streamId: streamId,
-        body: jsonEncode(gift),
+        body: IsmLiveGiftModel(
+          coinsValue: gift.virtualCurrency,
+          giftCategoryName: '3D',
+          giftName: gift.giftTitle,
+          giftThumbnailUrl: gift.giftAnimationImage,
+          message: gift.giftImage,
+        ).toJson(),
         searchableTags: ['gift'],
         metaData: const IsmLiveMetaData(),
         deviceId: _controller.configuration?.projectConfig.deviceId ?? '',

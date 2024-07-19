@@ -124,7 +124,7 @@ class IsmLiveStreamRepository {
           'userId': user?.userId,
           'createdBy': user?.userId,
           'streamImage': streamModel.streamImage,
-          'paymentAmount': streamModel.paymentAmount,
+          'amount': streamModel.paymentAmount,
         },
         showLoader: true,
       );
