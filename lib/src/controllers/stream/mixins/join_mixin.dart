@@ -144,6 +144,7 @@ mixin StreamJoinMixin {
         _controller.premiumStreamCoinsController.isEmpty) {
       return;
     }
+
     if (_controller.pickedImage == null) {
       final file = await _controller.cameraController?.takePicture();
       if (file != null) {

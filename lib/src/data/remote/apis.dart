@@ -41,6 +41,7 @@ class IsmLiveApis {
   static const String pkEnd = '$_live/pk/end';
   static const String pkWinner = '$_live/pk/winner';
   static const String sendHearts = '$_live/stream/like';
+  static const String buyStream = '$_live/buy/stream';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
   static const String sendGiftToStreamer = '/live/v4/giftTransfer';

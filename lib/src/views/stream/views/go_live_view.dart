@@ -26,6 +26,7 @@ class IsmGoLiveView extends StatelessWidget {
           controller.isHdBroadcast = false;
           controller.isRecordingBroadcast = false;
           controller.isSchedulingBroadcast = false;
+          controller.isPremium = false;
 
           controller.isRestreamBroadcast = false;
         },
@@ -182,14 +183,17 @@ class _StreamTypes extends StatelessWidget {
         id: IsmGoLiveView.updateId,
         builder: (controller) => Row(
           children: IsmLiveStreamTypes.values.map((e) {
-            controller.isPremium = e == IsmLiveStreamTypes.premium;
             final isSelected = controller.selectedGoLiveStream == e;
+
+            controller.isPremium =
+                controller.selectedGoLiveStream == IsmLiveStreamTypes.premium;
+
             return Expanded(
               child: IsmLiveTapHandler(
                 onTap: () {
                   controller.selectedGoLiveStream = e;
 
-                  if (controller.isPremium) {
+                  if (!controller.isPremium) {
                     controller.premiumStreamSheet();
                   }
 
@@ -211,15 +215,14 @@ class _StreamTypes extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (controller.isPremium &&
-                          controller.premiumStreamCoinsController.isEmpty)
+                      if (controller.premiumStreamCoinsController.isEmpty &&
+                          e == IsmLiveStreamTypes.premium)
                         const Icon(
                           Icons.diamond,
                           color: Colors.white,
                         ),
-                      if (controller.isPremium &&
-                          controller
-                              .premiumStreamCoinsController.isNotEmpty) ...[
+                      if (controller.premiumStreamCoinsController.isNotEmpty &&
+                          e == IsmLiveStreamTypes.premium) ...[
                         const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                         Text(
                           ' ${controller.premiumStreamCoinsController.text} coins',

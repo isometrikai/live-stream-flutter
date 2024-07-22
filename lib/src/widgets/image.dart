@@ -159,7 +159,7 @@ class _Network extends StatelessWidget {
         imageBuilder: (_, image) {
           try {
             if (imageUrl.isEmpty) {
-              _ErrorImage(
+              return _ErrorImage(
                 isProfileImage: isProfileImage,
                 name: name,
                 showError: showError,

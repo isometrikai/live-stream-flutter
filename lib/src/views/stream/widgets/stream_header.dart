@@ -15,9 +15,11 @@ class IsmLiveStreamHeader extends StatelessWidget {
     required this.isBattleTie,
     this.winnerName,
     required this.streamCoins,
+    required this.isPaidStream,
   });
 
   final String name;
+  final bool isPaidStream;
   final String? winnerName;
   final String description;
   final String imageUrl;
@@ -59,6 +61,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
             child: _LiveTimer(
               onTapModerators: onTapModerators,
               streamCoins: streamCoins,
+              isPaidStream: isPaidStream,
             ),
           ),
           IsmLiveDimens.boxHeight8,
@@ -189,8 +192,10 @@ class _LiveTimer extends StatelessWidget {
   const _LiveTimer({
     this.onTapModerators,
     required this.streamCoins,
+    required this.isPaidStream,
   });
   final String streamCoins;
+  final bool isPaidStream;
   final Function()? onTapModerators;
   @override
   Widget build(BuildContext context) => Row(
@@ -207,10 +212,12 @@ class _LiveTimer extends StatelessWidget {
               isScrollController: true,
             ),
           ),
-          IsmLiveDimens.boxWidth10,
-          IsmLiveCoins(
-            coins: streamCoins,
-          ),
+          if (isPaidStream) ...[
+            IsmLiveDimens.boxWidth10,
+            IsmLiveCoins(
+              coins: streamCoins,
+            ),
+          ]
           // IsmLiveDimens.boxWidth8,
           // GetBuilder<IsmLiveStreamController>(
           //   builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false))

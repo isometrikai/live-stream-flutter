@@ -9,7 +9,7 @@ class IsmLiveCoinBalanceModel {
   final bool? isHardLimitHit;
   final bool? isSoftLimitHit;
   final int? softLimit;
-  final int? balance;
+  final num? balance;
   final String? status;
   final String? userId;
   final String? userType;
@@ -43,7 +43,7 @@ class IsmLiveCoinBalanceModel {
     bool? isHardLimitHit,
     bool? isSoftLimitHit,
     int? softLimit,
-    int? balance,
+    num? balance,
     String? status,
     String? userId,
     String? userType,
@@ -103,7 +103,7 @@ class IsmLiveCoinBalanceModel {
             ? map['isSoftLimitHit'] as bool
             : null,
         softLimit: map['softLimit'] != null ? map['softLimit'] as int : null,
-        balance: map['balance'] != null ? map['balance'] as int : null,
+        balance: map['balance'] != null ? map['balance'] as num : null,
         status: map['status'] != null ? map['status'] as String : null,
         userId: map['userId'] != null ? map['userId'] as String : null,
         userType: map['userType'] != null ? map['userType'] as String : null,

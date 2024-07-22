@@ -672,6 +672,23 @@ class IsmLiveStreamRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> buyStream({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.buyStream}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.post,
+      showLoader: true,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
   Future<IsmLiveResponseModel> streamAnalyticsViewers({
     required String streamId,
     required int skip,

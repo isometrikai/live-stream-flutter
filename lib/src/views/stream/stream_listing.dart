@@ -102,8 +102,25 @@ class _StreamListing extends StatelessWidget {
                       (e) {
                         var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
-                          onTap: () => controller.initializeAndJoinStream(
-                              e, isCreatedByMe),
+                          onTap: () {
+                            if ((e.isPaid ?? false) &&
+                                !(e.alreadyPaid ?? false)) {
+                              controller.paidStreamSheet(
+                                  coins: e.paymentAmount ?? 0,
+                                  onTap: () async {
+                                    Get.back();
+                                    var res = await controller
+                                        .buyStream(e.streamId ?? '');
+                                    if (res) {
+                                      await controller.initializeAndJoinStream(
+                                          e, isCreatedByMe);
+                                    }
+                                  });
+                            } else {
+                              controller.initializeAndJoinStream(
+                                  e, isCreatedByMe);
+                            }
+                          },
                           child: IsmLiveStreamCard(
                             e,
                             isCreatedByMe: isCreatedByMe,
