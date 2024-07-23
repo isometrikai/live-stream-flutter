@@ -267,21 +267,20 @@ mixin StreamOngoingMixin {
 // Function to add heart message to the stream
   void addHeart(IsmLiveMessageModel message) {
     final key = ValueKey(message.messageId);
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _controller.heartList.insert(
-        0,
-        IsmLiveAnimationView(
-          key: key,
-          child: Transform.scale(
-            scale: 0.6,
-            child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
-          ),
-          onComplete: () {
-            _controller.heartList.removeWhere((e) => e.key == key);
-          },
+
+    _controller.heartList.insert(
+      0,
+      IsmLiveAnimationView(
+        key: key,
+        child: Transform.scale(
+          scale: 0.6,
+          child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
         ),
-      );
-    });
+        onComplete: () {
+          _controller.heartList.removeWhere((e) => e.key == key);
+        },
+      ),
+    );
   }
 
   // Function to add gift message to the stream
