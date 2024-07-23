@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class IsmLiveInputField extends StatelessWidget {
   const IsmLiveInputField({
@@ -28,6 +29,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.textInputAction,
     this.contentPadding,
     this.focusNode,
+    this.inputFormatters,
+    this.maxLength,
   }) : _textInputType = textInputType ?? TextInputType.text;
 
   const IsmLiveInputField.userName({
@@ -54,6 +57,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.textInputAction,
     this.contentPadding,
     this.focusNode,
+    this.inputFormatters,
+    this.maxLength,
   })  : _textInputType = TextInputType.name,
         obscureText = false;
 
@@ -82,6 +87,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.textInputAction,
     this.contentPadding,
     this.focusNode,
+    this.inputFormatters,
+    this.maxLength,
   }) : _textInputType = TextInputType.emailAddress;
 
   const IsmLiveInputField.password({
@@ -109,6 +116,8 @@ class IsmLiveInputField extends StatelessWidget {
     this.textInputAction,
     this.contentPadding,
     this.focusNode,
+    this.inputFormatters,
+    this.maxLength,
   }) : _textInputType = TextInputType.visiblePassword;
 
   final TextEditingController controller;
@@ -131,15 +140,19 @@ class IsmLiveInputField extends StatelessWidget {
   final bool? alignLabelWithHint;
   final int? minLines;
   final int? maxLines;
+  final int? maxLength;
   final double? radius;
   final TextInputAction? textInputAction;
   final EdgeInsets? contentPadding;
   final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) => Material(
         type: MaterialType.transparency,
         child: TextFormField(
+          maxLength: maxLength,
+          inputFormatters: inputFormatters,
           focusNode: focusNode,
           onFieldSubmitted: onFieldSubmit,
           maxLines: maxLines ?? 1,

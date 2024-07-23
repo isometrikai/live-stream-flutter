@@ -94,7 +94,9 @@ class IsmLiveAssetConstants {
   static const String dollar = '$_icons/dollar-circle.svg';
   static const String eye = '$_icons/eye.svg';
   static const String heartSvg = '$_icons/heart.svg';
+  static const String premiumDimond = '$_icons/premium-dimond.svg';
   static const String coinSvg = '$_icons/coin.svg';
+  static const String cash = '$_icons/cash.svg';
   static const String profileUser = '$_icons/profile-2user.svg';
   static const String vs = '$_icons/vs.svg';
   static const String gustRing = '$_icons/gustRing.svg';

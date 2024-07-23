@@ -124,7 +124,7 @@ class IsmLiveStreamRepository {
           'userId': user?.userId,
           'createdBy': user?.userId,
           'streamImage': streamModel.streamImage,
-          'paymentAmount': streamModel.paymentAmount,
+          'amount': streamModel.paymentAmount,
         },
         showLoader: true,
       );
@@ -668,6 +668,23 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.streamAnalytics}?${payload.makeQuery()}',
       baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
+  Future<IsmLiveResponseModel> buyStream({
+    required String streamId,
+  }) {
+    var payload = {
+      'streamId': streamId,
+    };
+
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.buyStream}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.post,
+      showLoader: true,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
     );
   }

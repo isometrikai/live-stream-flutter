@@ -102,6 +102,14 @@ enum IsmLivePkResponceToSend {
   final String value;
 }
 
+enum IsmLiveStreamTypes {
+  free('Free'),
+  premium('Premium');
+
+  const IsmLiveStreamTypes(this.value);
+  final String value;
+}
+
 enum IsmLiveMeetingType {
   videoCall(0),
   audioCall(1);

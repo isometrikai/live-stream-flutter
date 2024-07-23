@@ -170,4 +170,33 @@ mixin StreamSheetMixin {
       isScrollController: true,
     );
   }
+
+  void paidStreamSheet({required num coins, required Function() onTap}) async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLiveCustomButtomSheet(
+        leftLabel: 'Cancel',
+        rightLabel: 'Pay&Contineue',
+        title:
+            'This Stream is Primeum if you want to join you need to pay $coins coins',
+        onLeft: Get.back,
+        onRight: onTap,
+      ),
+      isScrollController: true,
+    );
+  }
+
+  void premiumStreamSheet() async {
+    await IsmLiveUtility.openBottomSheet(
+      IsmLivePremiumStreamSheet(
+        textController: _controller.premiumStreamCoinsController,
+        onTap: () {
+          if (_controller.premiumStreamCoinsController.isNotEmpty) {
+            Get.back();
+            _controller.update([IsmGoLiveView.updateId]);
+          }
+        },
+      ),
+      isScrollController: true,
+    );
+  }
 }

@@ -52,7 +52,7 @@ class IsmLiveStreamView extends StatelessWidget {
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
         controller: controller.pageController,
-        physics: const NeverScrollableScrollPhysics(),
+        // physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
         onPageChanged: (index) => controller.onStreamScroll(
@@ -105,6 +105,7 @@ class _IsmLiveStreamView extends StatelessWidget {
             if (isHost) {
               if (controller.isRtmp && !controller.usePersistentStreamKey) {
                 controller.rtmpSheet();
+              } else if (controller.isRtmp) {
               } else {
                 Get.find<IsmLiveStreamController>().askPublish();
               }
@@ -134,6 +135,8 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.copublisherRequestsList.clear();
           controller.animationController.dispose();
           controller.giftType = 0;
+          controller.premiumStreamCoinsController.clear();
+          controller.isPremium = false;
 
           await controller.room?.dispose();
         },
@@ -331,6 +334,7 @@ class _StreamHeader extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
           child: IsmLiveStreamHeader(
+            streamCoins: controller.premiumStreamCoinsController.text,
             isBattleTie: controller.pkWinnerId != null,
             winnerName: controller.findWinner(controller.pkWinnerId),
             description: controller.descriptionController.text,
@@ -338,6 +342,7 @@ class _StreamHeader extends StatelessWidget {
             imageUrl: controller.hostDetails?.image ?? '',
             pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
                 controller.participantTracks.length == 2,
+            isPaidStream: controller.isPremium,
             onTapModerators: () {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),

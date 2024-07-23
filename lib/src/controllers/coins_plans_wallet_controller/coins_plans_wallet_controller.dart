@@ -165,9 +165,9 @@ class CoinsPlansWalletController extends GetxController
     var res = await _coinsPlansWalletViewMode.totalWalletCoins(currency);
     if (res != null) {
       if (currency == 'coin') {
-        coinBalance = res.balance ?? 0;
+        coinBalance = res.balance?.toInt() ?? 0;
       } else {
-        balance = res.balance ?? 0;
+        balance = res.balance?.toInt() ?? 0;
       }
       update([CoinsPlansWalletView.updateId]);
     }

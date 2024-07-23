@@ -105,7 +105,11 @@ mixin StreamAPIMixin {
     return (
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
+            paymentAmount: !_controller.isPremium
+                ? 0
+                : double.parse(_controller.premiumStreamCoinsController.text),
             streamImage: image,
+            isPaid: _controller.isPremium,
             productsLinked: _controller.selectedProductsList.isNotEmpty,
             products: _controller.selectedProductsList
                 .map((e) => e.productId)
@@ -692,6 +696,11 @@ mixin StreamAPIMixin {
         .update([IsmLiveEndStream.updateId, IsmliveAnalyticsSheet.updateId]);
   }
 
+  Future<bool> buyStream(String streamId) async =>
+      await _controller._viewModel.buyStream(
+        streamId: streamId,
+      );
+
   Future<void> streamAnalyticsViewers(
       {required String streamId, int limit = 15, int skip = 0}) async {
     var list = await _controller._viewModel.streamAnalyticsViewers(
@@ -753,7 +762,7 @@ mixin StreamAPIMixin {
   Future<void> totalWalletCoins() async {
     var res = await _controller._viewModel.totalWalletCoins();
     if (res != null) {
-      _controller.giftcoinBalance = res.balance ?? 0;
+      _controller.giftcoinBalance = res.balance?.toInt() ?? 0;
     }
   }
 }

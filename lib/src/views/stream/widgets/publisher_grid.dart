@@ -102,50 +102,66 @@ class _RtmlView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
-        builder: (controller) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IsmLiveDimens.boxHeight50,
-            IsmLiveDimens.boxHeight50,
-            SizedBox(
-              height: Get.height * 0.3,
-              child: ParticipantWidget.widgetFor(
-                controller.participantTracks.first,
-                imageUrl: controller.hostDetails?.userProfileImageUrl,
-                showStatsLayer: false,
-                showFullVideo: true,
-              ),
-            ),
-            GridView.builder(
-              padding: IsmLiveDimens.edgeInsets0,
-              restorationId: '',
-              itemCount: 4,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 0.5,
-              ),
-              itemBuilder: (_, index) {
-                if (controller.participantTracks.length > index + 1) {
-                  var url = '';
-                  for (var element in controller.streamMembersList) {
-                    if (element.userId ==
-                        controller
-                            .participantList[index + 1].participant.identity) {
-                      url = element.userProfileImageUrl;
-                    }
-                  }
+        builder: (controller) {
+          IsmLiveParticipantTrack? hostScreen;
 
-                  return ParticipantWidget.widgetFor(
-                    controller.participantList[index + 1],
-                    imageUrl: url,
-                  );
-                }
-                return const NoVideoIconWidget();
-              },
-            )
-          ],
-        ),
+          for (var value in controller.participantTracks) {
+            if (value.participant.identity == controller.hostDetails?.userId) {
+              hostScreen = value;
+            }
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IsmLiveDimens.boxHeight50,
+              IsmLiveDimens.boxHeight50,
+              SizedBox(
+                height: Get.height * 0.3,
+                child: hostScreen == null
+                    ? NoVideoWidget(
+                        imageUrl: controller.hostDetails?.image ?? '',
+                        name: controller.hostDetails?.name ?? 'U',
+                      )
+                    : ParticipantWidget.widgetFor(
+                        hostScreen,
+                        imageUrl: controller.hostDetails?.userProfileImageUrl,
+                        showStatsLayer: false,
+                        showFullVideo: true,
+                      ),
+              ),
+              GridView.builder(
+                padding: IsmLiveDimens.edgeInsets0,
+                restorationId: '',
+                itemCount: 4,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 0.5,
+                ),
+                itemBuilder: (_, index) {
+                  if (controller.participantTracks.length > index &&
+                      hostScreen != controller.participantTracks[index]) {
+                    var url = '';
+                    for (var element in controller.streamMembersList) {
+                      if (element.userId ==
+                          controller
+                              .participantList[index].participant.identity) {
+                        url = element.userProfileImageUrl;
+                      }
+                    }
+
+                    return ParticipantWidget.widgetFor(
+                      controller.participantList[index],
+                      imageUrl: url,
+                    );
+                  }
+                  return const NoVideoIconWidget();
+                },
+              )
+            ],
+          );
+        },
       );
 }

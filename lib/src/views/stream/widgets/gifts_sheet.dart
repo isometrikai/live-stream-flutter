@@ -108,10 +108,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                           gift: gift!,
                           onTap: () {
                             Get.back();
-                            IsmLiveLog(
-                                '*********************---> ${gift.giftTitle}');
+
                             if (giftCategory.giftTitle == '3D') {
-                              IsmLiveLog('********************************');
                               onTap(gift);
                             }
 

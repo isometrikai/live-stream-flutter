@@ -796,6 +796,21 @@ class IsmLiveStreamViewModel {
     return null;
   }
 
+  Future<bool> buyStream({
+    required String streamId,
+  }) async {
+    try {
+      var res = await _repository.buyStream(
+        streamId: streamId,
+      );
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return false;
+  }
+
   Future<List<IsmLiveAnalyticViewerModel>> streamAnalyticsViewers({
     required String streamId,
     required int skip,

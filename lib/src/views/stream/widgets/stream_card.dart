@@ -76,6 +76,12 @@ class IsmLiveStreamCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                    if (stream.isPaid ?? false)
+                      IsmLiveCoins(
+                        coins: stream.alreadyPaid ?? false
+                            ? 'Paid'
+                            : stream.paymentAmount.toString(),
+                      ),
                     Row(
                       children: [
                         IsmLiveImage.network(
