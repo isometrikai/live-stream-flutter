@@ -136,7 +136,7 @@ class CoinsPlansWalletController extends GetxController
     await InAppPurchase.instance.completePurchase(purchaseDetails);
     if (res == null || res.statusCode != 200) return;
 
-    Future.wait([
+    await Future.wait([
       totalWalletCoins('coin'),
       totalWalletCoins('usd'),
     ]);

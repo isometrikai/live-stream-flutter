@@ -176,7 +176,7 @@ class IsmGoLiveView extends StatelessWidget {
 }
 
 class _StreamTypes extends StatelessWidget {
-  const _StreamTypes({super.key});
+  const _StreamTypes();
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
