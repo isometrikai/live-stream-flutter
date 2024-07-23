@@ -15,8 +15,7 @@ class IsmLiveCoinTransactions extends StatelessWidget {
           centerTitle: true,
           title: Text(
             'Coin Transactions',
-            style: context.textTheme.bodyLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         body: GetBuilder<CoinsPlansWalletController>(
@@ -30,8 +29,7 @@ class IsmLiveCoinTransactions extends StatelessWidget {
                 overlayColor: const WidgetStatePropertyAll(Colors.transparent),
                 controller: controller.coninTranscationTabController,
                 onTap: (index) {
-                  controller.coinTransactionType =
-                      IsmLiveCoinTransactionType.values[index];
+                  controller.coinTransactionType = IsmLiveCoinTransactionType.values[index];
 
                   if (controller.transactions.isEmpty) {
                     controller.fetchTransactions();
@@ -48,8 +46,7 @@ class IsmLiveCoinTransactions extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   controller: controller.coninTranscationTabController,
                   children: [
-                    ...IsmLiveCoinTransactionType.values
-                        .map((e) => const _CoinTransactionsListing()),
+                    ...IsmLiveCoinTransactionType.values.map((e) => const _CoinTransactionsListing()),
                   ],
                 ),
               ),
@@ -60,9 +57,7 @@ class IsmLiveCoinTransactions extends StatelessWidget {
 }
 
 class _CoinTransactionsListing extends StatelessWidget {
-  const _CoinTransactionsListing({
-    super.key,
-  });
+  const _CoinTransactionsListing();
 
   @override
   Widget build(BuildContext context) => GetBuilder<CoinsPlansWalletController>(
@@ -97,21 +92,15 @@ class _CoinTransactionsListing extends StatelessWidget {
                       leading: Container(
                         height: IsmLiveDimens.twenty,
                         width: IsmLiveDimens.twenty,
-                        color: controller.coinTransactionType.value == 2
-                            ? Colors.green
-                            : Colors.red,
+                        color: controller.coinTransactionType.value == 2 ? Colors.green : Colors.red,
                         child: Icon(
-                          controller.coinTransactionType.value == 2
-                              ? Icons.arrow_downward_sharp
-                              : Icons.arrow_upward_sharp,
+                          controller.coinTransactionType.value == 2 ? Icons.arrow_downward_sharp : Icons.arrow_upward_sharp,
                           color: Colors.white,
                           size: IsmLiveDimens.ten,
                         ),
                       ),
                       title: Text(
-                        tracsactionValue.description?.isEmpty ?? true
-                            ? 'No Discription'
-                            : tracsactionValue.description ?? '',
+                        tracsactionValue.description?.isEmpty ?? true ? 'No Discription' : tracsactionValue.description ?? '',
                         style: context.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -133,8 +122,7 @@ class _CoinTransactionsListing extends StatelessWidget {
                           IsmLiveDimens.boxWidth2,
                           Text(
                             tracsactionValue.amount?.formatWithKAndL() ?? '0',
-                            style: context.textTheme.bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                           )
                         ],
                       ),

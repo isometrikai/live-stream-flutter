@@ -16,7 +16,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (state) async {
-          Get.find<IsmLiveStreamController>()..totalWalletCoins();
+          await Get.find<IsmLiveStreamController>().totalWalletCoins();
 
           IsmLiveUtility.updateLater(() {
             pkController.getGiftCategories();
@@ -46,14 +46,12 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                   SizedBox(
                     height: IsmLiveDimens.twentyFive,
                     width: IsmLiveDimens.twentyFive,
-                    child:
-                        const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                    child: const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                   ),
                   IsmLiveDimens.boxWidth4,
                   Obx(() => Text(
                         controller.giftcoinBalance.formatWithKAndL(),
-                        style: context.textTheme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        style: context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                       )),
                 ],
               ),
@@ -87,8 +85,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
             ),
             SizedBox(
               height: Get.height * 0.4,
-              child: pkController.localGift?[controller.giftType]?.isEmpty ??
-                      true
+              child: pkController.localGift?[controller.giftType]?.isEmpty ?? true
                   ? const Center(child: Text('No data'))
                   : GridView.builder(
                       controller: pkController.giftController,
@@ -99,10 +96,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                         crossAxisCount: 3,
                       ),
                       itemBuilder: (_, index) {
-                        final gift = pkController
-                            .localGift?[controller.giftType]?[index];
-                        final giftCategory = pkController
-                            .giftCategoriesList[controller.giftType];
+                        final gift = pkController.localGift?[controller.giftType]?[index];
+                        final giftCategory = pkController.giftCategoriesList[controller.giftType];
                         return _GiftItem(
                           key: ValueKey(gift),
                           gift: gift!,
@@ -114,8 +109,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             }
 
                             pkController.sendGift(
-                                giftAnimationImage:
-                                    gift.giftAnimationImage ?? '',
+                                giftAnimationImage: gift.giftAnimationImage ?? '',
                                 giftId: gift.id ?? '',
                                 amount: gift.virtualCurrency ?? 0,
                                 giftImage: gift.giftImage ?? '',
@@ -123,8 +117,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                           },
                         );
                       },
-                      itemCount:
-                          pkController.localGift?[controller.giftType]?.length,
+                      itemCount: pkController.localGift?[controller.giftType]?.length,
                     ),
             ),
           ],
@@ -156,8 +149,7 @@ class _GiftItem extends StatelessWidget {
               SizedBox(
                 height: IsmLiveDimens.forty,
                 width: IsmLiveDimens.forty,
-                child: IsmLiveImage.network(gift.giftImage ?? '',
-                    name: gift.giftTitle ?? ''),
+                child: IsmLiveImage.network(gift.giftImage ?? '', name: gift.giftTitle ?? ''),
               ),
               IsmLiveDimens.boxHeight8,
               Row(
@@ -208,8 +200,7 @@ class CategoryType extends StatelessWidget {
             IsmLiveDimens.boxHeight5,
             Text(
               giftTitle,
-              style: context.textTheme.bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
             if (isSelected)
