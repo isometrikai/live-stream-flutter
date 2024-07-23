@@ -103,10 +103,9 @@ class _StreamListing extends StatelessWidget {
                         var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
                           onTap: () {
-                            if ((e.isPaid ?? false) &&
-                                !(e.alreadyPaid ?? false)) {
+                            if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
                               controller.paidStreamSheet(
-                                  coins: e.paymentAmount ?? 0,
+                                  coins: e.amount ?? 0,
                                   onTap: () async {
                                     Get.back();
                                     var res = await controller

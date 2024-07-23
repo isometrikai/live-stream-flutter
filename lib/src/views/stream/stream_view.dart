@@ -352,6 +352,10 @@ class _StreamHeader extends StatelessWidget {
             onTapViewers: (viewerList) {
               IsmLiveUtility.openBottomSheet(
                 GetBuilder<IsmLiveStreamController>(
+                  initState: (state) {
+                    IsmLiveUtility.updateLater(
+                        () => controller.getStreamViewer(streamId: streamId));
+                  },
                   id: IsmLiveStreamView.updateId,
                   builder: (controller) => IsmLiveListSheet(
                     scrollController: controller.viewerListController,

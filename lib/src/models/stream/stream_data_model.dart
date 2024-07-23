@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 
 class IsmLiveStreamDataModel {
   IsmLiveStreamDataModel({
+    this.amount,
+    this.isBuy,
     this.streamId,
     this.streamTitle,
     this.streamImage,
@@ -77,6 +79,7 @@ class IsmLiveStreamDataModel {
         isPaid: map['isPaid'] != null ? map['isPaid'] as bool : null,
         alreadyPaid:
             map['alreadyPaid'] != null ? map['alreadyPaid'] as bool : null,
+        isBuy: map['isBuy'] != null ? map['isBuy'] as bool : null,
         isScheduledStream: map['isScheduledStream'] != null
             ? map['isScheduledStream'] as bool
             : null,
@@ -85,6 +88,7 @@ class IsmLiveStreamDataModel {
             : null,
         country: map['country'] != null ? map['country'] as String : null,
         duration: map['duration'] != null ? map['duration'] as int : null,
+        amount: map['amount'] != null ? map['amount'] as num : null,
         streamTags:
             map['streamTags'] != null ? map['streamTags'] as String : null,
         streamTypes:
@@ -163,6 +167,8 @@ class IsmLiveStreamDataModel {
   final String? streamTypes;
   final List<dynamic>? members;
   final int? paymentAmount;
+  final num? amount;
+  final bool? isBuy;
   final int? paymentType;
   final int? viewersCount;
   final int? coinsCount;
@@ -202,6 +208,8 @@ class IsmLiveStreamDataModel {
     bool? isScheduledStream,
     String? paymentCurrencyCode,
     String? country,
+    num? amount,
+    bool? isBuy,
     int? duration,
     String? streamTags,
     String? streamTypes,
@@ -239,6 +247,8 @@ class IsmLiveStreamDataModel {
         isGroupStream: isGroupStream ?? this.isGroupStream,
         isPublicStream: isPublicStream ?? this.isPublicStream,
         userId: userId ?? this.userId,
+        amount: amount ?? this.amount,
+        isBuy: isBuy ?? this.isBuy,
         userType: userType ?? this.userType,
         audioOnly: audioOnly ?? this.audioOnly,
         isPaid: isPaid ?? this.isPaid,
@@ -285,6 +295,8 @@ class IsmLiveStreamDataModel {
         'isGroupStream': isGroupStream,
         'isPublicStream': isPublicStream,
         'userId': userId,
+        'isBuy': isBuy,
+        'amount': amount,
         'userType': userType,
         'audioOnly': audioOnly,
         'isPaid': isPaid,
@@ -323,7 +335,7 @@ class IsmLiveStreamDataModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamDataModel(streamId: $streamId, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
+      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount,isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
 
   @override
   bool operator ==(covariant IsmLiveStreamDataModel other) {
@@ -342,6 +354,8 @@ class IsmLiveStreamDataModel {
         other.userType == userType &&
         other.audioOnly == audioOnly &&
         other.isPaid == isPaid &&
+        other.amount == amount &&
+        other.isBuy == isBuy &&
         other.alreadyPaid == alreadyPaid &&
         other.isScheduledStream == isScheduledStream &&
         other.paymentCurrencyCode == paymentCurrencyCode &&
@@ -388,6 +402,8 @@ class IsmLiveStreamDataModel {
       userType.hashCode ^
       audioOnly.hashCode ^
       isPaid.hashCode ^
+      isBuy.hashCode ^
+      amount.hashCode ^
       alreadyPaid.hashCode ^
       isScheduledStream.hashCode ^
       paymentCurrencyCode.hashCode ^
