@@ -136,15 +136,18 @@ class IsmLiveMqttController extends GetxController {
     _mqttHelper.onData(_onEvent);
   }
 
-  Future<void> subscribeStream(String streamId) async {
+  Future<bool> subscribeStream(String streamId) async {
     try {
       if (!IsmLiveApp.isMqttConnected) {
         IsmLiveLog.info('MQTT is not connected, try to reconnect');
       }
       var topic = '$_topicPrefix/$streamId';
       _mqttHelper.subscribeTopic(topic);
+      return true;
     } catch (e) {
+      IsmLiveLog.info('topic has error :- $_topicPrefix/$streamId');
       IsmLiveLog.error('Subscribe Error - $e');
+      return false;
     }
   }
 

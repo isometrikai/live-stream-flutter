@@ -71,7 +71,8 @@ mixin StreamJoinMixin {
     _controller.update();
   }
 
-  Future<void> unpublishTracks() => _controller.room!.localParticipant!.unpublishAllTracks();
+  Future<void> unpublishTracks() =>
+      _controller.room!.localParticipant!.unpublishAllTracks();
 
 // Join a stream
   Future<void> joinStream(
@@ -175,41 +176,50 @@ mixin StreamJoinMixin {
   }) async {
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
-    _controller.descriptionController.text = streamDiscription ?? _controller.descriptionController.text;
+    _controller.descriptionController.text =
+        streamDiscription ?? _controller.descriptionController.text;
 
     // Subscribe to the stream
     _controller.streamId = streamId;
-    _controller.userRole = isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+    _controller.userRole =
+        isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
     } else {
       _controller.userRole?.leaveCopublishing();
     }
     _controller.update([IsmGoLiveView.updateId]);
-    unawaited(
-      _controller._mqttController?.subscribeStream(
-        streamId,
-      ),
+    bool? isSubscribe = await _controller._mqttController?.subscribeStream(
+      streamId,
     );
+
+    if (!(isSubscribe ?? true)) {
+      return;
+    }
 
     // Show appropriate message based on the user's role
     final translation = Get.context?.liveTranslations?.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {
-        message = translation?.preparingYourStream ?? IsmLiveStrings.preparingYourStream;
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
       } else {
         message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
       }
     } else if (isCopublisher) {
-      message = translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+      message =
+          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
     } else {
-      message = translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
     IsmLiveUtility.showLoader(message);
 
     try {
-      final videoQuality = hdBroadcast ? VideoParametersPresets.h720_169 : VideoParametersPresets.h540_169;
+      final videoQuality = hdBroadcast
+          ? VideoParametersPresets.h720_169
+          : VideoParametersPresets.h540_169;
       var room = Room(
         roomOptions: RoomOptions(
           defaultCameraCaptureOptions: CameraCaptureOptions(

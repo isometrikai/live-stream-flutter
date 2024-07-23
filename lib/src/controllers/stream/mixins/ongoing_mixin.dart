@@ -40,7 +40,9 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10
+                  ? 0
+                  : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false,
             ),
@@ -103,7 +105,8 @@ mixin StreamOngoingMixin {
           sortParticipants();
         })
         ..on<ParticipantDisconnectedEvent>((event) async {
-          if (_controller.participantTracks.length == 1 && _controller.isCopublisher) {
+          if (_controller.participantTracks.length == 1 &&
+              _controller.isCopublisher) {
             _controller.userRole?.leaveCopublishing();
           }
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
@@ -142,7 +145,8 @@ mixin StreamOngoingMixin {
     }
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    final localParticipantTracks = room.localParticipant?.videoTrackPublications;
+    final localParticipantTracks =
+        room.localParticipant?.videoTrackPublications;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(
@@ -227,12 +231,14 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add viewers to the stream
-  Future<void> addViewers(List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
+  Future<void> addViewers(
+      List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
     if (isFirstCall) {
       _controller.streamViewersList.clear();
     }
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList =
+        _controller.streamViewersList.toSet().toList();
   }
 
 // Function to add messages to the stream
@@ -240,16 +246,19 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats =
+        messages.map((e) => _controller.convertMessageToChat(e)).toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList =
+        _controller.streamMessagesList.toSet().toList();
     await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent + IsmLiveDimens.hundred,
+      _controller.messagesListController.position.maxScrollExtent +
+          IsmLiveDimens.hundred,
       duration: const Duration(milliseconds: 10),
       curve: Curves.ease,
     );
@@ -289,7 +298,9 @@ mixin StreamOngoingMixin {
     }
     final key = ValueKey(message.messageId);
     final gift = message.customType!.path;
-    final child = gift.endsWith('gif') ? IsmLiveGif(path: gift) : IsmLiveImage.asset(gift);
+    final child = gift.endsWith('gif')
+        ? IsmLiveGif(path: gift)
+        : IsmLiveImage.asset(gift);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(
@@ -314,7 +325,8 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.remoteParticipants.values.isEmpty || room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
+    if (room.remoteParticipants.values.isEmpty ||
+        room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
       return;
     }
 
@@ -322,11 +334,19 @@ mixin StreamOngoingMixin {
     try {
       if (_controller.speakerOn) {
         for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.enable());
+          unawaited(room.remoteParticipants.values
+              .elementAt(i)
+              .audioTrackPublications
+              .first
+              .enable());
         }
       } else {
         for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.disable());
+          unawaited(room.remoteParticipants.values
+              .elementAt(i)
+              .audioTrackPublications
+              .first
+              .disable());
         }
       }
     } catch (e) {
@@ -446,7 +466,8 @@ mixin StreamOngoingMixin {
   void enableScreenShare() async {
     try {
       IsmLiveUtility.showLoader();
-      if (_controller.room == null || _controller.room!.localParticipant == null) {
+      if (_controller.room == null ||
+          _controller.room!.localParticipant == null) {
         return;
       }
 
@@ -524,9 +545,11 @@ mixin StreamOngoingMixin {
     if (isHost) {
       isEnded = await _controller.stopStream(streamId);
     } else if (_controller.isCopublisher) {
-      isEnded = await _controller.leaveMember(streamId: streamId);
+      await _controller.leaveMember(streamId: streamId);
+      isEnded = true;
     } else {
-      isEnded = await _controller.leaveStream(streamId);
+      await _controller.leaveStream(streamId);
+      isEnded = true;
     }
     if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
@@ -546,7 +569,8 @@ mixin StreamOngoingMixin {
 
       _controller.memberStatus = IsmLiveMemberStatus.notMember;
 
-      await _controller.getRTCToken(_controller.streamId ?? '', showLoader: false);
+      await _controller.getRTCToken(_controller.streamId ?? '',
+          showLoader: false);
 
       await _controller.sortParticipants();
     }
@@ -556,7 +580,8 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom() async {
-    unawaited(_controller._mqttController?.unsubscribeStream(_controller.streamId!));
+    unawaited(
+        _controller._mqttController?.unsubscribeStream(_controller.streamId!));
 
     _controller.userRole = null;
     _controller.streamId = null;
