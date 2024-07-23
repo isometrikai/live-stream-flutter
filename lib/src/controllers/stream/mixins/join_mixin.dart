@@ -120,6 +120,11 @@ mixin StreamJoinMixin {
     }
 
     _controller.isRtmp = stream.rtmpIngest ?? false;
+    _controller.isPremium = stream.isPaid ?? false;
+    if (_controller.isPremium) {
+      _controller.premiumStreamCoinsController.text = stream.amount.toString();
+    }
+
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 

@@ -211,6 +211,7 @@ mixin StreamAPIMixin {
       skip: skip,
     );
     await _controller.addViewers(res, skip == 0);
+    _controller.update([IsmLiveStreamView.updateId]);
   }
 
 // Fetches messages related to a live stream.
