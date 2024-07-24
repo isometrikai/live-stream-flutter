@@ -533,14 +533,12 @@ mixin StreamOngoingMixin {
     required int index,
     required Room room,
   }) async {
-    IsmLiveUtility.showLoader();
     final didLeft = await disconnectStream(
       isHost: false,
       streamId: _controller.streamId ?? '',
       goBack: false,
     );
     if (!didLeft) {
-      IsmLiveUtility.closeLoader();
       IsmLiveLog.error('Cannot leave stream');
       await _controller.animateToPage(_controller.previousStreamIndex);
       return;
@@ -551,7 +549,6 @@ mixin StreamOngoingMixin {
       joinByScrolling: true,
     );
     _controller.previousStreamIndex = index;
-    IsmLiveUtility.closeLoader();
   }
 
   bool isStopStreamCall = false;
@@ -569,13 +566,15 @@ mixin StreamOngoingMixin {
     var isEnded = false;
 
     if (isHost) {
-      isEnded = await _controller.stopStream(
-          streamId, _controller.user?.userId ?? '');
+      await _controller.stopStream(streamId, _controller.user?.userId ?? '');
+      isEnded = true;
     } else if (_controller.isCopublisher ||
         (_controller.userRole?.isPkGuest ?? false)) {
-      isEnded = await _controller.leaveMember(streamId: streamId);
+      await _controller.leaveMember(streamId: streamId);
+      isEnded = true;
     } else {
-      isEnded = await _controller.leaveStream(streamId);
+      await _controller.leaveStream(streamId);
+      isEnded = true;
     }
     if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
