@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -35,13 +36,16 @@ class InAppManager {
             IsmLiveUtility.showLoader();
             break;
           case PurchaseStatus.purchased:
+            IsmLiveUtility.closeDialog();
             _onPurchase?.call(purchase);
             _onPurchase = null;
             break;
           case PurchaseStatus.error:
             InAppPurchase.instance.completePurchase(purchase);
+            IsmLiveUtility.closeDialog();
             IsmLiveUtility.showAlertDialog(
-                message: purchase.error?.message ?? '');
+              message: purchase.error?.message ?? '',
+            );
             break;
           case PurchaseStatus.restored:
             break;

@@ -231,7 +231,8 @@ class IsmLiveUtility {
 
   /// Close any open dialog.
   static void closeDialog() {
-    if (Get.isDialogOpen ?? false) Get.back<void>();
+    if (Get.isDialogOpen != true) return;
+    Get.back<void>();
   }
 
   /// Close any open snackbar

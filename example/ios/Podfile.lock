@@ -53,9 +53,9 @@ PODS:
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
-  - flutter_webrtc (0.9.36):
+  - flutter_webrtc (0.11.3):
     - Flutter
-    - WebRTC-SDK (= 114.5735.10)
+    - WebRTC-SDK (= 125.6422.04)
   - image_cropper (0.0.4):
     - Flutter
     - TOCropViewController (~> 2.7.4)
@@ -66,9 +66,9 @@ PODS:
     - FlutterMacOS
   - integration_test (0.0.1):
     - Flutter
-  - livekit_client (2.2.0):
+  - livekit_client (2.2.2):
     - Flutter
-    - WebRTC-SDK (= 114.5735.10)
+    - WebRTC-SDK (= 125.6422.04)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -76,9 +76,9 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
-  - SDWebImage (5.19.2):
-    - SDWebImage/Core (= 5.19.2)
-  - SDWebImage/Core (5.19.2)
+  - SDWebImage (5.19.4):
+    - SDWebImage/Core (= 5.19.4)
+  - SDWebImage/Core (5.19.4)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -89,7 +89,7 @@ PODS:
   - TOCropViewController (2.7.4)
   - wakelock_plus (0.0.1):
     - Flutter
-  - WebRTC-SDK (114.5735.10)
+  - WebRTC-SDK (125.6422.04)
 
 DEPENDENCIES:
   - appscrip_live_stream_component (from `.symlinks/plugins/appscrip_live_stream_component/ios`)
@@ -173,7 +173,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   appscrip_live_stream_component: 6a43f94aeedef0f36f9424c8f2f5c86f101c1c64
-  camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
+  camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
   CryptoSwift: c63a805d8bb5e5538e88af4e44bb537776af11ea
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
@@ -185,23 +185,23 @@ SPEC CHECKSUMS:
   flutter_callkit_incoming: 417dd1b46541cdd5d855ad795ccbe97d1c18155e
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  flutter_webrtc: b33475c3a57d59ff05bf87b4f5d3feceac63f291
+  flutter_webrtc: 75b868e4f9e817c7a9a42ca4b6169063de4eec9f
   image_cropper: 37d40f62177c101ff4c164906d259ea2c3aa70cf
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   in_app_purchase_storekit: 8c3b0b3eb1b0f04efbff401c3de6266d4258d433
   integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
-  livekit_client: 2b3f5185f95d46d62d3570bf981f3d98ad3051e2
+  livekit_client: c767049a635d5b6d43de3273dca3c439b8a6e970
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
+  SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
-  WebRTC-SDK: 8c0edd05b880a39648118192c252667ea06dea51
+  WebRTC-SDK: c3d69a87e7185fad3568f6f3cff7c9ac5890acf3
 
-PODFILE CHECKSUM: f9420bd595da8fbce156b547dcd3368afc5226ff
+PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
 
 COCOAPODS: 1.15.2

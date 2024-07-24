@@ -18,15 +18,15 @@ class CoinsPlansWalletRepository {
       );
 
   ///  for request to purchase the coins plans ...
-  Future<IsmLiveResponseModel> purchaseCoinsPlans({
-    required Map<String, dynamic> data,
-  }) async =>
+  Future<IsmLiveResponseModel> purchaseCoinsPlans(
+          {required Map<String, dynamic> data, required}) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.purchaseCoinsPlans,
         baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: data,
+        showLoader: true,
       );
 
   Future<IsmLiveResponseModel> totalWalletCoins(String currency) {

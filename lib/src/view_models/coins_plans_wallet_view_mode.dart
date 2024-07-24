@@ -12,7 +12,8 @@ class CoinsPlansWalletViewMode {
   }) async {
     try {
       final res = await _coinsPlansWalletRepository.getCoinsPlans(
-          showLoader: showLoader);
+        showLoader: showLoader,
+      );
       if (res.hasError) return const CoinPlansModel();
       return coinsPlansWalletModelFromJson(res.data);
     } catch (e, st) {

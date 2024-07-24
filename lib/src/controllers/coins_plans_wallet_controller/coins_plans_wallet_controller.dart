@@ -16,20 +16,12 @@ class CoinsPlansWalletController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    coninTranscationTabController = TabController(
-      vsync: this,
-      length: IsmLiveCoinTransactionType.values.length,
-    );
-
-    IsmLiveUtility.updateLater(
-      () {
-        totalWalletCoins('coin');
-        totalWalletCoins('usd');
-        getCoinsPlans();
-      },
-    );
-
-    for (var type in IsmLiveCoinTransactionType.values) {
+    IsmLiveUtility.updateLater(() {
+      totalWalletCoins('coin');
+      totalWalletCoins('usd');
+      getCoinsPlans();
+    });
+    for (final type in IsmLiveCoinTransactionType.values) {
       _refreshControllers[type] = RefreshController();
       _transactions[type] = [];
     }
@@ -73,7 +65,10 @@ class CoinsPlansWalletController extends GetxController
   /// get the plans from the store and store in this..
   final storePlans = <ProductDetails>[];
 
-  late TabController coninTranscationTabController;
+  late final coninTranscationTabController = TabController(
+    vsync: this,
+    length: IsmLiveCoinTransactionType.values.length,
+  );
 
   int coinBalance = 0;
   int balance = 0;
@@ -98,7 +93,6 @@ class CoinsPlansWalletController extends GetxController
     apiPlans.removeWhere((apiPlan) =>
         !storePlans.map((e) => e.id).contains(apiPlan.platformPlanId));
     apiPlans.sort((a, b) => a.baseCurrencyValue.compareTo(b.baseCurrencyValue));
-
     update([CoinsPlansWalletView.updateId]);
   }
 
@@ -124,7 +118,7 @@ class CoinsPlansWalletController extends GetxController
       purchaseToken = purchaseDetails.verificationData.serverVerificationData;
     }
     final data = {
-      'planId': apiPlan.id,
+      'planId': GetPlatform.isAndroid ? apiPlan.id : apiPlan.planId,
       'transactionId': purchaseDetails.purchaseID,
       'deviceType': deviceType,
       'packageName': packageInfo.packageName,
@@ -133,13 +127,14 @@ class CoinsPlansWalletController extends GetxController
     };
     data.removeWhere((key, value) => value == null || value.isEmpty);
     final res = await _coinsPlansWalletViewMode.purchaseCoinsPlans(data: data);
-    await InAppPurchase.instance.completePurchase(purchaseDetails);
+    try {
+      await InAppPurchase.instance.completePurchase(purchaseDetails);
+    } catch (_) {
+      debugPrint('Complete Purchase Error :- $_');
+    }
     if (res == null || res.statusCode != 200) return;
-
-    await Future.wait([
-      totalWalletCoins('coin'),
-      totalWalletCoins('usd'),
-    ]);
+    unawaited(totalWalletCoins('coin'));
+    unawaited(totalWalletCoins('usd'));
   }
 
   void onTapBuyPlan({
@@ -162,7 +157,7 @@ class CoinsPlansWalletController extends GetxController
   }
 
   Future<void> totalWalletCoins(String currency) async {
-    var res = await _coinsPlansWalletViewMode.totalWalletCoins(currency);
+    final res = await _coinsPlansWalletViewMode.totalWalletCoins(currency);
     if (res != null) {
       if (currency == 'coin') {
         coinBalance = res.balance?.toInt() ?? 0;
