@@ -52,16 +52,18 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
     animation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: controller,
-        curve: Curves.ease,
-      )..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            widget.onComplete?.call();
-          }
-        }),
-    );
+    ).animate(CurvedAnimation(
+      parent: controller,
+      curve: Curves.ease,
+    ))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          IsmLiveLog.error('Animation completed');
+          widget.onComplete?.call();
+        } else if (status == AnimationStatus.dismissed) {
+          IsmLiveLog.error('Animation Dismissed');
+        }
+      });
     IsmLiveUtility.updateLater(start, false);
   }
 
