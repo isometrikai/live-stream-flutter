@@ -181,13 +181,14 @@ class CoinsPlansWalletView extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              IsmLiveDimens.boxHeight10,
                               Text(
                                 '${_apiPlan.numberOfUnits} Coins',
                                 style: IsmLiveStyles.black16.copyWith(
                                   fontSize: IsmLiveDimens.twelve,
                                 ),
                               ),
-                              IsmLiveDimens.boxHeight10,
+                              IsmLiveDimens.boxHeight32,
                               SvgPicture.asset(IsmLiveAssetConstants.coinSvg),
                               Text(
                                 _storePlan.price,
@@ -197,24 +198,24 @@ class CoinsPlansWalletView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveDimens.boxHeight10,
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: IsmLiveColors.white,
-                                  borderRadius: BorderRadius.circular(
-                                      IsmLiveDimens.eight),
-                                  border: Border.all(
-                                    color: const Color(0xffE4E4F7),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Plan ${index + 1}',
-                                    style: IsmLiveStyles.black16.copyWith(
-                                        fontSize: IsmLiveDimens.twelve),
-                                  ),
-                                ),
-                              ),
+                              // DecoratedBox(
+                              //   decoration: BoxDecoration(
+                              //     color: IsmLiveColors.white,
+                              //     borderRadius: BorderRadius.circular(
+                              //         IsmLiveDimens.eight),
+                              //     border: Border.all(
+                              //       color: const Color(0xffE4E4F7),
+                              //     ),
+                              //   ),
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(8.0),
+                              //     child: Text(
+                              //       'Plan ${index + 1}',
+                              //       style: IsmLiveStyles.black16.copyWith(
+                              //           fontSize: IsmLiveDimens.twelve),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),

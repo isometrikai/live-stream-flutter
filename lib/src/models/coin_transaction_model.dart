@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
+
 class IsmLiveCoinTransactionModel {
   final num? amount;
   final num? closingBalance;
@@ -115,6 +117,14 @@ class IsmLiveCoinTransactionModel {
         accountId: map['accountId'] != null ? map['accountId'] as String : null,
         projectId: map['projectId'] != null ? map['projectId'] as String : null,
       );
+
+  String get formattedDuration {
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(
+        txnTimeStamp?.toInt() ?? 0,
+        isUtc: true);
+
+    return DateFormat('yyyy MMMM dd, h:mm a').format(dateTime);
+  }
 
   String toJson() => json.encode(toMap());
 
