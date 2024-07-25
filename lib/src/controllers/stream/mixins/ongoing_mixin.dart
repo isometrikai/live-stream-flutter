@@ -537,12 +537,14 @@ mixin StreamOngoingMixin {
       isHost: false,
       streamId: _controller.streamId ?? '',
       goBack: false,
+      endStream: _controller.streamId?.isNotEmpty ?? false,
     );
     if (!didLeft) {
       IsmLiveLog.error('Cannot leave stream');
       await _controller.animateToPage(_controller.previousStreamIndex);
       return;
     }
+
     await _controller.joinStream(
       _controller.streams[index],
       false,
@@ -573,9 +575,10 @@ mixin StreamOngoingMixin {
       await _controller.leaveMember(streamId: streamId);
       isEnded = true;
     } else {
-      await _controller.leaveStream(streamId);
+      endStream = await _controller.leaveStream(streamId);
       isEnded = true;
     }
+
     if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
@@ -596,11 +599,17 @@ mixin StreamOngoingMixin {
 
       await _controller.getRTCToken(_controller.streamId ?? '',
           showLoader: false);
-
       await _controller.sortParticipants();
     }
+
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;
+
+    if (goBack && !endStream) {
+      unawaited(_controller.getStreams());
+      closeStreamView(isHost, streamId: streamId);
+    }
+
     return isEnded;
   }
 
@@ -616,7 +625,7 @@ mixin StreamOngoingMixin {
     _controller._streamTimer = null;
 
     try {
-      await _controller.room!.disconnect();
+      await _controller.room?.disconnect();
     } catch (e) {
       IsmLiveLog('room not disconnected $e');
     }

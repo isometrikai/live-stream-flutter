@@ -52,9 +52,9 @@ class IsmLivePublisherGrid extends StatelessWidget {
                                 controller.participantTracks.length < 3 ? 2 : 3,
                             childAspectRatio:
                                 controller.participantTracks.length < 3
-                                    ? (Get.width / 2) / (Get.height * 0.3)
+                                    ? (Get.width / 2) / (Get.height * 0.4)
                                     : controller.participantTracks.length < 7
-                                        ? (Get.width / 3) / (Get.height * 0.2)
+                                        ? (Get.width / 3) / (Get.height * 0.3)
                                         : 1,
                           ),
                           itemBuilder: (_, index) {

@@ -43,8 +43,8 @@ class IsmLiveStreamView extends StatelessWidget {
     }
     return GetX<IsmLiveStreamController>(
       initState: (_) {
+        var controller = Get.find<IsmLiveStreamController>();
         IsmLiveUtility.updateLater(() {
-          var controller = Get.find<IsmLiveStreamController>();
           controller.previousStreamIndex =
               controller.pageController?.page?.toInt() ?? 0;
         });
@@ -55,6 +55,7 @@ class IsmLiveStreamView extends StatelessWidget {
         // physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
+        allowImplicitScrolling: true,
         onPageChanged: (index) => controller.onStreamScroll(
           index: index,
           room: room,
@@ -113,7 +114,6 @@ class _IsmLiveStreamView extends StatelessWidget {
           });
         },
         dispose: (_) async {
-          IsmLiveLog('-----------------> stream view dispose');
           await WakelockPlus.disable();
           var controller = Get.find<IsmLiveStreamController>();
           var pkcontroller = Get.find<IsmLivePkController>();
@@ -134,12 +134,13 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-          controller.animationController.dispose();
+
           controller.giftType = 0;
           controller.premiumStreamCoinsController.clear();
           controller.isPremium = false;
 
           await controller.room?.dispose();
+          controller.disposeAnimationController();
         },
         builder: (controller) => PopScope(
           canPop: false,

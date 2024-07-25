@@ -345,6 +345,14 @@ class IsmLiveStreamController extends GetxController
     alignmentAnimationRight = alignmentTweenRight.animate(animationController);
   }
 
+  void disposeAnimationController() {
+    try {
+      animationController.dispose();
+    } catch (e) {
+      IsmLiveLog('already is dispose');
+    }
+  }
+
   // Pagination method
   void pagination(String streamId) {
     viewerListController.addListener(() async {
