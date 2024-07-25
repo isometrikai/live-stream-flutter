@@ -605,7 +605,7 @@ mixin StreamOngoingMixin {
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;
 
-    if (goBack && !endStream) {
+    if (goBack && !endStream && !_controller.isCopublisher) {
       unawaited(_controller.getStreams());
       closeStreamView(isHost, streamId: streamId);
     }
