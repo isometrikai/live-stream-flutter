@@ -39,7 +39,7 @@ class IsmLiveStreamRepository {
   }
 
   // Future<IsmLiveResponseModel> getStreams({
-  //   required IsmLiveStreamQueryModel queryModel,
+  // required IsmLiveStreamQueryModel queryModel,
   // }) =>
   //     _apiWrapper.makeRequest(
   //       '${IsmLiveApis.getStreams}?${queryModel.toMap().makeQuery()}',
@@ -84,6 +84,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.delete,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: true,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> createStream(
@@ -143,6 +144,7 @@ class IsmLiveStreamRepository {
           'isometrikUserId': isometrikUserId,
         },
         showLoader: true,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> getPresignedUrl({
@@ -380,6 +382,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+      showDialog: false,
     );
   }
 
@@ -514,6 +517,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
+      showDialog: false,
     );
   }
 
