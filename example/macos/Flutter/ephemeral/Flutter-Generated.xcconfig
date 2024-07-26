@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\Users\mdtar\OneDrive\Documents\development\flutter_windows_3.19.0-stable\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\mdtar\Documents\appscrip_projects\flutter_livekit_call\example
+FLUTTER_ROOT=/Users/jatinappscrip/Documents/flutter
+FLUTTER_APPLICATION_PATH=/Users/jatinappscrip/Documents/Projects/flutter_livekit_call/example
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.2

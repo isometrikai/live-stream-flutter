@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mqtt_helper/mqtt_helper.dart';
 
 part 'live_data.dart';
 
@@ -21,8 +22,7 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) =>
-      IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
 
@@ -79,8 +79,7 @@ class IsmLiveApp extends StatelessWidget {
     Alignment? endStreamPosition,
     List<IsmLiveStreamOption>? controlIcons,
   }) {
-    assert(_initialized,
-        'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
+    assert(_initialized, 'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
@@ -93,7 +92,7 @@ class IsmLiveApp extends StatelessWidget {
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
 
-  static void handleMqttEvent(DynamicMap payload) {
+  static void handleMqttEvent(EventModel payload) {
     assert(
       _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
@@ -130,13 +129,11 @@ class IsmLiveApp extends StatelessWidget {
 
   static VoidCallback? get onStreamEnd => IsmLiveDelegate.onStreamEnd;
 
-  static set onStreamEnd(VoidCallback? callback) =>
-      IsmLiveDelegate.onStreamEnd = callback;
+  static set onStreamEnd(VoidCallback? callback) => IsmLiveDelegate.onStreamEnd = callback;
 
   static IsmLiveHeaderBuilder? get streamHeader => IsmLiveDelegate.streamHeader;
 
-  static IsmLiveHeaderBuilder? get bottomBuilder =>
-      IsmLiveDelegate.bottomBuilder;
+  static IsmLiveHeaderBuilder? get bottomBuilder => IsmLiveDelegate.bottomBuilder;
 
   static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
 
