@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mqtt_helper/mqtt_helper.dart';
 
 part 'live_data.dart';
 
@@ -89,7 +90,7 @@ class IsmLiveApp extends StatelessWidget {
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
 
-  static void handleMqttEvent(DynamicMap payload) {
+  static void handleMqttEvent(EventModel payload) {
     assert(
       _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
