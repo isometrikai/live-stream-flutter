@@ -120,8 +120,8 @@ class IsmLiveCoinTransactionModel {
 
   String get formattedDuration {
     var dateTime = DateTime.fromMillisecondsSinceEpoch(
-        txnTimeStamp?.toInt() ?? 0,
-        isUtc: true);
+      txnTimeStamp?.toInt() ?? 0,
+    );
 
     return DateFormat('yyyy MMMM dd, h:mm a').format(dateTime);
   }

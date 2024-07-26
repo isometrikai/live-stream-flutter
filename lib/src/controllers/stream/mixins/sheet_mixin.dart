@@ -131,8 +131,8 @@ mixin StreamSheetMixin {
             if (token == null) {
               return;
             }
-            // await _controller.room!.disconnect();
-            await _controller.room!.dispose();
+            await _controller.room!.disconnect();
+            // await _controller.room!.dispose();
 
             await _controller.connectStream(
               token: token,

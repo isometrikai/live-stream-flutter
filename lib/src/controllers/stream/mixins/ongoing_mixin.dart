@@ -57,7 +57,7 @@ mixin StreamOngoingMixin {
     // Sort participants and update UI
     await sortParticipants();
     // Toggle speaker if on mobile platform
-    if (lkPlatformIsMobile()) {
+    if (lk.lkPlatformIsMobile()) {
       unawaited(_controller.toggleSpeaker(value: true));
     }
     // Update stream view
@@ -97,38 +97,38 @@ mixin StreamOngoingMixin {
     required bool isHost,
   }) async =>
       _controller.listener
-        ?..on<RoomDisconnectedEvent>((event) async {
+        ?..on<lk.RoomDisconnectedEvent>((event) async {
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
         })
-        ..on<ParticipantEvent>((event) {
+        ..on<lk.ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
           sortParticipants();
         })
-        ..on<ParticipantConnectedEvent>((event) {
+        ..on<lk.ParticipantConnectedEvent>((event) {
           IsmLiveLog.info('ParticipantConnectedEvent: $event');
           sortParticipants();
         })
-        ..on<ParticipantDisconnectedEvent>((event) async {
-          if (_controller.participantTracks.length == 1 &&
-              _controller.isCopublisher) {
-            _controller.userRole?.leaveCopublishing();
-          }
+        ..on<lk.ParticipantDisconnectedEvent>((event) async {
+          // if (_controller.participantTracks.length == 1 &&
+          //     _controller.isCopublisher) {
+          //   _controller.userRole?.leaveCopublishing();
+          // }
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
         })
-        ..on<RoomRecordingStatusChanged>((event) {})
-        ..on<LocalTrackPublishedEvent>((_) => sortParticipants())
-        ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants())
-        ..on<TrackE2EEStateEvent>((event) {
+        ..on<lk.RoomRecordingStatusChanged>((event) {})
+        ..on<lk.LocalTrackPublishedEvent>((_) => sortParticipants())
+        ..on<lk.LocalTrackUnpublishedEvent>((_) => sortParticipants())
+        ..on<lk.TrackE2EEStateEvent>((event) {
           IsmLiveLog.info('TrackE2EEStateEvent: $event');
         })
-        ..on<ParticipantNameUpdatedEvent>((event) {
+        ..on<lk.ParticipantNameUpdatedEvent>((event) {
           IsmLiveLog.info('ParticipantNameUpdatedEvent: $event');
           sortParticipants();
         })
-        ..on<DataReceivedEvent>((event) {
+        ..on<lk.DataReceivedEvent>((event) {
           IsmLiveLog.info('DataReceivedEvent: ${event.topic} $event');
         })
-        ..on<AudioPlaybackStatusChanged>((event) async {
+        ..on<lk.AudioPlaybackStatusChanged>((event) async {
           IsmLiveLog.info('DataReceivedEvent: ${event.isPlaying} $event');
           if (_controller.room == null) {
             return;
@@ -531,7 +531,7 @@ mixin StreamOngoingMixin {
 
   void onStreamScroll({
     required int index,
-    required Room room,
+    // required Room room,
   }) async {
     final didLeft = await disconnectStream(
       isHost: false,
@@ -568,8 +568,8 @@ mixin StreamOngoingMixin {
     var isEnded = false;
 
     if (isHost) {
-      await _controller.stopStream(streamId, _controller.user?.userId ?? '');
       isEnded = true;
+      await _controller.stopStream(streamId, _controller.user?.userId ?? '');
     } else if (_controller.isCopublisher ||
         (_controller.userRole?.isPkGuest ?? false)) {
       await _controller.leaveMember(streamId: streamId);
@@ -625,9 +625,16 @@ mixin StreamOngoingMixin {
     _controller._streamTimer = null;
 
     try {
-      await _controller.room?.disconnect();
-    } catch (e) {
-      IsmLiveLog('room not disconnected $e');
+      if (!(_controller.room?.isDisposed ?? true)) {
+        await _controller.room?.dispose();
+      }
+
+      if (_controller.room?.connectionState !=
+          lk.ConnectionState.disconnected) {
+        await _controller.room?.disconnect();
+      }
+    } catch (e, st) {
+      IsmLiveLog('---------------->  $e , $st');
     }
   }
 

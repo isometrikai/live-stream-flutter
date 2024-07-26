@@ -109,6 +109,7 @@ class IsmGoLiveView extends StatelessWidget {
                         IsmLiveDimens.boxWidth10,
                         Expanded(
                           child: IsmLiveInputField(
+                            focusNode: FocusNode(),
                             hintStyle: IsmLiveStyles.white16,
                             minLines: 3,
                             maxLines: 3,

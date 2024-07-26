@@ -574,19 +574,16 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.streamStarted:
           break;
         case IsmLiveActions.streamStopped:
-          IsmLiveLog('is host mqt -- ${_streamController.isHost}');
-          if (!_streamController.isHost) {
-            final initiatorId = payload['initiatorId'] as String?;
-            if (Get.isDialogOpen ?? false) {
-              await Future.delayed(const Duration(milliseconds: 300));
-            }
-            _streamController.streams
-                .removeWhere((e) => e.streamId == streamId);
-            if (initiatorId != userId) {
-              _streamController.closeStreamView(false, fromMqtt: true);
-            }
-            _updateStreamListing();
+          final initiatorId = payload['initiatorId'] as String?;
+          if (Get.isDialogOpen ?? false) {
+            await Future.delayed(const Duration(milliseconds: 300));
           }
+          _streamController.streams.removeWhere((e) => e.streamId == streamId);
+          if (initiatorId != userId) {
+            _streamController.closeStreamView(false, fromMqtt: true);
+          }
+          _updateStreamListing();
+
           break;
         case IsmLiveActions.viewerJoined:
           if (streamId == _streamController.streamId) {
