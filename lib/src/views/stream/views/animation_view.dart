@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/widgets.dart';
@@ -21,8 +20,7 @@ class IsmLiveAnimationView extends StatefulWidget {
   State<IsmLiveAnimationView> createState() => _IsmLiveAnimationViewState();
 }
 
-class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
-    with SingleTickerProviderStateMixin {
+class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<double> animation;
 
@@ -34,10 +32,7 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
 
   Timer? timer;
 
-  int get duration =>
-      widget.duration ??
-      streamProperties?.animationTime ??
-      IsmLiveConstants.animationTime;
+  int get duration => widget.duration ?? streamProperties?.animationTime ?? IsmLiveConstants.animationTime;
 
   late DateTime startTime;
 
@@ -69,8 +64,7 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
 
   void setup() {
     startTime = DateTime.now();
-    streamProperties =
-        context.liveProperties?.streamProperties?.counterProperties;
+    streamProperties = context.liveProperties?.streamProperties?.counterProperties;
   }
 
   void start() async {
