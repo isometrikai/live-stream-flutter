@@ -41,11 +41,11 @@ mixin StreamJoinMixin {
     if (_controller.room == null) {
       return;
     }
-    VideoParameters? videoFilter;
+    lk.VideoParameters? videoFilter;
     if (_controller.isRestreamBroadcast) {
-      videoFilter = const VideoParameters(
-        dimensions: VideoDimensions(480, 640),
-        encoding: VideoEncoding(
+      videoFilter = const lk.VideoParameters(
+        dimensions: lk.VideoDimensions(480, 640),
+        encoding: lk.VideoEncoding(
           maxFramerate: 30,
           maxBitrate: 2500000,
         ),
@@ -53,12 +53,12 @@ mixin StreamJoinMixin {
     }
 
     final tracks = await Future.wait([
-      LocalVideoTrack.createCameraTrack(CameraCaptureOptions(
-          params: videoFilter ?? VideoParametersPresets.h720_169)),
-      LocalAudioTrack.create(),
+      lk.LocalVideoTrack.createCameraTrack(lk.CameraCaptureOptions(
+          params: videoFilter ?? lk.VideoParametersPresets.h720_169)),
+      lk.LocalAudioTrack.create(),
     ]);
-    var localVideo = tracks[0] as LocalVideoTrack;
-    var localAudio = tracks[1] as LocalAudioTrack;
+    var localVideo = tracks[0] as lk.LocalVideoTrack;
+    var localAudio = tracks[1] as lk.LocalAudioTrack;
 
     await Future.wait<dynamic>([
       _controller.room!.localParticipant!.publishVideoTrack(localVideo),
@@ -260,31 +260,31 @@ mixin StreamJoinMixin {
 
     try {
       final videoQuality = hdBroadcast || restream
-          ? const VideoParameters(
-              dimensions: VideoDimensions(480, 640),
-              encoding: VideoEncoding(
+          ? const lk.VideoParameters(
+              dimensions: lk.VideoDimensions(480, 640),
+              encoding: lk.VideoEncoding(
                 maxFramerate: 30,
                 maxBitrate: 2500000,
               ),
             )
-          : VideoParametersPresets.h540_169;
-      var room = Room(
-        roomOptions: RoomOptions(
-          defaultCameraCaptureOptions: CameraCaptureOptions(
-            cameraPosition: CameraPosition.front,
+          : lk.VideoParametersPresets.h540_169;
+      var room = lk.Room(
+        roomOptions: lk.RoomOptions(
+          defaultCameraCaptureOptions: lk.CameraCaptureOptions(
+            cameraPosition: lk.CameraPosition.front,
             params: videoQuality,
           ),
-          defaultAudioCaptureOptions: const AudioCaptureOptions(
+          defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
             noiseSuppression: true,
             echoCancellation: true,
             autoGainControl: true,
             highPassFilter: true,
             typingNoiseDetection: true,
           ),
-          defaultVideoPublishOptions: VideoPublishOptions(
+          defaultVideoPublishOptions: lk.VideoPublishOptions(
             videoEncoding: videoQuality.encoding,
           ),
-          defaultAudioPublishOptions: const AudioPublishOptions(
+          defaultAudioPublishOptions: const lk.AudioPublishOptions(
             dtx: true,
           ),
         ),
@@ -311,7 +311,7 @@ mixin StreamJoinMixin {
       room.localParticipant?.setTrackSubscriptionPermissions(
         allParticipantsAllowed: true,
         trackPermissions: [
-          const ParticipantTrackPermission(
+          const lk.ParticipantTrackPermission(
             'allowed-identity',
             true,
             null,

@@ -58,7 +58,7 @@ class IsmLiveStreamView extends StatelessWidget {
         allowImplicitScrolling: true,
         onPageChanged: (index) => controller.onStreamScroll(
           index: index,
-          room: room,
+          // room: room,
         ),
         itemBuilder: (_, index) {
           final stream = controller.streams[index];
@@ -134,13 +134,12 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.searchExistingMembesFieldController.clear();
           controller.searchMembersFieldController.clear();
           controller.copublisherRequestsList.clear();
-
+          controller.disposeAnimationController();
           controller.giftType = 0;
           controller.premiumStreamCoinsController.clear();
           controller.isPremium = false;
 
           await controller.room?.dispose();
-          controller.disposeAnimationController();
         },
         builder: (controller) => PopScope(
           canPop: false,

@@ -85,6 +85,7 @@ class IsmLiveUtility {
     bool isScrollController = false,
     Color? backgroundColor,
   }) async {
+    hideKeyboard();
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().showEmojiBoard = false;
     }

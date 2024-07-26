@@ -60,7 +60,8 @@ class IsmLiveStreamDataModel {
         streamImage:
             map['streamImage'] != null ? map['streamImage'] as String : null,
         startDateTime: map['startDateTime'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(map['startDateTime'] as int)
+            ? DateTime.fromMillisecondsSinceEpoch(
+                int.parse(map['startDateTime'].toString()))
             : null,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
         streamDescription: map['streamDescription'] != null
@@ -97,12 +98,12 @@ class IsmLiveStreamDataModel {
             ? List<dynamic>.from(map['members'] as List<dynamic>)
             : null,
         paymentAmount:
-            map['paymentAmount'] != null ? map['paymentAmount'] as int : null,
+            map['paymentAmount'] != null ? map['paymentAmount'] as num : null,
         paymentType:
             map['paymentType'] != null ? map['paymentType'] as int : null,
         viewersCount:
             map['viewersCount'] != null ? map['viewersCount'] as int : null,
-        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as int : null,
+        coinsCount: map['coinsCount'] != null ? map['coinsCount'] as num : null,
         userDetails: map['userDetails'] != null
             ? IsmLiveUser.fromMap(map['userDetails'] as Map<String, dynamic>)
             : null,
@@ -136,9 +137,9 @@ class IsmLiveStreamDataModel {
             ? map['persistRtmpIngestEndpoint'] as bool
             : null,
         firstUserCoins:
-            map['firstUserCoins'] != null ? map['firstUserCoins'] as int : null,
+            map['firstUserCoins'] != null ? map['firstUserCoins'] as num : null,
         secondUserCoins: map['secondUserCoins'] != null
-            ? map['secondUserCoins'] as int
+            ? map['secondUserCoins'] as num
             : null,
       );
 
@@ -166,12 +167,12 @@ class IsmLiveStreamDataModel {
   final String? streamTags;
   final String? streamTypes;
   final List<dynamic>? members;
-  final int? paymentAmount;
+  final num? paymentAmount;
   final num? amount;
   final bool? isBuy;
   final int? paymentType;
   final int? viewersCount;
-  final int? coinsCount;
+  final num? coinsCount;
   final IsmLiveUser? userDetails;
   final String? type;
   final bool? hdBroadcast;
@@ -187,8 +188,8 @@ class IsmLiveStreamDataModel {
   final bool? selfHosted;
   final bool? rtmpIngest;
   final bool? persistRtmpIngestEndpoint;
-  final int? firstUserCoins;
-  final int? secondUserCoins;
+  final num? firstUserCoins;
+  final num? secondUserCoins;
 
   IsmLiveStreamDataModel copyWith({
     String? streamId,
@@ -214,10 +215,10 @@ class IsmLiveStreamDataModel {
     String? streamTags,
     String? streamTypes,
     List<String>? members,
-    int? paymentAmount,
+    num? paymentAmount,
     int? paymentType,
     int? viewersCount,
-    int? coinsCount,
+    num? coinsCount,
     IsmLiveUser? userDetails,
     String? type,
     bool? hdBroadcast,
@@ -233,8 +234,8 @@ class IsmLiveStreamDataModel {
     bool? selfHosted,
     bool? rtmpIngest,
     bool? persistRtmpIngestEndpoint,
-    int? firstUserCoins,
-    int? secondUserCoins,
+    num? firstUserCoins,
+    num? secondUserCoins,
   }) =>
       IsmLiveStreamDataModel(
         streamId: streamId ?? this.streamId,

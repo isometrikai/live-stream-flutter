@@ -38,19 +38,19 @@ class IsmLivePkStatusModel {
                 map['secondUserDetails'] as Map<String, dynamic>)
             : null,
         firstUserCoins:
-            map['firstUserCoins'] != null ? map['firstUserCoins'] as int : null,
+            map['firstUserCoins'] != null ? map['firstUserCoins'] as num : null,
         secondUserCoins: map['secondUserCoins'] != null
-            ? map['secondUserCoins'] as int
+            ? map['secondUserCoins'] as num
             : null,
         creationTimestamp: map['creationTimestamp'] != null
             ? map['creationTimestamp'] as int
             : null,
         timeRemain: map['timeRemain'] != null ? map['timeRemain'] as int : null,
         percentageOfCoinsFirstUser: map['percentageOfCoinsFirstUser'] != null
-            ? map['percentageOfCoinsFirstUser'] as int
+            ? map['percentageOfCoinsFirstUser'] as num
             : null,
         percentageOfCoinsSecondUser: map['percentageOfCoinsSecondUser'] != null
-            ? map['percentageOfCoinsSecondUser'] as int
+            ? map['percentageOfCoinsSecondUser'] as num
             : null,
         battleTimeInMin: map['battleTimeInMin'] != null
             ? map['battleTimeInMin'] as int
@@ -68,12 +68,12 @@ class IsmLivePkStatusModel {
   final String? secoundUserId;
   final IsmLivePkUserDetails? firstUserDetails;
   final IsmLivePkUserDetails? secondUserDetails;
-  final int? firstUserCoins;
-  final int? secondUserCoins;
+  final num? firstUserCoins;
+  final num? secondUserCoins;
   final int? creationTimestamp;
   final int? timeRemain;
-  final int? percentageOfCoinsFirstUser;
-  final int? percentageOfCoinsSecondUser;
+  final num? percentageOfCoinsFirstUser;
+  final num? percentageOfCoinsSecondUser;
   final int? battleTimeInMin;
   final int? expireTimestamp;
 
@@ -84,12 +84,12 @@ class IsmLivePkStatusModel {
     String? secoundUserId,
     IsmLivePkUserDetails? firstUserDetails,
     IsmLivePkUserDetails? secondUserDetails,
-    int? firstUserCoins,
-    int? secondUserCoins,
+    num? firstUserCoins,
+    num? secondUserCoins,
     int? creationTimestamp,
     int? timeRemain,
-    int? percentageOfCoinsFirstUser,
-    int? percentageOfCoinsSecondUser,
+    num? percentageOfCoinsFirstUser,
+    num? percentageOfCoinsSecondUser,
     int? battleTimeInMin,
     int? expireTimestamp,
   }) =>

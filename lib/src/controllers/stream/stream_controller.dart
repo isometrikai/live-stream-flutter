@@ -8,7 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:get/get.dart';
-import 'package:livekit_client/livekit_client.dart';
+import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -45,9 +45,9 @@ class IsmLiveStreamController extends GetxController
 
   // --------- Start Stream Variables ---------------
 
-  final Rx<Room?> _room = Rx<Room?>(null);
-  Room? get room => _room.value;
-  set room(Room? value) => _room.value = value;
+  final Rx<lk.Room?> _room = Rx<lk.Room?>(null);
+  lk.Room? get room => _room.value;
+  set room(lk.Room? value) => _room.value = value;
 
   final Rx<RoomListener?> _listener = Rx<RoomListener?>(null);
   RoomListener? get listener => _listener.value;
@@ -189,7 +189,7 @@ class IsmLiveStreamController extends GetxController
   set participantList(List<IsmLiveParticipantTrack> value) =>
       _participantList.value = value;
 
-  CameraPosition position = CameraPosition.front;
+  lk.CameraPosition position = lk.CameraPosition.front;
 
   late TabController tabController;
   // late TabController giftsTabController;

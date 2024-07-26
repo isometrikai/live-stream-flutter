@@ -288,7 +288,7 @@ enum IsmLiveStreamOption {
 
   static List<IsmLiveStreamOption> get pkOptions => [
         IsmLiveStreamOption.pk,
-        IsmLiveStreamOption.favourite,
+        IsmLiveStreamOption.members,
         IsmLiveStreamOption.share,
         IsmLiveStreamOption.rotateCamera,
         IsmLiveStreamOption.settings,
