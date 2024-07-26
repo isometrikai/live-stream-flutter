@@ -30,10 +30,10 @@ class IsmLivePkWinnerModel {
             ? map['percentageOfCoinsSecondUser'] as num
             : null,
         totalCoinsFirstUser: map['totalCoinsFirstUser'] != null
-            ? map['totalCoinsFirstUser'] as int
+            ? map['totalCoinsFirstUser'] as num
             : null,
         totalCoinsSecondUser: map['totalCoinsSecondUser'] != null
-            ? map['totalCoinsSecondUser'] as int
+            ? map['totalCoinsSecondUser'] as num
             : null,
         status: map['status'] != null ? map['status'] as String : null,
         firstUserCoins:
@@ -60,11 +60,11 @@ class IsmLivePkWinnerModel {
   final String? winnerStreamUserId;
   final num? percentageOfCoinsFirstUser;
   final num? percentageOfCoinsSecondUser;
-  final int? totalCoinsFirstUser;
-  final int? totalCoinsSecondUser;
+  final num? totalCoinsFirstUser;
+  final num? totalCoinsSecondUser;
   final String? status;
-  final int? firstUserCoins;
-  final int? secondUserCoins;
+  final num? firstUserCoins;
+  final num? secondUserCoins;
   final String? senderUserId;
   final String? reciverUserId;
   final String? senderStreamUserId;
@@ -75,11 +75,11 @@ class IsmLivePkWinnerModel {
     String? winnerStreamUserId,
     num? percentageOfCoinsFirstUser,
     num? percentageOfCoinsSecondUser,
-    int? totalCoinsFirstUser,
-    int? totalCoinsSecondUser,
+    num? totalCoinsFirstUser,
+    num? totalCoinsSecondUser,
     String? status,
-    int? firstUserCoins,
-    int? secondUserCoins,
+    num? firstUserCoins,
+    num? secondUserCoins,
     String? senderUserId,
     String? reciverUserId,
     String? senderStreamUserId,

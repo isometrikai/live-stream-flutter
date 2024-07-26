@@ -143,12 +143,6 @@ class CoinsPlansWalletView extends StatelessWidget {
                     ),
                   ),
                 ),
-                // IsmLiveDimens.boxHeight10,
-                // Text(
-                //   'Select a plan',
-                //   style: context.textTheme.bodyMedium
-                //       ?.copyWith(fontWeight: FontWeight.bold),
-                // ),
                 SliverGrid.builder(
                   itemCount: controller.storePlans.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

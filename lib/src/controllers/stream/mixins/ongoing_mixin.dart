@@ -533,25 +533,24 @@ mixin StreamOngoingMixin {
     required int index,
     required Room room,
   }) async {
-    IsmLiveUtility.showLoader();
     final didLeft = await disconnectStream(
       isHost: false,
       streamId: _controller.streamId ?? '',
       goBack: false,
+      endStream: _controller.streamId?.isNotEmpty ?? false,
     );
     if (!didLeft) {
-      IsmLiveUtility.closeLoader();
       IsmLiveLog.error('Cannot leave stream');
       await _controller.animateToPage(_controller.previousStreamIndex);
       return;
     }
+
     await _controller.joinStream(
       _controller.streams[index],
       false,
       joinByScrolling: true,
     );
     _controller.previousStreamIndex = index;
-    IsmLiveUtility.closeLoader();
   }
 
   bool isStopStreamCall = false;
@@ -569,14 +568,17 @@ mixin StreamOngoingMixin {
     var isEnded = false;
 
     if (isHost) {
-      isEnded = await _controller.stopStream(
-          streamId, _controller.user?.userId ?? '');
+      await _controller.stopStream(streamId, _controller.user?.userId ?? '');
+      isEnded = true;
     } else if (_controller.isCopublisher ||
         (_controller.userRole?.isPkGuest ?? false)) {
-      isEnded = await _controller.leaveMember(streamId: streamId);
+      await _controller.leaveMember(streamId: streamId);
+      isEnded = true;
     } else {
-      isEnded = await _controller.leaveStream(streamId);
+      endStream = await _controller.leaveStream(streamId);
+      isEnded = true;
     }
+
     if (isEnded && endStream) {
       unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
@@ -597,11 +599,17 @@ mixin StreamOngoingMixin {
 
       await _controller.getRTCToken(_controller.streamId ?? '',
           showLoader: false);
-
       await _controller.sortParticipants();
     }
+
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;
+
+    if (goBack && !endStream && !_controller.isCopublisher) {
+      unawaited(_controller.getStreams());
+      closeStreamView(isHost, streamId: streamId);
+    }
+
     return isEnded;
   }
 
@@ -617,7 +625,7 @@ mixin StreamOngoingMixin {
     _controller._streamTimer = null;
 
     try {
-      await _controller.room!.disconnect();
+      await _controller.room?.disconnect();
     } catch (e) {
       IsmLiveLog('room not disconnected $e');
     }

@@ -46,19 +46,24 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           restorationId: '',
                           itemCount: controller.participantTracks.length,
                           physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: controller.participantTracks.length < 5 ? 2 : 3,
-                            childAspectRatio: controller.participantTracks.length < 3
-                                ? (Get.width / 2) / (Get.height * 0.4)
-                                : controller.participantTracks.length < 5
-                                    ? (Get.width / 3) / (Get.height / 3)
-                                    : 1,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                controller.participantTracks.length < 3 ? 2 : 3,
+                            childAspectRatio:
+                                controller.participantTracks.length < 3
+                                    ? (Get.width / 2) / (Get.height * 0.4)
+                                    : controller.participantTracks.length < 7
+                                        ? (Get.width / 3) / (Get.height * 0.3)
+                                        : 1,
                           ),
                           itemBuilder: (_, index) {
                             var url = '';
 
                             for (var element in controller.streamMembersList) {
-                              if (element.userId == controller.participantList[index].participant.identity) {
+                              if (element.userId ==
+                                  controller.participantList[index].participant
+                                      .identity) {
                                 url = element.userProfileImageUrl;
                               }
                             }
@@ -67,13 +72,18 @@ class IsmLivePublisherGrid extends StatelessWidget {
                               controller.participantList[index],
                               imageUrl: url,
                               isFirstIndex: index == 0,
-                              isViewer: !(controller.userRole?.isHost ?? false) &&
+                              isViewer: !(controller.userRole?.isHost ??
+                                      false) &&
                                   !(controller.userRole?.isPkGuest ?? false) &&
                                   (controller.pkStages?.isPkStart ?? false),
                               isHost: index == 0,
                               showStatsLayer: controller.isPk,
-                              isWinner: controller.pkWinnerId == controller.participantList[index].participant.identity,
-                              isbattleFinish: (controller.pkStages?.isPkStop ?? false) && controller.pkWinnerId != null,
+                              isWinner: controller.pkWinnerId ==
+                                  controller.participantList[index].participant
+                                      .identity,
+                              isbattleFinish:
+                                  (controller.pkStages?.isPkStop ?? false) &&
+                                      controller.pkWinnerId != null,
                             );
                           },
                         ),
@@ -131,10 +141,13 @@ class _RtmlView extends StatelessWidget {
                   childAspectRatio: 0.5,
                 ),
                 itemBuilder: (_, index) {
-                  if (controller.participantTracks.length > index && hostScreen != controller.participantTracks[index]) {
+                  if (controller.participantTracks.length > index &&
+                      hostScreen != controller.participantTracks[index]) {
                     var url = '';
                     for (var element in controller.streamMembersList) {
-                      if (element.userId == controller.participantList[index].participant.identity) {
+                      if (element.userId ==
+                          controller
+                              .participantList[index].participant.identity) {
                         url = element.userProfileImageUrl;
                       }
                     }
