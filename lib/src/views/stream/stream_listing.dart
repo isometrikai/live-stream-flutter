@@ -33,7 +33,14 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: const IsmLiveAppbar(),
-        floatingActionButton: const IsmLiveCreateStreamFAB(),
+        floatingActionButton: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const IsmLiveCreateStreamFAB(),
+            IsmLiveDimens.boxWidth10,
+            const IsmLiveStreamingScrolling(),
+          ],
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: GetBuilder<IsmLiveStreamController>(
           builder: (controller) => Column(

@@ -754,10 +754,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_helper
-      sha256: c66c65d5e0cc92cab9bd554bf941480176ee67822fb46d2beaead669165c817d
+      sha256: b4e6f2f3eb6fb0d88dfe7fb26efb1e1deab57ef55b7ba7a1be0353ea6417136a
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.8"
+    version: "0.0.9"
   nm:
     dependency: transitive
     description:
@@ -1308,5 +1308,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.4.0 <4.0.0"
+  dart: ">=3.4.3 <4.0.0"
   flutter: ">=3.22.0"
