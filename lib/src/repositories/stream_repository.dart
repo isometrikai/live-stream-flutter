@@ -239,26 +239,32 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> fetchMessages({
     required bool showLoading,
+    required List<int> messageType,
     required Map<String, dynamic> payload,
-  }) =>
-      _apiWrapper.makeRequest(
-        '${IsmLiveApis.messages}?${payload.makeQuery()}',
-        type: IsmLiveRequestType.get,
-        headers: IsmLiveUtility.tokenHeader(),
-        showLoader: showLoading,
-      );
+  }) {
+    payload['messageType'] = null;
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.messages}?${payload.makeQuery()}&messageTypes=${messageType.join(',')}',
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: showLoading,
+    );
+  }
 
   Future<IsmLiveResponseModel> fetchMessagesCount({
     required bool showLoading,
+    required List<int> messageType,
     required Map<String, dynamic> payload,
-  }) =>
-      _apiWrapper.makeRequest(
-        '${IsmLiveApis.messagesCount}?${payload.makeQuery()}',
-        type: IsmLiveRequestType.get,
-        headers: IsmLiveUtility.tokenHeader(),
-        showLoader: showLoading,
-        showDialog: false,
-      );
+  }) {
+    payload['messageType'] = null;
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.messagesCount}?${payload.makeQuery()}&messageTypes=${messageType.join(',')}',
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: showLoading,
+      showDialog: false,
+    );
+  }
 
   Future<IsmLiveResponseModel> kickoutViewer({
     required String streamId,

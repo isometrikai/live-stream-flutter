@@ -29,6 +29,7 @@ abstract class IsmLiveRouteManagement {
   static Future<void> goToStreamView({
     required RoomListener listener,
     required bool isHost,
+    required bool isScrolling,
     required bool isNewStream,
     required Room room,
     required String streamId,
@@ -42,6 +43,7 @@ abstract class IsmLiveRouteManagement {
       'streamId': streamId,
       'isHost': isHost,
       'isNewStream': isNewStream,
+      'isScrolling': isScrolling,
       'isInteractive': isInteractive,
     };
 

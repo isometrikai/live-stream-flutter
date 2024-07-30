@@ -18,7 +18,7 @@ mixin StreamOngoingMixin {
 
     _pkController.pkStatus(streamId);
     // Pagination setup for the stream
-    _controller.pagination(streamId);
+
     // Set up event listeners
     unawaited(setUpListeners(
       isHost: isHost,
@@ -32,7 +32,8 @@ mixin StreamOngoingMixin {
     if (!isHost) {
       await _controller.fetchMessagesCount(
         showLoading: false,
-        getMessageModel: IsmLiveGetMessageModel(streamId: streamId),
+        getMessageModel: IsmLiveGetMessageModel(
+            streamId: streamId, messageType: [IsmLiveMessageType.normal.value]),
       );
 
       if (_controller.messagesCount != 0) {
@@ -531,17 +532,31 @@ mixin StreamOngoingMixin {
 
   void onStreamScroll({
     required int index,
-    // required Room room,
   }) async {
+    if (_controller.streamId?.isEmpty ?? true) {
+      IsmLiveLog.error('Cannot ');
+
+      await _controller.animateToPage(_controller.previousStreamIndex);
+
+      unawaited(_controller.getStreams());
+      closeStreamView(
+        false,
+      );
+      return;
+    }
     final didLeft = await disconnectStream(
       isHost: false,
       streamId: _controller.streamId ?? '',
       goBack: false,
-      endStream: _controller.streamId?.isNotEmpty ?? false,
     );
     if (!didLeft) {
       IsmLiveLog.error('Cannot leave stream');
+
       await _controller.animateToPage(_controller.previousStreamIndex);
+      unawaited(_controller.getStreams());
+      closeStreamView(
+        false,
+      );
       return;
     }
 
@@ -549,6 +564,7 @@ mixin StreamOngoingMixin {
       _controller.streams[index],
       false,
       joinByScrolling: true,
+      isScrolling: true,
     );
     _controller.previousStreamIndex = index;
   }
@@ -575,7 +591,7 @@ mixin StreamOngoingMixin {
       await _controller.leaveMember(streamId: streamId);
       isEnded = true;
     } else {
-      endStream = await _controller.leaveStream(streamId);
+      await _controller.leaveStream(streamId);
       isEnded = true;
     }
 
@@ -605,11 +621,6 @@ mixin StreamOngoingMixin {
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;
 
-    if (goBack && !endStream && !_controller.isCopublisher) {
-      unawaited(_controller.getStreams());
-      closeStreamView(isHost, streamId: streamId);
-    }
-
     return isEnded;
   }
 
@@ -625,9 +636,13 @@ mixin StreamOngoingMixin {
     _controller._streamTimer = null;
 
     try {
-      if (!(_controller.room?.isDisposed ?? true)) {
-        await _controller.room?.dispose();
-      }
+      // if (!(_controller.room?.isDisposed ?? true)) {
+      //   await _controller.room?.dispose();
+      // }
+
+      IsmLiveLog(
+          '-------------------aa ${_controller.room?.connectionState != lk.ConnectionState.disconnected}');
+      IsmLiveLog('-------------------aa ${_controller.room?.connectionState}');
 
       if (_controller.room?.connectionState !=
           lk.ConnectionState.disconnected) {

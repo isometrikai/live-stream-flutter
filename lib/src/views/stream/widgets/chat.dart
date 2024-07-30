@@ -14,6 +14,18 @@ class IsmLiveChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
+        initState: (state) {
+          var controller = Get.find<IsmLiveStreamController>();
+          IsmLiveUtility.updateLater(
+            () => controller.pagination(streamId),
+          );
+        },
+        dispose: (state) {
+          var controller = Get.find<IsmLiveStreamController>();
+          controller.messagesListController
+              .removeListener(controller.messagePagination);
+          controller.messagesListController.dispose();
+        },
         builder: (controller) => ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: controller.participantTracks.length < 2
