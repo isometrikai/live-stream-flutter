@@ -228,8 +228,6 @@ class IsmLiveStreamController extends GetxController
 
   ScrollController membersListController = ScrollController();
 
-  ScrollController messagesListController = ScrollController();
-
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
@@ -292,6 +290,15 @@ class IsmLiveStreamController extends GetxController
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
+
+  @override
+  void dispose() {
+    IsmLiveUtility.updateLater(
+      () => Get.find<IsmLiveStreamController>().streamDispose(),
+    );
+
+    super.dispose();
+  }
 
   @override
   void onInit() {
@@ -482,20 +489,18 @@ class IsmLiveStreamController extends GetxController
         isMembersApiCall = false;
       }
     });
-    messagesListController = ScrollController();
-
-    messagesListController.addListener(messagePagination);
   }
 
-  void messagePagination() {
+  void messagePagination(ScrollController messagesListController) async {
     if (messagesListController.position.minScrollExtent ==
         messagesListController.position.pixels) {
       if (isMessagesApiCall) {
         return;
       }
+
       isMessagesApiCall = true;
       if (messagesCount != 0) {
-        fetchMessages(
+        await fetchMessages(
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
             streamId: _controller.streamId ?? '',

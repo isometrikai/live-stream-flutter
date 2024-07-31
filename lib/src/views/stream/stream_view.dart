@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -56,31 +55,24 @@ class IsmLiveStreamView extends StatelessWidget {
     return GetX<IsmLiveStreamController>(
       initState: (_) {
         var controller = Get.find<IsmLiveStreamController>();
+
         IsmLiveUtility.updateLater(() {
           controller.previousStreamIndex =
               controller.pageController?.page?.toInt() ?? 0;
         });
       },
       builder: (controller) => PageView.builder(
-        key: UniqueKey(),
         itemCount: controller.streams.length,
         controller: controller.pageController,
         scrollDirection: Axis.vertical,
         pageSnapping: true,
-        dragStartBehavior: DragStartBehavior.down,
-        allowImplicitScrolling: true,
-        onPageChanged: (index) {
-          IsmLiveUtility.updateLater(
-            () => controller.onStreamScroll(
-              index: index,
-              // room: room,
-            ),
-          );
-        },
+        onPageChanged: (index) => controller.onStreamScroll(
+          index: index,
+        ),
         itemBuilder: (_, index) {
           final stream = controller.streams[index];
           return _IsmLiveStreamView(
-            key: UniqueKey(),
+            key: key,
             streamImage: stream.streamImage,
             streamId: stream.streamId ?? '',
             isHost: false,
@@ -129,10 +121,6 @@ class _IsmLiveStreamView extends StatelessWidget {
               }
             }
           });
-        },
-        dispose: (_) async {
-          Get.find<IsmLiveStreamController>().streamDispose();
-          // await controller.room?.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,

@@ -18,7 +18,7 @@ mixin StreamOngoingMixin {
 
     _pkController.pkStatus(streamId);
     // Pagination setup for the stream
-
+    _controller.pagination(streamId);
     // Set up event listeners
     unawaited(setUpListeners(
       isHost: isHost,
@@ -30,6 +30,7 @@ mixin StreamOngoingMixin {
     _manageModerator(streamId);
     // Fetch message count and initial messages if not host
     if (!isHost) {
+      // _controller.streamMessagesList.clear();
       await _controller.fetchMessagesCount(
         showLoading: false,
         getMessageModel: IsmLiveGetMessageModel(
@@ -278,12 +279,6 @@ mixin StreamOngoingMixin {
     }
     _controller.streamMessagesList =
         _controller.streamMessagesList.toSet().toList();
-    await _controller.messagesListController.animateTo(
-      _controller.messagesListController.position.maxScrollExtent +
-          IsmLiveDimens.hundred,
-      duration: const Duration(milliseconds: 10),
-      curve: Curves.ease,
-    );
   }
 
 // Function to add heart message to the stream
@@ -530,20 +525,32 @@ mixin StreamOngoingMixin {
     }
   }
 
+  bool onChangeCall = false;
+
   void onStreamScroll({
     required int index,
   }) async {
-    if (_controller.streamId?.isEmpty ?? true) {
-      IsmLiveLog.error('Cannot ');
+    IsmLiveUtility.showLoader();
+    // if (onChangeCall) {
+    //   await _controller.animateToPage(index);
+    //   IsmLiveUtility.closeLoader();
+    //   return;
+    // }
+    // onChangeCall = true;
 
-      await _controller.animateToPage(_controller.previousStreamIndex);
+    if (_controller.streamId?.isEmpty ?? true) {
+      IsmLiveUtility.closeLoader();
+      IsmLiveLog.error('Cannot ');
 
       unawaited(_controller.getStreams());
       closeStreamView(
         false,
       );
+      // onChangeCall = false;
+
       return;
     }
+
     final didLeft = await disconnectStream(
       isHost: false,
       streamId: _controller.streamId ?? '',
@@ -551,12 +558,14 @@ mixin StreamOngoingMixin {
     );
     if (!didLeft) {
       IsmLiveLog.error('Cannot leave stream');
-
+      IsmLiveUtility.closeLoader();
       await _controller.animateToPage(_controller.previousStreamIndex);
       unawaited(_controller.getStreams());
       closeStreamView(
         false,
       );
+      // onChangeCall = false;
+
       return;
     }
 
@@ -566,7 +575,10 @@ mixin StreamOngoingMixin {
       joinByScrolling: true,
       isScrolling: true,
     );
+
     _controller.previousStreamIndex = index;
+
+    IsmLiveUtility.closeLoader();
   }
 
   bool isStopStreamCall = false;
@@ -582,6 +594,9 @@ mixin StreamOngoingMixin {
     }
     isStopStreamCall = true;
     var isEnded = false;
+    IsmLiveUtility.updateLater(
+      () => _controller.streamDispose(),
+    );
 
     if (isHost) {
       isEnded = true;

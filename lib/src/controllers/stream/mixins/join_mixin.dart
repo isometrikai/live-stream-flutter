@@ -35,7 +35,9 @@ mixin StreamJoinMixin {
 
 // Initialize the page controller
   void initialize(int index) {
-    _controller.pageController = PageController(initialPage: index);
+    _controller.pageController = PageController(
+      initialPage: index,
+    );
   }
 
   // Enable the user's video
