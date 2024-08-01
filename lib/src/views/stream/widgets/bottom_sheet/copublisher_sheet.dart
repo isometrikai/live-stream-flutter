@@ -69,6 +69,11 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
               height: Get.height * 0.4,
               child: GetBuilder<IsmLiveStreamController>(
                 id: updateId,
+                initState: (state) {
+                  Get.find<IsmLiveStreamController>()
+                    ..searchCopublisherFieldController.clear()
+                    ..searchMembersFieldController.clear();
+                },
                 builder: (controller) => TabBarView(
                   controller: controller.cobublisTabController,
                   children: [

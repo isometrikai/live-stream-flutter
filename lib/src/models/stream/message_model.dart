@@ -47,7 +47,7 @@ class IsmLiveMessageModel {
         customType: map['customType'] != null
             ? IsmLiveGifts.fromName(map['customType'].toString())
             : null,
-        body: utf8.decode((map['body'] as String).runes.toList()),
+        body: emojiConverter(map['body'] as String),
         parentMessageId: map['parentMessageId'] as String?,
         parentMessageSenderId: map['parentMessageSenderId'] as String?,
       );
@@ -80,6 +80,14 @@ class IsmLiveMessageModel {
       return metaData!.firstName!;
     }
     return senderName;
+  }
+
+  static String emojiConverter(String value) {
+    try {
+      return utf8.decode(value.runes.toList());
+    } catch (e) {
+      return '';
+    }
   }
 
   IsmLiveMessageModel copyWith({
