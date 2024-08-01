@@ -11,9 +11,10 @@ class IsmLiveUsersSheet extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (_) {
-          var controller = Get.find<IsmLiveStreamController>();
-          controller.usersList.clear();
-          controller.fetchUsers(forceFetch: true);
+          Get.find<IsmLiveStreamController>()
+            ..searchUserFieldController.clear()
+            ..usersList.clear()
+            ..fetchUsers(forceFetch: true);
         },
         builder: (controller) => IsmLiveScrollSheet(
           showSearchBar: true,

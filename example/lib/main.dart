@@ -52,27 +52,31 @@ class _MyAppState extends State<MyApp> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: Utility.hideKeyboard,
-          child: GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primaryColor: Colors.black,
-              floatingActionButtonTheme: const FloatingActionButtonThemeData(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
+          child: MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.0)),
+            child: GetMaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                primaryColor: Colors.black,
+                floatingActionButtonTheme: const FloatingActionButtonThemeData(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                ),
+                extensions: const [
+                  IsmLiveDataExtension(),
+                ],
               ),
-              extensions: const [
-                IsmLiveDataExtension(),
-              ],
+              // builder: (context, child) => Obx(
+              //   () => IsmLiveData(
+              //     configurations: kConfigData.value,
+              //     child: child!,
+              //   ),
+              // ),
+              translations: TranslationsFile(),
+              getPages: AppPages.pages,
+              initialRoute: AppPages.initial,
             ),
-            // builder: (context, child) => Obx(
-            //   () => IsmLiveData(
-            //     configurations: kConfigData.value,
-            //     child: child!,
-            //   ),
-            // ),
-            translations: TranslationsFile(),
-            getPages: AppPages.pages,
-            initialRoute: AppPages.initial,
           ),
         ),
       );
