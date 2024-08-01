@@ -116,7 +116,8 @@ class IsmLiveStreamDataModel {
             : null,
         productsCount:
             map['productsCount'] != null ? map['productsCount'] as int : null,
-        products: List.from(map['products'] as List),
+        products:
+            map['products'] != null ? List.from(map['products'] as List) : [],
         firstUserDetails: map['firstUserDetails'] != null
             ? IsmLivePkUserDetails.fromMap(
                 map['firstUserDetails'] as Map<String, dynamic>)

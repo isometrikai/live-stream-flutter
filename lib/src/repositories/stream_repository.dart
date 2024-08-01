@@ -39,7 +39,7 @@ class IsmLiveStreamRepository {
   }
 
   // Future<IsmLiveResponseModel> getStreams({
-  // required IsmLiveStreamQueryModel queryModel,
+  //   required IsmLiveStreamQueryModel queryModel,
   // }) =>
   //     _apiWrapper.makeRequest(
   //       '${IsmLiveApis.getStreams}?${queryModel.toMap().makeQuery()}',
@@ -48,22 +48,16 @@ class IsmLiveStreamRepository {
   //       showDialog: false,
   //     );
 
-  Future<IsmLiveResponseModel> getStreams() {
-    var queryModel = {
-      'sortOrder': 'asc',
-      'limit': 10,
-      'skip': 0,
-      'status': 4,
-      'fetchLive': true,
-    };
-    return _apiWrapper.makeRequest(
-      '${IsmLiveApis.fetchStream}?${queryModel.makeQuery()}',
-      type: IsmLiveRequestType.get,
-      baseUrl: IsmLiveApis.baseUrlStream,
-      headers: IsmLiveUtility.tokenHeader(),
-      showDialog: false,
-    );
-  }
+  Future<IsmLiveResponseModel> getStreams({
+    required IsmLiveStreamQueryModel queryModel,
+  }) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.fetchStream}?${queryModel.toMap().makeQuery()}',
+        type: IsmLiveRequestType.get,
+        baseUrl: IsmLiveApis.baseUrlStream,
+        headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
+      );
 
   Future<IsmLiveResponseModel> getRTCToken(String streamId, bool showLoader) =>
       _apiWrapper.makeRequest(

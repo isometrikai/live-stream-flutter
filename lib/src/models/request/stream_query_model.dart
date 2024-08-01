@@ -7,7 +7,11 @@ class IsmLiveStreamQueryModel {
     this.searchTag,
     this.membersIncluded,
     this.membersExactly,
+    this.sortOrder,
     this.sort,
+    this.limit,
+    this.status,
+    this.skip,
     this.includeMembers,
     this.membersSkip,
     this.membersLimit,
@@ -20,6 +24,12 @@ class IsmLiveStreamQueryModel {
     this.audioOnly,
     this.reStream,
     this.canPublish,
+    this.fetchLive,
+    this.isRecorded,
+    this.private,
+    this.restream,
+    this.hdbroadcast,
+    this.pk,
   });
 
   factory IsmLiveStreamQueryModel.fromMap(Map<String, dynamic> map) =>
@@ -34,7 +44,11 @@ class IsmLiveStreamQueryModel {
         membersExactly: map['membersExactly'] != null
             ? map['membersExactly'] as String
             : null,
+        sortOrder: map['sortOrder'] != null ? map['sortOrder'] as String : null,
         sort: map['sort'] != null ? map['sort'] as int : null,
+        limit: map['limit'] != null ? map['limit'] as int : null,
+        status: map['status'] != null ? map['status'] as int : null,
+        skip: map['skip'] != null ? map['skip'] as int : null,
         includeMembers: map['includeMembers'] != null
             ? map['includeMembers'] as bool
             : null,
@@ -57,18 +71,29 @@ class IsmLiveStreamQueryModel {
         reStream: map['reStream'] != null ? map['reStream'] as bool : null,
         canPublish:
             map['canPublish'] != null ? map['canPublish'] as bool : null,
+        fetchLive: map['fetchLive'] != null ? map['fetchLive'] as bool : null,
+        isRecorded:
+            map['isRecorded'] != null ? map['isRecorded'] as bool : null,
+        private: map['private'] != null ? map['private'] as bool : null,
+        restream: map['restream'] != null ? map['restream'] as bool : null,
+        hdbroadcast:
+            map['hdbroadcast'] != null ? map['hdbroadcast'] as bool : null,
+        pk: map['pk'] != null ? map['pk'] as bool : null,
       );
 
   factory IsmLiveStreamQueryModel.fromJson(String source) =>
       IsmLiveStreamQueryModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-
   final String? ids;
   final String? customType;
   final String? searchTag;
   final String? membersIncluded;
   final String? membersExactly;
+  final String? sortOrder;
   final int? sort;
+  final int? limit;
+  final int? status;
+  final int? skip;
   final bool? includeMembers;
   final int? membersSkip;
   final int? membersLimit;
@@ -81,6 +106,12 @@ class IsmLiveStreamQueryModel {
   final bool? audioOnly;
   final bool? reStream;
   final bool? canPublish;
+  final bool? fetchLive;
+  final bool? isRecorded;
+  final bool? private;
+  final bool? restream;
+  final bool? hdbroadcast;
+  final bool? pk;
 
   IsmLiveStreamQueryModel copyWith({
     String? ids,
@@ -88,7 +119,11 @@ class IsmLiveStreamQueryModel {
     String? searchTag,
     String? membersIncluded,
     String? membersExactly,
+    String? sortOrder,
     int? sort,
+    int? limit,
+    int? status,
+    int? skip,
     bool? includeMembers,
     int? membersSkip,
     int? membersLimit,
@@ -101,6 +136,12 @@ class IsmLiveStreamQueryModel {
     bool? audioOnly,
     bool? reStream,
     bool? canPublish,
+    bool? fetchLive,
+    bool? isRecorded,
+    bool? private,
+    bool? restream,
+    bool? hdbroadcast,
+    bool? pk,
   }) =>
       IsmLiveStreamQueryModel(
         ids: ids ?? this.ids,
@@ -108,7 +149,11 @@ class IsmLiveStreamQueryModel {
         searchTag: searchTag ?? this.searchTag,
         membersIncluded: membersIncluded ?? this.membersIncluded,
         membersExactly: membersExactly ?? this.membersExactly,
+        sortOrder: sortOrder ?? this.sortOrder,
         sort: sort ?? this.sort,
+        limit: limit ?? this.limit,
+        status: status ?? this.status,
+        skip: skip ?? this.skip,
         includeMembers: includeMembers ?? this.includeMembers,
         membersSkip: membersSkip ?? this.membersSkip,
         membersLimit: membersLimit ?? this.membersLimit,
@@ -121,6 +166,12 @@ class IsmLiveStreamQueryModel {
         audioOnly: audioOnly ?? this.audioOnly,
         reStream: reStream ?? this.reStream,
         canPublish: canPublish ?? this.canPublish,
+        fetchLive: fetchLive ?? this.fetchLive,
+        isRecorded: isRecorded ?? this.isRecorded,
+        private: private ?? this.private,
+        restream: restream ?? this.restream,
+        hdbroadcast: hdbroadcast ?? this.hdbroadcast,
+        pk: pk ?? this.pk,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -129,7 +180,11 @@ class IsmLiveStreamQueryModel {
         'searchTag': searchTag,
         'membersIncluded': membersIncluded,
         'membersExactly': membersExactly,
+        'sortOrder': sortOrder,
         'sort': sort,
+        'limit': limit,
+        'status': status,
+        'skip': skip,
         'includeMembers': includeMembers,
         'membersSkip': membersSkip,
         'membersLimit': membersLimit,
@@ -142,13 +197,19 @@ class IsmLiveStreamQueryModel {
         'audioOnly': audioOnly,
         'reStream': reStream,
         'canPublish': canPublish,
+        'fetchLive': fetchLive,
+        'isRecorded': isRecorded,
+        'private': private,
+        'restream': restream,
+        'hdbroadcast': hdbroadcast,
+        'pk': pk,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sort: $sort, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish)';
+      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sortOrder: $sortOrder, sort: $sort, limit: $limit, status: $status, skip: $skip, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish, fetchLive: $fetchLive, isRecorded: $isRecorded, private: $private, restream: $restream, hdbroadcast: $hdbroadcast, pk: $pk)';
 
   @override
   bool operator ==(covariant IsmLiveStreamQueryModel other) {
@@ -159,7 +220,11 @@ class IsmLiveStreamQueryModel {
         other.searchTag == searchTag &&
         other.membersIncluded == membersIncluded &&
         other.membersExactly == membersExactly &&
+        other.sortOrder == sortOrder &&
         other.sort == sort &&
+        other.limit == limit &&
+        other.status == status &&
+        other.skip == skip &&
         other.includeMembers == includeMembers &&
         other.membersSkip == membersSkip &&
         other.membersLimit == membersLimit &&
@@ -171,7 +236,13 @@ class IsmLiveStreamQueryModel {
         other.multiLive == multiLive &&
         other.audioOnly == audioOnly &&
         other.reStream == reStream &&
-        other.canPublish == canPublish;
+        other.canPublish == canPublish &&
+        other.fetchLive == fetchLive &&
+        other.isRecorded == isRecorded &&
+        other.private == private &&
+        other.restream == restream &&
+        other.hdbroadcast == hdbroadcast &&
+        other.pk == pk;
   }
 
   @override
@@ -181,7 +252,11 @@ class IsmLiveStreamQueryModel {
       searchTag.hashCode ^
       membersIncluded.hashCode ^
       membersExactly.hashCode ^
+      sortOrder.hashCode ^
       sort.hashCode ^
+      limit.hashCode ^
+      status.hashCode ^
+      skip.hashCode ^
       includeMembers.hashCode ^
       membersSkip.hashCode ^
       membersLimit.hashCode ^
@@ -193,5 +268,11 @@ class IsmLiveStreamQueryModel {
       multiLive.hashCode ^
       audioOnly.hashCode ^
       reStream.hashCode ^
-      canPublish.hashCode;
+      canPublish.hashCode ^
+      fetchLive.hashCode ^
+      isRecorded.hashCode ^
+      private.hashCode ^
+      restream.hashCode ^
+      hdbroadcast.hashCode ^
+      pk.hashCode;
 }

@@ -51,8 +51,7 @@ class IsmLiveStreamViewModel {
     required IsmLiveStreamQueryModel queryModel,
   }) async {
     try {
-      var res = await _repository.getStreams();
-      // var res = await _repository.getStreams(queryModel: queryModel);
+      var res = await _repository.getStreams(queryModel: queryModel);
 
       if (res.hasError || res.statusCode != 200) {
         return [];

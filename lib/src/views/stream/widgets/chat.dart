@@ -43,7 +43,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
           IsmLiveUtility.updateLater(() => unawaited(
                 messagesListController.animateTo(
                   messagesListController.position.maxScrollExtent +
-                      IsmLiveDimens.hundred,
+                      IsmLiveDimens.fifty,
                   duration: const Duration(milliseconds: 10),
                   curve: Curves.ease,
                 ),
@@ -53,7 +53,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
             constraints: BoxConstraints(
               maxHeight: controller.participantTracks.length < 2
                   ? IsmLiveDimens.percentHeight(0.4)
-                  : controller.participantTracks.length < 3
+                  : controller.participantTracks.length < 4
                       ? IsmLiveDimens.percentHeight(0.3)
                       : IsmLiveDimens.percentHeight(0.15),
               maxWidth: //isHost ? Get.width * 0.5 :

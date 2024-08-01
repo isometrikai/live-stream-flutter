@@ -59,22 +59,32 @@ mixin StreamAPIMixin {
       );
 
   /// Get streams based on the specified type (e.g., featured, trending, etc.).
-  Future<void> getStreams([
-    IsmLiveStreamType? type,
-  ]) async =>
+  Future<void> getStreams({IsmLiveStreamType? type, int skip = 0}) async =>
       _controller.getStreamDebouncer.run(
-        () => _getStreams(type),
+        () => _getStreams(type: type, skip: skip),
       );
 
   /// Internal method for getting streams based on the specified type.
-  Future<void> _getStreams([
+  Future<void> _getStreams({
     IsmLiveStreamType? type,
-  ]) async {
+    required int skip,
+  }) async {
     var streamType = type ?? _controller.streamType;
-    _controller._streams[streamType] = await _controller._viewModel.getStreams(
-      queryModel: streamType.queryModel,
-    );
+
+    if (skip == 0) {
+      _controller._streams[streamType] =
+          await _controller._viewModel.getStreams(
+        queryModel: streamType.queryModel(skip: skip),
+      );
+    } else {
+      _controller._streams[streamType]!
+          .addAll(await _controller._viewModel.getStreams(
+        queryModel: streamType.queryModel(skip: skip),
+      ));
+    }
+
     _controller._streamRefreshControllers[streamType]!.refreshCompleted();
+    _controller._streamRefreshControllers[streamType]!.loadComplete();
     IsmLiveUtility.updateLater(() {
       _controller.update([IsmLiveStreamListing.updateId]);
     });

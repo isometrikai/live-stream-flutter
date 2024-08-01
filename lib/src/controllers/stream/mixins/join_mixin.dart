@@ -111,8 +111,6 @@ mixin StreamJoinMixin {
       if (token.trim().isEmpty) {
         await _controller.stopStream(
             stream.streamId ?? '', _controller.user?.userId ?? '');
-      }
-      if (token.trim().isEmpty) {
         return;
       }
     } else {

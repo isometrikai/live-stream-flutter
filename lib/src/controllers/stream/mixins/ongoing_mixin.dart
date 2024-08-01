@@ -16,7 +16,9 @@ mixin StreamOngoingMixin {
       }
     });
 
-    _pkController.pkStatus(streamId);
+    if (_controller.isPk) {
+      _pkController.pkStatus(streamId);
+    }
     // Pagination setup for the stream
     _controller.pagination(streamId);
     // Set up event listeners
@@ -88,10 +90,10 @@ mixin StreamOngoingMixin {
     }
 
     ///This is to update the List of moderators without search
-    await _controller.fetchModerators(
+    unawaited(_controller.fetchModerators(
       forceFetch: true,
       streamId: streamId,
-    );
+    ));
   }
 
 // Function to set up event listeners
@@ -531,50 +533,55 @@ mixin StreamOngoingMixin {
     required int index,
   }) async {
     IsmLiveUtility.showLoader();
-    // if (onChangeCall) {
-    //   await _controller.animateToPage(index);
-    //   IsmLiveUtility.closeLoader();
-    //   return;
-    // }
-    // onChangeCall = true;
 
-    if (_controller.streamId?.isEmpty ?? true) {
-      IsmLiveUtility.closeLoader();
-      IsmLiveLog.error('Cannot ');
-
-      unawaited(_controller.getStreams());
-      closeStreamView(
-        false,
-      );
-      // onChangeCall = false;
-
-      return;
+    if (_controller.streams.length - 1 == index + 1) {
+      unawaited(_controller.getStreams(
+          skip: _controller.streams.length, type: _controller.streamType));
     }
 
     final didLeft = await disconnectStream(
       isHost: false,
       streamId: _controller.streamId ?? '',
       goBack: false,
+      isScrolling: true,
     );
     if (!didLeft) {
       IsmLiveLog.error('Cannot leave stream');
-      IsmLiveUtility.closeLoader();
-      await _controller.animateToPage(_controller.previousStreamIndex);
-      unawaited(_controller.getStreams());
-      closeStreamView(
-        false,
-      );
-      // onChangeCall = false;
-
-      return;
+      // IsmLiveUtility.closeLoader();
+      // await _controller.animateToPage(_controller.previousStreamIndex);
+      // unawaited(_controller.getStreams());
+      // closeStreamView(
+      //   false,
+      // );
     }
 
-    await _controller.joinStream(
-      _controller.streams[index],
-      false,
-      joinByScrolling: true,
-      isScrolling: true,
-    );
+    if ((_controller.streams[index].isPaid ?? false) &&
+        !(_controller.streams[index].isBuy ?? false)) {
+      IsmLiveUtility.closeLoader();
+      _controller.paidStreamSheet(
+          coins: _controller.streams[index].amount ?? 0,
+          onTap: () async {
+            Get.back();
+            var res = await _controller
+                .buyStream(_controller.streams[index].streamId ?? '');
+            if (res) {
+              _controller.streams[index].copyWith(isBuy: true);
+              await _controller.joinStream(
+                _controller.streams[index],
+                false,
+                joinByScrolling: true,
+                isScrolling: true,
+              );
+            }
+          });
+    } else {
+      await _controller.joinStream(
+        _controller.streams[index],
+        false,
+        joinByScrolling: true,
+        isScrolling: true,
+      );
+    }
 
     _controller.previousStreamIndex = index;
 
@@ -588,7 +595,19 @@ mixin StreamOngoingMixin {
     required String streamId,
     bool goBack = true,
     bool endStream = true,
+    bool isScrolling = false,
   }) async {
+    if (_controller.streamId?.isEmpty ?? true) {
+      if (!isScrolling) {
+        IsmLiveUtility.closeLoader();
+        await _controller.animateToPage(_controller.previousStreamIndex);
+        unawaited(_controller.getStreams());
+        closeStreamView(
+          false,
+        );
+      }
+      return false;
+    }
     if (isStopStreamCall) {
       return false;
     }
@@ -651,14 +670,6 @@ mixin StreamOngoingMixin {
     _controller._streamTimer = null;
 
     try {
-      // if (!(_controller.room?.isDisposed ?? true)) {
-      //   await _controller.room?.dispose();
-      // }
-
-      IsmLiveLog(
-          '-------------------aa ${_controller.room?.connectionState != lk.ConnectionState.disconnected}');
-      IsmLiveLog('-------------------aa ${_controller.room?.connectionState}');
-
       if (_controller.room?.connectionState !=
           lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
