@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
@@ -227,8 +228,6 @@ class IsmLiveStreamController extends GetxController
 
   ScrollController membersListController = ScrollController();
 
-  ScrollController messagesListController = ScrollController();
-
   final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
 
   final _streams = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
@@ -291,6 +290,15 @@ class IsmLiveStreamController extends GetxController
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
+
+  @override
+  void dispose() {
+    IsmLiveUtility.updateLater(
+      () => Get.find<IsmLiveStreamController>().streamDispose(),
+    );
+
+    super.dispose();
+  }
 
   @override
   void onInit() {
@@ -481,31 +489,31 @@ class IsmLiveStreamController extends GetxController
         isMembersApiCall = false;
       }
     });
+  }
 
-    messagesListController.addListener(() {
-      if (messagesListController.position.minScrollExtent ==
-          messagesListController.position.pixels) {
-        if (isMessagesApiCall) {
-          return;
-        }
-        isMessagesApiCall = true;
-        if (messagesCount != 0) {
-          fetchMessages(
-            showLoading: false,
-            getMessageModel: IsmLiveGetMessageModel(
-              streamId: streamId,
-              messageType: [IsmLiveMessageType.normal.value],
-              skip: messagesCount < 10 ? 0 : (messagesCount - 10),
-              limit: _controller.messagesCount < 10
-                  ? _controller.messagesCount
-                  : 10,
-              sort: 1,
-            ),
-          );
-        }
-        isMessagesApiCall = false;
+  void messagePagination(ScrollController messagesListController) async {
+    if (messagesListController.position.minScrollExtent ==
+        messagesListController.position.pixels) {
+      if (isMessagesApiCall) {
+        return;
       }
-    });
+
+      isMessagesApiCall = true;
+      if (messagesCount != 0) {
+        await fetchMessages(
+          showLoading: false,
+          getMessageModel: IsmLiveGetMessageModel(
+            streamId: _controller.streamId ?? '',
+            messageType: [IsmLiveMessageType.normal.value],
+            skip: messagesCount < 10 ? 0 : (messagesCount - 10),
+            limit:
+                _controller.messagesCount < 10 ? _controller.messagesCount : 10,
+            sort: 1,
+          ),
+        );
+      }
+      isMessagesApiCall = false;
+    }
   }
 
 // Method to start operations on initialization
@@ -604,6 +612,32 @@ class IsmLiveStreamController extends GetxController
         streamId: streamId ?? '',
       );
     }
+  }
+
+  void streamDispose() async {
+    var pkcontroller = Get.find<IsmLivePkController>();
+    pkcontroller.pkBarPersentage = 0;
+    pkcontroller.pkBarGustPersentage = 100;
+    pkcontroller.pkBarHostPersentage = 100;
+    pkcontroller.pkHostValue = 0;
+    pkcontroller.pkGustValue = 0;
+
+    showEmojiBoard = false;
+    streamMessagesList.clear();
+    streamViewersList.clear();
+    searchUserFieldController.clear();
+    descriptionController.clear();
+    messageFieldController.clear();
+    searchModeratorFieldController.clear();
+    searchCopublisherFieldController.clear();
+    searchExistingMembesFieldController.clear();
+    searchMembersFieldController.clear();
+    copublisherRequestsList.clear();
+    disposeAnimationController();
+    giftType = 0;
+    premiumStreamCoinsController.clear();
+    isPremium = false;
+    await WakelockPlus.disable();
   }
 
   void searchRequest(String values) async {

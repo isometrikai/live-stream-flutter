@@ -33,7 +33,14 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: const IsmLiveAppbar(),
-        floatingActionButton: const IsmLiveCreateStreamFAB(),
+        floatingActionButton: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const IsmLiveCreateStreamFAB(),
+            IsmLiveDimens.boxWidth10,
+            const IsmLiveStreamingScrolling(),
+          ],
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: GetBuilder<IsmLiveStreamController>(
           builder: (controller) => Column(
@@ -48,6 +55,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 controller: controller.tabController,
                 onTap: (index) {
                   controller.streamType = IsmLiveStreamType.values[index];
+                  controller.getStreams(type: controller.streamType);
                 },
                 tabs: [
                   ...IsmLiveStreamType.values.map(
@@ -86,7 +94,10 @@ class _StreamListing extends StatelessWidget {
         builder: (controller) => SmartRefresher(
           controller: controller.streamRefreshController,
           enablePullDown: true,
-          onRefresh: () => controller.getStreams(controller.streamType),
+          enablePullUp: true,
+          onRefresh: () => controller.getStreams(type: controller.streamType),
+          onLoading: () => controller.getStreams(
+              type: controller.streamType, skip: controller.streams.length),
           child: controller.streams.isEmpty
               ? const IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noStreams,

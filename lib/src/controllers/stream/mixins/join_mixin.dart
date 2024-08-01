@@ -25,15 +25,19 @@ mixin StreamJoinMixin {
     IsmLiveStreamDataModel stream,
     bool isHost, {
     bool joinByScrolling = false,
+    bool isScrolling = false,
   }) async {
     initialize(_controller.streams.indexOf(stream));
 
-    await joinStream(stream, isHost, joinByScrolling: joinByScrolling);
+    await joinStream(stream, isHost,
+        joinByScrolling: joinByScrolling, isScrolling: isScrolling);
   }
 
 // Initialize the page controller
   void initialize(int index) {
-    _controller.pageController = PageController(initialPage: index);
+    _controller.pageController = PageController(
+      initialPage: index,
+    );
   }
 
   // Enable the user's video
@@ -91,6 +95,7 @@ mixin StreamJoinMixin {
     IsmLiveStreamDataModel stream,
     bool isHost, {
     bool joinByScrolling = false,
+    bool isScrolling = false,
     bool isInteractive = false,
     VoidCallback? onStreamEnd,
   }) async {
@@ -106,8 +111,6 @@ mixin StreamJoinMixin {
       if (token.trim().isEmpty) {
         await _controller.stopStream(
             stream.streamId ?? '', _controller.user?.userId ?? '');
-      }
-      if (token.trim().isEmpty) {
         return;
       }
     } else {
@@ -121,6 +124,7 @@ mixin StreamJoinMixin {
 
     _controller.isRtmp = stream.rtmpIngest ?? false;
     _controller.isPremium = stream.isPaid ?? false;
+
     if (_controller.isPremium) {
       _controller.premiumStreamCoinsController.text = stream.amount.toString();
     }
@@ -138,6 +142,7 @@ mixin StreamJoinMixin {
       isNewStream: false,
       isPk: stream.isPkChallenge ?? false,
       joinByScrolling: joinByScrolling,
+      isScrolling: isScrolling,
       hdBroadcast: stream.hdBroadcast ?? false,
       isInteractive: isInteractive,
     );
@@ -205,6 +210,7 @@ mixin StreamJoinMixin {
     bool isPkGust = false,
     required bool isNewStream,
     bool joinByScrolling = false,
+    bool isScrolling = false,
     bool isInteractive = false,
   }) async {
     // Subscribe to the stream
@@ -361,6 +367,7 @@ mixin StreamJoinMixin {
           isHost: isHost,
           isNewStream: isNewStream,
           room: room,
+          isScrolling: isScrolling,
           streamImage: streamImage,
           listener: _controller.listener!,
           streamId: streamId,

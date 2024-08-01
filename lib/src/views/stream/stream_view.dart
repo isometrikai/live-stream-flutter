@@ -13,6 +13,7 @@ class IsmLiveStreamView extends StatelessWidget {
         streamId = Get.arguments['streamId'],
         isHost = Get.arguments['isHost'],
         isNewStream = Get.arguments['isNewStream'],
+        isScrolling = Get.arguments['isScrolling'],
         isInteractive = Get.arguments['isInteractive'];
 
   final RoomListener listener;
@@ -21,6 +22,7 @@ class IsmLiveStreamView extends StatelessWidget {
   final String streamId;
   final bool isHost;
   final bool isNewStream;
+  final bool isScrolling;
   final bool isInteractive;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
@@ -40,10 +42,20 @@ class IsmLiveStreamView extends StatelessWidget {
         isNewStream: isNewStream,
         isInteractive: isInteractive,
       );
+    } else if (!isScrolling) {
+      return _IsmLiveStreamView(
+        key: key,
+        streamImage: streamImage,
+        streamId: streamId,
+        isHost: false,
+        isNewStream: false,
+        isInteractive: isInteractive,
+      );
     }
     return GetX<IsmLiveStreamController>(
       initState: (_) {
         var controller = Get.find<IsmLiveStreamController>();
+
         IsmLiveUtility.updateLater(() {
           controller.previousStreamIndex =
               controller.pageController?.page?.toInt() ?? 0;
@@ -52,13 +64,10 @@ class IsmLiveStreamView extends StatelessWidget {
       builder: (controller) => PageView.builder(
         itemCount: controller.streams.length,
         controller: controller.pageController,
-        // physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         pageSnapping: true,
-        allowImplicitScrolling: true,
         onPageChanged: (index) => controller.onStreamScroll(
           index: index,
-          // room: room,
         ),
         itemBuilder: (_, index) {
           final stream = controller.streams[index];
@@ -112,34 +121,6 @@ class _IsmLiveStreamView extends StatelessWidget {
               }
             }
           });
-        },
-        dispose: (_) async {
-          await WakelockPlus.disable();
-          var controller = Get.find<IsmLiveStreamController>();
-          var pkcontroller = Get.find<IsmLivePkController>();
-          pkcontroller.pkBarPersentage = 0;
-          pkcontroller.pkBarGustPersentage = 100;
-          pkcontroller.pkBarHostPersentage = 100;
-          pkcontroller.pkHostValue = 0;
-          pkcontroller.pkGustValue = 0;
-
-          controller.showEmojiBoard = false;
-          controller.streamMessagesList.clear();
-          controller.streamViewersList.clear();
-          controller.searchUserFieldController.clear();
-          controller.descriptionController.clear();
-          controller.messageFieldController.clear();
-          controller.searchModeratorFieldController.clear();
-          controller.searchCopublisherFieldController.clear();
-          controller.searchExistingMembesFieldController.clear();
-          controller.searchMembersFieldController.clear();
-          controller.copublisherRequestsList.clear();
-          controller.disposeAnimationController();
-          controller.giftType = 0;
-          controller.premiumStreamCoinsController.clear();
-          controller.isPremium = false;
-
-          await controller.room?.dispose();
         },
         builder: (controller) => PopScope(
           canPop: false,

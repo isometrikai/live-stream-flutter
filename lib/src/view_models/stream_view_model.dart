@@ -51,8 +51,7 @@ class IsmLiveStreamViewModel {
     required IsmLiveStreamQueryModel queryModel,
   }) async {
     try {
-      var res = await _repository.getStreams();
-      // var res = await _repository.getStreams(queryModel: queryModel);
+      var res = await _repository.getStreams(queryModel: queryModel);
 
       if (res.hasError || res.statusCode != 200) {
         return [];
@@ -282,11 +281,13 @@ class IsmLiveStreamViewModel {
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
   }) async {
+    var messageType = getMessageModel.messageType ?? [0];
+
     try {
       var res = await _repository.fetchMessages(
-        showLoading: showLoading,
-        payload: getMessageModel.toMap(),
-      );
+          showLoading: showLoading,
+          payload: getMessageModel.toMap(),
+          messageType: messageType);
       if (res.hasError) {
         return [];
       }
@@ -308,8 +309,11 @@ class IsmLiveStreamViewModel {
     required IsmLiveGetMessageModel getMessageModel,
   }) async {
     try {
+      var messageType = getMessageModel.messageType ?? [0];
+
       var res = await _repository.fetchMessagesCount(
         showLoading: showLoading,
+        messageType: messageType,
         payload: getMessageModel.toMap(),
       );
       if (res.hasError) {

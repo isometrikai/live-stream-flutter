@@ -11,6 +11,7 @@ export 'gifts_sheet.dart';
 export 'go_live_nav_bar.dart';
 export 'host_details.dart';
 export 'list_sheet.dart';
+export 'live_streams_scrolling.dart';
 export 'logout_bottom_sheet.dart';
 export 'message_field.dart';
 export 'moderation_warning.dart';

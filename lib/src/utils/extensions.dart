@@ -41,27 +41,28 @@ extension IsmLiveMapExtension on Map<String, dynamic> {
 }
 
 extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
-  IsmLiveStreamQueryModel get queryModel {
-    var model = const IsmLiveStreamQueryModel();
+  IsmLiveStreamQueryModel queryModel({int skip = 0}) {
+    var model = IsmLiveStreamQueryModel(
+        skip: skip, limit: 10, status: 4, sortOrder: 'asc');
     switch (this) {
       case IsmLiveStreamType.all:
-        return model;
+        return model.copyWith(fetchLive: true);
       case IsmLiveStreamType.audioOnly:
         return model.copyWith(audioOnly: true);
       case IsmLiveStreamType.multilive:
         return model.copyWith(multiLive: true);
       case IsmLiveStreamType.private:
-        return model.copyWith(public: false);
+        return model.copyWith(private: true);
       case IsmLiveStreamType.ecommerce:
         return model.copyWith(productsLinked: true);
       case IsmLiveStreamType.restream:
         return model.copyWith(reStream: true);
       case IsmLiveStreamType.hd:
-        return model.copyWith(hdBroadcast: true);
+        return model.copyWith(hdbroadcast: true);
       case IsmLiveStreamType.recorded:
-        return model.copyWith(recorded: true);
+        return model.copyWith(isRecorded: true);
       case IsmLiveStreamType.pk:
-        return model.copyWith(recorded: true);
+        return model.copyWith(pk: true);
     }
   }
 }
