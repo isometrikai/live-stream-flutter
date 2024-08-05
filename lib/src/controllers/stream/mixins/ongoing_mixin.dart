@@ -632,7 +632,7 @@ mixin StreamOngoingMixin {
     }
 
     if (isEnded && endStream) {
-      unawaited(_controller._mqttController?.unsubscribeStream(streamId));
+      // unawaited(_controller._mqttController?.unsubscribeStream(streamId));
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
@@ -664,21 +664,20 @@ mixin StreamOngoingMixin {
     unawaited(
         _controller._mqttController?.unsubscribeStream(_controller.streamId!));
 
-    _controller.userRole = null;
-    _controller.streamId = null;
-    _pkController.pkTimer?.cancel();
-    _pkController.pkTimer = null;
-    _controller._streamTimer?.cancel();
-    _controller._streamTimer = null;
-    IsmLiveUtility.updateLater(
-      () => _controller.streamDispose(),
-    );
-
     try {
       if (_controller.room?.connectionState !=
           lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
       }
+      _controller.userRole = null;
+      _controller.streamId = null;
+      _pkController.pkTimer?.cancel();
+      _pkController.pkTimer = null;
+      _controller._streamTimer?.cancel();
+      _controller._streamTimer = null;
+      IsmLiveUtility.updateLater(
+        () => _controller.streamDispose(),
+      );
     } catch (e, st) {
       IsmLiveLog('---------------->  $e , $st');
     }

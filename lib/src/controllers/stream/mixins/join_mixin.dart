@@ -215,6 +215,7 @@ mixin StreamJoinMixin {
   }) async {
     // Subscribe to the stream
     _controller.streamId = streamId;
+    _controller.initAnimation();
 
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
