@@ -106,10 +106,10 @@ class _IsmLiveStreamView extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
+
           controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.participantList = controller.participantTracks;
 
-          controller.initAnimation();
           await WakelockPlus.enable();
           IsmLiveUtility.updateLater(() {
             if (isHost) {

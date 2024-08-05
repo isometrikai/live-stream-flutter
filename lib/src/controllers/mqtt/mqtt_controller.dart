@@ -580,6 +580,7 @@ class IsmLiveMqttController extends GetxController {
           }
           _streamController.streams.removeWhere((e) => e.streamId == streamId);
           if (initiatorId != userId) {
+            _disconnectRoom();
             _streamController.closeStreamView(false, fromMqtt: true);
           }
           _updateStreamListing();
