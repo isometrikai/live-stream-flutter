@@ -194,7 +194,11 @@ mixin StreamOngoingMixin {
         Get.back();
       }
       IsmLiveDebouncer(durationtime: 3000).run(() async {
-        await _controller.animationController.forward();
+        try {
+          await _controller.animationController.forward();
+        } catch (e) {
+          IsmLiveLog('animation error - $e');
+        }
       });
     }
   }
@@ -660,7 +664,7 @@ mixin StreamOngoingMixin {
     return isEnded;
   }
 
-  Future<void> disconnectRoom() async {
+  Future<void> disconnectRoom([bool callDispose = true]) async {
     unawaited(
         _controller._mqttController?.unsubscribeStream(_controller.streamId!));
 
@@ -669,15 +673,18 @@ mixin StreamOngoingMixin {
           lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
       }
-      _controller.userRole = null;
-      _controller.streamId = null;
-      _pkController.pkTimer?.cancel();
-      _pkController.pkTimer = null;
-      _controller._streamTimer?.cancel();
-      _controller._streamTimer = null;
-      IsmLiveUtility.updateLater(
-        () => _controller.streamDispose(),
-      );
+      if (callDispose) {
+        _controller.userRole = null;
+        _controller.streamId = null;
+        _pkController.pkTimer?.cancel();
+        _pkController.pkTimer = null;
+        _controller._streamTimer?.cancel();
+        _controller._streamTimer = null;
+
+        IsmLiveUtility.updateLater(
+          () => _controller.streamDispose(),
+        );
+      }
     } catch (e, st) {
       IsmLiveLog('---------------->  $e , $st');
     }

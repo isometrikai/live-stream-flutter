@@ -246,53 +246,73 @@ enum IsmLiveStreamOption {
   const IsmLiveStreamOption(this.icon);
 
   final String icon;
-  static List<IsmLiveStreamOption> get viewersOptions => [
-        IsmLiveStreamOption.gift,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speaker,
-        IsmLiveStreamOption.multiLive,
-        IsmLiveStreamOption.heart,
-      ];
 
-  static List<IsmLiveStreamOption> get hostOptions => [
-        IsmLiveStreamOption.members,
-        IsmLiveStreamOption.vs,
-        IsmLiveStreamOption.multiLive,
-        IsmLiveStreamOption.product,
-        IsmLiveStreamOption.share,
-        // IsmLiveStreamOption.favourite,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ];
+  ///viewer options
+  static List<IsmLiveStreamOption> get viewersOptions =>
+      IsmLiveDelegate.viewersOption.isEmpty
+          ? [
+              IsmLiveStreamOption.gift,
+              IsmLiveStreamOption.share,
+              IsmLiveStreamOption.speaker,
+              IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.heart,
+            ]
+          : IsmLiveDelegate.viewersOption;
 
-  static List<IsmLiveStreamOption> get rtmpOptions => [
-        IsmLiveStreamOption.members,
-        IsmLiveStreamOption.vs,
-        IsmLiveStreamOption.multiLive,
-        IsmLiveStreamOption.product,
-        // IsmLiveStreamOption.share,
-        // // IsmLiveStreamOption.favourite,
-        // IsmLiveStreamOption.rotateCamera,
-        // IsmLiveStreamOption.settings,
-      ];
-  static List<IsmLiveStreamOption> get copublisherOptions => [
-        IsmLiveStreamOption.members,
-        // IsmLiveStreamOption.vs,
-        IsmLiveStreamOption.multiLive,
+  ///host options
+  static List<IsmLiveStreamOption> get hostOptions =>
+      IsmLiveDelegate.hostOptions.isEmpty
+          ? [
+              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.vs,
+              IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.product,
+              IsmLiveStreamOption.share,
+              // IsmLiveStreamOption.favourite,
+              IsmLiveStreamOption.rotateCamera,
+              IsmLiveStreamOption.settings,
+            ]
+          : IsmLiveDelegate.hostOptions;
 
-        IsmLiveStreamOption.share,
+  ///rtmp options
+  static List<IsmLiveStreamOption> get rtmpOptions =>
+      IsmLiveDelegate.rtmpOptions.isEmpty
+          ? [
+              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.vs,
+              IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.product,
+              // IsmLiveStreamOption.share,
+              // // IsmLiveStreamOption.favourite,
+              // IsmLiveStreamOption.rotateCamera,
+              // IsmLiveStreamOption.settings,
+            ]
+          : IsmLiveDelegate.rtmpOptions;
 
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ];
+  ///copublisher options
+  static List<IsmLiveStreamOption> get copublisherOptions =>
+      IsmLiveDelegate.copublisherOptions.isEmpty
+          ? [
+              IsmLiveStreamOption.members,
+              // IsmLiveStreamOption.vs,
+              IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.share,
+              IsmLiveStreamOption.rotateCamera,
+              IsmLiveStreamOption.settings,
+            ]
+          : IsmLiveDelegate.copublisherOptions;
 
-  static List<IsmLiveStreamOption> get pkOptions => [
-        IsmLiveStreamOption.pk,
-        IsmLiveStreamOption.members,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ];
+  ///pk options
+  static List<IsmLiveStreamOption> get pkOptions =>
+      IsmLiveDelegate.pkOptions.isEmpty
+          ? [
+              IsmLiveStreamOption.pk,
+              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.share,
+              IsmLiveStreamOption.rotateCamera,
+              IsmLiveStreamOption.settings,
+            ]
+          : IsmLiveDelegate.pkOptions;
 }
 
 enum IsmLiveHostSettings {

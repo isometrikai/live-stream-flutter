@@ -35,8 +35,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
           var options = !isHost
               ? controller.userRole?.isPkGuest ?? false
                   ? IsmLiveStreamOption.pkOptions
-                  : IsmLiveDelegate.controlIcons ??
-                      IsmLiveStreamOption.viewersOptions
+                  : IsmLiveStreamOption.viewersOptions
               : controller.isRtmp
                   ? IsmLiveStreamOption.rtmpOptions
                   : controller.isPk

@@ -28,7 +28,17 @@ class IsmLiveDelegate {
 
   static Alignment endStreamPosition = Alignment.topRight;
 
-  static List<IsmLiveStreamOption>? controlIcons;
+  static List<IsmLiveStreamOption> viewersOption = [];
+
+  static List<IsmLiveStreamOption> hostOptions = [];
+
+  static List<IsmLiveStreamOption> rtmpOptions = [];
+
+  static List<IsmLiveStreamOption> copublisherOptions = [];
+
+  static List<IsmLiveStreamOption> pkOptions = [];
+
+  static Widget? homeScreen;
 
   Future<void> initialize(
     IsmLiveConfigData config, {

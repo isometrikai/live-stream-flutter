@@ -12,6 +12,17 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<HomeController>(
+        initState: (state) {
+          // IsmLiveStreamListing.child = Scaffold(
+          //     body: Center(
+          //         child: GestureDetector(
+          //   child: const Text('tariq the creater'),
+          //   onTap: () {
+          //     var contn = Get.find<IsmLiveStreamController>();
+          //     contn.getStreams();
+          //   },
+          // )));
+        },
         builder: (controller) => IsmLiveApp(
           configuration: kConfigData.value ?? controller.configData,
           enableLog: true,
