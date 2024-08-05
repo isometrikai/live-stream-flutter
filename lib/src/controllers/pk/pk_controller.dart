@@ -474,7 +474,7 @@ class IsmLivePkController extends GetxController
       return;
     }
 
-    await streamController.disconnectRoom();
+    await streamController.disconnectRoom(false);
     // await streamController.room?.dispose();
 
     await streamController.connectStream(

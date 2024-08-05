@@ -78,7 +78,12 @@ class IsmLiveApp extends StatelessWidget {
     bool showHeader = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
-    List<IsmLiveStreamOption>? controlIcons,
+    List<IsmLiveStreamOption> viewersOptions = const [],
+    List<IsmLiveStreamOption> hostOptions = const [],
+    List<IsmLiveStreamOption> rtmpOptions = const [],
+    List<IsmLiveStreamOption> copublisherOptions = const [],
+    List<IsmLiveStreamOption> pkOptions = const [],
+    Widget? homeScreen,
   }) {
     assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -89,7 +94,12 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
-    IsmLiveDelegate.controlIcons = controlIcons;
+    IsmLiveDelegate.viewersOption = viewersOptions;
+    IsmLiveDelegate.hostOptions = hostOptions;
+    IsmLiveDelegate.rtmpOptions = rtmpOptions;
+    IsmLiveDelegate.copublisherOptions = copublisherOptions;
+    IsmLiveDelegate.pkOptions = pkOptions;
+    IsmLiveDelegate.homeScreen = homeScreen;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();

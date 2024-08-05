@@ -215,7 +215,6 @@ mixin StreamJoinMixin {
   }) async {
     // Subscribe to the stream
     _controller.streamId = streamId;
-    _controller.initAnimation();
 
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
@@ -238,11 +237,13 @@ mixin StreamJoinMixin {
       }
     }
     _controller.update([IsmGoLiveView.updateId]);
-    unawaited(
-      _controller._mqttController?.subscribeStream(
-        streamId,
-      ),
-    );
+    if (!isCopublisher) {
+      unawaited(
+        _controller._mqttController?.subscribeStream(
+          streamId,
+        ),
+      );
+    }
 
     // Show appropriate message based on the user's role
     final translation = Get.context?.liveTranslations?.streamTranslations;
