@@ -532,8 +532,12 @@ mixin StreamOngoingMixin {
   void onStreamScroll({
     required int index,
   }) async {
-    IsmLiveUtility.showLoader();
+    if (onChangeCall) {
+      return;
+    }
 
+    IsmLiveUtility.showLoader();
+    onChangeCall = true;
     if (_controller.streams.length - 1 == index + 1) {
       unawaited(_controller.getStreams(
           skip: _controller.streams.length, type: _controller.streamType));
@@ -547,6 +551,7 @@ mixin StreamOngoingMixin {
     );
     if (!didLeft) {
       IsmLiveLog.error('Cannot leave stream');
+
       // IsmLiveUtility.closeLoader();
       // await _controller.animateToPage(_controller.previousStreamIndex);
       // unawaited(_controller.getStreams());
@@ -584,7 +589,7 @@ mixin StreamOngoingMixin {
     }
 
     _controller.previousStreamIndex = index;
-
+    onChangeCall = false;
     IsmLiveUtility.closeLoader();
   }
 
@@ -613,9 +618,6 @@ mixin StreamOngoingMixin {
     }
     isStopStreamCall = true;
     var isEnded = false;
-    IsmLiveUtility.updateLater(
-      () => _controller.streamDispose(),
-    );
 
     if (isHost) {
       isEnded = true;
@@ -668,6 +670,9 @@ mixin StreamOngoingMixin {
     _pkController.pkTimer = null;
     _controller._streamTimer?.cancel();
     _controller._streamTimer = null;
+    IsmLiveUtility.updateLater(
+      () => _controller.streamDispose(),
+    );
 
     try {
       if (_controller.room?.connectionState !=

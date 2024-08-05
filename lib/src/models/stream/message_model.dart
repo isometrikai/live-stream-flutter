@@ -86,7 +86,7 @@ class IsmLiveMessageModel {
     try {
       return utf8.decode(value.runes.toList());
     } catch (e) {
-      return '';
+      return value;
     }
   }
 

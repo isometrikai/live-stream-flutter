@@ -121,6 +121,7 @@ class IsmLiveUtility {
 
   /// Show loader
   static void showLoader([String? message]) async {
+    hideKeyboard();
     await Get.dialog(
       IsmLiveLoader(message: message),
       barrierDismissible: false,
@@ -139,6 +140,7 @@ class IsmLiveUtility {
     String? title,
     VoidCallback? onRetry,
   }) async {
+    hideKeyboard();
     await Get.dialog(
       CupertinoAlertDialog(
         title: Text(
@@ -182,6 +184,7 @@ class IsmLiveUtility {
     bool isDismissible = true,
     double? horizontalPadding,
   }) async {
+    hideKeyboard();
     await Get.dialog(
       UnconstrainedBox(
         child: SizedBox(
@@ -210,6 +213,7 @@ class IsmLiveUtility {
     String? title,
     Function()? onPress,
   }) async {
+    hideKeyboard();
     await Get.dialog(
       CupertinoAlertDialog(
         title: Text('$title'),

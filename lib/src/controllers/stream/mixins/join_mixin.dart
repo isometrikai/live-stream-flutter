@@ -262,7 +262,9 @@ mixin StreamJoinMixin {
       message =
           translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
-    IsmLiveUtility.showLoader(message);
+    if (!joinByScrolling) {
+      IsmLiveUtility.showLoader(message);
+    }
 
     try {
       final videoQuality = hdBroadcast || restream
@@ -338,7 +340,9 @@ mixin StreamJoinMixin {
         );
       }
 
-      IsmLiveUtility.closeLoader();
+      if (!joinByScrolling) {
+        IsmLiveUtility.closeLoader();
+      }
 
       unawaited(Future.wait([
         _controller.getStreamMembers(
