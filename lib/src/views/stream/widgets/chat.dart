@@ -31,9 +31,13 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
 
   @override
   void dispose() {
-    messagesListController.removeListener(
-        () => _controller.messagePagination(messagesListController));
-    messagesListController.dispose();
+    try {
+      messagesListController.removeListener(
+          () => _controller.messagePagination(messagesListController));
+      messagesListController.dispose();
+    } catch (e) {
+      IsmLiveLog('chat controller error $e');
+    }
     super.dispose();
   }
 

@@ -51,6 +51,7 @@ class IsmLiveModeratorDialog extends StatelessWidget {
                 if (stream == null) {
                   return;
                 }
+                controller.disconnectRoom();
                 controller.initializeStream(isHost: false, streamId: streamId);
                 controller.initializeAndJoinStream(stream, false);
               },
