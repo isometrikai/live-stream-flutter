@@ -203,7 +203,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                             ),
                                       ),
                                       IsmLiveControlsWidget(
-                                        isHost: controller.isPublishing,
+                                        isHost: isHost,
                                         isCopublishing: controller
                                                 .participantTracks.length >
                                             1,

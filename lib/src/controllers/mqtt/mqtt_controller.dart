@@ -366,6 +366,7 @@ class IsmLiveMqttController extends GetxController {
           _streamController.streamMembersList
               .removeWhere((e) => e.userId == member.userId);
           _updateStream();
+
           break;
         case IsmLiveActions.memberRemoved:
           final memberName = payload['memberName'] as String? ?? '';
@@ -425,7 +426,7 @@ class IsmLiveMqttController extends GetxController {
             streamId: streamId,
           );
 
-          if (_streamController.isHost) {
+          if (_streamController.isHost && !_streamController.isPk) {
             _streamController.userRole?.makeCopublisher();
           }
           unawaited(_streamController.handleMessage(message: message));
@@ -548,7 +549,7 @@ class IsmLiveMqttController extends GetxController {
                 .removeWhere((e) => e.userId == moderatorId);
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == moderatorId);
-            if (userId != initiatorId) {
+            if (userId == moderatorId) {
               _disconnectRoom();
             }
 
@@ -623,7 +624,7 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
 
-            if (viewer.userId != _streamController.user?.userId) {
+            if (viewer.userId != userId) {
               unawaited(_streamController.handleMessage(message: message));
               _streamController.streamViewersList
                   .removeWhere((e) => e.userId == viewer.userId);
@@ -654,7 +655,7 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamViewersList
                 .removeWhere((e) => e.userId == viewerId);
-            if (userId != initiatorId) {
+            if (userId == viewerId) {
               _disconnectRoom();
             }
             _updateStream();

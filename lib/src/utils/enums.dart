@@ -127,14 +127,14 @@ enum IsmLiveMeetingType {
 
 enum IsmLiveStreamType {
   all(0, IsmLiveStrings.all),
-  audioOnly(1, IsmLiveStrings.audioOnly),
+  // audioOnly(1, IsmLiveStrings.audioOnly),
   pk(2, IsmLiveStrings.pk),
-  private(3, IsmLiveStrings.private),
-  ecommerce(4, IsmLiveStrings.ecommerce),
+  // private(3, IsmLiveStrings.private),
+  // ecommerce(4, IsmLiveStrings.ecommerce),
   restream(5, IsmLiveStrings.reStream),
   hd(6, IsmLiveStrings.hd),
-  recorded(7, IsmLiveStrings.recorded),
-  multilive(8, IsmLiveStrings.multiLive);
+  recorded(7, IsmLiveStrings.recorded);
+  // multilive(8, IsmLiveStrings.multiLive);
 
   const IsmLiveStreamType(this.value, this.label);
   final int value;
@@ -266,7 +266,7 @@ enum IsmLiveStreamOption {
               IsmLiveStreamOption.members,
               IsmLiveStreamOption.vs,
               IsmLiveStreamOption.multiLive,
-              IsmLiveStreamOption.product,
+              // IsmLiveStreamOption.product,
               IsmLiveStreamOption.share,
               // IsmLiveStreamOption.favourite,
               IsmLiveStreamOption.rotateCamera,
@@ -278,7 +278,7 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get rtmpOptions =>
       IsmLiveDelegate.rtmpOptions.isEmpty
           ? [
-              IsmLiveStreamOption.members,
+              // IsmLiveStreamOption.members,
               IsmLiveStreamOption.vs,
               IsmLiveStreamOption.multiLive,
               IsmLiveStreamOption.product,
@@ -293,9 +293,9 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get copublisherOptions =>
       IsmLiveDelegate.copublisherOptions.isEmpty
           ? [
-              IsmLiveStreamOption.members,
+              // IsmLiveStreamOption.members,
               // IsmLiveStreamOption.vs,
-              IsmLiveStreamOption.multiLive,
+              // IsmLiveStreamOption.multiLive,
               IsmLiveStreamOption.share,
               IsmLiveStreamOption.rotateCamera,
               IsmLiveStreamOption.settings,
