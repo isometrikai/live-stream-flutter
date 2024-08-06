@@ -32,7 +32,6 @@ mixin StreamOngoingMixin {
     _manageModerator(streamId);
     // Fetch message count and initial messages if not host
     if (!isHost) {
-      // _controller.streamMessagesList.clear();
       await _controller.fetchMessagesCount(
         showLoading: false,
         getMessageModel: IsmLiveGetMessageModel(
