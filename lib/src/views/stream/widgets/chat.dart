@@ -82,7 +82,13 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                   alignment: Alignment.centerLeft,
                   child: IsmLiveTapHandler(
                     onTap: () {
-                      if (!message.isEvent) {
+                      var openSheet = message.sentByHost
+                          ? (controller.isCopublisher ||
+                              controller.isModerator ||
+                              controller.isMember ||
+                              controller.isHost)
+                          : true;
+                      if (!message.isEvent && !message.isDeleted && openSheet) {
                         IsmLiveUtility.openBottomSheet(
                           ChatBottomSheet(
                             message: message,
