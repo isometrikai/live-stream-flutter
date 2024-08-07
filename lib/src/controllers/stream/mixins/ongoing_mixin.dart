@@ -625,8 +625,10 @@ mixin StreamOngoingMixin {
     if (isHost) {
       isEnded = true;
       await _controller.stopStream(streamId, _controller.user?.userId ?? '');
-    } else if (_controller.isCopublisher ||
-        (_controller.userRole?.isPkGuest ?? false)) {
+    } else if (_controller.userRole?.isPkGuest ?? false) {
+      await _pkController.pkEnd();
+      isEnded = true;
+    } else if (_controller.isCopublisher) {
       await _controller.leaveMember(streamId: streamId);
       isEnded = true;
     } else {
@@ -645,17 +647,18 @@ mixin StreamOngoingMixin {
         unawaited(_controller.getStreams());
         closeStreamView(isHost, streamId: streamId);
       }
-    } else if (_controller.isCopublisher) {
-      await _controller.unpublishTracks();
-
-      _controller.userRole?.leaveCopublishing();
-
-      _controller.memberStatus = IsmLiveMemberStatus.notMember;
-
-      await _controller.getRTCToken(_controller.streamId ?? '',
-          showLoader: false);
-      await _controller.sortParticipants();
     }
+    //  else if (_controller.isCopublisher) {
+    //   await _controller.unpublishTracks();
+
+    //   _controller.userRole?.leaveCopublishing();
+
+    //   _controller.memberStatus = IsmLiveMemberStatus.notMember;
+
+    //   await _controller.getRTCToken(_controller.streamId ?? '',
+    //       showLoader: false);
+    //   await _controller.sortParticipants();
+    // }
 
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;
@@ -672,18 +675,17 @@ mixin StreamOngoingMixin {
           lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
       }
-      if (callDispose) {
-        _controller.userRole = null;
-        _controller.streamId = null;
-        _pkController.pkTimer?.cancel();
-        _pkController.pkTimer = null;
-        _controller._streamTimer?.cancel();
-        _controller._streamTimer = null;
 
-        IsmLiveUtility.updateLater(
-          () => _controller.streamDispose(),
-        );
-      }
+      _controller.userRole = null;
+      _controller.streamId = null;
+      _pkController.pkTimer?.cancel();
+      _pkController.pkTimer = null;
+      _controller._streamTimer?.cancel();
+      _controller._streamTimer = null;
+
+      IsmLiveUtility.updateLater(
+        () => _controller.streamDispose(callDispose),
+      );
     } catch (e, st) {
       IsmLiveLog('---------------->  $e , $st');
     }

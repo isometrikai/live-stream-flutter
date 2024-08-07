@@ -32,17 +32,32 @@ class IsmLiveControlsWidget extends StatelessWidget {
               ?.removeListener(streamController.update);
         },
         builder: (controller) {
-          var options = !isHost
-              ? controller.userRole?.isPkGuest ?? false
-                  ? IsmLiveStreamOption.pkOptions
-                  : IsmLiveStreamOption.viewersOptions
-              : controller.isRtmp
-                  ? IsmLiveStreamOption.rtmpOptions
-                  : controller.isPk
-                      ? IsmLiveStreamOption.pkOptions
-                      : isCopublishing
-                          ? IsmLiveStreamOption.copublisherOptions
-                          : IsmLiveStreamOption.hostOptions;
+          var options = <IsmLiveStreamOption>[];
+
+          if (isHost) {
+            options = controller.isRtmp
+                ? IsmLiveStreamOption.rtmpOptions
+                : controller.isPk
+                    ? IsmLiveStreamOption.pkOptions
+                    : IsmLiveStreamOption.hostOptions;
+          } else {
+            options = controller.userRole?.isPkGuest ?? false
+                ? IsmLiveStreamOption.pkOptions
+                : isCopublishing
+                    ? IsmLiveStreamOption.copublisherOptions
+                    : IsmLiveStreamOption.viewersOptions;
+          }
+
+          // var options = !isHost
+          //     ? controller.userRole?.isPkGuest ?? false
+          //         ? IsmLiveStreamOption.pkOptions
+          //         : IsmLiveStreamOption.viewersOptions
+          //     : controller.isRtmp
+          //         ? IsmLiveStreamOption.rtmpOptions
+          //         : controller.isPk
+          //             ? IsmLiveStreamOption.pkOptions
+
+          //                 : IsmLiveStreamOption.hostOptions;
 
           return SingleChildScrollView(
             child: Column(

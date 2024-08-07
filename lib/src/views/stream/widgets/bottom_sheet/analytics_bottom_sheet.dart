@@ -44,7 +44,7 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
               ),
               IsmLiveDimens.boxHeight16,
               Text(
-                'Live stream ended!',
+                'Live stream',
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

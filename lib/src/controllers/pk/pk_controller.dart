@@ -370,10 +370,8 @@ class IsmLivePkController extends GetxController
                     streamController.participantTracks[1].participant.identity,
               );
             } else {
-              streamController.disconnectStream(
-                isHost: false,
-                streamId: streamController.streamId ?? '',
-              );
+              streamController.disconnectRoom();
+              streamController.closeStreamView(false);
             }
           }
         },
@@ -573,12 +571,10 @@ class IsmLivePkController extends GetxController
   }
 
   Future<void> pkEnd() async {
-    var res = await _viewModel.pkEnd(
+    await _viewModel.pkEnd(
       inviteId,
     );
-    if (res) {
-      streamController.pkStages = null;
-    }
+    streamController.pkStages = null;
   }
 
   Future<void> getGiftCategories({

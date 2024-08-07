@@ -225,6 +225,7 @@ mixin StreamJoinMixin {
 
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
     } else {

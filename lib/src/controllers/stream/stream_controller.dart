@@ -614,7 +614,7 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void streamDispose() async {
+  void streamDispose([bool callDispose = true]) async {
     var pkcontroller = Get.find<IsmLivePkController>();
     pkcontroller.pkBarPersentage = 0;
     pkcontroller.pkBarGustPersentage = 100;
@@ -633,7 +633,7 @@ class IsmLiveStreamController extends GetxController
     searchExistingMembesFieldController.clear();
     searchMembersFieldController.clear();
     copublisherRequestsList.clear();
-    disposeAnimationController();
+    if (callDispose) disposeAnimationController();
     giftType = 0;
     premiumStreamCoinsController.clear();
     isPremium = false;
