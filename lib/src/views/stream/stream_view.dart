@@ -204,9 +204,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       ),
                                       IsmLiveControlsWidget(
                                         isHost: isHost,
-                                        isCopublishing: controller
-                                                .participantTracks.length >
-                                            1,
+                                        isCopublishing:
+                                            controller.isCopublisher,
                                         streamId: controller.streamId ?? '',
                                       ),
                                     ],

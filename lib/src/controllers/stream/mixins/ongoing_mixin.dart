@@ -667,8 +667,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
-    unawaited(
-        _controller._mqttController?.unsubscribeStream(_controller.streamId!));
+    await _controller._mqttController?.unsubscribeStream(_controller.streamId!);
 
     try {
       if (_controller.room?.connectionState !=
