@@ -758,4 +758,17 @@ class IsmLiveStreamController extends GetxController
     }
     return '';
   }
+
+  bool checkCanMakeModerator(String userId) {
+    var isthere = streamMembersList.any(
+      (element) => element.userId == userId,
+    );
+    if (!isthere) {
+      return moderatorsList.any(
+        (element) => element.userId == userId,
+      );
+    }
+
+    return isthere;
+  }
 }

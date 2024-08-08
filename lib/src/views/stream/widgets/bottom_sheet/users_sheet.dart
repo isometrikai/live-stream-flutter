@@ -30,6 +30,9 @@ class IsmLiveUsersSheet extends StatelessWidget {
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
             final user = controller.usersList[index];
+
+            var notShowbotton = controller.checkCanMakeModerator(user.userId);
+
             return ListTile(
               leading: IsmLiveImage.network(
                 user.profileUrl,
@@ -39,18 +42,20 @@ class IsmLiveUsersSheet extends StatelessWidget {
               ),
               title: Text(user.userName),
               subtitle: Text(user.userIdentifier),
-              trailing: IsmLiveButton.icon(
-                icon: Icons.person_add_rounded,
-                onTap: () {
-                  controller.makeModerator(
-                    moderatorId: user.userId,
-                    streamId: controller.streamId ?? '',
-                  );
+              trailing: notShowbotton
+                  ? null
+                  : IsmLiveButton.icon(
+                      icon: Icons.person_add_rounded,
+                      onTap: () {
+                        controller.makeModerator(
+                          moderatorId: user.userId,
+                          streamId: controller.streamId ?? '',
+                        );
 
-                  Get.back();
-                  Get.back();
-                },
-              ),
+                        Get.back();
+                        Get.back();
+                      },
+                    ),
             );
           },
         ),

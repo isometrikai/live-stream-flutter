@@ -60,16 +60,20 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                   ? IsmLiveButton.icon(
                       icon: Icons.person_remove_rounded,
                       onTap: () {
+                        Get.back();
                         controller.removeModerator(
                           moderatorId: moderator.userId,
                           streamId: controller.streamId ?? '',
                         );
                       },
                     )
-                  : controller.isModerator && controller.isHost != true
+                  : controller.isModerator &&
+                          controller.isHost != true &&
+                          (controller.user?.userId == moderator.userId)
                       ? IsmLiveButton.icon(
                           icon: Icons.exit_to_app_rounded,
                           onTap: () {
+                            Get.back();
                             controller
                                 .leaveModerator(controller.streamId ?? '');
                           },
