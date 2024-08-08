@@ -39,7 +39,13 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 ? IsmLiveStreamOption.rtmpOptions
                 : controller.isPk
                     ? IsmLiveStreamOption.pkOptions
-                    : IsmLiveStreamOption.hostOptions;
+                    : controller.isCopublisher
+                        ? IsmLiveStreamOption.hostOptions
+                            .where(
+                              (element) => element != IsmLiveStreamOption.vs,
+                            )
+                            .toList()
+                        : IsmLiveStreamOption.hostOptions;
           } else {
             options = controller.userRole?.isPkGuest ?? false
                 ? IsmLiveStreamOption.pkOptions

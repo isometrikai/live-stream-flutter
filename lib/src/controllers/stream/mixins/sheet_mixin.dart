@@ -160,6 +160,19 @@ mixin StreamSheetMixin {
     );
   }
 
+  void shareStream() async {
+    try {
+      final result =
+          await Share.share('check out my website https://example.com');
+
+      if (result.status == ShareResultStatus.success) {
+        print('Thank you for sharing my website!');
+      }
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+  }
+
   void rtmpSheet() async {
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveRtmpSheet(),

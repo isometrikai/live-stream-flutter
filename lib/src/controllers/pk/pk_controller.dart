@@ -78,6 +78,8 @@ class IsmLivePkController extends GetxController
 
   String? pkId;
 
+  String? pkguestStreamId;
+
   String? get getstreamId => streamController.streamId;
 
   num pkHostValue = 0;
@@ -447,6 +449,7 @@ class IsmLivePkController extends GetxController
     );
 
     if (res != null && res.message != IsmLivePkResponce.rejected) {
+      pkguestStreamId = streamController.streamId;
       await publishPk(
         reciverStreamId: res.streamData.streamId ?? '',
         hdBroadcast: res.streamData.hdBroadcast ?? false,
