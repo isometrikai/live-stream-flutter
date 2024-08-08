@@ -393,11 +393,14 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
+        _controller.shareStream();
         break;
       case IsmLiveStreamOption.members:
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
-            streamId: _controller.streamId ?? '',
+            streamId: (_controller.userRole?.isPkGuest ?? false)
+                ? _pkController.pkguestStreamId ?? ''
+                : _controller.streamId ?? '',
           ),
         );
         break;
@@ -667,8 +670,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
-    unawaited(
-        _controller._mqttController?.unsubscribeStream(_controller.streamId!));
+    await _controller._mqttController?.unsubscribeStream(_controller.streamId!);
 
     try {
       if (_controller.room?.connectionState !=

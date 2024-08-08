@@ -239,10 +239,8 @@ mixin StreamJoinMixin {
     }
     _controller.update([IsmGoLiveView.updateId]);
     if (!isCopublisher) {
-      unawaited(
-        _controller._mqttController?.subscribeStream(
-          streamId,
-        ),
+      await _controller._mqttController?.subscribeStream(
+        streamId,
       );
     }
 

@@ -27,16 +27,17 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
               onTap: () {
                 var contr = Get.find<IsmLiveStreamController>();
                 contr.onSaveRestreamSettings(
-                    channelName: type.label,
-                    channeltype: type.value,
-                    enable: contr.isRestreamType(type),
-                    channelId: contr.restreamChannels.isEmpty
-                        ? null
-                        : contr.restreamChannels
-                            .firstWhere(
-                              (element) => element.channelType == type.value,
-                            )
-                            .channelId);
+                  channelName: type.label,
+                  channeltype: type.value,
+                  enable: contr.isRestreamType(type),
+                  channelId: contr.restreamChannels.isEmpty
+                      ? null
+                      : contr.restreamChannels
+                          .firstWhere(
+                            (element) => element.channelType == type.value,
+                          )
+                          .channelId,
+                );
               }),
         ),
         body: GetBuilder<IsmLiveStreamController>(
@@ -56,9 +57,6 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
                   a.ingestUrl?.substring(0, lastSlashIndex) ?? '';
               contr.streamKey.text =
                   a.ingestUrl?.substring(lastSlashIndex + 1) ?? '';
-            } else {
-              contr.rtmlUrl.clear();
-              contr.streamKey.clear();
             }
           },
           builder: (controller) => Padding(

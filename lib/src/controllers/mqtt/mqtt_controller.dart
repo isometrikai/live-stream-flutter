@@ -540,24 +540,25 @@ class IsmLiveMqttController extends GetxController {
               messageType: IsmLiveMessageType.normal,
               messageId: '',
               body: userId == initiatorId
-                  ? 'You\'ve remove $moderatorName'
-                  : '$initiatorName has remove $moderatorName',
+                  ? 'You\'ve remove  $moderatorName from moderator'
+                  : '$initiatorName has remove $moderatorName from moderator',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
-            _streamController.streamViewersList
-                .removeWhere((e) => e.userId == moderatorId);
-            if (userId == moderatorId) {
-              _disconnectRoom();
-            }
-
-            _updateStream();
+            // _streamController.streamViewersList
+            //     .removeWhere((e) => e.userId == moderatorId);
             if (moderatorId == userId) {
-              Get.back();
-              IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
+              _streamController.userRole?.leaveModeration();
             }
+            _updateStream();
+
+            // if (moderatorId == userId) {
+            //    _disconnectRoom();
+            //   Get.back();
+            //   IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
+            // }
           }
           break;
 

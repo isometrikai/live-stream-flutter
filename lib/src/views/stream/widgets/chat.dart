@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,14 +42,22 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
-          IsmLiveUtility.updateLater(() => unawaited(
-                messagesListController.animateTo(
-                  messagesListController.position.maxScrollExtent +
-                      IsmLiveDimens.fifty,
-                  duration: const Duration(milliseconds: 10),
-                  curve: Curves.ease,
-                ),
-              ));
+          IsmLiveUtility.updateLater(
+            () {
+              try {
+                if (messagesListController.position.pixels + 200 >=
+                    messagesListController.position.maxScrollExtent) {
+                  messagesListController.animateTo(
+                    messagesListController.position.maxScrollExtent + 10,
+                    duration: const Duration(milliseconds: 5),
+                    curve: Curves.linear,
+                  );
+                }
+              } catch (e) {
+                IsmLiveLog('chat animation error $e');
+              }
+            },
+          );
 
           return ConstrainedBox(
             constraints: BoxConstraints(
@@ -76,7 +82,13 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                   alignment: Alignment.centerLeft,
                   child: IsmLiveTapHandler(
                     onTap: () {
-                      if (!message.isEvent) {
+                      var openSheet = message.sentByHost
+                          ? (controller.isCopublisher ||
+                              controller.isModerator ||
+                              controller.isMember ||
+                              controller.isHost)
+                          : true;
+                      if (!message.isEvent && !message.isDeleted && openSheet) {
                         IsmLiveUtility.openBottomSheet(
                           ChatBottomSheet(
                             message: message,
