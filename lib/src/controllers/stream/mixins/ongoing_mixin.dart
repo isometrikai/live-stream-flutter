@@ -58,7 +58,7 @@ mixin StreamOngoingMixin {
     }
 
     // Sort participants and update UI
-    await sortParticipants();
+    unawaited(sortParticipants());
     // Toggle speaker if on mobile platform
     if (lk.lkPlatformIsMobile()) {
       unawaited(_controller.toggleSpeaker(value: true));

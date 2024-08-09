@@ -95,7 +95,8 @@ class IsmLiveStreamRepository {
           'rtmpIngest': streamModel.rtmpIngest,
           'enableRecording': streamModel.enableRecording,
           'streamDescription': streamModel.streamDescription,
-          'isScheduledStream': false,
+          'isScheduledStream': streamModel.isScheduledStream,
+          'scheduleStartTime': streamModel.scheduleStartTime,
           'members': streamModel.members,
           'isometrikUserId': user?.userId,
           'country': streamModel.metaData?.country ?? 'INDIA',
@@ -705,6 +706,24 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlStream,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> fetchScheduledStream({
+    required int skip,
+    required int limit,
+  }) {
+    var payload = {
+      'skip': skip,
+      'limit': limit,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.fetchScheduledStream}?${payload.makeQuery()}',
       baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),

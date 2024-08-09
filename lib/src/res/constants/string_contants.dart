@@ -20,6 +20,7 @@ class IsmLiveStrings {
   static const String credit = 'Credit';
   static const String debit = 'Debit';
   static const String audioOnly = 'Audio Only';
+  static const String scheduled = 'Scheduled Streams';
   static const String multiLive = 'Multi Live';
   static const String pk = 'pk';
   static const String private = 'Private';

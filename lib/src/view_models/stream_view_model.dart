@@ -841,6 +841,28 @@ class IsmLiveStreamViewModel {
     return [];
   }
 
+  Future<List<IsmLiveStreamDataModel>> fetchScheduledStream({
+    required int skip,
+    required int limit,
+  }) async {
+    try {
+      var res = await _repository.fetchScheduledStream(
+        limit: limit,
+        skip: skip,
+      );
+      if (res.hasError || res.statusCode != 200) {
+        return [];
+      }
+      var list = jsonDecode(res.data)['streams'] as List? ?? [];
+      return list
+          .map((e) => IsmLiveStreamDataModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return [];
+  }
+
   Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {
     try {
       var res = await _repository.totalWalletCoins();

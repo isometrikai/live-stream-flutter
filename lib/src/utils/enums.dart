@@ -127,6 +127,7 @@ enum IsmLiveMeetingType {
 
 enum IsmLiveStreamType {
   all(0, IsmLiveStrings.all),
+  scheduledStreams(1, IsmLiveStrings.scheduled),
   // audioOnly(1, IsmLiveStrings.audioOnly),
   pk(2, IsmLiveStrings.pk),
   // private(3, IsmLiveStrings.private),

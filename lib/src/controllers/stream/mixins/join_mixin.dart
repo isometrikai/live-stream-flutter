@@ -176,6 +176,14 @@ mixin StreamJoinMixin {
     if (data.model == null) {
       return;
     }
+    if (data.model?.rtcToken.isEmpty ?? true) {
+      IsmLiveUtility.showDialog(
+        IsmLiveScheduleDialog(
+          message: _controller.scheduleLiveDate,
+        ),
+      );
+      return;
+    }
 
     final stream = data.model!;
     var now = DateTime.now();

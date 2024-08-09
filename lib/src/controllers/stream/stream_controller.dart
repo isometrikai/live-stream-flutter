@@ -334,7 +334,7 @@ class IsmLiveStreamController extends GetxController
   bool isExistingMembersApiCall = false;
   bool isProductApiCall = false;
 
-  void initAnimation() {
+  Future<void> initAnimation() async {
     animationController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,

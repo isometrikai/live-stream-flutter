@@ -162,6 +162,14 @@ class IsmLiveCallingController extends GetxController {
     }
   }
 
+  /// The function `stopMeeting` takes in parameters `isLoading` and `meetingId` and calls
+  /// `_viewModel.stopMeeting` with those parameters.
+  ///
+  /// Args:
+  ///   isLoading (bool): The `isLoading` parameter is a boolean value that indicates whether the meeting
+  /// is currently loading or not.
+  ///   meetingId (String): The `meetingId` parameter is a required `String` parameter that represents the
+  /// unique identifier of the meeting that you want to stop.
   Future<bool> stopMeeting({
     required bool isLoading,
     required String meetingId,
