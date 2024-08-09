@@ -513,14 +513,14 @@ class IsmLiveMqttController extends GetxController {
               senderId: moderatorId,
               messageType: IsmLiveMessageType.normal,
               messageId: '',
-              body: '$moderatorName has left',
+              body: '$moderatorName has left from moderator ',
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
-            _streamController.streamViewersList
-                .removeWhere((e) => e.userId == moderatorId);
+            // _streamController.streamViewersList
+            //     .removeWhere((e) => e.userId == moderatorId);
 
             _updateStream();
           }
