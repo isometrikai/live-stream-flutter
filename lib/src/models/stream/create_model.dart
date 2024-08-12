@@ -21,9 +21,11 @@ class IsmLiveCreateStreamModel {
     this.enableRecording = false,
     this.audioOnly = false,
     this.rtmpIngest = false,
+    this.isScheduledStream = false,
     this.persistRtmpIngestEndpoint = false,
     this.paymentCurrencyCode = 'coins',
     this.paymentAmount = 0,
+    this.scheduleStartTime,
     this.paymentType = 0,
     this.isPaid = false,
   });
@@ -33,6 +35,7 @@ class IsmLiveCreateStreamModel {
         streamImage: map['streamImage'] as String,
         streamDescription: map['streamDescription'] as String,
         selfHosted: map['selfHosted'] as bool,
+        isScheduledStream: map['isScheduledStream'] as bool,
         searchableTags:
             (map['searchableTags'] as List<dynamic>?)?.cast<String>(),
         restream: map['restream'] as bool,
@@ -51,6 +54,7 @@ class IsmLiveCreateStreamModel {
         persistRtmpIngestEndpoint: map['persistRtmpIngestEndpoint'] as bool,
         paymentCurrencyCode: map['paymentCurrencyCode'] as String,
         paymentAmount: map['paymentAmount'] as double,
+        scheduleStartTime: map['scheduleStartTime'] as double,
         paymentType: map['paymentType'] as int,
         isPaid: map['isPaid'] as bool,
       );
@@ -75,9 +79,11 @@ class IsmLiveCreateStreamModel {
   final bool enableRecording;
   final bool audioOnly;
   final bool rtmpIngest;
+  final bool isScheduledStream;
   final bool persistRtmpIngestEndpoint;
   final String paymentCurrencyCode;
   final double paymentAmount;
+  final num? scheduleStartTime;
   final int paymentType;
   final bool isPaid;
 
@@ -98,9 +104,11 @@ class IsmLiveCreateStreamModel {
     bool? enableRecording,
     bool? audioOnly,
     bool? rtmpIngest,
+    bool? isScheduledStream,
     bool? persistRtmpIngestEndpoint,
     String? paymentCurrencyCode,
     double? paymentAmount,
+    num? scheduleStartTime,
     int? paymentType,
     bool? isPaid,
   }) =>
@@ -121,10 +129,12 @@ class IsmLiveCreateStreamModel {
         enableRecording: enableRecording ?? this.enableRecording,
         audioOnly: audioOnly ?? this.audioOnly,
         rtmpIngest: rtmpIngest ?? this.rtmpIngest,
+        isScheduledStream: isScheduledStream ?? this.isScheduledStream,
         persistRtmpIngestEndpoint:
             persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
         paymentCurrencyCode: paymentCurrencyCode ?? this.paymentCurrencyCode,
         paymentAmount: paymentAmount ?? this.paymentAmount,
+        scheduleStartTime: scheduleStartTime ?? this.scheduleStartTime,
         paymentType: paymentType ?? this.paymentType,
         isPaid: isPaid ?? this.isPaid,
       );
@@ -146,9 +156,11 @@ class IsmLiveCreateStreamModel {
         'enableRecording': enableRecording,
         'audioOnly': audioOnly,
         'rtmpIngest': rtmpIngest,
+        'isScheduledStream': isScheduledStream,
         'persistRtmpIngestEndpoint': persistRtmpIngestEndpoint,
         'paymentCurrencyCode': paymentCurrencyCode,
         'paymentAmount': paymentAmount,
+        'scheduleStartTime': scheduleStartTime,
         'paymentType': paymentType,
         'isPaid': isPaid,
       };
@@ -157,7 +169,7 @@ class IsmLiveCreateStreamModel {
 
   @override
   String toString() =>
-      'IsmLiveCreateStreamModel(streamImage: $streamImage, streamDescription: $streamDescription, selfHosted: $selfHosted, searchableTags: $searchableTags, restream: $restream, productsLinked: $productsLinked, products: $products, multiLive: $multiLive, metaData: $metaData, members: $members, lowLatencyMode: $lowLatencyMode, isPublic: $isPublic, hdBroadcast: $hdBroadcast, enableRecording: $enableRecording, audioOnly: $audioOnly, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, paymentCurrencyCode: $paymentCurrencyCode, paymentAmount: $paymentAmount, paymentType: $paymentType, isPaid: $isPaid)';
+      'IsmLiveCreateStreamModel(streamImage: $streamImage, streamDescription: $streamDescription, selfHosted: $selfHosted, scheduleStartTime: $scheduleStartTime, searchableTags: $searchableTags, isScheduledStream: $isScheduledStream, restream: $restream, productsLinked: $productsLinked, products: $products, multiLive: $multiLive, metaData: $metaData, members: $members, lowLatencyMode: $lowLatencyMode, isPublic: $isPublic, hdBroadcast: $hdBroadcast, enableRecording: $enableRecording, audioOnly: $audioOnly, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, paymentCurrencyCode: $paymentCurrencyCode, paymentAmount: $paymentAmount, paymentType: $paymentType, isPaid: $isPaid)';
 
   @override
   bool operator ==(covariant IsmLiveCreateStreamModel other) {
@@ -179,9 +191,11 @@ class IsmLiveCreateStreamModel {
         other.enableRecording == enableRecording &&
         other.audioOnly == audioOnly &&
         other.rtmpIngest == rtmpIngest &&
+        other.isScheduledStream == isScheduledStream &&
         other.persistRtmpIngestEndpoint == persistRtmpIngestEndpoint &&
         other.paymentCurrencyCode == paymentCurrencyCode &&
         other.paymentAmount == paymentAmount &&
+        other.scheduleStartTime == scheduleStartTime &&
         other.paymentType == paymentType &&
         other.isPaid == isPaid;
   }
@@ -204,6 +218,8 @@ class IsmLiveCreateStreamModel {
       enableRecording.hashCode ^
       audioOnly.hashCode ^
       rtmpIngest.hashCode ^
+      isScheduledStream.hashCode ^
+      scheduleStartTime.hashCode ^
       persistRtmpIngestEndpoint.hashCode ^
       paymentCurrencyCode.hashCode ^
       paymentAmount.hashCode ^

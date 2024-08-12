@@ -19,6 +19,7 @@ mixin StreamAPIMixin {
   final _eligibleMembersDebouncer = IsmLiveDebouncer();
   final _moderatorsDebouncer = IsmLiveDebouncer();
   final _productsDebouncer = IsmLiveDebouncer();
+  final _scheduledStreamDebouncer = IsmLiveDebouncer();
 
   /// Fetch user details from local storage.
   Future<void> getUserDetails() async {
@@ -90,6 +91,33 @@ mixin StreamAPIMixin {
     });
   }
 
+  Future<void> fetchScheduledStream(
+          {IsmLiveStreamType? type, int skip = 0}) async =>
+      _controller._scheduledStreamDebouncer.run(
+        () => _fetchScheduledStream(type: type, skip: skip),
+      );
+
+  Future<void> _fetchScheduledStream({
+    IsmLiveStreamType? type,
+    required int skip,
+  }) async {
+    var streamType = type ?? _controller.streamType;
+
+    if (skip == 0) {
+      _controller._streams[streamType] = await _controller._viewModel
+          .fetchScheduledStream(limit: 10, skip: skip);
+    } else {
+      _controller._streams[streamType]!.addAll(await _controller._viewModel
+          .fetchScheduledStream(limit: 10, skip: skip));
+    }
+
+    _controller._streamRefreshControllers[streamType]!.refreshCompleted();
+    _controller._streamRefreshControllers[streamType]!.loadComplete();
+    IsmLiveUtility.updateLater(() {
+      _controller.update([IsmLiveStreamListing.updateId]);
+    });
+  }
+
   /// Get an RTC token for joining a stream.
   Future<IsmLiveRTCModel?> getRTCToken(String streamId,
           {bool showLoader = true}) =>
@@ -112,6 +140,7 @@ mixin StreamAPIMixin {
     if (image == null || image.isNullOrEmpty) {
       return null;
     }
+
     return (
       model: await _controller._viewModel.createStream(
         IsmLiveCreateStreamModel(
@@ -131,6 +160,10 @@ mixin StreamAPIMixin {
                 : _controller.descriptionController.text,
             restream: _controller.isRestreamBroadcast,
             rtmpIngest: _controller.isRtmp,
+            isScheduledStream: _controller.isSchedulingBroadcast,
+            scheduleStartTime: _controller.isSchedulingBroadcast
+                ? _controller.scheduleLiveDate.millisecondsSinceEpoch
+                : null,
             persistRtmpIngestEndpoint: _controller.usePersistentStreamKey),
         _controller.user,
       ),

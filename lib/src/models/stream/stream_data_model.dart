@@ -26,6 +26,7 @@ class IsmLiveStreamDataModel {
     this.paymentCurrencyCode,
     this.country,
     this.duration,
+    this.scheduleStartTime,
     this.streamTags,
     this.streamTypes,
     this.members,
@@ -62,6 +63,10 @@ class IsmLiveStreamDataModel {
         startDateTime: map['startDateTime'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
                 int.parse(map['startDateTime'].toString()))
+            : null,
+        scheduleStartTime: map['scheduleStartTime'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                int.parse(map['scheduleStartTime'].toString()))
             : null,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
         streamDescription: map['streamDescription'] != null
@@ -165,6 +170,7 @@ class IsmLiveStreamDataModel {
   final String? paymentCurrencyCode;
   final String? country;
   final int? duration;
+  final DateTime? scheduleStartTime;
   final String? streamTags;
   final String? streamTypes;
   final List<dynamic>? members;
@@ -197,6 +203,7 @@ class IsmLiveStreamDataModel {
     String? streamTitle,
     String? streamImage,
     DateTime? startDateTime,
+    DateTime? scheduleStartTime,
     String? recordUrl,
     String? streamDescription,
     bool? isRecorded,
@@ -243,6 +250,7 @@ class IsmLiveStreamDataModel {
         streamTitle: streamTitle ?? this.streamTitle,
         streamImage: streamImage ?? this.streamImage,
         startDateTime: startDateTime ?? this.startDateTime,
+        scheduleStartTime: scheduleStartTime ?? this.scheduleStartTime,
         recordUrl: recordUrl ?? this.recordUrl,
         streamDescription: streamDescription ?? this.streamDescription,
         isRecorded: isRecorded ?? this.isRecorded,
@@ -291,6 +299,7 @@ class IsmLiveStreamDataModel {
         'streamTitle': streamTitle,
         'streamImage': streamImage,
         'startDateTime': startDateTime,
+        'scheduleStartTime': scheduleStartTime,
         'recordUrl': recordUrl,
         'streamDescription': streamDescription,
         'isRecorded': isRecorded,
@@ -337,7 +346,7 @@ class IsmLiveStreamDataModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount,isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
+      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
 
   @override
   bool operator ==(covariant IsmLiveStreamDataModel other) {
@@ -347,6 +356,7 @@ class IsmLiveStreamDataModel {
         other.streamTitle == streamTitle &&
         other.streamImage == streamImage &&
         other.startDateTime == startDateTime &&
+        other.scheduleStartTime == scheduleStartTime &&
         other.recordUrl == recordUrl &&
         other.streamDescription == streamDescription &&
         other.isRecorded == isRecorded &&
@@ -395,6 +405,7 @@ class IsmLiveStreamDataModel {
       streamTitle.hashCode ^
       streamImage.hashCode ^
       startDateTime.hashCode ^
+      scheduleStartTime.hashCode ^
       recordUrl.hashCode ^
       streamDescription.hashCode ^
       isRecorded.hashCode ^

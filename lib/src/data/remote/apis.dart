@@ -26,6 +26,7 @@ class IsmLiveApis {
   static const String newStream = '$_live/stream';
   static const String fetchStream = '$_live/streams';
   static const String streamAnalytics = '$_live/stream/analytics';
+  static const String fetchScheduledStream = '$_live/streams/scheduled';
   // static const String streamAnalyticsViewers =
   //     '$_live/analytics/stream/viewers';
   static const String streamAnalyticsViewers = '$_live/stream/viewer';

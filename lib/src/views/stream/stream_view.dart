@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -106,7 +108,7 @@ class _IsmLiveStreamView extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.initAnimation();
+          unawaited(controller.initAnimation());
           controller.memberStatus = IsmLiveMemberStatus.notMember;
           controller.participantList = controller.participantTracks;
 

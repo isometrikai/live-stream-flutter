@@ -57,6 +57,13 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 controller: controller.tabController,
                 onTap: (index) {
                   controller.streamType = IsmLiveStreamType.values[index];
+
+                  if (controller.streamType ==
+                      IsmLiveStreamType.scheduledStreams) {
+                    controller.fetchScheduledStream(
+                        type: controller.streamType);
+                    return;
+                  }
                   controller.getStreams(type: controller.streamType);
                 },
                 tabs: [
@@ -97,9 +104,23 @@ class _StreamListing extends StatelessWidget {
           controller: controller.streamRefreshController,
           enablePullDown: true,
           enablePullUp: true,
-          onRefresh: () => controller.getStreams(type: controller.streamType),
-          onLoading: () => controller.getStreams(
-              type: controller.streamType, skip: controller.streams.length),
+          onRefresh: () {
+            if (controller.streamType == IsmLiveStreamType.scheduledStreams) {
+              controller.fetchScheduledStream(type: controller.streamType);
+              return;
+            }
+            controller.getStreams(type: controller.streamType);
+          },
+          onLoading: () {
+            if (controller.streamType == IsmLiveStreamType.scheduledStreams) {
+              controller.fetchScheduledStream(
+                  type: controller.streamType, skip: controller.streams.length);
+              return;
+            }
+
+            controller.getStreams(
+                type: controller.streamType, skip: controller.streams.length);
+          },
           child: controller.streams.isEmpty
               ? const IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noStreams,
