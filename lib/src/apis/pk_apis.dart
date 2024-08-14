@@ -4,8 +4,6 @@ class IsmLivePkApis {
   const IsmLivePkApis(this._apiWrapper);
   final IsmLiveApiWrapper _apiWrapper;
 
-  static const String baseUrl = IsmLiveApis.baseUrlStream;
-
   Future<IsmLiveResponseModel> getUsersToInviteForPK({
     required int skip,
     required int limit,
@@ -19,7 +17,6 @@ class IsmLivePkApis {
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.getUsersToInviteForPK}?${params.makeQuery()}',
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.get,
       showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),
@@ -38,7 +35,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.getUsersToInviteForPK,
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
@@ -57,7 +53,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.invitaionPK,
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
@@ -90,7 +85,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.pkStart,
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
@@ -108,7 +102,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.pkStop,
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
@@ -124,7 +117,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.pkWinner}?${params.makeQuery()}',
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showDialog: false,
@@ -139,7 +131,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.pkStatus}?${params.makeQuery()}',
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showDialog: false,
@@ -159,7 +150,7 @@ class IsmLivePkApis {
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.getGiftCategories}?${params.makeQuery()}',
-      baseUrl: baseUrl,
+      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       showDialog: false,
       showLoader: true,
@@ -182,7 +173,7 @@ class IsmLivePkApis {
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.getGiftsForACategory}?${params.makeQuery()}',
-      baseUrl: baseUrl,
+      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),
@@ -194,7 +185,7 @@ class IsmLivePkApis {
   }) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.sendGiftToStreamer,
-        baseUrl: baseUrl,
+        baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.post,
         showDialog: true,
         payload: payload,
@@ -211,7 +202,6 @@ class IsmLivePkApis {
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.pkEnd,
-      baseUrl: baseUrl,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
