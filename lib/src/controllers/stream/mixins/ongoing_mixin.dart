@@ -467,7 +467,7 @@ mixin StreamOngoingMixin {
         const androidConfig = FlutterBackgroundAndroidConfig(
           notificationTitle: 'Screen Sharing',
           notificationText: '${IsmLiveConstants.name} is sharing the screen.',
-          notificationImportance: AndroidNotificationImportance.Default,
+          notificationImportance: AndroidNotificationImportance.high,
           notificationIcon: AndroidResource(
             name: 'ic_launcher',
             defType: 'mipmap',
