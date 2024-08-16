@@ -622,7 +622,7 @@ class IsmLiveStreamController extends GetxController
     pkcontroller.pkBarHostPersentage = 100;
     pkcontroller.pkHostValue = 0;
     pkcontroller.pkGustValue = 0;
-
+    memberStatus = IsmLiveMemberStatus.notMember;
     showEmojiBoard = false;
     streamMessagesList.clear();
     streamViewersList.clear();

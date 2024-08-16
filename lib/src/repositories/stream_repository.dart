@@ -54,7 +54,6 @@ class IsmLiveStreamRepository {
       _apiWrapper.makeRequest(
         '${IsmLiveApis.fetchStream}?${queryModel.toMap().makeQuery()}',
         type: IsmLiveRequestType.get,
-        baseUrl: IsmLiveApis.baseUrlStream,
         headers: IsmLiveUtility.tokenHeader(),
         showDialog: false,
       );
@@ -87,7 +86,6 @@ class IsmLiveStreamRepository {
   ) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.newStream,
-        baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
@@ -131,7 +129,6 @@ class IsmLiveStreamRepository {
   ) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.newStream,
-        baseUrl: IsmLiveApis.baseUrlStream,
         type: IsmLiveRequestType.patch,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
@@ -655,7 +652,6 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       IsmLiveApis.sendHearts,
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
@@ -671,7 +667,6 @@ class IsmLiveStreamRepository {
 
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalytics}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
     );
@@ -686,7 +681,6 @@ class IsmLiveStreamRepository {
 
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.buyStream}',
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.post,
       showLoader: true,
       payload: payload,
@@ -706,7 +700,6 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
@@ -724,7 +717,6 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchScheduledStream}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
@@ -738,7 +730,6 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: false,

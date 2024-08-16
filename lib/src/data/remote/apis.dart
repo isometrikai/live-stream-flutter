@@ -22,7 +22,7 @@ class IsmLiveApis {
 //PK apis end point
   static const String baseUrlStream = 'https://service-apis.isometrik.io';
 
-  static const String _live = '/live/v2';
+  static const String _live = '/live/v1';
   static const String newStream = '$_live/stream';
   static const String fetchStream = '$_live/streams';
   static const String streamAnalytics = '$_live/stream/analytics';
@@ -30,8 +30,7 @@ class IsmLiveApis {
   // static const String streamAnalyticsViewers =
   //     '$_live/analytics/stream/viewers';
   static const String streamAnalyticsViewers = '$_live/stream/viewer';
-  static const String fetchCoins = '/v1/wallet/user';
-  static const String fetchTransactions = '/v1/transaction/user';
+
   static const String getUsersToInviteForPK = '$_live/invite/users';
   static const String sendInvitationToUserForPK = '$_live/invite/users';
   static const String invitaionPK = '$_live/invites';
@@ -43,9 +42,11 @@ class IsmLiveApis {
   static const String pkWinner = '$_live/pk/winner';
   static const String sendHearts = '$_live/stream/like';
   static const String buyStream = '$_live/buy/stream';
+  static const String fetchCoins = '/v1/wallet/user';
+  static const String fetchTransactions = '/v1/transaction/user';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
-  static const String sendGiftToStreamer = '/live/v4/giftTransfer';
+  static const String sendGiftToStreamer = '/v4/giftTransfer';
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
   static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
 
