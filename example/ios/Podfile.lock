@@ -66,7 +66,7 @@ PODS:
     - FlutterMacOS
   - integration_test (0.0.1):
     - Flutter
-  - livekit_client (2.2.2):
+  - livekit_client (2.2.4):
     - Flutter
     - WebRTC-SDK (= 125.6422.04)
   - package_info_plus (0.4.5):
@@ -195,7 +195,7 @@ SPEC CHECKSUMS:
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   in_app_purchase_storekit: 8c3b0b3eb1b0f04efbff401c3de6266d4258d433
   integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  livekit_client: c767049a635d5b6d43de3273dca3c439b8a6e970
+  livekit_client: d079c5f040d4bf2b80440ff0ae997725a183e4bc
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2

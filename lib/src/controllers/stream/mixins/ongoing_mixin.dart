@@ -34,8 +34,7 @@ mixin StreamOngoingMixin {
     if (!isHost) {
       await _controller.fetchMessagesCount(
         showLoading: false,
-        getMessageModel: IsmLiveGetMessageModel(
-            streamId: streamId, messageType: [IsmLiveMessageType.normal.value]),
+        getMessageModel: IsmLiveGetMessageModel(streamId: streamId, messageType: [IsmLiveMessageType.normal.value]),
       );
 
       if (_controller.messagesCount != 0) {
@@ -46,9 +45,7 @@ mixin StreamOngoingMixin {
               streamId: streamId,
               messageType: [IsmLiveMessageType.normal.value],
               sort: 1,
-              skip: _controller.messagesCount < 10
-                  ? 0
-                  : (_controller.messagesCount - 10),
+              skip: _controller.messagesCount < 10 ? 0 : (_controller.messagesCount - 10),
               limit: 10,
               senderIdsExclusive: false,
             ),
@@ -156,8 +153,7 @@ mixin StreamOngoingMixin {
     }
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    final localParticipantTracks =
-        room.localParticipant?.videoTrackPublications;
+    final localParticipantTracks = room.localParticipant?.videoTrackPublications;
     if (localParticipantTracks != null) {
       for (var t in localParticipantTracks) {
         userMediaTracks.add(
@@ -187,8 +183,7 @@ mixin StreamOngoingMixin {
 
     if (_controller.isPk &&
         _controller.participantTracks.length == 2 &&
-        ((_controller.userRole?.isHost ?? false) ||
-            (_controller.userRole?.isPkGuest ?? false))) {
+        ((_controller.userRole?.isHost ?? false) || (_controller.userRole?.isPkGuest ?? false))) {
       if (Get.isBottomSheetOpen ?? false) {
         Get.back();
       }
@@ -259,14 +254,12 @@ mixin StreamOngoingMixin {
   }
 
   // Function to add viewers to the stream
-  Future<void> addViewers(
-      List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
+  Future<void> addViewers(List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
     if (isFirstCall) {
       _controller.streamViewersList.clear();
     }
     _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList =
-        _controller.streamViewersList.toSet().toList();
+    _controller.streamViewersList = _controller.streamViewersList.toSet().toList();
   }
 
 // Function to add messages to the stream
@@ -274,16 +267,14 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    final chats =
-        messages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats = messages.map((e) => _controller.convertMessageToChat(e)).toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
     } else {
       _controller.streamMessagesList.insertAll(0, chats);
     }
-    _controller.streamMessagesList =
-        _controller.streamMessagesList.toSet().toList();
+    _controller.streamMessagesList = _controller.streamMessagesList.toSet().toList();
   }
 
 // Function to add heart message to the stream
@@ -346,8 +337,7 @@ mixin StreamOngoingMixin {
     if (room == null) {
       return;
     }
-    if (room.remoteParticipants.values.isEmpty ||
-        room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
+    if (room.remoteParticipants.values.isEmpty || room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
       return;
     }
 
@@ -355,19 +345,11 @@ mixin StreamOngoingMixin {
     try {
       if (_controller.speakerOn) {
         for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values
-              .elementAt(i)
-              .audioTrackPublications
-              .first
-              .enable());
+          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.enable());
         }
       } else {
         for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values
-              .elementAt(i)
-              .audioTrackPublications
-              .first
-              .disable());
+          unawaited(room.remoteParticipants.values.elementAt(i).audioTrackPublications.first.disable());
         }
       }
     } catch (e) {
@@ -398,9 +380,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.members:
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
-            streamId: (_controller.userRole?.isPkGuest ?? false)
-                ? _pkController.pkguestStreamId ?? ''
-                : _controller.streamId ?? '',
+            streamId: (_controller.userRole?.isPkGuest ?? false) ? _pkController.pkguestStreamId ?? '' : _controller.streamId ?? '',
           ),
         );
         break;
@@ -467,7 +447,6 @@ mixin StreamOngoingMixin {
         const androidConfig = FlutterBackgroundAndroidConfig(
           notificationTitle: 'Screen Sharing',
           notificationText: '${IsmLiveConstants.name} is sharing the screen.',
-          notificationImportance: AndroidNotificationImportance.high,
           notificationIcon: AndroidResource(
             name: 'ic_launcher',
             defType: 'mipmap',
@@ -496,8 +475,7 @@ mixin StreamOngoingMixin {
   void enableScreenShare() async {
     try {
       IsmLiveUtility.showLoader();
-      if (_controller.room == null ||
-          _controller.room!.localParticipant == null) {
+      if (_controller.room == null || _controller.room!.localParticipant == null) {
         return;
       }
 
@@ -545,8 +523,7 @@ mixin StreamOngoingMixin {
     IsmLiveUtility.showLoader();
     onChangeCall = true;
     if (_controller.streams.length - 1 == index + 1) {
-      unawaited(_controller.getStreams(
-          skip: _controller.streams.length, type: _controller.streamType));
+      unawaited(_controller.getStreams(skip: _controller.streams.length, type: _controller.streamType));
     }
 
     final didLeft = await disconnectStream(
@@ -566,15 +543,13 @@ mixin StreamOngoingMixin {
       // );
     }
 
-    if ((_controller.streams[index].isPaid ?? false) &&
-        !(_controller.streams[index].isBuy ?? false)) {
+    if ((_controller.streams[index].isPaid ?? false) && !(_controller.streams[index].isBuy ?? false)) {
       IsmLiveUtility.closeLoader();
       _controller.paidStreamSheet(
           coins: _controller.streams[index].amount ?? 0,
           onTap: () async {
             Get.back();
-            var res = await _controller
-                .buyStream(_controller.streams[index].streamId ?? '');
+            var res = await _controller.buyStream(_controller.streams[index].streamId ?? '');
             if (res) {
               _controller.streams[index].copyWith(isBuy: true);
               await _controller.joinStream(
@@ -673,8 +648,7 @@ mixin StreamOngoingMixin {
     await _controller._mqttController?.unsubscribeStream(_controller.streamId!);
 
     try {
-      if (_controller.room?.connectionState !=
-          lk.ConnectionState.disconnected) {
+      if (_controller.room?.connectionState != lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
       }
 
