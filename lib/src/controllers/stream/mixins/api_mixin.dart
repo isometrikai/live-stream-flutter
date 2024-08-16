@@ -72,6 +72,11 @@ mixin StreamAPIMixin {
   }) async {
     var streamType = type ?? _controller.streamType;
 
+    if (_controller.streamType == IsmLiveStreamType.scheduledStreams) {
+      unawaited(fetchScheduledStream());
+      return;
+    }
+
     if (skip == 0) {
       _controller._streams[streamType] =
           await _controller._viewModel.getStreams(

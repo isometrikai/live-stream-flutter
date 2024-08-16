@@ -16,6 +16,7 @@ class IsmLiveStreamView extends StatelessWidget {
         isHost = Get.arguments['isHost'],
         isNewStream = Get.arguments['isNewStream'],
         isScrolling = Get.arguments['isScrolling'],
+        isSchedule = Get.arguments['isSchedule'],
         isInteractive = Get.arguments['isInteractive'];
 
   final RoomListener listener;
@@ -25,6 +26,7 @@ class IsmLiveStreamView extends StatelessWidget {
   final bool isHost;
   final bool isNewStream;
   final bool isScrolling;
+  final bool isSchedule;
   final bool isInteractive;
 
   bool get fastConnection => room.engine.fastConnectOptions != null;
@@ -43,6 +45,7 @@ class IsmLiveStreamView extends StatelessWidget {
         isHost: isHost,
         isNewStream: isNewStream,
         isInteractive: isInteractive,
+        isSchedule: isSchedule,
       );
     } else if (!isScrolling) {
       return _IsmLiveStreamView(
@@ -52,6 +55,7 @@ class IsmLiveStreamView extends StatelessWidget {
         isHost: false,
         isNewStream: false,
         isInteractive: isInteractive,
+        isSchedule: isSchedule,
       );
     }
     return GetX<IsmLiveStreamController>(
@@ -80,6 +84,7 @@ class IsmLiveStreamView extends StatelessWidget {
             isHost: false,
             isNewStream: false,
             isInteractive: isInteractive,
+            isSchedule: isSchedule,
           );
         },
       ),
@@ -95,6 +100,7 @@ class _IsmLiveStreamView extends StatelessWidget {
     required this.isHost,
     required this.isNewStream,
     this.isInteractive = false,
+    required this.isSchedule,
   });
 
   final String? streamImage;
@@ -102,6 +108,7 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isHost;
   final bool isNewStream;
   final bool isInteractive;
+  final bool isSchedule;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -141,8 +148,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                 Align(
                   alignment: IsmLiveApp.headerPosition,
                   child: Obx(
-                    () => (controller.room?.localParticipant != null) &&
-                            IsmLiveApp.showHeader
+                    () => ((controller.room?.localParticipant != null) &&
+                                IsmLiveApp.showHeader) ||
+                            isSchedule
                         ? IsmLiveApp.streamHeader?.call(
                               context,
                               controller.hostDetails,
@@ -222,7 +230,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                             ],
                           ),
                         )
-                      : const SizedBox.shrink(),
+                      : isSchedule
+                          ? const ScheduleStreamView()
+                          : const SizedBox.shrink(),
                 ),
                 Align(
                   alignment: IsmLiveApp.endStreamPosition,
@@ -414,6 +424,70 @@ class _BottomDarkGradient extends StatelessWidget {
                 Colors.black26,
               ],
             ),
+          ),
+        ),
+      );
+}
+
+class ScheduleStreamView extends StatelessWidget {
+  const ScheduleStreamView({super.key});
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+        child: GetBuilder<IsmLiveStreamController>(
+          builder: (controller) => Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: IsmLiveDimens.edgeInsets8_0,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IsmLiveChatView(
+                              isHost: true,
+                              streamId: controller.streamId ?? '',
+                            ),
+                            IsmLiveDimens.boxHeight8,
+                            IsmLiveMessageField(
+                              streamId: controller.streamId ?? '',
+                              isHost: controller.isPublishing,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IsmLiveDimens.boxWidth2,
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IsmLiveControlsWidget(
+                            isHost: true,
+                            isCopublishing: false,
+                            isSchedule: true,
+                            streamId: controller.streamId ?? '',
+                          ),
+                          IsmLiveDimens.boxHeight32,
+                          SizedBox(
+                            width: Get.width / 3,
+                            child: IsmLiveButton(
+                              label: 'Go Live',
+                              onTap: () {},
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              IsmLiveDimens.boxHeight4,
+            ],
           ),
         ),
       );

@@ -400,6 +400,49 @@ mixin StreamJoinMixin {
     }
   }
 
+  void startSeduleStream(
+    IsmLiveStreamDataModel stream,
+  ) {
+    // unawaited(Future.wait([
+    //   _controller.getStreamMembers(
+    //     streamId: stream.streamId ?? '',
+    //     limit: 10,
+    //     skip: 0,
+    //   ),
+    //   _controller.getStreamViewer(
+    //     streamId: stream.streamId ?? '',
+    //     limit: 10,
+    //     skip: 0,
+    //   ),
+    // ]));
+    // _controller.initializeStream(
+    //   streamId: stream.streamId ?? '',
+    //   isHost: true,
+    // );
+    _controller.userRole = IsmLiveUserRole.host();
+    var details = stream.userDetails;
+    _controller.hostDetails = IsmLiveMemberDetailsModel(
+        isAdmin: false,
+        isPublishing: false,
+        joinTime: 0,
+        metaData: details?.userMetaData ?? const IsmLiveMetaData(),
+        userId: details?.id ?? '',
+        userIdentifier: '',
+        userName: details?.userName ?? '',
+        userProfileImageUrl: details?.userProfile ?? '');
+    _controller.room = lk.Room();
+    IsmLiveRouteManagement.goToStreamView(
+      isHost: true,
+      isNewStream: false,
+      room: lk.Room(),
+      isScrolling: false,
+      streamImage: stream.streamImage,
+      listener: lk.Room().createListener(),
+      streamId: stream.streamId ?? '',
+      isSchedule: true,
+    );
+  }
+
   void startStreamTimer() {
     if (_controller._streamTimer != null) {
       return;

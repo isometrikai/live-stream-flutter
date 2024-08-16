@@ -137,6 +137,12 @@ class _StreamListing extends StatelessWidget {
                         var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
                           onTap: () {
+                            if (controller.streamType ==
+                                IsmLiveStreamType.scheduledStreams) {
+                              controller.startSeduleStream(e);
+                              return;
+                            }
+
                             if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
                               controller.paidStreamSheet(
                                   coins: e.amount ?? 0,
