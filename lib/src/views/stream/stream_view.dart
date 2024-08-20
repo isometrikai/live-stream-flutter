@@ -477,7 +477,9 @@ class ScheduleStreamView extends StatelessWidget {
                             width: Get.width / 3,
                             child: IsmLiveButton(
                               label: 'Go Live',
-                              onTap: () {},
+                              onTap: () {
+                                controller.startStream();
+                              },
                             ),
                           ),
                         ],

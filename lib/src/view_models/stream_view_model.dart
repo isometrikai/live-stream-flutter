@@ -863,6 +863,36 @@ class IsmLiveStreamViewModel {
     return [];
   }
 
+  Future<bool> deleteScheduledStream({
+    required String eventId,
+  }) async {
+    try {
+      var res = await _repository.deleteScheduledStream(
+        eventId: eventId,
+      );
+
+      return !res.hasError;
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+    return false;
+  }
+
+  Future<bool> editScheduledStream({
+    required String eventId,
+  }) async {
+    try {
+      var res = await _repository.editScheduledStream(
+        eventId: eventId,
+      );
+
+      return !res.hasError;
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+    return false;
+  }
+
   Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {
     try {
       var res = await _repository.totalWalletCoins();

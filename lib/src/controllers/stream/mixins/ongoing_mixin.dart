@@ -398,6 +398,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.members:
         break;
       case IsmLiveStreamOption.favourite:
+        _controller.schgeduleStreamSheet();
         break;
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
@@ -681,20 +682,20 @@ mixin StreamOngoingMixin {
       _controller.streamId = null;
       _pkController.pkTimer?.cancel();
       _pkController.pkTimer = null;
-      _controller._streamTimer?.cancel();
-      _controller._streamTimer = null;
+      _controller.streamTimer?.cancel();
+      _controller.streamTimer = null;
 
       IsmLiveUtility.updateLater(
         () => _controller.streamDispose(callDispose),
       );
     } catch (e, st) {
-      IsmLiveLog('---------------->  $e , $st');
+      IsmLiveLog.error(' end stream  $e , $st');
     }
   }
 
   void closeStreamView(bool isHost, {String? streamId, bool fromMqtt = false}) {
-    _controller._streamTimer?.cancel();
-    _controller._streamTimer = null;
+    _controller.streamTimer?.cancel();
+    _controller.streamTimer = null;
     _pkController.pkTimer?.cancel();
     _pkController.pkTimer = null;
 

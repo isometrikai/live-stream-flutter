@@ -2,7 +2,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class IsmLiveStreamCard extends StatelessWidget {
   const IsmLiveStreamCard(
@@ -70,7 +69,7 @@ class IsmLiveStreamCard extends StatelessWidget {
                             ),
                             child: Text(
                               stream.isScheduledStream ?? false
-                                  ? '${DateFormat('yyyy MMMM dd, h:mm').format(stream.scheduleStartTime ?? DateTime.now())}'
+                                  ? stream.scheduleStartTime!.formattedDate
                                   : 'Continue',
                               style: context.textTheme.labelSmall?.copyWith(
                                 color: Colors.white,

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
@@ -167,6 +166,7 @@ class IsmLiveStreamController extends GetxController
   int get streamIndex => streams.indexWhere((e) => e.streamId == streamId);
 
   IsmLiveMemberDetailsModel? hostDetails;
+  IsmLiveStreamDataModel? streamDetails;
 
   Uint8List? bytes;
 
@@ -283,7 +283,7 @@ class IsmLiveStreamController extends GetxController
 
   FocusNode messageFocusNode = FocusNode();
 
-  Timer? _streamTimer;
+  Timer? streamTimer;
 
   final Rx<Duration> _streamDuration = Duration.zero.obs;
   Duration get streamDuration => _streamDuration.value;
@@ -624,6 +624,8 @@ class IsmLiveStreamController extends GetxController
     pkcontroller.pkHostValue = 0;
     pkcontroller.pkGustValue = 0;
     memberStatus = IsmLiveMemberStatus.notMember;
+
+    streamDetails = null;
     showEmojiBoard = false;
     streamMessagesList.clear();
     streamViewersList.clear();

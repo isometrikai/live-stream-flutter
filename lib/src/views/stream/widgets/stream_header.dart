@@ -59,7 +59,6 @@ class IsmLiveStreamHeader extends StatelessWidget {
           Padding(
             padding: IsmLiveDimens.edgeInsets10_0,
             child: _LiveTimer(
-              onTapModerators: onTapModerators,
               streamCoins: streamCoins,
               isPaidStream: isPaidStream,
             ),
@@ -191,22 +190,28 @@ class IsmLiveEndStreamButton extends StatelessWidget {
 }
 
 class _LiveTimer extends StatelessWidget {
-  const _LiveTimer({
-    this.onTapModerators,
+  _LiveTimer({
     required this.streamCoins,
     required this.isPaidStream,
   });
   final String streamCoins;
   final bool isPaidStream;
-  final Function()? onTapModerators;
+
+  final controller = Get.find<IsmLiveStreamController>();
+
   @override
   Widget build(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const IsmLiveLabel(),
-          IsmLiveDimens.boxWidth10,
-          const IsmLiveStreamTimer(),
+          if (controller.streamTimer != null) ...[
+            const IsmLiveLabel(),
+            IsmLiveDimens.boxWidth10,
+            const IsmLiveStreamTimer()
+          ] else
+            IsmLiveScheduleStreamTime(
+              scheduleTime: controller.streamDetails?.scheduleStartTime,
+            ),
           IsmLiveDimens.boxWidth10,
           IsmLiveStreamMemberCount(
             onTap: () => IsmLiveUtility.openBottomSheet(
@@ -220,26 +225,6 @@ class _LiveTimer extends StatelessWidget {
               coins: streamCoins,
             ),
           ]
-          // IsmLiveDimens.boxWidth8,
-          // GetBuilder<IsmLiveStreamController>(
-          //   builder: (controller) => (controller.isMember || (controller.isCopublisher ?? false))
-          //       ? IsmLiveTapHandler(
-          //           onTap: onTapModerators,
-          //           child: Container(
-          //             padding: IsmLiveDimens.edgeInsets4,
-          //             decoration: const BoxDecoration(
-          //               shape: BoxShape.circle,
-          //               color: Colors.black12,
-          //             ),
-          //             child: Icon(
-          //               Icons.local_police_rounded,
-          //               color: IsmLiveColors.white,
-          //               size: IsmLiveDimens.sixteen,
-          //             ),
-          //           ),
-          //         )
-          //       : IsmLiveDimens.box0,
-          // ),
         ],
       );
 }
@@ -294,6 +279,29 @@ class IsmLiveStreamTimer extends StatelessWidget {
           style: context.textTheme.labelMedium?.copyWith(
             color: IsmLiveColors.white,
             fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+}
+
+class IsmLiveScheduleStreamTime extends StatelessWidget {
+  const IsmLiveScheduleStreamTime({
+    super.key,
+    this.scheduleTime,
+  });
+  final DateTime? scheduleTime;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: IsmLiveDimens.edgeInsets8_4,
+        decoration: BoxDecoration(
+          color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+          borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+        ),
+        child: Text(
+          scheduleTime!.formattedDate,
+          style: context.textTheme.labelSmall?.copyWith(
+            color: Colors.white,
           ),
         ),
       );

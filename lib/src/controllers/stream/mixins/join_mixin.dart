@@ -403,24 +403,11 @@ mixin StreamJoinMixin {
   void startSeduleStream(
     IsmLiveStreamDataModel stream,
   ) {
-    // unawaited(Future.wait([
-    //   _controller.getStreamMembers(
-    //     streamId: stream.streamId ?? '',
-    //     limit: 10,
-    //     skip: 0,
-    //   ),
-    //   _controller.getStreamViewer(
-    //     streamId: stream.streamId ?? '',
-    //     limit: 10,
-    //     skip: 0,
-    //   ),
-    // ]));
-    // _controller.initializeStream(
-    //   streamId: stream.streamId ?? '',
-    //   isHost: true,
-    // );
     _controller.userRole = IsmLiveUserRole.host();
     var details = stream.userDetails;
+
+    _controller.streamDetails = stream;
+
     _controller.hostDetails = IsmLiveMemberDetailsModel(
         isAdmin: false,
         isPublishing: false,
@@ -443,11 +430,44 @@ mixin StreamJoinMixin {
     );
   }
 
+  void editScheduleStream() async {
+    if (_controller.streamDetails?.streamImage?.isEmpty ?? true) {
+      if (_controller.pickedImage == null) {
+        final file = await _controller.cameraController?.takePicture();
+        if (file != null) {
+          _controller.pickedImage = file;
+          _controller.update([IsmGoLiveView.updateId]);
+        } else {
+          var file = await FileManager.pickGalleryImage();
+          if (file != null) {
+            _controller.pickedImage = file;
+            _controller.update([IsmGoLiveView.updateId]);
+          }
+        }
+      }
+
+      var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
+      var type = _controller.pickedImage!.name.split('.').last;
+      var image = await _controller.uploadImage(type, bytes);
+    }
+    var res = await _controller
+        .editScheduledStream(_controller.streamDetails?.eventId ?? '');
+
+    if (res) {
+      IsmLiveUtility.showDialog(
+        IsmLiveEditScheduleDialog(
+          message:
+              _controller.streamDetails?.scheduleStartTime ?? DateTime.now(),
+        ),
+      );
+    }
+  }
+
   void startStreamTimer() {
-    if (_controller._streamTimer != null) {
+    if (_controller.streamTimer != null) {
       return;
     }
-    _controller._streamTimer = Timer.periodic(
+    _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
         _controller.streamDuration += const Duration(

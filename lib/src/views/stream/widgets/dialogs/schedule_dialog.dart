@@ -21,7 +21,37 @@ class IsmLiveScheduleDialog extends StatelessWidget {
           ),
           IsmLiveDimens.boxHeight8,
           Text(
-            'at ${DateFormat('yyyy MMMM dd, h:mm').format(message)}',
+            'at ${message.formattedDate}',
+            style: context.textTheme.bodyMedium,
+          ),
+          IsmLiveDimens.boxHeight20,
+          const IsmLiveButton(
+            label: 'Continue',
+            onTap: IsmLiveUtility.closeDialog,
+          ),
+        ],
+      );
+}
+
+class IsmLiveEditScheduleDialog extends StatelessWidget {
+  const IsmLiveEditScheduleDialog({super.key, required this.message});
+  final DateTime message;
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Edit Schedule Stream',
+            style: context.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          IsmLiveDimens.boxHeight8,
+          Text(
+            'at ${message.formattedDate}',
             style: context.textTheme.bodyMedium,
           ),
           IsmLiveDimens.boxHeight20,

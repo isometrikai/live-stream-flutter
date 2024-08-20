@@ -137,6 +137,20 @@ mixin StreamAPIMixin {
         streamId,
       );
 
+  Future<bool> deleteScheduledStream(
+    String eventId,
+  ) async =>
+      await _controller._viewModel.deleteScheduledStream(
+        eventId: eventId,
+      );
+
+  Future<bool> editScheduledStream(
+    String eventId,
+  ) async =>
+      await _controller._viewModel.editScheduledStream(
+        eventId: eventId,
+      );
+
 // Creates a new live stream with the provided details.
   Future<({IsmLiveRTCModel? model, String image})?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();

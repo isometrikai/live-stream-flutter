@@ -716,11 +716,41 @@ class IsmLiveStreamRepository {
       'limit': limit,
     };
     return _apiWrapper.makeRequest(
-      '${IsmLiveApis.fetchScheduledStream}?${payload.makeQuery()}',
+      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> deleteScheduledStream({
+    required String eventId,
+  }) {
+    var payload = {
+      'eventId': eventId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.delete,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> editScheduledStream({
+    required String eventId,
+  }) {
+    var payload = {
+      'eventId': eventId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
+      type: IsmLiveRequestType.patch,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: true,
     );
   }
 
