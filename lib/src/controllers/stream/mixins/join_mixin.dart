@@ -431,6 +431,7 @@ mixin StreamJoinMixin {
   }
 
   void editScheduleStream() async {
+    String? image;
     if (_controller.streamDetails?.streamImage?.isEmpty ?? true) {
       if (_controller.pickedImage == null) {
         final file = await _controller.cameraController?.takePicture();
@@ -448,11 +449,15 @@ mixin StreamJoinMixin {
 
       var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
       var type = _controller.pickedImage!.name.split('.').last;
-      var image = await _controller.uploadImage(type, bytes);
+      image = await _controller.uploadImage(type, bytes);
     }
-    var res = await _controller
-        .editScheduledStream(_controller.streamDetails?.eventId ?? '');
 
+    var res = await _controller.editScheduledStream(
+      eventId: _controller.streamDetails?.eventId ?? '',
+      streamImage: image ?? _controller.streamDetails?.streamImage,
+      streamDescription: _controller.descriptionController.text.trim(),
+    );
+    _controller.streamDetails = null;
     if (res) {
       IsmLiveUtility.showDialog(
         IsmLiveEditScheduleDialog(

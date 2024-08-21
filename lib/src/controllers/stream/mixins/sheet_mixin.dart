@@ -159,7 +159,10 @@ mixin StreamSheetMixin {
         leftLabel: 'Edit',
         rightLabel: 'Delete',
         title: 'Schedule Stream',
-        onLeft: IsmLiveRouteManagement.goToGoLiveView,
+        onLeft: () {
+          Get.back();
+          IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
+        },
         onRight: () async {
           Get.back();
 

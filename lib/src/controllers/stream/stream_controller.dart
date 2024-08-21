@@ -774,4 +774,35 @@ class IsmLiveStreamController extends GetxController
 
     return isthere;
   }
+
+  void goLiveSchedule() async {
+    var payload = IsmLiveScheduleStreamParam(
+      audioOnly: streamDetails?.audioOnly,
+      enableRecording: streamDetails?.isRecorded,
+      eventId: streamDetails?.eventId,
+      hdBroadcast: streamDetails?.hdBroadcast,
+      isPaid: streamDetails?.isPaid,
+      isPublicStream: streamDetails?.isPublicStream,
+      isSelfHosted: streamDetails?.selfHosted,
+      isometrikUserId: streamDetails?.userId,
+      lowLatencyMode: true,
+      members: streamDetails?.members,
+      multiLive: true,
+      paymentAmount: streamDetails?.paymentAmount,
+      paymentCurrencyCode: streamDetails?.paymentCurrencyCode,
+      persistRtmpIngestEndpoint: streamDetails?.persistRtmpIngestEndpoint,
+      products: streamDetails?.products,
+      productsLinked: streamDetails?.productsLinked,
+      restream: streamDetails?.restream,
+      rtmpIngest: streamDetails?.rtmpIngest,
+      saleType: 1,
+      streamDescription: streamDetails?.streamDescription,
+      streamImage: streamDetails?.streamImage,
+      streamTitle: (streamDetails?.streamTitle?.isEmpty ?? true)
+          ? 'My stream'
+          : streamDetails?.streamTitle,
+      userName: streamDetails?.userDetails?.userName,
+    );
+    await goliveScheduleStream(payload);
+  }
 }

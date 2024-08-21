@@ -139,6 +139,18 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
+  Future<IsmLiveResponseModel> goliveScheduleStream(
+    IsmLiveScheduleStreamParam payload,
+  ) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.scheduledStreamGoLive,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: payload.toMap(),
+        showLoader: true,
+        showDialog: false,
+      );
+
   Future<IsmLiveResponseModel> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
@@ -741,16 +753,20 @@ class IsmLiveStreamRepository {
 
   Future<IsmLiveResponseModel> editScheduledStream({
     required String eventId,
+    String? streamDescription,
+    String? streamImage,
   }) {
     var payload = {
+      'streamDescription': streamDescription,
       'eventId': eventId,
+      'streamImage': streamImage,
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
       type: IsmLiveRequestType.patch,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
-      showDialog: true,
+      showDialog: false,
     );
   }
 

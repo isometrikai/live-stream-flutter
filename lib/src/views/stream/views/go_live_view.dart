@@ -49,6 +49,7 @@ class IsmGoLiveView extends StatelessWidget {
             controller.selectedProductsList.clear();
           }
           controller.cameraController?.dispose();
+          controller.streamDetails = null;
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,

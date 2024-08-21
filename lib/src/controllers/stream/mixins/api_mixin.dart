@@ -144,11 +144,15 @@ mixin StreamAPIMixin {
         eventId: eventId,
       );
 
-  Future<bool> editScheduledStream(
-    String eventId,
-  ) async =>
+  Future<bool> editScheduledStream({
+    required String eventId,
+    String? streamDescription,
+    String? streamImage,
+  }) async =>
       await _controller._viewModel.editScheduledStream(
         eventId: eventId,
+        streamDescription: streamDescription,
+        streamImage: streamImage,
       );
 
 // Creates a new live stream with the provided details.
@@ -196,6 +200,9 @@ mixin StreamAPIMixin {
     String isometrikUserId,
   ) =>
       _controller._viewModel.stopStream(streamId, isometrikUserId);
+
+  Future<bool> goliveScheduleStream(IsmLiveScheduleStreamParam payload) =>
+      _controller._viewModel.goliveScheduleStream(payload);
 
   Future<void> getStreamMembers({
     required String streamId,

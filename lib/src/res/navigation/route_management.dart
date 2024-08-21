@@ -81,10 +81,16 @@ abstract class IsmLiveRouteManagement {
     );
   }
 
-  static void goToGoLiveView() {
-    Get.toNamed<void>(
-      IsmLiveRoutes.goLive,
-    );
+  static void goToGoLiveView({bool popPrevious = false}) {
+    if (popPrevious) {
+      Get.offAndToNamed<void>(
+        IsmLiveRoutes.goLive,
+      );
+    } else {
+      Get.toNamed<void>(
+        IsmLiveRoutes.goLive,
+      );
+    }
   }
 
   static void goToMyMeetingsView() {

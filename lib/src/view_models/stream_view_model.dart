@@ -132,6 +132,17 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<bool> goliveScheduleStream(IsmLiveScheduleStreamParam payload) async {
+    try {
+      var res = await _repository.goliveScheduleStream(payload);
+
+      return !res.hasError;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return false;
+    }
+  }
+
   Future<IsmLivePresignedUrl?> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
@@ -880,10 +891,14 @@ class IsmLiveStreamViewModel {
 
   Future<bool> editScheduledStream({
     required String eventId,
+    String? streamDescription,
+    String? streamImage,
   }) async {
     try {
       var res = await _repository.editScheduledStream(
         eventId: eventId,
+        streamDescription: streamDescription,
+        streamImage: streamImage,
       );
 
       return !res.hasError;

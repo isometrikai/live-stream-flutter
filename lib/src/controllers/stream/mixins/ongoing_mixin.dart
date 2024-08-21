@@ -610,8 +610,9 @@ mixin StreamOngoingMixin {
   }) async {
     if (_controller.streamId?.isEmpty ?? true) {
       if (!isScrolling) {
-        IsmLiveUtility.closeLoader();
-        await _controller.animateToPage(_controller.previousStreamIndex);
+        // IsmLiveUtility.closeLoader();
+        // await _controller.animateToPage(_controller.previousStreamIndex);
+        _controller.streamDispose();
         unawaited(_controller.getStreams());
         closeStreamView(
           false,

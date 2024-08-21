@@ -138,7 +138,8 @@ class _StreamListing extends StatelessWidget {
                         return IsmLiveTapHandler(
                           onTap: () {
                             if (controller.streamType ==
-                                IsmLiveStreamType.scheduledStreams) {
+                                    IsmLiveStreamType.scheduledStreams &&
+                                isCreatedByMe) {
                               controller.startSeduleStream(e);
                               return;
                             }
@@ -156,8 +157,10 @@ class _StreamListing extends StatelessWidget {
                                     }
                                   });
                             } else {
-                              controller.initializeAndJoinStream(
-                                  e, isCreatedByMe);
+                              if (e.isStreamActive ?? true) {
+                                controller.initializeAndJoinStream(
+                                    e, isCreatedByMe);
+                              }
                             }
                           },
                           child: IsmLiveStreamCard(
