@@ -157,10 +157,8 @@ class _StreamListing extends StatelessWidget {
                                     }
                                   });
                             } else {
-                              if (e.isStreamActive ?? true) {
-                                controller.initializeAndJoinStream(
-                                    e, isCreatedByMe);
-                              }
+                              controller.initializeAndJoinStream(
+                                  e, isCreatedByMe);
                             }
                           },
                           child: IsmLiveStreamCard(

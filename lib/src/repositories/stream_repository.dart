@@ -743,8 +743,9 @@ class IsmLiveStreamRepository {
       'eventId': eventId,
     };
     return _apiWrapper.makeRequest(
-      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
+      '${IsmLiveApis.scheduledStream}',
       type: IsmLiveRequestType.delete,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: false,
@@ -762,8 +763,9 @@ class IsmLiveStreamRepository {
       'streamImage': streamImage,
     };
     return _apiWrapper.makeRequest(
-      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
+      '${IsmLiveApis.scheduledStream}',
       type: IsmLiveRequestType.patch,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: false,

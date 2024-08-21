@@ -118,7 +118,8 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const _StreamTypes(),
+                    if (!(controller.streamDetails?.isScheduledStream ?? false))
+                      const _StreamTypes(),
                     IsmLiveDimens.boxHeight20,
                     Row(
                       children: [

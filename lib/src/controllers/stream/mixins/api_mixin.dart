@@ -201,7 +201,8 @@ mixin StreamAPIMixin {
   ) =>
       _controller._viewModel.stopStream(streamId, isometrikUserId);
 
-  Future<bool> goliveScheduleStream(IsmLiveScheduleStreamParam payload) =>
+  Future<IsmLiveScheduleRTCModule?> goliveScheduleStream(
+          IsmLiveScheduleStreamParam payload) =>
       _controller._viewModel.goliveScheduleStream(payload);
 
   Future<void> getStreamMembers({

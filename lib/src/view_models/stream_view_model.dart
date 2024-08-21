@@ -132,14 +132,17 @@ class IsmLiveStreamViewModel {
     }
   }
 
-  Future<bool> goliveScheduleStream(IsmLiveScheduleStreamParam payload) async {
+  Future<IsmLiveScheduleRTCModule?> goliveScheduleStream(
+      IsmLiveScheduleStreamParam payload) async {
     try {
       var res = await _repository.goliveScheduleStream(payload);
-
-      return !res.hasError;
+      if (res.hasError && res.statusCode != 200) {
+        return null;
+      }
+      return IsmLiveScheduleRTCModule.fromJson(res.data);
     } catch (e, st) {
       IsmLiveLog.error(e, st);
-      return false;
+      return null;
     }
   }
 

@@ -51,54 +51,55 @@ class IsmGoLiveNavBar extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: IsmGoLiveTabItem.values.map((e) {
-                  final isSelected = controller.selectedGoLiveTabItem == e;
-                  return Expanded(
-                    child: IsmLiveTapHandler(
-                      onTap: () {
-                        controller.selectedGoLiveTabItem = e;
+              if (!(controller.streamDetails?.isScheduledStream ?? false))
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: IsmGoLiveTabItem.values.map((e) {
+                    final isSelected = controller.selectedGoLiveTabItem == e;
+                    return Expanded(
+                      child: IsmLiveTapHandler(
+                        onTap: () {
+                          controller.selectedGoLiveTabItem = e;
 
-                        controller.onChangeRtmp(
-                            controller.selectedGoLiveTabItem ==
-                                IsmGoLiveTabItem.liveFromDevice);
-                        controller.onChangePersistent(false);
+                          controller.onChangeRtmp(
+                              controller.selectedGoLiveTabItem ==
+                                  IsmGoLiveTabItem.liveFromDevice);
+                          controller.onChangePersistent(false);
 
-                        controller.update([IsmGoLiveView.updateId]);
-                      },
-                      child: Padding(
-                        padding: IsmLiveDimens.edgeInsets0_4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              e.label,
-                              style: context.textTheme.labelLarge?.copyWith(
-                                color: isSelected
-                                    ? context.liveTheme?.selectedTextColor
-                                    : context.liveTheme?.unselectedTextColor,
-                              ),
-                            ),
-                            if (isSelected) ...[
-                              IsmLiveDimens.boxHeight4,
-                              Container(
-                                height: 2,
-                                width: Get.width * 0.25,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                          controller.update([IsmGoLiveView.updateId]);
+                        },
+                        child: Padding(
+                          padding: IsmLiveDimens.edgeInsets0_4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                e.label,
+                                style: context.textTheme.labelLarge?.copyWith(
+                                  color: isSelected
+                                      ? context.liveTheme?.selectedTextColor
+                                      : context.liveTheme?.unselectedTextColor,
                                 ),
                               ),
+                              if (isSelected) ...[
+                                IsmLiveDimens.boxHeight4,
+                                Container(
+                                  height: 2,
+                                  width: Get.width * 0.25,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                    );
+                  }).toList(),
+                ),
             ],
           ),
         ),
