@@ -507,6 +507,34 @@ class IsmLiveUser {
         userProfile: userProfile ?? this.userProfile,
       );
 
+  String get name {
+    if (userName?.isEmpty ?? true) {
+      return '${userMetaData?.firstName} ${userMetaData?.lastName}';
+    }
+    return userName!;
+  }
+
+  String get getFirstname {
+    if (firstName?.isEmpty ?? true) {
+      return '${userMetaData?.firstName}';
+    }
+    return firstName!;
+  }
+
+  String get getLastName {
+    if (lastName?.isEmpty ?? true) {
+      return '${userMetaData?.lastName}';
+    }
+    return lastName!;
+  }
+
+  String get image {
+    if (userProfile?.isEmpty ?? true) {
+      return '${userMetaData?.profilePic} ${userMetaData?.profilePic}';
+    }
+    return userProfile!;
+  }
+
   Map<String, dynamic> toMap() => <String, dynamic>{
         'id': id,
         'userName': userName,
