@@ -155,37 +155,50 @@ mixin StreamJoinMixin {
       return;
     }
 
-    if (_controller.pickedImage == null) {
-      final file = await _controller.cameraController?.takePicture();
-      if (file != null) {
-        _controller.pickedImage = file;
-        _controller.update([IsmGoLiveView.updateId]);
-      } else {
-        var file = await FileManager.pickGalleryImage();
+    // Create a stream
+    dynamic stream;
+    final String? image;
+    if (_controller.streamDetails?.isScheduledStream ?? false) {
+      var res = await goLiveSchedule();
+      if (res == null) {
+        return;
+      }
+      stream = res;
+      image = _controller.streamDetails?.streamImage;
+    } else {
+      if (_controller.pickedImage == null) {
+        final file = await _controller.cameraController?.takePicture();
         if (file != null) {
           _controller.pickedImage = file;
           _controller.update([IsmGoLiveView.updateId]);
+        } else {
+          var file = await FileManager.pickGalleryImage();
+          if (file != null) {
+            _controller.pickedImage = file;
+            _controller.update([IsmGoLiveView.updateId]);
+          }
         }
       }
-    }
-    // Create a stream
-    var data = await _controller.createStream();
-    if (data == null) {
-      return;
-    }
-    if (data.model == null) {
-      return;
-    }
-    if (data.model?.rtcToken.isEmpty ?? true) {
-      IsmLiveUtility.showDialog(
-        IsmLiveScheduleDialog(
-          message: _controller.scheduleLiveDate,
-        ),
-      );
-      return;
+      var data = await _controller.createStream();
+      if (data == null) {
+        return;
+      }
+      if (data.model == null) {
+        return;
+      }
+      if (data.model?.rtcToken.isEmpty ?? true) {
+        IsmLiveUtility.showDialog(
+          IsmLiveScheduleDialog(
+            message: _controller.scheduleLiveDate,
+          ),
+        );
+        return;
+      }
+
+      stream = data.model!;
+      image = data.image;
     }
 
-    final stream = data.model!;
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
 
@@ -196,7 +209,7 @@ mixin StreamJoinMixin {
     await connectStream(
       token: stream.rtcToken,
       streamId: stream.streamId!,
-      streamImage: data.image,
+      streamImage: image,
       isHost: true,
       isNewStream: true,
       hdBroadcast: _controller.isHdBroadcast,
@@ -400,11 +413,111 @@ mixin StreamJoinMixin {
     }
   }
 
+  Future<IsmLiveScheduleRTCModule?> goLiveSchedule() async {
+    var payload = IsmLiveScheduleStreamParam(
+      audioOnly: _controller.streamDetails?.audioOnly,
+      enableRecording: _controller.streamDetails?.isRecorded,
+      eventId: _controller.streamDetails?.eventId,
+      hdBroadcast: _controller.streamDetails?.hdBroadcast,
+      isPaid: _controller.streamDetails?.isPaid,
+      isPublicStream: _controller.streamDetails?.isPublicStream,
+      isSelfHosted: true,
+      isometrikUserId: _controller.streamDetails?.userId,
+      lowLatencyMode: true,
+      members: _controller.streamDetails?.members,
+      multiLive: true,
+      paymentAmount: _controller.streamDetails?.paymentAmount,
+      paymentCurrencyCode: _controller.streamDetails?.paymentCurrencyCode,
+      persistRtmpIngestEndpoint:
+          _controller.streamDetails?.persistRtmpIngestEndpoint,
+      products: _controller.streamDetails?.products,
+      productsLinked: _controller.streamDetails?.productsLinked,
+      restream: _controller.streamDetails?.restream,
+      rtmpIngest: _controller.streamDetails?.rtmpIngest,
+      saleType: 1,
+      streamDescription: _controller.streamDetails?.streamDescription,
+      streamImage: _controller.streamDetails?.streamImage,
+      streamTitle: (_controller.streamDetails?.streamTitle?.isEmpty ?? true)
+          ? 'My stream'
+          : _controller.streamDetails?.streamTitle,
+      userName: _controller.streamDetails?.userDetails?.userName,
+    );
+    return await _controller.goliveScheduleStream(payload);
+  }
+
+  void startSeduleStream(
+    IsmLiveStreamDataModel stream,
+  ) {
+    _controller.userRole = IsmLiveUserRole.host();
+    var details = stream.userDetails;
+
+    _controller.streamDetails = stream;
+
+    _controller.hostDetails = IsmLiveMemberDetailsModel(
+        isAdmin: false,
+        isPublishing: false,
+        joinTime: 0,
+        metaData: details?.userMetaData ?? const IsmLiveMetaData(),
+        userId: details?.id ?? '',
+        userIdentifier: '',
+        userName: details?.userName ?? '',
+        userProfileImageUrl: details?.userProfile ?? '');
+    _controller.room = lk.Room();
+    IsmLiveRouteManagement.goToStreamView(
+      isHost: true,
+      isNewStream: false,
+      room: lk.Room(),
+      isScrolling: false,
+      streamImage: stream.streamImage,
+      listener: lk.Room().createListener(),
+      streamId: stream.streamId ?? '',
+      isSchedule: true,
+    );
+  }
+
+  void editScheduleStream() async {
+    String? image;
+    if (_controller.streamDetails?.streamImage?.isEmpty ?? true) {
+      if (_controller.pickedImage == null) {
+        final file = await _controller.cameraController?.takePicture();
+        if (file != null) {
+          _controller.pickedImage = file;
+          _controller.update([IsmGoLiveView.updateId]);
+        } else {
+          var file = await FileManager.pickGalleryImage();
+          if (file != null) {
+            _controller.pickedImage = file;
+            _controller.update([IsmGoLiveView.updateId]);
+          }
+        }
+      }
+
+      var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
+      var type = _controller.pickedImage!.name.split('.').last;
+      image = await _controller.uploadImage(type, bytes);
+    }
+
+    var res = await _controller.editScheduledStream(
+      eventId: _controller.streamDetails?.eventId ?? '',
+      streamImage: image ?? _controller.streamDetails?.streamImage,
+      streamDescription: _controller.descriptionController.text.trim(),
+    );
+    _controller.streamDetails = null;
+    if (res) {
+      IsmLiveUtility.showDialog(
+        IsmLiveEditScheduleDialog(
+          message:
+              _controller.streamDetails?.scheduleStartTime ?? DateTime.now(),
+        ),
+      );
+    }
+  }
+
   void startStreamTimer() {
-    if (_controller._streamTimer != null) {
+    if (_controller.streamTimer != null) {
       return;
     }
-    _controller._streamTimer = Timer.periodic(
+    _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
         _controller.streamDuration += const Duration(

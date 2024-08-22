@@ -16,24 +16,40 @@ class IsmGoLiveView extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           var controller = Get.find<IsmLiveStreamController>();
-          controller.cameraFuture = null;
-          unawaited(controller.initializationOfGoLive());
-          unawaited(controller.userDetails());
-          controller.premiumStreamCoinsController.clear();
-          controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
-          controller.pickedImage = null;
-          controller.descriptionController.clear();
-          controller.isHdBroadcast = false;
-          controller.isRecordingBroadcast = false;
-          controller.isSchedulingBroadcast = false;
-          controller.isPremium = false;
-
-          controller.isRestreamBroadcast = false;
+          if (controller.streamDetails == null) {
+            controller.cameraFuture = null;
+            unawaited(controller.initializationOfGoLive());
+            unawaited(controller.userDetails());
+            controller.premiumStreamCoinsController.clear();
+            controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
+            controller.pickedImage = null;
+            controller.descriptionController.clear();
+            controller.isHdBroadcast = false;
+            controller.isRecordingBroadcast = false;
+            controller.isSchedulingBroadcast = false;
+            controller.isPremium = false;
+            controller.isRestreamBroadcast = false;
+          } else if (controller.streamDetails?.isScheduledStream ?? false) {
+            controller.premiumStreamCoinsController.clear();
+            unawaited(controller.initializationOfGoLive());
+            controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
+            controller.pickedImage = null;
+            controller.descriptionController.text =
+                controller.streamDetails?.streamDescription ?? '';
+            controller.isHdBroadcast = false;
+            controller.isRecordingBroadcast = false;
+            controller.isSchedulingBroadcast = false;
+            controller.isPremium = false;
+            controller.isRestreamBroadcast = false;
+          }
         },
         dispose: (state) {
-          var cons = Get.find<IsmLiveStreamController>();
-          cons.selectedProductsList.clear();
-          cons.cameraController?.dispose();
+          var controller = Get.find<IsmLiveStreamController>();
+          if (controller.streamDetails == null) {
+            controller.selectedProductsList.clear();
+          }
+          controller.cameraController?.dispose();
+          controller.streamDetails = null;
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -41,7 +57,7 @@ class IsmGoLiveView extends StatelessWidget {
           extendBody: true,
           bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
-            alignment: Alignment.center,
+            // alignment: Alignment.,
             fit: StackFit.loose,
             children: [
               FutureBuilder(
@@ -78,6 +94,7 @@ class IsmGoLiveView extends StatelessWidget {
               SingleChildScrollView(
                 padding: IsmLiveDimens.edgeInsets16,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     IsmLiveDimens.boxHeight32,
@@ -101,7 +118,8 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const _StreamTypes(),
+                    if (!(controller.streamDetails?.isScheduledStream ?? false))
+                      const _StreamTypes(),
                     IsmLiveDimens.boxHeight20,
                     Row(
                       children: [
@@ -127,45 +145,48 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    IsmLiveDimens.boxHeight10,
-                    IsmLiveRadioListTile(
-                      title: 'HD Broadcast',
-                      onChange: controller.onChangeHdBroadcast,
-                      value: controller.isHdBroadcast,
-                    ),
-                    IsmLiveRadioListTile(
-                      title: 'Record Broadcast',
-                      onChange: controller.onChangeRecording,
-                      value: controller.isRecordingBroadcast,
-                    ),
-                    IsmLiveRadioListTile(
-                      title: 'Restream Broadcast',
-                      onChange: controller.onChangeRestream,
-                      value: controller.isRestreamBroadcast,
-                    ),
-                    const _Restream(),
-                    if (controller.isRtmp) ...[
+                    if (!(controller.streamDetails?.isScheduledStream ??
+                        false)) ...[
+                      IsmLiveDimens.boxHeight10,
                       IsmLiveRadioListTile(
-                        title: 'Use Persistent RTMP Stream Key',
-                        onChange: controller.onChangePersistent,
-                        value: controller.usePersistentStreamKey,
+                        title: 'HD Broadcast',
+                        onChange: controller.onChangeHdBroadcast,
+                        value: controller.isHdBroadcast,
                       ),
-                      const _PersistentStream(),
-                    ],
-                    _AddProduct(
-                      selectedProducts: controller.selectedProductsList,
-                      onRemoveProduct: (index) {
-                        controller.selectedProductsList.removeAt(index);
-                        controller.update([updateId]);
-                      },
-                    ),
-                    IsmLiveRadioListTile(
-                      title: 'Schedule Live',
-                      onChange: controller.onChangeSchedule,
-                      value: controller.isSchedulingBroadcast,
-                    ),
-                    const _ScheduleStream(),
-                    const SizedBox(height: 120),
+                      IsmLiveRadioListTile(
+                        title: 'Record Broadcast',
+                        onChange: controller.onChangeRecording,
+                        value: controller.isRecordingBroadcast,
+                      ),
+                      IsmLiveRadioListTile(
+                        title: 'Restream Broadcast',
+                        onChange: controller.onChangeRestream,
+                        value: controller.isRestreamBroadcast,
+                      ),
+                      const _Restream(),
+                      if (controller.isRtmp) ...[
+                        IsmLiveRadioListTile(
+                          title: 'Use Persistent RTMP Stream Key',
+                          onChange: controller.onChangePersistent,
+                          value: controller.usePersistentStreamKey,
+                        ),
+                        const _PersistentStream(),
+                      ],
+                      _AddProduct(
+                        selectedProducts: controller.selectedProductsList,
+                        onRemoveProduct: (index) {
+                          controller.selectedProductsList.removeAt(index);
+                          controller.update([updateId]);
+                        },
+                      ),
+                      IsmLiveRadioListTile(
+                        title: 'Schedule Live',
+                        onChange: controller.onChangeSchedule,
+                        value: controller.isSchedulingBroadcast,
+                      ),
+                      const _ScheduleStream(),
+                      const SizedBox(height: 120),
+                    ]
                   ],
                 ),
               ),
@@ -262,8 +283,9 @@ class _StreamImage extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
           clipBehavior: Clip.antiAlias,
-          child: controller.pickedImage == null ||
-                  controller.pickedImage!.path.isNullOrEmpty
+          child: (controller.streamDetails?.streamImage?.isEmpty ?? true) &&
+                  (controller.pickedImage == null ||
+                      controller.pickedImage!.path.isNullOrEmpty)
               ? IsmLiveTapHandler(
                   onTap: () async {
                     var file = await FileManager.pickGalleryImage();
@@ -291,11 +313,15 @@ class _StreamImage extends StatelessWidget {
               : Stack(
                   fit: StackFit.expand,
                   children: [
-                    IsmLiveImage.file(
-                      controller.pickedImage!.path,
-                      isProfileImage: false,
-                      radius: IsmLiveDimens.twelve,
-                    ),
+                    !(controller.streamDetails?.streamImage?.isEmpty ?? true)
+                        ? IsmLiveImage.network(
+                            controller.streamDetails?.streamImage ?? '',
+                            name: 'U')
+                        : IsmLiveImage.file(
+                            controller.pickedImage!.path,
+                            isProfileImage: false,
+                            radius: IsmLiveDimens.twelve,
+                          ),
                     Positioned(
                       right: -IsmLiveDimens.ten,
                       top: -IsmLiveDimens.ten,
@@ -306,6 +332,7 @@ class _StreamImage extends StatelessWidget {
                           color: IsmLiveColors.white,
                         ),
                         onPressed: () {
+                          controller.streamDetails?.copyWith(streamImage: null);
                           controller.pickedImage = null;
                           controller.update([IsmGoLiveView.updateId]);
                         },

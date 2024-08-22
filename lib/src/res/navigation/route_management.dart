@@ -34,6 +34,7 @@ abstract class IsmLiveRouteManagement {
     required Room room,
     required String streamId,
     bool isInteractive = false,
+    bool isSchedule = false,
     String? streamImage,
   }) async {
     var arguments = {
@@ -45,6 +46,7 @@ abstract class IsmLiveRouteManagement {
       'isNewStream': isNewStream,
       'isScrolling': isScrolling,
       'isInteractive': isInteractive,
+      'isSchedule': isSchedule,
     };
 
     if (isHost && isNewStream) {
@@ -79,10 +81,16 @@ abstract class IsmLiveRouteManagement {
     );
   }
 
-  static void goToGoLiveView() {
-    Get.toNamed<void>(
-      IsmLiveRoutes.goLive,
-    );
+  static void goToGoLiveView({bool popPrevious = false}) {
+    if (popPrevious) {
+      Get.offAndToNamed<void>(
+        IsmLiveRoutes.goLive,
+      );
+    } else {
+      Get.toNamed<void>(
+        IsmLiveRoutes.goLive,
+      );
+    }
   }
 
   static void goToMyMeetingsView() {

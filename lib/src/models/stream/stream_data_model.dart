@@ -51,6 +51,9 @@ class IsmLiveStreamDataModel {
     this.persistRtmpIngestEndpoint,
     this.firstUserCoins,
     this.secondUserCoins,
+    this.status,
+    this.isStreamActive,
+    this.eventId,
   });
 
   factory IsmLiveStreamDataModel.fromMap(Map<String, dynamic> map) =>
@@ -113,6 +116,11 @@ class IsmLiveStreamDataModel {
             ? IsmLiveUser.fromMap(map['userDetails'] as Map<String, dynamic>)
             : null,
         type: map['type'] != null ? map['type'] as String : null,
+        status: map['status'] != null ? map['status'] as String : null,
+        eventId: map['eventId'] != null ? map['eventId'] as String : null,
+        isStreamActive: map['isStreamActive'] != null
+            ? map['isStreamActive'] as bool
+            : null,
         hdBroadcast:
             map['hdBroadcast'] != null ? map['hdBroadcast'] as bool : null,
         restream: map['restream'] != null ? map['restream'] as bool : null,
@@ -197,6 +205,9 @@ class IsmLiveStreamDataModel {
   final bool? persistRtmpIngestEndpoint;
   final num? firstUserCoins;
   final num? secondUserCoins;
+  final String? status;
+  final bool? isStreamActive;
+  final String? eventId;
 
   IsmLiveStreamDataModel copyWith({
     String? streamId,
@@ -244,6 +255,9 @@ class IsmLiveStreamDataModel {
     bool? persistRtmpIngestEndpoint,
     num? firstUserCoins,
     num? secondUserCoins,
+    String? status,
+    bool? isStreamActive,
+    String? eventId,
   }) =>
       IsmLiveStreamDataModel(
         streamId: streamId ?? this.streamId,
@@ -292,6 +306,9 @@ class IsmLiveStreamDataModel {
             persistRtmpIngestEndpoint ?? this.persistRtmpIngestEndpoint,
         firstUserCoins: firstUserCoins ?? this.firstUserCoins,
         secondUserCoins: secondUserCoins ?? this.secondUserCoins,
+        status: status ?? this.status,
+        isStreamActive: isStreamActive ?? this.isStreamActive,
+        eventId: eventId ?? this.eventId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -340,13 +357,16 @@ class IsmLiveStreamDataModel {
         'persistRtmpIngestEndpoint': persistRtmpIngestEndpoint,
         'firstUserCoins': firstUserCoins,
         'secondUserCoins': secondUserCoins,
+        'status': status,
+        'isStreamActive': isStreamActive,
+        'eventId': eventId,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
+      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream,      status: $status, isStreamActive: $isStreamActive , eventId: $eventId , userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
 
   @override
   bool operator ==(covariant IsmLiveStreamDataModel other) {
@@ -396,6 +416,9 @@ class IsmLiveStreamDataModel {
         other.rtmpIngest == rtmpIngest &&
         other.persistRtmpIngestEndpoint == persistRtmpIngestEndpoint &&
         other.firstUserCoins == firstUserCoins &&
+        other.status == status &&
+        other.isStreamActive == isStreamActive &&
+        other.eventId == eventId &&
         other.secondUserCoins == secondUserCoins;
   }
 
@@ -445,6 +468,9 @@ class IsmLiveStreamDataModel {
       rtmpIngest.hashCode ^
       persistRtmpIngestEndpoint.hashCode ^
       firstUserCoins.hashCode ^
+      status.hashCode ^
+      eventId.hashCode ^
+      isStreamActive.hashCode ^
       secondUserCoins.hashCode;
 }
 
@@ -480,6 +506,34 @@ class IsmLiveUser {
         lastName: lastName ?? this.lastName,
         userProfile: userProfile ?? this.userProfile,
       );
+
+  String get name {
+    if (userName?.isEmpty ?? true) {
+      return '${userMetaData?.firstName} ${userMetaData?.lastName}';
+    }
+    return userName!;
+  }
+
+  String get getFirstname {
+    if (firstName?.isEmpty ?? true) {
+      return '${userMetaData?.firstName}';
+    }
+    return firstName!;
+  }
+
+  String get getLastName {
+    if (lastName?.isEmpty ?? true) {
+      return '${userMetaData?.lastName}';
+    }
+    return lastName!;
+  }
+
+  String get image {
+    if (userProfile?.isEmpty ?? true) {
+      return '${userMetaData?.profilePic} ${userMetaData?.profilePic}';
+    }
+    return userProfile!;
+  }
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'id': id,

@@ -139,6 +139,18 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
+  Future<IsmLiveResponseModel> goliveScheduleStream(
+    IsmLiveScheduleStreamParam payload,
+  ) =>
+      _apiWrapper.makeRequest(
+        IsmLiveApis.scheduledStreamGoLive,
+        type: IsmLiveRequestType.post,
+        headers: IsmLiveUtility.tokenHeader(),
+        payload: payload.toMap(),
+        showLoader: true,
+        showDialog: false,
+      );
+
   Future<IsmLiveResponseModel> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
@@ -716,8 +728,44 @@ class IsmLiveStreamRepository {
       'limit': limit,
     };
     return _apiWrapper.makeRequest(
-      '${IsmLiveApis.fetchScheduledStream}?${payload.makeQuery()}',
+      '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> deleteScheduledStream({
+    required String eventId,
+  }) {
+    var payload = {
+      'eventId': eventId,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.scheduledStream}',
+      type: IsmLiveRequestType.delete,
+      payload: payload,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: true,
+      showDialog: false,
+    );
+  }
+
+  Future<IsmLiveResponseModel> editScheduledStream({
+    required String eventId,
+    String? streamDescription,
+    String? streamImage,
+  }) {
+    var payload = {
+      'streamDescription': streamDescription,
+      'eventId': eventId,
+      'streamImage': streamImage,
+    };
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.scheduledStream}',
+      type: IsmLiveRequestType.patch,
+      payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
       showDialog: false,

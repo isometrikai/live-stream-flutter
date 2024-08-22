@@ -132,6 +132,20 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<IsmLiveScheduleRTCModule?> goliveScheduleStream(
+      IsmLiveScheduleStreamParam payload) async {
+    try {
+      var res = await _repository.goliveScheduleStream(payload);
+      if (res.hasError && res.statusCode != 200) {
+        return null;
+      }
+      return IsmLiveScheduleRTCModule.fromJson(res.data);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
   Future<IsmLivePresignedUrl?> getPresignedUrl({
     required bool showLoader,
     required String userIdentifier,
@@ -861,6 +875,40 @@ class IsmLiveStreamViewModel {
       IsmLiveLog.error(e, st);
     }
     return [];
+  }
+
+  Future<bool> deleteScheduledStream({
+    required String eventId,
+  }) async {
+    try {
+      var res = await _repository.deleteScheduledStream(
+        eventId: eventId,
+      );
+
+      return !res.hasError;
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+    return false;
+  }
+
+  Future<bool> editScheduledStream({
+    required String eventId,
+    String? streamDescription,
+    String? streamImage,
+  }) async {
+    try {
+      var res = await _repository.editScheduledStream(
+        eventId: eventId,
+        streamDescription: streamDescription,
+        streamImage: streamImage,
+      );
+
+      return !res.hasError;
+    } catch (e) {
+      IsmLiveLog.error(e);
+    }
+    return false;
   }
 
   Future<IsmLiveCoinBalanceModel?> totalWalletCoins() async {

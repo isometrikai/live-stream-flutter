@@ -260,11 +260,16 @@ enum IsmLiveStreamOption {
             ]
           : IsmLiveDelegate.viewersOption;
 
+  static List<IsmLiveStreamOption> get scheduleOptions => [
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.favourite,
+      ];
+
   ///host options
   static List<IsmLiveStreamOption> get hostOptions =>
       IsmLiveDelegate.hostOptions.isEmpty
           ? [
-              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.bars,
               IsmLiveStreamOption.vs,
               IsmLiveStreamOption.multiLive,
               // IsmLiveStreamOption.product,
@@ -308,7 +313,7 @@ enum IsmLiveStreamOption {
       IsmLiveDelegate.pkOptions.isEmpty
           ? [
               IsmLiveStreamOption.pk,
-              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.bars,
               IsmLiveStreamOption.share,
               IsmLiveStreamOption.rotateCamera,
               IsmLiveStreamOption.settings,

@@ -8,10 +8,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
     required this.isHost,
     required this.streamId,
     required this.isCopublishing,
+    this.isSchedule = false,
   });
 
   final bool isHost;
   final bool isCopublishing;
+  final bool isSchedule;
   final String streamId;
 
   static const String updateId = 'ism-live-controls';
@@ -52,6 +54,10 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 : isCopublishing
                     ? IsmLiveStreamOption.copublisherOptions
                     : IsmLiveStreamOption.viewersOptions;
+          }
+
+          if (isSchedule) {
+            options = IsmLiveStreamOption.scheduleOptions;
           }
 
           // var options = !isHost

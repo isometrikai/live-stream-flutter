@@ -72,6 +72,11 @@ mixin StreamAPIMixin {
   }) async {
     var streamType = type ?? _controller.streamType;
 
+    if (_controller.streamType == IsmLiveStreamType.scheduledStreams) {
+      unawaited(fetchScheduledStream());
+      return;
+    }
+
     if (skip == 0) {
       _controller._streams[streamType] =
           await _controller._viewModel.getStreams(
@@ -132,6 +137,24 @@ mixin StreamAPIMixin {
         streamId,
       );
 
+  Future<bool> deleteScheduledStream(
+    String eventId,
+  ) async =>
+      await _controller._viewModel.deleteScheduledStream(
+        eventId: eventId,
+      );
+
+  Future<bool> editScheduledStream({
+    required String eventId,
+    String? streamDescription,
+    String? streamImage,
+  }) async =>
+      await _controller._viewModel.editScheduledStream(
+        eventId: eventId,
+        streamDescription: streamDescription,
+        streamImage: streamImage,
+      );
+
 // Creates a new live stream with the provided details.
   Future<({IsmLiveRTCModel? model, String image})?> createStream() async {
     var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
@@ -177,6 +200,10 @@ mixin StreamAPIMixin {
     String isometrikUserId,
   ) =>
       _controller._viewModel.stopStream(streamId, isometrikUserId);
+
+  Future<IsmLiveScheduleRTCModule?> goliveScheduleStream(
+          IsmLiveScheduleStreamParam payload) =>
+      _controller._viewModel.goliveScheduleStream(payload);
 
   Future<void> getStreamMembers({
     required String streamId,

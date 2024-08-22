@@ -572,6 +572,7 @@ class IsmLiveMqttController extends GetxController {
           break;
         case IsmLiveActions.streamStartPresence:
           unawaited(_streamController.getStreams());
+
           break;
         case IsmLiveActions.streamStarted:
           break;
