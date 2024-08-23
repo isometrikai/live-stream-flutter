@@ -156,12 +156,16 @@ mixin StreamAPIMixin {
       );
 
 // Creates a new live stream with the provided details.
-  Future<({IsmLiveRTCModel? model, String image})?> createStream() async {
-    var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
-    var type = _controller.pickedImage!.name.split('.').last;
-    var image = await uploadImage(type, bytes);
-    if (image == null || image.isNullOrEmpty) {
-      return null;
+  Future<({IsmLiveRTCModel? model, String image})?> createStream(
+      {String? streamImage}) async {
+    String? simage;
+    if (streamImage == null) {
+      var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
+      var type = _controller.pickedImage!.name.split('.').last;
+      simage = await uploadImage(type, bytes);
+      if (simage == null || simage.isNullOrEmpty) {
+        return null;
+      }
     }
 
     return (
@@ -170,7 +174,7 @@ mixin StreamAPIMixin {
             paymentAmount: !_controller.isPremium
                 ? 0
                 : double.parse(_controller.premiumStreamCoinsController.text),
-            streamImage: image,
+            streamImage: streamImage == null ? simage! : streamImage,
             isPaid: _controller.isPremium,
             productsLinked: _controller.selectedProductsList.isNotEmpty,
             products: _controller.selectedProductsList
