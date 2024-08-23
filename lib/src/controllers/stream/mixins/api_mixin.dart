@@ -194,7 +194,7 @@ mixin StreamAPIMixin {
             persistRtmpIngestEndpoint: _controller.usePersistentStreamKey),
         _controller.user,
       ),
-      image: image,
+      image: streamImage ?? simage ?? '',
     );
   }
 
