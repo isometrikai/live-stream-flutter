@@ -211,7 +211,7 @@ mixin StreamJoinMixin {
       streamId: stream.streamId!,
       streamImage: image,
       isHost: true,
-      isNewStream: true,
+      isNewStream: false,
       hdBroadcast: _controller.isHdBroadcast,
       restream: _controller.isRestreamBroadcast,
     );
