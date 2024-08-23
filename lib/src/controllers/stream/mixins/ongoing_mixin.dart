@@ -642,14 +642,15 @@ mixin StreamOngoingMixin {
 
     if (isEnded && endStream) {
       // unawaited(_controller._mqttController?.unsubscribeStream(streamId));
-      if (isHost) {
-        unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
-      }
+
       await disconnectRoom();
 
       if (goBack) {
         unawaited(_controller.getStreams());
         closeStreamView(isHost, streamId: streamId);
+      }
+      if (isHost) {
+        unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
     }
     //  else if (_controller.isCopublisher) {

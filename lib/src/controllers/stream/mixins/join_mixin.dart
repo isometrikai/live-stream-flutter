@@ -149,7 +149,7 @@ mixin StreamJoinMixin {
   }
 
 // Start streaming
-  Future<void> startStream() async {
+  Future<void> startStream({bool isNewStream = true}) async {
     if (_controller.isPremium &&
         _controller.premiumStreamCoinsController.isEmpty) {
       return;
@@ -211,7 +211,7 @@ mixin StreamJoinMixin {
       streamId: stream.streamId!,
       streamImage: image,
       isHost: true,
-      isNewStream: false,
+      isNewStream: isNewStream,
       hdBroadcast: _controller.isHdBroadcast,
       restream: _controller.isRestreamBroadcast,
     );
