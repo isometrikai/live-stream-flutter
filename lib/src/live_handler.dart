@@ -24,7 +24,7 @@ class IsmLiveHandler {
       IsmLiveUtility.cameras = value;
     }));
 
-    await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper()).init();
+    await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper(), permanent: true).init();
   }
 
   static MapStreamSubscription addListener(
