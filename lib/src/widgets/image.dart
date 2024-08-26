@@ -151,7 +151,9 @@ class _Network extends StatelessWidget {
   final bool showError;
 
   @override
-  Widget build(BuildContext context) => CachedNetworkImage(
+  Widget build(BuildContext context) {
+    try {
+      return CachedNetworkImage(
         imageUrl: imageUrl,
         fit: BoxFit.cover,
         alignment: Alignment.center,
@@ -205,6 +207,15 @@ class _Network extends StatelessWidget {
           showError: showError,
         ),
       );
+    } catch (e) {
+      IsmLiveLog('----------> $e ');
+      return _ErrorImage(
+        isProfileImage: isProfileImage,
+        name: name,
+        showError: showError,
+      );
+    }
+  }
 }
 
 class _Svg extends StatelessWidget {
