@@ -118,7 +118,9 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (!(controller.streamDetails?.isScheduledStream ?? false))
+                    if (!(controller.streamDetails?.isScheduledStream ??
+                            false) &&
+                        (IsmLiveDelegate.paidStream ?? true))
                       const _StreamTypes(),
                     IsmLiveDimens.boxHeight20,
                     Row(
@@ -148,22 +150,26 @@ class IsmGoLiveView extends StatelessWidget {
                     if (!(controller.streamDetails?.isScheduledStream ??
                         false)) ...[
                       IsmLiveDimens.boxHeight10,
-                      IsmLiveRadioListTile(
-                        title: 'HD Broadcast',
-                        onChange: controller.onChangeHdBroadcast,
-                        value: controller.isHdBroadcast,
-                      ),
-                      IsmLiveRadioListTile(
-                        title: 'Record Broadcast',
-                        onChange: controller.onChangeRecording,
-                        value: controller.isRecordingBroadcast,
-                      ),
-                      IsmLiveRadioListTile(
-                        title: 'Restream Broadcast',
-                        onChange: controller.onChangeRestream,
-                        value: controller.isRestreamBroadcast,
-                      ),
-                      const _Restream(),
+                      if (IsmLiveDelegate.hdStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'HD Broadcast',
+                          onChange: controller.onChangeHdBroadcast,
+                          value: controller.isHdBroadcast,
+                        ),
+                      if (IsmLiveDelegate.recordeStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'Record Broadcast',
+                          onChange: controller.onChangeRecording,
+                          value: controller.isRecordingBroadcast,
+                        ),
+                      if (IsmLiveDelegate.restreamStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'Restream Broadcast',
+                          onChange: controller.onChangeRestream,
+                          value: controller.isRestreamBroadcast,
+                        ),
+                      if (IsmLiveDelegate.restreamStream ?? true)
+                        const _Restream(),
                       if (controller.isRtmp) ...[
                         IsmLiveRadioListTile(
                           title: 'Use Persistent RTMP Stream Key',
@@ -172,18 +178,20 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                         const _PersistentStream(),
                       ],
-                      _AddProduct(
-                        selectedProducts: controller.selectedProductsList,
-                        onRemoveProduct: (index) {
-                          controller.selectedProductsList.removeAt(index);
-                          controller.update([updateId]);
-                        },
-                      ),
-                      IsmLiveRadioListTile(
-                        title: 'Schedule Live',
-                        onChange: controller.onChangeSchedule,
-                        value: controller.isSchedulingBroadcast,
-                      ),
+                      if (IsmLiveDelegate.productStream ?? true)
+                        _AddProduct(
+                          selectedProducts: controller.selectedProductsList,
+                          onRemoveProduct: (index) {
+                            controller.selectedProductsList.removeAt(index);
+                            controller.update([updateId]);
+                          },
+                        ),
+                      if (IsmLiveDelegate.scheduleStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'Schedule Live',
+                          onChange: controller.onChangeSchedule,
+                          value: controller.isSchedulingBroadcast,
+                        ),
                       const _ScheduleStream(),
                       const SizedBox(height: 120),
                     ]

@@ -160,6 +160,7 @@ mixin StreamJoinMixin {
     final String? image;
     if (_controller.streamDetails?.isScheduledStream ?? false) {
       var res = await goLiveSchedule();
+
       if (res == null) {
         return;
       }

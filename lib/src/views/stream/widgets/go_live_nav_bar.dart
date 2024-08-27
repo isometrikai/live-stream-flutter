@@ -51,7 +51,8 @@ class IsmGoLiveNavBar extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              if (!(controller.streamDetails?.isScheduledStream ?? false))
+              if (!(controller.streamDetails?.isScheduledStream ?? false) &&
+                  (IsmLiveDelegate.multiLiveStream ?? true))
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: IsmGoLiveTabItem.values.map((e) {

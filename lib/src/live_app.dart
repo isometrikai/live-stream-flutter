@@ -78,6 +78,14 @@ class IsmLiveApp extends StatelessWidget {
     bool showHeader = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
+    bool? hdStream,
+    bool? scheduleStream,
+    bool? productStream,
+    bool? rtmpStream,
+    bool? restreamStream,
+    bool? paidStream,
+    bool? multiLiveStream,
+    bool? recordeStream,
     List<IsmLiveStreamOption> viewersOptions = const [],
     List<IsmLiveStreamOption> hostOptions = const [],
     List<IsmLiveStreamOption> rtmpOptions = const [],
@@ -100,6 +108,14 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.copublisherOptions = copublisherOptions;
     IsmLiveDelegate.pkOptions = pkOptions;
     IsmLiveDelegate.homeScreen = homeScreen;
+    IsmLiveDelegate.scheduleStream = scheduleStream;
+    IsmLiveDelegate.hdStream = hdStream;
+    IsmLiveDelegate.paidStream = paidStream;
+    IsmLiveDelegate.restreamStream = restreamStream;
+    IsmLiveDelegate.rtmpStream = rtmpStream;
+    IsmLiveDelegate.multiLiveStream = multiLiveStream;
+    IsmLiveDelegate.productStream = productStream;
+    IsmLiveDelegate.recordeStream = recordeStream;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();

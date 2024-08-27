@@ -40,6 +40,22 @@ class IsmLiveDelegate {
 
   static Widget? homeScreen;
 
+  static bool? hdStream;
+
+  static bool? scheduleStream;
+
+  static bool? productStream;
+
+  static bool? rtmpStream;
+
+  static bool? restreamStream;
+
+  static bool? paidStream;
+
+  static bool? multiLiveStream;
+
+  static bool? recordeStream;
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
