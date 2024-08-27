@@ -193,6 +193,8 @@ mixin StreamJoinMixin {
             message: _controller.scheduleLiveDate,
           ),
         );
+        await _controller.getStreams(type: IsmLiveStreamType.scheduledStreams);
+
         return;
       }
 
