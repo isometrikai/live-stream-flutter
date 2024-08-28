@@ -92,7 +92,6 @@ class IsmLiveApp extends StatelessWidget {
     List<IsmLiveStreamOption> copublisherOptions = const [],
     List<IsmLiveStreamOption> pkOptions = const [],
     Widget? homeScreen,
-    Widget? endStreamScreen,
   }) {
     assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -109,7 +108,6 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.copublisherOptions = copublisherOptions;
     IsmLiveDelegate.pkOptions = pkOptions;
     IsmLiveDelegate.homeScreen = homeScreen;
-    IsmLiveDelegate.endStreamScreen = endStreamScreen;
     IsmLiveDelegate.scheduleStream = scheduleStream;
     IsmLiveDelegate.hdStream = hdStream;
     IsmLiveDelegate.paidStream = paidStream;
