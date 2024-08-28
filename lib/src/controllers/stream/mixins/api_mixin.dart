@@ -189,7 +189,7 @@ mixin StreamAPIMixin {
             rtmpIngest: _controller.isRtmp,
             isScheduledStream: _controller.isSchedulingBroadcast,
             scheduleStartTime: _controller.isSchedulingBroadcast
-                ? _controller.scheduleLiveDate.millisecondsSinceEpoch
+                ? _controller.scheduleLiveDate.millisecondsSinceEpoch ~/ 1000
                 : null,
             persistRtmpIngestEndpoint: _controller.usePersistentStreamKey),
         _controller.user,
