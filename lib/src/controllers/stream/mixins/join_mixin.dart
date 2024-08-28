@@ -188,13 +188,14 @@ mixin StreamJoinMixin {
         return;
       }
       if (data.model?.rtcToken.isEmpty ?? true) {
+        unawaited(_controller.fetchScheduledStream(
+            type: IsmLiveStreamType.scheduledStreams));
+
         IsmLiveUtility.showDialog(
           IsmLiveScheduleDialog(
             message: _controller.scheduleLiveDate,
           ),
         );
-        await _controller.fetchScheduledStream(
-            type: IsmLiveStreamType.scheduledStreams);
 
         return;
       }
