@@ -40,6 +40,8 @@ class IsmLiveDelegate {
 
   static Widget? homeScreen;
 
+  static Widget? endStreamScreen;
+
   static bool? hdStream;
 
   static bool? scheduleStream;
