@@ -191,8 +191,8 @@ class IsmLiveApp extends StatelessWidget {
     );
   }
 
-  static MapStreamSubscription addListener(
-    MapFunction listener,
+  static EventStreamSubscription addListener(
+    EventFunction listener,
   ) {
     assert(
       _initialized && _mqttInitialized,
@@ -201,7 +201,7 @@ class IsmLiveApp extends StatelessWidget {
     return IsmLiveHandler.addListener(listener);
   }
 
-  static Future<void> removeListener(MapFunction listener) async {
+  static Future<void> removeListener(EventFunction listener) async {
     assert(
       _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',

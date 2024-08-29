@@ -27,8 +27,8 @@ class IsmLiveHandler {
     await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper(), permanent: true).init();
   }
 
-  static MapStreamSubscription addListener(
-    MapFunction listener,
+  static EventStreamSubscription addListener(
+    EventFunction listener,
   ) {
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
@@ -37,7 +37,7 @@ class IsmLiveHandler {
     return mqttController.actionStreamController.stream.listen(listener);
   }
 
-  static Future<void> removeListener(MapFunction listener) async {
+  static Future<void> removeListener(EventFunction listener) async {
     var mqttController = Get.find<IsmLiveMqttController>();
     mqttController.actionListeners.remove(listener);
     await mqttController.actionStreamController.stream.drain();

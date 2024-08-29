@@ -18,10 +18,9 @@ class IsmLiveMqttController extends GetxController {
 
   final List<String> _topics = [];
 
-  final actionStreamController =
-      StreamController<Map<String, dynamic>>.broadcast();
+  final actionStreamController = StreamController<EventModel>.broadcast();
 
-  var actionListeners = <MapFunction>[];
+  var actionListeners = <EventFunction>[];
 
   String _topicPrefix = '';
 
@@ -218,7 +217,7 @@ class IsmLiveMqttController extends GetxController {
       IsmLiveLog.success(payload['action']);
     }
 
-    actionStreamController.add(payload);
+    actionStreamController.add(event);
     if (payload['action'] != null) {
       final action = IsmLiveActions.fromString(payload['action']);
       final streamId = payload['streamId'] as String?;
