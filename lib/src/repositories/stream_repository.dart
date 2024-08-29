@@ -714,7 +714,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.streamAnalyticsViewers}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
+      showLoader: false,
       showDialog: false,
     );
   }
@@ -731,7 +731,7 @@ class IsmLiveStreamRepository {
       '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
-      showLoader: true,
+      showLoader: false,
       showDialog: false,
     );
   }
