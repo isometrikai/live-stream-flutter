@@ -131,7 +131,9 @@ class IsmLiveApp extends StatelessWidget {
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
 
-    Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
+    }
   }
 
   static Future<void> joinStream({
