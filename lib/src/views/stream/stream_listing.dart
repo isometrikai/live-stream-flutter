@@ -19,16 +19,18 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
+    if (IsmLiveDelegate.viewer ?? true) {
+      if (!Get.isRegistered<IsmLiveMqttController>()) {
+        IsmLiveMqttBinding().dependencies();
+      }
+      if (!Get.isRegistered<IsmLiveStreamController>()) {
+        IsmLiveStreamBinding().dependencies();
+      }
+      IsmLiveUtility.updateLater(() {
+        IsmLiveLog.info('mqtt setup from IsmLiveStreamListing');
+        Get.find<IsmLiveMqttController>().setup();
+      });
     }
-    if (!Get.isRegistered<IsmLiveStreamController>()) {
-      IsmLiveStreamBinding().dependencies();
-    }
-    IsmLiveUtility.updateLater(() {
-      IsmLiveLog.info('mqtt setup from IsmLiveStreamListing');
-      Get.find<IsmLiveMqttController>().setup();
-    });
   }
 
   @override

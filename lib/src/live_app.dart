@@ -79,6 +79,7 @@ class IsmLiveApp extends StatelessWidget {
     Widget? endButton,
     Widget? endStreamScreen,
     bool showHeader = true,
+    bool viewer = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
     bool? hdStream,
@@ -120,6 +121,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.productStream = productStream;
     IsmLiveDelegate.recordeStream = recordeStream;
     IsmLiveDelegate.endStreamScreen = endStreamScreen;
+    IsmLiveDelegate.viewer = viewer;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
