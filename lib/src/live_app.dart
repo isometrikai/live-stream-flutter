@@ -25,9 +25,9 @@ class IsmLiveApp extends StatelessWidget {
   static set isMqttConnected(bool value) =>
       IsmLiveHandler.isMqttConnected = value;
 
-  static bool initialized = false;
+  static bool _initialized = false;
 
-  static bool mqttInitialized = false;
+  static bool _mqttInitialized = false;
 
   static Future<void> initialize(
     IsmLiveConfigData config, {
@@ -36,11 +36,11 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
   }) async {
-    if (initialized) {
+    if (_initialized) {
       return;
     }
 
-    initialized = true;
+    _initialized = true;
     await IsmLiveDelegate.instance.initialize(
       config,
       onEndStream: onStreamEnd,
@@ -57,10 +57,10 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? topics,
     List<String>? topicChannels,
   }) async {
-    if (mqttInitialized) {
+    if (_mqttInitialized) {
       return;
     }
-    mqttInitialized = true;
+    _mqttInitialized = true;
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
@@ -94,7 +94,7 @@ class IsmLiveApp extends StatelessWidget {
     List<IsmLiveStreamOption> pkOptions = const [],
     Widget? homeScreen,
   }) {
-    assert(initialized,
+    assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
@@ -124,7 +124,7 @@ class IsmLiveApp extends StatelessWidget {
 
   static void handleMqttEvent(EventModel payload) {
     assert(
-      initialized && mqttInitialized,
+      _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
 
@@ -138,7 +138,7 @@ class IsmLiveApp extends StatelessWidget {
     VoidCallback? onStreamEnd,
   }) async {
     assert(
-      initialized && mqttInitialized,
+      _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
 
@@ -182,8 +182,8 @@ class IsmLiveApp extends StatelessWidget {
     VoidCallback? logoutCallback,
     bool isLoading = true,
   }) {
-    initialized = false;
-    mqttInitialized = false;
+    _initialized = false;
+    _mqttInitialized = false;
     return IsmLiveHandler.dispose(
       isLoading: isLoading,
       isStreaming: isStreaming,
@@ -195,7 +195,7 @@ class IsmLiveApp extends StatelessWidget {
     EventFunction listener,
   ) {
     assert(
-      initialized && mqttInitialized,
+      _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
     return IsmLiveHandler.addListener(listener);
@@ -203,7 +203,7 @@ class IsmLiveApp extends StatelessWidget {
 
   static Future<void> removeListener(EventFunction listener) async {
     assert(
-      initialized && mqttInitialized,
+      _initialized && _mqttInitialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
     await IsmLiveHandler.removeListener(listener);
