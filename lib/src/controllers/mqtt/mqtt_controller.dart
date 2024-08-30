@@ -110,36 +110,40 @@ class IsmLiveMqttController extends GetxController {
       userTopic,
     ]);
 
-    await _mqttHelper.initialize(
-      MqttConfig(
-        serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-        projectConfig: ProjectConfig.fromMap(_config!.projectConfig.toMap()),
-        userId: userId,
-        enableLogging: true,
-        username: _config!.username,
-        password: _config!.password,
-        webSocketConfig: _config!.socketConfig != null
-            ? WebSocketConfig.fromMap(
-                _config!.socketConfig!.toMap(),
-              )
-            : null,
-        secure: _config!.secure,
-      ),
-      callbacks: MqttCallbacks(
-        onConnected: _onConnected,
-        onDisconnected: _onDisconnected,
-        onSubscribeFail: _onSubscribeFailed,
-        onSubscribed: _onSubscribed,
-        onUnsubscribed: _onUnSubscribed,
-        pongCallback: _pong,
-      ),
-      autoSubscribe: true,
-      topics: _topics,
-    );
+    try {
+      await _mqttHelper.initialize(
+        MqttConfig(
+          serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
+          projectConfig: ProjectConfig.fromMap(_config!.projectConfig.toMap()),
+          userId: userId,
+          enableLogging: true,
+          username: _config!.username,
+          password: _config!.password,
+          webSocketConfig: _config!.socketConfig != null
+              ? WebSocketConfig.fromMap(
+                  _config!.socketConfig!.toMap(),
+                )
+              : null,
+          secure: _config!.secure,
+        ),
+        callbacks: MqttCallbacks(
+          onConnected: _onConnected,
+          onDisconnected: _onDisconnected,
+          onSubscribeFail: _onSubscribeFailed,
+          onSubscribed: _onSubscribed,
+          onUnsubscribed: _onUnSubscribed,
+          pongCallback: _pong,
+        ),
+        autoSubscribe: true,
+        topics: _topics,
+      );
 
-    _mqttHelper
-        .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
-    _mqttHelper.onEvent(_onEvent);
+      _mqttHelper
+          .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
+      _mqttHelper.onEvent(_onEvent);
+    } catch (e) {
+      IsmLiveLog.error('mqtt issue mqttcontroller 145 line');
+    }
   }
 
   Future<void> subscribeStream(String streamId) async {
