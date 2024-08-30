@@ -44,8 +44,6 @@ class IsmLiveDelegate {
 
   static bool? hdStream;
 
-  static bool? viewer;
-
   static bool? scheduleStream;
 
   static bool? productStream;

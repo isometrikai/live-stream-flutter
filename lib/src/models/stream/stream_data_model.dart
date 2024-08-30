@@ -65,13 +65,11 @@ class IsmLiveStreamDataModel {
             map['streamImage'] != null ? map['streamImage'] as String : null,
         startDateTime: map['startDateTime'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(map['startDateTime'].toString()),
-                isUtc: true)
+                int.parse(map['startDateTime'].toString()))
             : null,
         scheduleStartTime: map['scheduleStartTime'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(map['scheduleStartTime'].toString()),
-                isUtc: true)
+                int.parse(map['scheduleStartTime'].toString()))
             : null,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
         streamDescription: map['streamDescription'] != null
