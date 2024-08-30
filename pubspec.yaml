@@ -41,7 +41,7 @@ dependencies:
   in_app_purchase_storekit: ^0.3.17
   intl: ^0.19.0
   livekit_client: ^2.2.2
-  mqtt_helper: ^1.0.0
+  mqtt_helper: ^0.0.9
   permission_handler: ^11.3.1
   pip_view: ^0.9.7
   plugin_platform_interface: ^2.1.8
