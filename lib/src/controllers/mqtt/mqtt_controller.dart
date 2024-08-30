@@ -87,9 +87,12 @@ class IsmLiveMqttController extends GetxController {
     List<String>? topics,
     List<String>? topicChannels,
   }) async {
+    IsmLiveLog.info('mqtt setup 1');
     if (_isInitialized) {
       return;
     }
+
+    IsmLiveLog.info('mqtt setup 2');
     _isInitialized = true;
     _config = IsmLiveUtility.config;
     _topicPrefix =
