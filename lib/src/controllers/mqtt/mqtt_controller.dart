@@ -117,11 +117,13 @@ class IsmLiveMqttController extends GetxController {
       await _mqttHelper.initialize(
         MqttConfig(
           serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-          projectConfig: ProjectConfig.fromMap(_config!.projectConfig.toMap()),
-          userId: userId,
+          projectConfig: ProjectConfig(
+            deviceId: deviceId,
+            username: _config?.username ?? '',
+            password: _config?.password ?? '',
+            userIdentifier: userId,
+          ),
           enableLogging: true,
-          username: _config!.username,
-          password: _config!.password,
           webSocketConfig: _config!.socketConfig != null
               ? WebSocketConfig.fromMap(
                   _config!.socketConfig!.toMap(),

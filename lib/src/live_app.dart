@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mqtt_helper/mqtt_helper.dart';
 
 part 'live_data.dart';
 
@@ -21,7 +22,8 @@ class IsmLiveApp extends StatelessWidget {
   }
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
-  static set isMqttConnected(bool value) => IsmLiveHandler.isMqttConnected = value;
+  static set isMqttConnected(bool value) =>
+      IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
 
@@ -43,6 +45,10 @@ class IsmLiveApp extends StatelessWidget {
       config,
       onEndStream: onStreamEnd,
     );
+
+    if (!Get.isRegistered<IsmLiveMqttController>()) {
+      IsmLiveMqttBinding().dependencies();
+    }
     if (shouldInitializeMqtt) {
       await initializeMqtt(
         topics: mqttTopics,
@@ -59,9 +65,6 @@ class IsmLiveApp extends StatelessWidget {
       return;
     }
     _mqttInitialized = true;
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
-    }
 
     IsmLiveLog.info('mqtt setup from starting');
     await Get.find<IsmLiveMqttController>().setup(
@@ -94,7 +97,8 @@ class IsmLiveApp extends StatelessWidget {
     List<IsmLiveStreamOption> pkOptions = const [],
     Widget? homeScreen,
   }) {
-    assert(_initialized, 'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
+    assert(_initialized,
+        'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
@@ -121,14 +125,14 @@ class IsmLiveApp extends StatelessWidget {
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
 
-  // static void handleMqttEvent(EventModel payload) {
-  //   assert(
-  //     _initialized && _mqttInitialized,
-  //     'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
-  //   );
+  static void handleMqttEvent(EventModel payload) {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
 
-  //   Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
-  // }
+    Get.find<IsmLiveMqttController>().handleEventsExternally(payload);
+  }
 
   static Future<void> joinStream({
     required IsmLiveStreamDataModel stream,
@@ -158,11 +162,13 @@ class IsmLiveApp extends StatelessWidget {
 
   static VoidCallback? get onStreamEnd => IsmLiveDelegate.onStreamEnd;
 
-  static set onStreamEnd(VoidCallback? callback) => IsmLiveDelegate.onStreamEnd = callback;
+  static set onStreamEnd(VoidCallback? callback) =>
+      IsmLiveDelegate.onStreamEnd = callback;
 
   static IsmLiveHeaderBuilder? get streamHeader => IsmLiveDelegate.streamHeader;
 
-  static IsmLiveHeaderBuilder? get bottomBuilder => IsmLiveDelegate.bottomBuilder;
+  static IsmLiveHeaderBuilder? get bottomBuilder =>
+      IsmLiveDelegate.bottomBuilder;
 
   static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
 
@@ -188,23 +194,23 @@ class IsmLiveApp extends StatelessWidget {
     );
   }
 
-  // static EventStreamSubscription addListener(
-  //   EventFunction listener,
-  // ) {
-  //   assert(
-  //     _initialized && _mqttInitialized,
-  //     'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
-  //   );
-  //   return IsmLiveHandler.addListener(listener);
-  // }
+  static EventStreamSubscription addListener(
+    EventFunction listener,
+  ) {
+    assert(
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    return IsmLiveHandler.addListener(listener);
+  }
 
-  // static Future<void> removeListener(EventFunction listener) async {
-  //   assert(
-  //     _initialized && _mqttInitialized,
-  //     'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
-  //   );
-  //   await IsmLiveHandler.removeListener(listener);
-  // }
+  static Future<void> removeListener(EventFunction listener) async {
+    assert(
+      _initialized && _mqttInitialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    await IsmLiveHandler.removeListener(listener);
+  }
 
   IsmLiveThemeData get themeData => _kThemeData;
 
