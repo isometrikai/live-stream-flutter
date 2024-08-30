@@ -64,6 +64,8 @@ class IsmLiveApp extends StatelessWidget {
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
+
+    IsmLiveLog.info('mqtt setup from starting');
     await Get.find<IsmLiveMqttController>().setup(
       topics: topics,
       topicChannels: topicChannels,
