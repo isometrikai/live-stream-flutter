@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class IsmLiveMqttBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put(IsmLiveMqttController());
+    Get.put(IsmLiveMqttController(), permanent: true);
   }
 }

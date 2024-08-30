@@ -87,9 +87,12 @@ class IsmLiveMqttController extends GetxController {
     List<String>? topics,
     List<String>? topicChannels,
   }) async {
+    IsmLiveLog.info('mqtt setup 1');
     if (_isInitialized) {
       return;
     }
+
+    IsmLiveLog.info('mqtt setup 2');
     _isInitialized = true;
     _config = IsmLiveUtility.config;
     _topicPrefix =
@@ -114,13 +117,11 @@ class IsmLiveMqttController extends GetxController {
       await _mqttHelper.initialize(
         MqttConfig(
           serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-          projectConfig: ProjectConfig(
-            deviceId: deviceId,
-            password: _config?.password ?? '',
-            userIdentifier: userId,
-            username: _config?.username ?? '',
-          ),
+          projectConfig: ProjectConfig.fromMap(_config!.projectConfig.toMap()),
+          userId: userId,
           enableLogging: true,
+          username: _config!.username,
+          password: _config!.password,
           webSocketConfig: _config!.socketConfig != null
               ? WebSocketConfig.fromMap(
                   _config!.socketConfig!.toMap(),
