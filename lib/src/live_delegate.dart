@@ -14,6 +14,10 @@ class IsmLiveDelegate {
 
   static VoidCallback? onStreamEnd;
 
+  static Function(String id)? subscribStreamById;
+
+  static Function(String id)? unsubscribStreamById;
+
   static IsmLiveHeaderBuilder? streamHeader;
 
   static IsmLiveHeaderBuilder? bottomBuilder;

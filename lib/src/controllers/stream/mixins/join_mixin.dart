@@ -264,12 +264,15 @@ mixin StreamJoinMixin {
       }
     }
     _controller.update([IsmGoLiveView.updateId]);
-    if (!isCopublisher) {
-      await _controller._mqttController?.subscribeStream(
-        streamId,
-      );
+    if (IsmLiveDelegate.subscribStreamById != null) {
+      IsmLiveDelegate.subscribStreamById!(streamId);
+    } else {
+      if (!isCopublisher) {
+        await _controller._mqttController?.subscribeStream(
+          streamId,
+        );
+      }
     }
-
     // Show appropriate message based on the user's role
     final translation = Get.context?.liveTranslations?.streamTranslations;
     var message = '';

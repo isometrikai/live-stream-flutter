@@ -90,6 +90,8 @@ class IsmLiveApp extends StatelessWidget {
     bool? paidStream,
     bool? multiLiveStream,
     bool? recordeStream,
+    Function(String id)? subscribStreamById,
+    Function(String id)? unsubscribStreamById,
     List<IsmLiveStreamOption> viewersOptions = const [],
     List<IsmLiveStreamOption> hostOptions = const [],
     List<IsmLiveStreamOption> rtmpOptions = const [],
@@ -121,6 +123,8 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.productStream = productStream;
     IsmLiveDelegate.recordeStream = recordeStream;
     IsmLiveDelegate.endStreamScreen = endStreamScreen;
+    IsmLiveDelegate.subscribStreamById = subscribStreamById;
+    IsmLiveDelegate.unsubscribStreamById = unsubscribStreamById;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
