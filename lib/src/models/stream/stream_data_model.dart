@@ -69,7 +69,7 @@ class IsmLiveStreamDataModel {
             : null,
         scheduleStartTime: map['scheduleStartTime'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(map['scheduleStartTime'].toString()))
+                int.parse(map['scheduleStartTime'].toString()) * 1000)
             : null,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
         streamDescription: map['streamDescription'] != null
@@ -539,7 +539,7 @@ class IsmLiveUser {
         'id': id,
         'userName': userName,
         'firstName': firstName,
-        'userMetaData': userMetaData?.toMap(),
+        'metaData': userMetaData?.toMap(),
         'lastName': lastName,
         'userProfile': userProfile,
       };
@@ -548,9 +548,8 @@ class IsmLiveUser {
         id: map['id'] != null ? map['id'] as String : null,
         userName: map['userName'] != null ? map['userName'] as String : null,
         firstName: map['firstName'] != null ? map['firstName'] as String : null,
-        userMetaData: map['userMetaData'] != null
-            ? IsmLiveMetaData.fromMap(
-                map['userMetaData'] as Map<String, dynamic>)
+        userMetaData: map['metaData'] != null
+            ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
             : null,
         lastName: map['lastName'] != null ? map['lastName'] as String : null,
         userProfile:
