@@ -23,7 +23,7 @@ mixin StreamAPIMixin {
 
   /// Fetch user details from local storage.
   Future<void> getUserDetails() async {
-    await _controller._viewModel.getUserDetails();
+    await _controller.viewModel.getUserDetails();
     _controller.user = UserDetails.fromJson(
       _dbWrapper.getStringValue(IsmLiveLocalKeys.user),
     );
@@ -31,7 +31,7 @@ mixin StreamAPIMixin {
   }
 
   Future<void> userDetails() async {
-    var res = await _controller._viewModel.userDetails();
+    var res = await _controller.viewModel.userDetails();
 
     if (res != null && res.rtmpIngestUrl != null) {
       var lastSlashIndex = res.rtmpIngestUrl?.lastIndexOf('/') ?? 0;
@@ -55,7 +55,7 @@ mixin StreamAPIMixin {
   Future<bool> _subscribeUser(
     bool isSubscribing,
   ) =>
-      _controller._viewModel.subscribeUser(
+      _controller.viewModel.subscribeUser(
         isSubscribing: isSubscribing,
       );
 
@@ -78,13 +78,12 @@ mixin StreamAPIMixin {
     }
 
     if (skip == 0) {
-      _controller._streams[streamType] =
-          await _controller._viewModel.getStreams(
+      _controller._streams[streamType] = await _controller.viewModel.getStreams(
         queryModel: streamType.queryModel(skip: skip),
       );
     } else {
       _controller._streams[streamType]!
-          .addAll(await _controller._viewModel.getStreams(
+          .addAll(await _controller.viewModel.getStreams(
         queryModel: streamType.queryModel(skip: skip),
       ));
     }
@@ -109,10 +108,10 @@ mixin StreamAPIMixin {
     var streamType = type ?? _controller.streamType;
 
     if (skip == 0) {
-      _controller._streams[streamType] = await _controller._viewModel
+      _controller._streams[streamType] = await _controller.viewModel
           .fetchScheduledStream(limit: 10, skip: skip);
     } else {
-      _controller._streams[streamType]!.addAll(await _controller._viewModel
+      _controller._streams[streamType]!.addAll(await _controller.viewModel
           .fetchScheduledStream(limit: 10, skip: skip));
     }
 
@@ -126,21 +125,21 @@ mixin StreamAPIMixin {
   /// Get an RTC token for joining a stream.
   Future<IsmLiveRTCModel?> getRTCToken(String streamId,
           {bool showLoader = true}) =>
-      _controller._viewModel.getRTCToken(streamId, showLoader);
+      _controller.viewModel.getRTCToken(streamId, showLoader);
 
 //Leaves a live stream.
 
   Future<bool> leaveStream(
     String streamId,
   ) async =>
-      await _controller._viewModel.leaveStream(
+      await _controller.viewModel.leaveStream(
         streamId,
       );
 
   Future<bool> deleteScheduledStream(
     String eventId,
   ) async =>
-      await _controller._viewModel.deleteScheduledStream(
+      await _controller.viewModel.deleteScheduledStream(
         eventId: eventId,
       );
 
@@ -149,7 +148,7 @@ mixin StreamAPIMixin {
     String? streamDescription,
     String? streamImage,
   }) async =>
-      await _controller._viewModel.editScheduledStream(
+      await _controller.viewModel.editScheduledStream(
         eventId: eventId,
         streamDescription: streamDescription,
         streamImage: streamImage,
@@ -169,7 +168,7 @@ mixin StreamAPIMixin {
     }
 
     return (
-      model: await _controller._viewModel.createStream(
+      model: await _controller.viewModel.createStream(
         IsmLiveCreateStreamModel(
             paymentAmount: !_controller.isPremium
                 ? 0
@@ -203,11 +202,11 @@ mixin StreamAPIMixin {
     String streamId,
     String isometrikUserId,
   ) =>
-      _controller._viewModel.stopStream(streamId, isometrikUserId);
+      _controller.viewModel.stopStream(streamId, isometrikUserId);
 
   Future<IsmLiveScheduleRTCModule?> goliveScheduleStream(
           IsmLiveScheduleStreamParam payload) =>
-      _controller._viewModel.goliveScheduleStream(payload);
+      _controller.viewModel.goliveScheduleStream(payload);
 
   Future<void> getStreamMembers({
     required String streamId,
@@ -232,7 +231,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     _controller.streamMembersList =
-        await _controller._viewModel.getStreamMembers(
+        await _controller.viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -279,7 +278,7 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    var res = await _controller._viewModel.getStreamViewer(
+    var res = await _controller.viewModel.getStreamViewer(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -304,7 +303,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
   }) async {
-    var res = await _controller._viewModel.fetchMessages(
+    var res = await _controller.viewModel.fetchMessages(
       getMessageModel: getMessageModel,
       showLoading: showLoading,
     );
@@ -322,7 +321,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
   }) async {
-    _controller.messagesCount = await _controller._viewModel.fetchMessagesCount(
+    _controller.messagesCount = await _controller.viewModel.fetchMessagesCount(
       getMessageModel: getMessageModel,
       showLoading: showLoading,
     );
@@ -333,7 +332,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
   }) async =>
-      await _controller._viewModel.sendMessage(
+      await _controller.viewModel.sendMessage(
         showLoading: showLoading,
         getMessageModel: sendMessageModel,
       );
@@ -343,7 +342,7 @@ mixin StreamAPIMixin {
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
   }) async =>
-      await _controller._viewModel.replyMessage(
+      await _controller.viewModel.replyMessage(
         showLoading: showLoading,
         getMessageModel: sendMessageModel,
       );
@@ -353,7 +352,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String viewerId,
   }) =>
-      _controller._viewModel.kickoutViewer(
+      _controller.viewModel.kickoutViewer(
         streamId: streamId,
         viewerId: viewerId,
       );
@@ -379,7 +378,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   ) async {
     if (forceFetch || _controller.usersList.isEmpty) {
-      var list = await _controller._viewModel.fetchUsers(
+      var list = await _controller.viewModel.fetchUsers(
         limit: limit,
         skip: skip,
         searchTag: searchTag,
@@ -416,7 +415,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.moderatorsList.isEmpty) {
-      var list = await _controller._viewModel.fetchModerators(
+      var list = await _controller.viewModel.fetchModerators(
         streamId: streamId,
         limit: limit,
         skip: skip,
@@ -433,7 +432,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String messageId,
   }) =>
-      _controller._viewModel.deleteMessage(
+      _controller.viewModel.deleteMessage(
         streamId: streamId,
         messageId: messageId,
       );
@@ -444,7 +443,7 @@ mixin StreamAPIMixin {
       Get.context?.liveTranslations?.uploadingImage ??
           IsmLiveStrings.uploadingImage,
     );
-    var res = await _controller._viewModel.getPresignedUrl(
+    var res = await _controller.viewModel.getPresignedUrl(
       showLoader: false,
       userIdentifier: _controller.user?.userIdentifier ??
           DateTime.now().millisecondsSinceEpoch.toString(),
@@ -455,7 +454,7 @@ mixin StreamAPIMixin {
 
       return null;
     }
-    var urlResponse = await _controller._viewModel.updatePresignedUrl(
+    var urlResponse = await _controller.viewModel.updatePresignedUrl(
       showLoading: false,
       presignedUrl: res.presignedUrl ?? '',
       file: bytes,
@@ -473,7 +472,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String moderatorId,
   }) =>
-      _controller._viewModel.makeModerator(
+      _controller.viewModel.makeModerator(
         streamId: streamId,
         moderatorId: moderatorId,
       );
@@ -483,7 +482,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String moderatorId,
   }) async {
-    var res = await _controller._viewModel.removeModerator(
+    var res = await _controller.viewModel.removeModerator(
       streamId: streamId,
       moderatorId: moderatorId,
     );
@@ -501,7 +500,7 @@ mixin StreamAPIMixin {
   Future<bool> leaveModerator(
     String streamId,
   ) async {
-    var isLeave = await _controller._viewModel.leaveModerator(
+    var isLeave = await _controller.viewModel.leaveModerator(
       streamId,
     );
     if (isLeave) {
@@ -515,7 +514,7 @@ mixin StreamAPIMixin {
   Future<bool> requestCopublisher(
     String streamId,
   ) async {
-    var isSend = await _controller._viewModel.requestCopublisher(
+    var isSend = await _controller.viewModel.requestCopublisher(
       streamId,
     );
     return isSend;
@@ -548,7 +547,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.copublisherRequestsList.isEmpty) {
-      var list = await _controller._viewModel.fetchCopublisherRequests(
+      var list = await _controller.viewModel.fetchCopublisherRequests(
         streamId: streamId,
         limit: limit,
         skip: skip,
@@ -588,7 +587,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.eligibleMembersList.isEmpty) {
-      var list = await _controller._viewModel.fetchEligibleMembers(
+      var list = await _controller.viewModel.fetchEligibleMembers(
         streamId: streamId,
         limit: limit,
         skip: skip,
@@ -606,7 +605,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String requestById,
   }) async {
-    var res = await _controller._viewModel.acceptCopublisherRequest(
+    var res = await _controller.viewModel.acceptCopublisherRequest(
       streamId: streamId,
       requestById: requestById,
     );
@@ -622,7 +621,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String requestById,
   }) async {
-    var res = await _controller._viewModel.denyCopublisherRequest(
+    var res = await _controller.viewModel.denyCopublisherRequest(
       streamId: streamId,
       requestById: requestById,
     );
@@ -638,7 +637,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String memberId,
   }) async {
-    var res = await _controller._viewModel.addMember(
+    var res = await _controller.viewModel.addMember(
       streamId: streamId,
       memberId: memberId,
     );
@@ -657,7 +656,7 @@ mixin StreamAPIMixin {
     required String streamId,
     required String memberId,
   }) async {
-    var res = await _controller._viewModel.removeMember(
+    var res = await _controller.viewModel.removeMember(
       streamId: streamId,
       memberId: memberId,
     );
@@ -674,7 +673,7 @@ mixin StreamAPIMixin {
   Future<bool> leaveMember({
     required String streamId,
   }) async {
-    var res = await _controller._viewModel.leaveMember(
+    var res = await _controller.viewModel.leaveMember(
       streamId: streamId,
     );
     if (res) {
@@ -691,7 +690,7 @@ mixin StreamAPIMixin {
   Future<void> statusCopublisherRequest(
     String streamId,
   ) async {
-    var res = await _controller._viewModel.statusCopublisherRequest(
+    var res = await _controller.viewModel.statusCopublisherRequest(
       streamId: streamId,
     );
     if (res != null) {
@@ -706,7 +705,7 @@ mixin StreamAPIMixin {
   Future<String?> switchViewer({
     required String streamId,
   }) =>
-      _controller._viewModel.switchViewer(
+      _controller.viewModel.switchViewer(
         streamId: streamId,
       );
 // Fetches products associated with a live stream.
@@ -733,7 +732,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.productsList.isEmpty) {
-      var list = await _controller._viewModel.fetchProducts(
+      var list = await _controller.viewModel.fetchProducts(
         limit: limit,
         skip: skip,
         searchTag: searchTag,
@@ -744,7 +743,7 @@ mixin StreamAPIMixin {
   }
 
   Future<void> getRestreamChannels() async {
-    var res = await _controller._viewModel.getRestreamChannels();
+    var res = await _controller.viewModel.getRestreamChannels();
     _controller.restreamChannels = res;
 
     _controller.restreamFacebook = false;
@@ -764,7 +763,7 @@ mixin StreamAPIMixin {
   }
 
   Future<void> streamAnalytics(String streamId) async {
-    _controller.streamAnalytis = await _controller._viewModel.streamAnalytics(
+    _controller.streamAnalytis = await _controller.viewModel.streamAnalytics(
       streamId: streamId,
     );
     _controller
@@ -772,13 +771,13 @@ mixin StreamAPIMixin {
   }
 
   Future<bool> buyStream(String streamId) async =>
-      await _controller._viewModel.buyStream(
+      await _controller.viewModel.buyStream(
         streamId: streamId,
       );
 
   Future<void> streamAnalyticsViewers(
       {required String streamId, int limit = 15, int skip = 0}) async {
-    var list = await _controller._viewModel.streamAnalyticsViewers(
+    var list = await _controller.viewModel.streamAnalyticsViewers(
       streamId: streamId,
       limit: limit,
       skip: skip,
@@ -794,7 +793,7 @@ mixin StreamAPIMixin {
     required String channelName,
     required int channeltype,
   }) =>
-      _controller._viewModel.addRestreamChannel(
+      _controller.viewModel.addRestreamChannel(
         url:
             '${_controller.rtmlUrl.text.trim()}/${_controller.streamKey.text.trim()}',
         enable: enable,
@@ -808,7 +807,7 @@ mixin StreamAPIMixin {
     required int channeltype,
     required String channelId,
   }) =>
-      _controller._viewModel.editRestreamChannel(
+      _controller.viewModel.editRestreamChannel(
         url:
             '${_controller.rtmlUrl.text.trim()}/${_controller.streamKey.text.trim()}',
         enable: enable,
@@ -825,7 +824,7 @@ mixin StreamAPIMixin {
     required String deviceId,
     required String customType,
   }) =>
-      _controller._viewModel.sendHearts(
+      _controller.viewModel.sendHearts(
         streamId: streamId,
         customType: customType,
         deviceId: deviceId,
@@ -835,7 +834,7 @@ mixin StreamAPIMixin {
       );
 
   Future<void> totalWalletCoins() async {
-    var res = await _controller._viewModel.totalWalletCoins();
+    var res = await _controller.viewModel.totalWalletCoins();
     if (res != null) {
       _controller.giftcoinBalance = res.balance?.toInt() ?? 0;
     }

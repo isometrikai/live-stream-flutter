@@ -30,9 +30,9 @@ class IsmLiveStreamController extends GetxController
         StreamMessageMixin,
         StreamSheetMixin,
         RestreamMixin {
-  IsmLiveStreamController(this._viewModel);
+  IsmLiveStreamController(this.viewModel);
 
-  final IsmLiveStreamViewModel _viewModel;
+  final IsmLiveStreamViewModel viewModel;
 
   IsmLiveMqttController? get _mqttController {
     if (Get.isRegistered<IsmLiveMqttController>()) {
