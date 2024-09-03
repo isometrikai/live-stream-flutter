@@ -51,9 +51,9 @@ class IsmLiveApp extends StatelessWidget {
     }
 
     await initializeMqtt(
-      shouldInitializeMqtt: shouldInitializeMqtt,
       topics: mqttTopics,
       topicChannels: mqttTopicChannels,
+      shouldInitializeMqtt: shouldInitializeMqtt,
     );
   }
 
@@ -69,9 +69,10 @@ class IsmLiveApp extends StatelessWidget {
 
     IsmLiveLog.info('mqtt setup from starting');
     await Get.find<IsmLiveMqttController>().setup(
-        topics: topics,
-        topicChannels: topicChannels,
-        shouldInitializeMqtt: shouldInitializeMqtt);
+      topics: topics,
+      topicChannels: topicChannels,
+      shouldInitializeMqtt: shouldInitializeMqtt,
+    );
   }
 
   static void configureInterface({
