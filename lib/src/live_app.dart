@@ -49,17 +49,18 @@ class IsmLiveApp extends StatelessWidget {
     if (!Get.isRegistered<IsmLiveMqttController>()) {
       IsmLiveMqttBinding().dependencies();
     }
-    if (shouldInitializeMqtt) {
-      await initializeMqtt(
-        topics: mqttTopics,
-        topicChannels: mqttTopicChannels,
-      );
-    }
+
+    await initializeMqtt(
+      shouldInitializeMqtt: shouldInitializeMqtt,
+      topics: mqttTopics,
+      topicChannels: mqttTopicChannels,
+    );
   }
 
   static Future<void> initializeMqtt({
     List<String>? topics,
     List<String>? topicChannels,
+    required bool shouldInitializeMqtt,
   }) async {
     if (_mqttInitialized) {
       return;
@@ -68,9 +69,9 @@ class IsmLiveApp extends StatelessWidget {
 
     IsmLiveLog.info('mqtt setup from starting');
     await Get.find<IsmLiveMqttController>().setup(
-      topics: topics,
-      topicChannels: topicChannels,
-    );
+        topics: topics,
+        topicChannels: topicChannels,
+        shouldInitializeMqtt: shouldInitializeMqtt);
   }
 
   static void configureInterface({
