@@ -19,35 +19,12 @@ class IsmLivePages {
         IsmLiveMqttBinding(),
       ],
     ),
-    GetPage<IsmLiveMeetingView>(
-      name: IsmLiveRoutes.myMeetingsView,
-      transitionDuration: transitionDuration,
-      page: IsmLiveMeetingView.new,
-      binding: IsmLiveMeetingBinding(),
-    ),
-    GetPage<CreateMeetingScreen>(
-      name: IsmLiveRoutes.createMeetingScreen,
-      transitionDuration: transitionDuration,
-      page: CreateMeetingScreen.new,
-    ),
-    GetPage<SearchUserScreen>(
-      name: IsmLiveRoutes.searchUserScreen,
-      transitionDuration: transitionDuration,
-      page: SearchUserScreen.new,
-    ),
-    GetPage<RoomPage>(
-      name: IsmLiveRoutes.roomPage,
-      transitionDuration: transitionDuration,
-      page: RoomPage.new,
-      binding: IsmLiveCallingBinding(),
-    ),
     GetPage<IsmLiveStreamView>(
       name: IsmLiveStreamView.route,
       transitionDuration: transitionDuration,
       page: IsmLiveStreamView.new,
       bindings: [
         IsmLiveStreamBinding(),
-        IsmLiveBroadcastBinding(),
       ],
     ),
     GetPage<IsmGoLiveView>(
@@ -62,7 +39,6 @@ class IsmLivePages {
       page: IsmLiveEndStream.new,
       bindings: [
         IsmLiveStreamBinding(),
-        IsmLiveBroadcastBinding(),
       ],
     ),
     GetPage<IsmLiveRestreamView>(
