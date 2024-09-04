@@ -1,7 +1,39 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class IsmLiveStreamQueryModel {
-  const IsmLiveStreamQueryModel({
+  final String? ids;
+  final String? customType;
+  final String? searchTag;
+  final String? membersIncluded;
+  final String? membersExactly;
+  final String? sortOrder;
+  final int? sort;
+  final int? limit;
+  final int? status;
+  final int? skip;
+  final bool? includeMembers;
+  final int? membersSkip;
+  final int? membersLimit;
+  final bool? hdBroadcast;
+  final bool? lowLatencyMode;
+  final bool? recorded;
+  final bool? public;
+  final bool? productsLinked;
+  final bool? multiLive;
+  final bool? audioOnly;
+  final bool? reStream;
+  final bool? canPublish;
+  final bool? fetchLive;
+  final bool? isRecorded;
+  final bool? private;
+  final bool? restream;
+  final bool? hdbroadcast;
+  final bool? pk;
+  final bool? isScheduledStream;
+  final int? startDateTime;
+  final int? endDateTime;
+  IsmLiveStreamQueryModel({
     this.ids,
     this.customType,
     this.searchTag,
@@ -31,7 +63,110 @@ class IsmLiveStreamQueryModel {
     this.hdbroadcast,
     this.pk,
     this.isScheduledStream,
+    this.startDateTime,
+    this.endDateTime,
   });
+
+  IsmLiveStreamQueryModel copyWith({
+    String? ids,
+    String? customType,
+    String? searchTag,
+    String? membersIncluded,
+    String? membersExactly,
+    String? sortOrder,
+    int? sort,
+    int? limit,
+    int? status,
+    int? skip,
+    bool? includeMembers,
+    int? membersSkip,
+    int? membersLimit,
+    bool? hdBroadcast,
+    bool? lowLatencyMode,
+    bool? recorded,
+    bool? public,
+    bool? productsLinked,
+    bool? multiLive,
+    bool? audioOnly,
+    bool? reStream,
+    bool? canPublish,
+    bool? fetchLive,
+    bool? isRecorded,
+    bool? private,
+    bool? restream,
+    bool? hdbroadcast,
+    bool? pk,
+    bool? isScheduledStream,
+    int? startDateTime,
+    int? endDateTime,
+  }) =>
+      IsmLiveStreamQueryModel(
+        ids: ids ?? this.ids,
+        customType: customType ?? this.customType,
+        searchTag: searchTag ?? this.searchTag,
+        membersIncluded: membersIncluded ?? this.membersIncluded,
+        membersExactly: membersExactly ?? this.membersExactly,
+        sortOrder: sortOrder ?? this.sortOrder,
+        sort: sort ?? this.sort,
+        limit: limit ?? this.limit,
+        status: status ?? this.status,
+        skip: skip ?? this.skip,
+        includeMembers: includeMembers ?? this.includeMembers,
+        membersSkip: membersSkip ?? this.membersSkip,
+        membersLimit: membersLimit ?? this.membersLimit,
+        hdBroadcast: hdBroadcast ?? this.hdBroadcast,
+        lowLatencyMode: lowLatencyMode ?? this.lowLatencyMode,
+        recorded: recorded ?? this.recorded,
+        public: public ?? this.public,
+        productsLinked: productsLinked ?? this.productsLinked,
+        multiLive: multiLive ?? this.multiLive,
+        audioOnly: audioOnly ?? this.audioOnly,
+        reStream: reStream ?? this.reStream,
+        canPublish: canPublish ?? this.canPublish,
+        fetchLive: fetchLive ?? this.fetchLive,
+        isRecorded: isRecorded ?? this.isRecorded,
+        private: private ?? this.private,
+        restream: restream ?? this.restream,
+        hdbroadcast: hdbroadcast ?? this.hdbroadcast,
+        pk: pk ?? this.pk,
+        isScheduledStream: isScheduledStream ?? this.isScheduledStream,
+        startDateTime: startDateTime ?? this.startDateTime,
+        endDateTime: endDateTime ?? this.endDateTime,
+      );
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'ids': ids,
+        'customType': customType,
+        'searchTag': searchTag,
+        'membersIncluded': membersIncluded,
+        'membersExactly': membersExactly,
+        'sortOrder': sortOrder,
+        'sort': sort,
+        'limit': limit,
+        'status': status,
+        'skip': skip,
+        'includeMembers': includeMembers,
+        'membersSkip': membersSkip,
+        'membersLimit': membersLimit,
+        'hdBroadcast': hdBroadcast,
+        'lowLatencyMode': lowLatencyMode,
+        'recorded': recorded,
+        'public': public,
+        'productsLinked': productsLinked,
+        'multiLive': multiLive,
+        'audioOnly': audioOnly,
+        'reStream': reStream,
+        'canPublish': canPublish,
+        'fetchLive': fetchLive,
+        'isRecorded': isRecorded,
+        'private': private,
+        'restream': restream,
+        'hdbroadcast': hdbroadcast,
+        'pk': pk,
+        'isScheduledStream': isScheduledStream,
+        'startDateTime': startDateTime,
+        'endDateTime': endDateTime,
+      };
 
   factory IsmLiveStreamQueryModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveStreamQueryModel(
@@ -83,141 +218,21 @@ class IsmLiveStreamQueryModel {
         isScheduledStream: map['isScheduledStream'] != null
             ? map['isScheduledStream'] as bool
             : null,
+        startDateTime:
+            map['startDateTime'] != null ? map['startDateTime'] as int : null,
+        endDateTime:
+            map['endDateTime'] != null ? map['endDateTime'] as int : null,
       );
+
+  String toJson() => json.encode(toMap());
 
   factory IsmLiveStreamQueryModel.fromJson(String source) =>
       IsmLiveStreamQueryModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-  final String? ids;
-  final String? customType;
-  final String? searchTag;
-  final String? membersIncluded;
-  final String? membersExactly;
-  final String? sortOrder;
-  final int? sort;
-  final int? limit;
-  final int? status;
-  final int? skip;
-  final bool? includeMembers;
-  final int? membersSkip;
-  final int? membersLimit;
-  final bool? hdBroadcast;
-  final bool? lowLatencyMode;
-  final bool? recorded;
-  final bool? public;
-  final bool? productsLinked;
-  final bool? multiLive;
-  final bool? audioOnly;
-  final bool? reStream;
-  final bool? canPublish;
-  final bool? fetchLive;
-  final bool? isRecorded;
-  final bool? private;
-  final bool? restream;
-  final bool? hdbroadcast;
-  final bool? pk;
-  final bool? isScheduledStream;
-
-  IsmLiveStreamQueryModel copyWith({
-    String? ids,
-    String? customType,
-    String? searchTag,
-    String? membersIncluded,
-    String? membersExactly,
-    String? sortOrder,
-    int? sort,
-    int? limit,
-    int? status,
-    int? skip,
-    bool? includeMembers,
-    int? membersSkip,
-    int? membersLimit,
-    bool? hdBroadcast,
-    bool? lowLatencyMode,
-    bool? recorded,
-    bool? public,
-    bool? productsLinked,
-    bool? multiLive,
-    bool? audioOnly,
-    bool? reStream,
-    bool? canPublish,
-    bool? fetchLive,
-    bool? isRecorded,
-    bool? private,
-    bool? restream,
-    bool? hdbroadcast,
-    bool? pk,
-    bool? isScheduledStream,
-  }) =>
-      IsmLiveStreamQueryModel(
-        ids: ids ?? this.ids,
-        customType: customType ?? this.customType,
-        searchTag: searchTag ?? this.searchTag,
-        membersIncluded: membersIncluded ?? this.membersIncluded,
-        membersExactly: membersExactly ?? this.membersExactly,
-        sortOrder: sortOrder ?? this.sortOrder,
-        sort: sort ?? this.sort,
-        limit: limit ?? this.limit,
-        status: status ?? this.status,
-        skip: skip ?? this.skip,
-        includeMembers: includeMembers ?? this.includeMembers,
-        membersSkip: membersSkip ?? this.membersSkip,
-        membersLimit: membersLimit ?? this.membersLimit,
-        hdBroadcast: hdBroadcast ?? this.hdBroadcast,
-        lowLatencyMode: lowLatencyMode ?? this.lowLatencyMode,
-        recorded: recorded ?? this.recorded,
-        public: public ?? this.public,
-        productsLinked: productsLinked ?? this.productsLinked,
-        multiLive: multiLive ?? this.multiLive,
-        audioOnly: audioOnly ?? this.audioOnly,
-        reStream: reStream ?? this.reStream,
-        canPublish: canPublish ?? this.canPublish,
-        fetchLive: fetchLive ?? this.fetchLive,
-        isRecorded: isRecorded ?? this.isRecorded,
-        private: private ?? this.private,
-        restream: restream ?? this.restream,
-        hdbroadcast: hdbroadcast ?? this.hdbroadcast,
-        pk: pk ?? this.pk,
-        isScheduledStream: isScheduledStream ?? this.isScheduledStream,
-      );
-
-  Map<String, dynamic> toMap() => <String, dynamic>{
-        'ids': ids,
-        'customType': customType,
-        'searchTag': searchTag,
-        'membersIncluded': membersIncluded,
-        'membersExactly': membersExactly,
-        'sortOrder': sortOrder,
-        'sort': sort,
-        'limit': limit,
-        'status': status,
-        'skip': skip,
-        'includeMembers': includeMembers,
-        'membersSkip': membersSkip,
-        'membersLimit': membersLimit,
-        'hdBroadcast': hdBroadcast,
-        'lowLatencyMode': lowLatencyMode,
-        'recorded': recorded,
-        'public': public,
-        'productsLinked': productsLinked,
-        'multiLive': multiLive,
-        'audioOnly': audioOnly,
-        'reStream': reStream,
-        'canPublish': canPublish,
-        'fetchLive': fetchLive,
-        'isRecorded': isRecorded,
-        'private': private,
-        'restream': restream,
-        'hdbroadcast': hdbroadcast,
-        'pk': pk,
-        'isScheduledStream': isScheduledStream,
-      };
-
-  String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sortOrder: $sortOrder, sort: $sort, limit: $limit, status: $status, skip: $skip, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish, fetchLive: $fetchLive, isRecorded: $isRecorded, private: $private, restream: $restream, hdbroadcast: $hdbroadcast, pk: $pk, isScheduledStream:$isScheduledStream)';
+      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sortOrder: $sortOrder, sort: $sort, limit: $limit, status: $status, skip: $skip, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish, fetchLive: $fetchLive, isRecorded: $isRecorded, private: $private, restream: $restream, hdbroadcast: $hdbroadcast, pk: $pk, isScheduledStream: $isScheduledStream, startDateTime: $startDateTime, endDateTime: $endDateTime)';
 
   @override
   bool operator ==(covariant IsmLiveStreamQueryModel other) {
@@ -250,8 +265,10 @@ class IsmLiveStreamQueryModel {
         other.private == private &&
         other.restream == restream &&
         other.hdbroadcast == hdbroadcast &&
+        other.pk == pk &&
         other.isScheduledStream == isScheduledStream &&
-        other.pk == pk;
+        other.startDateTime == startDateTime &&
+        other.endDateTime == endDateTime;
   }
 
   @override
@@ -283,6 +300,8 @@ class IsmLiveStreamQueryModel {
       private.hashCode ^
       restream.hashCode ^
       hdbroadcast.hashCode ^
+      pk.hashCode ^
       isScheduledStream.hashCode ^
-      pk.hashCode;
+      startDateTime.hashCode ^
+      endDateTime.hashCode;
 }

@@ -41,9 +41,18 @@ extension IsmLiveMapExtension on Map<String, dynamic> {
 }
 
 extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
-  IsmLiveStreamQueryModel queryModel({int skip = 0}) {
+  IsmLiveStreamQueryModel queryModel({
+    int skip = 0,
+    int? startDateTime,
+    int? endDateTime,
+  }) {
     var model = IsmLiveStreamQueryModel(
-        skip: skip, limit: 10, status: 4, sortOrder: 'asc');
+        skip: skip,
+        limit: 10,
+        status: 4,
+        sortOrder: 'asc',
+        startDateTime: startDateTime,
+        endDateTime: endDateTime);
     switch (this) {
       case IsmLiveStreamType.all:
         return model.copyWith(fetchLive: true);
