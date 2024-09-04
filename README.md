@@ -1,7 +1,7 @@
 
 [![isometrik.io](./assets/logo/isometrik.png)](https://isometrik.io/)
 
-`Appscrip LiveStream Component` is a package to support video call and live stream functionality in flutter projects using Isometric
+`Isomterik LiveStream Component` is a package to support video call and live stream functionality in flutter projects using Isometric
 
 ## Setup
 
