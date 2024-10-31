@@ -57,7 +57,6 @@ class IsmGoLiveView extends StatelessWidget {
           extendBody: true,
           bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
-            // alignment: Alignment.,
             fit: StackFit.loose,
             children: [
               FutureBuilder(

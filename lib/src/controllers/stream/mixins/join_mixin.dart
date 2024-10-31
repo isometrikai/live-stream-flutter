@@ -196,6 +196,8 @@ mixin StreamJoinMixin {
             message: _controller.scheduleLiveDate,
           ),
         );
+        _controller.isSchedulingBroadcast = false;
+        _controller.update(['ismlive-go-live']);
 
         return;
       }

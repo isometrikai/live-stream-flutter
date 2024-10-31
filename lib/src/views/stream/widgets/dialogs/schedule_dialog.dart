@@ -1,7 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class IsmLiveScheduleDialog extends StatelessWidget {
   const IsmLiveScheduleDialog({super.key, required this.message});

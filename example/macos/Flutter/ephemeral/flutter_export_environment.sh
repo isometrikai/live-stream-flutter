@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/jatinappscrip/Documents/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/jatinappscrip/Documents/Projects/live-stream-flutter/example"
+export "FLUTTER_ROOT=/home/umer/snap/flutter/common/flutter"
+export "FLUTTER_APPLICATION_PATH=/home/umer/Documents/live-stream-flutter/example"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.2"
