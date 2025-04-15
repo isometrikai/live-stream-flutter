@@ -79,14 +79,15 @@ class IsmGoLiveView extends StatelessWidget {
 
                   return Transform.scale(
                     scale: scale,
-                    child: CameraPreview(
+                    child: controller.selectedGoLiveTabItem ==
+                        IsmGoLiveTabItem.defaultLive ? CameraPreview(
                       controller.cameraController!,
                       child: SizedBox(
                         height: context.height,
                         width: context.width,
                         child: const ColoredBox(color: Colors.black38),
                       ),
-                    ),
+                    ) : null,
                   );
                 },
               ),

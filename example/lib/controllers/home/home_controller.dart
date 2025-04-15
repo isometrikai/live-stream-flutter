@@ -24,6 +24,7 @@ class HomeController extends GetxController {
   }
 
   void setupStream() async {
+    print("userDetails: ${dbWrapper.getStringValue(LocalKeys.user)}");
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
 
     configData = IsmLiveConfigData(

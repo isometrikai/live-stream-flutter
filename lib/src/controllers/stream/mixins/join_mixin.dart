@@ -152,6 +152,7 @@ mixin StreamJoinMixin {
   Future<void> startStream({bool isNewStream = true}) async {
     if (_controller.isPremium &&
         _controller.premiumStreamCoinsController.isEmpty) {
+      _controller.premiumStreamSheet();
       return;
     }
 

@@ -38,8 +38,9 @@ if (keystorePropertiesFile.exists()) {
 android {
     // namespace "com.flutterISMStream.com"
     namespace "com.dubly.androidapp"
-    compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 35
+//    ndkVersion flutter.ndkVersion
+    ndkVersion "27.0.12077973"
 
     compileOptions {
          coreLibraryDesugaringEnabled true
@@ -63,7 +64,7 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
         // minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 33
+        targetSdkVersion 35
         // targetSdkVersion flutter.targetSdkVersion
         versionCode configProperties['VERSION_CODE'].toInteger()
         versionName configProperties['VERSION_NAME'].toString()
