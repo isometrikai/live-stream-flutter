@@ -2,6 +2,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component_example/views/home/custom_stream_listing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,3 +31,26 @@ class HomeView extends StatelessWidget {
         ),
       );
 }
+
+// for custom UI
+
+// Widget build(BuildContext context) => GetBuilder<HomeController>(
+//   initState: (state) {
+//     // Initialize the stream listing service
+//     if (!Get.isRegistered<IsmLiveStreamController>()) {
+//       IsmLiveStreamBinding().dependencies();
+//     }
+//   },
+//   builder: (controller) => Scaffold(
+//     appBar: AppBar(
+//       title: const Text('Live Stream Example'),
+//       actions: [
+//         IconButton(
+//           icon: const Icon(Icons.logout),
+//           onPressed: controller.logout,
+//         ),
+//       ],
+//     ),
+//     body: const CustomStreamListing(),
+//   ),
+// );
