@@ -8,6 +8,25 @@ class StreamService {
   static const StreamService instance = StreamService._();
 
   IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
+  IsmLiveMqttController get _mqttController => Get.find<IsmLiveMqttController>();
+
+  /// Initialize the service and set up MQTT event listeners
+  void initialize() {
+    // Listen to MQTT events
+    _mqttController.actionStreamController.stream.listen((event) {
+      if (event.payload['action'] == IsmLiveActions.streamStartPresence.name) {
+        refreshStreams();
+      }
+    });
+  }
+
+  /// Refresh streams based on current type
+  Future<void> refreshStreams() async {
+    await getStreams(
+      type: _controller.streamType,
+      skip: 0,
+    );
+  }
 
   /// Get streams based on the specified type
   Future<List<IsmLiveStreamDataModel>> getStreams({
