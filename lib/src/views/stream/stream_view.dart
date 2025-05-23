@@ -246,8 +246,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                 ),
                 if (controller.isHost) ...[
                   Positioned(
-                    bottom: IsmLiveDimens.eighty,
-                    left: IsmLiveDimens.sixteen,
+                    bottom: IsmLiveDimens.zero,
+                    left: IsmLiveDimens.zero,
+                    right: IsmLiveDimens.zero,
                     child: const IsmLiveModerationWarning(),
                   ),
                   if (isNewStream)

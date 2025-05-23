@@ -16,4 +16,27 @@ class IsmLiveColors {
 
   static const Color green = Colors.green;
   static const Color red = Colors.red;
+
+  // Gradient Colors
+  static const Color gradientStart = Color(0xFFDB354D);
+  static const Color gradientEnd = Color(0xFF4F1299);
+
+  // Button Gradient
+  static const LinearGradient buttonTopBottomGradient = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    colors: [
+      gradientStart,
+      gradientEnd,
+    ],
+  );
+
+  static LinearGradient disableButtonTopBottomGradient = LinearGradient(
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+    colors: [
+      gradientStart.withAlpha(127),
+      gradientEnd.withAlpha(127),
+    ],
+  );
 }

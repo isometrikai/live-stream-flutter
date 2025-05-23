@@ -22,6 +22,7 @@ class IsmLiveAssetConstants {
 
   static const String appscrip = '$_logo/appscrip.png';
   static const String isometrik = '$_logo/isometrik.png';
+  static const String iamatLogo = '$_logo/iamat_logo.svg';
 
   static const String noImage = '$_images/noperson.png';
 

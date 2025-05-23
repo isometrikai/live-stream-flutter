@@ -132,6 +132,9 @@ mixin StreamJoinMixin {
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 
+    log('Stream duration: joinStream==> ${_controller.streamDuration}  start time: ==>${stream.startDateTime}  current time: ==>${now}');
+
+
     // Connect to the stream
     await connectStream(
       token: token,
@@ -209,6 +212,8 @@ mixin StreamJoinMixin {
 
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startTime ?? now);
+
+    log('Stream duration: startStream==> ${_controller.streamDuration}  start time: ==>${stream.startTime}  current time: ==>${now}');
 
     _controller.rtmlUrlDevice.text = stream.ingestEndpoint ?? '';
     _controller.streamKeyDevice.text = stream.streamKey ?? '';

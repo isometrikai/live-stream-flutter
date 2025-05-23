@@ -52,6 +52,8 @@ class IsmLiveStrings {
   static const String pkMessage = 'pk is starting';
 
   static const String uploadingImage = 'Uploading Image';
+  static const String youAreLiveNow = 'You’re Live Now';
+  static const String tvContinue = 'Continue';
 
   static const String areYouSureEndStream =
       'Are you sure that you want to end your live stream?';

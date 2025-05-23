@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,11 +12,13 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
     required this.rightLabel,
     this.onRight,
   });
+
   final String title;
   final String leftLabel;
   final String rightLabel;
   final VoidCallback? onLeft;
   final VoidCallback? onRight;
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
@@ -31,16 +34,17 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: IsmLiveButton.secondary(
-                    label: leftLabel,
-                    onTap: onLeft,
+                  child: CustomButton(
+                    onlyBorder: true,
+                    onPress: onLeft,
+                    title: leftLabel,
                   ),
                 ),
                 IsmLiveDimens.boxWidth16,
                 Expanded(
-                  child: IsmLiveButton(
-                    label: rightLabel,
-                    onTap: onRight,
+                  child: CustomButton(
+                    onPress: onRight,
+                    title: rightLabel,
                   ),
                 ),
               ],
