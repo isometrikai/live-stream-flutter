@@ -76,6 +76,14 @@ class IsmLiveStrings {
 
   static const String moderationWarning =
       'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day.\nWarning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
+  static const String weSentNotificationToFollowersText =
+      'We’ve sent a notification to your followers. Your fans will join the broadcast soon';
+  static const String broadcastingRulesTitle = '📢 Broadcasting Rules & Regulations';
+  static const String viewerConductTitle = '🛑 Viewer Conduct';
+  static const String welcomeToStreamRulesText = 'Welcome to the stream! To ensure a safe, respectful, and enjoyable experience for everyone, please follow these rules:';
+  static const String broadcastingRulesText = "18+ Only: This stream is strictly for adults (18+). Viewer discretion is advised. Respect Others: No hate speech, harassment, or discriminatory language.";
+  static const String noSpammingText = 'No Spamming: Avoid spamming the chat or promoting unrelated content.';
+
 
   static const String hostAcceptedCopublishRequestTitle =
       '@name has accepted your request to join as a co-publisher';

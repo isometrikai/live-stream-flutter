@@ -86,6 +86,7 @@ class IsmLiveMessageField extends StatelessWidget {
               suffixIcon: IconButton(
                 icon: const Icon(
                   Icons.send,
+                  color: Colors.white,
                 ),
                 color: Colors.white,
                 onPressed: controller.messageFieldController.isNotEmpty

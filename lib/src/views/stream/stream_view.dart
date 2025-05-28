@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -37,6 +39,7 @@ class IsmLiveStreamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log('IsmLiveStreamView: isHost: $isHost');
     if (isHost) {
       return _IsmLiveStreamView(
         key: key,
@@ -246,9 +249,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                 ),
                 if (controller.isHost) ...[
                   Positioned(
-                    bottom: IsmLiveDimens.zero,
-                    left: IsmLiveDimens.zero,
-                    right: IsmLiveDimens.zero,
+                    bottom: IsmLiveDimens.eighty,
+                    left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
                   if (isNewStream)
@@ -360,9 +362,9 @@ class _StreamHeader extends StatelessWidget {
                                 ? IsmLiveDimens.box0
                                 : SizedBox(
                                     width: IsmLiveDimens.hundred,
-                                    child: IsmLiveButton(
-                                      label: 'kick out',
-                                      onTap: () {
+                                    child: CustomButton(
+                                      title: 'kick out',
+                                      onPress: () {
                                         controller.kickoutViewer(
                                           streamId: streamId,
                                           viewerId: viewer.userId,

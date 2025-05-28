@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
   @override
   void initState() {
     super.initState();
+    log('IsmLiveStreamView: initState');
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -85,9 +87,9 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
         t.cancel();
         isCompleted = true;
         widget.onComplete?.call();
-        if ((streamProperties?.showYoureLiveSheet ?? false) &&
+        if ((streamProperties?.showYoureLiveSheet ?? true) &&
             widget.onCompleteSheet != null) {
-          IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!);
+          IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!, backgroundColor: Colors.transparent);
         }
         return;
       }
