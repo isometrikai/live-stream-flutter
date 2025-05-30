@@ -66,7 +66,7 @@ class IsmLiveListSheet extends StatelessWidget {
                         style: context.textTheme.titleMedium,
                       ),
                       subtitle: Text(
-                        viewer.identifier,
+                        viewer.userName,
                         style: context.textTheme.bodySmall,
                       ),
                       trailing: trailing?.call(context, viewer),

@@ -364,6 +364,7 @@ class _StreamHeader extends StatelessWidget {
                                     width: IsmLiveDimens.hundred,
                                     child: CustomButton(
                                       title: 'kick out',
+
                                       onPress: () {
                                         controller.kickoutViewer(
                                           streamId: streamId,

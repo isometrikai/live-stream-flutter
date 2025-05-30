@@ -39,7 +39,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IsmLiveDimens.boxWidth10,
@@ -144,22 +144,25 @@ class IsmLiveViewerCount extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
             color: Colors.white24,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.remove_red_eye,
-                color: IsmLiveColors.white,
-                size: IsmLiveDimens.sixteen,
-              ),
-              IsmLiveDimens.boxWidth4,
-              GetX<IsmLiveStreamController>(
-                builder: (controller) => Text(
-                  controller.streamViewersList.length.toString(),
-                  style: IsmLiveStyles.white12,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.remove_red_eye,
+                  color: IsmLiveColors.white,
+                  size: IsmLiveDimens.sixteen,
                 ),
-              ),
-            ],
+                IsmLiveDimens.boxWidth4,
+                GetX<IsmLiveStreamController>(
+                  builder: (controller) => Text(
+                    controller.streamViewersList.length.toString(),
+                    style: IsmLiveStyles.white12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -213,12 +216,12 @@ class _LiveTimer extends StatelessWidget {
               scheduleTime: controller.streamDetails?.scheduleStartTime,
             ),
           IsmLiveDimens.boxWidth10,
-          IsmLiveStreamMemberCount(
-            onTap: () => IsmLiveUtility.openBottomSheet(
-              const IsmLiveMembersSheet(),
-              isScrollController: true,
-            ),
-          ),
+          // IsmLiveStreamMemberCount(
+          //   onTap: () => IsmLiveUtility.openBottomSheet(
+          //     const IsmLiveMembersSheet(),
+          //     isScrollController: true,
+          //   ),
+          // ),
           if (isPaidStream) ...[
             IsmLiveDimens.boxWidth10,
             IsmLiveCoins(

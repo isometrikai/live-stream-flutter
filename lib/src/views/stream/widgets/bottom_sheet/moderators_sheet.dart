@@ -54,7 +54,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                 isProfileImage: true,
               ),
               title: Text(moderator.userName),
-              subtitle: Text(moderator.userIdentifier),
+              subtitle: Text(moderator.userName),
               trailing: (moderator.userId != controller.user?.userId &&
                       controller.isHost == true)
                   ? IsmLiveButton.icon(

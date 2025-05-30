@@ -25,7 +25,8 @@ class CustomIconButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius:
                 radius == null ? null : BorderRadius.circular(radius!),
-            gradient: IsmLiveColors.buttonTopBottomGradient,
+            color: color == Colors.transparent ? color : null,
+            gradient: color == Colors.transparent ? null :IsmLiveColors.buttonTopBottomGradient,
             shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: UnconstrainedBox(child: icon),
