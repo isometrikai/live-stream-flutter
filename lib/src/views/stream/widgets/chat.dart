@@ -59,7 +59,22 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
             },
           );
 
-          return ConstrainedBox(
+          return Positioned.fill(
+              child: ShaderMask(
+                  shaderCallback: (rect) {
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.white,
+                        Colors.white,
+                      ],
+                      stops: [0.0, 0.1, 1.0],
+                    ).createShader(rect);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: controller.participantTracks.length < 2
                   ? IsmLiveDimens.percentHeight(0.4)
@@ -274,7 +289,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                 );
               },
             ),
-          );
+          ),),);
         },
       );
 }
