@@ -456,7 +456,7 @@ class _StreamHeader extends StatelessWidget {
                                 icon: Icons.group_add_rounded,
                               ),
                     onItemTap: (viewer, index){
-
+                      IsmLiveDelegate.openUserProfileView?.call(viewer.userId);
                     },
                   ),
                 ),
