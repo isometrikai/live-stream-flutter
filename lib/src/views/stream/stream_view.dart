@@ -141,8 +141,10 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
   }
 
   Future<void> _enterPipMode() async {
+    debugPrint('Attempting to enter PiP mode...');
     if (Platform.isAndroid) {
       try {
+        debugPrint('Platform is Android, setting system UI mode...');
         await SystemChrome.setEnabledSystemUIMode(
           SystemUiMode.immersiveSticky,
         );
@@ -153,11 +155,12 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
         setState(() {
           _isInPipMode = true;
         });
+        debugPrint('Successfully entered PiP mode');
       } catch (e) {
         debugPrint('Error entering PiP mode: $e');
       }
     } else if (Platform.isIOS) {
-      // iOS PiP is handled automatically by the system
+      debugPrint('Platform is iOS, PiP is handled automatically');
       setState(() {
         _isInPipMode = true;
       });
@@ -455,7 +458,17 @@ class _StreamHeader extends StatelessWidget {
                             : const IsmLiveButton.icon(
                                 icon: Icons.group_add_rounded,
                               ),
-                    onViewerProfileTap: (viewer, index) => IsmLiveDelegate.openUserProfileView?.call(viewer.userId),
+                    onViewerProfileTap: (viewer, index) {
+                      debugPrint('Viewer profile tapped for user: ${viewer.userId}');
+                      _IsmLiveStreamViewState? state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
+                      debugPrint('Found state: ${state != null}');
+                      if (state != null) {
+                        state._enterPipMode();
+                      } else {
+                        debugPrint('Failed to find _IsmLiveStreamViewState');
+                      }
+                      IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
+                    },
                   ),
                 ),
               );
