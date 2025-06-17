@@ -317,7 +317,7 @@ mixin StreamJoinMixin {
       var room = lk.Room(
         roomOptions: lk.RoomOptions(
           defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-            cameraPosition: lk.CameraPosition.front,
+            cameraPosition: lk.CameraPosition.back,
             params: videoQuality,
           ),
           defaultAudioCaptureOptions: const lk.AudioCaptureOptions(

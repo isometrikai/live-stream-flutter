@@ -236,7 +236,6 @@ mixin StreamAPIMixin {
       limit: limit,
       skip: skip,
     );
-
     if (_controller.streamMembersList.isNotEmpty) {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
         (e) => e.isAdmin,

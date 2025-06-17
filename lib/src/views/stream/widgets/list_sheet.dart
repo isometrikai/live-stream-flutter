@@ -10,12 +10,14 @@ class IsmLiveListSheet extends StatelessWidget {
     required this.items,
     this.trailing,
     this.scrollController,
+    this.onItemTap,
   });
 
   final String? title;
   final List<IsmLiveViewerModel> items;
   final ViewerBuilder? trailing;
   final ScrollController? scrollController;
+  final Function(IsmLiveViewerModel, int)? onItemTap;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -54,6 +56,7 @@ class IsmLiveListSheet extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var viewer = items[index];
                     return ListTile(
+                      onTap: onItemTap?.call(items[index], index) ?? null,
                       contentPadding: IsmLiveDimens.edgeInsets0,
                       leading: IsmLiveImage.network(
                         viewer.imageUrl ?? '',

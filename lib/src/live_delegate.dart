@@ -14,6 +14,8 @@ class IsmLiveDelegate {
 
   static VoidCallback? onStreamEnd;
 
+  static Function(String userId)? openUserProfileView;
+
   static Function(String id)? subscribStreamById;
 
   static Function(String id)? unsubscribStreamById;
@@ -65,8 +67,10 @@ class IsmLiveDelegate {
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
+    void Function(String userId)? openUserProfileView,
   }) async {
     onStreamEnd = onEndStream;
+    openUserProfileView = openUserProfileView;
     await Future.wait([
       LocalNotificationService().init(),
       IsmLiveHandler.initialize(),
