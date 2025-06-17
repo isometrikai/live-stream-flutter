@@ -45,7 +45,7 @@ class IsmLiveApp extends StatelessWidget {
     await IsmLiveDelegate.instance.initialize(
       config,
       onEndStream: onStreamEnd,
-      openUserProfileView: openUserProfileView,
+      openUserProfile: openUserProfileView,
     );
 
     if (!Get.isRegistered<IsmLiveMqttController>()) {

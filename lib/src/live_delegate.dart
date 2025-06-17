@@ -67,10 +67,10 @@ class IsmLiveDelegate {
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
-    void Function(String userId)? openUserProfileView,
+    void Function(String userId)? openUserProfile,
   }) async {
     onStreamEnd = onEndStream;
-    openUserProfileView = openUserProfileView;
+    openUserProfileView = openUserProfile;
     await Future.wait([
       LocalNotificationService().init(),
       IsmLiveHandler.initialize(),
