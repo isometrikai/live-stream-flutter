@@ -34,7 +34,11 @@ dependencies:
   in_app_purchase_storekit: ^0.3.17
   intl: ^0.20.2
   livekit_client: ^2.2.2
-  mqtt_helper: ^1.0.2
+#  mqtt_helper: ^1.0.2
+  mqtt_helper:
+    git:
+      url: https://github.com/rahulsaryam/mqtt_helper.git
+      ref: main
   package_info_plus: ^8.1.0
   permission_handler: ^12.0.0+1
   plugin_platform_interface: ^2.1.8
