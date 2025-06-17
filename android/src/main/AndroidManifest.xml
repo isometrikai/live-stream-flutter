@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.appscrip_live_stream_component">
+    package="com.example.appscrip_live_stream_component">
 
   <uses-feature android:name="android.hardware.camera" />
   <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -17,34 +17,8 @@
   <uses-permission android:name="android.permission.WAKE_LOCK" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
   <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-  
-  <application
-    android:label="appscrip_live_stream_component"
-    android:name="${applicationName}"
-    android:icon="@mipmap/ic_launcher"
-    android:supportsRtl="true">
-    <activity
-      android:name=".MainActivity"
-      android:exported="true"
-      android:launchMode="singleTop"
-      android:theme="@style/LaunchTheme"
-      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode|screenSize|smallestScreenSize|screenLayout"
-      android:hardwareAccelerated="true"
-      android:windowSoftInputMode="adjustResize"
-      android:supportsPictureInPicture="true"
-      android:resizeableActivity="true">
-      <meta-data
-        android:name="io.flutter.embedding.android.NormalTheme"
-        android:resource="@style/NormalTheme"
-        />
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
-    <meta-data
-      android:name="flutterEmbedding"
-      android:value="2" />
+
+  <application>
     <service
         android:name="de.julianassmann.flutter_background.IsolateHolderService"
         android:enabled="true"
