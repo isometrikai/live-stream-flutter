@@ -418,6 +418,7 @@ class _StreamHeader extends StatelessWidget {
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',
+            userIdentifier: controller.hostDetails?.userIdentifier??'',
             pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
                 controller.participantTracks.length == 2,
             isPaidStream: controller.isPremium,
@@ -459,15 +460,31 @@ class _StreamHeader extends StatelessWidget {
                                 icon: Icons.group_add_rounded,
                               ),
                     onViewerProfileTap: (viewer, index) {
-                      debugPrint('Viewer profile tapped for user: ${viewer.userId}');
-                      var state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
-                      debugPrint('Found state: ${state != null}');
-                      if (state != null) {
-                        state._enterPipMode();
-                      } else {
-                        debugPrint('Failed to find _IsmLiveStreamViewState');
-                      }
-                      IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
+                        IsmLiveUtility.openBottomSheet(
+                          StreamLiveSheet(
+                            widget: IsmLiveImage.network(
+                              IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl??'') ?? viewer.imageUrl??'',
+                              isProfileImage: true,
+                              name: viewer.userName,
+                              height: IsmLiveDimens.hundred,
+                              width: IsmLiveDimens.hundred,
+                            ),
+                            title: viewer.userName,
+                            subTitle: null,
+                            buttonLable: 'View Profile',
+                            onTap:  () {
+                              var state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
+                              debugPrint('Found state: ${state != null}');
+                              if (state != null) {
+                                state._enterPipMode();
+                              } else {
+                                debugPrint('Failed to find _IsmLiveStreamViewState');
+                              }
+                              IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
+                            },
+                          ),
+                          isScrollController: true,
+                        );
                     },
                   ),
                 ),

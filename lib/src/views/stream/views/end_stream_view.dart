@@ -36,7 +36,7 @@ class IsmLiveEndStream extends StatelessWidget {
                         children: [
                           IsmLiveDimens.boxWidth50,
                           IsmLiveImage.network(
-                            controller.user?.userProfileImageUrl ?? '',
+                            IsmLiveDelegate.getUserProfileUrl?.call(controller.user?.userProfileImageUrl ?? '') ?? controller.user?.userProfileImageUrl ?? '',
                             name: controller.user?.userName ?? 'U',
                             height: IsmLiveDimens.ninty,
                             width: IsmLiveDimens.ninty,

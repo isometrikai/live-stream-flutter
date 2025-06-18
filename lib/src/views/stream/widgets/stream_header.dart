@@ -16,6 +16,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.winnerName,
     required this.streamCoins,
     required this.isPaidStream,
+    required this.userIdentifier,
   });
 
   final String name;
@@ -24,6 +25,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
   final String description;
   final String imageUrl;
   final String streamCoins;
+  final String userIdentifier;
 
   final bool pkCompleted;
   final bool isBattleTie;
@@ -48,6 +50,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
                 name: name,
                 description: description,
                 isHost: Get.find<IsmLiveStreamController>().isHost,
+                userIdentifier: userIdentifier,
               ),
               IsmLiveDimens.boxWidth10,
               IsmLiveModeratorCount(onTap: onTapModerators),
