@@ -46,39 +46,62 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
           itemCount: controller.moderatorsList.length,
           itemBuilder: (context, index) {
             final moderator = controller.moderatorsList[index];
-            return ListTile(
-              leading: IsmLiveImage.network(
-                IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ?? moderator.profileUrl,
-                name: moderator.userName,
-                dimensions: IsmLiveDimens.forty,
-                isProfileImage: true,
+            final imageUrl = IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ?? moderator.profileUrl;
+            return InkWell(
+              onTap: (){
+                IsmLiveUtility.openBottomSheet(
+                  StreamLiveSheet(
+                    widget: IsmLiveImage.network(
+                      imageUrl,
+                      isProfileImage: true,
+                      name: moderator.userName,
+                      height: IsmLiveDimens.hundred,
+                      width: IsmLiveDimens.hundred,
+                    ),
+                    title: moderator.userName,
+                    subTitle: null ,
+                    buttonLable: 'View Profile',
+                    onTap: () {
+                      IsmLiveDelegate.openUserProfileView?.call(moderator.userIdentifier);
+                    },
+                  ),
+                  isScrollController: true,
+                );
+              },
+              child: ListTile(
+                leading: IsmLiveImage.network(
+                  imageUrl,
+                  name: moderator.userName,
+                  dimensions: IsmLiveDimens.forty,
+                  isProfileImage: true,
+                ),
+                title: Text(moderator.userName),
+                subtitle: Text(moderator.userName),
+                trailing: (moderator.userId != controller.user?.userId &&
+                        controller.isHost == true)
+                    ? IsmLiveButton.icon(
+                        icon: Icons.person_remove_rounded,
+                        onTap: () {
+                          Get.back();
+                          controller.removeModerator(
+                            moderatorId: moderator.userId,
+                            streamId: controller.streamId ?? '',
+                          );
+                        },
+                      )
+                    : controller.isModerator &&
+                            controller.isHost != true &&
+                            (controller.user?.userId == moderator.userId)
+                        ? IsmLiveButton.icon(
+                            icon: Icons.exit_to_app_rounded,
+                            onTap: () {
+                              Get.back();
+                              controller
+                                  .leaveModerator(controller.streamId ?? '');
+                            },
+                          )
+                        : null,
               ),
-              title: Text(moderator.userName),
-              subtitle: Text(moderator.userName),
-              trailing: (moderator.userId != controller.user?.userId &&
-                      controller.isHost == true)
-                  ? IsmLiveButton.icon(
-                      icon: Icons.person_remove_rounded,
-                      onTap: () {
-                        Get.back();
-                        controller.removeModerator(
-                          moderatorId: moderator.userId,
-                          streamId: controller.streamId ?? '',
-                        );
-                      },
-                    )
-                  : controller.isModerator &&
-                          controller.isHost != true &&
-                          (controller.user?.userId == moderator.userId)
-                      ? IsmLiveButton.icon(
-                          icon: Icons.exit_to_app_rounded,
-                          onTap: () {
-                            Get.back();
-                            controller
-                                .leaveModerator(controller.streamId ?? '');
-                          },
-                        )
-                      : null,
             );
           },
         ),
