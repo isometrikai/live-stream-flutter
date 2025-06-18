@@ -96,9 +96,9 @@ class IsmLiveMessageField extends StatelessWidget {
                         }),
                   ),
                 ),
-                Dimens.boxWidth(Dimens.fifteen),
+                IsmLiveDimens.boxWidth15,
                 CustomIconButton(
-                  dimension: Dimens.fourty,
+                  dimension: IsmLiveDimens.forty,
                   icon: const Icon(
                     Icons.send,
                     color: Colors.white,

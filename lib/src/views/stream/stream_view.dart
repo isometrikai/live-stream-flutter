@@ -216,7 +216,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               ) ??
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: Dimens.twelve),
+                                    padding: EdgeInsets.symmetric(horizontal: IsmLiveDimens.twelve),
                                     child:
                                     IsmLiveMessageField(
                                       streamId: controller

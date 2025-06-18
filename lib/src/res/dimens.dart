@@ -87,6 +87,7 @@ class IsmLiveDimens {
   static final Widget boxWidth8 = SizedBox(width: eight);
   static final Widget boxWidth10 = SizedBox(width: ten);
   static final Widget boxWidth12 = SizedBox(width: twelve);
+  static final Widget boxWidth15 = SizedBox(width: fifteen);
   static final Widget boxWidth16 = SizedBox(width: sixteen);
   static final Widget boxWidth20 = SizedBox(width: twenty);
   static final Widget boxWidth24 = SizedBox(width: twentyFour);
