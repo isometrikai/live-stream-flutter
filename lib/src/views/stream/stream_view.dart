@@ -191,28 +191,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                   streamId: streamId,
                                                 ),
                                                 IsmLiveDimens.boxHeight8,
-                                                IsmLiveApp.inputBuilder?.call(
-                                                      context,
-                                                      IsmLiveMessageField(
-                                                        streamId: controller
-                                                                .streamId ??
-                                                            '',
-                                                        isHost: controller
-                                                            .isPublishing,
-                                                      ),
-                                                    ) ??
-                                                    Padding(
-                                                      padding: IsmLiveDimens
-                                                          .edgeInsets8_0,
-                                                      child:
-                                                          IsmLiveMessageField(
-                                                        streamId: controller
-                                                                .streamId ??
-                                                            '',
-                                                        isHost: controller
-                                                            .isPublishing,
-                                                      ),
-                                                    ),
+
                                               ],
                                             ),
                                       ),
@@ -226,6 +205,27 @@ class _IsmLiveStreamView extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              IsmLiveApp.inputBuilder?.call(
+                                context,
+                                IsmLiveMessageField(
+                                  streamId: controller
+                                      .streamId ??
+                                      '',
+                                  isHost: controller
+                                      .isPublishing,
+                                ),
+                              ) ??
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: Dimens.twelve),
+                                    child:
+                                    IsmLiveMessageField(
+                                      streamId: controller
+                                          .streamId ??
+                                          '',
+                                      isHost: controller
+                                          .isPublishing,
+                                    ),
+                                  ),
                               IsmLiveDimens.boxHeight8,
                               if (IsmLiveApp.endStreamPosition.isBottomAligned)
                                 ...[],

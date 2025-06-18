@@ -77,6 +77,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
+                  padding: EdgeInsets.only(bottom: Dimens.eight),
                   alignment: Alignment.bottomRight,
                   width: IsmLiveDimens.fifty,
                   child: ListView.separated(

@@ -19,19 +19,28 @@ class IsmLiveChatView extends StatefulWidget {
 class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   final messagesListController = ScrollController();
   final _controller = Get.find<IsmLiveStreamController>();
+  bool _isScrolling = false;
 
   @override
   void initState() {
-    messagesListController.addListener(
-        () async => _controller.messagePagination(messagesListController));
+    messagesListController.addListener(_scrollListener);
     super.initState();
+  }
+
+  void _scrollListener() {
+    if (!_isScrolling) {
+      _isScrolling = true;
+      _controller.messagePagination(messagesListController);
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _isScrolling = false;
+      });
+    }
   }
 
   @override
   void dispose() {
     try {
-      messagesListController.removeListener(
-          () => _controller.messagePagination(messagesListController));
+      messagesListController.removeListener(_scrollListener);
       messagesListController.dispose();
     } catch (e) {
       IsmLiveLog('chat controller error $e');
@@ -39,255 +48,242 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
     super.dispose();
   }
 
+  void _scrollToBottom() {
+    if (messagesListController.hasClients) {
+      messagesListController.animateTo(
+        messagesListController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
-        builder: (controller) {
-          IsmLiveUtility.updateLater(
-            () {
-              try {
-                if (messagesListController.position.pixels + 200 >=
-                    messagesListController.position.maxScrollExtent) {
-                  messagesListController.animateTo(
-                    messagesListController.position.maxScrollExtent + 10,
-                    duration: const Duration(milliseconds: 5),
-                    curve: Curves.linear,
-                  );
-                }
-              } catch (e) {
-                IsmLiveLog('chat animation error $e');
-              }
-            },
-          );
+      builder: (controller) {
+        // Scroll to bottom when new message arrives
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (controller.streamMessagesList.isNotEmpty) {
+            _scrollToBottom();
+          }
+        });
 
-          /* getting invalid paren view error show remove positioned
-          * */
-          return ShaderMask(
-              shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.white,
-                    Colors.white,
-                  ],
-                  stops: [0.0, 0.1, 1.0],
-                ).createShader(rect),
-              blendMode: BlendMode.dstIn,
-              child: ConstrainedBox(
-                      constraints: BoxConstraints(
-          maxHeight: controller.participantTracks.length < 2
-              ? IsmLiveDimens.percentHeight(0.4)
-              : controller.participantTracks.length < 4
-                  ? IsmLiveDimens.percentHeight(0.3)
-                  : IsmLiveDimens.percentHeight(0.15),
-          maxWidth: //isHost ? Get.width * 0.5 :
-              Get.width * 0.75,
-                      ),
-                      child: ListView.separated(
-          controller: messagesListController,
-          padding: IsmLiveDimens.edgeInsets0_8,
-          shrinkWrap: true,
-          itemCount: controller.streamMessagesList.length,
-          separatorBuilder: (_, __) => IsmLiveDimens.boxHeight10,
-          itemBuilder: (_, index) {
-            final message = controller.streamMessagesList[index];
-
-            return UnconstrainedBox(
-              alignment: Alignment.centerLeft,
-              child: IsmLiveTapHandler(
-                onTap: () {
-                  var openSheet = message.sentByHost
-                      ? (controller.isCopublisher ||
-                          controller.isModerator ||
-                          controller.isMember ||
-                          controller.isHost)
-                      : true;
-                  if (!message.isEvent && !message.isDeleted && openSheet) {
-                    IsmLiveUtility.openBottomSheet(
-                      ChatBottomSheet(
-                        message: message,
-                      ),
-                    );
-                  }
-                },
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
-                  ),
-                  child: Padding(
-                    padding: IsmLiveDimens.edgeInsets8_4,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        IsmLiveImage.network(
-                          IsmLiveDelegate.getUserProfileUrl?.call(message.imageUrl) ?? message.imageUrl,
-                          name: message.userName,
-                          dimensions: IsmLiveDimens.twentyFour,
-                          isProfileImage: true,
+        return ShaderMask(
+          shaderCallback: (rect) => const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.white,
+              Colors.white,
+            ],
+            stops: [0.0, 0.1, 1.0],
+          ).createShader(rect),
+          blendMode: BlendMode.dstIn,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: controller.participantTracks.length < 2
+                  ? IsmLiveDimens.percentHeight(0.4)
+                  : controller.participantTracks.length < 4
+                      ? IsmLiveDimens.percentHeight(0.3)
+                      : IsmLiveDimens.percentHeight(0.15),
+              maxWidth: Get.width * 0.75,
+            ),
+            child: ListView.builder(
+              controller: messagesListController,
+              padding: IsmLiveDimens.edgeInsets0_8,
+              shrinkWrap: true,
+              itemCount: controller.streamMessagesList.length,
+              itemBuilder: (context, index) {
+                final message = controller.streamMessagesList[index];
+                return _ChatMessageItem(
+                  message: message,
+                  isHost: widget.isHost,
+                  onTap: () {
+                    var openSheet = message.sentByHost
+                        ? (controller.isCopublisher ||
+                            controller.isModerator ||
+                            controller.isMember ||
+                            controller.isHost)
+                        : true;
+                    if (!message.isEvent && !message.isDeleted && openSheet) {
+                      IsmLiveUtility.openBottomSheet(
+                        ChatBottomSheet(
+                          message: message,
                         ),
-                        IsmLiveDimens.boxWidth4,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                                  style: context.textTheme.labelSmall!
-                                      .copyWith(
-                                    color: IsmLiveColors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                if (message.sentByHost) ...[
-                                  IsmLiveDimens.boxWidth8,
-                                  DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: (context.liveTheme
-                                                  ?.primaryColor ??
-                                              IsmLiveColors.primary)
-                                          .withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(
-                                          IsmLiveDimens.four),
-                                    ),
-                                    child: Padding(
-                                      padding: IsmLiveDimens.edgeInsets6_2,
-                                      child: Text(
-                                        'Host',
-                                        style: context.textTheme.labelSmall
-                                            ?.copyWith(
-                                          color: IsmLiveColors.white
-                                              .withOpacity(0.7),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+}
+
+class _ChatMessageItem extends StatelessWidget {
+  const _ChatMessageItem({
+    required this.message,
+    required this.isHost,
+    required this.onTap,
+  });
+
+  final dynamic message;
+  final bool isHost;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: UnconstrainedBox(
+        alignment: Alignment.centerLeft,
+        child: IsmLiveTapHandler(
+          onTap: onTap,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+            ),
+            child: Padding(
+              padding: IsmLiveDimens.edgeInsets8_4,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IsmLiveImage.network(
+                    IsmLiveDelegate.getUserProfileUrl?.call(message.imageUrl) ?? message.imageUrl,
+                    name: message.userName,
+                    dimensions: IsmLiveDimens.twentyFour,
+                    isProfileImage: true,
+                  ),
+                  IsmLiveDimens.boxWidth4,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                            style: context.textTheme.labelSmall!.copyWith(
+                              color: IsmLiveColors.white,
+                              fontWeight: FontWeight.w700,
                             ),
-                            if (message.isDeleted)
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: widget.isHost
-                                      ? Get.width * 0.35
-                                      : Get.width * 0.6,
-                                ),
+                          ),
+                          if (message.sentByHost) ...[
+                            IsmLiveDimens.boxWidth8,
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: (context.liveTheme?.primaryColor ?? IsmLiveColors.primary)
+                                    .withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+                              ),
+                              child: Padding(
+                                padding: IsmLiveDimens.edgeInsets6_2,
                                 child: Text(
-                                  ' ${message.body} Deleted Message',
-                                  style: context.textTheme.labelSmall
-                                      ?.copyWith(
-                                    color: Colors.white70,
-                                    fontStyle: FontStyle.italic,
+                                  'Host',
+                                  style: context.textTheme.labelSmall?.copyWith(
+                                    color: IsmLiveColors.white.withOpacity(0.7),
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                ),
-                              )
-                            else ...[
-                              if (message.isReply &&
-                                  message.parentBody != null) ...[
-                                Text(
-                                  'Reply to ${message.parentBody}',
-                                  style: context.textTheme.labelSmall
-                                      ?.copyWith(
-                                    color: Colors.white70,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: // isHost
-                                      //  ? Get.width * 0.35
-                                      //  :
-                                      Get.width * 0.6,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      message.body,
-                                      style: context.textTheme.labelMedium
-                                          ?.copyWith(
-                                        color: IsmLiveColors.white,
-                                      ),
-                                      softWrap: true,
-                                    ),
-                                    if (message.isCopublisherRequest)
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(
-                                            width: IsmLiveDimens.hundred,
-                                            height:
-                                                IsmLiveDimens.thirtyTwo +
-                                                    IsmLiveDimens.two,
-                                            child: IsmLiveButton(
-                                              label: 'accept',
-                                              onTap: () {
-                                                controller
-                                                    .acceptCopublisherRequest(
-                                                  requestById:
-                                                      message.userId,
-                                                  streamId:
-                                                      controller.streamId ??
-                                                          '',
-                                                );
-                                                controller.streamMessagesList[
-                                                        index] =
-                                                    message.copyWith(
-                                                        isCopublisherRequest:
-                                                            false);
-                                              },
-                                            ),
-                                          ),
-                                          IsmLiveDimens.boxWidth2,
-                                          SizedBox(
-                                            width: IsmLiveDimens.hundred,
-                                            height:
-                                                IsmLiveDimens.thirtyTwo +
-                                                    IsmLiveDimens.two,
-                                            child: IsmLiveButton(
-                                              label: 'deny',
-                                              onTap: () {
-                                                controller
-                                                    .denyCopublisherRequest(
-                                                  requestById:
-                                                      message.userId,
-                                                  streamId:
-                                                      controller.streamId ??
-                                                          '',
-                                                );
-                                                controller.streamMessagesList[
-                                                        index] =
-                                                    message.copyWith(
-                                                        isCopublisherRequest:
-                                                            false);
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                  ],
                                 ),
                               ),
-                            ],
+                            ),
                           ],
+                        ],
+                      ),
+                      if (message.isDeleted)
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: isHost ? Get.width * 0.35 : Get.width * 0.6,
+                          ),
+                          child: Text(
+                            ' ${message.body} Deleted Message',
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: Colors.white70,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        )
+                      else ...[
+                        if (message.isReply && message.parentBody != null) ...[
+                          Text(
+                            'Reply to ${message.parentBody}',
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: Colors.white70,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: Get.width * 0.6,
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                message.body,
+                                style: context.textTheme.labelMedium?.copyWith(
+                                  color: IsmLiveColors.white,
+                                ),
+                                softWrap: true,
+                              ),
+                              if (message.isCopublisherRequest)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      width: IsmLiveDimens.hundred,
+                                      height: IsmLiveDimens.thirtyTwo + IsmLiveDimens.two,
+                                      child: IsmLiveButton(
+                                        label: 'accept',
+                                        onTap: () {
+                                          final controller = Get.find<IsmLiveStreamController>();
+                                          controller.acceptCopublisherRequest(
+                                            requestById: message.userId,
+                                            streamId: controller.streamId ?? '',
+                                          );
+                                          controller.streamMessagesList[controller.streamMessagesList.indexOf(message)] =
+                                              message.copyWith(isCopublisherRequest: false);
+                                        },
+                                      ),
+                                    ),
+                                    IsmLiveDimens.boxWidth2,
+                                    SizedBox(
+                                      width: IsmLiveDimens.hundred,
+                                      height: IsmLiveDimens.thirtyTwo + IsmLiveDimens.two,
+                                      child: IsmLiveButton(
+                                        label: 'deny',
+                                        onTap: () {
+                                          final controller = Get.find<IsmLiveStreamController>();
+                                          controller.denyCopublisherRequest(
+                                            requestById: message.userId,
+                                            streamId: controller.streamId ?? '',
+                                          );
+                                          controller.streamMessagesList[controller.streamMessagesList.indexOf(message)] =
+                                              message.copyWith(isCopublisherRequest: false);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                )
+                            ],
+                          ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
-                ),
+                ],
               ),
-            );
-          },
-                      ),
-                    ),);
-        },
-      );
+            ),
+          ),
+        ),
+      ),
+    );
 }
