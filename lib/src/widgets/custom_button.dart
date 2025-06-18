@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 
 /// [CustomButton] widget is a custom Button.
@@ -102,7 +101,7 @@ class CustomButton extends StatelessWidget {
               // ),
             ),
             child: titleWidget ?? (onlyBorder ? Padding(
-              padding: EdgeInsets.all(1.5),
+              padding: const EdgeInsets.all(1.5),
               child: Container(
                 decoration: BoxDecoration(
                   color: IsmLiveColors.white,borderRadius: borderRadius,),

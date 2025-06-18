@@ -24,7 +24,7 @@ class IsmLiveHostDetail extends StatelessWidget {
           IsmLiveUtility.openBottomSheet(
             StreamLiveSheet(
               widget: IsmLiveImage.network(
-                imageUrl,
+                IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
                 isProfileImage: true,
                 name: name,
                 height: IsmLiveDimens.hundred,

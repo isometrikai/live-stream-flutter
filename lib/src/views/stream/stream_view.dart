@@ -5,10 +5,10 @@ import 'dart:io';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:flutter/services.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
   IsmLiveStreamView({
@@ -460,7 +460,7 @@ class _StreamHeader extends StatelessWidget {
                               ),
                     onViewerProfileTap: (viewer, index) {
                       debugPrint('Viewer profile tapped for user: ${viewer.userId}');
-                      _IsmLiveStreamViewState? state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
+                      var state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
                       debugPrint('Found state: ${state != null}');
                       if (state != null) {
                         state._enterPipMode();

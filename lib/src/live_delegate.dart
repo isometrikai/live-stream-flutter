@@ -16,6 +16,8 @@ class IsmLiveDelegate {
 
   static Function(String userId)? openUserProfileView;
 
+  static String Function(String key)? getUserProfileUrl;
+
   static Function(String id)? subscribStreamById;
 
   static Function(String id)? unsubscribStreamById;
@@ -64,13 +66,14 @@ class IsmLiveDelegate {
 
   static bool? recordeStream;
 
-  Future<void> initialize(
-    IsmLiveConfigData config, {
+  Future<void> initialize(IsmLiveConfigData config, {
     VoidCallback? onEndStream,
     void Function(String userId)? openUserProfile,
+    String Function(String key)? userProfileUrl,
   }) async {
     onStreamEnd = onEndStream;
     openUserProfileView = openUserProfile;
+    getUserProfileUrl = userProfileUrl;
     await Future.wait([
       LocalNotificationService().init(),
       IsmLiveHandler.initialize(),

@@ -17,8 +17,8 @@ class _CustomStreamListingState extends State<CustomStreamListing> {
   final _streamService = StreamService();
   final _refreshController = RefreshController();
   final _streams = <IsmLiveStreamDataModel>[].obs;
-  var _isLoading = false.obs;
-  var _selectedStreamType = IsmLiveStreamType.all.obs;
+  final _isLoading = false.obs;
+  final _selectedStreamType = IsmLiveStreamType.all.obs;
 
   @override
   void initState() {
@@ -51,8 +51,7 @@ class _CustomStreamListingState extends State<CustomStreamListing> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         // Custom stream type selector
         Container(
@@ -149,7 +148,6 @@ class _CustomStreamListingState extends State<CustomStreamListing> {
         ),
       ],
     );
-  }
 
   @override
   void dispose() {

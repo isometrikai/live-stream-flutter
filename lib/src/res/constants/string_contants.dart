@@ -81,7 +81,7 @@ class IsmLiveStrings {
   static const String broadcastingRulesTitle = '📢 Broadcasting Rules & Regulations';
   static const String viewerConductTitle = '🛑 Viewer Conduct';
   static const String welcomeToStreamRulesText = 'Welcome to the stream! To ensure a safe, respectful, and enjoyable experience for everyone, please follow these rules:';
-  static const String broadcastingRulesText = "18+ Only: This stream is strictly for adults (18+). Viewer discretion is advised. Respect Others: No hate speech, harassment, or discriminatory language.";
+  static const String broadcastingRulesText = '18+ Only: This stream is strictly for adults (18+). Viewer discretion is advised. Respect Others: No hate speech, harassment, or discriminatory language.';
   static const String noSpammingText = 'No Spamming: Avoid spamming the chat or promoting unrelated content.';
 
 

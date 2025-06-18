@@ -62,8 +62,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
           /* getting invalid paren view error show remove positioned
           * */
           return ShaderMask(
-              shaderCallback: (rect) {
-                return LinearGradient(
+              shaderCallback: (rect) => const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
@@ -72,8 +71,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                     Colors.white,
                   ],
                   stops: [0.0, 0.1, 1.0],
-                ).createShader(rect);
-              },
+                ).createShader(rect),
               blendMode: BlendMode.dstIn,
               child: ConstrainedBox(
                       constraints: BoxConstraints(

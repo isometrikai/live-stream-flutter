@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 /// A service class that uses the stream API functionality from the package
 class StreamService {
@@ -46,11 +45,9 @@ class StreamService {
   }
 
   /// Get scheduled streams
-  Future<List<IsmLiveStreamDataModel>> _getScheduledStreams({int skip = 0}) async {
-    return _controller.viewModel.getStreams(
+  Future<List<IsmLiveStreamDataModel>> _getScheduledStreams({int skip = 0}) async => _controller.viewModel.getStreams(
       queryModel: IsmLiveStreamType.scheduledStreams.queryModel(skip: skip),
     );
-  }
 
   /// Join a stream
   Future<void> joinStream(IsmLiveStreamDataModel stream, bool isCreatedByMe) async {

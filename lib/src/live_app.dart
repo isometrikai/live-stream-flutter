@@ -36,6 +36,7 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
     void Function(String userId)? openUserProfileView,
+    String Function(String key)? getUserProfileUrl,
   }) async {
     if (_initialized) {
       return;
@@ -46,6 +47,7 @@ class IsmLiveApp extends StatelessWidget {
       config,
       onEndStream: onStreamEnd,
       openUserProfile: openUserProfileView,
+      userProfileUrl: getUserProfileUrl
     );
 
     if (!Get.isRegistered<IsmLiveMqttController>()) {
