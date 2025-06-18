@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,9 +25,9 @@ class IsmLiveStreamEndDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           IsmLiveDimens.boxHeight20,
-          const IsmLiveButton(
-            label: 'Okay',
-            onTap: IsmLiveUtility.closeDialog,
+          const CustomButton(
+            title: 'Okay',
+            onPress: IsmLiveUtility.closeDialog,
           ),
         ],
       );

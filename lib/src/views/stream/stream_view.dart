@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -97,7 +96,7 @@ class IsmLiveStreamView extends StatelessWidget {
   }
 }
 
-class _IsmLiveStreamView extends StatefulWidget {
+class _IsmLiveStreamView extends StatelessWidget {
   const _IsmLiveStreamView({
     super.key,
     required this.streamImage,
@@ -116,77 +115,6 @@ class _IsmLiveStreamView extends StatefulWidget {
   final bool isSchedule;
 
   @override
-  State<_IsmLiveStreamView> createState() => _IsmLiveStreamViewState();
-}
-
-class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
-  bool _isInPipMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _setupPipMode();
-  }
-
-  void _setupPipMode() {
-    if (Platform.isAndroid) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: Colors.transparent,
-        ),
-      );
-    }
-  }
-
-  Future<void> _enterPipMode() async {
-    debugPrint('Attempting to enter PiP mode...');
-    if (Platform.isAndroid) {
-      try {
-        debugPrint('Platform is Android, setting system UI mode...');
-        await SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.immersiveSticky,
-        );
-        await SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.manual,
-          overlays: [],
-        );
-        setState(() {
-          _isInPipMode = true;
-        });
-        debugPrint('Successfully entered PiP mode');
-      } catch (e) {
-        debugPrint('Error entering PiP mode: $e');
-      }
-    } else if (Platform.isIOS) {
-      debugPrint('Platform is iOS, PiP is handled automatically');
-      setState(() {
-        _isInPipMode = true;
-      });
-    }
-  }
-
-  Future<void> _exitPipMode() async {
-    if (Platform.isAndroid) {
-      try {
-        await SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.edgeToEdge,
-        );
-        setState(() {
-          _isInPipMode = false;
-        });
-      } catch (e) {
-        debugPrint('Error exiting PiP mode: $e');
-      }
-    } else if (Platform.isIOS) {
-      setState(() {
-        _isInPipMode = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
@@ -197,7 +125,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
 
           await WakelockPlus.enable();
           IsmLiveUtility.updateLater(() {
-            if (widget.isHost) {
+            if (isHost) {
               if (controller.isRtmp && !controller.usePersistentStreamKey) {
                 controller.rtmpSheet();
               } else if (controller.isRtmp) {
@@ -209,25 +137,16 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
         },
         builder: (controller) => PopScope(
           canPop: false,
-          onPopInvoked: (didPop) async {
-            if (!didPop) {
-              if (!_isInPipMode) {
-                await _enterPipMode();
-              } else {
-                await _exitPipMode();
-              }
-            }
-          },
           child: Scaffold(
             backgroundColor:
                 context.liveTheme?.streamBackgroundColor ?? IsmLiveColors.black,
             body: Stack(
               children: [
-                IsmLiveStreamBanner(widget.streamImage),
+                IsmLiveStreamBanner(streamImage),
                 const _TopDarkGradient(),
                 IsmLivePublisherGrid(
-                  streamImage: widget.streamImage ?? '',
-                  isInteractive: widget.isInteractive,
+                  streamImage: streamImage ?? '',
+                  isInteractive: isInteractive,
                 ),
                 const _BottomDarkGradient(),
                 Align(
@@ -235,7 +154,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                   child: Obx(
                     () => ((controller.room?.localParticipant != null) &&
                                 IsmLiveApp.showHeader) ||
-                            widget.isSchedule
+                            isSchedule
                         ? IsmLiveApp.streamHeader?.call(
                               context,
                               controller.hostDetails,
@@ -269,7 +188,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                               children: [
                                                 IsmLiveChatView(
                                                   isHost: controller.isHost,
-                                                  streamId: widget.streamId,
+                                                  streamId: streamId,
                                                 ),
                                                 IsmLiveDimens.boxHeight8,
                                                 IsmLiveApp.inputBuilder?.call(
@@ -298,7 +217,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                             ),
                                       ),
                                       IsmLiveControlsWidget(
-                                        isHost: widget.isHost,
+                                        isHost: isHost,
                                         isCopublishing:
                                             controller.isCopublisher,
                                         streamId: controller.streamId ?? '',
@@ -315,7 +234,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                             ],
                           ),
                         )
-                      : widget.isSchedule
+                      : isSchedule
                           ? const ScheduleStreamView()
                           : const SizedBox.shrink(),
                 ),
@@ -325,7 +244,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                       IsmLiveEndStreamButton(
                         onTapExit: () => controller.onExit(
                           isHost: controller.isHost,
-                          streamId: widget.streamId,
+                          streamId: streamId,
                         ),
                       ),
                 ),
@@ -335,7 +254,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                     left: IsmLiveDimens.sixteen,
                     child: const IsmLiveModerationWarning(),
                   ),
-                  if (widget.isNewStream)
+                  if (isNewStream)
                     const IsmLiveCounterView(
                       onCompleteSheet: YourLiveSheet(),
                     ),
@@ -447,7 +366,6 @@ class _StreamHeader extends StatelessWidget {
                                     width: IsmLiveDimens.hundred,
                                     child: CustomButton(
                                       title: 'kick out',
-
                                       onPress: () {
                                         controller.kickoutViewer(
                                           streamId: streamId,
@@ -473,13 +391,6 @@ class _StreamHeader extends StatelessWidget {
                             subTitle: null,
                             buttonLable: 'View Profile',
                             onTap:  () {
-                              var state = context.findAncestorStateOfType<_IsmLiveStreamViewState>();
-                              debugPrint('Found state: ${state != null}');
-                              if (state != null) {
-                                state._enterPipMode();
-                              } else {
-                                debugPrint('Failed to find _IsmLiveStreamViewState');
-                              }
                               IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
                             },
                           ),

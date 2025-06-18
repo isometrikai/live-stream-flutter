@@ -180,11 +180,10 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                                 ),
                                 child: Text(
                                   ' ${message.body} Deleted Message',
-                                  style: context.textTheme.labelMedium
+                                  style: context.textTheme.labelSmall
                                       ?.copyWith(
-                                    color: context
-                                        .liveTheme?.unselectedTextColor,
-                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white70,
+                                    fontStyle: FontStyle.italic,
                                   ),
                                 ),
                               )
