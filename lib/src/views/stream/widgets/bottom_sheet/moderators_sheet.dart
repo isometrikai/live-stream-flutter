@@ -48,7 +48,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
             final moderator = controller.moderatorsList[index];
             return ListTile(
               leading: IsmLiveImage.network(
-                moderator.profileUrl,
+                IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ?? moderator.profileUrl,
                 name: moderator.userName,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,

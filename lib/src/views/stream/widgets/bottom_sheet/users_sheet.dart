@@ -35,13 +35,13 @@ class IsmLiveUsersSheet extends StatelessWidget {
 
             return ListTile(
               leading: IsmLiveImage.network(
-                user.profileUrl,
+                IsmLiveDelegate.getUserProfileUrl?.call(user.profileUrl) ?? user.profileUrl,
                 name: user.userName,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,
               ),
               title: Text(user.userName),
-              subtitle: Text(user.userIdentifier),
+              subtitle: Text(user.userName),
               trailing: notShowbotton
                   ? null
                   : IsmLiveButton.icon(

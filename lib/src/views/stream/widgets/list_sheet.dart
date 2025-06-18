@@ -62,7 +62,7 @@ class IsmLiveListSheet extends StatelessWidget {
                       contentPadding: IsmLiveDimens.edgeInsets0,
                       leading: InkWell(
                         child: IsmLiveImage.network(
-                          viewer.imageUrl ?? '',
+                          IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl ?? '') ?? viewer.imageUrl??'',
                           name: viewer.userName,
                           dimensions: IsmLiveDimens.forty,
                           isProfileImage: true,

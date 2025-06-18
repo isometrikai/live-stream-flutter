@@ -44,7 +44,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
             children: [
               IsmLiveDimens.boxWidth10,
               IsmLiveHostDetail(
-                imageUrl: imageUrl,
+                imageUrl: IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
                 name: name,
                 description: description,
                 isHost: Get.find<IsmLiveStreamController>().isHost,

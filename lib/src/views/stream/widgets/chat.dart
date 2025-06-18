@@ -122,7 +122,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         IsmLiveImage.network(
-                          message.imageUrl,
+                          IsmLiveDelegate.getUserProfileUrl?.call(message.imageUrl) ?? message.imageUrl,
                           name: message.userName,
                           dimensions: IsmLiveDimens.twentyFour,
                           isProfileImage: true,
