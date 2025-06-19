@@ -778,6 +778,7 @@ class IsmLiveStreamRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlWallet,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: false,

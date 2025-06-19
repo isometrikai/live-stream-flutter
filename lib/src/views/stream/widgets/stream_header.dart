@@ -322,7 +322,7 @@ class IsmLiveLabel extends StatelessWidget {
           color: IsmLiveApp.isMqttConnected
               ? IsmLiveColors.green
               : IsmLiveColors.red,
-          borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+          borderRadius: BorderRadius.circular(IsmLiveDimens.six),
         ),
         child: Padding(
           padding: IsmLiveDimens.edgeInsets8_4,
