@@ -29,7 +29,7 @@ class IsmLiveEndStream extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IsmLiveDimens.boxHeight32,
+                      IsmLiveDimens.boxHeight50,
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

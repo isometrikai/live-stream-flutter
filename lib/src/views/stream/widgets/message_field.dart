@@ -110,6 +110,7 @@ class IsmLiveMessageField extends StatelessWidget {
                             parentMessage: controller.parentMessage,
                           )
                       : null,
+                  gradient: IsmLiveDelegate.streamOptionsBgGradient,
                 )
               ],
             ),
