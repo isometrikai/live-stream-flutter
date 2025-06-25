@@ -255,7 +255,7 @@ enum IsmLiveStreamOption {
               IsmLiveStreamOption.gift,
               IsmLiveStreamOption.share,
               IsmLiveStreamOption.speaker,
-              // IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.multiLive,
               IsmLiveStreamOption.heart,
             ]
           : IsmLiveDelegate.viewersOption;
@@ -270,8 +270,8 @@ enum IsmLiveStreamOption {
       IsmLiveDelegate.hostOptions.isEmpty
           ? [
               IsmLiveStreamOption.bars,
-              // IsmLiveStreamOption.vs,
-              // IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.vs,
+              IsmLiveStreamOption.multiLive,
               // IsmLiveStreamOption.product,
               IsmLiveStreamOption.share,
               // IsmLiveStreamOption.favourite,

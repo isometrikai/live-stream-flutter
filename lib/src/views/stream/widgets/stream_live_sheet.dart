@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -48,9 +47,9 @@ class StreamLiveSheet extends StatelessWidget {
             ],
             if (onTap != null && buttonLable != null) ...[
               IsmLiveDimens.boxHeight16,
-              CustomButton(
-                title: buttonLable!,
-                onPress: onTap!,
+              IsmLiveButton(
+                label: buttonLable!,
+                onTap: onTap!,
               ),
             ],
           ],

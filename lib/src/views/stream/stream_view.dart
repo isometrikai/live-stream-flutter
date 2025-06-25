@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -364,9 +363,9 @@ class _StreamHeader extends StatelessWidget {
                                 ? IsmLiveDimens.box0
                                 : SizedBox(
                                     width: IsmLiveDimens.hundred,
-                                    child: CustomButton(
-                                      title: 'kick out',
-                                      onPress: () {
+                                    child: IsmLiveButton(
+                                      label: 'kick out',
+                                      onTap: () {
                                         controller.kickoutViewer(
                                           streamId: streamId,
                                           viewerId: viewer.userId,

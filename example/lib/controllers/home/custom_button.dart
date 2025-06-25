@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component_example/res/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 
@@ -90,8 +91,8 @@ class CustomButton extends StatelessWidget {
             padding: padding ?? IsmLiveDimens.edgeInsetsAll(IsmLiveDimens.zero),
             decoration: BoxDecoration(
               gradient:!isDisable
-                  ? IsmLiveColors.buttonTopBottomGradient
-                  : IsmLiveColors.disableButtonTopBottomGradient,
+                  ? ColorsValue.buttonTopBottomGradient
+                  : ColorsValue.disableButtonTopBottomGradient,
               borderRadius: borderRadius,
               // border: Border.all(
               //   width: borderWidth ?? 1,
@@ -107,7 +108,7 @@ class CustomButton extends StatelessWidget {
                   color: IsmLiveColors.white,borderRadius: borderRadius,),
                 alignment: Alignment.center,
                 child: ShaderMask(
-                  shaderCallback: (bounds) =>  IsmLiveColors.buttonTopBottomGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                  shaderCallback: (bounds) =>  ColorsValue.buttonTopBottomGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
                   child: Text(
                     '$title',
                     style:  TextStyle(

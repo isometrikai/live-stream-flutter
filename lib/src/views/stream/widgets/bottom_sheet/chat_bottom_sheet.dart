@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,9 +17,9 @@ class ChatBottomSheet extends StatelessWidget {
           children: [
             SizedBox(
               width: Get.width * 0.4,
-              child: CustomButton(
-                title: 'Reply',
-                onPress: () {
+              child: IsmLiveButton(
+                label: 'Reply',
+                onTap: () {
                   controller.parentMessage = message;
 
                   controller.update([IsmLiveMessageField.updateId]);
@@ -35,9 +34,9 @@ class ChatBottomSheet extends StatelessWidget {
               IsmLiveDimens.boxWidth8,
               SizedBox(
                 width: Get.width * 0.4,
-                child: CustomButton(
-                  title: 'Delete',
-                  onPress: () {
+                child: IsmLiveButton(
+                  label: 'Delete',
+                  onTap: () {
                     controller.deleteMessage(
                       streamId: controller.streamId ?? '',
                       messageId: message.messageId,

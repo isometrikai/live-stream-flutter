@@ -66,14 +66,14 @@ class IsmLiveDelegate {
 
   static bool? recordeStream;
 
+  static IsmLiveButtonConfig? ismLiveButtonConfig;
+
+  static LinearGradient? streamOptionsBgGradient;
+
   Future<void> initialize(IsmLiveConfigData config, {
     VoidCallback? onEndStream,
-    void Function(String userId)? openUserProfile,
-    String Function(String key)? userProfileUrl,
   }) async {
     onStreamEnd = onEndStream;
-    openUserProfileView = openUserProfile;
-    getUserProfileUrl = userProfileUrl;
     await Future.wait([
       LocalNotificationService().init(),
       IsmLiveHandler.initialize(),

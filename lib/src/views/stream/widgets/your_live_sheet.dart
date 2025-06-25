@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,13 +45,12 @@ class YourLiveSheet extends StatelessWidget {
             const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
-              child: CustomButton(
-                onPress: () {
+              child: IsmLiveButton(
+                onTap: () {
                   Get.back();
                   onTap?.call();
                 },
-                height: IsmLiveDimens.fifty,
-                title: IsmLiveStrings.tvContinue,
+                label: IsmLiveStrings.tvContinue,
               ),
             ),
           ],
