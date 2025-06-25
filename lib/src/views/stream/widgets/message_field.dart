@@ -140,5 +140,6 @@ class IsmLiveHeartButton extends StatelessWidget {
         ),
         onTap: onTap,
         color: IsmLiveColors.red,
+        gradient: IsmLiveDelegate.streamOptionsBgGradient,
       );
 }
