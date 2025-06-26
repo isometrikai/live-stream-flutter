@@ -228,6 +228,28 @@ enum IsmLiveActions {
   final String value;
 }
 
+enum IsmLiveAnalyticsOptions {
+  hearts(IsmLiveAssetConstants.heartSvg),
+  order(IsmLiveAssetConstants.box),
+  viewers(IsmLiveAssetConstants.eye),
+  followers(IsmLiveAssetConstants.profileUser),
+  earnings(IsmLiveAssetConstants.dollar),
+  duration(IsmLiveAssetConstants.clock),
+  ;
+
+  const IsmLiveAnalyticsOptions(this.icon);
+  final String icon;
+
+  static List<IsmLiveAnalyticsOptions> get optionsList => IsmLiveDelegate.liveAnalyticsOptions.isEmpty ? [
+        IsmLiveAnalyticsOptions.hearts,
+        IsmLiveAnalyticsOptions.order,
+        IsmLiveAnalyticsOptions.viewers,
+        IsmLiveAnalyticsOptions.followers,
+        IsmLiveAnalyticsOptions.earnings,
+        IsmLiveAnalyticsOptions.duration,
+      ] : IsmLiveDelegate.liveAnalyticsOptions;
+}
+
 enum IsmLiveStreamOption {
   gift(IsmLiveAssetConstants.gift),
   bars(IsmLiveAssetConstants.bars),

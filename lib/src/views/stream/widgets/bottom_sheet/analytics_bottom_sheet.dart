@@ -60,42 +60,50 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                   crossAxisCount: 3,
                   childAspectRatio: 1.5,
                 ),
-                children: [
-                  IsmLiveEndStreamContainer(
-                    points: '${controller.streamAnalytis?.hearts ?? 0}',
-                    title: 'Hearts',
-                    color: Colors.black,
-                    assetConstant: IsmLiveAssetConstants.heartSvg,
-                  ),
-                  IsmLiveEndStreamContainer(
-                    points: '${controller.streamAnalytis?.productCount ?? 0}',
-                    title: 'Order',
-                    assetConstant: IsmLiveAssetConstants.box,
-                  ),
-                  IsmLiveEndStreamContainer(
-                    points:
-                        '${controller.streamAnalytis?.totalViewersCount ?? 0}',
-                    title: 'Viewers',
-                    assetConstant: IsmLiveAssetConstants.eye,
-                  ),
-                  IsmLiveEndStreamContainer(
-                    points: '${controller.streamAnalytis?.followers ?? 0}',
-                    title: 'Followers',
-                    assetConstant: IsmLiveAssetConstants.profileUser,
-                  ),
-                  IsmLiveEndStreamContainer(
-                    points: '\$${controller.streamAnalytis?.totalEarning ?? 0}',
-                    title: 'Earnings',
-                    assetConstant: IsmLiveAssetConstants.dollar,
-                  ),
-                  GetX<IsmLiveStreamController>(
-                    builder: (controller) => IsmLiveEndStreamContainer(
-                      points: controller.streamDuration.formattedTime,
-                      title: 'Duration',
-                      assetConstant: IsmLiveAssetConstants.clock,
-                    ),
-                  ),
-                ],
+                children: IsmLiveAnalyticsOptions.optionsList.map((option) {
+                  var points = '';
+                  var title = '';
+                  Color? color;
+
+                  switch (option) {
+                    case IsmLiveAnalyticsOptions.hearts:
+                      points = '${controller.streamAnalytis?.hearts ?? 0}';
+                      title = 'Hearts';
+                      color = Colors.black;
+                      break;
+                    case IsmLiveAnalyticsOptions.order:
+                      points = '${controller.streamAnalytis?.productCount ?? 0}';
+                      title = 'Order';
+                      break;
+                    case IsmLiveAnalyticsOptions.viewers:
+                      points = '${controller.streamAnalytis?.totalViewersCount ?? 0}';
+                      title = 'Viewers';
+                      break;
+                    case IsmLiveAnalyticsOptions.followers:
+                      points = '${controller.streamAnalytis?.followers ?? 0}';
+                      title = 'Followers';
+                      break;
+                    case IsmLiveAnalyticsOptions.earnings:
+                      points = '\$${controller.streamAnalytis?.totalEarning ?? 0}';
+                      title = 'Earnings';
+                      break;
+                    case IsmLiveAnalyticsOptions.duration:
+                      return GetX<IsmLiveStreamController>(
+                        builder: (controller) => IsmLiveEndStreamContainer(
+                          points: controller.streamDuration.formattedTime,
+                          title: 'Duration',
+                          assetConstant: option.icon,
+                        ),
+                      );
+                  }
+
+                  return IsmLiveEndStreamContainer(
+                    points: points,
+                    title: title,
+                    assetConstant: option.icon,
+                    color: color,
+                  );
+                }).toList(),
               ),
             ],
           ),

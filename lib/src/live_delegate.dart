@@ -46,6 +46,8 @@ class IsmLiveDelegate {
 
   static List<IsmLiveStreamOption> pkOptions = [];
 
+  static List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = [];
+
   static Widget? homeScreen;
 
   static Widget? endStreamScreen;

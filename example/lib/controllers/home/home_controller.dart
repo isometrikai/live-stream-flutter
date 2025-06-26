@@ -93,7 +93,15 @@ class HomeController extends GetxController {
             ColorsValue.gradientStart,
             ColorsValue.gradientEnd,
           ],
-        )
+        ),
+      liveAnalyticsOptions: [
+        IsmLiveAnalyticsOptions.hearts,
+        IsmLiveAnalyticsOptions.viewers,
+        IsmLiveAnalyticsOptions.followers,
+        IsmLiveAnalyticsOptions.earnings,
+        IsmLiveAnalyticsOptions.duration,
+
+      ]
     );
   }
 

@@ -99,6 +99,7 @@ class IsmLiveApp extends StatelessWidget {
     List<IsmLiveStreamOption> rtmpOptions = const [],
     List<IsmLiveStreamOption> copublisherOptions = const [],
     List<IsmLiveStreamOption> pkOptions = const [],
+    List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = const [],
     Widget? homeScreen,
     void Function(String userId)? openUserProfileView,
     String Function(String key)? getUserProfileUrl,
@@ -135,6 +136,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.getUserProfileUrl = getUserProfileUrl;
     IsmLiveDelegate.ismLiveButtonConfig = ismLiveButtonConfig;
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
+    IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();
