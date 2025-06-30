@@ -147,10 +147,11 @@ class LocalNotificationService {
     // #4
     const id = 0;
 
+    /*
+    remove from dependency update 18.0.1 -> 19.3.0
+    * */
     await flutterLocalNotificationsPlugin.zonedSchedule(
         id, title, body, scheduleTime, noticeDetail,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         payload: jsonEncode(payload));
   }
