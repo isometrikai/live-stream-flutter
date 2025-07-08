@@ -47,57 +47,63 @@ class IsmLiveStreamView extends StatelessWidget {
       ),
     );
     log('IsmLiveStreamView: isHost: $isHost');
-    if (isHost) {
-      return _IsmLiveStreamView(
-        key: key,
-        streamImage: streamImage,
-        streamId: streamId,
-        isHost: isHost,
-        isNewStream: isNewStream,
-        isInteractive: isInteractive,
-        isSchedule: isSchedule,
-      );
-    } else if (!isScrolling) {
-      return _IsmLiveStreamView(
-        key: key,
-        streamImage: streamImage,
-        streamId: streamId,
-        isHost: false,
-        isNewStream: false,
-        isInteractive: isInteractive,
-        isSchedule: isSchedule,
-      );
-    }
-    return GetX<IsmLiveStreamController>(
-      initState: (_) {
-        var controller = Get.find<IsmLiveStreamController>();
-
-        IsmLiveUtility.updateLater(() {
-          controller.previousStreamIndex =
-              controller.pageController?.page?.toInt() ?? 0;
-        });
-      },
-      builder: (controller) => PageView.builder(
-        itemCount: controller.streams.length,
-        controller: controller.pageController,
-        scrollDirection: Axis.vertical,
-        pageSnapping: true,
-        onPageChanged: (index) => controller.onStreamScroll(
-          index: index,
-        ),
-        itemBuilder: (_, index) {
-          final stream = controller.streams[index];
-          return _IsmLiveStreamView(
-            key: key,
-            streamImage: stream.streamImage,
-            streamId: stream.streamId ?? '',
-            isHost: false,
-            isNewStream: false,
-            isInteractive: isInteractive,
-            isSchedule: isSchedule,
-          );
-        },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // For iOS
       ),
+      child: isHost
+          ? _IsmLiveStreamView(
+              key: key,
+              streamImage: streamImage,
+              streamId: streamId,
+              isHost: isHost,
+              isNewStream: isNewStream,
+              isInteractive: isInteractive,
+              isSchedule: isSchedule,
+            )
+          : (!isScrolling)
+              ? _IsmLiveStreamView(
+                  key: key,
+                  streamImage: streamImage,
+                  streamId: streamId,
+                  isHost: false,
+                  isNewStream: false,
+                  isInteractive: isInteractive,
+                  isSchedule: isSchedule,
+                )
+              : GetX<IsmLiveStreamController>(
+                  initState: (_) {
+                    var controller = Get.find<IsmLiveStreamController>();
+
+                    IsmLiveUtility.updateLater(() {
+                      controller.previousStreamIndex =
+                          controller.pageController?.page?.toInt() ?? 0;
+                    });
+                  },
+                  builder: (controller) => PageView.builder(
+                    itemCount: controller.streams.length,
+                    controller: controller.pageController,
+                    scrollDirection: Axis.vertical,
+                    pageSnapping: true,
+                    onPageChanged: (index) => controller.onStreamScroll(
+                      index: index,
+                    ),
+                    itemBuilder: (_, index) {
+                      final stream = controller.streams[index];
+                      return _IsmLiveStreamView(
+                        key: key,
+                        streamImage: stream.streamImage,
+                        streamId: stream.streamId ?? '',
+                        isHost: false,
+                        isNewStream: false,
+                        isInteractive: isInteractive,
+                        isSchedule: isSchedule,
+                      );
+                    },
+                  ),
+                ),
     );
   }
 }
@@ -144,174 +150,192 @@ class _IsmLiveStreamView extends StatelessWidget {
         builder: (controller) => PopScope(
           canPop: false,
           child: Scaffold(
+            extendBodyBehindAppBar: true,
             backgroundColor:
                 context.liveTheme?.streamBackgroundColor ?? IsmLiveColors.black,
-            body: Stack(
-              children: [
-                IsmLiveStreamBanner(streamImage),
-                const _TopDarkGradient(),
-                IsmLivePublisherGrid(
-                  streamImage: streamImage ?? '',
-                  isInteractive: isInteractive,
-                ),
-                const _BottomDarkGradient(),
-                Align(
-                  alignment: IsmLiveApp.headerPosition,
-                  child: Obx(
-                    () => ((controller.room?.localParticipant != null) &&
-                                IsmLiveApp.showHeader) ||
-                            isSchedule
-                        ? IsmLiveApp.streamHeader?.call(
-                              context,
-                              controller.hostDetails,
-                              controller.descriptionController.text,
-                            ) ??
-                            _StreamHeader(streamId: controller.streamId ?? '')
-                        : IsmLiveDimens.box0,
-                  ),
-                ),
-                Obx(
-                  () => (controller.room?.localParticipant != null)
-                      ? SafeArea(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: IsmLiveDimens.edgeInsets8_0,
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Expanded(
-                                        child: IsmLiveApp.bottomBuilder?.call(
-                                              context,
-                                              controller.hostDetails,
-                                              controller
-                                                  .descriptionController.text,
-                                            ) ??
-                                            Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IsmLiveChatView(
-                                                  isHost: controller.isHost,
-                                                  streamId: streamId,
+            body: SafeArea(
+              top: false,
+              child: Container(
+                color: Colors.black, // Ensures status bar area is always dark
+                child: Stack(
+                  children: [
+                    Container(
+                        color:
+                            Colors.black), // Bottom-most layer for status bar
+                    IsmLiveStreamBanner(streamImage),
+                    const _TopDarkGradient(),
+                    IsmLivePublisherGrid(
+                      streamImage: streamImage ?? '',
+                      isInteractive: isInteractive,
+                    ),
+                    const _BottomDarkGradient(),
+                    Align(
+                      alignment: IsmLiveApp.headerPosition,
+                      child: Obx(
+                        () => ((controller.room?.localParticipant != null) &&
+                                    IsmLiveApp.showHeader) ||
+                                isSchedule
+                            ? IsmLiveApp.streamHeader?.call(
+                                  context,
+                                  controller.hostDetails,
+                                  controller.descriptionController.text,
+                                ) ??
+                                _StreamHeader(
+                                    streamId: controller.streamId ?? '')
+                            : IsmLiveDimens.box0,
+                      ),
+                    ),
+                    Obx(
+                      () => (controller.room?.localParticipant != null)
+                          ? SafeArea(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: IsmLiveDimens.edgeInsets8_0,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            child: IsmLiveApp.bottomBuilder
+                                                    ?.call(
+                                                  context,
+                                                  controller.hostDetails,
+                                                  controller
+                                                      .descriptionController
+                                                      .text,
+                                                ) ??
+                                                Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    IsmLiveChatView(
+                                                      isHost: controller.isHost,
+                                                      streamId: streamId,
+                                                    ),
+                                                    IsmLiveDimens.boxHeight8,
+                                                  ],
                                                 ),
-                                                IsmLiveDimens.boxHeight8,
-                                              ],
-                                            ),
+                                          ),
+                                          IsmLiveControlsWidget(
+                                            isHost: isHost,
+                                            isCopublishing:
+                                                controller.isCopublisher,
+                                            streamId: controller.streamId ?? '',
+                                          ),
+                                        ],
                                       ),
-                                      IsmLiveControlsWidget(
-                                        isHost: isHost,
-                                        isCopublishing:
-                                            controller.isCopublisher,
-                                        streamId: controller.streamId ?? '',
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                  IsmLiveApp.inputBuilder?.call(
+                                        context,
+                                        IsmLiveMessageField(
+                                          streamId: controller.streamId ?? '',
+                                          isHost: controller.isPublishing,
+                                        ),
+                                      ) ??
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: IsmLiveDimens.twelve),
+                                        child: IsmLiveMessageField(
+                                          streamId: controller.streamId ?? '',
+                                          isHost: controller.isPublishing,
+                                        ),
+                                      ),
+                                  IsmLiveDimens.boxHeight8,
+                                  if (IsmLiveApp
+                                      .endStreamPosition.isBottomAligned)
+                                    ...[],
+                                  if (controller.showEmojiBoard)
+                                    const IsmLiveEmojis(),
+                                ],
                               ),
-                              IsmLiveApp.inputBuilder?.call(
-                                    context,
-                                    IsmLiveMessageField(
-                                      streamId: controller.streamId ?? '',
-                                      isHost: controller.isPublishing,
-                                    ),
-                                  ) ??
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: IsmLiveDimens.twelve),
-                                    child: IsmLiveMessageField(
-                                      streamId: controller.streamId ?? '',
-                                      isHost: controller.isPublishing,
-                                    ),
-                                  ),
-                              IsmLiveDimens.boxHeight8,
-                              if (IsmLiveApp.endStreamPosition.isBottomAligned)
-                                ...[],
-                              if (controller.showEmojiBoard)
-                                const IsmLiveEmojis(),
-                            ],
+                            )
+                          : isSchedule
+                              ? const ScheduleStreamView()
+                              : const SizedBox.shrink(),
+                    ),
+                    Align(
+                      alignment: IsmLiveApp.endStreamPosition,
+                      child: IsmLiveApp.endButton ??
+                          IsmLiveEndStreamButton(
+                            onTapExit: () => controller.onExit(
+                              isHost: controller.isHost,
+                              streamId: streamId,
+                            ),
                           ),
-                        )
-                      : isSchedule
-                          ? const ScheduleStreamView()
-                          : const SizedBox.shrink(),
-                ),
-                Align(
-                  alignment: IsmLiveApp.endStreamPosition,
-                  child: IsmLiveApp.endButton ??
-                      IsmLiveEndStreamButton(
-                        onTapExit: () => controller.onExit(
-                          isHost: controller.isHost,
-                          streamId: streamId,
+                    ),
+                    if (controller.isHost) ...[
+                      Positioned(
+                        bottom: IsmLiveDimens.eighty,
+                        left: IsmLiveDimens.sixteen,
+                        child: const IsmLiveModerationWarning(),
+                      ),
+                      if (isNewStream)
+                        const IsmLiveCounterView(
+                          onCompleteSheet: YourLiveSheet(),
+                        ),
+                    ],
+                    if (controller.isPk &&
+                        !(controller.pkStages?.isPkStart ?? false) &&
+                        ((controller.userRole?.isPkGuest ?? false) ||
+                            (controller.userRole?.isHost ?? false)) &&
+                        !controller.animationController.isCompleted &&
+                        controller.participantTracks.length == 2) ...[
+                      AnimatedBuilder(
+                        animation: controller.alignmentAnimation,
+                        builder: (context, child) => AnimatedAlign(
+                          alignment: controller.alignmentAnimation.value,
+                          duration: const Duration(
+                            milliseconds: 100,
+                          ),
+                          child:
+                              const IsmLiveImage.svg(IsmLiveAssetConstants.v),
                         ),
                       ),
+                      AnimatedBuilder(
+                        animation: controller.alignmentAnimationRight,
+                        builder: (context, child) => AnimatedAlign(
+                          alignment: controller.alignmentAnimationRight.value,
+                          duration: const Duration(
+                            milliseconds: 100,
+                          ),
+                          child:
+                              const IsmLiveImage.svg(IsmLiveAssetConstants.s),
+                        ),
+                      ),
+                    ],
+                    if ((controller.pkStages?.isPk ?? false) &&
+                        controller.animationController.isCompleted &&
+                        (controller.userRole?.isHost ?? false) &&
+                        !(controller.pkStages?.isPkStart ?? false) &&
+                        controller.participantTracks.length == 2 &&
+                        !(controller.pkStages?.isPkStop ?? false))
+                      Align(
+                        alignment: Alignment.center,
+                        child: IsmLiveTapHandler(
+                          onTap: controller.pkChallengeSheet,
+                          child: const IsmLiveImage.svg(
+                            IsmLiveAssetConstants.start,
+                          ),
+                        ),
+                      ),
+                    if ((controller.pkStages?.isPkStart ?? false) &&
+                        controller.participantTracks.length > 1)
+                      const IsmLivePkTimerContainer(),
+                    if ((controller.pkStages?.isPkStop ?? false) &&
+                        controller.pkWinnerId == null)
+                      const Align(
+                        alignment: Alignment.center,
+                        child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),
+                      ),
+                    ...controller.heartList,
+                    ...controller.giftList,
+                  ],
                 ),
-                if (controller.isHost) ...[
-                  Positioned(
-                    bottom: IsmLiveDimens.eighty,
-                    left: IsmLiveDimens.sixteen,
-                    child: const IsmLiveModerationWarning(),
-                  ),
-                  if (isNewStream)
-                    const IsmLiveCounterView(
-                      onCompleteSheet: YourLiveSheet(),
-                    ),
-                ],
-                if (controller.isPk &&
-                    !(controller.pkStages?.isPkStart ?? false) &&
-                    ((controller.userRole?.isPkGuest ?? false) ||
-                        (controller.userRole?.isHost ?? false)) &&
-                    !controller.animationController.isCompleted &&
-                    controller.participantTracks.length == 2) ...[
-                  AnimatedBuilder(
-                    animation: controller.alignmentAnimation,
-                    builder: (context, child) => AnimatedAlign(
-                      alignment: controller.alignmentAnimation.value,
-                      duration: const Duration(
-                        milliseconds: 100,
-                      ),
-                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
-                    ),
-                  ),
-                  AnimatedBuilder(
-                    animation: controller.alignmentAnimationRight,
-                    builder: (context, child) => AnimatedAlign(
-                      alignment: controller.alignmentAnimationRight.value,
-                      duration: const Duration(
-                        milliseconds: 100,
-                      ),
-                      child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
-                    ),
-                  ),
-                ],
-                if ((controller.pkStages?.isPk ?? false) &&
-                    controller.animationController.isCompleted &&
-                    (controller.userRole?.isHost ?? false) &&
-                    !(controller.pkStages?.isPkStart ?? false) &&
-                    controller.participantTracks.length == 2 &&
-                    !(controller.pkStages?.isPkStop ?? false))
-                  Align(
-                    alignment: Alignment.center,
-                    child: IsmLiveTapHandler(
-                      onTap: controller.pkChallengeSheet,
-                      child: const IsmLiveImage.svg(
-                        IsmLiveAssetConstants.start,
-                      ),
-                    ),
-                  ),
-                if ((controller.pkStages?.isPkStart ?? false) &&
-                    controller.participantTracks.length > 1)
-                  const IsmLivePkTimerContainer(),
-                if ((controller.pkStages?.isPkStop ?? false) &&
-                    controller.pkWinnerId == null)
-                  const Align(
-                    alignment: Alignment.center,
-                    child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),
-                  ),
-                ...controller.heartList,
-                ...controller.giftList,
-              ],
+              ),
             ),
           ),
         ),
