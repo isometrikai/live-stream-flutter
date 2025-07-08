@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -39,6 +39,13 @@ class IsmLiveStreamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // For iOS
+      ),
+    );
     log('IsmLiveStreamView: isHost: $isHost');
     if (isHost) {
       return _IsmLiveStreamView(
@@ -190,7 +197,6 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                   streamId: streamId,
                                                 ),
                                                 IsmLiveDimens.boxHeight8,
-
                                               ],
                                             ),
                                       ),
@@ -205,24 +211,18 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveApp.inputBuilder?.call(
-                                context,
-                                IsmLiveMessageField(
-                                  streamId: controller
-                                      .streamId ??
-                                      '',
-                                  isHost: controller
-                                      .isPublishing,
-                                ),
-                              ) ??
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: IsmLiveDimens.twelve),
-                                    child:
+                                    context,
                                     IsmLiveMessageField(
-                                      streamId: controller
-                                          .streamId ??
-                                          '',
-                                      isHost: controller
-                                          .isPublishing,
+                                      streamId: controller.streamId ?? '',
+                                      isHost: controller.isPublishing,
+                                    ),
+                                  ) ??
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: IsmLiveDimens.twelve),
+                                    child: IsmLiveMessageField(
+                                      streamId: controller.streamId ?? '',
+                                      isHost: controller.isPublishing,
                                     ),
                                   ),
                               IsmLiveDimens.boxHeight8,
@@ -336,7 +336,7 @@ class _StreamHeader extends StatelessWidget {
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
             imageUrl: controller.hostDetails?.image ?? '',
-            userIdentifier: controller.hostDetails?.userIdentifier??'',
+            userIdentifier: controller.hostDetails?.userIdentifier ?? '',
             pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
                 controller.participantTracks.length == 2,
             isPaidStream: controller.isPremium,
@@ -377,24 +377,28 @@ class _StreamHeader extends StatelessWidget {
                                 icon: Icons.group_add_rounded,
                               ),
                     onViewerProfileTap: (viewer, index) {
-                        IsmLiveUtility.openBottomSheet(
-                          StreamLiveSheet(
-                            widget: IsmLiveImage.network(
-                              IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl??'') ?? viewer.imageUrl??'',
-                              isProfileImage: true,
-                              name: viewer.userName,
-                              height: IsmLiveDimens.hundred,
-                              width: IsmLiveDimens.hundred,
-                            ),
-                            title: viewer.userName,
-                            subTitle: null,
-                            buttonLable: 'View Profile',
-                            onTap:  () {
-                              IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
-                            },
+                      IsmLiveUtility.openBottomSheet(
+                        StreamLiveSheet(
+                          widget: IsmLiveImage.network(
+                            IsmLiveDelegate.getUserProfileUrl
+                                    ?.call(viewer.imageUrl ?? '') ??
+                                viewer.imageUrl ??
+                                '',
+                            isProfileImage: true,
+                            name: viewer.userName,
+                            height: IsmLiveDimens.hundred,
+                            width: IsmLiveDimens.hundred,
                           ),
-                          isScrollController: true,
-                        );
+                          title: viewer.userName,
+                          subTitle: null,
+                          buttonLable: 'View Profile',
+                          onTap: () {
+                            IsmLiveDelegate.openUserProfileView
+                                ?.call(viewer.identifier);
+                          },
+                        ),
+                        isScrollController: true,
+                      );
                     },
                   ),
                 ),
