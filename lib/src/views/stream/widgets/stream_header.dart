@@ -304,12 +304,12 @@ class IsmLiveScheduleStreamTime extends StatelessWidget {
           color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
           borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
         ),
-        child: Text(
+        child: scheduleTime != null ? Text(
           scheduleTime!.formattedDate,
           style: context.textTheme.labelSmall?.copyWith(
             color: Colors.white,
           ),
-        ),
+        ): null,
       );
 }
 
