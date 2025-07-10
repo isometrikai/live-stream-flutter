@@ -206,8 +206,8 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 ? VideoTrackRenderer(
                     activeVideoTrack!,
                     fit: widget.showFullVideo
-                        ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
-                        : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                        ? VideoViewFit.contain
+                        : VideoViewFit.cover,
                   )
                 : NoVideoWidget(
                     name: widget.participant.name,

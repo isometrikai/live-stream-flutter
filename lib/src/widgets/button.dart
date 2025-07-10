@@ -2,6 +2,30 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// --- Custom Button Injection Support ---
+
+typedef IsmLiveCustomButtonBuilder = Widget Function(
+    BuildContext context, {
+    required String label,
+    VoidCallback? onTap,
+    required bool small,
+    required bool showBorder,
+    IconData? icon,
+    required bool secondary,
+    });
+
+class IsmLiveButtonConfig {
+  final IsmLiveCustomButtonBuilder? primaryBuilder;
+  final IsmLiveCustomButtonBuilder? secondaryBuilder;
+  final IsmLiveCustomButtonBuilder? iconBuilder;
+
+  const IsmLiveButtonConfig({
+    this.primaryBuilder,
+    this.secondaryBuilder,
+    this.iconBuilder,
+  });
+}
+
 class IsmLiveButton extends StatelessWidget {
   const IsmLiveButton({
     super.key,
@@ -82,29 +106,49 @@ class IsmLiveButton extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: _type == IsmLiveButtonType.icon ? null : 48,
-        width: _type == IsmLiveButtonType.icon ? null : double.maxFinite,
-        child: switch (_type) {
-          IsmLiveButtonType.primary => _Primary(
-              label: label,
-              onTap: onTap,
-              small: small,
-              showBorder: showBorder,
-            ),
-          IsmLiveButtonType.secondary => _Secondary(
-              label: label,
-              onTap: onTap,
-              small: small,
-              showBorder: showBorder,
-            ),
-          IsmLiveButtonType.icon => _Icon(
-              icon: icon!,
-              onTap: onTap,
-              secondary: secondary,
-            ),
-        },
+  Widget build(BuildContext context) {
+    final config = IsmLiveDelegate.ismLiveButtonConfig;
+    final builder = switch (_type) {
+      IsmLiveButtonType.primary => config?.primaryBuilder,
+      IsmLiveButtonType.secondary => config?.secondaryBuilder,
+      IsmLiveButtonType.icon => config?.iconBuilder,
+    };
+
+    if (builder != null) {
+      return builder(
+        context,
+        label: label,
+        onTap: onTap,
+        small: small,
+        showBorder: showBorder,
+        icon: icon,
+        secondary: secondary,
       );
+    }
+    return SizedBox(
+      height: _type == IsmLiveButtonType.icon ? null : 48,
+      width: _type == IsmLiveButtonType.icon ? null : double.maxFinite,
+      child: switch (_type) {
+        IsmLiveButtonType.primary => _Primary(
+            label: label,
+            onTap: onTap,
+            small: small,
+            showBorder: showBorder,
+          ),
+        IsmLiveButtonType.secondary => _Secondary(
+            label: label,
+            onTap: onTap,
+            small: small,
+            showBorder: showBorder,
+          ),
+        IsmLiveButtonType.icon => _Icon(
+            icon: icon!,
+            onTap: onTap,
+            secondary: secondary,
+          ),
+      },
+    );
+  }
 }
 
 class _Primary extends StatelessWidget {

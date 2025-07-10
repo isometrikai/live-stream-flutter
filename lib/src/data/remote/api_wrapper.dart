@@ -44,7 +44,7 @@ class IsmLiveApiWrapper {
 
     final uri = Uri.parse(url);
 
-    IsmLiveLog.info('[Request] - ${type.name.toUpperCase()} - $uri\n$payload');
+    IsmLiveLog.info('[Request] - ${type.name.toUpperCase()} - $uri\nHeaders :- $headers\n$payload');
 
     if (showLoader) IsmLiveUtility.showLoader(message);
     if (await IsmLiveUtility.isNetworkAvailable) {

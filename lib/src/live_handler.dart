@@ -69,6 +69,12 @@ class IsmLiveHandler {
     if (Get.isRegistered<IsmLiveMqttController>()) {
       unawaited(Get.delete<IsmLiveMqttController>(force: true));
     }
+    if (Get.isRegistered<IsmLiveApiWrapper>()) {
+      unawaited(Get.delete<IsmLiveApiWrapper>(force: true));
+    }
+    if (Get.isRegistered<IsmLiveDBWrapper>()) {
+      unawaited(Get.delete<IsmLiveDBWrapper>(force: true));
+    }
     IsmLiveUtility.config = null;
     (logoutCallback ?? onLogout)?.call();
 

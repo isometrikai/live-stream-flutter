@@ -30,32 +30,54 @@ class IsmLiveUsersSheet extends StatelessWidget {
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
             final user = controller.usersList[index];
-
+            final imageUrl = IsmLiveDelegate.getUserProfileUrl?.call(user.profileUrl) ?? user.profileUrl;
             var notShowbotton = controller.checkCanMakeModerator(user.userId);
 
-            return ListTile(
-              leading: IsmLiveImage.network(
-                user.profileUrl,
-                name: user.userName,
-                dimensions: IsmLiveDimens.forty,
-                isProfileImage: true,
-              ),
-              title: Text(user.userName),
-              subtitle: Text(user.userIdentifier),
-              trailing: notShowbotton
-                  ? null
-                  : IsmLiveButton.icon(
-                      icon: Icons.person_add_rounded,
-                      onTap: () {
-                        controller.makeModerator(
-                          moderatorId: user.userId,
-                          streamId: controller.streamId ?? '',
-                        );
-
-                        Get.back();
-                        Get.back();
-                      },
+            return InkWell(
+              onTap: (){
+                IsmLiveUtility.openBottomSheet(
+                  StreamLiveSheet(
+                    widget: IsmLiveImage.network(
+                      imageUrl,
+                      isProfileImage: true,
+                      name: user.userName,
+                      height: IsmLiveDimens.hundred,
+                      width: IsmLiveDimens.hundred,
                     ),
+                    title: user.userName,
+                    subTitle: null ,
+                    buttonLable: 'View Profile',
+                    onTap: () {
+                      IsmLiveDelegate.openUserProfileView?.call(user.userIdentifier);
+                    },
+                  ),
+                  isScrollController: true,
+                );
+              },
+              child: ListTile(
+                leading: IsmLiveImage.network(
+                  imageUrl,
+                  name: user.userName,
+                  dimensions: IsmLiveDimens.forty,
+                  isProfileImage: true,
+                ),
+                title: Text(user.userName),
+                subtitle: Text(user.userName),
+                trailing: notShowbotton
+                    ? null
+                    : IsmLiveButton.icon(
+                        icon: Icons.person_add_rounded,
+                        onTap: () {
+                          controller.makeModerator(
+                            moderatorId: user.userId,
+                            streamId: controller.streamId ?? '',
+                          );
+
+                          Get.back();
+                          Get.back();
+                        },
+                      ),
+              ),
             );
           },
         ),

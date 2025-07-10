@@ -14,6 +14,10 @@ class IsmLiveDelegate {
 
   static VoidCallback? onStreamEnd;
 
+  static Function(String userId)? openUserProfileView;
+
+  static String Function(String key)? getUserProfileUrl;
+
   static Function(String id)? subscribStreamById;
 
   static Function(String id)? unsubscribStreamById;
@@ -42,6 +46,8 @@ class IsmLiveDelegate {
 
   static List<IsmLiveStreamOption> pkOptions = [];
 
+  static List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = [];
+
   static Widget? homeScreen;
 
   static Widget? endStreamScreen;
@@ -62,8 +68,11 @@ class IsmLiveDelegate {
 
   static bool? recordeStream;
 
-  Future<void> initialize(
-    IsmLiveConfigData config, {
+  static IsmLiveButtonConfig? ismLiveButtonConfig;
+
+  static LinearGradient? streamOptionsBgGradient;
+
+  Future<void> initialize(IsmLiveConfigData config, {
     VoidCallback? onEndStream,
   }) async {
     onStreamEnd = onEndStream;

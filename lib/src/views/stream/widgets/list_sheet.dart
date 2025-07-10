@@ -10,12 +10,14 @@ class IsmLiveListSheet extends StatelessWidget {
     required this.items,
     this.trailing,
     this.scrollController,
+    this.onViewerProfileTap,
   });
 
   final String? title;
   final List<IsmLiveViewerModel> items;
   final ViewerBuilder? trailing;
   final ScrollController? scrollController;
+  final Function(IsmLiveViewerModel, int)? onViewerProfileTap;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -54,19 +56,24 @@ class IsmLiveListSheet extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var viewer = items[index];
                     return ListTile(
+                      onTap: onViewerProfileTap != null
+                          ? () => onViewerProfileTap!(items[index], index)
+                          : null,
                       contentPadding: IsmLiveDimens.edgeInsets0,
-                      leading: IsmLiveImage.network(
-                        viewer.imageUrl ?? '',
-                        name: viewer.userName,
-                        dimensions: IsmLiveDimens.forty,
-                        isProfileImage: true,
+                      leading: InkWell(
+                        child: IsmLiveImage.network(
+                          IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl ?? '') ?? viewer.imageUrl??'',
+                          name: viewer.userName,
+                          dimensions: IsmLiveDimens.forty,
+                          isProfileImage: true,
+                        ),
                       ),
                       title: Text(
                         '@${viewer.userName}',
                         style: context.textTheme.titleMedium,
                       ),
                       subtitle: Text(
-                        viewer.identifier,
+                        viewer.userName,
                         style: context.textTheme.bodySmall,
                       ),
                       trailing: trailing?.call(context, viewer),

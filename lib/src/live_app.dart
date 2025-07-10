@@ -34,7 +34,7 @@ class IsmLiveApp extends StatelessWidget {
     bool shouldInitializeMqtt = true,
     List<String>? mqttTopics,
     List<String>? mqttTopicChannels,
-    VoidCallback? onStreamEnd,
+    VoidCallback? onStreamEnd
   }) async {
     if (_initialized) {
       return;
@@ -99,7 +99,12 @@ class IsmLiveApp extends StatelessWidget {
     List<IsmLiveStreamOption> rtmpOptions = const [],
     List<IsmLiveStreamOption> copublisherOptions = const [],
     List<IsmLiveStreamOption> pkOptions = const [],
+    List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = const [],
     Widget? homeScreen,
+    void Function(String userId)? openUserProfileView,
+    String Function(String key)? getUserProfileUrl,
+    IsmLiveButtonConfig? ismLiveButtonConfig,
+    LinearGradient? streamOptionsBgGradient,
   }) {
     assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -127,6 +132,11 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.endStreamScreen = endStreamScreen;
     IsmLiveDelegate.subscribStreamById = subscribStreamById;
     IsmLiveDelegate.unsubscribStreamById = unsubscribStreamById;
+    IsmLiveDelegate.openUserProfileView = openUserProfileView;
+    IsmLiveDelegate.getUserProfileUrl = getUserProfileUrl;
+    IsmLiveDelegate.ismLiveButtonConfig = ismLiveButtonConfig;
+    IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
+    IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();

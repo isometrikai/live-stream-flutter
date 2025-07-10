@@ -48,4 +48,10 @@ class IsmLiveStyles {
     fontSize: IsmLiveDimens.twenty,
     fontWeight: FontWeight.bold,
   );
+  static TextStyle whiteBold15 = TextStyle(
+    color: IsmLiveColors.white,
+    fontWeight: FontWeight.bold,
+    fontSize: IsmLiveDimens.fifteen,
+  );
+
 }

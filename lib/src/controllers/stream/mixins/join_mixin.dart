@@ -132,6 +132,7 @@ mixin StreamJoinMixin {
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 
+
     // Connect to the stream
     await connectStream(
       token: token,
@@ -312,7 +313,7 @@ mixin StreamJoinMixin {
       var room = lk.Room(
         roomOptions: lk.RoomOptions(
           defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-            cameraPosition: lk.CameraPosition.front,
+            cameraPosition: lk.CameraPosition.back,
             params: videoQuality,
           ),
           defaultAudioCaptureOptions: const lk.AudioCaptureOptions(

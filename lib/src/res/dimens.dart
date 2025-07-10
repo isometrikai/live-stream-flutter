@@ -47,6 +47,7 @@ class IsmLiveDimens {
   static final double thirtyTwo = 32.sp;
 
   static final double forty = 40.sp;
+  static final double fourtyFour = 44.sp;
   static final double fortyFive = 45.sp;
   static final double fifty = 50.sp;
   static final double fiftyFive = 55.sp;
@@ -86,6 +87,7 @@ class IsmLiveDimens {
   static final Widget boxWidth8 = SizedBox(width: eight);
   static final Widget boxWidth10 = SizedBox(width: ten);
   static final Widget boxWidth12 = SizedBox(width: twelve);
+  static final Widget boxWidth15 = SizedBox(width: fifteen);
   static final Widget boxWidth16 = SizedBox(width: sixteen);
   static final Widget boxWidth20 = SizedBox(width: twenty);
   static final Widget boxWidth24 = SizedBox(width: twentyFour);
@@ -155,4 +157,7 @@ class IsmLiveDimens {
       EdgeInsets.symmetric(horizontal: sixteen, vertical: eight);
   static final EdgeInsets edgeInsets16_10 =
       EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
+
+  static EdgeInsets edgeInsetsAll(double allSide) => EdgeInsets.all(allSide);
+
 }

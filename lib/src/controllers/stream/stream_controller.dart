@@ -192,7 +192,7 @@ class IsmLiveStreamController extends GetxController
   set participantList(List<IsmLiveParticipantTrack> value) =>
       _participantList.value = value;
 
-  lk.CameraPosition position = lk.CameraPosition.front;
+  lk.CameraPosition position = lk.CameraPosition.back;
 
   late TabController tabController;
   // late TabController giftsTabController;

@@ -11,11 +11,13 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
     required this.rightLabel,
     this.onRight,
   });
+
   final String title;
   final String leftLabel;
   final String rightLabel;
   final VoidCallback? onLeft;
   final VoidCallback? onRight;
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
@@ -23,24 +25,28 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IsmLiveDimens.boxHeight10,
-            Text(
-              title,
-              style: context.textTheme.titleLarge,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+              child: Text(
+                title,
+                style: context.textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
             ),
             IsmLiveDimens.boxHeight20,
             Row(
               children: [
                 Expanded(
                   child: IsmLiveButton.secondary(
-                    label: leftLabel,
                     onTap: onLeft,
+                    label: leftLabel,
                   ),
                 ),
                 IsmLiveDimens.boxWidth16,
                 Expanded(
                   child: IsmLiveButton(
-                    label: rightLabel,
                     onTap: onRight,
+                    label: rightLabel,
                   ),
                 ),
               ],

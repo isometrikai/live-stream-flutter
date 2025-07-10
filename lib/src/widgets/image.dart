@@ -258,9 +258,10 @@ class _ErrorImage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isProfileImage
-              ? context.liveTheme?.primaryColor
-              : IsmLiveColors.secondary,
+          color: IsmLiveColors.lightGray.withOpacity(0.3),
+          // color: isProfileImage
+          //     ? context.liveTheme?.primaryColor
+          //     : IsmLiveColors.secondary,
           shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
         ),
         child: !showError || isProfileImage

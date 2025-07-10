@@ -8,11 +8,13 @@ class IsmLiveHostDetail extends StatelessWidget {
     required this.imageUrl,
     required this.description,
     required this.isHost,
+    required this.userIdentifier,
   });
 
   final String name;
   final String imageUrl;
   final String description;
+  final String userIdentifier;
   final bool isHost;
 
   Color _color(BuildContext context) =>
@@ -32,8 +34,10 @@ class IsmLiveHostDetail extends StatelessWidget {
               ),
               title: name,
               subTitle: description.trim().isEmpty ? null : description,
-              buttonLable: isHost ? null : 'Follow',
-              onTap: isHost ? null : () {},
+              buttonLable: isHost ? null : 'View Profile',
+              onTap: isHost ? null : () {
+                IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
+              },
             ),
             isScrollController: true,
           );

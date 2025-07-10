@@ -21,6 +21,7 @@ class IsmLiveApis {
 
 //PK apis end point
   static const String baseUrlStream = 'https://service-apis.isometrik.io';
+  static const String baseUrlWallet = 'https://apinew.isometrik.ai';
 
   static const String _live = '/live/v1';
   static const String newStream = '$_live/stream';
@@ -47,7 +48,7 @@ class IsmLiveApis {
   static const String fetchTransactions = '/v1/transaction/user';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
-  static const String sendGiftToStreamer = '/v4/giftTransfer';
+  static const String sendGiftToStreamer = '/live/v4/giftTransfer';
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
   static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
 

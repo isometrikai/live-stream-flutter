@@ -1,9 +1,11 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component_example/controllers/home/custom_button.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -50,6 +52,57 @@ class HomeController extends GetxController {
       ),
     );
     await IsmLiveApp.initialize(configData);
+    IsmLiveApp.configureInterface(
+      hostOptions: [
+        IsmLiveStreamOption.bars,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.rotateCamera,
+        IsmLiveStreamOption.settings,
+      ],
+      viewersOptions: [
+        IsmLiveStreamOption.gift,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.speaker,
+        IsmLiveStreamOption.heart,
+      ],
+      ismLiveButtonConfig: IsmLiveButtonConfig(
+        primaryBuilder: (context,
+                {required label,
+                onTap,
+                required small,
+                required showBorder,
+                icon,
+                required secondary}) =>
+            CustomButton(
+          title: label,
+          onPress: onTap,
+        ),
+        secondaryBuilder: (context,
+                {required label,
+                onTap,
+                required small,
+                required showBorder,
+                icon,
+                required secondary}) =>
+            CustomButton(title: label, onPress: onTap, onlyBorder: true),
+      ),
+        streamOptionsBgGradient : const LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            ColorsValue.gradientStart,
+            ColorsValue.gradientEnd,
+          ],
+        ),
+      liveAnalyticsOptions: [
+        IsmLiveAnalyticsOptions.hearts,
+        IsmLiveAnalyticsOptions.viewers,
+        IsmLiveAnalyticsOptions.followers,
+        IsmLiveAnalyticsOptions.earnings,
+        IsmLiveAnalyticsOptions.duration,
+
+      ]
+    );
   }
 
   @override

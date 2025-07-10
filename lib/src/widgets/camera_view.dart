@@ -26,7 +26,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
   late CameraController cameraControllerback;
   var isRecording = false;
   var flash = false;
-  var isCameraFront = true;
+  var isCameraFront = false;
   Timer? timer;
   var duration = const Duration();
 

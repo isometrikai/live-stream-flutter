@@ -9,12 +9,14 @@ class CustomIconButton extends StatelessWidget {
     this.onTap,
     this.color,
     this.dimension,
+    this.gradient,
   });
   final Widget icon;
   final double? radius;
   final VoidCallback? onTap;
   final Color? color;
   final double? dimension;
+  final LinearGradient? gradient;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -23,9 +25,9 @@ class CustomIconButton extends StatelessWidget {
           height: dimension,
           width: dimension,
           decoration: BoxDecoration(
-            borderRadius:
-                radius == null ? null : BorderRadius.circular(radius!),
-            color: color ?? Colors.black12,
+            borderRadius: radius == null ? null : BorderRadius.circular(radius!),
+            color: gradient==null ? color : null ,
+            gradient: gradient ?? null,
             shape: radius == null ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: UnconstrainedBox(child: icon),

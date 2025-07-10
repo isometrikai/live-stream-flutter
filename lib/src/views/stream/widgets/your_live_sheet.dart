@@ -11,34 +11,65 @@ class YourLiveSheet extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: IsmLiveDimens.edgeInsets16,
+  Widget build(BuildContext context) => Stack(
+    alignment: Alignment.topCenter,
+    children: [
+      // Bottom Sheet Background
+      Container(
+        margin: const EdgeInsets.only(top: 40),
+        // push down to make room for circle
+        padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
+        // top padding for content
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius:
+          BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IsmLiveDimens.boxHeight16,
-            Text(
-              'You\'re Live',
-              style: IsmLiveStyles.blackBold16,
-            ),
-            IsmLiveDimens.boxHeight8,
-            Padding(
-              padding: IsmLiveDimens.edgeInsets40_0,
-              child: const Text(
-                'We’ve sent a notification to all your followers , and they should be joining soon',
-                textAlign: TextAlign.center,
+            const SizedBox(height: 20),
+            const Text(
+              IsmLiveStrings.youAreLiveNow,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
             ),
-            IsmLiveDimens.boxHeight16,
-            IsmLiveButton(
-              label: 'Ok',
-              onTap: () {
-                Get.back();
-                onTap?.call();
-              },
+            const SizedBox(height: 10),
+            const Text(
+              IsmLiveStrings.weSentNotificationToFollowersText,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: double.infinity,
+              child: IsmLiveButton(
+                onTap: () {
+                  Get.back();
+                  onTap?.call();
+                },
+                label: IsmLiveStrings.tvContinue,
+              ),
             ),
           ],
         ),
-      );
+      ),
+      // Circle Icon Overlapping Top
+      const CircleAvatar(
+        radius: 40,
+        backgroundColor: Colors.transparent,
+        child: SizedBox(
+          width: 80,
+          height: 80,
+          child: ClipOval(
+            child: IsmLiveImage.svg(
+              IsmLiveAssetConstants.iamatLogo,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }

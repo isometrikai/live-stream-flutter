@@ -9,25 +9,59 @@ class IsmLiveModerationWarning extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: updateId,
-        builder: (controller) => Offstage(
-          offstage: !controller.isModerationWarningVisible,
-          child: SizedBox(
-            width: Get.width * 0.8,
-            child: SafeArea(
+    id: updateId,
+    builder: (controller) => Offstage(
+      offstage: !controller.isModerationWarningVisible,
+      child: SizedBox(
+        width: Get.width * 0.8,
+        child: SafeArea(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: IsmLiveColors.black.withAlpha(50),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
+
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    context.liveTranslations?.streamTranslations
-                            ?.moderationWarning ??
-                        IsmLiveStrings.moderationWarning,
-                    style: context.textTheme.labelMedium?.copyWith(
+                  Text(IsmLiveStrings.broadcastingRulesTitle,
+                    style: context.textTheme.headlineSmall?.copyWith(
                       color: IsmLiveColors.white,
                     ),
                   ),
+                  IsmLiveDimens.boxHeight16,
+                  Text(IsmLiveStrings.welcomeToStreamRulesText,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: IsmLiveColors.white.withAlpha(200),
+                    ),
+                  ),
+                  IsmLiveDimens.boxHeight16,
+                  Text(IsmLiveStrings.viewerConductTitle,
+                    style: context.textTheme.headlineSmall?.copyWith(
+                      color: IsmLiveColors.white,
+                    ),
+                  ),
+                  IsmLiveDimens.boxHeight16,
+
+                  Text(IsmLiveStrings.broadcastingRulesText,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: IsmLiveColors.white.withAlpha(200),
+                    ),
+                  ),
+
+                  IsmLiveDimens.boxHeight16,
+
+                  Text(IsmLiveStrings.noSpammingText,
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: IsmLiveColors.white.withAlpha(200),
+                    ),
+                  ),
+
                   IsmLiveDimens.boxHeight10,
+
                   SizedBox(
                     width: Get.width * 0.5,
                     child: IsmLiveButton(
@@ -43,5 +77,7 @@ class IsmLiveModerationWarning extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

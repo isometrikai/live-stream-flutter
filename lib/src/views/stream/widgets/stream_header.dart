@@ -16,6 +16,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
     this.winnerName,
     required this.streamCoins,
     required this.isPaidStream,
+    required this.userIdentifier,
   });
 
   final String name;
@@ -24,6 +25,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
   final String description;
   final String imageUrl;
   final String streamCoins;
+  final String userIdentifier;
 
   final bool pkCompleted;
   final bool isBattleTie;
@@ -39,15 +41,16 @@ class IsmLiveStreamHeader extends StatelessWidget {
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IsmLiveDimens.boxWidth10,
               IsmLiveHostDetail(
-                imageUrl: imageUrl,
+                imageUrl: IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
                 name: name,
                 description: description,
                 isHost: Get.find<IsmLiveStreamController>().isHost,
+                userIdentifier: userIdentifier,
               ),
               IsmLiveDimens.boxWidth10,
               IsmLiveModeratorCount(onTap: onTapModerators),
@@ -144,22 +147,25 @@ class IsmLiveViewerCount extends StatelessWidget {
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
             color: Colors.white24,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.remove_red_eye,
-                color: IsmLiveColors.white,
-                size: IsmLiveDimens.sixteen,
-              ),
-              IsmLiveDimens.boxWidth4,
-              GetX<IsmLiveStreamController>(
-                builder: (controller) => Text(
-                  controller.streamViewersList.length.toString(),
-                  style: IsmLiveStyles.white12,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.remove_red_eye,
+                  color: IsmLiveColors.white,
+                  size: IsmLiveDimens.sixteen,
                 ),
-              ),
-            ],
+                IsmLiveDimens.boxWidth4,
+                GetX<IsmLiveStreamController>(
+                  builder: (controller) => Text(
+                    controller.streamViewersList.length.toString(),
+                    style: IsmLiveStyles.white12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -213,12 +219,12 @@ class _LiveTimer extends StatelessWidget {
               scheduleTime: controller.streamDetails?.scheduleStartTime,
             ),
           IsmLiveDimens.boxWidth10,
-          IsmLiveStreamMemberCount(
-            onTap: () => IsmLiveUtility.openBottomSheet(
-              const IsmLiveMembersSheet(),
-              isScrollController: true,
-            ),
-          ),
+          // IsmLiveStreamMemberCount(
+          //   onTap: () => IsmLiveUtility.openBottomSheet(
+          //     const IsmLiveMembersSheet(),
+          //     isScrollController: true,
+          //   ),
+          // ),
           if (isPaidStream) ...[
             IsmLiveDimens.boxWidth10,
             IsmLiveCoins(
@@ -298,12 +304,12 @@ class IsmLiveScheduleStreamTime extends StatelessWidget {
           color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
           borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
         ),
-        child: Text(
+        child: scheduleTime != null ? Text(
           scheduleTime!.formattedDate,
           style: context.textTheme.labelSmall?.copyWith(
             color: Colors.white,
           ),
-        ),
+        ): null,
       );
 }
 
@@ -316,7 +322,7 @@ class IsmLiveLabel extends StatelessWidget {
           color: IsmLiveApp.isMqttConnected
               ? IsmLiveColors.green
               : IsmLiveColors.red,
-          borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+          borderRadius: BorderRadius.circular(IsmLiveDimens.six),
         ),
         child: Padding(
           padding: IsmLiveDimens.edgeInsets8_4,
