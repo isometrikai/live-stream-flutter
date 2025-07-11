@@ -30,11 +30,13 @@ class IsmLiveUsersSheet extends StatelessWidget {
           itemCount: controller.usersList.length,
           itemBuilder: (context, index) {
             final user = controller.usersList[index];
-            final imageUrl = IsmLiveDelegate.getUserProfileUrl?.call(user.profileUrl) ?? user.profileUrl;
+            final imageUrl =
+                IsmLiveDelegate.getUserProfileUrl?.call(user.profileUrl) ??
+                    user.profileUrl;
             var notShowbotton = controller.checkCanMakeModerator(user.userId);
 
             return InkWell(
-              onTap: (){
+              onTap: () {
                 IsmLiveUtility.openBottomSheet(
                   StreamLiveSheet(
                     widget: IsmLiveImage.network(
@@ -45,10 +47,11 @@ class IsmLiveUsersSheet extends StatelessWidget {
                       width: IsmLiveDimens.hundred,
                     ),
                     title: user.userName,
-                    subTitle: null ,
+                    subTitle: null,
                     buttonLable: 'View Profile',
                     onTap: () {
-                      IsmLiveDelegate.openUserProfileView?.call(user.userIdentifier);
+                      IsmLiveDelegate.openUserProfileView
+                          ?.call(user.userIdentifier);
                     },
                   ),
                   isScrollController: true,
@@ -73,8 +76,8 @@ class IsmLiveUsersSheet extends StatelessWidget {
                             streamId: controller.streamId ?? '',
                           );
 
-                          Get.back();
-                          Get.back();
+                          IsmLiveRoute.pop();
+                          IsmLiveRoute.pop();
                         },
                       ),
               ),

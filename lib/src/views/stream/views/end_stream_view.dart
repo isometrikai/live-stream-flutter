@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveEndStream extends StatelessWidget {
-  IsmLiveEndStream({
+  const IsmLiveEndStream({
     super.key,
-  }) : streamId = Get.arguments['streamId'];
+    required this.streamId,
+  });
   final String streamId;
   static const String updateId = 'end-stream-view';
 
@@ -36,17 +37,21 @@ class IsmLiveEndStream extends StatelessWidget {
                         children: [
                           IsmLiveDimens.boxWidth50,
                           IsmLiveImage.network(
-                            IsmLiveDelegate.getUserProfileUrl?.call(controller.user?.userProfileImageUrl ?? '') ?? controller.user?.userProfileImageUrl ?? '',
+                            IsmLiveDelegate.getUserProfileUrl?.call(
+                                    controller.user?.userProfileImageUrl ??
+                                        '') ??
+                                controller.user?.userProfileImageUrl ??
+                                '',
                             name: controller.user?.userName ?? 'U',
                             height: IsmLiveDimens.ninty,
                             width: IsmLiveDimens.ninty,
                             isProfileImage: true,
                           ),
-                          IconButton(
-                            icon: const Icon(
+                          const IconButton(
+                            icon: Icon(
                               Icons.close,
                             ),
-                            onPressed: Get.back,
+                            onPressed: IsmLiveRoute.pop,
                           ),
                         ],
                       ),
@@ -69,50 +74,58 @@ class IsmLiveEndStream extends StatelessWidget {
                           crossAxisCount: 3,
                           childAspectRatio: 1.5,
                         ),
-                          children: IsmLiveAnalyticsOptions.optionsList.map((option) {
-                            var points = '';
-                            var title = '';
-                            Color? color;
+                        children:
+                            IsmLiveAnalyticsOptions.optionsList.map((option) {
+                          var points = '';
+                          var title = '';
+                          Color? color;
 
-                            switch (option) {
-                              case IsmLiveAnalyticsOptions.hearts:
-                                points = '${controller.streamAnalytis?.hearts ?? 0}';
-                                title = 'Hearts';
-                                color = Colors.black;
-                                break;
-                              case IsmLiveAnalyticsOptions.order:
-                                points = '${controller.streamAnalytis?.productCount ?? 0}';
-                                title = 'Order';
-                                break;
-                              case IsmLiveAnalyticsOptions.viewers:
-                                points = '${controller.streamAnalytis?.totalViewersCount ?? 0}';
-                                title = 'Viewers';
-                                break;
-                              case IsmLiveAnalyticsOptions.followers:
-                                points = '${controller.streamAnalytis?.followers ?? 0}';
-                                title = 'Followers';
-                                break;
-                              case IsmLiveAnalyticsOptions.earnings:
-                                points = '\$${controller.streamAnalytis?.totalEarning ?? 0}';
-                                title = 'Earnings';
-                                break;
-                              case IsmLiveAnalyticsOptions.duration:
-                                return GetX<IsmLiveStreamController>(
-                                  builder: (controller) => IsmLiveEndStreamContainer(
-                                    points: controller.streamDuration.formattedTime,
-                                    title: 'Duration',
-                                    assetConstant: option.icon,
-                                  ),
-                                );
-                            }
+                          switch (option) {
+                            case IsmLiveAnalyticsOptions.hearts:
+                              points =
+                                  '${controller.streamAnalytis?.hearts ?? 0}';
+                              title = 'Hearts';
+                              color = Colors.black;
+                              break;
+                            case IsmLiveAnalyticsOptions.order:
+                              points =
+                                  '${controller.streamAnalytis?.productCount ?? 0}';
+                              title = 'Order';
+                              break;
+                            case IsmLiveAnalyticsOptions.viewers:
+                              points =
+                                  '${controller.streamAnalytis?.totalViewersCount ?? 0}';
+                              title = 'Viewers';
+                              break;
+                            case IsmLiveAnalyticsOptions.followers:
+                              points =
+                                  '${controller.streamAnalytis?.followers ?? 0}';
+                              title = 'Followers';
+                              break;
+                            case IsmLiveAnalyticsOptions.earnings:
+                              points =
+                                  '\$${controller.streamAnalytis?.totalEarning ?? 0}';
+                              title = 'Earnings';
+                              break;
+                            case IsmLiveAnalyticsOptions.duration:
+                              return GetX<IsmLiveStreamController>(
+                                builder: (controller) =>
+                                    IsmLiveEndStreamContainer(
+                                  points:
+                                      controller.streamDuration.formattedTime,
+                                  title: 'Duration',
+                                  assetConstant: option.icon,
+                                ),
+                              );
+                          }
 
-                            return IsmLiveEndStreamContainer(
-                              points: points,
-                              title: title,
-                              assetConstant: option.icon,
-                              color: color,
-                            );
-                          }).toList(),
+                          return IsmLiveEndStreamContainer(
+                            points: points,
+                            title: title,
+                            assetConstant: option.icon,
+                            color: color,
+                          );
+                        }).toList(),
                       ),
                       Divider(
                         thickness: 5,

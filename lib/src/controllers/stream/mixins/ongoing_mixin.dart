@@ -713,7 +713,7 @@ mixin StreamOngoingMixin {
       }
       Get.back();
       if (fromMqtt) {
-        IsmLiveUtility.showDialog(const IsmLiveStreamEndDialog());
+        IsmLiveUtility.showCustomDialog(const IsmLiveStreamEndDialog());
       }
     }
   }

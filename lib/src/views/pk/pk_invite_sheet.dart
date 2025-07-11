@@ -96,7 +96,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: 'Reject',
                       onTap: () {
-                        Get.back();
+                        IsmLiveRoute.pop();
                         controller.invitationPk(
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',
@@ -110,7 +110,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: 'Accept',
                       onTap: () {
-                        Get.back();
+                        IsmLiveRoute.pop();
                         controller.invitationPk(
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',

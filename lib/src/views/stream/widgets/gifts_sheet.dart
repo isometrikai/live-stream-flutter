@@ -88,7 +88,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
             SizedBox(
               height: Get.height * 0.4,
               child: ((pkController.localGift?.isEmpty ?? true) ||
-                  (pkController.localGift?[controller.giftType]?.isEmpty ?? true))
+                      (pkController.localGift?[controller.giftType]?.isEmpty ??
+                          true))
                   ? const Center(child: Text('No data'))
                   : GridView.builder(
                       controller: pkController.giftController,
@@ -121,7 +122,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                               return;
                             }
 
-                            Get.back();
+                            IsmLiveRoute.pop();
 
                             if (giftCategory.giftTitle == '3D') {
                               onTap(gift);

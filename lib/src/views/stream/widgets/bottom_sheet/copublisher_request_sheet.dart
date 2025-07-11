@@ -91,7 +91,7 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
               IsmLiveButton(
                 label: label,
                 onTap: () {
-                  Get.back();
+                  IsmLiveRoute.pop();
                   onTap?.call();
                 },
               ),

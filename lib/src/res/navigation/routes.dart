@@ -1,5 +1,3 @@
-part of 'pages.dart';
-
 class IsmLiveRoutes {
   static const String myMeetingsView = '/my-meetings';
 

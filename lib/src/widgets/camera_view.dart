@@ -104,7 +104,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: Get.back,
+                      onTap: IsmLiveRoute.pop,
                       child: SvgPicture.asset(
                         IsmLiveAssetConstants.backRounded,
                       ),
@@ -195,9 +195,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               return;
                             }
 
-                            Get.back<XFile>(
-                              result: XFile(pickedFile.files.first.path ?? ''),
-                            );
+                            IsmLiveRoute.pop<XFile>(
+                                XFile(pickedFile.files.first.path ?? ''));
                           },
                           child: SvgPicture.asset(
                             IsmLiveAssetConstants.galerryRoundedSvg,
@@ -208,7 +207,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               ? () async {
                                   final picture =
                                       await cameraControllerback.takePicture();
-                                  Get.back<XFile>(result: picture);
+                                  IsmLiveRoute.pop<XFile>(picture);
                                 }
                               : () async {
                                   if (isRecording) {
@@ -217,7 +216,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                     setState(() {});
                                     final recording = await cameraControllerback
                                         .stopVideoRecording();
-                                    Get.back<XFile>(result: recording);
+                                    IsmLiveRoute.pop<XFile>(recording);
                                   } else {
                                     await cameraControllerback
                                         .startVideoRecording();
@@ -242,7 +241,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             setState(() {});
                             cameraControllerback.stopVideoRecording().then(
                               (value) {
-                                Get.back<XFile>(result: value);
+                                IsmLiveRoute.pop<XFile>(value);
                               },
                             );
                           },

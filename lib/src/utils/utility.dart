@@ -22,6 +22,20 @@ class IsmLiveUtility {
 
   static IsmLiveConfigData? _config;
 
+  static GlobalKey<NavigatorState>? _navigatorKey;
+
+  static GlobalKey<NavigatorState> get navigatorKey {
+    assert(
+      _navigatorKey != null,
+      'IsmLiveUtility.navigatorKey is not set. Please provide it during IsmLiveApp initialization.',
+    );
+    return _navigatorKey!;
+  }
+
+  static set navigatorKey(GlobalKey<NavigatorState>? key) {
+    _navigatorKey = key;
+  }
+
   static IsmLiveConfigData get config {
     assert(
       _initialized,
@@ -89,11 +103,10 @@ class IsmLiveUtility {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().showEmojiBoard = false;
     }
-    return await Get.bottomSheet<T>(
-      SafeArea(child: child),
+    return await showModalBottomSheet<T>(
+      context: IsmLiveUtility.navigatorKey.currentContext!,
       isDismissible: isDismissible,
       isScrollControlled: isScrollController,
-      ignoreSafeArea: ignoreSafeArea,
       enableDrag: enableDrag,
       backgroundColor: backgroundColor ?? IsmLiveColors.white,
       shape: RoundedRectangleBorder(
@@ -101,6 +114,7 @@ class IsmLiveUtility {
           top: Radius.circular(IsmLiveDimens.thirty),
         ),
       ),
+      builder: (context) => SafeArea(child: child),
     );
   }
 
@@ -122,9 +136,10 @@ class IsmLiveUtility {
   /// Show loader
   static void showLoader([String? message]) async {
     hideKeyboard();
-    await Get.dialog(
-      IsmLiveLoader(message: message),
+    showDialog(
+      context: IsmLiveUtility.navigatorKey.currentContext!,
       barrierDismissible: false,
+      builder: (context) => IsmLiveLoader(message: message),
     );
   }
 
@@ -141,8 +156,9 @@ class IsmLiveUtility {
     VoidCallback? onRetry,
   }) async {
     hideKeyboard();
-    await Get.dialog(
-      CupertinoAlertDialog(
+    await showCupertinoDialog(
+      context: IsmLiveUtility.navigatorKey.currentContext!,
+      builder: (context) => CupertinoAlertDialog(
         title: Text(
           title ?? (isSuccess ? 'Success' : 'Error'),
         ),
@@ -151,26 +167,23 @@ class IsmLiveUtility {
         ),
         actions: [
           CupertinoDialogAction(
-            onPressed: Get.back,
+            onPressed: IsmLiveRoute.pop,
             isDefaultAction: true,
             child: Text(
               'Okay',
               style: IsmLiveStyles.black16,
-              // style: IsmLiveStyles.black16.copyWith(color: ColorsValue.primary),
             ),
           ),
           if (onRetry != null)
             CupertinoDialogAction(
               onPressed: () {
-                Get.back();
+                IsmLiveRoute.pop();
                 onRetry();
               },
               isDefaultAction: true,
               child: Text(
                 'Retry',
                 style: IsmLiveStyles.black16,
-                // style:
-                //     IsmLiveStyles.black16.copyWith(color: ColorsValue.primary),
               ),
             ),
         ],
@@ -179,20 +192,22 @@ class IsmLiveUtility {
   }
 
   /// Show info dialog
-  static void showDialog(
+  static void showCustomDialog(
     Widget dialog, {
     bool isDismissible = true,
     double? horizontalPadding,
   }) async {
     hideKeyboard();
-    await Get.dialog(
-      UnconstrainedBox(
+    await showDialog(
+      context: IsmLiveUtility.navigatorKey.currentContext!,
+      barrierDismissible: isDismissible,
+      builder: (context) => UnconstrainedBox(
         child: SizedBox(
           width: IsmLiveDimens.percentWidth(1) -
               (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Get.context?.liveTheme?.backgroundColor ?? Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
             ),
             child: Padding(
@@ -202,8 +217,6 @@ class IsmLiveUtility {
           ),
         ),
       ),
-      barrierDismissible: isDismissible,
-      useSafeArea: true,
     );
   }
 
@@ -214,8 +227,9 @@ class IsmLiveUtility {
     Function()? onPress,
   }) async {
     hideKeyboard();
-    await Get.dialog(
-      CupertinoAlertDialog(
+    await showCupertinoDialog(
+      context: IsmLiveUtility.navigatorKey.currentContext!,
+      builder: (context) => CupertinoAlertDialog(
         title: Text('$title'),
         content: Text('$message'),
         actions: <Widget>[
@@ -236,13 +250,14 @@ class IsmLiveUtility {
 
   /// Close any open dialog.
   static void closeDialog() {
-    if (Get.isDialogOpen != true) return;
-    Get.back<void>();
+    // No direct equivalent for Get.isDialogOpen, so just try to pop
+    IsmLiveRoute.pop<void>();
   }
 
   /// Close any open snackbar
   static void closeSnackbar() {
-    if (Get.isSnackbarOpen) Get.back<void>();
+    // No direct equivalent for Get.isSnackbarOpen, so just try to pop
+    IsmLiveRoute.pop<void>();
   }
 
   /// Show a message to the user.
@@ -279,24 +294,28 @@ class IsmLiveUtility {
     Future.delayed(
       const Duration(seconds: 0),
       () {
-        Get.rawSnackbar(
-          messageText: Text(
-            message,
-            style: IsmLiveStyles.white16,
+        ScaffoldMessenger.of(IsmLiveUtility.navigatorKey.currentContext!)
+            .showSnackBar(
+          SnackBar(
+            content: Text(
+              message,
+              style: IsmLiveStyles.white16,
+            ),
+            backgroundColor: backgroundColor,
+            action: actionName != null
+                ? SnackBarAction(
+                    label: actionName,
+                    onPressed: onTap ?? IsmLiveRoute.pop,
+                    textColor: Colors.white,
+                  )
+                : null,
+            behavior: SnackBarBehavior.floating,
+            margin: IsmLiveDimens.edgeInsets10,
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(IsmLiveDimens.ten + IsmLiveDimens.five),
+            ),
           ),
-          mainButton: actionName != null
-              ? TextButton(
-                  onPressed: onTap ?? Get.back,
-                  child: Text(
-                    actionName,
-                    style: IsmLiveStyles.white16,
-                  ),
-                )
-              : null,
-          backgroundColor: backgroundColor,
-          margin: IsmLiveDimens.edgeInsets10,
-          borderRadius: IsmLiveDimens.ten + IsmLiveDimens.five,
-          snackStyle: SnackStyle.FLOATING,
         );
       },
     );
@@ -496,4 +515,56 @@ class IsmLiveUtility {
       return value;
     }
   }
+}
+
+/// Centralized navigation utility for IsmLive, using the host app's navigatorKey for all navigation.
+class IsmLiveRoute {
+  IsmLiveRoute._();
+
+  /// Push a widget onto the navigation stack.
+  static Future<T?> push<T>(Widget child) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (BuildContext context) => child,
+        ),
+      );
+
+  /// Push a named route onto the navigation stack.
+  static Future<T?> pushNamed<T>(String routeName, {Object? arguments}) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.pushNamed<T>(
+        routeName,
+        arguments: arguments,
+      );
+
+  /// Replace the current route by pushing a widget and removing the previous one.
+  static Future<T?> pushReplacement<T, TO>(Widget child, {TO? result}) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.pushReplacement<T, TO>(
+        MaterialPageRoute(
+          builder: (BuildContext context) => child,
+        ),
+        result: result,
+      );
+
+  /// Replace the current route by pushing a named route and removing the previous one.
+  static Future<T?> pushReplacementNamed<T, TO>(String routeName,
+          {TO? result, Object? arguments}) async =>
+      await IsmLiveUtility.navigatorKey.currentState
+          ?.pushReplacementNamed<T, TO>(
+        routeName,
+        result: result,
+        arguments: arguments,
+      );
+
+  /// Pop the top-most route off the navigation stack.
+  static void pop<T>([T? result]) {
+    IsmLiveUtility.navigatorKey.currentState?.pop(result);
+  }
+
+  /// Maybe pop the top-most route if possible.
+  static Future<bool> maybePop<T>([T? result]) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.maybePop(result) ?? false;
+
+  /// Check if the navigator can pop.
+  static bool canPop() =>
+      IsmLiveUtility.navigatorKey.currentState?.canPop() ?? false;
 }

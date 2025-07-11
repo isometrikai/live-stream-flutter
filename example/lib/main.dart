@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+final kNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   await _setup();
   runApp(const MyApp());
@@ -19,6 +21,7 @@ Rx<IsmLiveConfigData?> kConfigData = Rx<IsmLiveConfigData?>(null);
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.lazyPut(SharedPreferencesManager.new);
+  IsmLiveUtility.navigatorKey = kNavigatorKey;
   await Future.wait([
     Get.put<AppConfig>(AppConfig()).init(AppConstants.appName),
     Get.put<DBWrapper>(DBWrapper()).init(),
@@ -56,6 +59,7 @@ class _MyAppState extends State<MyApp> {
             data: MediaQuery.of(context)
                 .copyWith(textScaler: const TextScaler.linear(1.0)),
             child: GetMaterialApp(
+              navigatorKey: kNavigatorKey,
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 primaryColor: Colors.black,

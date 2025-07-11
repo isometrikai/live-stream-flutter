@@ -1,4 +1,3 @@
-import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/controllers/controllers.dart';
 import 'package:appscrip_live_stream_component_example/views/views.dart';
 import 'package:get/get.dart';
@@ -48,6 +47,5 @@ class AppPages {
       binding: AuthBinding(),
       transition: Transition.rightToLeft,
     ),
-    ...IsmLivePages.pages,
   ];
 }

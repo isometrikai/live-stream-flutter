@@ -10,13 +10,14 @@ class IsmLiveApp extends StatelessWidget {
   IsmLiveApp({
     super.key,
     required this.configuration,
+    required GlobalKey<NavigatorState> navigatorKey,
     this.onCallStart,
     this.onCallEnd,
     this.enableLog = true,
     this.onLogout,
   }) {
-    initialize(configuration);
-
+    IsmLiveUtility.navigatorKey = navigatorKey;
+    initialize(configuration, navigatorKey: navigatorKey);
     IsmLiveHandler.isLogsEnabled = enableLog;
     IsmLiveHandler.onLogout = onLogout;
   }
@@ -31,11 +32,13 @@ class IsmLiveApp extends StatelessWidget {
 
   static Future<void> initialize(
     IsmLiveConfigData config, {
+    required GlobalKey<NavigatorState> navigatorKey,
     bool shouldInitializeMqtt = true,
     List<String>? mqttTopics,
     List<String>? mqttTopicChannels,
-    VoidCallback? onStreamEnd
+    VoidCallback? onStreamEnd,
   }) async {
+    IsmLiveUtility.navigatorKey = navigatorKey;
     if (_initialized) {
       return;
     }
@@ -241,8 +244,5 @@ class IsmLiveApp extends StatelessWidget {
   final VoidCallback? onLogout;
 
   @override
-  Widget build(BuildContext context) => IsmLiveConfig(
-        data: configuration,
-        child: const IsmLiveStreamListing(),
-      );
+  Widget build(BuildContext context) => const IsmLiveStreamListing();
 }

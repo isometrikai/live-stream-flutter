@@ -1,4 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet_binding.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -7,24 +10,6 @@ abstract class IsmLiveRouteManagement {
   // static void goToMyMeetingsView(IsmLiveStreamConfig configuration) {
   //   Get.toNamed<void>(IsLiveRoutes.myMeetingsView, arguments: configuration);
   // }
-
-  static void goToCreateMeetingScreen() {
-    Get.toNamed(IsmLiveRoutes.createMeetingScreen);
-  }
-
-  static Future<void> goToRoomPage(
-    Room room,
-    EventsListener<RoomEvent> listener,
-    String meetingId,
-    bool audioCallOnly,
-  ) async {
-    await Get.toNamed(IsmLiveRoutes.roomPage, arguments: {
-      'room': room,
-      'listener': listener,
-      'meetingId': meetingId,
-      'audioCallOnly': audioCallOnly,
-    });
-  }
 
   static Future<void> goToStreamView({
     required RoomListener listener,
@@ -37,66 +22,60 @@ abstract class IsmLiveRouteManagement {
     bool isSchedule = false,
     String? streamImage,
   }) async {
-    var arguments = {
-      'room': room,
-      'listener': listener,
-      'streamImage': streamImage,
-      'streamId': streamId,
-      'isHost': isHost,
-      'isNewStream': isNewStream,
-      'isScrolling': isScrolling,
-      'isInteractive': isInteractive,
-      'isSchedule': isSchedule,
-    };
-
-    if (isHost && isNewStream) {
-      await Get.offNamed(
-        IsmLiveRoutes.streamView,
-        arguments: arguments,
-      );
-    } else {
-      await Get.toNamed(
-        IsmLiveRoutes.streamView,
-        arguments: arguments,
-      );
-    }
-  }
-
-  static void goToSearchUserScreen() {
-    Get.toNamed<void>(
-      IsmLiveRoutes.searchUserScreen,
+    IsmLiveStreamBinding().dependencies();
+    var widget = IsmLiveStreamView(
+      listener: listener,
+      room: room,
+      streamImage: streamImage,
+      streamId: streamId,
+      isHost: isHost,
+      isNewStream: isNewStream,
+      isScrolling: isScrolling,
+      isSchedule: isSchedule,
+      isInteractive: isInteractive,
     );
+    if (isHost && isNewStream) {
+      await IsmLiveRoute.pushReplacement(widget);
+    } else {
+      await IsmLiveRoute.push(widget);
+    }
   }
 
   static void goToEndStreamView(String streamId) {
     if (Get.currentRoute == IsmLiveRoutes.endStream) {
       return;
     }
-
-    Get.offAndToNamed<void>(
-      IsmLiveRoutes.endStream,
-      arguments: {
-        'streamId': streamId,
-      },
-    );
+    IsmLiveStreamBinding().dependencies();
+    IsmLiveRoute.pushReplacement(IsmLiveEndStream(streamId: streamId));
   }
 
   static void goToGoLiveView({bool popPrevious = false}) {
+    IsmLiveStreamBinding().dependencies();
     if (popPrevious) {
-      Get.offAndToNamed<void>(
-        IsmLiveRoutes.goLive,
-      );
+      IsmLiveRoute.pushReplacement(const IsmGoLiveView());
     } else {
-      Get.toNamed<void>(
-        IsmLiveRoutes.goLive,
-      );
+      IsmLiveRoute.push(const IsmGoLiveView());
     }
   }
 
-  static void goToMyMeetingsView() {
-    Get.offAndToNamed<void>(
-      IsmLiveRoutes.myMeetingsView,
-    );
+  static void goToAddProduct() {
+    IsmLiveStreamBinding().dependencies();
+    IsmLiveRoute.push(const IsmLiveAddProduct());
+  }
+
+  static void goToTagProduct() {
+    IsmLiveStreamBinding().dependencies();
+    IsmLiveRoute.push(const IsmLiveTagProducts());
+  }
+
+  static Future<void> goToRestreamSettingsView(IsmLiveRestreamType type) async {
+    IsmLiveStreamBinding().dependencies();
+    await IsmLiveRoute.push(IsmLiveRestreamSettingsView(type: type));
+  }
+
+  static void goToRestreamView() {
+    IsmLiveStreamBinding().dependencies();
+    IsmLiveRoute.push(const IsmLiveRestreamView());
   }
 
   static Future<XFile?> goToCamera(
@@ -104,12 +83,13 @@ abstract class IsmLiveRouteManagement {
     bool isOnlyImage,
   ) async {
     if (IsmLiveUtility.cameras.isNotEmpty) {
-      return await Get.to<XFile>(
+      IsmLiveStreamBinding().dependencies();
+      return await IsmLiveRoute.push(
         CameraScreenView(
           isPhotoRequired: isPhotoRequired,
           isOnlyImage: isOnlyImage,
         ),
-      );
+      ) as XFile?;
     } else {
       await IsmLiveUtility.showInfoDialog(
         IsmLiveResponseModel.message('Camera Not Available'),
@@ -118,29 +98,38 @@ abstract class IsmLiveRouteManagement {
     }
   }
 
-  static void goToRestreamView() {
-    Get.toNamed(IsmLiveRoutes.restreamView);
+  static void goToCoinsPlanWallet() {
+    CoinsPlansWalletBinding().dependencies();
+    IsmLiveRoute.push(const CoinsPlansWalletView());
   }
 
-  static Future<void> goToRestreamSettingsView(IsmLiveRestreamType type) async {
-    await Get.toNamed(IsmLiveRoutes.restreamSettingsView, arguments: type);
+  static void goToCoinTransaction() {
+    CoinsPlansWalletBinding().dependencies();
+    IsmLiveRoute.push(const IsmLiveCoinTransactions());
   }
+}
 
-  static void goToAddProduct() {
-    Get.toNamed<void>(
-      IsmLiveRoutes.addProduct,
+class LiveStreamRoute {
+  /// Opens the Go Live view, handling all bindings and navigation internally.
+  static Future<void> goLiveView() async {
+    // Ensure bindings are set up
+    IsmLiveStreamBinding().dependencies();
+    // Push the Go Live view using the global navigator key
+    await IsmLiveUtility.navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => const IsmGoLiveView(),
+      ),
     );
   }
 
-  static void goToTagProduct() {
-    Get.toNamed<void>(
-      IsmLiveRoutes.tagProduct,
+  static Future<void> coinsPlansWalletView() async {
+    // Ensure bindings are set up
+    CoinsPlansWalletBinding().dependencies();
+    // Push the Coins Plans Wallet view using the global navigator key
+    await IsmLiveUtility.navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => const CoinsPlansWalletView(),
+      ),
     );
   }
-
-  static void goToCoinsPlanWallet() =>
-      Get.toNamed(IsmLiveRoutes.coinsPlansWalletView);
-
-  static void goToCoinTransaction() =>
-      Get.toNamed(IsmLiveRoutes.coinTransactionsView);
 }

@@ -26,9 +26,9 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
                   style: context.textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: Get.back,
+                const IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: IsmLiveRoute.pop,
                 ),
               ],
             ),
@@ -44,9 +44,9 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-            IsmLiveButton(
+            const IsmLiveButton(
               label: 'Confirm',
-              onTap: Get.back,
+              onTap: IsmLiveRoute.pop,
             ),
           ],
         ),

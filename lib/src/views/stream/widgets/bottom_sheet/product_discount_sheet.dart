@@ -19,9 +19,9 @@ class IsmLiveProductDiscountSheet extends StatelessWidget {
                   'Discount Percentage',
                   style: context.textTheme.headlineSmall,
                 ),
-                IconButton(
-                  onPressed: Get.back,
-                  icon: const Icon(
+                const IconButton(
+                  onPressed: IsmLiveRoute.pop,
+                  icon: Icon(
                     Icons.close,
                     color: IsmLiveColors.black,
                   ),

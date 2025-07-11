@@ -28,17 +28,20 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                 children: [
                   IsmLiveDimens.boxWidth50,
                   IsmLiveImage.network(
-                    IsmLiveDelegate.getUserProfileUrl?.call(controller.user?.userProfileImageUrl ?? '') ?? controller.user?.userProfileImageUrl ?? '',
+                    IsmLiveDelegate.getUserProfileUrl?.call(
+                            controller.user?.userProfileImageUrl ?? '') ??
+                        controller.user?.userProfileImageUrl ??
+                        '',
                     name: controller.user?.userName ?? 'U',
                     height: IsmLiveDimens.ninty,
                     width: IsmLiveDimens.ninty,
                     isProfileImage: true,
                   ),
-                  IconButton(
-                    icon: const Icon(
+                  const IconButton(
+                    icon: Icon(
                       Icons.close,
                     ),
-                    onPressed: Get.back,
+                    onPressed: IsmLiveRoute.pop,
                   ),
                 ],
               ),
@@ -72,11 +75,13 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                       color = Colors.black;
                       break;
                     case IsmLiveAnalyticsOptions.order:
-                      points = '${controller.streamAnalytis?.productCount ?? 0}';
+                      points =
+                          '${controller.streamAnalytis?.productCount ?? 0}';
                       title = 'Order';
                       break;
                     case IsmLiveAnalyticsOptions.viewers:
-                      points = '${controller.streamAnalytis?.totalViewersCount ?? 0}';
+                      points =
+                          '${controller.streamAnalytis?.totalViewersCount ?? 0}';
                       title = 'Viewers';
                       break;
                     case IsmLiveAnalyticsOptions.followers:
@@ -84,7 +89,8 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                       title = 'Followers';
                       break;
                     case IsmLiveAnalyticsOptions.earnings:
-                      points = '\$${controller.streamAnalytis?.totalEarning ?? 0}';
+                      points =
+                          '\$${controller.streamAnalytis?.totalEarning ?? 0}';
                       title = 'Earnings';
                       break;
                     case IsmLiveAnalyticsOptions.duration:

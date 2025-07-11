@@ -51,7 +51,7 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
-    await IsmLiveApp.initialize(configData);
+    await IsmLiveApp.initialize(configData,navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       hostOptions: [
         IsmLiveStreamOption.bars,
@@ -65,27 +65,27 @@ class HomeController extends GetxController {
         IsmLiveStreamOption.speaker,
         IsmLiveStreamOption.heart,
       ],
-      ismLiveButtonConfig: IsmLiveButtonConfig(
-        primaryBuilder: (context,
-                {required label,
-                onTap,
-                required small,
-                required showBorder,
-                icon,
-                required secondary}) =>
-            CustomButton(
-          title: label,
-          onPress: onTap,
-        ),
-        secondaryBuilder: (context,
-                {required label,
-                onTap,
-                required small,
-                required showBorder,
-                icon,
-                required secondary}) =>
-            CustomButton(title: label, onPress: onTap, onlyBorder: true),
-      ),
+      // ismLiveButtonConfig: IsmLiveButtonConfig(
+      //   primaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(
+      //     title: label,
+      //     onPress: onTap,
+      //   ),
+      //   secondaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+      // ),
         streamOptionsBgGradient : const LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
@@ -100,7 +100,6 @@ class HomeController extends GetxController {
         IsmLiveAnalyticsOptions.followers,
         IsmLiveAnalyticsOptions.earnings,
         IsmLiveAnalyticsOptions.duration,
-
       ]
     );
   }

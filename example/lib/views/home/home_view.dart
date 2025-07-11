@@ -25,6 +25,7 @@ class HomeView extends StatelessWidget {
         },
         builder: (controller) => IsmLiveApp(
           configuration: kConfigData.value ?? controller.configData,
+          navigatorKey: kNavigatorKey,
           enableLog: true,
           onLogout: controller.logout,
         ),

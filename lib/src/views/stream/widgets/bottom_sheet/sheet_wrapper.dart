@@ -54,13 +54,13 @@ class IsmLiveScrollSheet extends StatelessWidget {
                       .copyWith(fontWeight: FontWeight.bold),
                 ),
                 trailing: trailing ??
-                    CustomIconButton(
-                      icon: const Icon(
+                    const CustomIconButton(
+                      icon: Icon(
                         Icons.cancel_rounded,
                         color: IsmLiveColors.grey,
                       ),
                       color: Colors.transparent,
-                      onTap: Get.back,
+                      onTap: IsmLiveRoute.pop,
                     ),
               ),
             if (showSearchBar)
@@ -78,14 +78,14 @@ class IsmLiveScrollSheet extends StatelessWidget {
             if (showCancelIcon)
               Padding(
                 padding: IsmLiveDimens.edgeInsets16_08_16_0,
-                child: Align(
+                child: const Align(
                   alignment: Alignment.bottomRight,
                   child: CustomIconButton(
-                    icon: const IsmLiveImage.svg(
+                    icon: IsmLiveImage.svg(
                       IsmLiveAssetConstants.cancel,
                     ),
                     color: Colors.transparent,
-                    onTap: Get.back,
+                    onTap: IsmLiveRoute.pop,
                   ),
                 ),
               ),

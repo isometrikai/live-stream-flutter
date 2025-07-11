@@ -141,9 +141,9 @@ class IsmLiveAddProduct extends StatelessWidget {
                         ),
                       ],
                       IsmLiveDimens.boxHeight10,
-                      IsmLiveButton(
+                      const IsmLiveButton(
                         label: 'Continue',
-                        onTap: Get.back,
+                        onTap: IsmLiveRoute.pop,
                       ),
                       IsmLiveDimens.boxHeight10,
                     ],

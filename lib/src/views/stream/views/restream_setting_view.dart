@@ -1,9 +1,10 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveRestreamSettingsView extends StatelessWidget {
-  IsmLiveRestreamSettingsView({super.key}) : type = Get.arguments;
+  const IsmLiveRestreamSettingsView({super.key, required this.type});
 
   final IsmLiveRestreamType type;
 

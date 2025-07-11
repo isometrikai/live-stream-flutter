@@ -31,7 +31,7 @@ class PickImageSheet extends StatelessWidget {
               attachments.length,
               (index) => GestureDetector(
                 onTap: () async {
-                  Get.back();
+                  IsmLiveRoute.pop();
                   beforePicking?.call();
                   XFile? file;
                   if (index == 0) {

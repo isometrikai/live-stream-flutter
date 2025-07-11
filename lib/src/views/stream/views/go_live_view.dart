@@ -80,14 +80,16 @@ class IsmGoLiveView extends StatelessWidget {
                   return Transform.scale(
                     scale: scale,
                     child: controller.selectedGoLiveTabItem ==
-                        IsmGoLiveTabItem.defaultLive ? CameraPreview(
-                      controller.cameraController!,
-                      child: SizedBox(
-                        height: context.height,
-                        width: context.width,
-                        child: const ColoredBox(color: Colors.black38),
-                      ),
-                    ) : null,
+                            IsmGoLiveTabItem.defaultLive
+                        ? CameraPreview(
+                            controller.cameraController!,
+                            child: SizedBox(
+                              height: context.height,
+                              width: context.width,
+                              child: const ColoredBox(color: Colors.black38),
+                            ),
+                          )
+                        : null,
                   );
                 },
               ),
@@ -101,12 +103,12 @@ class IsmGoLiveView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          icon: const Icon(
+                        const IconButton(
+                          icon: Icon(
                             Icons.close,
                             color: IsmLiveColors.white,
                           ),
-                          onPressed: Get.back,
+                          onPressed: IsmLiveRoute.pop,
                         ),
                         Text(
                           'Go Live',

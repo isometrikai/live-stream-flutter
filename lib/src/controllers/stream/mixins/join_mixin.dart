@@ -132,7 +132,6 @@ mixin StreamJoinMixin {
     var now = DateTime.now();
     _controller.streamDuration = now.difference(stream.startDateTime ?? now);
 
-
     // Connect to the stream
     await connectStream(
       token: token,
@@ -193,7 +192,7 @@ mixin StreamJoinMixin {
         unawaited(_controller.fetchScheduledStream(
             type: IsmLiveStreamType.scheduledStreams));
 
-        IsmLiveUtility.showDialog(
+        IsmLiveUtility.showCustomDialog(
           IsmLiveScheduleDialog(
             message: _controller.scheduleLiveDate,
           ),
@@ -516,7 +515,7 @@ mixin StreamJoinMixin {
     );
     _controller.streamDetails = null;
     if (res) {
-      IsmLiveUtility.showDialog(
+      IsmLiveUtility.showCustomDialog(
         IsmLiveEditScheduleDialog(
           message:
               _controller.streamDetails?.scheduleStartTime ?? DateTime.now(),

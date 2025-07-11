@@ -33,7 +33,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
               ? IsmLiveButton.icon(
                   icon: Icons.person_add_rounded,
                   onTap: () {
-                    Get.back();
+                    IsmLiveRoute.pop();
                     IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
                   },
                 )
@@ -46,9 +46,11 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
           itemCount: controller.moderatorsList.length,
           itemBuilder: (context, index) {
             final moderator = controller.moderatorsList[index];
-            final imageUrl = IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ?? moderator.profileUrl;
+            final imageUrl =
+                IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ??
+                    moderator.profileUrl;
             return InkWell(
-              onTap: (){
+              onTap: () {
                 IsmLiveUtility.openBottomSheet(
                   StreamLiveSheet(
                     widget: IsmLiveImage.network(
@@ -59,10 +61,11 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                       width: IsmLiveDimens.hundred,
                     ),
                     title: moderator.userName,
-                    subTitle: null ,
+                    subTitle: null,
                     buttonLable: 'View Profile',
                     onTap: () {
-                      IsmLiveDelegate.openUserProfileView?.call(moderator.userIdentifier);
+                      IsmLiveDelegate.openUserProfileView
+                          ?.call(moderator.userIdentifier);
                     },
                   ),
                   isScrollController: true,
@@ -82,7 +85,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                     ? IsmLiveButton.icon(
                         icon: Icons.person_remove_rounded,
                         onTap: () {
-                          Get.back();
+                          IsmLiveRoute.pop();
                           controller.removeModerator(
                             moderatorId: moderator.userId,
                             streamId: controller.streamId ?? '',
@@ -95,7 +98,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         ? IsmLiveButton.icon(
                             icon: Icons.exit_to_app_rounded,
                             onTap: () {
-                              Get.back();
+                              IsmLiveRoute.pop();
                               controller
                                   .leaveModerator(controller.streamId ?? '');
                             },

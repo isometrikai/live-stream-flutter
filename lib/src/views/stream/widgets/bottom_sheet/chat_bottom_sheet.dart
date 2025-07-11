@@ -23,7 +23,7 @@ class ChatBottomSheet extends StatelessWidget {
                   controller.parentMessage = message;
 
                   controller.update([IsmLiveMessageField.updateId]);
-                  Get.back();
+                  IsmLiveRoute.pop();
                 },
               ),
             ),
@@ -41,7 +41,7 @@ class ChatBottomSheet extends StatelessWidget {
                       streamId: controller.streamId ?? '',
                       messageId: message.messageId,
                     );
-                    Get.back();
+                    IsmLiveRoute.pop();
                   },
                 ),
               ),

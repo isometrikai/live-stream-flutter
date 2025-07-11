@@ -503,7 +503,7 @@ class IsmLiveMqttController extends GetxController {
           unawaited(_streamController.handleMessage(message: message));
           if (userId == moderatorId) {
             final hostName = payload['initiatorName'];
-            IsmLiveUtility.showDialog(
+            IsmLiveUtility.showCustomDialog(
               IsmLiveModeratorDialog(
                 hostName: hostName,
                 streamId: streamId,
@@ -674,7 +674,7 @@ class IsmLiveMqttController extends GetxController {
             _updateStream();
             if (viewerId == userId) {
               Get.back();
-              IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
+              IsmLiveUtility.showCustomDialog(const IsmLiveKickoutDialog());
             }
           }
           break;

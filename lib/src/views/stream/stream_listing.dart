@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -146,7 +147,7 @@ class _StreamListing extends StatelessWidget {
                               controller.paidStreamSheet(
                                   coins: e.amount ?? 0,
                                   onTap: () async {
-                                    Get.back();
+                                    IsmLiveRoute.pop();
                                     var res = await controller
                                         .buyStream(e.streamId ?? '');
                                     if (res) {

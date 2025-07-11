@@ -151,7 +151,7 @@ class IsmLivePkSheet extends StatelessWidget {
                               label: 'Accept',
                               // ignore: unnecessary_lambdas
                               onTap: () {
-                                Get.back();
+                                IsmLiveRoute.pop();
 
                                 ///
                                 // controller.pkInviteSheet();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -9,17 +10,19 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
-  IsmLiveStreamView({
+  /// Refactored: All arguments must be passed via the constructor.
+  const IsmLiveStreamView({
     super.key,
-  })  : room = Get.arguments['room'],
-        listener = Get.arguments['listener'],
-        streamImage = Get.arguments['streamImage'],
-        streamId = Get.arguments['streamId'],
-        isHost = Get.arguments['isHost'],
-        isNewStream = Get.arguments['isNewStream'],
-        isScrolling = Get.arguments['isScrolling'],
-        isSchedule = Get.arguments['isSchedule'],
-        isInteractive = Get.arguments['isInteractive'];
+    required this.listener,
+    required this.room,
+    this.streamImage,
+    required this.streamId,
+    required this.isHost,
+    required this.isNewStream,
+    required this.isScrolling,
+    required this.isSchedule,
+    required this.isInteractive,
+  });
 
   final RoomListener listener;
   final Room room;
@@ -34,7 +37,6 @@ class IsmLiveStreamView extends StatelessWidget {
   bool get fastConnection => room.engine.fastConnectOptions != null;
 
   static const String route = IsmLiveRoutes.streamView;
-
   static const String updateId = 'ismlive-stream-view';
 
   @override

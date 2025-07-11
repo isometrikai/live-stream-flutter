@@ -23,9 +23,9 @@ class CoinsPlansWalletView extends StatelessWidget {
               style: context.textTheme.bodyLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            leading: InkWell(
-              onTap: Get.back,
-              child: const Icon(Icons.arrow_back),
+            leading: const InkWell(
+              onTap: IsmLiveRoute.pop,
+              child: Icon(Icons.arrow_back),
             ),
           ),
           body: Padding(

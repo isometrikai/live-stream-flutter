@@ -54,7 +54,7 @@ class IsmLiveMembersSheet extends StatelessWidget {
                       ? IsmLiveButton.icon(
                           icon: Icons.exit_to_app_rounded,
                           onTap: () {
-                            Get.back();
+                            IsmLiveRoute.pop();
                             controller.disconnectStream(
                               isHost: false,
                               streamId: controller.streamId ?? '',
