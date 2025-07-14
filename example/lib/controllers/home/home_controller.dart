@@ -53,18 +53,18 @@ class HomeController extends GetxController {
     );
     await IsmLiveApp.initialize(configData,navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      hostOptions: [
-        IsmLiveStreamOption.bars,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ],
-      viewersOptions: [
-        IsmLiveStreamOption.gift,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speaker,
-        IsmLiveStreamOption.heart,
-      ],
+      // hostOptions: [
+      //   IsmLiveStreamOption.bars,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.rotateCamera,
+      //   IsmLiveStreamOption.settings,
+      // ],
+      // viewersOptions: [
+      //   IsmLiveStreamOption.gift,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.speaker,
+      //   IsmLiveStreamOption.heart,
+      // ],
       // ismLiveButtonConfig: IsmLiveButtonConfig(
       //   primaryBuilder: (context,
       //           {required label,
@@ -86,21 +86,21 @@ class HomeController extends GetxController {
       //           required secondary}) =>
       //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
       // ),
-        streamOptionsBgGradient : const LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            ColorsValue.gradientStart,
-            ColorsValue.gradientEnd,
-          ],
-        ),
-      liveAnalyticsOptions: [
-        IsmLiveAnalyticsOptions.hearts,
-        IsmLiveAnalyticsOptions.viewers,
-        IsmLiveAnalyticsOptions.followers,
-        IsmLiveAnalyticsOptions.earnings,
-        IsmLiveAnalyticsOptions.duration,
-      ]
+      //   streamOptionsBgGradient : const LinearGradient(
+      //     begin: Alignment.bottomCenter,
+      //     end: Alignment.topCenter,
+      //     colors: [
+      //       ColorsValue.gradientStart,
+      //       ColorsValue.gradientEnd,
+      //     ],
+      //   ),
+      // liveAnalyticsOptions: [
+      //   IsmLiveAnalyticsOptions.hearts,
+      //   IsmLiveAnalyticsOptions.viewers,
+      //   IsmLiveAnalyticsOptions.followers,
+      //   IsmLiveAnalyticsOptions.earnings,
+      //   IsmLiveAnalyticsOptions.duration,
+      // ]
     );
   }
 
