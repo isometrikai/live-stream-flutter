@@ -24,6 +24,8 @@ class IsmLiveHandler {
       IsmLiveUtility.cameras = value;
     }));
 
+    debugPrint('LiveStream: IsmLiveApiWrapper ??:  ${Get.find<IsmLiveApiWrapper>()}');
+
     await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper(), permanent: true).init();
   }
 
