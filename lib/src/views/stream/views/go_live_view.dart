@@ -393,7 +393,7 @@ class _AddProduct extends StatelessWidget {
             IsmLiveDimens.boxHeight5,
             selectedProducts.isNotEmpty
                 ? SizedBox(
-                    height: Get.height * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.2,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
@@ -418,7 +418,7 @@ class _AddProduct extends StatelessWidget {
                 : IsmLiveTapHandler(
                     onTap: IsmLiveRouteManagement.goToAddProduct,
                     child: SizedBox(
-                      width: Get.width,
+                      width: MediaQuery.of(context).size.width,
                       height: IsmLiveDimens.hundred,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
