@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mqtt_helper/mqtt_helper.dart';
 
@@ -116,6 +117,8 @@ class IsmLiveMqttController extends GetxController {
 
     if (shouldInitializeMqtt) {
       try {
+        debugPrint('IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
+        debugPrint('IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
         await _mqttHelper.initialize(
           MqttConfig(
             serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
