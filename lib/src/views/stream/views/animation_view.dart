@@ -96,8 +96,8 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
         animation: controller,
         builder: (context, child) => AnimatedPositioned(
           duration: const Duration(seconds: 1),
-          bottom: animation.value.verticalPosition,
-          right: animation.value.horizontalPosition,
+          bottom: animation.value.verticalPosition(context),
+          right: animation.value.horizontalPosition(context),
           child: Obx(
             () => Offstage(
               offstage: isCompleted,

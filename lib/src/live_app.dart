@@ -108,6 +108,7 @@ class IsmLiveApp extends StatelessWidget {
     String Function(String key)? getUserProfileUrl,
     IsmLiveButtonConfig? ismLiveButtonConfig,
     LinearGradient? streamOptionsBgGradient,
+    String? logoSvg,
   }) {
     assert(_initialized,
         'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -140,6 +141,7 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.ismLiveButtonConfig = ismLiveButtonConfig;
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
+    IsmLiveDelegate.logoSvg = logoSvg;
   }
 
   static Future<void> endStream() async => await IsmLiveDelegate.endStream();

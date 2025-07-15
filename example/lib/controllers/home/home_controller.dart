@@ -101,6 +101,7 @@ class HomeController extends GetxController {
       //   IsmLiveAnalyticsOptions.earnings,
       //   IsmLiveAnalyticsOptions.duration,
       // ]
+      // logoSvg: 'assets/logo/iamat_logo.svg'
     );
   }
 
