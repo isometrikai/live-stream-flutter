@@ -36,7 +36,7 @@ class CoinsPlansWalletView extends StatelessWidget {
               shrinkWrap: true,
               slivers: [
                 SliverAppBar(
-                  toolbarHeight: Get.height * .11,
+                  toolbarHeight: MediaQuery.of(context).size.height * .11,
                   automaticallyImplyLeading: false,
                   pinned: true,
                   backgroundColor: IsmLiveColors.white,
@@ -94,7 +94,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                   ),
                 ),
                 SliverAppBar(
-                  toolbarHeight: Get.height * .11,
+                  toolbarHeight: MediaQuery.of(context).size.height * .11,
                   automaticallyImplyLeading: false,
                   pinned: true,
                   backgroundColor: IsmLiveColors.transparent,

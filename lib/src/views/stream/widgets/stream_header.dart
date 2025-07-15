@@ -46,7 +46,8 @@ class IsmLiveStreamHeader extends StatelessWidget {
             children: [
               IsmLiveDimens.boxWidth10,
               IsmLiveHostDetail(
-                imageUrl: IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
+                imageUrl: IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ??
+                    imageUrl,
                 name: name,
                 description: description,
                 isHost: Get.find<IsmLiveStreamController>().isHost,
@@ -69,7 +70,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
           IsmLiveDimens.boxHeight8,
           if (pkCompleted)
             Container(
-              width: Get.width,
+              width: MediaQuery.of(context).size.width,
               color: Colors.blue,
               height: IsmLiveDimens.twenty,
               child: Text(
@@ -84,7 +85,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
           else
             Container(
               margin: IsmLiveDimens.edgeInsets10_0,
-              width: Get.width * 0.6,
+              width: MediaQuery.of(context).size.width * 0.6,
               child: Text(
                 description,
                 style:
@@ -304,12 +305,14 @@ class IsmLiveScheduleStreamTime extends StatelessWidget {
           color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
           borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
         ),
-        child: scheduleTime != null ? Text(
-          scheduleTime!.formattedDate,
-          style: context.textTheme.labelSmall?.copyWith(
-            color: Colors.white,
-          ),
-        ): null,
+        child: scheduleTime != null
+            ? Text(
+                scheduleTime!.formattedDate,
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                ),
+              )
+            : null,
       );
 }
 

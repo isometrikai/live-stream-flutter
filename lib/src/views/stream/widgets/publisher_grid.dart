@@ -50,12 +50,16 @@ class IsmLivePublisherGrid extends StatelessWidget {
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount:
                                 controller.participantTracks.length < 3 ? 2 : 3,
-                            childAspectRatio:
-                                controller.participantTracks.length < 3
-                                    ? (Get.width / 2) / (Get.height * 0.4)
-                                    : controller.participantTracks.length < 7
-                                        ? (Get.width / 3) / (Get.height * 0.3)
-                                        : 1,
+                            childAspectRatio: controller
+                                        .participantTracks.length <
+                                    3
+                                ? (MediaQuery.of(context).size.width / 2) /
+                                    (MediaQuery.of(context).size.height * 0.4)
+                                : controller.participantTracks.length < 7
+                                    ? (MediaQuery.of(context).size.width / 3) /
+                                        (MediaQuery.of(context).size.height *
+                                            0.3)
+                                    : 1,
                           ),
                           itemBuilder: (_, index) {
                             var url = '';
@@ -117,7 +121,7 @@ class _RtmlView extends StatelessWidget {
               IsmLiveDimens.boxHeight50,
               IsmLiveDimens.boxHeight50,
               SizedBox(
-                height: Get.height * 0.3,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: hostScreen == null
                     ? NoVideoWidget(
                         imageUrl: controller.hostDetails?.image ?? '',

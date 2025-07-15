@@ -86,7 +86,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: Get.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: ((pkController.localGift?.isEmpty ?? true) ||
                       (pkController.localGift?[controller.giftType]?.isEmpty ??
                           true))

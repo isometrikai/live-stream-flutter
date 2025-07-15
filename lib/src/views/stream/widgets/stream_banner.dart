@@ -15,8 +15,8 @@ class IsmLiveStreamBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         builder: (controller) => SizedBox(
-          height: Get.height,
-          width: Get.width,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           child: ImageFiltered(
             imageFilter: ImageFilter.blur(
               sigmaX: 10,
@@ -32,8 +32,10 @@ class IsmLiveStreamBanner extends StatelessWidget {
                         controller.pickedImage!.path,
                       )
                     : ColoredBox(
-                        color: context.liveTheme?.secondaryColor?.withValues(alpha: 125) ??
-                            IsmLiveColors.secondary..withValues(alpha: 125),
+                        color: context.liveTheme?.secondaryColor
+                                ?.withValues(alpha: 125) ??
+                            IsmLiveColors.secondary
+                          ..withValues(alpha: 125),
                       ),
           ),
         ),

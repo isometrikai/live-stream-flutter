@@ -23,7 +23,7 @@ class IsmLiveProductContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: width ?? Get.width * .3,
+        width: width ?? MediaQuery.of(context).size.width * .3,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

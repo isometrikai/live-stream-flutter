@@ -443,7 +443,7 @@ class _TopDarkGradient extends StatelessWidget {
         top: 0,
         left: 0,
         right: 0,
-        height: Get.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.3,
         child: const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -467,7 +467,7 @@ class _BottomDarkGradient extends StatelessWidget {
         bottom: 0,
         left: 0,
         right: 0,
-        height: Get.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.3,
         child: const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -528,7 +528,7 @@ class ScheduleStreamView extends StatelessWidget {
                           ),
                           IsmLiveDimens.boxHeight32,
                           SizedBox(
-                            width: Get.width / 3,
+                            width: MediaQuery.of(context).size.width / 3,
                             child: IsmLiveButton(
                               label: 'Go Live',
                               onTap: () {

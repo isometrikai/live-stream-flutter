@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 
@@ -134,9 +133,10 @@ extension IsmLiveIntExtensions on num {
 }
 
 extension IsmLiveDoubleExtensions on double {
-  double get verticalPosition => Get.height * 1.1 * this;
+  double verticalPosition(BuildContext context) =>
+      MediaQuery.of(context).size.height * 1.1 * this;
 
-  double get horizontalPosition {
+  double horizontalPosition(BuildContext context) {
     final random1 = Random().nextBool();
     final random2 = Random().nextBool();
     final value = random1
@@ -146,7 +146,7 @@ extension IsmLiveDoubleExtensions on double {
         : random2
             ? 0.6
             : 0.7;
-    return Get.width * 0.5 * this * value;
+    return MediaQuery.of(context).size.width * 0.5 * this * value;
   }
 }
 

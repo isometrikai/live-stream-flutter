@@ -92,8 +92,8 @@ class _IsmLiveGiftViewState extends State<IsmLiveGiftView>
           child: Align(
             alignment: Alignment.center,
             child: SizedBox(
-              height: Get.height * 0.5,
-              width: Get.width * 0.5,
+              height: MediaQuery.of(context).size.height * 0.5,
+              width: MediaQuery.of(context).size.width * 0.5,
               child: AnimatedBuilder(
                 animation: controller,
                 builder: (context, child) => ScaleTransition(

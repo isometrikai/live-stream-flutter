@@ -113,7 +113,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 // if (isHost)
                 //   Container(
                 //     height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
-                //     width: Get.width * 0.4,
+                //     width: MediaQuery.of(context).size.width * 0.4,
                 //     padding: IsmLiveDimens.edgeInsets0_4,
                 //     child: IsmLiveProductContainer(
                 //       productName: 'SOLD',

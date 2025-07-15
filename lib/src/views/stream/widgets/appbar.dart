@@ -15,7 +15,7 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      Size(Get.width, height ?? IsmLiveDimens.appBarHeight);
+      Size.fromHeight(height ?? IsmLiveDimens.appBarHeight);
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(

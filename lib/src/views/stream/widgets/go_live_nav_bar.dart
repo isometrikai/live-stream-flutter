@@ -33,21 +33,18 @@ class IsmGoLiveNavBar extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.25,
-                        child: IsmLiveButton(
-                          label: 'Go Live',
-                          showBorder: true,
-                          onTap: () {
-                            if (controller.streamDetails?.isScheduledStream ??
-                                false) {
-                              controller.editScheduleStream();
-                              return;
-                            }
+                      IsmLiveButton(
+                        label: 'Go Live',
+                        showBorder: true,
+                        onTap: () {
+                          if (controller.streamDetails?.isScheduledStream ??
+                              false) {
+                            controller.editScheduleStream();
+                            return;
+                          }
 
-                            controller.startStream();
-                          },
-                        ),
+                          controller.startStream();
+                        },
                       ),
                     ],
                   ),

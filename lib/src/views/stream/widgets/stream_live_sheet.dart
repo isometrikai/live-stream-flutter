@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class StreamLiveSheet extends StatelessWidget {
   const StreamLiveSheet({
@@ -18,7 +17,7 @@ class StreamLiveSheet extends StatelessWidget {
   final Widget? widget;
   @override
   Widget build(BuildContext context) => Container(
-        width: Get.width,
+        width: MediaQuery.of(context).size.width,
         padding: IsmLiveDimens.edgeInsets16,
         child: Column(
           mainAxisSize: MainAxisSize.min,

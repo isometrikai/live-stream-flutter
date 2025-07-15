@@ -34,7 +34,7 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
             ),
             const Divider(),
             SizedBox(
-              height: Get.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.3,
               child: GetBuilder<IsmLiveStreamController>(
                 builder: (controller) => CupertinoDatePicker(
                   minimumDate: DateTime.now(),

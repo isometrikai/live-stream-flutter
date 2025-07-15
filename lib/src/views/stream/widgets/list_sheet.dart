@@ -22,7 +22,7 @@ class IsmLiveListSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
-          maxHeight: Get.height * 0.7,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: SingleChildScrollView(
           controller: scrollController,
@@ -31,7 +31,7 @@ class IsmLiveListSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: Get.width,
+                width: MediaQuery.of(context).size.width,
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title ?? 'Top Viewers',
@@ -62,7 +62,10 @@ class IsmLiveListSheet extends StatelessWidget {
                       contentPadding: IsmLiveDimens.edgeInsets0,
                       leading: InkWell(
                         child: IsmLiveImage.network(
-                          IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl ?? '') ?? viewer.imageUrl??'',
+                          IsmLiveDelegate.getUserProfileUrl
+                                  ?.call(viewer.imageUrl ?? '') ??
+                              viewer.imageUrl ??
+                              '',
                           name: viewer.userName,
                           dimensions: IsmLiveDimens.forty,
                           isProfileImage: true,
@@ -103,7 +106,7 @@ class IsmLiveListSheetTwo extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         constraints: BoxConstraints(
-          maxHeight: Get.height * 0.7,
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
         ),
         child: SingleChildScrollView(
           controller: scrollController,
@@ -112,7 +115,7 @@ class IsmLiveListSheetTwo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: Get.width,
+                width: MediaQuery.of(context).size.width,
                 alignment: Alignment.centerLeft,
                 child: Text(
                   title ?? 'Top Viewers',
@@ -130,7 +133,7 @@ class IsmLiveListSheetTwo extends StatelessWidget {
                 const Text('No Viewers'),
               ] else
                 SizedBox(
-                  height: Get.height * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   child: ListView.builder(
                     padding: IsmLiveDimens.edgeInsets0,
                     shrinkWrap: true,

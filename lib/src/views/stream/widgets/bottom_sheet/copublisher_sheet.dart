@@ -66,7 +66,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: Get.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: GetBuilder<IsmLiveStreamController>(
                 id: updateId,
                 initState: (state) {

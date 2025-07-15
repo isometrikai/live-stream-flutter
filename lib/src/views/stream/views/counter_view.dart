@@ -89,7 +89,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
         widget.onComplete?.call();
         if ((streamProperties?.showYoureLiveSheet ?? true) &&
             widget.onCompleteSheet != null) {
-          IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!, backgroundColor: Colors.transparent);
+          IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!,
+              backgroundColor: Colors.transparent);
         }
         return;
       }
@@ -113,8 +114,8 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
         () => Offstage(
           offstage: isCompleted,
           child: SizedBox(
-            height: Get.height,
-            width: Get.width,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
             child: ColoredBox(
               color: Colors.black38,
               child: Center(

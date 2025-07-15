@@ -69,7 +69,7 @@ class IsmLivePkSheet extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: Get.height * 0.4,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: GetX<IsmLivePkController>(
                   builder: (controller) => TabBarView(
                     controller: controller.pkTabController,

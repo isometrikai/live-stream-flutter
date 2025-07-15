@@ -92,7 +92,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: Get.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: IsmLiveButton(
                       label: 'Reject',
                       onTap: () {
@@ -106,7 +106,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                     ),
                   ),
                   SizedBox(
-                    width: Get.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: IsmLiveButton(
                       label: 'Accept',
                       onTap: () {

@@ -16,7 +16,7 @@ class ChatBottomSheet extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: Get.width * 0.4,
+              width: MediaQuery.of(context).size.width * 0.4,
               child: IsmLiveButton(
                 label: 'Reply',
                 onTap: () {
@@ -33,7 +33,7 @@ class ChatBottomSheet extends StatelessWidget {
                 message.isReply == false) ...[
               IsmLiveDimens.boxWidth8,
               SizedBox(
-                width: Get.width * 0.4,
+                width: MediaQuery.of(context).size.width * 0.4,
                 child: IsmLiveButton(
                   label: 'Delete',
                   onTap: () {
