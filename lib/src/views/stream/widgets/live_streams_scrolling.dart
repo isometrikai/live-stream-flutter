@@ -26,6 +26,7 @@ class IsmLiveStreamingScrolling extends StatelessWidget {
               controller.streams.first,
               false,
               isScrolling: true,
+              context: context,
             );
           }
           // }

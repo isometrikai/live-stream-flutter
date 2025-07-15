@@ -186,7 +186,7 @@ class IsmLiveEndStreamButton extends StatelessWidget {
         child: Container(
           margin: IsmLiveDimens.edgeInsets10_0,
           child: IsmLiveTapHandler(
-            onTap: onTapExit ?? IsmLiveApp.endStream,
+            onTap: onTapExit,
             child: const Icon(
               Icons.close,
               color: IsmLiveColors.white,

@@ -101,6 +101,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',
                           response: IsmLivePkResponceToSend.rejected.value,
+                          context: context,
                         );
                       },
                     ),
@@ -115,6 +116,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                           inviteId: inviteId ?? '',
                           reciverStreamId: reciverStreamId ?? '',
                           response: IsmLivePkResponceToSend.accepted.value,
+                          context: context,
                         );
                       },
                     ),

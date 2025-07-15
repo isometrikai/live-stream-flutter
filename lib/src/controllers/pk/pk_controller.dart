@@ -441,6 +441,7 @@ class IsmLivePkController extends GetxController
     required String inviteId,
     required String response,
     required String reciverStreamId,
+    required BuildContext context,
   }) async {
     var res = await _viewModel.invitationPk(
       streamId: reciverStreamId,
@@ -455,6 +456,7 @@ class IsmLivePkController extends GetxController
         hdBroadcast: res.streamData.hdBroadcast ?? false,
         streamDiscription: res.streamData.streamDescription,
         streamImage: res.streamData.streamImage,
+        context: context,
       );
     }
   }
@@ -465,6 +467,7 @@ class IsmLivePkController extends GetxController
     String? streamDiscription,
     bool hdBroadcast = false,
     bool startPublish = true,
+    required BuildContext context,
   }) async {
     var token = await _viewModel.publishPk(
       streamId: reciverStreamId,
@@ -489,6 +492,7 @@ class IsmLivePkController extends GetxController
       isCopublisher: false,
       isPk: true,
       isPkGust: true,
+      context: context,
     );
 
     await streamController.sortParticipants();

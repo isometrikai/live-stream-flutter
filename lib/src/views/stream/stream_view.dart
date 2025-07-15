@@ -90,8 +90,7 @@ class IsmLiveStreamView extends StatelessWidget {
                     scrollDirection: Axis.vertical,
                     pageSnapping: true,
                     onPageChanged: (index) => controller.onStreamScroll(
-                      index: index,
-                    ),
+                        index: index, context: context),
                     itemBuilder: (_, index) {
                       final stream = controller.streams[index];
                       return _IsmLiveStreamView(
@@ -263,10 +262,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                       alignment: IsmLiveApp.endStreamPosition,
                       child: IsmLiveApp.endButton ??
                           IsmLiveEndStreamButton(
-                            onTapExit: () => controller.onExit(
-                              isHost: controller.isHost,
-                              streamId: streamId,
-                            ),
+                            onTapExit: () =>
+                                IsmLiveApp.endStream(context: context),
                           ),
                     ),
                     if (controller.isHost) ...[
@@ -532,7 +529,7 @@ class ScheduleStreamView extends StatelessWidget {
                             child: IsmLiveButton(
                               label: 'Go Live',
                               onTap: () {
-                                controller.startStream();
+                                controller.startStream(context: context);
                               },
                             ),
                           ),

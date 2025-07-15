@@ -6,8 +6,9 @@ mixin StreamSheetMixin {
   void onExit({
     required bool isHost,
     required String streamId,
+    required BuildContext context,
   }) async {
-    FocusScope.of(Get.context!).unfocus();
+    FocusScope.of(context).unfocus();
 
     if (isHost || (_controller.isCopublisher)) {
       await IsmLiveUtility.openBottomSheet(
@@ -73,13 +74,13 @@ mixin StreamSheetMixin {
   }
 
   // Function to handle showing copublishing viewer bottom sheet
-  void copublishingViewerSheet() async {
+  void copublishingViewerSheet(BuildContext context) async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-          title: Get.context?.liveTranslations?.requestCopublishingTitle ??
+          title: context.liveTranslations?.requestCopublishingTitle ??
               IsmLiveStrings.requestCopublishingTitle,
           description:
-              Get.context?.liveTranslations?.requestCopublishingDescription ??
+              context.liveTranslations?.requestCopublishingDescription ??
                   IsmLiveStrings.requestCopublishingDescription,
           label: _controller.memberStatus.isRejected
               ? 'Request denied by the host'
@@ -105,18 +106,17 @@ mixin StreamSheetMixin {
   }
 
 // Function to handle showing copublishing start video bottom sheet
-  void copublishingStartVideoSheet() async {
+  void copublishingStartVideoSheet(BuildContext context) async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title:
-            (Get.context?.liveTranslations?.hostAcceptedCopublishRequestTitle ??
-                    IsmLiveStrings.hostAcceptedCopublishRequestTitle)
-                .trParams({
+        title: (context.liveTranslations?.hostAcceptedCopublishRequestTitle ??
+                IsmLiveStrings.hostAcceptedCopublishRequestTitle)
+            .trParams({
           'name': _controller.hostDetails?.userName ?? 'Host',
         }),
-        description: Get.context?.liveTranslations
-                ?.hostAcceptedCopublishRequestDescription ??
-            IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description:
+            context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
+                IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: 'Start Video',
         images: [
           _controller.user?.profileUrl ?? '',
@@ -136,6 +136,7 @@ mixin StreamSheetMixin {
               isHost: false,
               isNewStream: false,
               isCopublisher: true,
+              context: context,
             );
 
             await _controller.sortParticipants();

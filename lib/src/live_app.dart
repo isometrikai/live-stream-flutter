@@ -144,7 +144,8 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.logoSvg = logoSvg;
   }
 
-  static Future<void> endStream() async => await IsmLiveDelegate.endStream();
+  static Future<void> endStream({required BuildContext context}) async =>
+      await IsmLiveDelegate.endStream(context: context);
 
   static void handleMqttEvent(EventModel payload) {
     assert(
@@ -162,6 +163,7 @@ class IsmLiveApp extends StatelessWidget {
     required bool isHost,
     bool isInteractive = false,
     VoidCallback? onStreamEnd,
+    required BuildContext context,
   }) async {
     assert(
       _initialized,
@@ -179,6 +181,7 @@ class IsmLiveApp extends StatelessWidget {
         joinByScrolling: false,
         isInteractive: isInteractive,
         onStreamEnd: onStreamEnd,
+        context: context,
       );
     });
   }

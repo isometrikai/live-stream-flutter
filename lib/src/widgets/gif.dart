@@ -13,14 +13,14 @@ class IsmLiveGif extends StatefulWidget {
   final String path;
   final bool fromPackage;
 
-  static Future preCache(String file) => precacheImage(
+  static Future preCache(String file, BuildContext context) => precacheImage(
       (file.isURL
           ? NetworkImage(file)
           : AssetImage(
               file,
               package: IsmLiveConstants.packageName,
             )) as ImageProvider,
-      Get.context!);
+      context);
 
   @override
   State<IsmLiveGif> createState() => _IsmLiveGifState();

@@ -156,12 +156,12 @@ mixin StreamAPIMixin {
 
 // Creates a new live stream with the provided details.
   Future<({IsmLiveRTCModel? model, String image})?> createStream(
-      {String? streamImage}) async {
+      {String? streamImage, required BuildContext context}) async {
     String? simage;
     if (streamImage == null) {
       var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
       var type = _controller.pickedImage!.name.split('.').last;
-      simage = await uploadImage(type, bytes);
+      simage = await uploadImage(type, bytes, context);
       if (simage == null || simage.isNullOrEmpty) {
         return null;
       }
@@ -437,10 +437,10 @@ mixin StreamAPIMixin {
       );
 
 //Uploads an image for a live stream.
-  Future<String?> uploadImage(String mediaExtension, Uint8List bytes) async {
+  Future<String?> uploadImage(
+      String mediaExtension, Uint8List bytes, BuildContext context) async {
     IsmLiveUtility.showLoader(
-      Get.context?.liveTranslations?.uploadingImage ??
-          IsmLiveStrings.uploadingImage,
+      context.liveTranslations?.uploadingImage ?? IsmLiveStrings.uploadingImage,
     );
     var res = await _controller.viewModel.getPresignedUrl(
       showLoader: false,

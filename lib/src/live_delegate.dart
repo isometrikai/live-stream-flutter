@@ -74,7 +74,8 @@ class IsmLiveDelegate {
 
   static LinearGradient? streamOptionsBgGradient;
 
-  Future<void> initialize(IsmLiveConfigData config, {
+  Future<void> initialize(
+    IsmLiveConfigData config, {
     VoidCallback? onEndStream,
   }) async {
     onStreamEnd = onEndStream;
@@ -87,7 +88,7 @@ class IsmLiveDelegate {
     ]);
   }
 
-  static Future<void> endStream() async {
+  static Future<void> endStream({required BuildContext context}) async {
     assert(Get.isRegistered<IsmLiveStreamController>(),
         'StreamController is not initialized');
     IsmLiveLog.error('Calling Leave API from Outside');
@@ -98,6 +99,7 @@ class IsmLiveDelegate {
     controller.onExit(
       isHost: controller.isHost,
       streamId: controller.streamId!,
+      context: context,
     );
   }
 }

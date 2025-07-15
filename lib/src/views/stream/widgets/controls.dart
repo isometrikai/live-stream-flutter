@@ -92,7 +92,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                         controller.controlIcon(options[index]),
                       ),
                       onTap: () async {
-                        await controller.onOptionTap(options[index]);
+                        await controller.onOptionTap(options[index], context);
                         controller.update([IsmLiveControlsWidget.updateId]);
                       },
                       color: options[index] == IsmLiveStreamOption.heart

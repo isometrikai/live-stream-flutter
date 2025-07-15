@@ -39,11 +39,11 @@ class IsmGoLiveNavBar extends StatelessWidget {
                         onTap: () {
                           if (controller.streamDetails?.isScheduledStream ??
                               false) {
-                            controller.editScheduleStream();
+                            controller.editScheduleStream(context);
                             return;
                           }
 
-                          controller.startStream();
+                          controller.startStream(context: context);
                         },
                       ),
                     ],

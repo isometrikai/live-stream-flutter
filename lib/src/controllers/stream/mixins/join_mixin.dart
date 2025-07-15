@@ -26,11 +26,14 @@ mixin StreamJoinMixin {
     bool isHost, {
     bool joinByScrolling = false,
     bool isScrolling = false,
+    required BuildContext context,
   }) async {
     initialize(_controller.streams.indexOf(stream));
 
     await joinStream(stream, isHost,
-        joinByScrolling: joinByScrolling, isScrolling: isScrolling);
+        joinByScrolling: joinByScrolling,
+        isScrolling: isScrolling,
+        context: context);
   }
 
 // Initialize the page controller
@@ -98,6 +101,7 @@ mixin StreamJoinMixin {
     bool isScrolling = false,
     bool isInteractive = false,
     VoidCallback? onStreamEnd,
+    required BuildContext context,
   }) async {
     // Get the token for the stream based on whether the user is a host or not
     if (onStreamEnd != null) {
@@ -145,11 +149,13 @@ mixin StreamJoinMixin {
       isScrolling: isScrolling,
       hdBroadcast: stream.hdBroadcast ?? false,
       isInteractive: isInteractive,
+      context: context,
     );
   }
 
 // Start streaming
-  Future<void> startStream({bool isNewStream = true}) async {
+  Future<void> startStream(
+      {bool isNewStream = true, required BuildContext context}) async {
     if (_controller.isPremium &&
         _controller.premiumStreamCoinsController.isEmpty) {
       _controller.premiumStreamSheet();
@@ -181,7 +187,7 @@ mixin StreamJoinMixin {
           }
         }
       }
-      var data = await _controller.createStream();
+      var data = await _controller.createStream(context: context);
       if (data == null) {
         return;
       }
@@ -222,6 +228,7 @@ mixin StreamJoinMixin {
       isNewStream: isNewStream,
       hdBroadcast: _controller.isHdBroadcast,
       restream: _controller.isRestreamBroadcast,
+      context: context,
     );
   }
 
@@ -241,6 +248,7 @@ mixin StreamJoinMixin {
     bool joinByScrolling = false,
     bool isScrolling = false,
     bool isInteractive = false,
+    required BuildContext context, // <-- add context param
   }) async {
     // Subscribe to the stream
     _controller.streamId = streamId;
@@ -277,7 +285,7 @@ mixin StreamJoinMixin {
       }
     }
     // Show appropriate message based on the user's role
-    final translation = Get.context?.liveTranslations?.streamTranslations;
+    final translation = context.liveTranslations?.streamTranslations;
     var message = '';
     if (isHost) {
       if (isNewStream) {
@@ -397,8 +405,8 @@ mixin StreamJoinMixin {
       startStreamTimer();
 
       if (!joinByScrolling) {
-        IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path));
-        IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path));
+        IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
+        IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path, context));
 
         await IsmLiveRouteManagement.goToStreamView(
           isHost: isHost,
@@ -486,7 +494,7 @@ mixin StreamJoinMixin {
     );
   }
 
-  void editScheduleStream() async {
+  void editScheduleStream(BuildContext context) async {
     String? image;
     if (_controller.streamDetails?.streamImage?.isEmpty ?? true) {
       if (_controller.pickedImage == null) {
@@ -505,7 +513,7 @@ mixin StreamJoinMixin {
 
       var bytes = File(_controller.pickedImage!.path).readAsBytesSync();
       var type = _controller.pickedImage!.name.split('.').last;
-      image = await _controller.uploadImage(type, bytes);
+      image = await _controller.uploadImage(type, bytes, context);
     }
 
     var res = await _controller.editScheduledStream(

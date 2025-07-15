@@ -152,12 +152,18 @@ class _StreamListing extends StatelessWidget {
                                         .buyStream(e.streamId ?? '');
                                     if (res) {
                                       await controller.initializeAndJoinStream(
-                                          e, isCreatedByMe);
+                                        e,
+                                        isCreatedByMe,
+                                        context: context,
+                                      );
                                     }
                                   });
                             } else {
                               controller.initializeAndJoinStream(
-                                  e, isCreatedByMe);
+                                e,
+                                isCreatedByMe,
+                                context: context,
+                              );
                             }
                           },
                           child: IsmLiveStreamCard(

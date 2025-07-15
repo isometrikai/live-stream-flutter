@@ -375,7 +375,7 @@ mixin StreamOngoingMixin {
     }
   }
 
-  Future onOptionTap(IsmLiveStreamOption option) async {
+  Future onOptionTap(IsmLiveStreamOption option, BuildContext context) async {
     switch (option) {
       case IsmLiveStreamOption.gift:
         _controller.giftsSheet();
@@ -385,9 +385,9 @@ mixin StreamOngoingMixin {
           _controller.copublishingHostSheet();
         } else {
           if (_controller.memberStatus.canEnableVideo) {
-            _controller.copublishingStartVideoSheet();
+            _controller.copublishingStartVideoSheet(context);
           } else {
-            _controller.copublishingViewerSheet();
+            _controller.copublishingViewerSheet(context);
           }
         }
 
@@ -537,6 +537,7 @@ mixin StreamOngoingMixin {
 
   void onStreamScroll({
     required int index,
+    required BuildContext context,
   }) async {
     if (onChangeCall) {
       return;
@@ -582,6 +583,7 @@ mixin StreamOngoingMixin {
                 false,
                 joinByScrolling: true,
                 isScrolling: true,
+                context: context,
               );
             }
           });
@@ -591,6 +593,7 @@ mixin StreamOngoingMixin {
         false,
         joinByScrolling: true,
         isScrolling: true,
+        context: context,
       );
     }
 

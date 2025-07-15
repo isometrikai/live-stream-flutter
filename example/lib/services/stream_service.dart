@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// A service class that uses the stream API functionality from the package
@@ -7,8 +8,10 @@ class StreamService {
   const StreamService._();
   static const StreamService instance = StreamService._();
 
-  IsmLiveStreamController get _controller => Get.find<IsmLiveStreamController>();
-  IsmLiveMqttController get _mqttController => Get.find<IsmLiveMqttController>();
+  IsmLiveStreamController get _controller =>
+      Get.find<IsmLiveStreamController>();
+  IsmLiveMqttController get _mqttController =>
+      Get.find<IsmLiveMqttController>();
 
   /// Initialize the service and set up MQTT event listeners
   void initialize() {
@@ -34,7 +37,7 @@ class StreamService {
     int skip = 0,
   }) async {
     var streamType = type ?? _controller.streamType;
-    
+
     if (streamType == IsmLiveStreamType.scheduledStreams) {
       return _getScheduledStreams(skip: skip);
     }
@@ -45,20 +48,25 @@ class StreamService {
   }
 
   /// Get scheduled streams
-  Future<List<IsmLiveStreamDataModel>> _getScheduledStreams({int skip = 0}) async => _controller.viewModel.getStreams(
-      queryModel: IsmLiveStreamType.scheduledStreams.queryModel(skip: skip),
-    );
+  Future<List<IsmLiveStreamDataModel>> _getScheduledStreams(
+          {int skip = 0}) async =>
+      _controller.viewModel.getStreams(
+        queryModel: IsmLiveStreamType.scheduledStreams.queryModel(skip: skip),
+      );
 
   /// Join a stream
-  Future<void> joinStream(IsmLiveStreamDataModel stream, bool isCreatedByMe) async {
+  Future<void> joinStream(IsmLiveStreamDataModel stream, bool isCreatedByMe,
+      BuildContext context) async {
     if ((stream.isPaid ?? false) && !(stream.isBuy ?? false)) {
       // Handle paid stream
       final res = await _controller.buyStream(stream.streamId ?? '');
       if (res) {
-        await _controller.initializeAndJoinStream(stream, isCreatedByMe);
+        await _controller.initializeAndJoinStream(stream, isCreatedByMe,
+            context: context);
       }
     } else {
-      await _controller.initializeAndJoinStream(stream, isCreatedByMe);
+      await _controller.initializeAndJoinStream(stream, isCreatedByMe,
+          context: context);
     }
   }
 
@@ -66,7 +74,7 @@ class StreamService {
   String? get currentUserId => _controller.user?.userId;
 
   /// Start a new live stream with the specified parameters
-  /// 
+  ///
   /// [streamTitle] - The title of the stream
   /// [streamDescription] - Description of the stream
   /// [streamImage] - Optional image for the stream thumbnail
@@ -86,7 +94,7 @@ class StreamService {
   /// [eventId] - Event ID for scheduled streams
   /// [paymentCurrencyCode] - Currency code for paid streams
   /// [saleType] - Type of sale for paid streams
-  /// 
+  ///
   /// Returns the created stream data model if successful, null otherwise
   Future<IsmLiveStreamDataModel?> startLiveStream({
     required String streamTitle,
@@ -107,6 +115,7 @@ class StreamService {
     bool productsLinked = false,
     String? eventId,
     String? paymentCurrencyCode,
+    required BuildContext context,
   }) async {
     try {
       // Set up stream details
@@ -135,7 +144,8 @@ class StreamService {
       _controller.descriptionController.text = streamDescription;
 
       // Create stream directly with the image URL
-      var data = await _controller.createStream(streamImage: streamImage);
+      var data = await _controller.createStream(
+          streamImage: streamImage, context: context);
       if (data == null || data.model == null) {
         return null;
       }
@@ -149,6 +159,7 @@ class StreamService {
         isNewStream: true,
         hdBroadcast: hdBroadcast,
         restream: restream,
+        context: context,
       );
 
       return _controller.streamDetails;
@@ -157,4 +168,4 @@ class StreamService {
       return null;
     }
   }
-} 
+}
