@@ -190,7 +190,7 @@ mixin StreamOngoingMixin {
         ((_controller.userRole?.isHost ?? false) ||
             (_controller.userRole?.isPkGuest ?? false))) {
       if (Get.isBottomSheetOpen ?? false) {
-        Get.back();
+        IsmLiveRoute.pop();
       }
       IsmLiveDebouncer(durationtime: 3000).run(() async {
         try {
@@ -573,7 +573,7 @@ mixin StreamOngoingMixin {
       _controller.paidStreamSheet(
           coins: _controller.streams[index].amount ?? 0,
           onTap: () async {
-            Get.back();
+            IsmLiveRoute.pop();
             var res = await _controller
                 .buyStream(_controller.streams[index].streamId ?? '');
             if (res) {
@@ -712,9 +712,9 @@ mixin StreamOngoingMixin {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
       if (Get.isBottomSheetOpen ?? false) {
-        Get.back();
+        IsmLiveRoute.pop();
       }
-      Get.back();
+      IsmLiveRoute.pop();
       if (fromMqtt) {
         IsmLiveUtility.showCustomDialog(const IsmLiveStreamEndDialog());
       }

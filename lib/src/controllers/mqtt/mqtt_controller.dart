@@ -117,8 +117,10 @@ class IsmLiveMqttController extends GetxController {
 
     if (shouldInitializeMqtt) {
       try {
-        debugPrint('IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
-        debugPrint('IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
+        debugPrint(
+            'IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
+        debugPrint(
+            'IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
         await _mqttHelper.initialize(
           MqttConfig(
             serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
@@ -407,7 +409,7 @@ class IsmLiveMqttController extends GetxController {
                 .removeWhere((e) => e.userId == memberId);
             if (userId != initiatorId && userId == memberId) {
               _disconnectRoom();
-              Get.back();
+              IsmLiveRoute.pop();
             }
             // if (memberId == userId) {
             //   unawaited(_streamController.unpublishTracks());
@@ -676,7 +678,7 @@ class IsmLiveMqttController extends GetxController {
             }
             _updateStream();
             if (viewerId == userId) {
-              Get.back();
+              IsmLiveRoute.pop();
               IsmLiveUtility.showCustomDialog(const IsmLiveKickoutDialog());
             }
           }

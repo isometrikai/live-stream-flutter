@@ -40,7 +40,7 @@ mixin RestreamMixin {
       );
 
       if (res.isNotEmpty) {
-        Get.back();
+        IsmLiveRoute.pop();
       }
     } else {
       var isComplete = await _controller.editRestreamChannel(
@@ -50,7 +50,7 @@ mixin RestreamMixin {
         channelId: channelId,
       );
       if (isComplete) {
-        Get.back();
+        IsmLiveRoute.pop();
       }
     }
 

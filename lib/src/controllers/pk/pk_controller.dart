@@ -208,7 +208,7 @@ class IsmLivePkController extends GetxController
 
     if (pkDetails.userId != streamController.user?.userId) {
       if (Get.isBottomSheetOpen ?? false) {
-        Get.back();
+        IsmLiveRoute.pop();
       }
 
       if (pkDetails.metaData?.status ==
@@ -218,7 +218,7 @@ class IsmLivePkController extends GetxController
             title: 'Request for pk is rejected',
             leftLabel: 'cancel',
             rightLabel: 'ReSend',
-            onLeft: Get.back,
+            onLeft: IsmLiveRoute.pop,
             onRight: () {
               sendInvitationToUserForPK(
                 reciverDetails: IsmLivePkInviteModel(
@@ -319,7 +319,7 @@ class IsmLivePkController extends GetxController
 
           streamController.update([IsmLivePublisherGrid.updateId]);
 
-          Get.back();
+          IsmLiveRoute.pop();
         },
       ),
     );
@@ -358,9 +358,9 @@ class IsmLivePkController extends GetxController
         leftLabel: 'cancel',
         rightLabel:
             streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
-        onLeft: Get.back,
+        onLeft: IsmLiveRoute.pop,
         onRight: () {
-          Get.back();
+          IsmLiveRoute.pop();
           if (streamController.pkStages?.isPkStart ?? false) {
             stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
           } else {
@@ -421,7 +421,7 @@ class IsmLivePkController extends GetxController
     );
 
     if (res) {
-      Get.back();
+      IsmLiveRoute.pop();
 
       pkInviteSheet(
         description:
@@ -548,7 +548,7 @@ class IsmLivePkController extends GetxController
 
   Future<void> startPkBattle() async {
     if (pkSelectTime.isNotEmpty) {
-      Get.back();
+      IsmLiveRoute.pop();
       await _viewModel.startPkBattle(
         battleTimeInMin: pkSelectTime,
         inviteId: inviteId,

@@ -19,9 +19,9 @@ mixin StreamSheetMixin {
           leftLabel: isHost ? 'Cancel' : 'Stop stream',
           rightLabel: isHost ? 'End Stream' : 'Leave stream',
           onLeft: isHost
-              ? Get.back
+              ? IsmLiveRoute.pop
               : () async {
-                  Get.back();
+                  IsmLiveRoute.pop();
                   await _controller.disconnectStream(
                     isHost: isHost,
                     streamId: streamId,
@@ -29,7 +29,7 @@ mixin StreamSheetMixin {
                   );
                 },
           onRight: () async {
-            Get.back();
+            IsmLiveRoute.pop();
 
             await _controller.disconnectStream(
               isHost: isHost,
@@ -161,15 +161,15 @@ mixin StreamSheetMixin {
         rightLabel: 'Delete',
         title: 'Schedule Stream',
         onLeft: () {
-          Get.back();
+          IsmLiveRoute.pop();
           IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
         },
         onRight: () async {
-          Get.back();
+          IsmLiveRoute.pop();
 
           await _controller
               .deleteScheduledStream(_controller.streamDetails?.eventId ?? '');
-          Get.back();
+          IsmLiveRoute.pop();
           _controller.streamDispose();
           unawaited(_controller.getStreams());
         },
@@ -212,7 +212,7 @@ mixin StreamSheetMixin {
         rightLabel: 'Pay&Contineue',
         title:
             'This Stream is Primeum if you want to join you need to pay $coins coins',
-        onLeft: Get.back,
+        onLeft: IsmLiveRoute.pop,
         onRight: onTap,
       ),
       isScrollController: true,
@@ -225,7 +225,7 @@ mixin StreamSheetMixin {
         textController: _controller.premiumStreamCoinsController,
         onTap: () {
           if (_controller.premiumStreamCoinsController.isNotEmpty) {
-            Get.back();
+            IsmLiveRoute.pop();
             _controller.update([IsmGoLiveView.updateId]);
           }
         },
