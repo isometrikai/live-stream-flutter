@@ -58,19 +58,19 @@ class AuthController extends GetxController {
 
   // -------------------------------- Functions ------------------------------------
 
-  void validateLogin() {
+  void validateLogin(BuildContext context) {
     // if (loginFormKey.currentState!.validate()) {
-    login();
+    login(context);
     // }
   }
 
-  void validateSignUp() {
+  void validateSignUp(BuildContext context) {
     if (signFormKey.currentState!.validate()) {
-      signup();
+      signup(context);
     }
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     var res = await _viewModel.login(
       userName: userNameController.text.trim(),
       email: emailController.text.trim(),
@@ -82,10 +82,10 @@ class AuthController extends GetxController {
     }
 
     // unawaited(userController.getUserData());
-    RouteManagement.goToHome();
+    RouteManagement.goToHome(context);
   }
 
-  Future<void> signup() async {
+  Future<void> signup(BuildContext context) async {
     var creatUser = <String, dynamic>{
       'userProfileImageUrl': profileImage,
       'userName': userNameController.text.trim(),
@@ -102,7 +102,7 @@ class AuthController extends GetxController {
       return;
     }
     // unawaited(userController.getUserData());
-    RouteManagement.goToHome();
+    RouteManagement.goToHome(context);
   }
 
   void uploadImage(ImageSource imageSource) async {

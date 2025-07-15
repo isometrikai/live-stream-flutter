@@ -27,7 +27,7 @@ class HomeView extends StatelessWidget {
           configuration: kConfigData.value ?? controller.configData,
           navigatorKey: kNavigatorKey,
           enableLog: true,
-          onLogout: controller.logout,
+          onLogout: () => controller.logout(context),
         ),
       );
 }

@@ -110,14 +110,7 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('login-signup'),
                         child: IsmLiveButton(
-                          onTap:
-                              //  controller.loginFormKey.currentState
-                              //             ?.validate() ??
-                              //         false
-                              //     ?
-                              controller.validateLogin
-                          // : null
-                          ,
+                          onTap: () => controller.validateLogin(context),
                           label: TranslationKeys.login.tr,
                         ),
                       ),
@@ -125,7 +118,7 @@ class LoginView extends StatelessWidget {
                       Hero(
                         tag: const ValueKey('login-signup-change'),
                         child: IsmLiveButton.secondary(
-                          onTap: RouteManagement.goToSignUp,
+                          onTap: () => RouteManagement.goToSignUp(context),
                           label: TranslationKeys.signup.tr,
                         ),
                       ),

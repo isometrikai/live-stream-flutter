@@ -238,7 +238,7 @@ class SignupView extends StatelessWidget {
                                           ?.validate() ??
                                       false
                                   ? controller.profileImage.isNotEmpty
-                                      ? controller.validateSignUp
+                                      ? () => controller.validateSignUp(context)
                                       : () {
                                           Get.dialog(
                                             AlertDialog(
@@ -263,7 +263,7 @@ class SignupView extends StatelessWidget {
                           Hero(
                             tag: const ValueKey('login-signup-change'),
                             child: IsmLiveButton.secondary(
-                              onTap: RouteManagement.goToLogin,
+                              onTap: () => RouteManagement.goToLogin(context),
                               label: TranslationKeys.login.tr,
                             ),
                           ),

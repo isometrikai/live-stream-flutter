@@ -13,21 +13,16 @@ class SplashController extends GetxController {
     IsmLiveUtility.updateLater(() {
       Get.updateLocale(const Locale('en', 'IN'));
     });
-    startOnInit();
   }
 
   var isLoggedIn = false;
 
-  void startOnInit() async {
+  void startOnInit(BuildContext context) async {
     isLoggedIn = dbWrapper.getBoolValue(LocalKeys.isLoggedIn);
-    late Function route;
     if (isLoggedIn) {
-      route = RouteManagement.goToHome;
+      RouteManagement.goToHome(context);
     } else {
-      route = RouteManagement.goToLogin;
+      RouteManagement.goToLogin(context);
     }
-    IsmLiveUtility.updateLater(() {
-      route();
-    });
   }
 }

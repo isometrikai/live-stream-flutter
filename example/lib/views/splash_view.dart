@@ -12,13 +12,18 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<SplashController>(
-        builder: (controller) => const Scaffold(
-          body: Center(
-            child: Hero(
-              tag: ValueKey('logo_isometrik'),
-              child: IsmLiveImage.svg(AssetConstants.isometrik),
+        builder: (controller) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            controller.startOnInit(context);
+          });
+          return const Scaffold(
+            body: Center(
+              child: Hero(
+                tag: ValueKey('logo_isometrik'),
+                child: IsmLiveImage.svg(AssetConstants.isometrik),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       );
 }

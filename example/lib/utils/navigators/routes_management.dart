@@ -1,27 +1,28 @@
 import 'package:appscrip_live_stream_component_example/utils/navigators/app_pages.dart';
-import 'package:get/get.dart';
+import 'package:flutter/widgets.dart'; // Added for BuildContext
 
 abstract class RouteManagement {
   /// Go to the SignIn Screen
-  static void goToLogin([bool fromSignup = false]) {
+  static void goToLogin(BuildContext context, [bool fromSignup = false]) {
     if (fromSignup) {
-      Get.back();
+      Navigator.of(context).pop();
     } else {
-      Get.offAllNamed<void>(
+      Navigator.of(context).pushNamedAndRemoveUntil(
         AppRoutes.login,
+        (route) => false,
       );
     }
   }
 
-  static void goToSignUp() {
-    Get.offNamed(AppRoutes.signup);
-    // Get.offNamed(AppRoutes.signup);
+  static void goToSignUp(BuildContext context) {
+    Navigator.of(context).pushNamed(AppRoutes.signup);
   }
 
   /// Go to the Home Screen
-  static void goToHome() {
-    Get.offAllNamed<void>(
+  static void goToHome(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
       AppRoutes.home,
+      (route) => false,
     );
   }
 }

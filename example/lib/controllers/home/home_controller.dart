@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component_example/controllers/home/custom_button.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
@@ -51,58 +50,58 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
-    await IsmLiveApp.initialize(configData,navigatorKey: kNavigatorKey);
+    await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      // hostOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.rotateCamera,
-      //   IsmLiveStreamOption.settings,
-      // ],
-      // viewersOptions: [
-      //   IsmLiveStreamOption.gift,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.speaker,
-      //   IsmLiveStreamOption.heart,
-      // ],
-      // ismLiveButtonConfig: IsmLiveButtonConfig(
-      //   primaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(
-      //     title: label,
-      //     onPress: onTap,
-      //   ),
-      //   secondaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
-      // ),
-      //   streamOptionsBgGradient : const LinearGradient(
-      //     begin: Alignment.bottomCenter,
-      //     end: Alignment.topCenter,
-      //     colors: [
-      //       ColorsValue.gradientStart,
-      //       ColorsValue.gradientEnd,
-      //     ],
-      //   ),
-      // liveAnalyticsOptions: [
-      //   IsmLiveAnalyticsOptions.hearts,
-      //   IsmLiveAnalyticsOptions.viewers,
-      //   IsmLiveAnalyticsOptions.followers,
-      //   IsmLiveAnalyticsOptions.earnings,
-      //   IsmLiveAnalyticsOptions.duration,
-      // ]
-      // logoSvg: 'assets/logo/iamat_logo.svg'
-    );
+        // hostOptions: [
+        //   IsmLiveStreamOption.bars,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.rotateCamera,
+        //   IsmLiveStreamOption.settings,
+        // ],
+        // viewersOptions: [
+        //   IsmLiveStreamOption.gift,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.speaker,
+        //   IsmLiveStreamOption.heart,
+        // ],
+        // ismLiveButtonConfig: IsmLiveButtonConfig(
+        //   primaryBuilder: (context,
+        //           {required label,
+        //           onTap,
+        //           required small,
+        //           required showBorder,
+        //           icon,
+        //           required secondary}) =>
+        //       CustomButton(
+        //     title: label,
+        //     onPress: onTap,
+        //   ),
+        //   secondaryBuilder: (context,
+        //           {required label,
+        //           onTap,
+        //           required small,
+        //           required showBorder,
+        //           icon,
+        //           required secondary}) =>
+        //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+        // ),
+        //   streamOptionsBgGradient : const LinearGradient(
+        //     begin: Alignment.bottomCenter,
+        //     end: Alignment.topCenter,
+        //     colors: [
+        //       ColorsValue.gradientStart,
+        //       ColorsValue.gradientEnd,
+        //     ],
+        //   ),
+        // liveAnalyticsOptions: [
+        //   IsmLiveAnalyticsOptions.hearts,
+        //   IsmLiveAnalyticsOptions.viewers,
+        //   IsmLiveAnalyticsOptions.followers,
+        //   IsmLiveAnalyticsOptions.earnings,
+        //   IsmLiveAnalyticsOptions.duration,
+        // ]
+        // logoSvg: 'assets/logo/iamat_logo.svg'
+        );
   }
 
   @override
@@ -113,11 +112,11 @@ class HomeController extends GetxController {
     });
   }
 
-  void logout() async {
+  void logout(BuildContext context) async {
     dbWrapper.deleteBox();
 
     await dbWrapper.deleteAllSecuredValues();
 
-    RouteManagement.goToLogin();
+    RouteManagement.goToLogin(context);
   }
 }
