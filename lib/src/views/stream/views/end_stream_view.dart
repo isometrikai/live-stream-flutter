@@ -50,6 +50,7 @@ class IsmLiveEndStream extends StatelessWidget {
                           const IconButton(
                             icon: Icon(
                               Icons.close,
+                              color: Colors.black,
                             ),
                             onPressed: IsmLiveRoute.pop,
                           ),
