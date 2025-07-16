@@ -47,12 +47,16 @@ class IsmLiveEndStream extends StatelessWidget {
                             width: IsmLiveDimens.ninty,
                             isProfileImage: true,
                           ),
-                          const IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.black,
+                          Container(
+                            padding: EdgeInsets.all(IsmLiveDimens.six),
+                            color: Colors.red,
+                            child: const IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: IsmLiveColors.black,
+                              ),
+                              onPressed: IsmLiveRoute.pop,
                             ),
-                            onPressed: IsmLiveRoute.pop,
                           ),
                         ],
                       ),
