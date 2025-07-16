@@ -28,6 +28,7 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
                 ),
                 const IconButton(
                   icon: Icon(Icons.close),
+                  color: IsmLiveColors.lightGray,
                   onPressed: IsmLiveRoute.pop,
                 ),
               ],
