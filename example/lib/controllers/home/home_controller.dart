@@ -18,15 +18,19 @@ class HomeController extends GetxController {
   late IsmLiveConfigData configData;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-
-    setupStream();
+    try {
+      setupStream();
+    } catch (e, st) {
+      // Use IsmLiveLog for error logging
+      IsmLiveLog.error('Error in HomeController.onInit: $e', st);
+    }
   }
 
   void setupStream() async {
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
-
+     debugPrint('IsmLiveApp: setupStream:  stated $user');
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
         accountId: AppConstants.accountId,
@@ -50,8 +54,8 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
-    await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
-    IsmLiveApp.configureInterface(
+    // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
+    // IsmLiveApp.configureInterface(
         // hostOptions: [
         //   IsmLiveStreamOption.bars,
         //   IsmLiveStreamOption.share,
@@ -101,7 +105,7 @@ class HomeController extends GetxController {
         //   IsmLiveAnalyticsOptions.duration,
         // ]
         // logoSvg: 'assets/logo/iamat_logo.svg'
-        );
+        // );
   }
 
   @override

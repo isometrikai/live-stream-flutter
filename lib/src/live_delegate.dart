@@ -86,6 +86,7 @@ class IsmLiveDelegate {
           IsmLiveLocalKeys.configDetails, config.toJson()),
       IsmLiveUtility.initialize(config),
     ]);
+    IsmLiveLog.info('IsmLiveApp : configDetails data set Successfully');
   }
 
   static Future<void> endStream({required BuildContext context}) async {

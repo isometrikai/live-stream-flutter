@@ -78,21 +78,19 @@ mixin StreamAPIMixin {
     }
 
     if (skip == 0) {
-      _controller._streams[streamType] = await _controller.viewModel.getStreams(
+      _controller.streamsMap[streamType] =
+          await _controller.viewModel.getStreams(
         queryModel: streamType.queryModel(skip: skip),
       );
     } else {
-      _controller._streams[streamType]!
+      _controller.streamsMap[streamType]!
           .addAll(await _controller.viewModel.getStreams(
         queryModel: streamType.queryModel(skip: skip),
       ));
     }
 
-    _controller._streamRefreshControllers[streamType]!.refreshCompleted();
-    _controller._streamRefreshControllers[streamType]!.loadComplete();
-    IsmLiveUtility.updateLater(() {
-      _controller.update([IsmLiveStreamListing.updateId]);
-    });
+    // Removed refreshCompleted/loadComplete calls
+    _controller.update([IsmLiveStreamListing.updateId]);
   }
 
   Future<void> fetchScheduledStream(
@@ -108,15 +106,16 @@ mixin StreamAPIMixin {
     var streamType = type ?? _controller.streamType;
 
     if (skip == 0) {
-      _controller._streams[streamType] = await _controller.viewModel
+      _controller.streamsMap[streamType] = await _controller.viewModel
           .fetchScheduledStream(limit: 10, skip: skip);
     } else {
-      _controller._streams[streamType]!.addAll(await _controller.viewModel
-          .fetchScheduledStream(limit: 10, skip: skip));
+      final newItems = await _controller.viewModel
+          .fetchScheduledStream(limit: 10, skip: skip);
+      _controller.streamsMap[streamType] =
+          List.from(_controller.streamsMap[streamType] ?? [])..addAll(newItems);
     }
 
-    _controller._streamRefreshControllers[streamType]!.refreshCompleted();
-    _controller._streamRefreshControllers[streamType]!.loadComplete();
+    // Removed refreshCompleted/loadComplete calls
     IsmLiveUtility.updateLater(() {
       _controller.update([IsmLiveStreamListing.updateId]);
     });
