@@ -50,7 +50,7 @@ class IsmLiveDelegate {
 
   static Widget? homeScreen;
 
-  static String? logoSvg;
+  static Widget? logoWidget;
 
   static Widget? endStreamScreen;
 
