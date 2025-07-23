@@ -74,6 +74,8 @@ class IsmLiveDelegate {
 
   static LinearGradient? streamOptionsBgGradient;
 
+  static Future<void> Function(String streamId)? onHostStopStream;
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,

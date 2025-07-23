@@ -140,6 +140,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveButtonConfig? ismLiveButtonConfig,
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
+    Future<void> Function(String streamId)? onHostStopStream,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -173,6 +174,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
+    IsmLiveDelegate.onHostStopStream = onHostStopStream;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>

@@ -631,7 +631,11 @@ mixin StreamOngoingMixin {
 
     if (isHost) {
       isEnded = true;
-      await _controller.stopStream(streamId, _controller.user?.userId ?? '');
+      if (IsmLiveDelegate.onHostStopStream != null) {
+        await IsmLiveDelegate.onHostStopStream!(streamId);
+      } else {
+        await _controller.stopStream(streamId, _controller.user?.userId ?? '');
+      }
     } else if (_controller.userRole?.isPkGuest ?? false) {
       await _pkController.pkEnd();
       isEnded = true;
