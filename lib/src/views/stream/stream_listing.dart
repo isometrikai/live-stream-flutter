@@ -80,6 +80,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                       (e) => _StreamListing(
                         key: ValueKey(
                             '${IsmLiveStreamListing.updateId}-${e.value}'),
+                        streamType: e,
                       ),
                     ),
                   ],
@@ -91,36 +92,72 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
       );
 }
 
-class _StreamListing extends StatelessWidget {
+class _StreamListing extends StatefulWidget {
   const _StreamListing({
-    super.key,
-  });
+    Key? key,
+    required this.streamType,
+  }) : super(key: key);
+  final IsmLiveStreamType streamType;
+
+  @override
+  State<_StreamListing> createState() => _StreamListingState();
+}
+
+class _StreamListingState extends State<_StreamListing> {
+  late final RefreshController _refreshController;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshController = RefreshController();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamListing.updateId,
         builder: (controller) => SmartRefresher(
-          controller: controller.streamRefreshController,
+          controller: _refreshController,
           enablePullDown: true,
           enablePullUp: true,
-          onRefresh: () {
-            if (controller.streamType == IsmLiveStreamType.scheduledStreams) {
-              controller.fetchScheduledStream(type: controller.streamType);
-              return;
+          onRefresh: () async {
+            try {
+              if (widget.streamType == IsmLiveStreamType.scheduledStreams) {
+                await controller.fetchScheduledStream(type: widget.streamType);
+              } else {
+                await controller.getStreams(type: widget.streamType);
+              }
+            } catch (e, st) {
+              print(st);
+            } finally {
+              _refreshController.refreshCompleted();
             }
-            controller.getStreams(type: controller.streamType);
           },
-          onLoading: () {
-            if (controller.streamType == IsmLiveStreamType.scheduledStreams) {
-              controller.fetchScheduledStream(
-                  type: controller.streamType, skip: controller.streams.length);
-              return;
+          onLoading: () async {
+            try {
+              if (widget.streamType == IsmLiveStreamType.scheduledStreams) {
+                await controller.fetchScheduledStream(
+                    type: widget.streamType,
+                    skip:
+                        controller.streamsMap[widget.streamType]?.length ?? 0);
+              } else {
+                await controller.getStreams(
+                    type: widget.streamType,
+                    skip:
+                        controller.streamsMap[widget.streamType]?.length ?? 0);
+              }
+            } catch (e, st) {
+              print(st);
+            } finally {
+              _refreshController.loadComplete();
             }
-
-            controller.getStreams(
-                type: controller.streamType, skip: controller.streams.length);
           },
-          child: controller.streams.isEmpty
+          child: controller.streamsMap[widget.streamType]!.isEmpty
               ? const IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noStreams,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
@@ -131,12 +168,12 @@ class _StreamListing extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: IsmLiveDimens.eight,
                     mainAxisSpacing: IsmLiveDimens.eight,
-                    children: controller.streams.map(
+                    children: controller.streamsMap[widget.streamType]!.map(
                       (e) {
                         var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
                           onTap: () {
-                            if (controller.streamType ==
+                            if (widget.streamType ==
                                     IsmLiveStreamType.scheduledStreams &&
                                 isCreatedByMe) {
                               controller.startSeduleStream(e);

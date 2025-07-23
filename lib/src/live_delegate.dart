@@ -50,7 +50,7 @@ class IsmLiveDelegate {
 
   static Widget? homeScreen;
 
-  static String? logoSvg;
+  static Widget? logoWidget;
 
   static Widget? endStreamScreen;
 
@@ -74,6 +74,8 @@ class IsmLiveDelegate {
 
   static LinearGradient? streamOptionsBgGradient;
 
+  static Future<void> Function(String streamId)? onHostStopStream;
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
@@ -86,6 +88,7 @@ class IsmLiveDelegate {
           IsmLiveLocalKeys.configDetails, config.toJson()),
       IsmLiveUtility.initialize(config),
     ]);
+    IsmLiveLog.info('IsmLiveApp : configDetails data set Successfully');
   }
 
   static Future<void> endStream({required BuildContext context}) async {

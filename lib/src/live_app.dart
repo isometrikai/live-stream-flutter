@@ -6,28 +6,34 @@ import 'package:mqtt_helper/mqtt_helper.dart';
 
 part 'live_data.dart';
 
-class IsmLiveApp extends StatelessWidget {
-  IsmLiveApp({
+class IsmLiveApp extends StatefulWidget {
+  /// Plug-and-play entry point: Handles its own initialization and shows default UI.
+  /// Usage:
+  ///   IsmLiveApp(configuration: ..., navigatorKey: ...)
+  const IsmLiveApp({
     super.key,
     required this.configuration,
-    required GlobalKey<NavigatorState> navigatorKey,
+    required this.navigatorKey,
     this.onCallStart,
     this.onCallEnd,
     this.enableLog = true,
     this.onLogout,
-  }) {
-    IsmLiveUtility.navigatorKey = navigatorKey;
-    initialize(configuration, navigatorKey: navigatorKey);
-    IsmLiveHandler.isLogsEnabled = enableLog;
-    IsmLiveHandler.onLogout = onLogout;
-  }
+  });
+  final IsmLiveConfigData configuration;
+  final GlobalKey<NavigatorState> navigatorKey;
+  final VoidCallback? onCallStart;
+  final VoidCallback? onCallEnd;
+  final bool enableLog;
+  final VoidCallback? onLogout;
+
+  static bool get isInitialized => _initialized;
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) =>
       IsmLiveHandler.isMqttConnected = value;
 
   static bool _initialized = false;
-
+  static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
 
   static Future<void> initialize(
@@ -38,26 +44,51 @@ class IsmLiveApp extends StatelessWidget {
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
   }) async {
-    IsmLiveUtility.navigatorKey = navigatorKey;
-    if (_initialized) {
+    if (_initialized || _initializing) {
+      IsmLiveLog.info(
+          'IsmLiveApp.initialize: Already initialized or initializing.');
       return;
     }
+    _initializing = true;
+    IsmLiveLog.info('IsmLiveApp.initialize: START');
 
-    _initialized = true;
-    await IsmLiveDelegate.instance.initialize(
-      config,
-      onEndStream: onStreamEnd,
-    );
+    try {
+      IsmLiveUtility.navigatorKey = navigatorKey;
 
-    if (!Get.isRegistered<IsmLiveMqttController>()) {
-      IsmLiveMqttBinding().dependencies();
+      IsmLiveLog.info('Calling IsmLiveDelegate.instance.initialize');
+      await IsmLiveDelegate.instance.initialize(
+        config,
+        onEndStream: onStreamEnd,
+      );
+      IsmLiveLog.info('IsmLiveDelegate.instance.initialize DONE');
+
+      // Register all required controllers up front
+      if (!Get.isRegistered<IsmLiveStreamController>()) {
+        IsmLiveLog.info('Registering IsmLiveStreamController');
+        IsmLiveStreamBinding().dependencies();
+      }
+      if (!Get.isRegistered<IsmLiveMqttController>()) {
+        IsmLiveLog.info('Registering IsmLiveMqttController');
+        IsmLiveMqttBinding().dependencies();
+      }
+
+      IsmLiveLog.info('Calling initializeMqtt');
+      await initializeMqtt(
+        topics: mqttTopics,
+        topicChannels: mqttTopicChannels,
+        shouldInitializeMqtt: shouldInitializeMqtt,
+      );
+      IsmLiveLog.info('initializeMqtt DONE');
+
+      _initialized = true;
+      IsmLiveLog.info('IsmLiveApp.initialize: SUCCESS');
+    } catch (e, stack) {
+      _initialized = false;
+      IsmLiveLog.error('IsmLiveApp.initialize: FAILED: $e\n$stack');
+      rethrow;
+    } finally {
+      _initializing = false;
     }
-
-    await initializeMqtt(
-      topics: mqttTopics,
-      topicChannels: mqttTopicChannels,
-      shouldInitializeMqtt: shouldInitializeMqtt,
-    );
   }
 
   static Future<void> initializeMqtt({
@@ -108,10 +139,11 @@ class IsmLiveApp extends StatelessWidget {
     String Function(String key)? getUserProfileUrl,
     IsmLiveButtonConfig? ismLiveButtonConfig,
     LinearGradient? streamOptionsBgGradient,
-    String? logoSvg,
+    Widget? logoWidget,
+    Future<void> Function(String streamId)? onHostStopStream,
   }) {
-    assert(_initialized,
-        'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
+    // assert(_initialized,
+    //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
@@ -141,7 +173,8 @@ class IsmLiveApp extends StatelessWidget {
     IsmLiveDelegate.ismLiveButtonConfig = ismLiveButtonConfig;
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
-    IsmLiveDelegate.logoSvg = logoSvg;
+    IsmLiveDelegate.logoWidget = logoWidget;
+    IsmLiveDelegate.onHostStopStream = onHostStopStream;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -242,12 +275,36 @@ class IsmLiveApp extends StatelessWidget {
 
   IsmLiveTranslationsData get translationsData => _kTranslationsData;
 
-  final IsmLiveConfigData configuration;
-  final VoidCallback? onCallStart;
-  final VoidCallback? onCallEnd;
-  final bool enableLog;
-  final VoidCallback? onLogout;
+  @override
+  State<IsmLiveApp> createState() => _IsmLiveAppState();
+}
+
+class _IsmLiveAppState extends State<IsmLiveApp> {
+  late Future<void> _initFuture;
 
   @override
-  Widget build(BuildContext context) => const IsmLiveStreamListing();
+  void initState() {
+    super.initState();
+    // Set logging and logout callback for plug-and-play usage
+    IsmLiveHandler.isLogsEnabled = widget.enableLog;
+    IsmLiveHandler.onLogout = widget.onLogout;
+    _initFuture = IsmLiveApp.initialize(
+      widget.configuration,
+      navigatorKey: widget.navigatorKey,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<void>(
+        future: _initFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return IsmLiveConfig(
+              data: widget.configuration,
+              child: const IsmLiveStreamListing(),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
 }

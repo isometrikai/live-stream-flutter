@@ -10,7 +10,6 @@ import 'package:flutter_background/flutter_background.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -230,14 +229,9 @@ class IsmLiveStreamController extends GetxController
 
   ScrollController membersListController = ScrollController();
 
-  final _streamRefreshControllers = <IsmLiveStreamType, RefreshController>{};
+  final streamsMap = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
 
-  final _streams = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
-
-  RefreshController get streamRefreshController =>
-      _streamRefreshControllers[streamType]!;
-
-  List<IsmLiveStreamDataModel> get streams => _streams[streamType]!;
+  List<IsmLiveStreamDataModel> get streams => streamsMap[streamType]!;
 
   List<UserDetails> usersList = [];
 
@@ -538,8 +532,7 @@ class IsmLiveStreamController extends GetxController
 
   void generateVariables() {
     for (var type in IsmLiveStreamType.values) {
-      _streamRefreshControllers[type] = RefreshController();
-      _streams[type] = [];
+      streamsMap[type] = [];
     }
   }
 

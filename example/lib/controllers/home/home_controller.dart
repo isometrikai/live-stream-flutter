@@ -18,15 +18,19 @@ class HomeController extends GetxController {
   late IsmLiveConfigData configData;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
-
-    setupStream();
+    try {
+      setupStream();
+    } catch (e, st) {
+      // Use IsmLiveLog for error logging
+      IsmLiveLog.error('Error in HomeController.onInit: $e', st);
+    }
   }
 
   void setupStream() async {
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
-
+    debugPrint('IsmLiveApp: setupStream:  stated $user');
     configData = IsmLiveConfigData(
       projectConfig: IsmLiveProjectConfig(
         accountId: AppConstants.accountId,
@@ -50,58 +54,58 @@ class HomeController extends GetxController {
         port: AppConstants.mqttPort,
       ),
     );
-    await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
-    IsmLiveApp.configureInterface(
-        // hostOptions: [
-        //   IsmLiveStreamOption.bars,
-        //   IsmLiveStreamOption.share,
-        //   IsmLiveStreamOption.rotateCamera,
-        //   IsmLiveStreamOption.settings,
-        // ],
-        // viewersOptions: [
-        //   IsmLiveStreamOption.gift,
-        //   IsmLiveStreamOption.share,
-        //   IsmLiveStreamOption.speaker,
-        //   IsmLiveStreamOption.heart,
-        // ],
-        // ismLiveButtonConfig: IsmLiveButtonConfig(
-        //   primaryBuilder: (context,
-        //           {required label,
-        //           onTap,
-        //           required small,
-        //           required showBorder,
-        //           icon,
-        //           required secondary}) =>
-        //       CustomButton(
-        //     title: label,
-        //     onPress: onTap,
-        //   ),
-        //   secondaryBuilder: (context,
-        //           {required label,
-        //           onTap,
-        //           required small,
-        //           required showBorder,
-        //           icon,
-        //           required secondary}) =>
-        //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
-        // ),
-        //   streamOptionsBgGradient : const LinearGradient(
-        //     begin: Alignment.bottomCenter,
-        //     end: Alignment.topCenter,
-        //     colors: [
-        //       ColorsValue.gradientStart,
-        //       ColorsValue.gradientEnd,
-        //     ],
-        //   ),
-        // liveAnalyticsOptions: [
-        //   IsmLiveAnalyticsOptions.hearts,
-        //   IsmLiveAnalyticsOptions.viewers,
-        //   IsmLiveAnalyticsOptions.followers,
-        //   IsmLiveAnalyticsOptions.earnings,
-        //   IsmLiveAnalyticsOptions.duration,
-        // ]
-        // logoSvg: 'assets/logo/iamat_logo.svg'
-        );
+    // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
+    // IsmLiveApp.configureInterface(
+    // hostOptions: [
+    //   IsmLiveStreamOption.bars,
+    //   IsmLiveStreamOption.share,
+    //   IsmLiveStreamOption.rotateCamera,
+    //   IsmLiveStreamOption.settings,
+    // ],
+    // viewersOptions: [
+    //   IsmLiveStreamOption.gift,
+    //   IsmLiveStreamOption.share,
+    //   IsmLiveStreamOption.speaker,
+    //   IsmLiveStreamOption.heart,
+    // ],
+    // ismLiveButtonConfig: IsmLiveButtonConfig(
+    //   primaryBuilder: (context,
+    //           {required label,
+    //           onTap,
+    //           required small,
+    //           required showBorder,
+    //           icon,
+    //           required secondary}) =>
+    //       CustomButton(
+    //     title: label,
+    //     onPress: onTap,
+    //   ),
+    //   secondaryBuilder: (context,
+    //           {required label,
+    //           onTap,
+    //           required small,
+    //           required showBorder,
+    //           icon,
+    //           required secondary}) =>
+    //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+    // ),
+    //   streamOptionsBgGradient : const LinearGradient(
+    //     begin: Alignment.bottomCenter,
+    //     end: Alignment.topCenter,
+    //     colors: [
+    //       ColorsValue.gradientStart,
+    //       ColorsValue.gradientEnd,
+    //     ],
+    //   ),
+    // liveAnalyticsOptions: [
+    //   IsmLiveAnalyticsOptions.hearts,
+    //   IsmLiveAnalyticsOptions.viewers,
+    //   IsmLiveAnalyticsOptions.followers,
+    //   IsmLiveAnalyticsOptions.earnings,
+    //   IsmLiveAnalyticsOptions.duration,
+    // ]
+    // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
+    // );
   }
 
   @override

@@ -77,6 +77,9 @@ class IsmLiveHandler {
     if (Get.isRegistered<IsmLiveDBWrapper>()) {
       unawaited(Get.delete<IsmLiveDBWrapper>(force: true));
     }
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      unawaited(Get.delete<IsmLiveStreamController>(force: true));
+    }
     IsmLiveUtility.config = null;
     (logoutCallback ?? onLogout)?.call();
 

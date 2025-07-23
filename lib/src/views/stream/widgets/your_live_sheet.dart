@@ -55,17 +55,15 @@ class YourLiveSheet extends StatelessWidget {
             ),
           ),
           // Circle Icon Overlapping Top
-          if( IsmLiveDelegate.logoSvg != null && IsmLiveDelegate.logoSvg!.isNotEmpty) ...[
-             CircleAvatar(
+          if (IsmLiveDelegate.logoWidget != null) ...[
+            CircleAvatar(
               radius: 40,
               backgroundColor: Colors.transparent,
               child: SizedBox(
                 width: 80,
                 height: 80,
                 child: ClipOval(
-                  child: IsmLiveImage.svg(
-                     IsmLiveDelegate.logoSvg!,
-                  ),
+                  child: IsmLiveDelegate.logoWidget!,
                 ),
               ),
             ),

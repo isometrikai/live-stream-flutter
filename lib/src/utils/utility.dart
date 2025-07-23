@@ -14,7 +14,7 @@ class IsmLiveUtility {
 
   static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
-
+    debugPrint('IsmLiveApp: set actual data initialize:  stated ${config.userConfig.userToken}');
     _config ??= config;
   }
 
