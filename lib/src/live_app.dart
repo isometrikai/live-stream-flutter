@@ -176,6 +176,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
     IsmLiveDelegate.onHostStopStream = onHostStopStream;
+    IsmLiveDelegate.productSelectionCallback = productSelectionCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
