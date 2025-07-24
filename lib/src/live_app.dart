@@ -141,6 +141,7 @@ class IsmLiveApp extends StatefulWidget {
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
     Future<void> Function(String streamId)? onHostStopStream,
+    ProductSelectionCallback? productSelectionCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');

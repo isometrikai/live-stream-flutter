@@ -380,7 +380,29 @@ class _AddProduct extends StatelessWidget {
                 ),
                 if (selectedProducts.isNotEmpty)
                   TextButton(
-                    onPressed: IsmLiveRouteManagement.goToAddProduct,
+                    onPressed: () async {
+                      final controller = Get.find<IsmLiveStreamController>();
+                      if (IsmLiveDelegate.productSelectionCallback != null) {
+                        final products =
+                            await IsmLiveDelegate.productSelectionCallback!(
+                          context,
+                          List<IsmLiveProductModel>.from(
+                              controller.selectedProductsList),
+                          (updatedList) {
+                            controller.selectedProductsList
+                              ..clear()
+                              ..addAll(updatedList);
+                            controller.update([IsmGoLiveView.updateId]);
+                          },
+                        );
+                        controller.selectedProductsList
+                          ..clear()
+                          ..addAll(products);
+                        controller.update([IsmGoLiveView.updateId]);
+                      } else {
+                        IsmLiveRouteManagement.goToAddProduct();
+                      }
+                    },
                     child: Text(
                       '+Add',
                       style: context.textTheme.bodyLarge?.copyWith(
@@ -416,7 +438,29 @@ class _AddProduct extends StatelessWidget {
                     ),
                   )
                 : IsmLiveTapHandler(
-                    onTap: IsmLiveRouteManagement.goToAddProduct,
+                    onTap: () async {
+                      final controller = Get.find<IsmLiveStreamController>();
+                      if (IsmLiveDelegate.productSelectionCallback != null) {
+                        final products =
+                            await IsmLiveDelegate.productSelectionCallback!(
+                          context,
+                          List<IsmLiveProductModel>.from(
+                              controller.selectedProductsList),
+                          (updatedList) {
+                            controller.selectedProductsList
+                              ..clear()
+                              ..addAll(updatedList);
+                            controller.update([IsmGoLiveView.updateId]);
+                          },
+                        );
+                        controller.selectedProductsList
+                          ..clear()
+                          ..addAll(products);
+                        controller.update([IsmGoLiveView.updateId]);
+                      } else {
+                        IsmLiveRouteManagement.goToAddProduct();
+                      }
+                    },
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: IsmLiveDimens.hundred,

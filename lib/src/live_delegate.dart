@@ -1,7 +1,20 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+// For e-commerce related delegates, see IsmLiveECommerceDelegate.
+
+/// Callback for product selection.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [currentlySelectedProducts] - The products currently selected in the SDK, for pre-selection in the host UI.
+/// [onRemoveProduct] - Call this to update the SDK's product list if the host removes products from their UI.
+typedef ProductSelectionCallback = Future<List<IsmLiveProductModel>> Function(
+  BuildContext context,
+  List<IsmLiveProductModel> currentlySelectedProducts,
+  void Function(List<IsmLiveProductModel> updatedList) onRemoveProduct,
+);
 
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
@@ -75,6 +88,11 @@ class IsmLiveDelegate {
   static LinearGradient? streamOptionsBgGradient;
 
   static Future<void> Function(String streamId)? onHostStopStream;
+
+  // ================= E-Commerce Delegates =================
+  static ProductSelectionCallback? productSelectionCallback;
+  // Add more e-commerce related delegates/config here as you expand.
+  // ========================================================
 
   Future<void> initialize(
     IsmLiveConfigData config, {
