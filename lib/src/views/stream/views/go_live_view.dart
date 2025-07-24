@@ -453,6 +453,7 @@ class _AddProduct extends StatelessWidget {
                             controller.update([IsmGoLiveView.updateId]);
                           },
                         );
+                        print('Selected products found in SDK ${products.length}');
                         controller.selectedProductsList
                           ..clear()
                           ..addAll(products);
