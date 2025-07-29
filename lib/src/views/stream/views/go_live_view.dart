@@ -181,13 +181,17 @@ class IsmGoLiveView extends StatelessWidget {
                         const _PersistentStream(),
                       ],
                       if (IsmLiveDelegate.productStream ?? true)
-                        _AddProduct(
-                          selectedProducts: controller.selectedProductsList,
-                          onRemoveProduct: (index) {
-                            controller.selectedProductsList.removeAt(index);
-                            controller.update([updateId]);
-                          },
-                        ),
+                        IsmLiveDelegate.addProductViewBuilder != null
+                            ? IsmLiveDelegate.addProductViewBuilder!(context)
+                            : _AddProduct(
+                                selectedProducts:
+                                    controller.selectedProductsList,
+                                onRemoveProduct: (index) {
+                                  controller.selectedProductsList
+                                      .removeAt(index);
+                                  controller.update([updateId]);
+                                },
+                              ),
                       if (IsmLiveDelegate.scheduleStream ?? true)
                         IsmLiveRadioListTile(
                           title: 'Schedule Live',
@@ -380,29 +384,7 @@ class _AddProduct extends StatelessWidget {
                 ),
                 if (selectedProducts.isNotEmpty)
                   TextButton(
-                    onPressed: () async {
-                      final controller = Get.find<IsmLiveStreamController>();
-                      if (IsmLiveDelegate.productSelectionCallback != null) {
-                        final products =
-                            await IsmLiveDelegate.productSelectionCallback!(
-                          context,
-                          List<IsmLiveProductModel>.from(
-                              controller.selectedProductsList),
-                          (updatedList) {
-                            controller.selectedProductsList
-                              ..clear()
-                              ..addAll(updatedList);
-                            controller.update([IsmGoLiveView.updateId]);
-                          },
-                        );
-                        controller.selectedProductsList
-                          ..clear()
-                          ..addAll(products);
-                        controller.update([IsmGoLiveView.updateId]);
-                      } else {
-                        IsmLiveRouteManagement.goToAddProduct();
-                      }
-                    },
+                    onPressed: IsmLiveRouteManagement.goToAddProduct,
                     child: Text(
                       '+Add',
                       style: context.textTheme.bodyLarge?.copyWith(
@@ -438,30 +420,7 @@ class _AddProduct extends StatelessWidget {
                     ),
                   )
                 : IsmLiveTapHandler(
-                    onTap: () async {
-                      final controller = Get.find<IsmLiveStreamController>();
-                      if (IsmLiveDelegate.productSelectionCallback != null) {
-                        final products =
-                            await IsmLiveDelegate.productSelectionCallback!(
-                          context,
-                          List<IsmLiveProductModel>.from(
-                              controller.selectedProductsList),
-                          (updatedList) {
-                            controller.selectedProductsList
-                              ..clear()
-                              ..addAll(updatedList);
-                            controller.update([IsmGoLiveView.updateId]);
-                          },
-                        );
-                        print('Selected products found in SDK ${products.length}');
-                        controller.selectedProductsList
-                          ..clear()
-                          ..addAll(products);
-                        controller.update([IsmGoLiveView.updateId]);
-                      } else {
-                        IsmLiveRouteManagement.goToAddProduct();
-                      }
-                    },
+                    onTap: IsmLiveRouteManagement.goToAddProduct,
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: IsmLiveDimens.hundred,

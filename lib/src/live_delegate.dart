@@ -16,6 +16,11 @@ typedef ProductSelectionCallback = Future<List<IsmLiveProductModel>> Function(
   void Function(List<IsmLiveProductModel> updatedList) onRemoveProduct,
 );
 
+/// Builder for the Add Product view.
+///
+/// If set, this widget will be used in place of the default _AddProduct widget in go_live_view.dart.
+typedef AddProductViewBuilder = Widget Function(BuildContext context);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -90,8 +95,10 @@ class IsmLiveDelegate {
   static Future<void> Function(String streamId)? onHostStopStream;
 
   // ================= E-Commerce Delegates =================
-  static ProductSelectionCallback? productSelectionCallback;
-  // Add more e-commerce related delegates/config here as you expand.
+  /// If set, this builder will be used for the Add Product view in go_live_view.dart.
+  static AddProductViewBuilder? addProductViewBuilder;
+  // Optionally deprecate or remove productSelectionCallback if you want to encourage full view replacement.
+  // static ProductSelectionCallback? productSelectionCallback;
   // ========================================================
 
   Future<void> initialize(
