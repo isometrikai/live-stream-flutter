@@ -94,6 +94,8 @@ class IsmLiveDelegate {
 
   static Future<void> Function(String streamId)? onHostStopStream;
 
+  static Future<void> Function(String streamId)? onLeftStreamAsViewer;
+
   // ================= E-Commerce Delegates =================
   /// If set, this builder will be used for the Add Product view in go_live_view.dart.
   static AddProductViewBuilder? addProductViewBuilder;

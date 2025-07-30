@@ -643,7 +643,11 @@ mixin StreamOngoingMixin {
       await _controller.leaveMember(streamId: streamId);
       isEnded = true;
     } else {
-      await _controller.leaveStream(streamId);
+      if (IsmLiveDelegate.onLeftStreamAsViewer != null) {
+        await IsmLiveDelegate.onLeftStreamAsViewer!(streamId);
+      } else {
+        await _controller.leaveStream(streamId);
+      }
       isEnded = true;
     }
 

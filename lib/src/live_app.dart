@@ -141,6 +141,7 @@ class IsmLiveApp extends StatefulWidget {
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
     Future<void> Function(String streamId)? onHostStopStream,
+    Future<void> Function(String streamId)? onLeftStreamAsViewer,
     AddProductViewBuilder? addProductViewBuilder,
   }) {
     // assert(_initialized,
@@ -176,6 +177,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
     IsmLiveDelegate.onHostStopStream = onHostStopStream;
+    IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
     IsmLiveDelegate.addProductViewBuilder = addProductViewBuilder;
   }
 
