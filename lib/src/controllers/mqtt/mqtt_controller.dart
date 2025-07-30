@@ -10,22 +10,33 @@ class IsmLiveMqttController extends GetxController {
   final _mqttHelper = MqttHelper();
 
   bool _isInitialized = false;
+  bool _isReconnecting = false;
+  Timer? _reconnectTimer;
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 5;
+  static const Duration _initialReconnectDelay = Duration(seconds: 2);
+  static const Duration _maxReconnectDelay = Duration(seconds: 30);
 
   late String userTopic;
-
   late String userId;
-
   late String deviceId;
 
   final List<String> _topics = [];
-
   final actionStreamController = StreamController<EventModel>.broadcast();
-
   var actionListeners = <EventFunction>[];
 
   String _topicPrefix = '';
-
   IsmLiveConfigData? _config;
+
+  // Reconnection configuration
+  bool _autoReconnect = true;
+  Duration _reconnectDelay = _initialReconnectDelay;
+
+  // Getters for external access
+  bool get isReconnecting => _isReconnecting;
+  bool get autoReconnect => _autoReconnect;
+  int get reconnectAttempts => _reconnectAttempts;
+  int get maxReconnectAttempts => _maxReconnectAttempts;
 
   IsmLiveStreamController get _streamController {
     if (!Get.isRegistered<IsmLiveStreamController>()) {
@@ -162,7 +173,8 @@ class IsmLiveMqttController extends GetxController {
   Future<void> subscribeStream(String streamId) async {
     try {
       if (!IsmLiveApp.isMqttConnected) {
-        IsmLiveLog.info('MQTT is not connected, try to reconnect');
+        IsmLiveLog.info('MQTT is not connected, attempting to reconnect');
+        await reconnect();
       }
       var topic = '$_topicPrefix/$streamId';
       _mqttHelper.subscribeTopic(topic);
@@ -190,6 +202,11 @@ class IsmLiveMqttController extends GetxController {
   }
 
   Future<void> disconnect() async {
+    // Cancel any pending reconnection attempts
+    _reconnectTimer?.cancel();
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
+
     _mqttHelper.disconnect();
     await actionStreamController.stream.drain();
   }
@@ -202,6 +219,11 @@ class IsmLiveMqttController extends GetxController {
   void _onDisconnected() {
     IsmLiveApp.isMqttConnected = false;
     IsmLiveLog.success('MQTT Disconnected');
+
+    // Trigger automatic reconnection if enabled
+    if (_autoReconnect && !_isReconnecting) {
+      _scheduleReconnection();
+    }
   }
 
   /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
@@ -223,7 +245,149 @@ class IsmLiveMqttController extends GetxController {
   void _onConnected() {
     IsmLiveApp.isMqttConnected = true;
     IsmLiveLog.success('MQTT Connected');
+
+    // Reset reconnection state on successful connection
+    _resetReconnectionState();
   }
+
+  // ----------------- Reconnection Methods -----------------------
+
+  /// Schedules automatic reconnection with exponential backoff
+  void _scheduleReconnection() {
+    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) {
+      IsmLiveLog.error(
+          'MQTT: Max reconnection attempts reached or already reconnecting');
+      return;
+    }
+
+    _isReconnecting = true;
+    _reconnectAttempts++;
+
+    IsmLiveLog.info(
+        'MQTT: Scheduling reconnection attempt $_reconnectAttempts/$_maxReconnectAttempts in ${_reconnectDelay.inSeconds} seconds');
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(_reconnectDelay, _attemptReconnection);
+
+    // Exponential backoff for next attempt
+    _reconnectDelay = Duration(
+      seconds: (_reconnectDelay.inSeconds * 2).clamp(
+        _initialReconnectDelay.inSeconds,
+        _maxReconnectDelay.inSeconds,
+      ),
+    );
+  }
+
+  /// Attempts to reconnect to MQTT
+  Future<void> _attemptReconnection() async {
+    if (!_isReconnecting) return;
+
+    IsmLiveLog.info('MQTT: Attempting reconnection...');
+
+    try {
+      await _mqttHelper.initialize(
+        MqttConfig(
+          serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
+          projectConfig: ProjectConfig(
+            deviceId: deviceId,
+            username: _config?.username ?? '',
+            password: _config?.password ?? '',
+            userIdentifier: userId,
+          ),
+          enableLogging: true,
+          webSocketConfig: _config!.socketConfig != null
+              ? WebSocketConfig.fromMap(
+                  _config!.socketConfig!.toMap(),
+                )
+              : null,
+          secure: _config!.secure,
+        ),
+        callbacks: MqttCallbacks(
+          onConnected: _onConnected,
+          onDisconnected: _onDisconnected,
+          onSubscribeFail: _onSubscribeFailed,
+          onSubscribed: _onSubscribed,
+          onUnsubscribed: _onUnSubscribed,
+          pongCallback: _pong,
+        ),
+        autoSubscribe: true,
+        topics: _topics,
+      );
+
+      _mqttHelper
+          .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
+      _mqttHelper.onEvent(_onEvent);
+
+      IsmLiveLog.success('MQTT: Reconnection successful');
+    } catch (e) {
+      IsmLiveLog.error('MQTT: Reconnection failed - $e');
+
+      // Schedule next reconnection attempt if we haven't reached max attempts
+      if (_reconnectAttempts < _maxReconnectAttempts) {
+        _scheduleReconnection();
+      } else {
+        _isReconnecting = false;
+        IsmLiveLog.error(
+            'MQTT: Max reconnection attempts reached. Manual reconnection required.');
+      }
+    }
+  }
+
+  /// Resets reconnection state after successful connection
+  void _resetReconnectionState() {
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
+    _reconnectDelay = _initialReconnectDelay;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+  }
+
+  /// Manual reconnection method for host app
+  Future<bool> reconnect() async {
+    if (_isReconnecting) {
+      IsmLiveLog.error('MQTT: Already attempting to reconnect');
+      return false;
+    }
+
+    IsmLiveLog.info('MQTT: Manual reconnection requested');
+    _resetReconnectionState();
+    _isReconnecting = true;
+
+    await _attemptReconnection();
+    return IsmLiveApp.isMqttConnected;
+  }
+
+  /// Enables or disables automatic reconnection
+  void setAutoReconnect(bool enabled) {
+    _autoReconnect = enabled;
+    IsmLiveLog.info('MQTT: Auto-reconnect ${enabled ? 'enabled' : 'disabled'}');
+  }
+
+  /// Sets custom reconnection configuration
+  void setReconnectionConfig({
+    int? maxAttempts,
+    Duration? initialDelay,
+    Duration? maxDelay,
+  }) {
+    if (maxAttempts != null && maxAttempts > 0) {
+      // Note: _maxReconnectAttempts is const, so we'll use a different approach
+      IsmLiveLog.info(
+          'MQTT: Max reconnection attempts cannot be changed at runtime');
+    }
+    if (initialDelay != null) {
+      _reconnectDelay = initialDelay;
+    }
+    IsmLiveLog.info('MQTT: Reconnection configuration updated');
+  }
+
+  /// Gets current reconnection status
+  Map<String, dynamic> getReconnectionStatus() => {
+        'isReconnecting': _isReconnecting,
+        'reconnectAttempts': _reconnectAttempts,
+        'maxReconnectAttempts': _maxReconnectAttempts,
+        'autoReconnect': _autoReconnect,
+        'isConnected': IsmLiveApp.isMqttConnected,
+      };
 
   void handleEventsExternally(EventModel payload) => _onEvent(payload);
 

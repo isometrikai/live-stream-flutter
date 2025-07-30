@@ -24,7 +24,8 @@ class IsmLiveHandler {
       IsmLiveUtility.cameras = value;
     }));
 
-    debugPrint('LiveStream: IsmLiveApiWrapper ??:  ${Get.find<IsmLiveApiWrapper>()}');
+    debugPrint(
+        'LiveStream: IsmLiveApiWrapper ??:  ${Get.find<IsmLiveApiWrapper>()}');
 
     await Get.put<IsmLiveDBWrapper>(IsmLiveDBWrapper(), permanent: true).init();
   }
@@ -38,6 +39,22 @@ class IsmLiveHandler {
     var mqttController = Get.find<IsmLiveMqttController>();
     return mqttController.actionStreamController.stream.listen(listener);
   }
+
+  /// Get the MQTT controller instance
+  static IsmLiveMqttController getMqttController() {
+    if (!Get.isRegistered<IsmLiveMqttController>()) {
+      IsmLiveMqttBinding().dependencies();
+    }
+    return Get.find<IsmLiveMqttController>();
+  }
+
+  /// Manual MQTT reconnection
+  static Future<bool> reconnectMqtt() async =>
+      await getMqttController().reconnect();
+
+  /// Get MQTT reconnection status
+  static Map<String, dynamic> getMqttReconnectionStatus() =>
+      getMqttController().getReconnectionStatus();
 
   static Future<void> removeListener(EventFunction listener) async {
     var mqttController = Get.find<IsmLiveMqttController>();
