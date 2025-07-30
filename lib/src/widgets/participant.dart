@@ -1,7 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 
@@ -198,7 +197,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         ),
         decoration: BoxDecoration(
           color: context.liveTheme?.streamBackgroundColor ??
-              Theme.of(ctx).cardColor,
+              Theme.of(ctx).cardColor.withAlpha(80),
         ),
         child: Stack(
           children: [

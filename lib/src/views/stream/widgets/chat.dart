@@ -137,175 +137,175 @@ class _ChatMessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
-        child: UnconstrainedBox(
+        child: Align(
           alignment: Alignment.centerLeft,
-          child: IsmLiveTapHandler(
-            onTap: onTap,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.black26,
-                borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
-              ),
-              child: Padding(
-                padding: IsmLiveDimens.edgeInsets8_4,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IsmLiveImage.network(
-                      IsmLiveDelegate.getUserProfileUrl
-                              ?.call(message.imageUrl) ??
-                          message.imageUrl,
-                      name: message.userName,
-                      dimensions: IsmLiveDimens.twentyFour,
-                      isProfileImage: true,
-                    ),
-                    IsmLiveDimens.boxWidth4,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            child: IsmLiveTapHandler(
+              onTap: onTap,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
+                ),
+                child: Padding(
+                  padding: IsmLiveDimens.edgeInsets8_4,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IsmLiveImage.network(
+                        IsmLiveDelegate.getUserProfileUrl
+                                ?.call(message.imageUrl) ??
+                            message.imageUrl,
+                        name: message.userName,
+                        dimensions: IsmLiveDimens.twentyFour,
+                        isProfileImage: true,
+                      ),
+                      IsmLiveDimens.boxWidth4,
+                      Expanded(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              '${message.userName}${message.sentByMe ? " (You)" : ""}',
-                              style: context.textTheme.labelSmall!.copyWith(
-                                color: IsmLiveColors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            if (message.sentByHost) ...[
-                              IsmLiveDimens.boxWidth8,
-                              DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: (context.liveTheme?.primaryColor ??
-                                          IsmLiveColors.primary)
-                                      .withOpacity(0.2),
-                                  borderRadius:
-                                      BorderRadius.circular(IsmLiveDimens.four),
-                                ),
-                                child: Padding(
-                                  padding: IsmLiveDimens.edgeInsets6_2,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
                                   child: Text(
-                                    'Host',
+                                    '${message.userName}${message.sentByMe ? " (You)" : ""}',
                                     style:
-                                        context.textTheme.labelSmall?.copyWith(
-                                      color:
-                                          IsmLiveColors.white.withOpacity(0.7),
-                                      fontWeight: FontWeight.w600,
+                                        context.textTheme.labelSmall!.copyWith(
+                                      color: IsmLiveColors.white,
+                                      fontWeight: FontWeight.w700,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                                if (message.sentByHost) ...[
+                                  IsmLiveDimens.boxWidth8,
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      color: (context.liveTheme?.primaryColor ??
+                                              IsmLiveColors.primary)
+                                          .withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(
+                                          IsmLiveDimens.four),
+                                    ),
+                                    child: Padding(
+                                      padding: IsmLiveDimens.edgeInsets6_2,
+                                      child: Text(
+                                        'Host',
+                                        style: context.textTheme.labelSmall
+                                            ?.copyWith(
+                                          color: IsmLiveColors.white
+                                              .withOpacity(0.7),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            if (message.isDeleted)
+                              Text(
+                                ' ${message.body} Deleted Message',
+                                style: context.textTheme.labelSmall?.copyWith(
+                                  color: Colors.white70,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              )
+                            else ...[
+                              if (message.isReply &&
+                                  message.parentBody != null) ...[
+                                Text(
+                                  'Reply to ${message.parentBody}',
+                                  style: context.textTheme.labelSmall?.copyWith(
+                                    color: Colors.white70,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                              Column(
+                                children: [
+                                  Text(
+                                    message.body,
+                                    style:
+                                        context.textTheme.labelMedium?.copyWith(
+                                      color: IsmLiveColors.white,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                                  if (message.isCopublisherRequest)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: IsmLiveDimens.hundred,
+                                          height: IsmLiveDimens.thirtyTwo +
+                                              IsmLiveDimens.two,
+                                          child: IsmLiveButton(
+                                            label: 'accept',
+                                            onTap: () {
+                                              final controller = Get.find<
+                                                  IsmLiveStreamController>();
+                                              controller
+                                                  .acceptCopublisherRequest(
+                                                requestById: message.userId,
+                                                streamId:
+                                                    controller.streamId ?? '',
+                                              );
+                                              controller.streamMessagesList[
+                                                      controller
+                                                          .streamMessagesList
+                                                          .indexOf(message)] =
+                                                  message.copyWith(
+                                                      isCopublisherRequest:
+                                                          false);
+                                            },
+                                          ),
+                                        ),
+                                        IsmLiveDimens.boxWidth2,
+                                        SizedBox(
+                                          width: IsmLiveDimens.hundred,
+                                          height: IsmLiveDimens.thirtyTwo +
+                                              IsmLiveDimens.two,
+                                          child: IsmLiveButton(
+                                            label: 'deny',
+                                            onTap: () {
+                                              final controller = Get.find<
+                                                  IsmLiveStreamController>();
+                                              controller.denyCopublisherRequest(
+                                                requestById: message.userId,
+                                                streamId:
+                                                    controller.streamId ?? '',
+                                              );
+                                              controller.streamMessagesList[
+                                                      controller
+                                                          .streamMessagesList
+                                                          .indexOf(message)] =
+                                                  message.copyWith(
+                                                      isCopublisherRequest:
+                                                          false);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                ],
                               ),
                             ],
                           ],
                         ),
-                        if (message.isDeleted)
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: isHost
-                                  ? MediaQuery.of(context).size.width * 0.35
-                                  : MediaQuery.of(context).size.width * 0.6,
-                            ),
-                            child: Text(
-                              ' ${message.body} Deleted Message',
-                              style: context.textTheme.labelSmall?.copyWith(
-                                color: Colors.white70,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          )
-                        else ...[
-                          if (message.isReply &&
-                              message.parentBody != null) ...[
-                            Text(
-                              'Reply to ${message.parentBody}',
-                              style: context.textTheme.labelSmall?.copyWith(
-                                color: Colors.white70,
-                                fontStyle: FontStyle.italic,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.6,
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  message.body,
-                                  style:
-                                      context.textTheme.labelMedium?.copyWith(
-                                    color: IsmLiveColors.white,
-                                  ),
-                                  softWrap: true,
-                                ),
-                                if (message.isCopublisherRequest)
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(
-                                        width: IsmLiveDimens.hundred,
-                                        height: IsmLiveDimens.thirtyTwo +
-                                            IsmLiveDimens.two,
-                                        child: IsmLiveButton(
-                                          label: 'accept',
-                                          onTap: () {
-                                            final controller = Get.find<
-                                                IsmLiveStreamController>();
-                                            controller.acceptCopublisherRequest(
-                                              requestById: message.userId,
-                                              streamId:
-                                                  controller.streamId ?? '',
-                                            );
-                                            controller.streamMessagesList[
-                                                    controller
-                                                        .streamMessagesList
-                                                        .indexOf(message)] =
-                                                message.copyWith(
-                                                    isCopublisherRequest:
-                                                        false);
-                                          },
-                                        ),
-                                      ),
-                                      IsmLiveDimens.boxWidth2,
-                                      SizedBox(
-                                        width: IsmLiveDimens.hundred,
-                                        height: IsmLiveDimens.thirtyTwo +
-                                            IsmLiveDimens.two,
-                                        child: IsmLiveButton(
-                                          label: 'deny',
-                                          onTap: () {
-                                            final controller = Get.find<
-                                                IsmLiveStreamController>();
-                                            controller.denyCopublisherRequest(
-                                              requestById: message.userId,
-                                              streamId:
-                                                  controller.streamId ?? '',
-                                            );
-                                            controller.streamMessagesList[
-                                                    controller
-                                                        .streamMessagesList
-                                                        .indexOf(message)] =
-                                                message.copyWith(
-                                                    isCopublisherRequest:
-                                                        false);
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

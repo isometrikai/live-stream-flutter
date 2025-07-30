@@ -68,13 +68,14 @@ class IsmLiveMessageField extends StatelessWidget {
                   child: IsmLiveInputField(
                     focusNode: controller.messageFocusNode,
                     cursorColor: Colors.white,
-                    style: context.textTheme.bodySmall?.copyWith(color: Colors.white),
+                    style: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
-                    contentPadding: IsmLiveDimens.edgeInsets0,
+                    contentPadding: IsmLiveDimens.edgeInsetsR14,
                     fillColor: IsmLiveColors.white.withOpacity(0.3),
-                    hintStyle:
-                        context.textTheme.bodySmall?.copyWith(color: Colors.white),
+                    hintStyle: context.textTheme.bodySmall
+                        ?.copyWith(color: Colors.white),
                     borderColor: Colors.transparent,
                     onchange: (value) =>
                         controller.update([IsmLiveStreamView.updateId]),

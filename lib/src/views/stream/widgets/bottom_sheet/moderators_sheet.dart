@@ -20,93 +20,98 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
             )
             ..searchModeratorFieldController.clear();
         },
-        builder: (controller) => IsmLiveScrollSheet(
-          showSearchBar: true,
-          placeHolder: IsmLiveAssetConstants.moderator_placeholder,
-          placeHolderText: 'No Moderator',
-          onPressClearIcon: () {
-            controller.searchModeratorFieldController.clear();
-            controller.searchModerators(
-                controller.searchModeratorFieldController.text);
-          },
-          trailing: controller.isHost == true
-              ? IsmLiveButton.icon(
-                  icon: Icons.person_add_rounded,
-                  onTap: () {
-                    IsmLiveRoute.pop();
-                    IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
-                  },
-                )
-              : null,
-          textEditingController: controller.searchModeratorFieldController,
-          hintText: 'Search Moderators',
-          onchange: controller.searchModerators,
-          title: 'Moderators',
-          controller: controller.moderatorListController,
-          itemCount: controller.moderatorsList.length,
-          itemBuilder: (context, index) {
-            final moderator = controller.moderatorsList[index];
-            final imageUrl =
-                IsmLiveDelegate.getUserProfileUrl?.call(moderator.profileUrl) ??
-                    moderator.profileUrl;
-            return InkWell(
-              onTap: () {
-                IsmLiveUtility.openBottomSheet(
-                  StreamLiveSheet(
-                    widget: IsmLiveImage.network(
-                      imageUrl,
-                      isProfileImage: true,
-                      name: moderator.userName,
-                      height: IsmLiveDimens.hundred,
-                      width: IsmLiveDimens.hundred,
-                    ),
-                    title: moderator.userName,
-                    subTitle: null,
-                    buttonLable: 'View Profile',
+        builder: (controller) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: IsmLiveScrollSheet(
+            showSearchBar: true,
+            placeHolder: IsmLiveAssetConstants.moderator_placeholder,
+            placeHolderText: 'No Moderator',
+            onPressClearIcon: () {
+              controller.searchModeratorFieldController.clear();
+              controller.searchModerators(
+                  controller.searchModeratorFieldController.text);
+            },
+            trailing: controller.isHost == true
+                ? IsmLiveButton.icon(
+                    icon: Icons.person_add_rounded,
                     onTap: () {
-                      IsmLiveDelegate.openUserProfileView
-                          ?.call(moderator.userIdentifier);
+                      IsmLiveRoute.pop();
+                      IsmLiveUtility.openBottomSheet(const IsmLiveUsersSheet());
                     },
+                  )
+                : null,
+            textEditingController: controller.searchModeratorFieldController,
+            hintText: 'Search Moderators',
+            onchange: controller.searchModerators,
+            title: 'Moderators',
+            controller: controller.moderatorListController,
+            itemCount: controller.moderatorsList.length,
+            itemBuilder: (context, index) {
+              final moderator = controller.moderatorsList[index];
+              final imageUrl = IsmLiveDelegate.getUserProfileUrl
+                      ?.call(moderator.profileUrl) ??
+                  moderator.profileUrl;
+              return InkWell(
+                onTap: () {
+                  IsmLiveUtility.openBottomSheet(
+                    StreamLiveSheet(
+                      widget: IsmLiveImage.network(
+                        imageUrl,
+                        isProfileImage: true,
+                        name: moderator.userName,
+                        height: IsmLiveDimens.hundred,
+                        width: IsmLiveDimens.hundred,
+                      ),
+                      title: moderator.userName,
+                      subTitle: null,
+                      buttonLable: 'View Profile',
+                      onTap: () {
+                        IsmLiveDelegate.openUserProfileView
+                            ?.call(moderator.userIdentifier);
+                      },
+                    ),
+                    isScrollController: true,
+                  );
+                },
+                child: ListTile(
+                  leading: IsmLiveImage.network(
+                    imageUrl,
+                    name: moderator.userName,
+                    dimensions: IsmLiveDimens.forty,
+                    isProfileImage: true,
                   ),
-                  isScrollController: true,
-                );
-              },
-              child: ListTile(
-                leading: IsmLiveImage.network(
-                  imageUrl,
-                  name: moderator.userName,
-                  dimensions: IsmLiveDimens.forty,
-                  isProfileImage: true,
+                  title: Text(moderator.userName),
+                  subtitle: Text(moderator.userName),
+                  trailing: (moderator.userId != controller.user?.userId &&
+                          controller.isHost == true)
+                      ? IsmLiveButton.icon(
+                          icon: Icons.person_remove_rounded,
+                          onTap: () {
+                            IsmLiveRoute.pop();
+                            controller.removeModerator(
+                              moderatorId: moderator.userId,
+                              streamId: controller.streamId ?? '',
+                            );
+                          },
+                        )
+                      : controller.isModerator &&
+                              controller.isHost != true &&
+                              (controller.user?.userId == moderator.userId)
+                          ? IsmLiveButton.icon(
+                              icon: Icons.exit_to_app_rounded,
+                              onTap: () {
+                                IsmLiveRoute.pop();
+                                controller
+                                    .leaveModerator(controller.streamId ?? '');
+                              },
+                            )
+                          : null,
                 ),
-                title: Text(moderator.userName),
-                subtitle: Text(moderator.userName),
-                trailing: (moderator.userId != controller.user?.userId &&
-                        controller.isHost == true)
-                    ? IsmLiveButton.icon(
-                        icon: Icons.person_remove_rounded,
-                        onTap: () {
-                          IsmLiveRoute.pop();
-                          controller.removeModerator(
-                            moderatorId: moderator.userId,
-                            streamId: controller.streamId ?? '',
-                          );
-                        },
-                      )
-                    : controller.isModerator &&
-                            controller.isHost != true &&
-                            (controller.user?.userId == moderator.userId)
-                        ? IsmLiveButton.icon(
-                            icon: Icons.exit_to_app_rounded,
-                            onTap: () {
-                              IsmLiveRoute.pop();
-                              controller
-                                  .leaveModerator(controller.streamId ?? '');
-                            },
-                          )
-                        : null,
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       );
 }

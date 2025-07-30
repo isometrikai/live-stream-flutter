@@ -125,6 +125,7 @@ class IsmLiveDimens {
   static final EdgeInsets edgeInsetsT16 = EdgeInsets.only(top: sixteen);
   static final EdgeInsets edgeInsetsT100 = EdgeInsets.only(top: hundred);
   static final EdgeInsets edgeInsetsR10 = EdgeInsets.only(right: ten);
+  static final EdgeInsets edgeInsetsR14 = EdgeInsets.only(right: fourteen);
   static final EdgeInsets edgeInsetsB10 = EdgeInsets.only(bottom: ten);
   static final EdgeInsets edgeInsetsB25 = EdgeInsets.only(bottom: twentyFive);
   static final EdgeInsets edgeInsetsB20 = EdgeInsets.only(bottom: twenty);
@@ -159,5 +160,4 @@ class IsmLiveDimens {
       EdgeInsets.symmetric(horizontal: sixteen, vertical: ten);
 
   static EdgeInsets edgeInsetsAll(double allSide) => EdgeInsets.all(allSide);
-
 }
