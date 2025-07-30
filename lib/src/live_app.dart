@@ -32,6 +32,18 @@ class IsmLiveApp extends StatefulWidget {
   static set isMqttConnected(bool value) =>
       IsmLiveHandler.isMqttConnected = value;
 
+  /// Manual MQTT reconnection method
+  static Future<bool> reconnectMqtt() async =>
+      await IsmLiveHandler.reconnectMqtt();
+
+  /// Get MQTT reconnection status
+  static Map<String, dynamic> getMqttReconnectionStatus() =>
+      IsmLiveHandler.getMqttReconnectionStatus();
+
+  /// Get MQTT controller instance for advanced operations
+  static IsmLiveMqttController getMqttController() =>
+      IsmLiveHandler.getMqttController();
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
