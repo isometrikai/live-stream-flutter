@@ -48,29 +48,35 @@ mixin StreamJoinMixin {
     if (_controller.room == null) {
       return;
     }
-    lk.VideoParameters? videoFilter;
-    if (_controller.isRestreamBroadcast) {
-      videoFilter = const lk.VideoParameters(
-        dimensions: lk.VideoDimensions(480, 640),
-        encoding: lk.VideoEncoding(
-          maxFramerate: 30,
-          maxBitrate: 2500000,
-        ),
-      );
+
+    try {
+      lk.VideoParameters? videoFilter;
+      if (_controller.isRestreamBroadcast) {
+        videoFilter = const lk.VideoParameters(
+          dimensions: lk.VideoDimensions(480, 640),
+          encoding: lk.VideoEncoding(
+            maxFramerate: 30,
+            maxBitrate: 2500000,
+          ),
+        );
+      }
+
+      final tracks = await Future.wait([
+        lk.LocalVideoTrack.createCameraTrack(lk.CameraCaptureOptions(
+            params: videoFilter ?? lk.VideoParametersPresets.h720_169)),
+        lk.LocalAudioTrack.create(),
+      ]);
+      var localVideo = tracks[0] as lk.LocalVideoTrack;
+      var localAudio = tracks[1] as lk.LocalAudioTrack;
+
+      await Future.wait<dynamic>([
+        _controller.room!.localParticipant!.publishVideoTrack(localVideo),
+        _controller.room!.localParticipant!.publishAudioTrack(localAudio),
+      ]);
+    } catch (e) {
+      IsmLiveLog.error('enableMyVideo error: $e');
+      // Don't rethrow - let the stream continue without video/audio if needed
     }
-
-    final tracks = await Future.wait([
-      lk.LocalVideoTrack.createCameraTrack(lk.CameraCaptureOptions(
-          params: videoFilter ?? lk.VideoParametersPresets.h720_169)),
-      lk.LocalAudioTrack.create(),
-    ]);
-    var localVideo = tracks[0] as lk.LocalVideoTrack;
-    var localAudio = tracks[1] as lk.LocalAudioTrack;
-
-    await Future.wait<dynamic>([
-      _controller.room!.localParticipant!.publishVideoTrack(localVideo),
-      _controller.room!.localParticipant!.publishAudioTrack(localAudio),
-    ]);
   }
 
 // Toggle audio on/off
@@ -90,8 +96,13 @@ mixin StreamJoinMixin {
     _controller.update();
   }
 
-  Future<void> unpublishTracks() =>
-      _controller.room!.localParticipant!.unpublishAllTracks();
+  Future<void> unpublishTracks() async {
+    try {
+      await _controller.room!.localParticipant!.unpublishAllTracks();
+    } catch (e) {
+      IsmLiveLog.error('unpublishTracks error: $e');
+    }
+  }
 
 // Join a stream
   Future<void> joinStream(
@@ -275,34 +286,48 @@ mixin StreamJoinMixin {
       }
     }
     _controller.update([IsmGoLiveView.updateId]);
-    if (IsmLiveDelegate.subscribStreamById != null) {
-      IsmLiveDelegate.subscribStreamById!(streamId);
-    } else {
-      if (!isCopublisher) {
-        await _controller._mqttController?.subscribeStream(
-          streamId,
-        );
-      }
-    }
-    // Show appropriate message based on the user's role
-    final translation = context.liveTranslations?.streamTranslations;
-    var message = '';
-    if (isHost) {
-      if (isNewStream) {
-        message = translation?.preparingYourStream ??
-            IsmLiveStrings.preparingYourStream;
+
+    // Add null safety check for MQTT controller
+    try {
+      if (IsmLiveDelegate.subscribStreamById != null) {
+        IsmLiveDelegate.subscribStreamById!(streamId);
       } else {
-        message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
+        if (!isCopublisher && _controller._mqttController != null) {
+          await _controller._mqttController?.subscribeStream(streamId);
+        }
       }
-    } else if (isCopublisher) {
-      message =
-          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
-    } else if (isPkGust) {
-      message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
-    } else {
-      message =
-          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+    } catch (e) {
+      IsmLiveLog.error('MQTT subscription error: $e');
     }
+
+    // Show appropriate message based on the user's role
+    var message = '';
+    try {
+      final translation = context.liveTranslations?.streamTranslations;
+      if (isHost) {
+        if (isNewStream) {
+          message = translation?.preparingYourStream ??
+              IsmLiveStrings.preparingYourStream;
+        } else {
+          message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
+        }
+      } else if (isCopublisher) {
+        message =
+            translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+      } else if (isPkGust) {
+        message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
+      } else {
+        message =
+            translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      }
+    } catch (e) {
+      // Fallback message if context access fails
+      message = isHost
+          ? (isNewStream ? 'Preparing your stream...' : 'Reconnecting...')
+          : 'Joining live stream...';
+      IsmLiveLog.error('Translation access error: $e');
+    }
+
     if (!joinByScrolling) {
       IsmLiveUtility.showLoader(message);
     }
@@ -342,93 +367,128 @@ mixin StreamJoinMixin {
       _controller.room = room;
 
       /// Dispose listener if it was active on `scroll` streams
-      await _controller.listener?.dispose();
+      try {
+        await _controller.listener?.dispose();
+      } catch (e) {
+        IsmLiveLog.error('Listener dispose error: $e');
+      }
 
       // Create a Listener before connecting
       _controller.listener = room.createListener();
 
-      // Try to connect to the room
+      // Try to connect to the room with better error handling
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
       } catch (e, st) {
-        IsmLiveLog.error(e, st);
+        IsmLiveLog.error('Room connection error: $e', st);
         IsmLiveUtility.closeLoader();
         return;
       }
 
       // Set track subscription permissions
-      room.localParticipant?.setTrackSubscriptionPermissions(
-        allParticipantsAllowed: true,
-        trackPermissions: [
-          const lk.ParticipantTrackPermission(
-            'allowed-identity',
-            true,
-            null,
-          ),
-        ],
-      );
+      try {
+        room.localParticipant?.setTrackSubscriptionPermissions(
+          allParticipantsAllowed: true,
+          trackPermissions: [
+            const lk.ParticipantTrackPermission(
+              'allowed-identity',
+              true,
+              null,
+            ),
+          ],
+        );
+      } catch (e) {
+        IsmLiveLog.error('Track subscription permissions error: $e');
+      }
 
       // Enable video if the user is a host or copublisher
       if (!_controller.isRtmp) {
-        if (isHost || isCopublisher || isPkGust) {
-          await enableMyVideo();
+        try {
+          if (isHost || isCopublisher || isPkGust) {
+            await enableMyVideo();
+          }
+          // Toggle audio if the user is a host or copublisher
+          unawaited(
+            _controller.toggleAudio(
+              value: isHost || isCopublisher,
+            ),
+          );
+        } catch (e) {
+          IsmLiveLog.error('Video/Audio enable error: $e');
         }
-        // Toggle audio if the user is a host or copublisher
-        unawaited(
-          _controller.toggleAudio(
-            value: isHost || isCopublisher,
-          ),
-        );
       }
 
       if (!joinByScrolling) {
         IsmLiveUtility.closeLoader();
       }
 
-      unawaited(Future.wait([
-        _controller.getStreamMembers(
+      // Wrap API calls in try-catch
+      try {
+        unawaited(Future.wait([
+          _controller.getStreamMembers(
+            streamId: streamId,
+            limit: 10,
+            skip: 0,
+          ),
+          _controller.getStreamViewer(
+            streamId: streamId,
+            limit: 10,
+            skip: 0,
+          ),
+        ]));
+      } catch (e) {
+        IsmLiveLog.error('Stream members/viewer fetch error: $e');
+      }
+
+      try {
+        _controller.initializeStream(
           streamId: streamId,
-          limit: 10,
-          skip: 0,
-        ),
-        _controller.getStreamViewer(
-          streamId: streamId,
-          limit: 10,
-          skip: 0,
-        ),
-      ]));
-      _controller.initializeStream(
-        streamId: streamId,
-        isHost: isHost,
-      );
+          isHost: isHost,
+        );
+      } catch (e) {
+        IsmLiveLog.error('Stream initialization error: $e');
+      }
 
       startStreamTimer();
 
       if (!joinByScrolling) {
-        IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
-        IsmLiveGifts.animated.map((e) => IsmLiveGif.preCache(e.path, context));
+        try {
+          IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
+          IsmLiveGifts.animated
+              .map((e) => IsmLiveGif.preCache(e.path, context));
+        } catch (e) {
+          IsmLiveLog.error('Gift pre-cache error: $e');
+        }
 
-        await IsmLiveRouteManagement.goToStreamView(
-          isHost: isHost,
-          isNewStream: isNewStream,
-          room: room,
-          isScrolling: isScrolling,
-          streamImage: streamImage,
-          listener: _controller.listener!,
-          streamId: streamId,
-          isInteractive: isInteractive,
-        );
+        try {
+          await IsmLiveRouteManagement.goToStreamView(
+            isHost: isHost,
+            isNewStream: isNewStream,
+            room: room,
+            isScrolling: isScrolling,
+            streamImage: streamImage,
+            listener: _controller.listener!,
+            streamId: streamId,
+            isInteractive: isInteractive,
+          );
+        } catch (e) {
+          IsmLiveLog.error('Navigation error: $e');
+        }
       }
 
       // _controller.update([IsmLiveStreamView.updateId]);
     } catch (e, st) {
-      unawaited(
-        _controller._mqttController?.unsubscribeStream(
-          streamId,
-        ),
-      );
+      try {
+        unawaited(
+          _controller._mqttController?.unsubscribeStream(
+            streamId,
+          ),
+        );
+      } catch (unsubError) {
+        IsmLiveLog.error('Unsubscribe error: $unsubError');
+      }
       _controller.userRole = null;
-      IsmLiveLog.error(e, st);
+      IsmLiveLog.error('ConnectStream error: $e', st);
     }
   }
 
