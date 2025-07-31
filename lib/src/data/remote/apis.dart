@@ -1,3 +1,5 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+
 /// This class is used for all the APIs endpoints
 class IsmLiveApis {
   const IsmLiveApis._();
@@ -20,7 +22,7 @@ class IsmLiveApis {
   static const String userSubscription = '/gs/v2/subscription';
 
 //PK apis end point
-  static const String baseUrlStream = 'https://service-apis.isometrik.io';
+  static  String baseUrlStream = IsmLiveDelegate.productionMode ?  'https://apis.isometrik.ai' : 'https://service-apis.isometrik.io';    // pro
   static const String baseUrlWallet = 'https://apinew.isometrik.ai';
 
   static const String _live = '/live/v1';

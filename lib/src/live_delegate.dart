@@ -88,6 +88,8 @@ class IsmLiveDelegate {
 
   static bool? recordeStream;
 
+  static bool productionMode = false;
+
   static IsmLiveButtonConfig? ismLiveButtonConfig;
 
   static LinearGradient? streamOptionsBgGradient;

@@ -155,6 +155,7 @@ class IsmLiveApp extends StatefulWidget {
     Future<void> Function(String streamId)? onHostStopStream,
     Future<void> Function(String streamId)? onLeftStreamAsViewer,
     AddProductViewBuilder? addProductViewBuilder,
+    bool productionMode = false,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -191,6 +192,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onHostStopStream = onHostStopStream;
     IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
     IsmLiveDelegate.addProductViewBuilder = addProductViewBuilder;
+    IsmLiveDelegate.productionMode = productionMode;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
