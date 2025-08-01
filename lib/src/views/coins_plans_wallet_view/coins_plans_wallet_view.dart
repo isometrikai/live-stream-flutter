@@ -57,7 +57,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                           SizedBox(
                             width: IsmLiveDimens.thirty,
                             height: IsmLiveDimens.thirty,
-                            child: SvgPicture.asset(
+                            child: const IsmLiveImage.svg(
                               IsmLiveAssetConstants.coinSvg,
                             ),
                           ),
@@ -183,7 +183,9 @@ class CoinsPlansWalletView extends StatelessWidget {
                                 ),
                               ),
                               IsmLiveDimens.boxHeight32,
-                              SvgPicture.asset(IsmLiveAssetConstants.coinSvg),
+                              IsmLiveImage.svg(
+                                IsmLiveAssetConstants.coinSvg,
+                              ),
                               Text(
                                 _storePlan.price,
                                 style: IsmLiveStyles.black16.copyWith(

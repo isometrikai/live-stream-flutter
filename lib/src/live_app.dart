@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,6 +32,32 @@ class IsmLiveApp extends StatefulWidget {
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) =>
       IsmLiveHandler.isMqttConnected = value;
+
+  /// Refresh coins balance from server
+  static Future<void> refreshCoinsBalance() async {
+    if (!Get.isRegistered<CoinsPlansWalletController>()) {
+      CoinsPlansWalletBinding().dependencies();
+    }
+    final controller = Get.find<CoinsPlansWalletController>();
+    await controller.totalWalletCoins('coin');
+    await controller.totalWalletCoins('usd');
+  }
+
+  /// Get coins balance with automatic controller registration if needed
+  static int get coinsBalance {
+    if (!Get.isRegistered<CoinsPlansWalletController>()) {
+      CoinsPlansWalletBinding().dependencies();
+    }
+    return Get.find<CoinsPlansWalletController>().coinBalance;
+  }
+
+  /// Get wallet balance in USD with automatic controller registration if needed
+  static int get walletBalance {
+    if (!Get.isRegistered<CoinsPlansWalletController>()) {
+      CoinsPlansWalletBinding().dependencies();
+    }
+    return Get.find<CoinsPlansWalletController>().balance;
+  }
 
   /// Manual MQTT reconnection method
   static Future<bool> reconnectMqtt() async =>

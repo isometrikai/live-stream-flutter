@@ -14,7 +14,8 @@ class IsmLiveUtility {
 
   static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
-    debugPrint('IsmLiveApp: set actual data initialize:  stated ${config.userConfig.userToken}');
+    debugPrint(
+        'IsmLiveApp: set actual data initialize:  stated ${config.userConfig.userToken}');
     _config ??= config;
   }
 
@@ -163,7 +164,7 @@ class IsmLiveUtility {
           title ?? (isSuccess ? 'Success' : 'Error'),
         ),
         content: Text(
-          jsonDecode(data.data)['error'] as String,
+          _getErrorMessage(data.data),
         ),
         actions: [
           CupertinoDialogAction(
@@ -258,6 +259,20 @@ class IsmLiveUtility {
   static void closeSnackbar() {
     // No direct equivalent for Get.isSnackbarOpen, so just try to pop
     IsmLiveRoute.pop<void>();
+  }
+
+  /// Safely extract error message from response data
+  static String _getErrorMessage(String data) {
+    try {
+      final decoded = jsonDecode(data);
+      if (decoded is Map<String, dynamic> && decoded.containsKey('error')) {
+        return decoded['error'] as String;
+      }
+      return data; // Return raw data if no error field found
+    } catch (e) {
+      // If JSON parsing fails, return the raw data
+      return data;
+    }
   }
 
   /// Show a message to the user.
