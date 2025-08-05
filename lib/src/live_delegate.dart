@@ -21,6 +21,17 @@ typedef ProductSelectionCallback = Future<List<IsmLiveProductModel>> Function(
 /// If set, this widget will be used in place of the default _AddProduct widget in go_live_view.dart.
 typedef AddProductViewBuilder = Widget Function(BuildContext context);
 
+/// Callback for GoLive button click.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [isScheduledStream] - Whether the stream is a scheduled stream.
+/// [streamDetails] - The current stream details.
+typedef GoLiveClickCallback = Future<void> Function(
+  BuildContext context,
+  bool isScheduledStream,
+  IsmLiveStreamDataModel? streamDetails,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -97,6 +108,11 @@ class IsmLiveDelegate {
   static Future<void> Function(String streamId)? onHostStopStream;
 
   static Future<void> Function(String streamId)? onLeftStreamAsViewer;
+
+  /// Callback for GoLive button click.
+  /// If set, this callback will be called when the GoLive button is tapped.
+  /// If not set, the default behavior will be used.
+  static GoLiveClickCallback? onGoLiveClick;
 
   // ================= E-Commerce Delegates =================
   /// If set, this builder will be used for the Add Product view in go_live_view.dart.

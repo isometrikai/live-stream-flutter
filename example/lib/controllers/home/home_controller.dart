@@ -56,6 +56,24 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
+        // Custom GoLive button click handler
+        // onGoLiveClick: (context, isScheduledStream, streamDetails) async {
+        //   // Example: Custom logic before going live
+        //   if (isScheduledStream) {
+        //     IsmLiveLog.info('Scheduled stream detected - editing schedule');
+        //     // You can add custom logic here like:
+        //     // - Validate user permissions
+        //     // - Track analytics
+        //     // - Show custom UI
+        //   } else {
+        //     IsmLiveLog.info('Regular stream detected - starting stream');
+        //     // You can add custom validation or analytics here
+        //   }
+
+        //   // Example: You can show custom dialogs, validate permissions, etc.
+        //   // The default behavior will be executed after this callback returns
+        // },
+
         // paidStream: false
         // hostOptions: [
         //   IsmLiveStreamOption.bars,
@@ -69,7 +87,7 @@ class HomeController extends GetxController {
         //   IsmLiveStreamOption.speaker,
         //   IsmLiveStreamOption.heart,
         // ],
-        // ismLiveButtonConfig: IsmLiveButtonConfig(
+        // ismliveButtonConfig: IsmLiveButtonConfig(
         //   primaryBuilder: (context,
         //           {required label,
         //           onTap,

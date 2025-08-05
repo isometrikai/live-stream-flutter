@@ -36,7 +36,56 @@ IsmLiveStreamListing()
 
 ---
 
-### 3. Runtime Check (Optional)
+### 3. Customizing Stream Behavior
+
+You can customize various stream behaviors using the `configureInterface` method:
+
+```dart
+IsmLiveApp.configureInterface(
+  // Custom GoLive button click handler
+  onGoLiveClick: (context, isScheduledStream, streamDetails) async {
+    // Your custom logic here
+    if (isScheduledStream) {
+      // Handle scheduled stream
+      print('Scheduled stream detected');
+    } else {
+      // Handle regular stream
+      print('Regular stream detected');
+    }
+    
+    // You can perform custom actions like:
+    // - Show custom dialogs
+    // - Validate user permissions
+    // - Track analytics
+    // - Custom navigation
+  },
+  
+  // Custom host stop stream handler
+  onHostStopStream: (streamId) async {
+    // Custom logic when host stops stream
+    print('Host stopped stream: $streamId');
+  },
+  
+  // Other customization options...
+  showHeader: true,
+  streamHeader: (context) => CustomHeader(),
+  // ... more options
+);
+```
+
+#### Available Callbacks:
+
+- **`onGoLiveClick`**: Called when the "Go Live" button is tapped
+  - Parameters: `context`, `isScheduledStream`, `streamDetails`
+  - If not set, default behavior is used (edit scheduled stream or start stream)
+  
+- **`onHostStopStream`**: Called when host stops the stream
+  - Parameter: `streamId`
+  - If not set, default stop stream behavior is used
+
+---
+
+### 4. Runtime Check (Optional)
 
 If you use SDK widgets directly, you can check initialization:
 
@@ -52,6 +101,7 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 |----------------------- |---------------------------|-----------------------------|
 | Plug-and-play          | `IsmLiveApp`              | Handles init, shows loader & default UI |
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
+| Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
 
 ---
 
