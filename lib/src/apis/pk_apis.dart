@@ -150,7 +150,7 @@ class IsmLivePkApis {
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.getGiftCategories}?${params.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
+      baseUrl: IsmLiveApis.baseUrlStreamGift,
       type: IsmLiveRequestType.get,
       showDialog: false,
       showLoader: true,
@@ -173,7 +173,7 @@ class IsmLivePkApis {
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.getGiftsForACategory}?${params.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlStream,
+      baseUrl: IsmLiveApis.baseUrlStreamGift,
       type: IsmLiveRequestType.get,
       showDialog: false,
       headers: IsmLiveUtility.tokenHeader(),

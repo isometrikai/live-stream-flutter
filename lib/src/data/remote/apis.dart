@@ -22,7 +22,8 @@ class IsmLiveApis {
   static const String userSubscription = '/gs/v2/subscription';
 
 //PK apis end point
-  static  String baseUrlStream = IsmLiveDelegate.productionMode ?  'https://apis.isometrik.ai' : 'https://service-apis.isometrik.io';    // pro
+  static String baseUrlStreamGift = IsmLiveDelegate.productionMode ? 'https://apinew.isometrik.ai' : 'https://service-apis.isometrik.io';
+  static String baseUrlStream = IsmLiveDelegate.productionMode ?  'https://apinew.isometrik.ai' : 'https://service-apis.isometrik.io';    // pro
   static const String baseUrlWallet = 'https://apinew.isometrik.ai';
 
   static const String _live = '/live/v1';
