@@ -56,82 +56,80 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-        // Custom GoLive button click handler
-        // onGoLiveClick: (context, isScheduledStream, streamDetails) async {
-        //   // Example: Custom logic before going live
-        //   if (isScheduledStream) {
-        //     IsmLiveLog.info('Scheduled stream detected - editing schedule');
-        //     // You can add custom logic here like:
-        //     // - Validate user permissions
-        //     // - Track analytics
-        //     // - Show custom UI
-        //   } else {
-        //     IsmLiveLog.info('Regular stream detected - starting stream');
-        //     // You can add custom validation or analytics here
-        //   }
+      // ecomConfigure: IsmLiveEcomConfigure(
+      //   onGoLiveClick:
+      //       (context, isScheduledStream, streamDetails, goLiveData) async {
+      //     // Example: Handle image scenario
+      //     if (goLiveData.pickedImage != null) {
+      //       IsmLiveLog.info(
+      //           'User picked image: ${goLiveData.pickedImage!.path}');
+      //     }
+      //   },
+      //   onGoLiveDispose: () {
+      //     // Example: Cleanup operations when GoLive view is disposed
+      //     IsmLiveLog.info('GoLive view disposed - performing cleanup');
+      //   },
+      // ),
+      // Custom GoLive button click handler with comprehensive data
 
-        //   // Example: You can show custom dialogs, validate permissions, etc.
-        //   // The default behavior will be executed after this callback returns
-        // },
+      // paidStream: false
+      // hostOptions: [
+      //   IsmLiveStreamOption.bars,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.rotateCamera,
+      //   IsmLiveStreamOption.settings,
+      // ],
+      // viewersOptions: [
+      //   IsmLiveStreamOption.gift,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.speaker,
+      //   IsmLiveStreamOption.heart,
+      // ],
+      // ismliveButtonConfig: IsmLiveButtonConfig(
+      //   primaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(
+      //     title: label,
+      //     onPress: onTap,
+      //   ),
+      //   secondaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+      // ),
+      //   streamOptionsBgGradient : const LinearGradient(
+      //     begin: Alignment.bottomCenter,
+      //     end: Alignment.topCenter,
+      //     colors: [
+      //       ColorsValue.gradientStart,
+      //       ColorsValue.gradientEnd,
+      //     ],
+      //   ),
+      // liveAnalyticsOptions: [
+      //   IsmLiveAnalyticsOptions.hearts,
+      //   IsmLiveAnalyticsOptions.viewers,
+      //   IsmLiveAnalyticsOptions.followers,
+      //   IsmLiveAnalyticsOptions.earnings,
+      //   IsmLiveAnalyticsOptions.duration,
+      // ]
+      // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
+      // addProductViewBuilder: (
+      //   BuildContext context
+      // ) {
+      //   return MyCustomAddProductView(
 
-        // paidStream: false
-        // hostOptions: [
-        //   IsmLiveStreamOption.bars,
-        //   IsmLiveStreamOption.share,
-        //   IsmLiveStreamOption.rotateCamera,
-        //   IsmLiveStreamOption.settings,
-        // ],
-        // viewersOptions: [
-        //   IsmLiveStreamOption.gift,
-        //   IsmLiveStreamOption.share,
-        //   IsmLiveStreamOption.speaker,
-        //   IsmLiveStreamOption.heart,
-        // ],
-        // ismliveButtonConfig: IsmLiveButtonConfig(
-        //   primaryBuilder: (context,
-        //           {required label,
-        //           onTap,
-        //           required small,
-        //           required showBorder,
-        //           icon,
-        //           required secondary}) =>
-        //       CustomButton(
-        //     title: label,
-        //     onPress: onTap,
-        //   ),
-        //   secondaryBuilder: (context,
-        //           {required label,
-        //           onTap,
-        //           required small,
-        //           required showBorder,
-        //           icon,
-        //           required secondary}) =>
-        //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
-        // ),
-        //   streamOptionsBgGradient : const LinearGradient(
-        //     begin: Alignment.bottomCenter,
-        //     end: Alignment.topCenter,
-        //     colors: [
-        //       ColorsValue.gradientStart,
-        //       ColorsValue.gradientEnd,
-        //     ],
-        //   ),
-        // liveAnalyticsOptions: [
-        //   IsmLiveAnalyticsOptions.hearts,
-        //   IsmLiveAnalyticsOptions.viewers,
-        //   IsmLiveAnalyticsOptions.followers,
-        //   IsmLiveAnalyticsOptions.earnings,
-        //   IsmLiveAnalyticsOptions.duration,
-        // ]
-        // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
-        // addProductViewBuilder: (
-        //   BuildContext context
-        // ) {
-        //   return MyCustomAddProductView(
-
-        //   );
-        // },
-        );
+      //   );
+      // },
+    );
   }
 
   @override

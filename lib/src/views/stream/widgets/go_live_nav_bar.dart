@@ -41,7 +41,8 @@ class IsmGoLiveNavBar extends StatelessWidget {
                               controller.streamDetails?.isScheduledStream ??
                                   false;
 
-                          if (IsmLiveDelegate.onGoLiveClick != null) {
+                          if (IsmLiveDelegate.ecomConfigure?.onGoLiveClick !=
+                              null) {
                             // Handle image scenario similar to join_mixin.dart logic
                             if (controller.pickedImage == null) {
                               // Try to take picture from camera first
@@ -93,11 +94,9 @@ class IsmGoLiveNavBar extends StatelessWidget {
                               streamKey: controller.streamKey.text,
                               rtmpUrlDevice: controller.rtmlUrlDevice.text,
                               streamKeyDevice: controller.streamKeyDevice.text,
-                              selectedProductsList:
-                                  controller.selectedProductsList,
                             );
 
-                            await IsmLiveDelegate.onGoLiveClick!(
+                            await IsmLiveDelegate.ecomConfigure!.onGoLiveClick!(
                               context,
                               isScheduledStream,
                               controller.streamDetails,

@@ -181,9 +181,8 @@ class IsmLiveApp extends StatefulWidget {
     Widget? logoWidget,
     Future<void> Function(String streamId)? onHostStopStream,
     Future<void> Function(String streamId)? onLeftStreamAsViewer,
-    AddProductViewBuilder? addProductViewBuilder,
     bool productionMode = false,
-    GoLiveClickCallback? onGoLiveClick,
+    IsmLiveEcomConfigure? ecomConfigure,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -219,9 +218,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.logoWidget = logoWidget;
     IsmLiveDelegate.onHostStopStream = onHostStopStream;
     IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
-    IsmLiveDelegate.addProductViewBuilder = addProductViewBuilder;
     IsmLiveDelegate.productionMode = productionMode;
-    IsmLiveDelegate.onGoLiveClick = onGoLiveClick;
+    IsmLiveDelegate.ecomConfigure = ecomConfigure;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -286,9 +284,8 @@ class IsmLiveApp extends StatefulWidget {
 
   static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
 
-  /// Get the GoLive click callback
-  static GoLiveClickCallback? get onGoLiveClick =>
-      IsmLiveDelegate.onGoLiveClick;
+  static IsmLiveEcomConfigure? get ecomConfigure =>
+      IsmLiveDelegate.ecomConfigure;
 
   static Future<void> dispose({
     bool? isStreaming,

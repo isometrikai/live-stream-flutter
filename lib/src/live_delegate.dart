@@ -47,7 +47,6 @@ class IsmLiveGoLiveData {
     required this.streamKey,
     required this.rtmpUrlDevice,
     required this.streamKeyDevice,
-    required this.selectedProductsList,
   });
 
   final bool isScheduledStream;
@@ -72,7 +71,6 @@ class IsmLiveGoLiveData {
   final String streamKey;
   final String rtmpUrlDevice;
   final String streamKeyDevice;
-  final List<IsmLiveProductModel> selectedProductsList;
 }
 
 /// Callback for GoLive button click.
@@ -87,6 +85,12 @@ typedef GoLiveClickCallback = Future<void> Function(
   IsmLiveStreamDataModel? streamDetails,
   IsmLiveGoLiveData goLiveData,
 );
+
+/// Callback for GoLive view dispose.
+///
+/// This callback is called when the GoLive view is disposed.
+/// Useful for cleanup operations like disposing controllers, clearing data, etc.
+typedef GoLiveDisposeCallback = void Function();
 
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
@@ -165,17 +169,7 @@ class IsmLiveDelegate {
 
   static Future<void> Function(String streamId)? onLeftStreamAsViewer;
 
-  /// Callback for GoLive button click.
-  /// If set, this callback will be called when the GoLive button is tapped.
-  /// If not set, the default behavior will be used.
-  static GoLiveClickCallback? onGoLiveClick;
-
-  // ================= E-Commerce Delegates =================
-  /// If set, this builder will be used for the Add Product view in go_live_view.dart.
-  static AddProductViewBuilder? addProductViewBuilder;
-  // Optionally deprecate or remove productSelectionCallback if you want to encourage full view replacement.
-  // static ProductSelectionCallback? productSelectionCallback;
-  // ========================================================
+  static IsmLiveEcomConfigure? ecomConfigure;
 
   Future<void> initialize(
     IsmLiveConfigData config, {
@@ -206,4 +200,16 @@ class IsmLiveDelegate {
       context: context,
     );
   }
+}
+
+class IsmLiveEcomConfigure {
+  IsmLiveEcomConfigure({
+    this.addProductViewBuilder,
+    this.onGoLiveClick,
+    this.onGoLiveDispose,
+  });
+
+  final AddProductViewBuilder? addProductViewBuilder;
+  final GoLiveClickCallback? onGoLiveClick;
+  final GoLiveDisposeCallback? onGoLiveDispose;
 }

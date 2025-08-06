@@ -50,6 +50,9 @@ class IsmGoLiveView extends StatelessWidget {
           }
           controller.cameraController?.dispose();
           controller.streamDetails = null;
+
+          // Call the dispose callback if provided
+          IsmLiveDelegate.ecomConfigure?.onGoLiveDispose?.call();
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -181,8 +184,10 @@ class IsmGoLiveView extends StatelessWidget {
                         const _PersistentStream(),
                       ],
                       if (IsmLiveDelegate.productStream ?? true)
-                        IsmLiveDelegate.addProductViewBuilder != null
-                            ? IsmLiveDelegate.addProductViewBuilder!(context)
+                        IsmLiveDelegate.ecomConfigure?.addProductViewBuilder !=
+                                null
+                            ? IsmLiveDelegate
+                                .ecomConfigure!.addProductViewBuilder!(context)
                             : _AddProduct(
                                 selectedProducts:
                                     controller.selectedProductsList,
