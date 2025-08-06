@@ -685,7 +685,8 @@ class IsmLivePkController extends GetxController
             : streamController.hostDetails?.userName,
         messageStreamId: streamController.streamId,
         pkId: pkId,
-        amount: amount,
+        // amount: amount, // for testing
+        amount: 0,
         currency: 'COIN',
         receiverCurrency: 'INR',
         reciverUserType: (streamController.pkStages?.isPkStart ?? false)
