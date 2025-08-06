@@ -42,10 +42,66 @@ class IsmGoLiveNavBar extends StatelessWidget {
                                   false;
 
                           if (IsmLiveDelegate.onGoLiveClick != null) {
+                            // Handle image scenario similar to join_mixin.dart logic
+                            if (controller.pickedImage == null) {
+                              // Try to take picture from camera first
+                              final file = await controller.cameraController
+                                  ?.takePicture();
+                              if (file != null) {
+                                controller.pickedImage = file;
+                                controller.update([IsmGoLiveView.updateId]);
+                              } else {
+                                // If camera fails, pick from gallery
+                                var file = await FileManager.pickGalleryImage();
+                                if (file != null) {
+                                  controller.pickedImage = file;
+                                  controller.update([IsmGoLiveView.updateId]);
+                                }
+                              }
+                            }
+
+                            // Create comprehensive data object with all user-entered details
+                            final goLiveData = IsmLiveGoLiveData(
+                              isScheduledStream: isScheduledStream,
+                              streamDetails: controller.streamDetails,
+                              description:
+                                  controller.descriptionController.text,
+                              pickedImage: controller
+                                  .pickedImage, // Use the final pickedImage (either picked from gallery or taken from camera)
+                              isHdBroadcast: controller.isHdBroadcast,
+                              isRecordingBroadcast:
+                                  controller.isRecordingBroadcast,
+                              isRestreamBroadcast:
+                                  controller.isRestreamBroadcast,
+                              isPremium: controller.isPremium,
+                              isSchedulingBroadcast:
+                                  controller.isSchedulingBroadcast,
+                              usePersistentStreamKey:
+                                  controller.usePersistentStreamKey,
+                              isRtmp: controller.isRtmp,
+                              selectedGoLiveTabItem:
+                                  controller.selectedGoLiveTabItem,
+                              selectedGoLiveStream:
+                                  controller.selectedGoLiveStream,
+                              scheduleLiveDate: controller.scheduleLiveDate,
+                              premiumStreamCoins:
+                                  controller.premiumStreamCoinsController.text,
+                              restreamFacebook: controller.restreamFacebook,
+                              restreamYoutube: controller.restreamYoutube,
+                              restreamInstagram: controller.restreamInstagram,
+                              rtmpUrl: controller.rtmlUrl.text,
+                              streamKey: controller.streamKey.text,
+                              rtmpUrlDevice: controller.rtmlUrlDevice.text,
+                              streamKeyDevice: controller.streamKeyDevice.text,
+                              selectedProductsList:
+                                  controller.selectedProductsList,
+                            );
+
                             await IsmLiveDelegate.onGoLiveClick!(
                               context,
                               isScheduledStream,
                               controller.streamDetails,
+                              goLiveData,
                             );
                             return;
                           }

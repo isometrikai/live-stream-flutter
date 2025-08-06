@@ -42,22 +42,39 @@ You can customize various stream behaviors using the `configureInterface` method
 
 ```dart
 IsmLiveApp.configureInterface(
-  // Custom GoLive button click handler
-  onGoLiveClick: (context, isScheduledStream, streamDetails) async {
+  // Custom GoLive button click handler with comprehensive data
+  onGoLiveClick: (context, isScheduledStream, streamDetails, goLiveData) async {
+    // Access all user-entered details
+    print('Description: ${goLiveData.description}');
+    print('HD Broadcast: ${goLiveData.isHdBroadcast}');
+    print('Record Broadcast: ${goLiveData.isRecordingBroadcast}');
+    print('Restream Broadcast: ${goLiveData.isRestreamBroadcast}');
+    print('Premium Stream: ${goLiveData.isPremium}');
+    print('Premium Coins: ${goLiveData.premiumStreamCoins}');
+    print('Picked Image: ${goLiveData.pickedImage?.path}');
+    print('Selected Products: ${goLiveData.selectedProductsList.length}');
+    print('RTMP URL: ${goLiveData.rtmpUrl}');
+    print('Stream Key: ${goLiveData.streamKey}');
+    print('Restream Facebook: ${goLiveData.restreamFacebook}');
+    print('Restream YouTube: ${goLiveData.restreamYoutube}');
+    print('Restream Instagram: ${goLiveData.restreamInstagram}');
+    
     // Your custom logic here
     if (isScheduledStream) {
+      print('Scheduled stream detected - editing schedule');
       // Handle scheduled stream
-      print('Scheduled stream detected');
     } else {
+      print('Regular stream detected - starting stream');
       // Handle regular stream
-      print('Regular stream detected');
     }
     
     // You can perform custom actions like:
-    // - Show custom dialogs
     // - Validate user permissions
     // - Track analytics
+    // - Show custom dialogs
     // - Custom navigation
+    // - Process the picked image
+    // - Validate stream settings
   },
   
   // Custom host stop stream handler
@@ -76,7 +93,19 @@ IsmLiveApp.configureInterface(
 #### Available Callbacks:
 
 - **`onGoLiveClick`**: Called when the "Go Live" button is tapped
-  - Parameters: `context`, `isScheduledStream`, `streamDetails`
+  - Parameters: `context`, `isScheduledStream`, `streamDetails`, `goLiveData`
+  - `goLiveData` contains all user-entered details:
+    - `description`: User-entered stream description
+    - `pickedImage`: Selected image file (XFile) - **Note**: If no image was picked by user, the system will automatically take a picture from camera or pick from gallery, similar to the default behavior
+    - `isHdBroadcast`: HD Broadcast toggle status
+    - `isRecordingBroadcast`: Record Broadcast toggle status
+    - `isRestreamBroadcast`: Restream Broadcast toggle status
+    - `isPremium`: Premium stream toggle status
+    - `premiumStreamCoins`: Premium stream coins amount
+    - `selectedProductsList`: List of selected products
+    - `rtmpUrl`, `streamKey`: RTMP settings
+    - `restreamFacebook`, `restreamYoutube`, `restreamInstagram`: Restream platform toggles
+    - And many more stream configuration options
   - If not set, default behavior is used (edit scheduled stream or start stream)
   
 - **`onHostStopStream`**: Called when host stops the stream
