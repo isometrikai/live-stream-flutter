@@ -264,6 +264,53 @@ class IsmLiveApp extends StatefulWidget {
     });
   }
 
+  static Future<void> connectStream({
+    required String token,
+    required String streamId,
+    String? streamImage,
+    String? streamDescription,
+    bool hdBroadcast = false,
+    bool restream = false,
+    required bool isHost,
+    bool isCopublisher = false,
+    bool isPk = false,
+    bool isPkGuest = false,
+    required bool isNewStream,
+    bool joinByScrolling = false,
+    bool isScrolling = false,
+    bool isInteractive = false,
+    required BuildContext context,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    IsmLiveUtility.updateLater(() async {
+      await Get.find<IsmLiveStreamController>().connectStream(
+        token: token,
+        streamId: streamId,
+        streamImage: streamImage,
+        streamDiscription: streamDescription,
+        hdBroadcast: hdBroadcast,
+        restream: restream,
+        isHost: isHost,
+        isCopublisher: isCopublisher,
+        isPk: isPk,
+        isPkGust: isPkGuest,
+        isNewStream: isNewStream,
+        joinByScrolling: joinByScrolling,
+        isScrolling: isScrolling,
+        isInteractive: isInteractive,
+        context: context,
+      );
+    });
+  }
+
   static VoidCallback? get onStreamEnd => IsmLiveDelegate.onStreamEnd;
 
   static set onStreamEnd(VoidCallback? callback) =>
