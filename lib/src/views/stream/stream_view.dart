@@ -240,9 +240,38 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: IsmLiveDimens.twelve),
-                                        child: IsmLiveMessageField(
-                                          streamId: controller.streamId ?? '',
-                                          isHost: controller.isPublishing,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: IsmLiveMessageField(
+                                                streamId:
+                                                    controller.streamId ?? '',
+                                                isHost: controller.isPublishing,
+                                              ),
+                                            ),
+                                            if (IsmLiveDelegate.productStream ==
+                                                true) ...[
+                                              Expanded(
+                                                flex: 1,
+                                                child: IsmLiveButton(
+                                                  label: 'Pin Product',
+                                                  onTap: () {
+                                                    // Call the pin product callback if provided
+                                                    IsmLiveDelegate
+                                                        .ecomConfigure
+                                                        ?.onPinProduct
+                                                        ?.call(
+                                                      context,
+                                                      controller.streamId ?? '',
+                                                      controller.isHost,
+                                                      controller.isPublishing,
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                            ]
+                                          ],
                                         ),
                                       ),
                                   IsmLiveDimens.boxHeight8,

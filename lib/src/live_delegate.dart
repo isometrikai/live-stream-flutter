@@ -92,6 +92,22 @@ typedef GoLiveClickCallback = Future<void> Function(
 /// Useful for cleanup operations like disposing controllers, clearing data, etc.
 typedef GoLiveDisposeCallback = void Function();
 
+/// Callback for Pin Product button click.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host.
+/// [isPublishing] - Whether the stream is currently publishing.
+///
+/// This callback is called when the Pin Product button is tapped in the stream view.
+/// Useful for handling product pinning functionality in the host application.
+typedef PinProductCallback = void Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isPublishing,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -207,9 +223,11 @@ class IsmLiveEcomConfigure {
     this.addProductViewBuilder,
     this.onGoLiveClick,
     this.onGoLiveDispose,
+    this.onPinProduct,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
   final GoLiveClickCallback? onGoLiveClick;
   final GoLiveDisposeCallback? onGoLiveDispose;
+  final PinProductCallback? onPinProduct;
 }
