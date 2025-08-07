@@ -187,6 +187,15 @@ class IsmLiveDelegate {
 
   static IsmLiveEcomConfigure? ecomConfigure;
 
+  static bool enableFreeGift = false;
+
+  /// Triggers a rebuild of the pinned product widget by updating the stream controller
+  static void updatePinnedProductWidget() {
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+  }
+
   Future<void> initialize(
     IsmLiveConfigData config, {
     VoidCallback? onEndStream,
@@ -224,10 +233,14 @@ class IsmLiveEcomConfigure {
     this.onGoLiveClick,
     this.onGoLiveDispose,
     this.onPinProduct,
+    this.pinnedProductBuilder,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
   final GoLiveClickCallback? onGoLiveClick;
   final GoLiveDisposeCallback? onGoLiveDispose;
   final PinProductCallback? onPinProduct;
+  final Widget? Function(
+          BuildContext context, IsmLiveStreamController controller)?
+      pinnedProductBuilder;
 }

@@ -220,11 +220,34 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                   ],
                                                 ),
                                           ),
-                                          IsmLiveControlsWidget(
-                                            isHost: isHost,
-                                            isCopublishing:
-                                                controller.isCopublisher,
-                                            streamId: controller.streamId ?? '',
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              IsmLiveControlsWidget(
+                                                isHost: isHost,
+                                                isCopublishing:
+                                                    controller.isCopublisher,
+                                                streamId:
+                                                    controller.streamId ?? '',
+                                              ),
+                                              if (IsmLiveDelegate
+                                                          .productStream ==
+                                                      true &&
+                                                  IsmLiveDelegate.ecomConfigure
+                                                          ?.pinnedProductBuilder !=
+                                                      null) ...[
+                                                IsmLiveDimens.boxHeight8,
+                                                IsmLiveDelegate.ecomConfigure!
+                                                        .pinnedProductBuilder!(
+                                                      context,
+                                                      controller,
+                                                    ) ??
+                                                    const SizedBox.shrink(),
+                                                IsmLiveDimens.boxHeight16,
+                                              ],
+                                            ],
                                           ),
                                         ],
                                       ),

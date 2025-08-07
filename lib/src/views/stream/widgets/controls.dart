@@ -78,10 +78,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.only(bottom: IsmLiveDimens.eight),
-                  alignment: IsmLiveDelegate.productStream == true
-                      ? Alignment.centerRight
-                      : Alignment.bottomRight,
+                  alignment: Alignment.bottomRight,
                   width: IsmLiveDimens.fifty,
+                  margin: IsmLiveDelegate.productStream == true
+                      ? EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.08)
+                      : null,
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: options.length,

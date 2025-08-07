@@ -183,6 +183,7 @@ class IsmLiveApp extends StatefulWidget {
     Future<void> Function(String streamId)? onLeftStreamAsViewer,
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
+    bool enableFreeGift = false,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -220,6 +221,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
+    IsmLiveDelegate.enableFreeGift = enableFreeGift;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>

@@ -404,7 +404,16 @@ mixin StreamOngoingMixin {
         _controller.settingSheet();
         break;
       case IsmLiveStreamOption.product:
-        IsmLiveRouteManagement.goToTagProduct();
+        if (IsmLiveDelegate.ecomConfigure?.onPinProduct != null) {
+          IsmLiveDelegate.ecomConfigure!.onPinProduct!(
+            context,
+            _controller.streamId ?? '',
+            _controller.isHost,
+            _controller.isPublishing,
+          );
+        } else {
+          IsmLiveRouteManagement.goToTagProduct();
+        }
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();

@@ -35,7 +35,10 @@ abstract class IsmLiveRouteManagement {
       isInteractive: isInteractive,
     );
     if (isHost && isNewStream) {
-      await IsmLiveRoute.pushReplacement(widget);
+      // For new host streams, remove only the Go Live view and keep the rest of the stack
+      // This works for both demo (plug-and-play) and host apps (direct initialization)
+      IsmLiveRoute.pop(); // Remove Go Live view
+      await IsmLiveRoute.push(widget); // Push stream view
     } else {
       await IsmLiveRoute.push(widget);
     }
