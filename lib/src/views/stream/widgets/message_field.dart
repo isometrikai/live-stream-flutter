@@ -87,6 +87,20 @@ class IsmLiveMessageField extends StatelessWidget {
                         parentMessage: controller.parentMessage,
                       );
                     },
+                    suffixIcon: IsmLiveDelegate.productStream == true ? IconButton(
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      ),
+                      color: Colors.white,
+                      onPressed: controller.messageFieldController.isNotEmpty
+                          ? () => controller.sendTextMessage(
+                        streamId: streamId,
+                        body: controller.messageFieldController.text.trim(),
+                        parentMessage: controller.parentMessage,
+                      )
+                          : null,
+                    ) : null,
                     prefixIcon: IconButton(
                         icon: const Icon(
                           Icons.mood,
@@ -98,21 +112,23 @@ class IsmLiveMessageField extends StatelessWidget {
                   ),
                 ),
                 IsmLiveDimens.boxWidth15,
-                CustomIconButton(
-                  dimension: IsmLiveDimens.forty,
-                  icon: const Icon(
-                    Icons.send,
-                    color: Colors.white,
-                  ),
-                  onTap: controller.messageFieldController.isNotEmpty
-                      ? () => controller.sendTextMessage(
-                            streamId: streamId,
-                            body: controller.messageFieldController.text.trim(),
-                            parentMessage: controller.parentMessage,
-                          )
-                      : null,
-                  gradient: IsmLiveDelegate.streamOptionsBgGradient,
-                )
+                if(IsmLiveDelegate.productStream != true)...[
+                  CustomIconButton(
+                    dimension: IsmLiveDimens.forty,
+                    icon: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    ),
+                    onTap: controller.messageFieldController.isNotEmpty
+                        ? () => controller.sendTextMessage(
+                      streamId: streamId,
+                      body: controller.messageFieldController.text.trim(),
+                      parentMessage: controller.parentMessage,
+                    )
+                        : null,
+                    gradient: IsmLiveDelegate.streamOptionsBgGradient,
+                  )
+                ]
               ],
             ),
           ],
