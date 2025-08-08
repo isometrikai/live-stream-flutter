@@ -4,7 +4,7 @@ import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -56,35 +56,89 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      // ecomConfigure: IsmLiveEcomConfigure(
-      //   onGoLiveClick:
-      //       (context, isScheduledStream, streamDetails, goLiveData) async {
-      //     // Example: Handle image scenario
-      //     if (goLiveData.pickedImage != null) {
-      //       IsmLiveLog.info(
-      //           'User picked image: ${goLiveData.pickedImage!.path}');
-      //     }
-      //   },
-      //   onGoLiveDispose: () {
-      //     // Example: Cleanup operations when GoLive view is disposed
-      //     IsmLiveLog.info('GoLive view disposed - performing cleanup');
-      //   },
-      // ),
+      productStream: true,
+      enableFreeGift: true, // Enable free gifts - amount will be sent as 0
+      ecomConfigure: IsmLiveEcomConfigure(
+        // onGoLiveClick:
+        //     (context, isScheduledStream, streamDetails, goLiveData) async {
+        //   // Example: Handle image scenario
+        //   if (goLiveData.pickedImage != null) {
+        //     IsmLiveLog.info(
+        //         'User picked image: ${goLiveData.pickedImage!.path}');
+        //   }
+        // },
+        onGoLiveDispose: () {
+          // Example: Cleanup operations when GoLive view is disposed
+          IsmLiveLog.info('GoLive view disposed - performing cleanup');
+        },
+        onPinProduct: (context, streamId, isHost, isPublishing) {},
+        // Example pinned product builder that can be updated dynamically
+        pinnedProductBuilder: (context, controller) {
+          // This widget will appear below the controls for hosts when productStream is true
+          // You can update this widget by calling IsmLiveDelegate.updatePinnedProductWidget()
+          return Container(
+            width: 150,
+            height: 200,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Pinned Product Widget',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.favorite,
+                          color: Colors.white, size: 16),
+                      onPressed: () {
+                        // Example action
+                        IsmLiveLog.info(
+                            'Pinned product widget action triggered');
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.share,
+                          color: Colors.white, size: 16),
+                      onPressed: () {
+                        // Example action
+                        IsmLiveLog.info('Share action triggered');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
       // Custom GoLive button click handler with comprehensive data
 
       // paidStream: false
-      // hostOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.rotateCamera,
-      //   IsmLiveStreamOption.settings,
-      // ],
-      // viewersOptions: [
-      //   IsmLiveStreamOption.gift,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.speaker,
-      //   IsmLiveStreamOption.heart,
-      // ],
+      hostOptions: [
+        IsmLiveStreamOption.bars,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.product,
+        IsmLiveStreamOption.rotateCamera,
+        IsmLiveStreamOption.settings,
+      ],
+      viewersOptions: [
+        IsmLiveStreamOption.gift,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.speaker,
+        IsmLiveStreamOption.heart,
+      ],
       // ismliveButtonConfig: IsmLiveButtonConfig(
       //   primaryBuilder: (context,
       //           {required label,
