@@ -36,7 +36,7 @@ class IsmLiveUsersSheet extends StatelessWidget {
             var notShowbotton = controller.checkCanMakeModerator(user.userId);
 
             return InkWell(
-              onTap: () {
+              onTap: IsmLiveDelegate.restrictProfileSheetOnProfileClick ? null :() {
                 IsmLiveUtility.openBottomSheet(
                   StreamLiveSheet(
                     widget: IsmLiveImage.network(
@@ -76,7 +76,6 @@ class IsmLiveUsersSheet extends StatelessWidget {
                             streamId: controller.streamId ?? '',
                           );
 
-                          IsmLiveRoute.pop();
                           IsmLiveRoute.pop();
                         },
                       ),

@@ -189,6 +189,8 @@ class IsmLiveDelegate {
 
   static bool enableFreeGift = false;
 
+  static bool restrictProfileSheetOnProfileClick = false;
+
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {
     if (Get.isRegistered<IsmLiveStreamController>()) {

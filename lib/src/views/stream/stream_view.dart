@@ -477,32 +477,32 @@ class _StreamHeader extends StatelessWidget {
                                       },
                                     ),
                                   )
-                            : const IsmLiveButton.icon(
-                                icon: Icons.group_add_rounded,
-                              ),
+                            : IsmLiveDimens.box0,
                     onViewerProfileTap: (viewer, index) {
-                      IsmLiveUtility.openBottomSheet(
-                        StreamLiveSheet(
-                          widget: IsmLiveImage.network(
-                            IsmLiveDelegate.getUserProfileUrl
-                                    ?.call(viewer.imageUrl ?? '') ??
-                                viewer.imageUrl ??
-                                '',
-                            isProfileImage: true,
-                            name: viewer.userName,
-                            height: IsmLiveDimens.hundred,
-                            width: IsmLiveDimens.hundred,
+                      if (!IsmLiveDelegate.restrictProfileSheetOnProfileClick) {
+                        IsmLiveUtility.openBottomSheet(
+                          StreamLiveSheet(
+                            widget: IsmLiveImage.network(
+                              IsmLiveDelegate.getUserProfileUrl
+                                      ?.call(viewer.imageUrl ?? '') ??
+                                  viewer.imageUrl ??
+                                  '',
+                              isProfileImage: true,
+                              name: viewer.userName,
+                              height: IsmLiveDimens.hundred,
+                              width: IsmLiveDimens.hundred,
+                            ),
+                            title: viewer.userName,
+                            subTitle: null,
+                            buttonLable: 'View Profile',
+                            onTap: () {
+                              IsmLiveDelegate.openUserProfileView
+                                  ?.call(viewer.identifier);
+                            },
                           ),
-                          title: viewer.userName,
-                          subTitle: null,
-                          buttonLable: 'View Profile',
-                          onTap: () {
-                            IsmLiveDelegate.openUserProfileView
-                                ?.call(viewer.identifier);
-                          },
-                        ),
-                        isScrollController: true,
-                      );
+                          isScrollController: true,
+                        );
+                      }
                     },
                   ),
                 ),

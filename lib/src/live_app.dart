@@ -184,6 +184,7 @@ class IsmLiveApp extends StatefulWidget {
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
     bool enableFreeGift = false,
+    bool restrictProfileSheetOnProfileClick = false,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -222,6 +223,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
+    IsmLiveDelegate.restrictProfileSheetOnProfileClick =
+        restrictProfileSheetOnProfileClick;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>

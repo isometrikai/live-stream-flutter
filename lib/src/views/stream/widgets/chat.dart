@@ -83,7 +83,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: controller.participantTracks.length < 2
-                    ? IsmLiveDimens.percentHeight(0.4)
+                    ? IsmLiveDimens.percentHeight(0.35)
                     : controller.participantTracks.length < 4
                         ? IsmLiveDimens.percentHeight(0.3)
                         : IsmLiveDimens.percentHeight(0.15),

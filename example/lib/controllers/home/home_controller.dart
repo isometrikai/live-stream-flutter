@@ -56,8 +56,11 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      productStream: true,
-      enableFreeGift: true, // Enable free gifts - amount will be sent as 0
+      productionMode: true,
+      productStream: false,
+      enableFreeGift: false,
+      restrictProfileSheetOnProfileClick: true,
+      // Enable free gifts - amount will be sent as 0
       ecomConfigure: IsmLiveEcomConfigure(
         // onGoLiveClick:
         //     (context, isScheduledStream, streamDetails, goLiveData) async {

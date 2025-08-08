@@ -27,37 +27,39 @@ class IsmLiveGiftsSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             IsmLiveDimens.boxHeight16,
-            ListTile(
-              title: Text(
-                'My Balance',
-                style: context.textTheme.headlineSmall,
-              ),
-              trailing: SizedBox(
-                width: IsmLiveDimens.oneHundredTwenty,
-                height: IsmLiveDimens.forty,
-                child: const IsmLiveButton(
-                  label: 'Add Coins',
-                  onTap: IsmLiveRouteManagement.goToCoinsPlanWallet,
+            if (!IsmLiveDelegate.enableFreeGift) ...[
+              ListTile(
+                title: Text(
+                  'My Balance',
+                  style: context.textTheme.headlineSmall,
+                ),
+                trailing: SizedBox(
+                  width: IsmLiveDimens.oneHundredTwenty,
+                  height: IsmLiveDimens.forty,
+                  child: const IsmLiveButton(
+                    label: 'Add Coins',
+                    onTap: IsmLiveRouteManagement.goToCoinsPlanWallet,
+                  ),
+                ),
+                subtitle: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: IsmLiveDimens.twentyFive,
+                      width: IsmLiveDimens.twentyFive,
+                      child:
+                          const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                    ),
+                    IsmLiveDimens.boxWidth4,
+                    Obx(() => Text(
+                          controller.giftcoinBalance.formatWithKAndL(),
+                          style: context.textTheme.bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        )),
+                  ],
                 ),
               ),
-              subtitle: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: IsmLiveDimens.twentyFive,
-                    width: IsmLiveDimens.twentyFive,
-                    child:
-                        const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                  ),
-                  IsmLiveDimens.boxWidth4,
-                  Obx(() => Text(
-                        controller.giftcoinBalance.formatWithKAndL(),
-                        style: context.textTheme.bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      )),
-                ],
-              ),
-            ),
+            ],
             IsmLiveDimens.boxHeight10,
             SizedBox(
               height: IsmLiveDimens.hundred,
@@ -174,15 +176,17 @@ class _GiftItem extends StatelessWidget {
                 child: IsmLiveImage.network(gift.giftImage ?? '',
                     name: gift.giftTitle ?? ''),
               ),
-              IsmLiveDimens.boxHeight8,
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                  IsmLiveDimens.boxWidth4,
-                  Text('${gift.virtualCurrency}'),
-                ],
-              ),
+              if (!IsmLiveDelegate.enableFreeGift) ...[
+                IsmLiveDimens.boxHeight8,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                    IsmLiveDimens.boxWidth4,
+                    Text('${gift.virtualCurrency}'),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
