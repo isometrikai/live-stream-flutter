@@ -127,6 +127,34 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
+  /// Wraps IsmLiveChatView with conditional width constraints
+  /// When productStream is true, limits width to half screen width
+  Widget _buildChatView(
+    BuildContext context, {
+    required bool isHost,
+    required String streamId,
+  }) {
+    final chatView = IsmLiveChatView(
+      isHost: isHost,
+      streamId: streamId,
+    );
+
+    // Apply width constraint only when productStream is enabled
+    if (IsmLiveDelegate.productStream == true) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.5,
+          ),
+          child: chatView,
+        ),
+      );
+    }
+
+    return chatView;
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
@@ -215,7 +243,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                     mainAxisSize:
                                                         MainAxisSize.min,
                                                     children: [
-                                                      IsmLiveChatView(
+                                                      _buildChatView(
+                                                        context,
                                                         isHost:
                                                             controller.isHost,
                                                         streamId: streamId,
@@ -535,6 +564,34 @@ class _BottomDarkGradient extends StatelessWidget {
 class ScheduleStreamView extends StatelessWidget {
   const ScheduleStreamView({super.key});
 
+  /// Wraps IsmLiveChatView with conditional width constraints
+  /// When productStream is true, limits width to half screen width
+  Widget _buildChatView(
+    BuildContext context, {
+    required bool isHost,
+    required String streamId,
+  }) {
+    final chatView = IsmLiveChatView(
+      isHost: isHost,
+      streamId: streamId,
+    );
+
+    // Apply width constraint only when productStream is enabled
+    if (IsmLiveDelegate.productStream == true) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.5,
+          ),
+          child: chatView,
+        ),
+      );
+    }
+
+    return chatView;
+  }
+
   @override
   Widget build(BuildContext context) => SafeArea(
         child: GetBuilder<IsmLiveStreamController>(
@@ -552,7 +609,8 @@ class ScheduleStreamView extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IsmLiveChatView(
+                            _buildChatView(
+                              context,
                               isHost: true,
                               streamId: controller.streamId ?? '',
                             ),
