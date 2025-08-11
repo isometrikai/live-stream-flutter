@@ -111,7 +111,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                           gift: gift!,
                           onTap: () {
                             if (controller.giftcoinBalance <
-                                (gift.virtualCurrency ?? 0)) {
+                                    (gift.virtualCurrency ?? 0) &&
+                                !IsmLiveDelegate.enableFreeGift) {
                               IsmLiveUtility.showAlertDialog(
                                   title: 'Coin Balance',
                                   message:
