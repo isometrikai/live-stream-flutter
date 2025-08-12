@@ -18,6 +18,7 @@ const _kThemeData = IsmLiveThemeData(
     foregroundColor: IsmLiveColors.black,
     disableColor: IsmLiveColors.grey,
   ),
+  fontFamily: null, // Will be set dynamically from delegate
 );
 
 const _kTranslationsData = IsmLiveTranslationsData(
@@ -53,9 +54,22 @@ class IsmLiveData extends StatelessWidget {
   final IsmLiveConfigData? configurations;
   final Widget child;
 
+  /// Gets the theme data with dynamic font family from delegate
+  IsmLiveThemeData get _dynamicThemeData {
+    final baseTheme = theme ?? _kThemeData;
+    final delegateFontFamily = IsmLiveDelegate.fontFamily;
+
+    if (delegateFontFamily != null &&
+        baseTheme.fontFamily != delegateFontFamily) {
+      return baseTheme.copyWith(fontFamily: delegateFontFamily);
+    }
+
+    return baseTheme;
+  }
+
   @override
   Widget build(BuildContext context) => IsmLiveTheme(
-        data: theme ?? _kThemeData,
+        data: _dynamicThemeData,
         child: IsmLiveTranslations(
           data: translations ?? _kTranslationsData,
           child: IsmLiveProperties(

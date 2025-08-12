@@ -28,7 +28,7 @@ class IsmGoLiveNavBar extends StatelessWidget {
                         padding: IsmLiveDimens.edgeInsets4,
                         child: Text(
                           'Broadcasters under 18 are not permitted',
-                          style: context.textTheme.bodySmall?.copyWith(
+                          style: context.dynamicTextTheme.bodySmall?.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -145,7 +145,8 @@ class IsmGoLiveNavBar extends StatelessWidget {
                             children: [
                               Text(
                                 e.label,
-                                style: context.textTheme.labelLarge?.copyWith(
+                                style: context.dynamicTextTheme.labelLarge
+                                    ?.copyWith(
                                   color: isSelected
                                       ? Colors.white
                                       : Colors.white54,

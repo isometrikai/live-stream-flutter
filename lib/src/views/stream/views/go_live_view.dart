@@ -16,6 +16,7 @@ class IsmGoLiveView extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           var controller = Get.find<IsmLiveStreamController>();
+
           if (controller.streamDetails == null) {
             controller.cameraFuture = null;
             unawaited(controller.initializationOfGoLive());
@@ -69,8 +70,13 @@ class IsmGoLiveView extends StatelessWidget {
                     return const IsmLiveLoader(isDialog: false);
                   }
                   if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('Error while initializing Camera'),
+                    return Center(
+                      child: Text(
+                        'Error while initializing Camera',
+                        style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                          color: IsmLiveColors.white,
+                        ),
+                      ),
                     );
                   }
                   if (controller.cameraController == null) {
@@ -134,12 +140,17 @@ class IsmGoLiveView extends StatelessWidget {
                         IsmLiveDimens.boxWidth10,
                         Expanded(
                           child: IsmLiveInputField(
-                            hintStyle: IsmLiveStyles.white16,
+                            hintStyle:
+                                context.dynamicTextTheme.bodyLarge?.copyWith(
+                              color: IsmLiveColors.white,
+                            ),
                             minLines: 3,
                             maxLines: 3,
                             alignLabelWithHint: true,
                             cursorColor: IsmLiveColors.white,
-                            style: IsmLiveStyles.white16,
+                            style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                              color: IsmLiveColors.white,
+                            ),
                             borderColor: IsmLiveColors.white,
                             radius: IsmLiveDimens.twelve,
                             fillColor: IsmLiveColors.white.withOpacity(0.3),
@@ -266,14 +277,14 @@ class _StreamTypes extends StatelessWidget {
                         const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                         Text(
                           ' ${controller.premiumStreamCoinsController.text} coins',
-                          style: context.textTheme.labelLarge?.copyWith(
+                          style: context.dynamicTextTheme.labelLarge?.copyWith(
                             color: !isSelected ? Colors.black : Colors.white,
                           ),
                         ),
                       ] else
                         Text(
                           e.value,
-                          style: context.textTheme.labelLarge?.copyWith(
+                          style: context.dynamicTextTheme.labelLarge?.copyWith(
                             color: !isSelected ? Colors.black : Colors.white,
                           ),
                         ),
@@ -383,7 +394,7 @@ class _AddProduct extends StatelessWidget {
               children: [
                 Text(
                   'Add product*',
-                  style: context.textTheme.bodyLarge?.copyWith(
+                  style: context.dynamicTextTheme.bodyLarge?.copyWith(
                     color: IsmLiveColors.white,
                   ),
                 ),
@@ -392,7 +403,7 @@ class _AddProduct extends StatelessWidget {
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
                     child: Text(
                       '+Add',
-                      style: context.textTheme.bodyLarge?.copyWith(
+                      style: context.dynamicTextTheme.bodyLarge?.copyWith(
                         color: IsmLiveColors.white,
                       ),
                     ),
@@ -447,7 +458,8 @@ class _AddProduct extends StatelessWidget {
                             ),
                             Text(
                               'Add products',
-                              style: context.textTheme.labelMedium?.copyWith(
+                              style: context.dynamicTextTheme.labelMedium
+                                  ?.copyWith(
                                 color: context.liveTheme?.selectedTextColor,
                               ),
                             ),
@@ -477,7 +489,7 @@ class _Restream extends StatelessWidget {
                     onTap: IsmLiveRouteManagement.goToRestreamView,
                     title: Text(
                       'Restream',
-                      style: context.textTheme.bodyLarge?.copyWith(
+                      style: context.dynamicTextTheme.bodyLarge?.copyWith(
                         color: IsmLiveColors.white,
                       ),
                     ),
@@ -553,20 +565,20 @@ class _PersistentStream extends StatelessWidget {
                   ),
                   IsmLiveDimens.boxHeight10,
                   Text.rich(
-                    const TextSpan(
+                    TextSpan(
                       text:
                           'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device. \nIf you want to create a new stream key in case you think your key is compromised ',
                       children: [
                         TextSpan(
                           text: 'click here.',
-                          style: TextStyle(
+                          style: context.dynamicTextTheme.labelMedium?.copyWith(
                             decoration: TextDecoration.underline,
                             decorationColor: IsmLiveColors.white,
                           ),
                         ),
                       ],
                     ),
-                    style: context.textTheme.labelMedium?.copyWith(
+                    style: context.dynamicTextTheme.labelMedium?.copyWith(
                       color: IsmLiveColors.white,
                     ),
                   )
@@ -598,7 +610,7 @@ class _InputField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: context.textTheme.labelLarge?.copyWith(
+            style: context.dynamicTextTheme.labelLarge?.copyWith(
               color: IsmLiveColors.white,
             ),
           ),
@@ -606,10 +618,10 @@ class _InputField extends StatelessWidget {
           IsmLiveInputField(
             controller: controller,
             hintText: hint ?? 'Enter $label',
-            hintStyle: context.textTheme.labelLarge?.copyWith(
+            hintStyle: context.dynamicTextTheme.labelLarge?.copyWith(
               color: IsmLiveColors.white,
             ),
-            style: context.textTheme.labelLarge?.copyWith(
+            style: context.dynamicTextTheme.labelLarge?.copyWith(
               color: IsmLiveColors.white,
             ),
             onTap: onTap,

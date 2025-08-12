@@ -1,7 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class IsmLiveRadioListTile extends StatelessWidget {
   const IsmLiveRadioListTile({
@@ -38,7 +37,7 @@ class IsmLiveRadioListTile extends StatelessWidget {
             IsmLiveDimens.boxWidth2,
             Text(
               title,
-              style: context.textTheme.bodyLarge?.copyWith(
+              style: context.dynamicTextTheme.bodyLarge?.copyWith(
                 color: isDark ? IsmLiveColors.white : IsmLiveColors.black,
               ),
             ),

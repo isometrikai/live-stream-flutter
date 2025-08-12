@@ -94,6 +94,41 @@ extension IsmLiveContextExtension on BuildContext {
   IsmLiveTranslationsData? get liveTranslations => liveExtension?.translations;
 
   IsmLivePropertiesData? get liveProperties => liveExtension?.properties;
+
+  /// Get dynamic text theme that automatically applies the configured font family
+  TextTheme get dynamicTextTheme {
+    final baseTheme = Theme.of(this).textTheme;
+    final fontFamily = IsmLiveDelegate.fontFamily;
+
+    if (fontFamily == null) return baseTheme;
+
+    return TextTheme(
+      displayLarge: baseTheme.displayLarge?.copyWith(fontFamily: fontFamily),
+      displayMedium: baseTheme.displayMedium?.copyWith(fontFamily: fontFamily),
+      displaySmall: baseTheme.displaySmall?.copyWith(fontFamily: fontFamily),
+      headlineLarge: baseTheme.headlineLarge?.copyWith(fontFamily: fontFamily),
+      headlineMedium:
+          baseTheme.headlineMedium?.copyWith(fontFamily: fontFamily),
+      headlineSmall: baseTheme.headlineSmall?.copyWith(fontFamily: fontFamily),
+      titleLarge: baseTheme.titleLarge?.copyWith(fontFamily: fontFamily),
+      titleMedium: baseTheme.titleMedium?.copyWith(fontFamily: fontFamily),
+      titleSmall: baseTheme.titleSmall?.copyWith(fontFamily: fontFamily),
+      bodyLarge: baseTheme.bodyLarge?.copyWith(fontFamily: fontFamily),
+      bodyMedium: baseTheme.bodyMedium?.copyWith(fontFamily: fontFamily),
+      bodySmall: baseTheme.bodySmall?.copyWith(fontFamily: fontFamily),
+      labelLarge: baseTheme.labelLarge?.copyWith(fontFamily: fontFamily),
+      labelMedium: baseTheme.labelMedium?.copyWith(fontFamily: fontFamily),
+      labelSmall: baseTheme.labelSmall?.copyWith(fontFamily: fontFamily),
+    );
+  }
+}
+
+extension IsmLiveTextStyleExtension on TextStyle {
+  /// Applies the dynamic font family from IsmLiveDelegate to this TextStyle
+  TextStyle get withLiveFont {
+    final fontFamily = IsmLiveDelegate.fontFamily;
+    return fontFamily != null ? copyWith(fontFamily: fontFamily) : this;
+  }
 }
 
 extension IsmLiveMaterialStateExtension on Set<WidgetState> {

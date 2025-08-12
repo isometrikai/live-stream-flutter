@@ -42,3 +42,9 @@ flutter:
   - assets/images/
   - assets/images/gifts/
   - assets/icon/
+  fonts:
+  - family: Satoshi
+    fonts:
+      - asset: assets/fonts/Satoshi-Regular.ttf
+      - asset: assets/fonts/Satoshi-Bold.ttf
+        weight: 700

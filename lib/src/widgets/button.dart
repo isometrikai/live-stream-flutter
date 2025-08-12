@@ -5,25 +5,24 @@ import 'package:get/get.dart';
 // --- Custom Button Injection Support ---
 
 typedef IsmLiveCustomButtonBuilder = Widget Function(
-    BuildContext context, {
-    required String label,
-    VoidCallback? onTap,
-    required bool small,
-    required bool showBorder,
-    IconData? icon,
-    required bool secondary,
-    });
+  BuildContext context, {
+  required String label,
+  VoidCallback? onTap,
+  required bool small,
+  required bool showBorder,
+  IconData? icon,
+  required bool secondary,
+});
 
 class IsmLiveButtonConfig {
-  final IsmLiveCustomButtonBuilder? primaryBuilder;
-  final IsmLiveCustomButtonBuilder? secondaryBuilder;
-  final IsmLiveCustomButtonBuilder? iconBuilder;
-
   const IsmLiveButtonConfig({
     this.primaryBuilder,
     this.secondaryBuilder,
     this.iconBuilder,
   });
+  final IsmLiveCustomButtonBuilder? primaryBuilder;
+  final IsmLiveCustomButtonBuilder? secondaryBuilder;
+  final IsmLiveCustomButtonBuilder? iconBuilder;
 }
 
 class IsmLiveButton extends StatelessWidget {
@@ -72,7 +71,9 @@ class IsmLiveButton extends StatelessWidget {
   static WidgetStateProperty<TextStyle?> _textStyle(
           BuildContext context, bool small) =>
       WidgetStateProperty.all(
-        (small ? context.textTheme.labelSmall : context.textTheme.bodyMedium)
+        (small
+                ? context.dynamicTextTheme.labelSmall
+                : context.dynamicTextTheme.bodyMedium)
             ?.copyWith(
           fontWeight: FontWeight.w600,
         ),

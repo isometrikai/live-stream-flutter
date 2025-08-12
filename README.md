@@ -135,3 +135,48 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 ---
 
 For more details, see the API documentation or contact support.
+
+## Dynamic Font Family Support
+
+The SDK now supports dynamic font family configuration, allowing host apps to use their own fonts throughout the live streaming interface.
+
+### Usage
+
+```dart
+// Configure the interface with your custom font family
+IsmLiveApp.configureInterface(
+  fontFamily: 'YourCustomFont', // Your font family name
+  // ... other configurations
+);
+```
+
+### How it Works
+
+1. **Font Family Configuration**: Host app provides the font family name via `configureInterface`
+2. **Automatic Application**: The SDK automatically applies the font family to all text styles
+3. **Fallback Support**: If no font family is provided, the SDK uses default system fonts
+4. **Consistent Styling**: All other font properties (size, weight, color) remain unchanged
+
+### Implementation Details
+
+- **IsmLiveStyles**: All predefined styles automatically use the configured font family
+- **Extension Method**: Use `.withLiveFont` on any TextStyle to apply the dynamic font
+- **Theme Integration**: Font family is integrated into the theme system for consistency
+
+### Example
+
+```dart
+// In your host app
+IsmLiveApp.configureInterface(
+  fontFamily: 'Poppins', // Your app's font family
+  productionMode: true,
+  // ... other configurations
+);
+
+// The SDK will automatically use 'Poppins' for all text
+// You can also manually apply it to custom styles:
+Text(
+  'Custom Text',
+  style: TextStyle(fontSize: 16).withLiveFont,
+)
+```

@@ -16,6 +16,7 @@ class IsmLiveThemeData with Diagnosticable {
     this.cardBackgroundColor,
     this.selectedTextColor,
     this.unselectedTextColor,
+    this.fontFamily,
   });
 
   final Color? primaryColor;
@@ -30,6 +31,7 @@ class IsmLiveThemeData with Diagnosticable {
   final BorderRadius? buttonRadius;
   final BorderRadius? iconButtonRadius;
   final Color? cardBackgroundColor;
+  final String? fontFamily;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -59,6 +61,7 @@ class IsmLiveThemeData with Diagnosticable {
     properties.add(DiagnosticsProperty<BorderRadius>(
         'iconButtonRadius', iconButtonRadius));
     properties.add(ColorProperty('cardBackgroundColor', cardBackgroundColor));
+    properties.add(StringProperty('fontFamily', fontFamily));
   }
 
   IsmLiveThemeData lerp(covariant IsmLiveThemeData? other, double t) {
@@ -84,6 +87,7 @@ class IsmLiveThemeData with Diagnosticable {
           BorderRadius.lerp(iconButtonRadius, other.iconButtonRadius, t),
       cardBackgroundColor:
           Color.lerp(cardBackgroundColor, other.cardBackgroundColor, t),
+      fontFamily: other.fontFamily ?? fontFamily,
     );
   }
 
@@ -100,6 +104,7 @@ class IsmLiveThemeData with Diagnosticable {
     BorderRadius? buttonRadius,
     BorderRadius? iconButtonRadius,
     Color? cardBackgroundColor,
+    String? fontFamily,
   }) =>
       IsmLiveThemeData(
         primaryColor: primaryColor ?? this.primaryColor,
@@ -115,5 +120,6 @@ class IsmLiveThemeData with Diagnosticable {
         buttonRadius: buttonRadius ?? this.buttonRadius,
         iconButtonRadius: iconButtonRadius ?? this.iconButtonRadius,
         cardBackgroundColor: cardBackgroundColor ?? this.cardBackgroundColor,
+        fontFamily: fontFamily ?? this.fontFamily,
       );
 }

@@ -4,54 +4,64 @@ import 'package:flutter/material.dart';
 class IsmLiveStyles {
   const IsmLiveStyles._();
 
-  static TextStyle black16 = TextStyle(
-    color: Colors.black,
-    fontSize: IsmLiveDimens.sixteen,
-  );
+  /// Helper method to apply font family to existing styles
+  static TextStyle _applyFontFamily(TextStyle baseStyle) {
+    final fontFamily = IsmLiveDelegate.fontFamily;
+    return fontFamily != null
+        ? baseStyle.copyWith(fontFamily: fontFamily)
+        : baseStyle;
+  }
 
-  static TextStyle lightGrey14 = TextStyle(
-    color: Colors.grey[400],
-    fontSize: IsmLiveDimens.fourteen,
-  );
+  static TextStyle get black16 => _applyFontFamily(TextStyle(
+        color: Colors.black,
+        fontSize: IsmLiveDimens.sixteen,
+      ));
 
-  static TextStyle white16 = TextStyle(
-    color: Colors.white,
-    fontSize: IsmLiveDimens.sixteen,
-  );
+  static TextStyle get lightGrey14 => _applyFontFamily(TextStyle(
+        color: Colors.grey[400],
+        fontSize: IsmLiveDimens.fourteen,
+      ));
 
-  static TextStyle white10 = TextStyle(
-    color: Colors.white,
-    fontSize: IsmLiveDimens.ten,
-  );
+  static TextStyle get white16 => _applyFontFamily(TextStyle(
+        color: Colors.white,
+        fontSize: IsmLiveDimens.sixteen,
+      ));
 
-  static TextStyle white12 = TextStyle(
-    color: Colors.white,
-    fontSize: IsmLiveDimens.twelve,
-  );
+  static TextStyle get white10 => _applyFontFamily(TextStyle(
+        color: Colors.white,
+        fontSize: IsmLiveDimens.ten,
+      ));
 
-  static TextStyle whiteBold16 = TextStyle(
-    color: Colors.white,
-    fontSize: IsmLiveDimens.sixteen,
-    fontWeight: FontWeight.bold,
-  );
-  static TextStyle whiteBold25 = TextStyle(
-    color: Colors.white,
-    fontSize: IsmLiveDimens.twentyFive,
-    fontWeight: FontWeight.bold,
-  );
-  static TextStyle blackBold16 = TextStyle(
-    fontSize: IsmLiveDimens.sixteen,
-    fontWeight: FontWeight.bold,
-  );
+  static TextStyle get white12 => _applyFontFamily(TextStyle(
+        color: Colors.white,
+        fontSize: IsmLiveDimens.twelve,
+      ));
 
-  static TextStyle blackBold20 = TextStyle(
-    fontSize: IsmLiveDimens.twenty,
-    fontWeight: FontWeight.bold,
-  );
-  static TextStyle whiteBold15 = TextStyle(
-    color: IsmLiveColors.white,
-    fontWeight: FontWeight.bold,
-    fontSize: IsmLiveDimens.fifteen,
-  );
+  static TextStyle get whiteBold16 => _applyFontFamily(TextStyle(
+        color: Colors.white,
+        fontSize: IsmLiveDimens.sixteen,
+        fontWeight: FontWeight.bold,
+      ));
 
+  static TextStyle get whiteBold25 => _applyFontFamily(TextStyle(
+        color: Colors.white,
+        fontSize: IsmLiveDimens.twentyFive,
+        fontWeight: FontWeight.bold,
+      ));
+
+  static TextStyle get blackBold16 => _applyFontFamily(TextStyle(
+        fontSize: IsmLiveDimens.sixteen,
+        fontWeight: FontWeight.bold,
+      ));
+
+  static TextStyle get blackBold20 => _applyFontFamily(TextStyle(
+        fontSize: IsmLiveDimens.twenty,
+        fontWeight: FontWeight.bold,
+      ));
+
+  static TextStyle get whiteBold15 => _applyFontFamily(TextStyle(
+        color: IsmLiveColors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: IsmLiveDimens.fifteen,
+      ));
 }

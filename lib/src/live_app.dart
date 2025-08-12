@@ -185,6 +185,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveEcomConfigure? ecomConfigure,
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
+    String? fontFamily,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -225,6 +226,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
+    IsmLiveDelegate.fontFamily = fontFamily;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -338,6 +340,17 @@ class IsmLiveApp extends StatefulWidget {
 
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
+
+  static String? get fontFamily => IsmLiveDelegate.fontFamily;
+
+  /// Update font family dynamically at runtime
+  static void updateFontFamily(String? fontFamily) {
+    IsmLiveDelegate.fontFamily = fontFamily;
+    // Trigger rebuild of widgets that use the font
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update();
+    }
+  }
 
   static Future<void> dispose({
     bool? isStreaming,

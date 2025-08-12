@@ -57,9 +57,11 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: false,
-      enableFreeGift: false,
+      productStream: true,
+      enableFreeGift: true,
       restrictProfileSheetOnProfileClick: true,
+      // Configure dynamic font family - host app can provide their font name
+      // fontFamily: 'Satoshi', // Example: Use Poppins font family
       // Enable free gifts - amount will be sent as 0
       ecomConfigure: IsmLiveEcomConfigure(
         // onGoLiveClick:
@@ -75,56 +77,6 @@ class HomeController extends GetxController {
           IsmLiveLog.info('GoLive view disposed - performing cleanup');
         },
         onPinProduct: (context, streamId, isHost, isPublishing) {},
-        // Example pinned product builder that can be updated dynamically
-        pinnedProductBuilder: (context, controller) {
-          // This widget will appear below the controls for hosts when productStream is true
-          // You can update this widget by calling IsmLiveDelegate.updatePinnedProductWidget()
-          return Container(
-            width: 150,
-            height: 200,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Pinned Product Widget',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.favorite,
-                          color: Colors.white, size: 16),
-                      onPressed: () {
-                        // Example action
-                        IsmLiveLog.info(
-                            'Pinned product widget action triggered');
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.share,
-                          color: Colors.white, size: 16),
-                      onPressed: () {
-                        // Example action
-                        IsmLiveLog.info('Share action triggered');
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
       ),
       // Custom GoLive button click handler with comprehensive data
 
