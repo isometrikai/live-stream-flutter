@@ -288,11 +288,17 @@ class _IsmLiveStreamView extends StatelessWidget {
                                               if (IsmLiveDelegate
                                                           .productStream ==
                                                       true &&
-                                                  !isKeyboardOpen) ...[
+                                                  !isKeyboardOpen &&
+                                                  controller.isHost) ...[
                                                 Expanded(
                                                   flex: 1,
                                                   child: IsmLiveButton(
-                                                    label: 'Pin Product',
+                                                    label: IsmLiveDelegate
+                                                                .ecomConfigure
+                                                                ?.hasPinnedProduct ==
+                                                            true
+                                                        ? 'Next Item >>'
+                                                        : 'Pin Product',
                                                     onTap: () {
                                                       // Call the pin product callback if provided
                                                       IsmLiveDelegate
@@ -302,8 +308,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                         context,
                                                         controller.streamId ??
                                                             '',
-                                                        controller.isHost,
-                                                        controller.isPublishing,
+                                                        IsmLiveDelegate
+                                                                .ecomConfigure
+                                                                ?.hasPinnedProduct ??
+                                                            false,
                                                       );
                                                     },
                                                   ),

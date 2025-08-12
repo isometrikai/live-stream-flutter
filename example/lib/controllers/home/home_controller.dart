@@ -76,7 +76,12 @@ class HomeController extends GetxController {
           // Example: Cleanup operations when GoLive view is disposed
           IsmLiveLog.info('GoLive view disposed - performing cleanup');
         },
-        onPinProduct: (context, streamId, isHost, isPublishing) {},
+        onPinProduct: (context, streamId, hasPinnedProduct) {},
+        hasPinnedProductGetter: () {
+          // Return true if a product is currently pinned, false otherwise
+          // This will be called every time the UI needs to check the pinned status
+          return false; // Replace with your actual logic to check if product is pinned
+        },
       ),
       // Custom GoLive button click handler with comprehensive data
 

@@ -408,8 +408,7 @@ mixin StreamOngoingMixin {
           IsmLiveDelegate.ecomConfigure!.onPinProduct!(
             context,
             _controller.streamId ?? '',
-            _controller.isHost,
-            _controller.isPublishing,
+             false,
           );
         } else {
           IsmLiveRouteManagement.goToTagProduct();

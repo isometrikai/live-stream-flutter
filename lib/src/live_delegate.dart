@@ -96,16 +96,14 @@ typedef GoLiveDisposeCallback = void Function();
 ///
 /// [context] - The BuildContext from the SDK UI.
 /// [streamId] - The current stream ID.
-/// [isHost] - Whether the current user is the host.
-/// [isPublishing] - Whether the stream is currently publishing.
+/// [hasPinnedProduct] - Whether there is currently a product pinned.
 ///
 /// This callback is called when the Pin Product button is tapped in the stream view.
 /// Useful for handling product pinning functionality in the host application.
 typedef PinProductCallback = void Function(
   BuildContext context,
   String streamId,
-  bool isHost,
-  bool isPublishing,
+  bool hasPinnedProduct,
 );
 
 class IsmLiveDelegate {
@@ -238,6 +236,7 @@ class IsmLiveEcomConfigure {
     this.onGoLiveDispose,
     this.onPinProduct,
     this.pinnedProductBuilder,
+    this.hasPinnedProductGetter,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
@@ -247,4 +246,8 @@ class IsmLiveEcomConfigure {
   final Widget? Function(
           BuildContext context, IsmLiveStreamController controller)?
       pinnedProductBuilder;
+  final bool Function()? hasPinnedProductGetter;
+
+  /// Gets the current pinned product status dynamically
+  bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;
 }
