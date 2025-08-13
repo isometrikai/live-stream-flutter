@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class IsmLiveProductContainer extends StatelessWidget {
   const IsmLiveProductContainer({
@@ -45,7 +44,7 @@ class IsmLiveProductContainer extends StatelessWidget {
                   padding: IsmLiveDimens.edgeInsets8_0,
                   child: Text(
                     productName.toUpperCase(),
-                    style: context.textTheme.bodySmall
+                    style: context.dynamicTextTheme.bodySmall
                         ?.copyWith(color: IsmLiveColors.lightGray),
                   ),
                 ),
@@ -54,7 +53,7 @@ class IsmLiveProductContainer extends StatelessWidget {
                   child: Text(
                     productDisc,
                     overflow: TextOverflow.ellipsis,
-                    style: context.textTheme.bodyLarge,
+                    style: context.dynamicTextTheme.bodyLarge,
                     maxLines: 1,
                   ),
                 ),
@@ -66,13 +65,13 @@ class IsmLiveProductContainer extends StatelessWidget {
                     children: [
                       Text(
                         '$currencyIcon $price',
-                        style: context.textTheme.bodySmall
+                        style: context.dynamicTextTheme.bodySmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       IsmLiveDimens.boxWidth4,
                       Text(
                         '$currencyIcon $price',
-                        style: const TextStyle(
+                        style: context.dynamicTextTheme.bodySmall?.copyWith(
                           color: IsmLiveColors.lightGray,
                           decoration: TextDecoration.lineThrough,
                           decorationColor: IsmLiveColors.lightGray,

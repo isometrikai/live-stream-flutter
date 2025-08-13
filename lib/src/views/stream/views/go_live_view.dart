@@ -141,14 +141,15 @@ class IsmGoLiveView extends StatelessWidget {
                         Expanded(
                           child: IsmLiveInputField(
                             hintStyle:
-                                context.dynamicTextTheme.bodyLarge?.copyWith(
+                                context.dynamicTextTheme.bodyMedium?.copyWith(
                               color: IsmLiveColors.white,
                             ),
-                            minLines: 3,
-                            maxLines: 3,
+                            minLines: 4,
+                            maxLines: 4,
                             alignLabelWithHint: true,
                             cursorColor: IsmLiveColors.white,
-                            style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                            style:
+                                context.dynamicTextTheme.bodyMedium?.copyWith(
                               color: IsmLiveColors.white,
                             ),
                             borderColor: IsmLiveColors.white,
@@ -394,8 +395,9 @@ class _AddProduct extends StatelessWidget {
               children: [
                 Text(
                   'Add product*',
-                  style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                  style: context.dynamicTextTheme.bodyMedium?.copyWith(
                     color: IsmLiveColors.white,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (selectedProducts.isNotEmpty)
@@ -403,14 +405,15 @@ class _AddProduct extends StatelessWidget {
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
                     child: Text(
                       '+Add',
-                      style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                      style: context.dynamicTextTheme.bodyMedium?.copyWith(
                         color: IsmLiveColors.white,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
               ],
             ),
-            IsmLiveDimens.boxHeight5,
+            IsmLiveDimens.boxHeight10,
             selectedProducts.isNotEmpty
                 ? SizedBox(
                     height: MediaQuery.of(context).size.height * 0.2,
@@ -452,15 +455,16 @@ class _AddProduct extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.add_circle_outline_rounded,
-                              color: context.liveTheme?.selectedTextColor,
+                              color: IsmLiveColors.white,
                             ),
                             Text(
                               'Add products',
                               style: context.dynamicTextTheme.labelMedium
                                   ?.copyWith(
-                                color: context.liveTheme?.selectedTextColor,
+                                fontWeight: FontWeight.w600,
+                                color: IsmLiveColors.white,
                               ),
                             ),
                           ],
