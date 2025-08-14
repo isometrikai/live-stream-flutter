@@ -274,6 +274,9 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
+    // Messages are already processed by the host app's callback at an earlier stage
+    // No additional filtering needed here
+
     final chats =
         messages.map((e) => _controller.convertMessageToChat(e)).toList();
 
@@ -408,7 +411,7 @@ mixin StreamOngoingMixin {
           IsmLiveDelegate.ecomConfigure!.onPinProduct!(
             context,
             _controller.streamId ?? '',
-             false,
+            false,
           );
         } else {
           IsmLiveRouteManagement.goToTagProduct();

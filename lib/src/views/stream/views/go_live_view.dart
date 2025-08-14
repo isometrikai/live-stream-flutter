@@ -134,35 +134,37 @@ class IsmGoLiveView extends StatelessWidget {
                         (IsmLiveDelegate.paidStream ?? true))
                       const _StreamTypes(),
                     IsmLiveDimens.boxHeight20,
-                    Row(
-                      children: [
-                        const _StreamImage(),
-                        IsmLiveDimens.boxWidth10,
-                        Expanded(
-                          child: IsmLiveInputField(
-                            hintStyle:
-                                context.dynamicTextTheme.bodyMedium?.copyWith(
-                              color: IsmLiveColors.white,
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          const _StreamImage(),
+                          IsmLiveDimens.boxWidth10,
+                          Expanded(
+                            child: IsmLiveInputField(
+                              hintStyle:
+                                  context.dynamicTextTheme.bodyMedium?.copyWith(
+                                color: IsmLiveColors.white,
+                              ),
+                              minLines: 4,
+                              maxLines: 4,
+                              alignLabelWithHint: true,
+                              cursorColor: IsmLiveColors.white,
+                              style:
+                                  context.dynamicTextTheme.bodyMedium?.copyWith(
+                                color: IsmLiveColors.white,
+                              ),
+                              borderColor: IsmLiveColors.white,
+                              radius: IsmLiveDimens.twelve,
+                              fillColor: IsmLiveColors.white.withOpacity(0.3),
+                              controller: controller.descriptionController,
+                              hintText: 'Enter description',
+                              onchange: (_) {
+                                controller.update([updateId]);
+                              },
                             ),
-                            minLines: 4,
-                            maxLines: 4,
-                            alignLabelWithHint: true,
-                            cursorColor: IsmLiveColors.white,
-                            style:
-                                context.dynamicTextTheme.bodyMedium?.copyWith(
-                              color: IsmLiveColors.white,
-                            ),
-                            borderColor: IsmLiveColors.white,
-                            radius: IsmLiveDimens.twelve,
-                            fillColor: IsmLiveColors.white.withOpacity(0.3),
-                            controller: controller.descriptionController,
-                            hintText: 'Enter description',
-                            onchange: (_) {
-                              controller.update([updateId]);
-                            },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     if (!(controller.streamDetails?.isScheduledStream ??
                         false)) ...[
@@ -306,7 +308,6 @@ class _StreamImage extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
         builder: (controller) => Container(
-          height: IsmLiveDimens.hundred,
           width: IsmLiveDimens.eighty,
           decoration: BoxDecoration(
             color: IsmLiveColors.white.withOpacity(0.3),

@@ -186,6 +186,7 @@ class IsmLiveApp extends StatefulWidget {
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
     String? fontFamily,
+    MessageProcessCallback? messageProcessCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -227,6 +228,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
     IsmLiveDelegate.fontFamily = fontFamily;
+    IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -343,12 +345,25 @@ class IsmLiveApp extends StatefulWidget {
 
   static String? get fontFamily => IsmLiveDelegate.fontFamily;
 
+  static MessageProcessCallback? get messageProcessCallback =>
+      IsmLiveDelegate.messageProcessCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
     // Trigger rebuild of widgets that use the font
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update();
+    }
+  }
+
+  /// Update message process callback dynamically at runtime
+  static void updateMessageProcessCallback(
+      MessageProcessCallback? messageProcessCallback) {
+    IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
+    // Trigger rebuild of stream view to apply new filter
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
   }
 

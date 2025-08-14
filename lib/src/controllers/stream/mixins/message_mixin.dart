@@ -25,25 +25,52 @@ mixin StreamMessageMixin {
         isCopublisherRequest: message.isCopublisherRequest,
       );
 
+// Process message through host app's callback if provided
+  IsmLiveMessageModel? _processMessage(
+    IsmLiveMessageModel message,
+    bool isMqtt,
+  ) {
+    // If no process callback is provided, return the original message
+    if (IsmLiveDelegate.messageProcessCallback == null) {
+      return message;
+    }
+
+    // Apply the host app's message processing
+    return IsmLiveDelegate.messageProcessCallback!.call(
+      message,
+      _controller.streamId ?? '',
+      isMqtt,
+      _controller.isHost,
+    );
+  }
+
 // Handle incoming message based on its type
   Future<void> handleMessage({
     required IsmLiveMessageModel message,
     Map<String, dynamic>? payload,
     bool isMqtt = true,
   }) async {
-    switch (message.messageType) {
+    // Process the message first
+    final processedMessage = _processMessage(message, isMqtt);
+
+    // If message was filtered out (null), don't process it
+    if (processedMessage == null) {
+      return;
+    }
+
+    switch (processedMessage.messageType) {
       case IsmLiveMessageType.normal:
-        await _controller.addMessages([message], isMqtt);
+        await _controller.addMessages([processedMessage], isMqtt);
         break;
       case IsmLiveMessageType.heart:
-        _controller.addHeart(message);
+        _controller.addHeart(processedMessage);
         break;
       case IsmLiveMessageType.gift:
         if (_controller.pkStages?.isPk ?? false) {
           _pkController.pkBarStatus(payload ?? {});
         }
-        if (message.senderId != _controller.user?.userId) {
-          _controller.addGift(message, payload ?? {});
+        if (processedMessage.senderId != _controller.user?.userId) {
+          _controller.addGift(processedMessage, payload ?? {});
         }
         break;
       case IsmLiveMessageType.remove:

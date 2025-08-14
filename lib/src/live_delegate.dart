@@ -106,6 +106,33 @@ typedef PinProductCallback = void Function(
   bool hasPinnedProduct,
 );
 
+/// Callback for message processing and filtering.
+///
+/// [message] - The incoming message that can be modified or filtered.
+/// [streamId] - The current stream ID.
+/// [isMqtt] - Whether the message is coming from MQTT (true) or API (false).
+/// [isHost] - Whether the current user is the host of the stream.
+///
+/// Return the processed message:
+/// - Return the original message (modified or not) to allow it to be displayed
+/// - Return null to prevent the message from being displayed
+///
+/// This callback is called before any message is added to the stream's message list.
+/// Useful for implementing:
+/// - Message content modification
+/// - Profanity filtering
+/// - Spam detection
+/// - User-specific message blocking
+/// - Content moderation
+/// - Custom business rules
+/// - Message transformation
+typedef MessageProcessCallback = IsmLiveMessageModel? Function(
+  IsmLiveMessageModel message,
+  String streamId,
+  bool isMqtt,
+  bool isHost,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -190,6 +217,8 @@ class IsmLiveDelegate {
   static bool restrictProfileSheetOnProfileClick = false;
 
   static String? fontFamily;
+
+  static MessageProcessCallback? messageProcessCallback;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

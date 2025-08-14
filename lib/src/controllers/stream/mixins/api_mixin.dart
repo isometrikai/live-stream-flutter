@@ -305,12 +305,41 @@ mixin StreamAPIMixin {
       getMessageModel: getMessageModel,
       showLoading: showLoading,
     );
-    await _controller.addMessages(res, false);
+
+    // Process messages through host app's callback if provided
+    final processedMessages = res
+        .where((message) {
+          final processedMessage = _processMessage(message, false);
+          return processedMessage != null;
+        })
+        .map((message) => _processMessage(message, false)!)
+        .toList();
+
+    await _controller.addMessages(processedMessages, false);
     if (_controller.messagesCount > 10) {
       _controller.messagesCount -= 10;
     } else {
       _controller.messagesCount = 0;
     }
+  }
+
+  // Process message through host app's callback if provided
+  IsmLiveMessageModel? _processMessage(
+    IsmLiveMessageModel message,
+    bool isMqtt,
+  ) {
+    // If no process callback is provided, return the original message
+    if (IsmLiveDelegate.messageProcessCallback == null) {
+      return message;
+    }
+
+    // Apply the host app's message processing
+    return IsmLiveDelegate.messageProcessCallback!.call(
+      message,
+      _controller.streamId ?? '',
+      isMqtt,
+      _controller.isHost,
+    );
   }
 
 // Fetches the count of messages related to a live stream.
