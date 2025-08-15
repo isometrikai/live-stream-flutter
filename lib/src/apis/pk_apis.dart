@@ -185,7 +185,7 @@ class IsmLivePkApis {
   }) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.sendGiftToStreamer,
-        baseUrl: IsmLiveApis.baseUrlStream,
+        baseUrl: IsmLiveApis.baseUrl,
         type: IsmLiveRequestType.post,
         showDialog: true,
         payload: payload,

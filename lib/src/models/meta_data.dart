@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class IsmLiveMetaData {
   const IsmLiveMetaData({
     this.country = 'India',
@@ -11,6 +13,7 @@ class IsmLiveMetaData {
     this.firstName,
     this.lastName,
     this.parentMessageBody,
+    this.rawJson,
   });
 
   factory IsmLiveMetaData.fromMap(Map<String, dynamic> map) => IsmLiveMetaData(
@@ -23,6 +26,7 @@ class IsmLiveMetaData {
         secretMessage: map['secretMessage'] as bool? ?? false,
         isPk: map['isPk'] as bool? ?? false,
         parentMessageBody: map['parentMessageBody'] as String?,
+        rawJson: map,
       );
 
   factory IsmLiveMetaData.fromJson(String source) =>
@@ -37,6 +41,7 @@ class IsmLiveMetaData {
   final bool secretMessage;
   final bool isPk;
   final String? parentMessageBody;
+  final Map<String, dynamic>? rawJson;
 
   IsmLiveMetaData copyWith({
     String? country,
@@ -48,6 +53,7 @@ class IsmLiveMetaData {
     bool? secretMessage,
     bool? isPk,
     String? parentMessageBody,
+    Map<String, dynamic>? rawJson,
   }) =>
       IsmLiveMetaData(
         country: country ?? this.country,
@@ -59,6 +65,7 @@ class IsmLiveMetaData {
         secretMessage: secretMessage ?? this.secretMessage,
         isPk: isPk ?? this.isPk,
         parentMessageBody: parentMessageBody ?? this.parentMessageBody,
+        rawJson: rawJson ?? this.rawJson,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -71,13 +78,14 @@ class IsmLiveMetaData {
         'secretMessage': secretMessage,
         'isPk': isPk,
         'parentMessageBody': parentMessageBody,
+        ...?rawJson,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody)';
+      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody, rawJson: $rawJson)';
 
   @override
   bool operator ==(covariant IsmLiveMetaData other) {
@@ -91,7 +99,8 @@ class IsmLiveMetaData {
         other.openStream == openStream &&
         other.secretMessage == secretMessage &&
         other.isPk == isPk &&
-        parentMessageBody == other.parentMessageBody;
+        parentMessageBody == other.parentMessageBody &&
+        mapEquals(other.rawJson, rawJson);
   }
 
   @override
@@ -104,5 +113,6 @@ class IsmLiveMetaData {
       openStream.hashCode ^
       secretMessage.hashCode ^
       isPk.hashCode ^
-      parentMessageBody.hashCode;
+      parentMessageBody.hashCode ^
+      rawJson.hashCode;
 }

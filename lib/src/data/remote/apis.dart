@@ -4,7 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 class IsmLiveApis {
   const IsmLiveApis._();
 
-  static const String baseUrl = 'https://apis.isometrik.io';
+  static const String baseUrl = 'https://apis.isometrik.ai';
 
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String productDetails =
@@ -51,7 +51,7 @@ class IsmLiveApis {
   static const String fetchTransactions = '/v1/transaction/user';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
-  static const String sendGiftToStreamer = '/live/v4/giftTransfer';
+  static const String sendGiftToStreamer = '/live/v1/giftTransfer';
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
   static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
 
