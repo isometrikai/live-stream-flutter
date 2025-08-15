@@ -187,6 +187,7 @@ class IsmLiveApp extends StatefulWidget {
     bool restrictProfileSheetOnProfileClick = false,
     String? fontFamily,
     MessageProcessCallback? messageProcessCallback,
+    StreamViewLoadedCallback? streamViewLoadedCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -229,6 +230,7 @@ class IsmLiveApp extends StatefulWidget {
         restrictProfileSheetOnProfileClick;
     IsmLiveDelegate.fontFamily = fontFamily;
     IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
+    IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -348,6 +350,9 @@ class IsmLiveApp extends StatefulWidget {
   static MessageProcessCallback? get messageProcessCallback =>
       IsmLiveDelegate.messageProcessCallback;
 
+  static StreamViewLoadedCallback? get streamViewLoadedCallback =>
+      IsmLiveDelegate.streamViewLoadedCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -365,6 +370,12 @@ class IsmLiveApp extends StatefulWidget {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
+  }
+
+  /// Update stream view loaded callback dynamically at runtime
+  static void updateStreamViewLoadedCallback(
+      StreamViewLoadedCallback? streamViewLoadedCallback) {
+    IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
   }
 
   static Future<void> dispose({

@@ -97,13 +97,17 @@ typedef GoLiveDisposeCallback = void Function();
 /// [context] - The BuildContext from the SDK UI.
 /// [streamId] - The current stream ID.
 /// [hasPinnedProduct] - Whether there is currently a product pinned.
+/// [buttonLabel] - The label of the button that was tapped.
+/// [isHost] - Whether the current user is the host of the stream.
 ///
-/// This callback is called when the Pin Product button is tapped in the stream view.
-/// Useful for handling product pinning functionality in the host application.
-typedef PinProductCallback = void Function(
+/// This callback is called when the Product Action button is tapped in the stream view.
+/// Useful for handling product pinning/buying functionality in the host application.
+typedef ProductActionCallback = void Function(
   BuildContext context,
   String streamId,
   bool hasPinnedProduct,
+  String buttonLabel,
+  bool isHost,
 );
 
 /// Callback for message processing and filtering.
@@ -130,6 +134,28 @@ typedef MessageProcessCallback = IsmLiveMessageModel? Function(
   IsmLiveMessageModel message,
   String streamId,
   bool isMqtt,
+  bool isHost,
+);
+
+/// Callback for stream view loaded event.
+///
+/// This callback is triggered once the stream view screen is loaded and ready.
+/// Useful for performing initial setup or work for the stream screen.
+///
+/// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host of the stream.
+///
+/// This callback is called in the initState of the stream view widget.
+/// Useful for implementing:
+/// - Initial analytics tracking
+/// - Stream-specific configuration
+/// - User engagement tracking
+/// - Custom UI setup
+/// - Stream metadata logging
+/// - Performance monitoring
+/// - Custom initialization logic
+typedef StreamViewLoadedCallback = void Function(
+  String streamId,
   bool isHost,
 );
 
@@ -220,6 +246,8 @@ class IsmLiveDelegate {
 
   static MessageProcessCallback? messageProcessCallback;
 
+  static StreamViewLoadedCallback? streamViewLoadedCallback;
+
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {
     if (Get.isRegistered<IsmLiveStreamController>()) {
@@ -263,7 +291,7 @@ class IsmLiveEcomConfigure {
     this.addProductViewBuilder,
     this.onGoLiveClick,
     this.onGoLiveDispose,
-    this.onPinProduct,
+    this.onProductAction,
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
   });
@@ -271,7 +299,7 @@ class IsmLiveEcomConfigure {
   final AddProductViewBuilder? addProductViewBuilder;
   final GoLiveClickCallback? onGoLiveClick;
   final GoLiveDisposeCallback? onGoLiveDispose;
-  final PinProductCallback? onPinProduct;
+  final ProductActionCallback? onProductAction;
   final Widget? Function(
           BuildContext context, IsmLiveStreamController controller)?
       pinnedProductBuilder;

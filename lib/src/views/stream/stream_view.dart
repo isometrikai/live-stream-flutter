@@ -127,6 +127,43 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
+  /// Determines if the product button should be shown based on the conditions
+  bool _shouldShowProductButton(bool isHost, bool hasPinnedProduct) {
+    // 1. This button only for productStream only (already checked in the calling code)
+    // 2. if isHost = false and hasPinnedProduct = true means (viewer) button visible
+    // 3. if isHost = false and hasPinnedProduct = false then don't show button
+    // 4. if isHost = true and hasPinnedProduct = true then show button
+    // 5. if isHost = true and hasPinnedProduct = false then show button
+
+    if (isHost) {
+      // Host: show button in both cases (hasPinnedProduct = true/false)
+      return true;
+    } else {
+      // Viewer: only show button when hasPinnedProduct = true
+      return hasPinnedProduct;
+    }
+  }
+
+  /// Gets the appropriate button label based on the conditions
+  String _getProductButtonLabel(bool isHost, bool hasPinnedProduct) {
+    if (isHost) {
+      // Host conditions
+      if (hasPinnedProduct) {
+        return 'Next Item >>';
+      } else {
+        return 'Pin Product';
+      }
+    } else {
+      // Viewer conditions
+      if (hasPinnedProduct) {
+        return 'Buy now';
+      } else {
+        // This case should not happen as button won't be shown
+        return '';
+      }
+    }
+  }
+
   /// Wraps IsmLiveChatView with conditional width constraints
   /// When productStream is true, limits width to half screen width
   Widget _buildChatView(
@@ -165,6 +202,12 @@ class _IsmLiveStreamView extends StatelessWidget {
           controller.participantList = controller.participantTracks;
 
           await WakelockPlus.enable();
+
+          // Trigger stream view loaded callback if provided
+          IsmLiveUtility.updateLater(() {
+            IsmLiveDelegate.streamViewLoadedCallback?.call(streamId, isHost);
+          });
+
           IsmLiveUtility.updateLater(() {
             if (isHost) {
               if (controller.isRtmp && !controller.usePersistentStreamKey) {
@@ -288,34 +331,51 @@ class _IsmLiveStreamView extends StatelessWidget {
                                               if (IsmLiveDelegate
                                                           .productStream ==
                                                       true &&
-                                                  !isKeyboardOpen &&
-                                                  controller.isHost) ...[
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: IsmLiveButton(
-                                                    label: IsmLiveDelegate
-                                                                .ecomConfigure
-                                                                ?.hasPinnedProduct ==
-                                                            true
-                                                        ? 'Next Item >>'
-                                                        : 'Pin Product',
-                                                    onTap: () {
-                                                      // Call the pin product callback if provided
-                                                      IsmLiveDelegate
-                                                          .ecomConfigure
-                                                          ?.onPinProduct
-                                                          ?.call(
-                                                        context,
-                                                        controller.streamId ??
-                                                            '',
+                                                  !isKeyboardOpen) ...[
+                                                // Determine button visibility and label based on conditions
+                                                if (_shouldShowProductButton(
+                                                    controller.isHost,
+                                                    IsmLiveDelegate
+                                                            .ecomConfigure
+                                                            ?.hasPinnedProduct ??
+                                                        false)) ...[
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: IsmLiveButton(
+                                                      label:
+                                                          _getProductButtonLabel(
+                                                        controller.isHost,
                                                         IsmLiveDelegate
                                                                 .ecomConfigure
                                                                 ?.hasPinnedProduct ??
                                                             false,
-                                                      );
-                                                    },
-                                                  ),
-                                                )
+                                                      ),
+                                                      onTap: () {
+                                                        // Call the product action callback if provided
+                                                        IsmLiveDelegate
+                                                            .ecomConfigure
+                                                            ?.onProductAction
+                                                            ?.call(
+                                                          context,
+                                                          controller.streamId ??
+                                                              '',
+                                                          IsmLiveDelegate
+                                                                  .ecomConfigure
+                                                                  ?.hasPinnedProduct ??
+                                                              false,
+                                                          _getProductButtonLabel(
+                                                            controller.isHost,
+                                                            IsmLiveDelegate
+                                                                    .ecomConfigure
+                                                                    ?.hasPinnedProduct ??
+                                                                false,
+                                                          ),
+                                                          controller.isHost,
+                                                        );
+                                                      },
+                                                    ),
+                                                  )
+                                                ]
                                               ]
                                             ],
                                           ),

@@ -407,11 +407,13 @@ mixin StreamOngoingMixin {
         _controller.settingSheet();
         break;
       case IsmLiveStreamOption.product:
-        if (IsmLiveDelegate.ecomConfigure?.onPinProduct != null) {
-          IsmLiveDelegate.ecomConfigure!.onPinProduct!(
+        if (IsmLiveDelegate.ecomConfigure?.onProductAction != null) {
+          IsmLiveDelegate.ecomConfigure!.onProductAction!(
             context,
             _controller.streamId ?? '',
             false,
+            'Pin Product',
+            _controller.isHost,
           );
         } else {
           IsmLiveRouteManagement.goToTagProduct();
