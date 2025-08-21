@@ -71,7 +71,7 @@ class IsmLiveMessageField extends StatelessWidget {
                     style: context.textTheme.bodySmall
                         ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
-                    hintText: 'Say Something…',
+                    hintText: IsmLiveDelegate.productStream == true ? 'Comments...' : 'Say Something…',
                     contentPadding: IsmLiveDimens.edgeInsetsR14,
                     fillColor: IsmLiveColors.white.withOpacity(0.3),
                     hintStyle: context.textTheme.bodySmall

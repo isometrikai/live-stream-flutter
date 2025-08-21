@@ -16,7 +16,6 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
           Get.find<IsmLiveStreamController>()
             ..fetchModerators(
               streamId: Get.find<IsmLiveStreamController>().streamId ?? '',
-              forceFetch: true,
             )
             ..searchModeratorFieldController.clear();
         },

@@ -442,6 +442,7 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.moderatorsList.isEmpty) {
+      _controller.moderatorsList.clear();
       var list = await _controller.viewModel.fetchModerators(
         streamId: streamId,
         limit: limit,

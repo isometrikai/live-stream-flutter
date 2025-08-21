@@ -5,6 +5,8 @@ class IsmLiveApis {
   const IsmLiveApis._();
 
   static const String baseUrl = 'https://apis.isometrik.ai';
+  static const String baseUrlWallet = 'https://apinew.isometrik.ai';
+  static const String debugBaseUrl = 'https://service-apis.isometrik.io';
 
   static const String wsUrl = 'wss://streaming.isometrik.io';
   static const String productDetails =
@@ -22,9 +24,12 @@ class IsmLiveApis {
   static const String userSubscription = '/gs/v2/subscription';
 
 //PK apis end point
-  static String baseUrlStreamGift = IsmLiveDelegate.productionMode ? 'https://apinew.isometrik.ai' : 'https://service-apis.isometrik.io';
-  static String baseUrlStream = IsmLiveDelegate.productionMode ?  'https://apinew.isometrik.ai' : 'https://service-apis.isometrik.io';    // pro
-  static const String baseUrlWallet = 'https://apinew.isometrik.ai';
+  static String baseUrlStreamGiftSent =
+      IsmLiveDelegate.productionMode ? baseUrl : debugBaseUrl;
+  static String baseUrlStreamGift =
+      IsmLiveDelegate.productionMode ? baseUrlWallet : debugBaseUrl;
+  static String baseUrlStream =
+      IsmLiveDelegate.productionMode ? baseUrlWallet : debugBaseUrl;
 
   static const String _live = '/live/v1';
   static const String newStream = '$_live/stream';
