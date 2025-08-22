@@ -105,7 +105,7 @@ class IsmLiveEndStream extends StatelessWidget {
                               break;
                             case IsmLiveAnalyticsOptions.earnings:
                               points =
-                                  '\$${controller.streamAnalytis?.totalEarning ?? 0}';
+                                  '${controller.streamAnalytis?.totalEarning ?? 0}';
                               title = 'Earnings';
                               break;
                             case IsmLiveAnalyticsOptions.duration:
