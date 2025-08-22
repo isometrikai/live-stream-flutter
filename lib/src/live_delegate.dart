@@ -1,5 +1,6 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
+import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -159,6 +160,90 @@ typedef StreamViewLoadedCallback = void Function(
   bool isHost,
 );
 
+/// Callback for heart message sending.
+///
+/// This callback is called when a user sends a heart message to the stream.
+/// Host applications can use this to implement their own heart message API
+/// or analytics tracking.
+///
+/// [streamId] - The current stream ID.
+/// [userId] - The ID of the user sending the heart.
+/// [userName] - The name of the user sending the heart.
+/// [userImage] - The profile image URL of the user sending the heart.
+/// [deviceId] - The device ID of the user.
+/// [customType] - The custom type of the heart message (default: 'like').
+///
+/// Return true if the heart message was successfully processed by the host app,
+/// false if the host app wants the SDK to handle it with the default implementation.
+///
+/// This callback is called before the SDK's default heart message handling.
+/// Useful for implementing:
+/// - Custom heart message APIs
+/// - Analytics tracking
+/// - User engagement metrics
+/// - Custom heart message processing
+/// - Integration with external services
+/// - Custom heart message validation
+typedef HeartMessageCallback = Future<bool> Function(
+  String streamId,
+  String userId,
+  String userName,
+  String userImage,
+  String deviceId,
+  String customType,
+);
+
+/// Callback for stream analytics data.
+///
+/// This callback is called when the SDK needs to fetch stream analytics data.
+/// Host applications can use this to implement their own analytics API
+/// and return data in the expected format.
+///
+/// [streamId] - The current stream ID.
+///
+/// Return the analytics data in IsmLiveStreamAnalyticsModel format,
+/// or null if the host app wants the SDK to handle it with the default implementation.
+///
+/// This callback is called before the SDK's default analytics API call.
+/// Useful for implementing:
+/// - Custom analytics APIs
+/// - Real-time analytics integration
+/// - Custom analytics processing
+/// - Integration with external analytics services
+/// - Custom analytics validation
+/// - Analytics data transformation
+typedef StreamAnalyticsCallback = Future<IsmLiveStreamAnalyticsModel?> Function(
+  String streamId,
+);
+
+/// Callback for stream analytics viewers data.
+///
+/// This callback is called when the SDK needs to fetch stream analytics viewers data.
+/// Host applications can use this to implement their own analytics viewers API
+/// and return data in the expected format.
+///
+/// [streamId] - The current stream ID.
+/// [skip] - Number of records to skip for pagination.
+/// [limit] - Number of records to return for pagination.
+///
+/// Return the analytics viewers data as List<IsmLiveAnalyticViewerModel>,
+/// or null if the host app wants the SDK to handle it with the default implementation.
+///
+/// This callback is called before the SDK's default analytics viewers API call.
+/// Useful for implementing:
+/// - Custom analytics viewers APIs
+/// - Real-time viewers data integration
+/// - Custom viewers data processing
+/// - Integration with external analytics services
+/// - Custom viewers data validation
+/// - Viewers data transformation
+typedef StreamAnalyticsViewersCallback
+    = Future<List<IsmLiveAnalyticViewerModel>?> Function(
+  String streamId,
+  int skip,
+  int limit,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -247,6 +332,12 @@ class IsmLiveDelegate {
   static MessageProcessCallback? messageProcessCallback;
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
+
+  static HeartMessageCallback? heartMessageCallback;
+
+  static StreamAnalyticsCallback? streamAnalyticsCallback;
+
+  static StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

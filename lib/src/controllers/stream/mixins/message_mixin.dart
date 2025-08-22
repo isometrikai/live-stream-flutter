@@ -169,27 +169,42 @@ mixin StreamMessageMixin {
 
 // Send a heart message to the stream
   Future<void> sendHeartMessage(String streamId) async {
-    // const body = 'heart';
-    // final isSent = await _controller.sendMessage(
-    //   showLoading: false,
-    //   sendMessageModel: IsmLiveSendMessageModel(
-    //     streamId: streamId,
-    //     body: body,
-    //     searchableTags: [body],
-    //     metaData: const IsmLiveMetaData(),
-    //     deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
-    //     messageType: IsmLiveMessageType.heart,
-    //   ),
-    // );
+    final deviceId = _controller.configuration?.projectConfig.deviceId ?? '';
+    final userId = _controller.user?.userId ?? '';
+    final userName = _controller.user?.userName ?? '';
+    final userImage = _controller.user?.userProfileImageUrl ?? '';
+    final customType = 'like';
 
-    // if (isSent) {}
+    // Check if host app has provided a custom heart message callback
+    if (IsmLiveDelegate.heartMessageCallback != null) {
+      try {
+        final isHandledByHost =
+            await IsmLiveDelegate.heartMessageCallback!.call(
+          streamId,
+          userId,
+          userName,
+          userImage,
+          deviceId,
+          customType,
+        );
 
+        // If host app successfully handled the heart message, return early
+        if (isHandledByHost) {
+          return;
+        }
+      } catch (e) {
+        IsmLiveLog.error('Error in host heart message callback: $e');
+        // Continue with default implementation if host callback fails
+      }
+    }
+
+    // Default implementation - send heart through SDK's internal API
     await _controller.sendHearts(
-      customType: 'like',
-      deviceId: _controller.configuration?.projectConfig.deviceId ?? '',
-      senderId: _controller.user?.userId ?? '',
-      senderImage: _controller.user?.userProfileImageUrl ?? '',
-      senderName: _controller.user?.userName ?? '',
+      customType: customType,
+      deviceId: deviceId,
+      senderId: userId,
+      senderImage: userImage,
+      senderName: userName,
       streamId: streamId,
     );
   }

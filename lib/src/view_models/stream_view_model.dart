@@ -800,6 +800,25 @@ class IsmLiveStreamViewModel {
   Future<IsmLiveStreamAnalyticsModel?> streamAnalytics({
     required String streamId,
   }) async {
+    // Check if host app has provided a custom stream analytics callback
+    if (IsmLiveDelegate.streamAnalyticsCallback != null) {
+      try {
+        final analyticsData =
+            await IsmLiveDelegate.streamAnalyticsCallback!.call(
+          streamId,
+        );
+
+        // If host app successfully provided analytics data, return it
+        if (analyticsData != null) {
+          return analyticsData;
+        }
+      } catch (e) {
+        IsmLiveLog.error('Error in host stream analytics callback: $e');
+        // Continue with default implementation if host callback fails
+      }
+    }
+
+    // Default implementation - call SDK's internal API
     try {
       var res = await _repository.streamAnalytics(
         streamId: streamId,
@@ -834,6 +853,27 @@ class IsmLiveStreamViewModel {
     required int skip,
     required int limit,
   }) async {
+    // Check if host app has provided a custom stream analytics viewers callback
+    if (IsmLiveDelegate.streamAnalyticsViewersCallback != null) {
+      try {
+        final viewersData =
+            await IsmLiveDelegate.streamAnalyticsViewersCallback!.call(
+          streamId,
+          skip,
+          limit,
+        );
+
+        // If host app successfully provided viewers data, return it
+        if (viewersData != null) {
+          return viewersData;
+        }
+      } catch (e) {
+        IsmLiveLog.error('Error in host stream analytics viewers callback: $e');
+        // Continue with default implementation if host callback fails
+      }
+    }
+
+    // Default implementation - call SDK's internal API
     try {
       var res = await _repository.streamAnalyticsViewers(
         streamId: streamId,

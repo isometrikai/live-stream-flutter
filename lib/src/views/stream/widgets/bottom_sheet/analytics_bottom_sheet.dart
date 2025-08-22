@@ -77,7 +77,7 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                       break;
                     case IsmLiveAnalyticsOptions.order:
                       points =
-                          '${controller.streamAnalytis?.productCount ?? 0}';
+                          '${controller.streamAnalytis?.soldCount ?? 0}';
                       title = 'Order';
                       break;
                     case IsmLiveAnalyticsOptions.viewers:

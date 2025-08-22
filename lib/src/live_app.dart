@@ -188,6 +188,9 @@ class IsmLiveApp extends StatefulWidget {
     String? fontFamily,
     MessageProcessCallback? messageProcessCallback,
     StreamViewLoadedCallback? streamViewLoadedCallback,
+    HeartMessageCallback? heartMessageCallback,
+    StreamAnalyticsCallback? streamAnalyticsCallback,
+    StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -231,6 +234,10 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.fontFamily = fontFamily;
     IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
+    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
+    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
+    IsmLiveDelegate.streamAnalyticsViewersCallback =
+        streamAnalyticsViewersCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -353,6 +360,15 @@ class IsmLiveApp extends StatefulWidget {
   static StreamViewLoadedCallback? get streamViewLoadedCallback =>
       IsmLiveDelegate.streamViewLoadedCallback;
 
+  static HeartMessageCallback? get heartMessageCallback =>
+      IsmLiveDelegate.heartMessageCallback;
+
+  static StreamAnalyticsCallback? get streamAnalyticsCallback =>
+      IsmLiveDelegate.streamAnalyticsCallback;
+
+  static StreamAnalyticsViewersCallback? get streamAnalyticsViewersCallback =>
+      IsmLiveDelegate.streamAnalyticsViewersCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -376,6 +392,25 @@ class IsmLiveApp extends StatefulWidget {
   static void updateStreamViewLoadedCallback(
       StreamViewLoadedCallback? streamViewLoadedCallback) {
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
+  }
+
+  /// Update heart message callback dynamically at runtime
+  static void updateHeartMessageCallback(
+      HeartMessageCallback? heartMessageCallback) {
+    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
+  }
+
+  /// Update stream analytics callback dynamically at runtime
+  static void updateStreamAnalyticsCallback(
+      StreamAnalyticsCallback? streamAnalyticsCallback) {
+    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
+  }
+
+  /// Update stream analytics viewers callback dynamically at runtime
+  static void updateStreamAnalyticsViewersCallback(
+      StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback) {
+    IsmLiveDelegate.streamAnalyticsViewersCallback =
+        streamAnalyticsViewersCallback;
   }
 
   static Future<void> dispose({

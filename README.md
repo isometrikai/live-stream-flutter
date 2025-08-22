@@ -112,6 +112,238 @@ IsmLiveApp.configureInterface(
   - Parameter: `streamId`
   - If not set, default stop stream behavior is used
 
+- **`heartMessageCallback`**: Called when a user sends a heart message to the stream
+  - Parameters: `streamId`, `userId`, `userName`, `userImage`, `deviceId`, `customType`
+  - Return `true` if your app successfully handled the heart message, `false` to let SDK handle with default implementation
+  - Useful for custom heart message APIs, analytics tracking, user validation, rate limiting, etc.
+  - If not set, SDK uses default heart message handling
+
+- **`streamAnalyticsCallback`**: Called when the SDK needs to fetch stream analytics data
+  - Parameters: `streamId`
+  - Return `IsmLiveStreamAnalyticsModel` if your app successfully provided analytics data, `null` to let SDK handle with default implementation
+  - Useful for custom analytics APIs, real-time analytics integration, custom analytics processing, etc.
+  - If not set, SDK uses default analytics API
+
+- **`streamAnalyticsViewersCallback`**: Called when the SDK needs to fetch stream analytics viewers data
+  - Parameters: `streamId`, `skip`, `limit`
+  - Return `List<IsmLiveAnalyticViewerModel>` if your app successfully provided viewers data, `null` to let SDK handle with default implementation
+  - Useful for custom analytics viewers APIs, real-time viewers data integration, custom viewers data processing, etc.
+  - If not set, SDK uses default analytics viewers API
+
+#### Heart Message Callback Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
+    // Call your own API to handle heart messages
+    final success = await _callYourHeartMessageAPI(
+      streamId: streamId,
+      userId: userId,
+      userName: userName,
+      userImage: userImage,
+      deviceId: deviceId,
+      customType: customType,
+    );
+    
+    if (success) {
+      // Log analytics
+      await _logAnalytics(streamId, userId, userName);
+      return true; // Host app handled successfully
+    }
+    
+    return false; // Let SDK handle with default implementation
+  },
+);
+```
+
+**Advanced Usage with Validation:**
+```dart
+IsmLiveApp.configureInterface(
+  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
+    // Validate if user can send heart messages
+    if (!_canUserSendHeart(userId)) {
+      return false; // Let SDK handle (might show error)
+    }
+    
+    // Check rate limiting
+    if (_isRateLimited(userId)) {
+      return false;
+    }
+    
+    // Call your API
+    return await _callYourHeartMessageAPI(/* params */);
+  },
+);
+```
+
+**Premium User Handling:**
+```dart
+IsmLiveApp.configureInterface(
+  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
+    if (_isPremiumUser(userId)) {
+      // Premium users get special handling
+      return await _handlePremiumHeartMessage(/* params */);
+    } else {
+      // Regular users get standard handling
+      return await _handleRegularHeartMessage(/* params */);
+    }
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update callback at runtime
+IsmLiveApp.updateHeartMessageCallback(_newHeartMessageHandler);
+
+// Disable custom handling (use SDK default)
+IsmLiveApp.updateHeartMessageCallback(null);
+```
+
+#### Stream Analytics Callback Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  streamAnalyticsCallback: (streamId) async {
+    // Call your own analytics API
+    final analyticsData = await _callYourAnalyticsAPI(streamId);
+    
+    if (analyticsData != null) {
+      // Convert your data to IsmLiveStreamAnalyticsModel format
+      return IsmLiveStreamAnalyticsModel(
+        totalViewersCount: analyticsData['viewers'],
+        hearts: analyticsData['hearts'],
+        followers: analyticsData['followers'],
+        totalEarning: analyticsData['earnings'],
+        duration: analyticsData['duration'],
+        productCount: analyticsData['products'],
+        // ... other fields
+      );
+    }
+    
+    return null; // Let SDK handle with default implementation
+  },
+);
+```
+
+**Advanced Usage with Real-time Analytics:**
+```dart
+IsmLiveApp.configureInterface(
+  streamAnalyticsCallback: (streamId) async {
+    try {
+      // Call your real-time analytics service
+      final realTimeData = await _getRealTimeAnalytics(streamId);
+      
+      // Apply custom business logic
+      final processedData = _processAnalyticsData(realTimeData);
+      
+      return IsmLiveStreamAnalyticsModel(
+        totalViewersCount: processedData.viewers,
+        hearts: processedData.hearts,
+        followers: processedData.followers,
+        totalEarning: processedData.earnings,
+        duration: processedData.duration,
+        productCount: processedData.products,
+        soldCount: processedData.soldProducts,
+        newViewersCount: processedData.newViewers,
+        earnings: processedData.revenue,
+        giftsCount: processedData.gifts,
+        coinsCount: processedData.coins,
+      );
+    } catch (e) {
+      IsmLiveLog.error('Error fetching analytics: $e');
+      return null; // Let SDK handle with default implementation
+    }
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update analytics callback at runtime
+IsmLiveApp.updateStreamAnalyticsCallback(_newAnalyticsHandler);
+
+// Disable custom analytics (use SDK default)
+IsmLiveApp.updateStreamAnalyticsCallback(null);
+```
+
+#### Stream Analytics Viewers Callback Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
+    // Call your own analytics viewers API
+    final viewersData = await _callYourAnalyticsViewersAPI(
+      streamId: streamId,
+      skip: skip,
+      limit: limit,
+    );
+    
+    if (viewersData != null) {
+      // Convert your data to List<IsmLiveAnalyticViewerModel> format
+      return viewersData.map((viewer) => IsmLiveAnalyticViewerModel(
+        isometrikUserId: viewer['isometrikUserId'],
+        appUserId: viewer['appUserId'],
+        firstName: viewer['firstName'],
+        lastName: viewer['lastName'],
+        userName: viewer['userName'],
+        profilePic: viewer['profilePic'],
+        timestamp: viewer['timestamp'],
+        // ... other fields
+      )).toList();
+    }
+    
+    return null; // Let SDK handle with default implementation
+  },
+);
+```
+
+**Advanced Usage with Real-time Viewers Data:**
+```dart
+IsmLiveApp.configureInterface(
+  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
+    try {
+      // Call your real-time viewers analytics service
+      final realTimeViewersData = await _getRealTimeViewersAnalytics(
+        streamId: streamId,
+        skip: skip,
+        limit: limit,
+      );
+      
+      // Apply custom business logic
+      final processedViewersData = _processViewersData(realTimeViewersData);
+      
+      return processedViewersData.map((viewer) => IsmLiveAnalyticViewerModel(
+        isometrikUserId: viewer.isometrikUserId,
+        appUserId: viewer.appUserId,
+        firstName: viewer.firstName,
+        lastName: viewer.lastName,
+        userName: viewer.userName,
+        profilePic: viewer.profilePic,
+        timestamp: viewer.timestamp,
+        userMetaData: viewer.userMetaData,
+        statusLogs: viewer.statusLogs,
+      )).toList();
+    } catch (e) {
+      IsmLiveLog.error('Error fetching viewers analytics: $e');
+      return null; // Let SDK handle with default implementation
+    }
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update viewers analytics callback at runtime
+IsmLiveApp.updateStreamAnalyticsViewersCallback(_newViewersAnalyticsHandler);
+
+// Disable custom viewers analytics (use SDK default)
+IsmLiveApp.updateStreamAnalyticsViewersCallback(null);
+```
+
 ---
 
 ### 4. Runtime Check (Optional)
@@ -131,6 +363,9 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Plug-and-play          | `IsmLiveApp`              | Handles init, shows loader & default UI |
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
 | Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
+| Custom Heart Messages  | `heartMessageCallback`    | Handle heart messages with your own API |
+| Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
+| Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
 
 ---
 
