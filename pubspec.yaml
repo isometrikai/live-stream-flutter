@@ -50,7 +50,7 @@ dependencies:
 
 dependency_overrides:
   collection: ^1.19.0
-  flutter_webrtc: ^0.14.1
+  flutter_webrtc: ^1.1.0
 
 dev_dependencies:
   flutter_test:
