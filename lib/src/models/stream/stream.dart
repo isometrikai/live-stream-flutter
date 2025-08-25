@@ -1,3 +1,4 @@
+export 'analytis_viewer_model.dart';
 export 'chat_model.dart';
 export 'create_model.dart';
 export 'get_message_model.dart';
