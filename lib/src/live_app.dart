@@ -71,6 +71,14 @@ class IsmLiveApp extends StatefulWidget {
   static IsmLiveMqttController getMqttController() =>
       IsmLiveHandler.getMqttController();
 
+  /// Get stream controller instance for advanced operations
+  static IsmLiveStreamController getStreamController() {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+    return Get.find<IsmLiveStreamController>();
+  }
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
