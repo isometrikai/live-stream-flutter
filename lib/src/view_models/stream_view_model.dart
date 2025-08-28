@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:get/get.dart';
 
 class IsmLiveStreamViewModel {
@@ -799,6 +798,7 @@ class IsmLiveStreamViewModel {
 
   Future<IsmLiveStreamAnalyticsModel?> streamAnalytics({
     required String streamId,
+    required bool isHost,
   }) async {
     // Check if host app has provided a custom stream analytics callback
     if (IsmLiveDelegate.streamAnalyticsCallback != null) {
@@ -806,6 +806,7 @@ class IsmLiveStreamViewModel {
         final analyticsData =
             await IsmLiveDelegate.streamAnalyticsCallback!.call(
           streamId,
+          isHost,
         );
 
         // If host app successfully provided analytics data, return it

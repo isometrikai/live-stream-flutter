@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -200,6 +199,7 @@ typedef HeartMessageCallback = Future<bool> Function(
 /// and return data in the expected format.
 ///
 /// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host of the stream.
 ///
 /// Return the analytics data in IsmLiveStreamAnalyticsModel format,
 /// or null if the host app wants the SDK to handle it with the default implementation.
@@ -214,6 +214,7 @@ typedef HeartMessageCallback = Future<bool> Function(
 /// - Analytics data transformation
 typedef StreamAnalyticsCallback = Future<IsmLiveStreamAnalyticsModel?> Function(
   String streamId,
+  bool isHost,
 );
 
 /// Callback for stream analytics viewers data.

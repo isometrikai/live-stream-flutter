@@ -12,7 +12,8 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
         id: updateId,
         initState: (state) async {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Get.find<IsmLiveStreamController>().streamAnalytics(streamId);
+            final controller = Get.find<IsmLiveStreamController>();
+            controller.streamAnalytics(streamId);
           });
         },
         builder: (controller) => Padding(
@@ -76,8 +77,7 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                       color = Colors.black;
                       break;
                     case IsmLiveAnalyticsOptions.order:
-                      points =
-                          '${controller.streamAnalytis?.soldCount ?? 0}';
+                      points = '${controller.streamAnalytis?.soldCount ?? 0}';
                       title = 'Order';
                       break;
                     case IsmLiveAnalyticsOptions.viewers:

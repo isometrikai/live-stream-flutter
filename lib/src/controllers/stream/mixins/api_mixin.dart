@@ -793,6 +793,7 @@ mixin StreamAPIMixin {
   Future<void> streamAnalytics(String streamId) async {
     _controller.streamAnalytis = await _controller.viewModel.streamAnalytics(
       streamId: streamId,
+      isHost: _controller.isHost,
     );
     _controller
         .update([IsmLiveEndStream.updateId, IsmliveAnalyticsSheet.updateId]);
