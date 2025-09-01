@@ -12,6 +12,7 @@ class IsmLiveHandler {
   static final RxBool _isMqttConnected = false.obs;
   static bool get isMqttConnected => _isMqttConnected.value;
   static set isMqttConnected(bool value) => _isMqttConnected.value = value;
+  static RxBool get isMqttConnectedRx => _isMqttConnected;
 
   static bool isLogsEnabled = false;
 

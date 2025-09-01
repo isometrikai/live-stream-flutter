@@ -320,19 +320,21 @@ class IsmLiveLabel extends StatelessWidget {
   const IsmLiveLabel({super.key});
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: IsmLiveApp.isMqttConnected
-              ? IsmLiveColors.green
-              : IsmLiveColors.red,
-          borderRadius: BorderRadius.circular(IsmLiveDimens.six),
-        ),
-        child: Padding(
-          padding: IsmLiveDimens.edgeInsets8_4,
-          child: Text(
-            'Live',
-            style: context.textTheme.labelSmall?.copyWith(
-              color: IsmLiveColors.white,
+  Widget build(BuildContext context) => Obx(
+        () => DecoratedBox(
+          decoration: BoxDecoration(
+            color: IsmLiveApp.isMqttConnectedRx.value
+                ? IsmLiveColors.green
+                : IsmLiveColors.red,
+            borderRadius: BorderRadius.circular(IsmLiveDimens.six),
+          ),
+          child: Padding(
+            padding: IsmLiveDimens.edgeInsets8_4,
+            child: Text(
+              'Live',
+              style: context.textTheme.labelSmall?.copyWith(
+                color: IsmLiveColors.white,
+              ),
             ),
           ),
         ),

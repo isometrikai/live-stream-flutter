@@ -32,6 +32,7 @@ class IsmLiveApp extends StatefulWidget {
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) =>
       IsmLiveHandler.isMqttConnected = value;
+  static RxBool get isMqttConnectedRx => IsmLiveHandler.isMqttConnectedRx;
 
   /// Refresh coins balance from server
   static Future<void> refreshCoinsBalance() async {
@@ -305,6 +306,7 @@ class IsmLiveApp extends StatefulWidget {
     bool joinByScrolling = false,
     bool isScrolling = false,
     bool isInteractive = false,
+    DateTime? startTime,
     required BuildContext context,
   }) async {
     assert(
@@ -332,6 +334,7 @@ class IsmLiveApp extends StatefulWidget {
         joinByScrolling: joinByScrolling,
         isScrolling: isScrolling,
         isInteractive: isInteractive,
+        startTime: startTime,
         context: context,
       );
     });

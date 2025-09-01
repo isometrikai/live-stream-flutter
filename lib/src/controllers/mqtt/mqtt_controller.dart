@@ -13,7 +13,8 @@ class IsmLiveMqttController extends GetxController {
   bool _isReconnecting = false;
   Timer? _reconnectTimer;
   int _reconnectAttempts = 0;
-  static const int _maxReconnectAttempts = 5;
+  static const int _maxReconnectAttempts =
+      0; // (3)  auto connect already manage in MQTT helper
   static const Duration _initialReconnectDelay = Duration(seconds: 2);
   static const Duration _maxReconnectDelay = Duration(seconds: 30);
 
@@ -177,6 +178,10 @@ class IsmLiveMqttController extends GetxController {
         await reconnect();
       }
       var topic = '$_topicPrefix/$streamId';
+      // Ensure this topic is tracked for auto-resubscribe on reconnects
+      if (!_topics.contains(topic)) {
+        _topics.add(topic);
+      }
       _mqttHelper.subscribeTopic(topic);
     } catch (e) {
       IsmLiveLog.error('Subscribe Error - $e');
@@ -196,6 +201,8 @@ class IsmLiveMqttController extends GetxController {
     try {
       var topic = '$_topicPrefix/$streamId';
       _mqttHelper.unsubscribeTopic(topic);
+      // Remove from tracked topics so it is not auto-resubscribed
+      _topics.remove(topic);
     } catch (e) {
       IsmLiveLog.error('Subscribe Error - $e');
     }
