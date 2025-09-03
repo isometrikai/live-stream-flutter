@@ -7,10 +7,22 @@ class IsmLiveMessageField extends StatelessWidget {
     super.key,
     required this.streamId,
     required this.isHost,
+    this.customFillColor,
+    this.customBorderColor,
+    this.customRadius,
+    this.customStyle,
+    this.customHintStyle,
+    this.customContentPadding,
   });
 
   final String streamId;
   final bool isHost;
+  final Color? customFillColor;
+  final Color? customBorderColor;
+  final double? customRadius;
+  final TextStyle? customStyle;
+  final TextStyle? customHintStyle;
+  final EdgeInsets? customContentPadding;
 
   static const String updateId = 'message-field-id';
 
@@ -68,15 +80,20 @@ class IsmLiveMessageField extends StatelessWidget {
                   child: IsmLiveInputField(
                     focusNode: controller.messageFocusNode,
                     cursorColor: Colors.white,
-                    style: context.textTheme.bodySmall
-                        ?.copyWith(color: Colors.white),
+                    style: customStyle ??
+                        context.textTheme.bodySmall
+                            ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
-                    hintText: IsmLiveDelegate.productStream == true ? 'Comments...' : 'Say Something…',
-                    contentPadding: IsmLiveDimens.edgeInsetsR14,
-                    fillColor: IsmLiveColors.white.withOpacity(0.3),
-                    hintStyle: context.textTheme.bodySmall
-                        ?.copyWith(color: Colors.white),
-                    borderColor: Colors.transparent,
+                    hintText: 'Say Something…',
+                    contentPadding:
+                        customContentPadding ?? IsmLiveDimens.edgeInsetsR14,
+                    fillColor:
+                        customFillColor ?? IsmLiveColors.white.withOpacity(0.3),
+                    hintStyle: customHintStyle ??
+                        context.textTheme.bodySmall
+                            ?.copyWith(color: Colors.white),
+                    borderColor: customBorderColor ?? Colors.transparent,
+                    radius: customRadius,
                     onchange: (value) =>
                         controller.update([IsmLiveStreamView.updateId]),
                     textInputAction: TextInputAction.send,
@@ -87,20 +104,28 @@ class IsmLiveMessageField extends StatelessWidget {
                         parentMessage: controller.parentMessage,
                       );
                     },
-                    suffixIcon: IsmLiveDelegate.productStream == true ? IconButton(
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
-                      color: Colors.white,
-                      onPressed: controller.messageFieldController.isNotEmpty
-                          ? () => controller.sendTextMessage(
-                        streamId: streamId,
-                        body: controller.messageFieldController.text.trim(),
-                        parentMessage: controller.parentMessage,
-                      )
-                          : null,
-                    ) : null,
+                    suffixIcon: IsmLiveDelegate.productStream == true &&
+                            controller.messageFieldController.text
+                                .trim()
+                                .isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                            ),
+                            color: Colors.white,
+                            onPressed: controller
+                                    .messageFieldController.isNotEmpty
+                                ? () => controller.sendTextMessage(
+                                      streamId: streamId,
+                                      body: controller
+                                          .messageFieldController.text
+                                          .trim(),
+                                      parentMessage: controller.parentMessage,
+                                    )
+                                : null,
+                          )
+                        : null,
                     prefixIcon: IconButton(
                         icon: const Icon(
                           Icons.mood,
@@ -112,7 +137,7 @@ class IsmLiveMessageField extends StatelessWidget {
                   ),
                 ),
                 IsmLiveDimens.boxWidth15,
-                if(IsmLiveDelegate.productStream != true)...[
+                if (IsmLiveDelegate.productStream != true) ...[
                   CustomIconButton(
                     dimension: IsmLiveDimens.forty,
                     icon: const Icon(
@@ -121,10 +146,11 @@ class IsmLiveMessageField extends StatelessWidget {
                     ),
                     onTap: controller.messageFieldController.isNotEmpty
                         ? () => controller.sendTextMessage(
-                      streamId: streamId,
-                      body: controller.messageFieldController.text.trim(),
-                      parentMessage: controller.parentMessage,
-                    )
+                              streamId: streamId,
+                              body:
+                                  controller.messageFieldController.text.trim(),
+                              parentMessage: controller.parentMessage,
+                            )
                         : null,
                     gradient: IsmLiveDelegate.streamOptionsBgGradient,
                   )

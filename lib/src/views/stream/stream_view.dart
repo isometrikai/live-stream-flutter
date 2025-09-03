@@ -127,23 +127,6 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
-  /// Determines if the product button should be shown based on the conditions
-  bool _shouldShowProductButton(bool isHost, bool hasPinnedProduct) {
-    // 1. This button only for productStream only (already checked in the calling code)
-    // 2. if isHost = false and hasPinnedProduct = true means (viewer) button visible
-    // 3. if isHost = false and hasPinnedProduct = false then don't show button
-    // 4. if isHost = true and hasPinnedProduct = true then show button
-    // 5. if isHost = true and hasPinnedProduct = false then show button
-
-    if (isHost) {
-      // Host: show button in both cases (hasPinnedProduct = true/false)
-      return true;
-    } else {
-      // Viewer: only show button when hasPinnedProduct = true
-      return hasPinnedProduct;
-    }
-  }
-
   /// Gets the appropriate button label based on the conditions
   String _getProductButtonLabel(bool isHost, bool hasPinnedProduct) {
     if (isHost) {
@@ -163,6 +146,87 @@ class _IsmLiveStreamView extends StatelessWidget {
       }
     }
   }
+
+  /// Builds two arrow buttons for hosts that match input field height
+  Widget _buildHostArrowButtons(BuildContext context) =>
+      GetBuilder<IsmLiveStreamController>(
+        builder: (controller) => SizedBox(
+          height:
+              52, // Match input field height (16px top + 16px bottom padding + 20px text height)
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(right: 4),
+                  height: double.infinity, // Fill the available height
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white.withOpacity(0.2),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // Match input field border radius
+                      ),
+                      padding: EdgeInsets.zero,
+                      elevation: 0,
+                    ),
+                    onPressed: () {
+                      // Left arrow action - call onProductAction with "left"
+                      IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
+                        context,
+                        controller.streamId ?? '',
+                        IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
+                            false,
+                        'left', // Send "left" as the action identifier
+                        controller.isHost,
+                      );
+                    },
+                    child: const Icon(
+                      Icons.keyboard_arrow_left,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 4),
+                  height: double.infinity, // Fill the available height
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white.withOpacity(0.2),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            12), // Match input field border radius
+                      ),
+                      padding: EdgeInsets.zero,
+                      elevation: 0,
+                    ),
+                    onPressed: () {
+                      // Right arrow action - call onProductAction with "right"
+                      IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
+                        context,
+                        controller.streamId ?? '',
+                        IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
+                            false,
+                        'right', // Send "right" as the action identifier
+                        controller.isHost,
+                      );
+                    },
+                    child: const Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 
   /// Wraps IsmLiveChatView with conditional width constraints
   /// When productStream is true, limits width to half screen width
@@ -307,79 +371,87 @@ class _IsmLiveStreamView extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    IsmLiveApp.inputBuilder?.call(
-                                          context,
-                                          IsmLiveMessageField(
-                                            streamId: controller.streamId ?? '',
-                                            isHost: controller.isPublishing,
-                                          ),
-                                        ) ??
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: IsmLiveDimens.twelve),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: IsmLiveMessageField(
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: IsmLiveDimens.twelve),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: IsmLiveApp.inputBuilder
+                                                    ?.call(
+                                                  context,
+                                                  IsmLiveMessageField(
+                                                    streamId:
+                                                        controller.streamId ??
+                                                            '',
+                                                    isHost:
+                                                        controller.isPublishing,
+                                                  ),
+                                                ) ??
+                                                IsmLiveMessageField(
                                                   streamId:
                                                       controller.streamId ?? '',
                                                   isHost:
                                                       controller.isPublishing,
                                                 ),
-                                              ),
-                                              if (IsmLiveDelegate
-                                                          .productStream ==
-                                                      true &&
-                                                  !isKeyboardOpen) ...[
-                                                // Determine button visibility and label based on conditions
-                                                if (_shouldShowProductButton(
-                                                    controller.isHost,
-                                                    IsmLiveDelegate
-                                                            .ecomConfigure
-                                                            ?.hasPinnedProduct ??
-                                                        false)) ...[
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: IsmLiveButton(
-                                                      label:
-                                                          _getProductButtonLabel(
-                                                        controller.isHost,
-                                                        IsmLiveDelegate
+                                          ),
+                                          if (IsmLiveDelegate.productStream ==
+                                                  true &&
+                                              !isKeyboardOpen) ...[
+                                            // Determine button visibility and label based on conditions
+                                            if (IsmLiveDelegate.ecomConfigure
+                                                    ?.hasPinnedProduct ??
+                                                false) ...[
+                                              Expanded(
+                                                flex: 2,
+                                                child: controller.isHost &&
+                                                        (IsmLiveDelegate
                                                                 .ecomConfigure
                                                                 ?.hasPinnedProduct ??
-                                                            false,
-                                                      ),
-                                                      onTap: () {
-                                                        // Call the product action callback if provided
-                                                        IsmLiveDelegate
-                                                            .ecomConfigure
-                                                            ?.onProductAction
-                                                            ?.call(
-                                                          context,
-                                                          controller.streamId ??
-                                                              '',
+                                                            false)
+                                                    ? _buildHostArrowButtons(
+                                                        context)
+                                                    : IsmLiveButton(
+                                                        label:
+                                                            _getProductButtonLabel(
+                                                          controller.isHost,
                                                           IsmLiveDelegate
                                                                   .ecomConfigure
                                                                   ?.hasPinnedProduct ??
                                                               false,
-                                                          _getProductButtonLabel(
-                                                            controller.isHost,
+                                                        ),
+                                                        onTap: () {
+                                                          // Call the product action callback if provided
+                                                          IsmLiveDelegate
+                                                              .ecomConfigure
+                                                              ?.onProductAction
+                                                              ?.call(
+                                                            context,
+                                                            controller
+                                                                    .streamId ??
+                                                                '',
                                                             IsmLiveDelegate
                                                                     .ecomConfigure
                                                                     ?.hasPinnedProduct ??
                                                                 false,
-                                                          ),
-                                                          controller.isHost,
-                                                        );
-                                                      },
-                                                    ),
-                                                  )
-                                                ]
-                                              ]
-                                            ],
-                                          ),
-                                        ),
+                                                            _getProductButtonLabel(
+                                                              controller.isHost,
+                                                              IsmLiveDelegate
+                                                                      .ecomConfigure
+                                                                      ?.hasPinnedProduct ??
+                                                                  false,
+                                                            ),
+                                                            controller.isHost,
+                                                          );
+                                                        },
+                                                      ),
+                                              )
+                                            ]
+                                          ]
+                                        ],
+                                      ),
+                                    ),
                                     IsmLiveDimens.boxHeight8,
                                     if (IsmLiveApp
                                         .endStreamPosition.isBottomAligned)
@@ -398,7 +470,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                               null)
                         Positioned(
                           right: IsmLiveDimens.sixteen,
-                          bottom: IsmLiveDimens.sixty,
+                          bottom: IsmLiveDimens.eighty,
                           child: IsmLiveDelegate
                                   .ecomConfigure!.pinnedProductBuilder!(
                                 context,
@@ -683,10 +755,17 @@ class ScheduleStreamView extends StatelessWidget {
                               streamId: controller.streamId ?? '',
                             ),
                             IsmLiveDimens.boxHeight8,
-                            IsmLiveMessageField(
-                              streamId: controller.streamId ?? '',
-                              isHost: controller.isPublishing,
-                            ),
+                            IsmLiveApp.inputBuilder?.call(
+                                  context,
+                                  IsmLiveMessageField(
+                                    streamId: controller.streamId ?? '',
+                                    isHost: controller.isPublishing,
+                                  ),
+                                ) ??
+                                IsmLiveMessageField(
+                                  streamId: controller.streamId ?? '',
+                                  isHost: controller.isPublishing,
+                                ),
                           ],
                         ),
                       ),

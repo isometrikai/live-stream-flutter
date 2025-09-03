@@ -4,6 +4,7 @@ import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
+import 'package:appscrip_live_stream_component_example/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -57,8 +58,15 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: true,
+      productStream: false,
       enableFreeGift: true,
+      hostTopProfileClickCallback:
+          (context, isHost, userIdentifier, name, imageUrl, description) async {
+        return true;
+      },
+      inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+        defaultMessageField: defaultMessageField,
+      ),
       restrictProfileSheetOnProfileClick: true,
       // Configure dynamic font family - host app can provide their font name
       // fontFamily: 'Satoshi', // Example: Use Poppins font family
@@ -81,8 +89,15 @@ class HomeController extends GetxController {
         hasPinnedProductGetter: () {
           // Return true if a product is currently pinned, false otherwise
           // This will be called every time the UI needs to check the pinned status
-          return false; // Replace with your actual logic to check if product is pinned
+          return true; // Replace with your actual logic to check if product is pinned
         },
+        pinnedProductBuilder: (context, controller) => SizedBox(
+          width: 150,
+          height: 200,
+          child: Container(
+            color: Colors.red,
+          ),
+        ),
       ),
       // Custom GoLive button click handler with comprehensive data
 

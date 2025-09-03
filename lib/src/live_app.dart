@@ -200,6 +200,7 @@ class IsmLiveApp extends StatefulWidget {
     HeartMessageCallback? heartMessageCallback,
     StreamAnalyticsCallback? streamAnalyticsCallback,
     StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
+    HostTopProfileClickCallback? hostTopProfileClickCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -247,6 +248,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
     IsmLiveDelegate.streamAnalyticsViewersCallback =
         streamAnalyticsViewersCallback;
+    IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -380,6 +382,9 @@ class IsmLiveApp extends StatefulWidget {
   static StreamAnalyticsViewersCallback? get streamAnalyticsViewersCallback =>
       IsmLiveDelegate.streamAnalyticsViewersCallback;
 
+  static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
+      IsmLiveDelegate.hostTopProfileClickCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -422,6 +427,12 @@ class IsmLiveApp extends StatefulWidget {
       StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback) {
     IsmLiveDelegate.streamAnalyticsViewersCallback =
         streamAnalyticsViewersCallback;
+  }
+
+  /// Update host top profile click callback dynamically at runtime
+  static void updateHostTopProfileClickCallback(
+      HostTopProfileClickCallback? hostTopProfileClickCallback) {
+    IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
   }
 
   static Future<void> dispose({

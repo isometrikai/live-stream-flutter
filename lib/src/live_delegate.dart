@@ -245,6 +245,38 @@ typedef StreamAnalyticsViewersCallback
   int limit,
 );
 
+/// Callback for host top profile click action.
+///
+/// This callback is called when a user taps on the host profile widget in the stream view.
+/// Host applications can use this to implement their own host profile view or navigation.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [isHost] - Whether the current user is the host of the stream.
+/// [userIdentifier] - The user identifier of the host.
+/// [name] - The name of the host.
+/// [imageUrl] - The profile image URL of the host.
+/// [description] - The description/bio of the host.
+///
+/// Return true if the host profile click was successfully handled by the host app,
+/// false if the host app wants the SDK to handle it with the default bottom sheet implementation.
+///
+/// This callback is called before the SDK's default host profile bottom sheet handling.
+/// Useful for implementing:
+/// - Custom host profile views
+/// - Custom navigation to host profile
+/// - Custom host interaction flows
+/// - Integration with external profile systems
+/// - Custom host profile UI
+/// - Analytics tracking for host profile views
+typedef HostTopProfileClickCallback = Future<bool> Function(
+  BuildContext context,
+  bool isHost,
+  String userIdentifier,
+  String name,
+  String imageUrl,
+  String description,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -339,6 +371,8 @@ class IsmLiveDelegate {
   static StreamAnalyticsCallback? streamAnalyticsCallback;
 
   static StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback;
+
+  static HostTopProfileClickCallback? hostTopProfileClickCallback;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

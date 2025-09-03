@@ -22,7 +22,27 @@ class IsmLiveHostDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
-        onTap: () {
+        onTap: () async {
+          // Check if host app wants to handle the host top profile click
+          final hostTopProfileCallback =
+              IsmLiveDelegate.hostTopProfileClickCallback;
+          if (hostTopProfileCallback != null) {
+            final handled = await hostTopProfileCallback(
+              context,
+              isHost,
+              userIdentifier,
+              name,
+              imageUrl,
+              description,
+            );
+
+            // If host app handled the click, don't show default bottom sheet
+            if (handled) {
+              return;
+            }
+          }
+
+          // Default behavior: show bottom sheet
           IsmLiveUtility.openBottomSheet(
             StreamLiveSheet(
               widget: IsmLiveImage.network(
@@ -35,9 +55,11 @@ class IsmLiveHostDetail extends StatelessWidget {
               title: name,
               subTitle: description.trim().isEmpty ? null : description,
               buttonLable: isHost ? null : 'View Profile',
-              onTap: isHost ? null : () {
-                IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
-              },
+              onTap: isHost
+                  ? null
+                  : () {
+                      IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
+                    },
             ),
             isScrollController: true,
           );
