@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -561,6 +560,88 @@ class IsmLiveStreamController extends GetxController
     isRtmp = value;
 
     update([IsmGoLiveView.updateId]);
+  }
+
+  /// Determines if the Go Live button should be enabled
+  /// Based on validation rules like description input, etc.
+  bool get isGoLiveButtonEnabled {
+    // Basic validation: description should not be empty
+    if (descriptionController.text.trim().isEmpty) {
+      return false;
+    }
+
+    // Add more validation rules as needed
+    // For example: check if image is selected, stream type is valid, etc.
+
+    return true;
+  }
+
+  /// Handles the Go Live button press logic
+  /// This method contains all the logic from IsmGoLiveNavBar's onTap
+  Future<void> handleGoLivePress(BuildContext context) async {
+    final isScheduledStream = streamDetails?.isScheduledStream ?? false;
+
+    if (IsmLiveDelegate.ecomConfigure?.onGoLiveClick != null) {
+      // Handle image scenario similar to join_mixin.dart logic
+      if (pickedImage == null) {
+        // Try to take picture from camera first
+        final file = await cameraController?.takePicture();
+        if (file != null) {
+          pickedImage = file;
+          update([IsmGoLiveView.updateId]);
+        } else {
+          // If camera fails, pick from gallery
+          var file = await FileManager.pickGalleryImage();
+          if (file != null) {
+            pickedImage = file;
+            update([IsmGoLiveView.updateId]);
+          }
+        }
+      }
+
+      // Create comprehensive data object with all user-entered details
+      final goLiveData = IsmLiveGoLiveData(
+        isScheduledStream: isScheduledStream,
+        streamDetails: streamDetails,
+        description: descriptionController.text,
+        pickedImage:
+            pickedImage, // Use the final pickedImage (either picked from gallery or taken from camera)
+        isHdBroadcast: isHdBroadcast,
+        isRecordingBroadcast: isRecordingBroadcast,
+        isRestreamBroadcast: isRestreamBroadcast,
+        isPremium: isPremium,
+        isSchedulingBroadcast: isSchedulingBroadcast,
+        usePersistentStreamKey: usePersistentStreamKey,
+        isRtmp: isRtmp,
+        selectedGoLiveTabItem: selectedGoLiveTabItem,
+        selectedGoLiveStream: selectedGoLiveStream,
+        scheduleLiveDate: scheduleLiveDate,
+        premiumStreamCoins: premiumStreamCoinsController.text,
+        restreamFacebook: restreamFacebook,
+        restreamYoutube: restreamYoutube,
+        restreamInstagram: restreamInstagram,
+        rtmpUrl: rtmlUrl.text,
+        streamKey: streamKey.text,
+        rtmpUrlDevice: rtmlUrlDevice.text,
+        streamKeyDevice: streamKeyDevice.text,
+      );
+
+      await IsmLiveDelegate.ecomConfigure!.onGoLiveClick!(
+        context,
+        isScheduledStream,
+        streamDetails,
+        goLiveData,
+      );
+      return;
+    }
+
+    // Default behavior
+    if (isScheduledStream) {
+      editScheduleStream(context);
+      return;
+    }
+
+    startStream(context: context);
   }
 
   void onChangeRestream(bool value) {

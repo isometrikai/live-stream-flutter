@@ -109,26 +109,10 @@ class IsmGoLiveView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     IsmLiveDimens.boxHeight32,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            color: IsmLiveColors.white,
-                          ),
-                          onPressed: IsmLiveRoute.pop,
-                        ),
-                        Text(
-                          'Go Live',
-                          style: IsmLiveStyles.whiteBold16,
-                        ),
-                        const IconButton(
-                          icon: SizedBox.shrink(),
-                          onPressed: null,
-                        ),
-                      ],
-                    ),
+                    // Use custom header builder if provided, otherwise use default header
+                    IsmLiveDelegate.goLiveHeaderBuilder
+                            ?.call(context, controller) ??
+                        const _DefaultGoLiveHeader(),
                     if (!(controller.streamDetails?.isScheduledStream ??
                             false) &&
                         (IsmLiveDelegate.paidStream ?? true))
@@ -404,6 +388,13 @@ class _AddProduct extends StatelessWidget {
                 if (selectedProducts.isNotEmpty)
                   TextButton(
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      overlayColor: Colors.transparent,
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                     child: Text(
                       '+Add',
                       style: context.dynamicTextTheme.bodyMedium?.copyWith(
@@ -635,6 +626,32 @@ class _InputField extends StatelessWidget {
             radius: IsmLiveDimens.twelve,
             borderColor: IsmLiveColors.white,
             suffixIcon: suffixIcon,
+          ),
+        ],
+      );
+}
+
+class _DefaultGoLiveHeader extends StatelessWidget {
+  const _DefaultGoLiveHeader();
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const IconButton(
+            icon: Icon(
+              Icons.close,
+              color: IsmLiveColors.white,
+            ),
+            onPressed: IsmLiveRoute.pop,
+          ),
+          Text(
+            'Go Live',
+            style: IsmLiveStyles.whiteBold16,
+          ),
+          const IconButton(
+            icon: SizedBox.shrink(),
+            onPressed: null,
           ),
         ],
       );

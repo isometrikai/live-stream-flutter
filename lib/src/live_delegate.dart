@@ -277,6 +277,62 @@ typedef HostTopProfileClickCallback = Future<bool> Function(
   String description,
 );
 
+/// Builder for Go Live header.
+///
+/// This builder allows host applications to provide a custom header widget for the Go Live screen.
+/// If not provided, the SDK will use the default header with close button, title, and placeholder.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [controller] - The IsmLiveStreamController instance for accessing stream state and actions.
+///
+/// Return a Widget that will be displayed as the header in the Go Live screen.
+/// The widget should handle its own layout and styling.
+///
+/// This builder is called when rendering the Go Live screen header.
+/// Useful for implementing:
+/// - Custom Go Live screen branding
+/// - Custom navigation controls
+/// - Custom header layout
+/// - Integration with host app's design system
+/// - Custom header actions and buttons
+/// - Analytics tracking for Go Live interactions
+typedef GoLiveHeaderBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamController controller,
+);
+
+/// Builder for Go Live button.
+///
+/// This builder allows host applications to provide a custom Go Live button widget.
+/// If not provided, the SDK will use the default IsmGoLiveNavBar implementation.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [controller] - The IsmLiveStreamController instance for accessing stream state.
+/// [onGoLivePressed] - The callback function that should be called when the Go Live button is pressed.
+///                     This maintains the same functionality as the default implementation.
+/// [isEnabled] - Whether the Go Live button should be enabled or disabled based on validation.
+///               Host apps should respect this state and disable their custom button accordingly.
+///
+/// Return a Widget that will be displayed as the Go Live button/navigation bar.
+/// The widget should handle its own layout and styling but must call [onGoLivePressed] when activated.
+/// The widget should also respect the [isEnabled] state for proper UX.
+///
+/// This builder is called when rendering the Go Live screen's bottom navigation area.
+/// Useful for implementing:
+/// - Custom Go Live button design
+/// - Custom button layout and positioning
+/// - Integration with host app's design system
+/// - Custom button states and animations
+/// - Custom validation and error handling UI
+/// - Analytics tracking for Go Live button interactions
+/// - Custom enabled/disabled states
+typedef GoLiveButtonBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamController controller,
+  VoidCallback onGoLivePressed,
+  bool isEnabled,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -373,6 +429,10 @@ class IsmLiveDelegate {
   static StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback;
 
   static HostTopProfileClickCallback? hostTopProfileClickCallback;
+
+  static GoLiveHeaderBuilder? goLiveHeaderBuilder;
+
+  static GoLiveButtonBuilder? goLiveButtonBuilder;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

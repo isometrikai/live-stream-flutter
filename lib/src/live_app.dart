@@ -201,6 +201,8 @@ class IsmLiveApp extends StatefulWidget {
     StreamAnalyticsCallback? streamAnalyticsCallback,
     StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
+    GoLiveHeaderBuilder? goLiveHeaderBuilder,
+    GoLiveButtonBuilder? goLiveButtonBuilder,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -249,6 +251,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamAnalyticsViewersCallback =
         streamAnalyticsViewersCallback;
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
+    IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
+    IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -385,6 +389,12 @@ class IsmLiveApp extends StatefulWidget {
   static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
       IsmLiveDelegate.hostTopProfileClickCallback;
 
+  static GoLiveHeaderBuilder? get goLiveHeaderBuilder =>
+      IsmLiveDelegate.goLiveHeaderBuilder;
+
+  static GoLiveButtonBuilder? get goLiveButtonBuilder =>
+      IsmLiveDelegate.goLiveButtonBuilder;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -433,6 +443,26 @@ class IsmLiveApp extends StatefulWidget {
   static void updateHostTopProfileClickCallback(
       HostTopProfileClickCallback? hostTopProfileClickCallback) {
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
+  }
+
+  /// Update go live header builder dynamically at runtime
+  static void updateGoLiveHeaderBuilder(
+      GoLiveHeaderBuilder? goLiveHeaderBuilder) {
+    IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
+    // Trigger rebuild of go live view to apply new header
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
+    }
+  }
+
+  /// Update go live button builder dynamically at runtime
+  static void updateGoLiveButtonBuilder(
+      GoLiveButtonBuilder? goLiveButtonBuilder) {
+    IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
+    // Trigger rebuild of go live view to apply new button
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
+    }
   }
 
   static Future<void> dispose({

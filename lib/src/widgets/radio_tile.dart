@@ -38,7 +38,7 @@ class IsmLiveRadioListTile extends StatelessWidget {
             Text(
               title,
               style: context.dynamicTextTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
                 color: isDark ? IsmLiveColors.white : IsmLiveColors.black,
               ),
             ),
