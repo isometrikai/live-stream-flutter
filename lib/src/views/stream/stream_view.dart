@@ -267,10 +267,8 @@ class _IsmLiveStreamView extends StatelessWidget {
 
           await WakelockPlus.enable();
 
-          // Trigger stream view loaded callback if provided
-          IsmLiveUtility.updateLater(() {
-            IsmLiveDelegate.streamViewLoadedCallback?.call(streamId, isHost);
-          });
+          // Note: streamViewLoadedCallback is now triggered when hostDetails becomes available
+          // in the _getStreamMembers method of api_mixin.dart
 
           IsmLiveUtility.updateLater(() {
             if (isHost) {

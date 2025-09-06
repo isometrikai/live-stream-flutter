@@ -239,6 +239,17 @@ mixin StreamAPIMixin {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
         (e) => e.isAdmin,
       );
+
+      // Trigger stream view loaded callback once host details are available (only once per stream)
+      if (!_controller._streamViewLoadedCallbackTriggered) {
+        _controller._streamViewLoadedCallbackTriggered = true;
+        IsmLiveDelegate.streamViewLoadedCallback?.call(
+          streamId,
+          _controller.isHost,
+          _controller.hostDetails,
+        );
+      }
+
       var isCopublisher = false;
       isCopublisher = _controller.streamMembersList
           .any((e) => e.userId == _controller.user?.userId);

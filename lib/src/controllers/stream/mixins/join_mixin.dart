@@ -316,6 +316,9 @@ mixin StreamJoinMixin {
     // Subscribe to the stream
     _controller.streamId = streamId;
 
+    // Reset callback trigger flag for new stream
+    _controller._streamViewLoadedCallbackTriggered = false;
+
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
     _controller.descriptionController.text =

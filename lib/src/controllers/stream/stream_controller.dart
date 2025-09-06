@@ -166,6 +166,8 @@ class IsmLiveStreamController extends GetxController
   IsmLiveMemberDetailsModel? hostDetails;
   IsmLiveStreamDataModel? streamDetails;
 
+  bool _streamViewLoadedCallbackTriggered = false;
+
   Uint8List? bytes;
 
   int messagesCount = 0;

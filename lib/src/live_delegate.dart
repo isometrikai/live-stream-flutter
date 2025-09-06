@@ -144,6 +144,7 @@ typedef MessageProcessCallback = IsmLiveMessageModel? Function(
 ///
 /// [streamId] - The current stream ID.
 /// [isHost] - Whether the current user is the host of the stream.
+/// [hostDetails] - The host member details (null if current user is not host or host details unavailable).
 ///
 /// This callback is called in the initState of the stream view widget.
 /// Useful for implementing:
@@ -157,6 +158,7 @@ typedef MessageProcessCallback = IsmLiveMessageModel? Function(
 typedef StreamViewLoadedCallback = void Function(
   String streamId,
   bool isHost,
+  IsmLiveMemberDetailsModel? hostDetails,
 );
 
 /// Callback for heart message sending.

@@ -67,6 +67,9 @@ class HomeController extends GetxController {
         defaultMessageField: defaultMessageField,
       ),
       restrictProfileSheetOnProfileClick: true,
+      // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
+      //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
+      // },
       // Custom Go Live header with host app branding
       // goLiveHeaderBuilder: _buildCustomGoLiveHeader,
       // Custom Go Live button with host app branding
