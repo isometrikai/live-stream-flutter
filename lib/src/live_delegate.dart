@@ -365,6 +365,37 @@ typedef AnalyticsButtonCallback = Future<bool> Function(
   String? pkGuestStreamId,
 );
 
+/// Builder for custom "Buy now" button in product streams.
+///
+/// This builder is called when rendering the "Buy now" button for viewers in product streams.
+/// Host applications can use this to implement their own custom button design and styling.
+///
+/// [context] - The build context where the button is being rendered.
+/// [streamId] - The current stream ID.
+/// [hasPinnedProduct] - Whether there is a pinned product in the stream.
+/// [isHost] - Whether the current user is the host of the stream.
+/// [onTap] - The callback function to call when the button is tapped (preserves existing functionality).
+///
+/// The [onTap] callback should be called when the custom button is tapped to maintain
+/// the existing product action functionality.
+///
+/// This builder is called when rendering the product stream "Buy now" button.
+/// Useful for implementing:
+/// - Custom button designs matching host app's theme
+/// - Custom button animations and states
+/// - Integration with host app's design system
+/// - Custom button layouts and positioning
+/// - Custom loading states during purchase
+/// - Custom accessibility features
+/// - Brand-specific styling and colors
+typedef BuyNowButtonBuilder = Widget Function(
+  BuildContext context,
+  String streamId,
+  bool hasPinnedProduct,
+  bool isHost,
+  VoidCallback onTap,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -514,6 +545,7 @@ class IsmLiveEcomConfigure {
     this.onProductAction,
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
+    this.buyNowButtonBuilder,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
@@ -524,6 +556,7 @@ class IsmLiveEcomConfigure {
           BuildContext context, IsmLiveStreamController controller)?
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
+  final BuyNowButtonBuilder? buyNowButtonBuilder;
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;

@@ -66,6 +66,7 @@ class HomeController extends GetxController {
       inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
         defaultMessageField: defaultMessageField,
       ),
+
       restrictProfileSheetOnProfileClick: true,
       // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
       //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
@@ -86,6 +87,12 @@ class HomeController extends GetxController {
         //         'User picked image: ${goLiveData.pickedImage!.path}');
         //   }
         // },
+        buyNowButtonBuilder:
+            (context, streamId, hasPinnedProduct, isHost, onTap) =>
+                IsmLiveButton.secondary(
+          label: 'Buy now',
+          onTap: onTap,
+        ),
 
         onGoLiveDispose: () {
           // Example: Cleanup operations when GoLive view is disposed

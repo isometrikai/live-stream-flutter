@@ -386,15 +386,11 @@ class _AddProduct extends StatelessWidget {
                   ),
                 ),
                 if (selectedProducts.isNotEmpty)
-                  TextButton(
+                   TextButton(
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
                     style: TextButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      overlayColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
+                        backgroundColor: Colors.transparent,
+                      ),
                     child: Text(
                       '+Add',
                       style: context.dynamicTextTheme.bodyMedium?.copyWith(

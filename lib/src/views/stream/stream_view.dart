@@ -127,26 +127,6 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
-  /// Gets the appropriate button label based on the conditions
-  String _getProductButtonLabel(bool isHost, bool hasPinnedProduct) {
-    if (isHost) {
-      // Host conditions
-      if (hasPinnedProduct) {
-        return 'Next Item >>';
-      } else {
-        return 'Pin Product';
-      }
-    } else {
-      // Viewer conditions
-      if (hasPinnedProduct) {
-        return 'Buy now';
-      } else {
-        // This case should not happen as button won't be shown
-        return '';
-      }
-    }
-  }
-
   /// Builds two arrow buttons for hosts that match input field height
   Widget _buildHostArrowButtons(BuildContext context) =>
       GetBuilder<IsmLiveStreamController>(
@@ -254,6 +234,18 @@ class _IsmLiveStreamView extends StatelessWidget {
     }
 
     return chatView;
+  }
+
+  /// Common method to handle "Buy now" button click functionality
+  void _onBuyNowTap(BuildContext context, IsmLiveStreamController controller) {
+    // Call the product action callback if provided
+    IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
+      context,
+      controller.streamId ?? '',
+      IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ?? false,
+      'Buy now',
+      controller.isHost,
+    );
   }
 
   @override
@@ -410,40 +402,29 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                             false)
                                                     ? _buildHostArrowButtons(
                                                         context)
-                                                    : IsmLiveButton(
-                                                        label:
-                                                            _getProductButtonLabel(
-                                                          controller.isHost,
+                                                    : IsmLiveDelegate
+                                                            .ecomConfigure
+                                                            ?.buyNowButtonBuilder
+                                                            ?.call(
+                                                          context,
+                                                          controller.streamId ??
+                                                              '',
                                                           IsmLiveDelegate
                                                                   .ecomConfigure
                                                                   ?.hasPinnedProduct ??
                                                               false,
+                                                          controller.isHost,
+                                                          () => _onBuyNowTap(
+                                                              context,
+                                                              controller),
+                                                        ) ??
+                                                        IsmLiveButton(
+                                                          label: 'Buy now',
+                                                          onTap: () =>
+                                                              _onBuyNowTap(
+                                                                  context,
+                                                                  controller),
                                                         ),
-                                                        onTap: () {
-                                                          // Call the product action callback if provided
-                                                          IsmLiveDelegate
-                                                              .ecomConfigure
-                                                              ?.onProductAction
-                                                              ?.call(
-                                                            context,
-                                                            controller
-                                                                    .streamId ??
-                                                                '',
-                                                            IsmLiveDelegate
-                                                                    .ecomConfigure
-                                                                    ?.hasPinnedProduct ??
-                                                                false,
-                                                            _getProductButtonLabel(
-                                                              controller.isHost,
-                                                              IsmLiveDelegate
-                                                                      .ecomConfigure
-                                                                      ?.hasPinnedProduct ??
-                                                                  false,
-                                                            ),
-                                                            controller.isHost,
-                                                          );
-                                                        },
-                                                      ),
                                               )
                                             ]
                                           ]
