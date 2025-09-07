@@ -335,6 +335,36 @@ typedef GoLiveButtonBuilder = Widget Function(
   bool isEnabled,
 );
 
+/// Callback for analytics/bars button click event.
+///
+/// This callback is triggered when the user taps on the analytics/bars button in the stream.
+/// Host applications can use this to implement their own analytics screen or custom behavior.
+///
+/// [context] - The build context where the tap occurred.
+/// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host of the stream.
+/// [isPkGuest] - Whether the current user is a PK guest.
+/// [pkGuestStreamId] - The PK guest stream ID (if applicable).
+///
+/// Return true if the host app handled the click and wants to prevent the default behavior,
+/// false if the host app wants the SDK to handle it with the default analytics sheet.
+///
+/// This callback is called before the SDK's default analytics sheet handling.
+/// Useful for implementing:
+/// - Custom analytics screens
+/// - Custom data visualization
+/// - Integration with external analytics services
+/// - Custom user engagement tracking
+/// - Host-specific analytics features
+/// - Custom permission checks
+typedef AnalyticsButtonCallback = Future<bool> Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isPkGuest,
+  String? pkGuestStreamId,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -435,6 +465,8 @@ class IsmLiveDelegate {
   static GoLiveHeaderBuilder? goLiveHeaderBuilder;
 
   static GoLiveButtonBuilder? goLiveButtonBuilder;
+
+  static AnalyticsButtonCallback? analyticsButtonCallback;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

@@ -203,6 +203,7 @@ class IsmLiveApp extends StatefulWidget {
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
+    AnalyticsButtonCallback? analyticsButtonCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -253,6 +254,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
     IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
     IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
+    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -395,6 +397,9 @@ class IsmLiveApp extends StatefulWidget {
   static GoLiveButtonBuilder? get goLiveButtonBuilder =>
       IsmLiveDelegate.goLiveButtonBuilder;
 
+  static AnalyticsButtonCallback? get analyticsButtonCallback =>
+      IsmLiveDelegate.analyticsButtonCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -463,6 +468,12 @@ class IsmLiveApp extends StatefulWidget {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
     }
+  }
+
+  /// Update analytics button callback dynamically at runtime
+  static void updateAnalyticsButtonCallback(
+      AnalyticsButtonCallback? analyticsButtonCallback) {
+    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
   }
 
   static Future<void> dispose({

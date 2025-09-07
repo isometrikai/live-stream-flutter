@@ -426,6 +426,24 @@ mixin StreamOngoingMixin {
         await toggleSpeaker();
         break;
       case IsmLiveStreamOption.bars:
+        // Check if host app wants to handle the analytics button click
+        final analyticsCallback = IsmLiveDelegate.analyticsButtonCallback;
+        if (analyticsCallback != null) {
+          final handled = await analyticsCallback(
+            context,
+            _controller.streamId ?? '',
+            _controller.isHost,
+            _controller.userRole?.isPkGuest ?? false,
+            _pkController.pkguestStreamId,
+          );
+
+          // If host app handled the click, don't show default analytics sheet
+          if (handled) {
+            break;
+          }
+        }
+
+        // Default behavior: show analytics sheet
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
             streamId: (_controller.userRole?.isPkGuest ?? false)
