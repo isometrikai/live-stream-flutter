@@ -111,9 +111,10 @@ class IsmLiveUtility {
       enableDrag: enableDrag,
       backgroundColor: backgroundColor ?? IsmLiveColors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(IsmLiveDimens.thirty),
-        ),
+        borderRadius: IsmLiveDelegate.bottomSheetBorderRadius ??
+            BorderRadius.vertical(
+              top: Radius.circular(IsmLiveDimens.thirty),
+            ),
       ),
       builder: (context) => SafeArea(child: child),
     );

@@ -204,6 +204,9 @@ class IsmLiveApp extends StatefulWidget {
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
     AnalyticsButtonCallback? analyticsButtonCallback,
+    TopViewersListCallback? topViewersListCallback,
+    ModeratorsListCallback? moderatorsListCallback,
+    BorderRadius? bottomSheetBorderRadius,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -255,6 +258,9 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
     IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
+    IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
+    IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
+    IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
   }
 
   static Future<void> endStream({required BuildContext context}) async =>
@@ -400,6 +406,15 @@ class IsmLiveApp extends StatefulWidget {
   static AnalyticsButtonCallback? get analyticsButtonCallback =>
       IsmLiveDelegate.analyticsButtonCallback;
 
+  static TopViewersListCallback? get topViewersListCallback =>
+      IsmLiveDelegate.topViewersListCallback;
+
+  static ModeratorsListCallback? get moderatorsListCallback =>
+      IsmLiveDelegate.moderatorsListCallback;
+
+  static BorderRadius? get bottomSheetBorderRadius =>
+      IsmLiveDelegate.bottomSheetBorderRadius;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -474,6 +489,24 @@ class IsmLiveApp extends StatefulWidget {
   static void updateAnalyticsButtonCallback(
       AnalyticsButtonCallback? analyticsButtonCallback) {
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
+  }
+
+  /// Update top viewers list callback dynamically at runtime
+  static void updateTopViewersListCallback(
+      TopViewersListCallback? topViewersListCallback) {
+    IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
+  }
+
+  /// Update moderators list callback dynamically at runtime
+  static void updateModeratorsListCallback(
+      ModeratorsListCallback? moderatorsListCallback) {
+    IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
+  }
+
+  /// Update bottom sheet border radius dynamically at runtime
+  static void updateBottomSheetBorderRadius(
+      BorderRadius? bottomSheetBorderRadius) {
+    IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
   }
 
   static Future<void> dispose({

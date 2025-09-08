@@ -68,6 +68,96 @@ class HomeController extends GetxController {
       ),
 
       restrictProfileSheetOnProfileClick: true,
+
+      moderatorsListCallback: (context, streamId, isHost, isModerator,
+          moderatorsList, hostDetails) async {
+        // Custom moderators list implementation
+        return true;
+      },
+
+      // topViewersListCallback: (context, viewerList, streamId, isHost,
+      //     isModerator, streamViewersList) async {
+      //   // Simple temporary viewers list implementation
+      //   showModalBottomSheet(
+      //     context: context,
+      //     shape: const RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      //     ),
+      //     builder: (context) => Container(
+      //       padding: const EdgeInsets.all(16),
+      //       child: Column(
+      //         mainAxisSize: MainAxisSize.min,
+      //         children: [
+      //           // Header
+      //           Container(
+      //             width: 40,
+      //             height: 4,
+      //             decoration: BoxDecoration(
+      //               color: Colors.grey[300],
+      //               borderRadius: BorderRadius.circular(2),
+      //             ),
+      //           ),
+      //           const SizedBox(height: 16),
+      //           Text(
+      //             'Viewers (${streamViewersList.length})',
+      //             style: const TextStyle(
+      //               fontSize: 18,
+      //               fontWeight: FontWeight.bold,
+      //             ),
+      //           ),
+      //           const SizedBox(height: 16),
+      //           // Viewers list
+      //           Flexible(
+      //             child: ListView.builder(
+      //               shrinkWrap: true,
+      //               itemCount: streamViewersList.length,
+      //               itemBuilder: (context, index) {
+      //                 final viewer = streamViewersList[index];
+      //                 return ListTile(
+      //                   leading: CircleAvatar(
+      //                     child: viewer.imageUrl?.isEmpty != false
+      //                         ? Text(viewer.userName
+      //                                 .substring(0, 1)
+      //                                 .toUpperCase() ??
+      //                             'U')
+      //                         : null,
+      //                   ),
+      //                   title: Text(viewer.userName ?? 'Unknown User'),
+      //                   subtitle: Text(viewer.name ?? ''),
+      //                   trailing: ElevatedButton(
+      //                     onPressed: () {
+      //                       // Simple action - you can customize this
+      //                       if (isHost || isModerator) {
+      //                         Get.find<IsmLiveStreamController>().kickoutViewer(
+      //                           streamId: streamId,
+      //                           viewerId: viewer?.userId ?? '',
+      //                         );
+      //                         Navigator.pop(context);
+      //                       }
+      //                     },
+      //                     style: ElevatedButton.styleFrom(
+      //                       backgroundColor: Colors.red,
+      //                       foregroundColor: Colors.white,
+      //                       minimumSize: const Size(60, 30),
+      //                     ),
+      //                     child: Text(
+      //                       (isHost || isModerator) ? 'Kick' : 'View',
+      //                       style: const TextStyle(fontSize: 12),
+      //                     ),
+      //                   ),
+      //                 );
+      //               },
+      //             ),
+      //           ),
+      //           const SizedBox(height: 16),
+      //         ],
+      //       ),
+      //     ),
+      //   );
+
+      //   return true; // Prevent default viewers sheet
+      // },
+
       // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
       //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
       // },

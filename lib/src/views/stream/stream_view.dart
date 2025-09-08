@@ -563,13 +563,51 @@ class _StreamHeader extends StatelessWidget {
             pkCompleted: (controller.pkStages?.isPkStop ?? false) &&
                 controller.participantTracks.length == 2,
             isPaidStream: controller.isPremium,
-            onTapModerators: () {
+            onTapModerators: () async {
+              // Check if host app wants to handle the moderators list tap
+              final moderatorsCallback = IsmLiveDelegate.moderatorsListCallback;
+              if (moderatorsCallback != null) {
+                final handled = await moderatorsCallback(
+                  context,
+                  streamId,
+                  controller.isHost,
+                  controller.isModerator,
+                  controller.moderatorsList,
+                  controller.hostDetails,
+                );
+
+                // If host app handled the tap, don't show default moderators sheet
+                if (handled) {
+                  return;
+                }
+              }
+
+              // Default behavior: show moderators sheet
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
                 isScrollController: true,
               );
             },
-            onTapViewers: (viewerList) {
+            onTapViewers: (viewerList) async {
+              // Check if host app wants to handle the viewers list tap
+              final viewersCallback = IsmLiveDelegate.topViewersListCallback;
+              if (viewersCallback != null) {
+                final handled = await viewersCallback(
+                  context,
+                  viewerList,
+                  streamId,
+                  controller.isHost,
+                  controller.isModerator,
+                  controller.streamViewersList,
+                );
+
+                // If host app handled the tap, don't show default viewers sheet
+                if (handled) {
+                  return;
+                }
+              }
+
+              // Default behavior: show viewers sheet
               IsmLiveUtility.openBottomSheet(
                 GetBuilder<IsmLiveStreamController>(
                   initState: (state) {

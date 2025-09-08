@@ -396,6 +396,72 @@ typedef BuyNowButtonBuilder = Widget Function(
   VoidCallback onTap,
 );
 
+/// Callback for top viewers list tap event.
+///
+/// This callback is triggered when the user taps on the viewers count/list in the stream header.
+/// Host applications can use this to implement their own custom viewers UI and management.
+///
+/// [context] - The build context where the tap occurred.
+/// [viewerList] - The current list of viewers (may be empty, actual list is in streamViewersList).
+/// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host of the stream.
+/// [isModerator] - Whether the current user is a moderator of the stream.
+/// [streamViewersList] - The complete list of stream viewers from the controller.
+///
+/// Return true if the host app handled the viewers tap and wants to prevent the default behavior,
+/// false if the host app wants the SDK to handle it with the default viewers sheet.
+///
+/// This callback is called before the SDK's default viewers sheet handling.
+/// Useful for implementing:
+/// - Custom viewers list UI
+/// - Custom viewer management features
+/// - Integration with host app's user management system
+/// - Custom viewer interaction features
+/// - Custom viewer profile handling
+/// - Custom moderation features
+/// - Analytics tracking for viewer interactions
+typedef TopViewersListCallback = Future<bool> Function(
+  BuildContext context,
+  List<dynamic> viewerList,
+  String streamId,
+  bool isHost,
+  bool isModerator,
+  List<IsmLiveViewerModel> streamViewersList,
+);
+
+/// Callback for moderators list tap event.
+///
+/// This callback is triggered when the user taps on the moderators count/list in the stream header.
+/// Host applications can use this to implement their own custom moderators UI and management.
+///
+/// [context] - The build context where the tap occurred.
+/// [streamId] - The current stream ID.
+/// [isHost] - Whether the current user is the host of the stream.
+/// [isModerator] - Whether the current user is a moderator of the stream.
+/// [moderatorsList] - The complete list of stream moderators from the controller.
+/// [hostDetails] - The host member details (null if host details unavailable).
+///
+/// Return true if the host app handled the moderators tap and wants to prevent the default behavior,
+/// false if the host app wants the SDK to handle it with the default moderators sheet.
+///
+/// This callback is called before the SDK's default moderators sheet handling.
+/// Useful for implementing:
+/// - Custom moderators list UI
+/// - Custom moderator management features
+/// - Integration with host app's user management system
+/// - Custom moderator interaction features
+/// - Custom moderator profile handling
+/// - Custom moderation control features
+/// - Analytics tracking for moderator interactions
+typedef ModeratorsListCallback = Future<bool> Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isModerator,
+  List<UserDetails> moderatorsList,
+  IsmLiveMemberDetailsModel? hostDetails,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -498,6 +564,12 @@ class IsmLiveDelegate {
   static GoLiveButtonBuilder? goLiveButtonBuilder;
 
   static AnalyticsButtonCallback? analyticsButtonCallback;
+
+  static TopViewersListCallback? topViewersListCallback;
+
+  static ModeratorsListCallback? moderatorsListCallback;
+
+  static BorderRadius? bottomSheetBorderRadius;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {
