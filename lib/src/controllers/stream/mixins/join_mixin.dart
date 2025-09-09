@@ -27,13 +27,15 @@ mixin StreamJoinMixin {
     bool joinByScrolling = false,
     bool isScrolling = false,
     required BuildContext context,
+    bool reJoin = false,
   }) async {
     initialize(_controller.streams.indexOf(stream));
 
     await joinStream(stream, isHost,
         joinByScrolling: joinByScrolling,
         isScrolling: isScrolling,
-        context: context);
+        context: context,
+        reJoin: reJoin);
   }
 
 // Initialize the page controller
@@ -113,6 +115,7 @@ mixin StreamJoinMixin {
     bool isInteractive = false,
     VoidCallback? onStreamEnd,
     required BuildContext context,
+    bool reJoin = false,
   }) async {
     // Get the token for the stream based on whether the user is a host or not
     if (onStreamEnd != null) {
@@ -137,12 +140,7 @@ mixin StreamJoinMixin {
       token = data.rtcToken;
 
       // Log the complete RTC response for debugging
-      print('StreamTimer RTC Response Debug: ===>');
       print('  startTime: ${data.startTime}');
-      print('  startTime UTC: ${data.startTime?.toUtc()}');
-      print('  startTime.startDateTime: ${stream.startDateTime}');
-      print('  startTime.startDateTime UTC: ${stream.startDateTime?.toUtc()}');
-      print('  startTime streamDuration: ${_controller.streamDuration}');
 
       // Use the actual start time from the RTC token response if available
       if (data.startTime != null) {
@@ -184,19 +182,19 @@ mixin StreamJoinMixin {
 
     // Connect to the stream
     await connectStream(
-      token: token,
-      streamId: stream.streamId!,
-      streamImage: stream.streamImage,
-      streamDiscription: stream.streamDescription,
-      isHost: isHost,
-      isNewStream: false,
-      isPk: stream.isPkChallenge ?? false,
-      joinByScrolling: joinByScrolling,
-      isScrolling: isScrolling,
-      hdBroadcast: stream.hdBroadcast ?? false,
-      isInteractive: isInteractive,
-      context: context,
-    );
+        token: token,
+        streamId: stream.streamId!,
+        streamImage: stream.streamImage,
+        streamDiscription: stream.streamDescription,
+        isHost: isHost,
+        isNewStream: false,
+        isPk: stream.isPkChallenge ?? false,
+        joinByScrolling: joinByScrolling,
+        isScrolling: isScrolling,
+        hdBroadcast: stream.hdBroadcast ?? false,
+        isInteractive: isInteractive,
+        context: context,
+        reJoin: reJoin);
   }
 
 // Start streaming
@@ -312,6 +310,7 @@ mixin StreamJoinMixin {
     bool isInteractive = false,
     DateTime? startTime,
     required BuildContext context,
+    bool reJoin = false,
   }) async {
     // Subscribe to the stream
     _controller.streamId = streamId;
@@ -526,15 +525,15 @@ mixin StreamJoinMixin {
 
         try {
           await IsmLiveRouteManagement.goToStreamView(
-            isHost: isHost,
-            isNewStream: isNewStream,
-            room: room,
-            isScrolling: isScrolling,
-            streamImage: streamImage,
-            listener: _controller.listener!,
-            streamId: streamId,
-            isInteractive: isInteractive,
-          );
+              isHost: isHost,
+              isNewStream: isNewStream,
+              room: room,
+              isScrolling: isScrolling,
+              streamImage: streamImage,
+              listener: _controller.listener!,
+              streamId: streamId,
+              isInteractive: isInteractive,
+              reJoin: reJoin);
         } catch (e) {
           IsmLiveLog.error('Navigation error: $e');
         }

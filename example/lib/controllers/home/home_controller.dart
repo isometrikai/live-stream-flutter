@@ -69,11 +69,11 @@ class HomeController extends GetxController {
 
       restrictProfileSheetOnProfileClick: true,
 
-      moderatorsListCallback: (context, streamId, isHost, isModerator,
-          moderatorsList, hostDetails) async {
-        // Custom moderators list implementation
-        return true;
-      },
+      // moderatorsListCallback: (context, streamId, isHost, isModerator,
+      //     moderatorsList, hostDetails) async {
+      //   // Custom moderators list implementation
+      //   return true;
+      // },
 
       // topViewersListCallback: (context, viewerList, streamId, isHost,
       //     isModerator, streamViewersList) async {

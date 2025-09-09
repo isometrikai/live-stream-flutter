@@ -21,6 +21,7 @@ abstract class IsmLiveRouteManagement {
     bool isInteractive = false,
     bool isSchedule = false,
     String? streamImage,
+    bool reJoin = false,
   }) async {
     IsmLiveStreamBinding().dependencies();
     var widget = IsmLiveStreamView(
@@ -34,7 +35,7 @@ abstract class IsmLiveRouteManagement {
       isSchedule: isSchedule,
       isInteractive: isInteractive,
     );
-    if (isHost && isNewStream) {
+    if ((isHost && isNewStream) || reJoin) {
       await IsmLiveRoute.pushReplacement(widget);
     } else {
       await IsmLiveRoute.push(widget);
