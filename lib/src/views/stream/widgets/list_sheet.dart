@@ -150,11 +150,11 @@ class IsmLiveListSheetTwo extends StatelessWidget {
                           isProfileImage: true,
                         ),
                         title: Text(
-                          '@${viewer.userName}',
+                          '${viewer.firstName} ${viewer.lastName}',
                           style: context.textTheme.titleMedium,
                         ),
                         subtitle: Text(
-                          viewer.timestamp.toString(),
+                          '@${viewer.userName}',
                           style: context.textTheme.bodySmall,
                         ),
                       );
