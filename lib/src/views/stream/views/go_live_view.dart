@@ -11,6 +11,30 @@ class IsmGoLiveView extends StatelessWidget {
 
   static const String updateId = 'ismlive-go-live';
 
+  /// Get the appropriate text style for "Add Cover" and similar action text based on configuration
+  static TextStyle _getAddCoverTextStyle(BuildContext context) {
+    // Check if custom add cover text style is provided in GoLive screen configuration
+    final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
+    if (goLiveScreenConfigure?.addCoverTextStyle != null) {
+      return goLiveScreenConfigure!.addCoverTextStyle!;
+    }
+
+    // Fallback to default style
+    return IsmLiveStyles.white12;
+  }
+
+  /// Get the appropriate icon for "Add" actions based on configuration
+  static IconData _getAddIcon(BuildContext context) {
+    // Check if custom add icon is provided in GoLive screen configuration
+    final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
+    if (goLiveScreenConfigure?.addIcon != null) {
+      return goLiveScreenConfigure!.addIcon!;
+    }
+
+    // Fallback to default icon
+    return Icons.add_circle_outline_rounded;
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -314,14 +338,14 @@ class _StreamImage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.add,
+                      Icon(
+                        IsmGoLiveView._getAddIcon(context),
                         color: IsmLiveColors.white,
                       ),
                       IsmLiveDimens.boxHeight10,
                       Text(
                         'Add Cover',
-                        style: IsmLiveStyles.white12,
+                        style: IsmGoLiveView._getAddCoverTextStyle(context),
                       ),
                     ],
                   ),
@@ -386,11 +410,11 @@ class _AddProduct extends StatelessWidget {
                   ),
                 ),
                 if (selectedProducts.isNotEmpty)
-                   TextButton(
+                  TextButton(
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
                     style: TextButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                      ),
+                      backgroundColor: Colors.transparent,
+                    ),
                     child: Text(
                       '+Add',
                       style: context.dynamicTextTheme.bodyMedium?.copyWith(
@@ -443,17 +467,14 @@ class _AddProduct extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.add_circle_outline_rounded,
+                            Icon(
+                              IsmGoLiveView._getAddIcon(context),
                               color: IsmLiveColors.white,
                             ),
                             Text(
                               'Add products',
-                              style: context.dynamicTextTheme.labelMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: IsmLiveColors.white,
-                              ),
+                              style:
+                                  IsmGoLiveView._getAddCoverTextStyle(context),
                             ),
                           ],
                         ),

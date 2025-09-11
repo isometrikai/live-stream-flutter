@@ -83,12 +83,109 @@ IsmLiveApp.configureInterface(
     print('Host stopped stream: $streamId');
   },
   
+  // GoLive screen configuration (recommended approach)
+  goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+    goLiveHeaderBuilder: (context, controller) => CustomGoLiveHeader(),
+    goLiveButtonBuilder: (context, controller, onGoLivePressed, isEnabled) => 
+        CustomGoLiveButton(
+          onPressed: isEnabled ? onGoLivePressed : null,
+          isEnabled: isEnabled,
+        ),
+    radioTileTextStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: Colors.black87,
+    ),
+    addCoverTextStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.blue,
+    ),
+    addIcon: Icons.add_box_rounded,
+  ),
+  
   // Other customization options...
   showHeader: true,
   streamHeader: (context) => CustomHeader(),
   // ... more options
 );
 ```
+
+#### GoLive Screen Configuration
+
+The SDK now provides a dedicated `IsmLiveGoLiveScreenConfigure` class for better organization of GoLive screen customization:
+
+```dart
+// New recommended approach
+IsmLiveApp.configureInterface(
+  goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+    goLiveHeaderBuilder: (context, controller) => CustomGoLiveHeader(),
+    goLiveButtonBuilder: (context, controller, onGoLivePressed, isEnabled) => 
+        CustomGoLiveButton(
+          onPressed: isEnabled ? onGoLivePressed : null,
+          isEnabled: isEnabled,
+        ),
+    radioTileTextStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: Colors.black87,
+    ),
+    addCoverTextStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.blue,
+    ),
+  ),
+);
+
+// Legacy approach (still supported for backward compatibility)
+IsmLiveApp.configureInterface(
+  goLiveHeaderBuilder: (context, controller) => CustomGoLiveHeader(),
+  goLiveButtonBuilder: (context, controller, onGoLivePressed, isEnabled) => 
+      CustomGoLiveButton(
+        onPressed: isEnabled ? onGoLivePressed : null,
+        isEnabled: isEnabled,
+      ),
+);
+```
+
+**Benefits of the new approach:**
+- Better organization and cleaner code
+- Easier to extend with future GoLive screen features
+- Consistent with other configuration classes like `IsmLiveEcomConfigure`
+- Backward compatible with existing implementations
+
+#### Text Style Customization
+
+The `IsmLiveGoLiveScreenConfigure` class includes specific text style properties for different UI elements:
+
+```dart
+IsmLiveApp.configureInterface(
+  goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+    radioTileTextStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: Colors.black87,
+      letterSpacing: 0.5,
+    ),
+    addCoverTextStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.blue,
+      decoration: TextDecoration.underline,
+    ),
+    addIcon: Icons.add_circle,
+    // ... other configurations
+  ),
+);
+```
+
+**Text Style Properties:**
+- **`radioTileTextStyle`**: Customizes text in radio tiles, switches, and toggle components
+- **`addCoverTextStyle`**: Customizes action text elements like "Add cover", "Add description", etc.
+- **`addIcon`**: Customizes the icon used for "Add" actions like "Add Cover", "Add products", etc.
+- **Fallback Support**: Uses default styling and icons if no custom configuration is provided
+- **Easy Management**: Centralized styling for consistent appearance across different UI elements
 
 #### Available Callbacks:
 
@@ -344,6 +441,43 @@ IsmLiveApp.updateStreamAnalyticsViewersCallback(_newViewersAnalyticsHandler);
 IsmLiveApp.updateStreamAnalyticsViewersCallback(null);
 ```
 
+#### GoLive Screen Configuration Dynamic Updates
+
+You can update GoLive screen configuration at runtime using the new configuration class:
+
+```dart
+// Update entire GoLive screen configuration
+IsmLiveApp.updateGoLiveScreenConfigure(
+  IsmLiveGoLiveScreenConfigure(
+    goLiveHeaderBuilder: (context, controller) => NewCustomHeader(),
+    goLiveButtonBuilder: (context, controller, onGoLivePressed, isEnabled) => 
+        NewCustomButton(
+          onPressed: isEnabled ? onGoLivePressed : null,
+          isEnabled: isEnabled,
+        ),
+    radioTileTextStyle: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: Colors.blue,
+    ),
+    addCoverTextStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      color: Colors.green,
+    ),
+    addIcon: Icons.add_rounded,
+  ),
+);
+
+// Disable custom GoLive screen configuration (use SDK default)
+IsmLiveApp.updateGoLiveScreenConfigure(null);
+
+// Legacy individual updates (still supported)
+IsmLiveApp.updateGoLiveHeaderBuilder((context, controller) => CustomHeader());
+IsmLiveApp.updateGoLiveButtonBuilder((context, controller, onGoLivePressed, isEnabled) => 
+    CustomButton(onPressed: isEnabled ? onGoLivePressed : null));
+```
+
 ---
 
 ### 4. Runtime Check (Optional)
@@ -363,6 +497,7 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Plug-and-play          | `IsmLiveApp`              | Handles init, shows loader & default UI |
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
 | Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
+| Custom GoLive Screen   | `IsmLiveGoLiveScreenConfigure`  | Customize GoLive screen header and button |
 | Custom Heart Messages  | `heartMessageCallback`    | Handle heart messages with your own API |
 | Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
 | Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
@@ -370,6 +505,14 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 ---
 
 For more details, see the API documentation or contact support.
+
+## Platform-Specific Setup
+
+The SDK requires platform-specific configuration for different operating systems. Please follow the setup guides for your target platforms:
+
+- **[Android Setup](./README_android.md)** - Android-specific configuration including permissions, manifest changes, and build settings
+- **[iOS Setup](./README_ios.md)** - iOS-specific configuration including Info.plist, Podfile, and background modes
+- **[Web Setup](./README_web.md)** - Web-specific configuration including HTML setup and Google Maps integration
 
 ## Dynamic Font Family Support
 

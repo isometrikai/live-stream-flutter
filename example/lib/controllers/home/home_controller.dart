@@ -68,6 +68,10 @@ class HomeController extends GetxController {
       ),
 
       restrictProfileSheetOnProfileClick: true,
+      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+        goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+        // goLiveButtonBuilder: _buildCustomGoLiveButton,
+      ),
 
       // moderatorsListCallback: (context, streamId, isHost, isModerator,
       //     moderatorsList, hostDetails) async {
@@ -162,9 +166,7 @@ class HomeController extends GetxController {
       //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
       // },
       // Custom Go Live header with host app branding
-      // goLiveHeaderBuilder: _buildCustomGoLiveHeader,
       // Custom Go Live button with host app branding
-      // goLiveButtonBuilder: _buildCustomGoLiveButton,
       // Configure dynamic font family - host app can provide their font name
       // fontFamily: 'Satoshi', // Example: Use Poppins font family
       // Enable free gifts - amount will be sent as 0
@@ -177,12 +179,12 @@ class HomeController extends GetxController {
         //         'User picked image: ${goLiveData.pickedImage!.path}');
         //   }
         // },
-        buyNowButtonBuilder:
-            (context, streamId, hasPinnedProduct, isHost, onTap) =>
-                IsmLiveButton.secondary(
-          label: 'Buy now',
-          onTap: onTap,
-        ),
+        // buyNowButtonBuilder:
+        //     (context, streamId, hasPinnedProduct, isHost, onTap) =>
+        //         IsmLiveButton.secondary(
+        //   label: 'Buy now',
+        //   onTap: onTap,
+        // ),
 
         onGoLiveDispose: () {
           // Example: Cleanup operations when GoLive view is disposed
@@ -195,13 +197,13 @@ class HomeController extends GetxController {
           // This will be called every time the UI needs to check the pinned status
           return true; // Replace with your actual logic to check if product is pinned
         },
-        pinnedProductBuilder: (context, controller) => SizedBox(
-          width: 150,
-          height: 200,
-          child: Container(
-            color: Colors.red,
-          ),
-        ),
+        // pinnedProductBuilder: (context, controller) => SizedBox(
+        //   width: 150,
+        //   height: 200,
+        //   child: Container(
+        //     color: Colors.red,
+        //   ),
+        // ),
       ),
       // Custom GoLive button click handler with comprehensive data
 
@@ -298,7 +300,6 @@ class HomeController extends GetxController {
           // Highlighted text banner
           Expanded(
             child: Container(
-              margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFFCD0000),
@@ -325,116 +326,121 @@ class HomeController extends GetxController {
     VoidCallback onGoLivePressed,
     bool isEnabled,
   ) =>
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isEnabled
-                  ? [const Color(0xFFFF6B6B), const Color(0xFFCD0000)]
-                  : [Colors.grey[400]!, Colors.grey[600]!],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isEnabled
+                    ? [const Color(0xFFFF6B6B), const Color(0xFFCD0000)]
+                    : [Colors.grey[400]!, Colors.grey[600]!],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: isEnabled
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFFCD0000).withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [],
             ),
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: isEnabled
-                ? [
-                    BoxShadow(
-                      color: const Color(0xFFCD0000).withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Custom styled Go Live button (equivalent to original lines 36-116)
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isEnabled
-                      ? Colors.white.withOpacity(0.1)
-                      : Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(
-                    color: isEnabled ? Colors.white : Colors.white54,
-                    width: 1,
-                  ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Custom styled Go Live button (equivalent to original lines 36-116)
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: isEnabled
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(25),
-                    onTap: isEnabled ? onGoLivePressed : null,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Live icon
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: isEnabled
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.white.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.live_tv,
-                              color: isEnabled ? Colors.white : Colors.white54,
-                              size: 18,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          // Custom Go Live text with enabled state
-                          Text(
-                            isEnabled
-                                ? 'Start Broadcasting'
-                                : 'Enter description to continue',
-                            style: TextStyle(
-                              color: isEnabled ? Colors.white : Colors.white70,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          // Stream type indicator (only show when enabled)
-                          if (isEnabled)
+                    border: Border.all(
+                      color: isEnabled ? Colors.white : Colors.white54,
+                      width: 1,
+                    ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(25),
+                      onTap: isEnabled ? onGoLivePressed : null,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Live icon
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: controller.selectedGoLiveStream ==
-                                        IsmLiveStreamTypes.premium
-                                    ? Colors.amber.withOpacity(0.2)
+                                color: isEnabled
+                                    ? Colors.white.withOpacity(0.2)
                                     : Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10),
+                                shape: BoxShape.circle,
                               ),
-                              child: Text(
-                                controller.selectedGoLiveStream.value
-                                    .toUpperCase(),
-                                style: TextStyle(
+                              child: Icon(
+                                Icons.live_tv,
+                                color:
+                                    isEnabled ? Colors.white : Colors.white54,
+                                size: 18,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Custom Go Live text with enabled state
+                            Text(
+                              isEnabled
+                                  ? 'Start Broadcasting'
+                                  : 'Enter description to continue',
+                              style: TextStyle(
+                                color:
+                                    isEnabled ? Colors.white : Colors.white70,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Stream type indicator (only show when enabled)
+                            if (isEnabled)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
                                   color: controller.selectedGoLiveStream ==
                                           IsmLiveStreamTypes.premium
-                                      ? Colors.amber
-                                      : Colors.white70,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
+                                      ? Colors.amber.withOpacity(0.2)
+                                      : Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  controller.selectedGoLiveStream.value
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                    color: controller.selectedGoLiveStream ==
+                                            IsmLiveStreamTypes.premium
+                                        ? Colors.amber
+                                        : Colors.white70,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

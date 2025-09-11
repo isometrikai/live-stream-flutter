@@ -541,6 +541,8 @@ class IsmLiveDelegate {
 
   static IsmLiveEcomConfigure? ecomConfigure;
 
+  static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
+
   static bool enableFreeGift = false;
 
   static bool restrictProfileSheetOnProfileClick = false;
@@ -632,4 +634,68 @@ class IsmLiveEcomConfigure {
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;
+}
+
+/// Configuration class for GoLive screen customization.
+///
+/// This class provides a centralized way to configure GoLive screen components
+/// including header builder, button builder, text styles, icons, and future GoLive-related features.
+/// Similar to IsmLiveEcomConfigure, this allows for better organization and
+/// extensibility of GoLive screen configuration.
+class IsmLiveGoLiveScreenConfigure {
+  IsmLiveGoLiveScreenConfigure({
+    this.goLiveHeaderBuilder,
+    this.goLiveButtonBuilder,
+    this.radioTileTextStyle,
+    this.addCoverTextStyle,
+    this.addIcon,
+    this.tabSelectedTextStyle,
+    this.tabUnselectedTextStyle,
+  });
+
+  /// Custom header builder for the GoLive screen.
+  ///
+  /// If provided, this will replace the default header in the GoLive view.
+  /// The builder receives the context and stream controller for customization.
+  final GoLiveHeaderBuilder? goLiveHeaderBuilder;
+
+  /// Custom button builder for the GoLive screen.
+  ///
+  /// If provided, this will replace the default GoLive button/navigation bar.
+  /// The builder receives context, stream controller, onGoLivePressed callback,
+  /// and isEnabled state for proper customization.
+  final GoLiveButtonBuilder? goLiveButtonBuilder;
+
+  /// Custom text style for radio tile components (switches, toggles).
+  ///
+  /// If provided, this will be used for text elements in IsmLiveRadioListTile
+  /// and similar radio/toggle components in the GoLive screen.
+  /// If not provided, the default text style will be used.
+  final TextStyle? radioTileTextStyle;
+
+  /// Custom text style for "Add cover" and similar action text elements.
+  ///
+  /// If provided, this will be used for action text elements like "Add cover",
+  /// "Add description", and similar interactive text elements in the GoLive screen.
+  /// If not provided, the default text style will be used.
+  final TextStyle? addCoverTextStyle;
+
+  /// Custom icon for "Add" actions in GoLive screen.
+  ///
+  /// If provided, this will be used for add action icons like "Add Cover",
+  /// "Add products", and similar interactive elements in the GoLive screen.
+  /// If not provided, the default Icons.add_circle_outline_rounded will be used.
+  final IconData? addIcon;
+
+  /// Custom text style for selected bottom tab label in GoLive screen.
+  ///
+  /// If provided, this style will be applied to the selected tab text in the
+  /// bottom tab selector (e.g., "Go Live", "Live from device").
+  final TextStyle? tabSelectedTextStyle;
+
+  /// Custom text style for unselected bottom tab label in GoLive screen.
+  ///
+  /// If provided, this style will be applied to the unselected tab text in the
+  /// bottom tab selector.
+  final TextStyle? tabUnselectedTextStyle;
 }

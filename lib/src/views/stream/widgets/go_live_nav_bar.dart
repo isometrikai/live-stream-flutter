@@ -81,11 +81,16 @@ class _GoLiveTabSelector extends StatelessWidget {
                           children: [
                             Text(
                               e.label,
-                              style:
+                              style: (isSelected
+                                      ? IsmLiveDelegate.goLiveScreenConfigure
+                                          ?.tabSelectedTextStyle
+                                      : IsmLiveDelegate.goLiveScreenConfigure
+                                          ?.tabUnselectedTextStyle) ??
                                   context.dynamicTextTheme.labelLarge?.copyWith(
-                                color:
-                                    isSelected ? Colors.white : Colors.white54,
-                              ),
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.white54,
+                                  ),
                             ),
                             if (isSelected) ...[
                               IsmLiveDimens.boxHeight4,
