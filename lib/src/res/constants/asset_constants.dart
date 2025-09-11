@@ -139,4 +139,5 @@ class IsmLiveAssetConstants {
       '$_icons/user-request-placeholder.svg';
 
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
+  static const String close_rounded_fill = '$_icons/close_rounded_fill.svg';
 }

@@ -11,6 +11,46 @@ class IsmGoLiveView extends StatelessWidget {
 
   static const String updateId = 'ismlive-go-live';
 
+  /// Get the appropriate text style for "Add Cover" and similar action text based on configuration
+  static TextStyle _getAddCoverTextStyle(BuildContext context) {
+    // Check if custom add cover text style is provided in GoLive screen configuration
+    final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
+    if (goLiveScreenConfigure?.addCoverTextStyle != null) {
+      return goLiveScreenConfigure!.addCoverTextStyle!;
+    }
+
+    // Fallback to default style
+    return IsmLiveStyles.white12;
+  }
+
+  /// Get the appropriate text style based on configuration and theme
+  static TextStyle getTextStyle(BuildContext context) {
+    // Check if custom radio tile text style is provided in GoLive screen configuration
+    final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
+    if (goLiveScreenConfigure?.radioTileTextStyle != null) {
+      return goLiveScreenConfigure!.radioTileTextStyle!;
+    }
+
+    // Fallback to default style
+    return context.dynamicTextTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w400,
+          color: IsmLiveColors.white,
+        ) ??
+        const TextStyle();
+  }
+
+  /// Get the appropriate icon for "Add" actions based on configuration
+  static IconData _getAddIcon(BuildContext context) {
+    // Check if custom add icon is provided in GoLive screen configuration
+    final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
+    if (goLiveScreenConfigure?.addIcon != null) {
+      return goLiveScreenConfigure!.addIcon!;
+    }
+
+    // Fallback to default icon
+    return Icons.add_circle_outline_rounded;
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -118,28 +158,32 @@ class IsmGoLiveView extends StatelessWidget {
                         (IsmLiveDelegate.paidStream ?? true))
                       const _StreamTypes(),
                     IsmLiveDimens.boxHeight20,
-                    IntrinsicHeight(
-                      child: Row(
-                        children: [
-                          const _StreamImage(),
-                          IsmLiveDimens.boxWidth10,
-                          Expanded(
+                    Row(
+                      children: [
+                        const _StreamImage(),
+                        IsmLiveDimens.boxWidth10,
+                        Expanded(
+                          child: Container(
+                            height: IsmLiveDimens
+                                .hundred, // Fixed height to match _StreamImage
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.circular(IsmLiveDimens.twelve),
+                              border: Border.all(color: IsmLiveColors.white),
+                              color: IsmLiveColors.white.withOpacity(0.3),
+                            ),
                             child: IsmLiveInputField(
-                              hintStyle:
-                                  context.dynamicTextTheme.bodyMedium?.copyWith(
-                                color: IsmLiveColors.white,
-                              ),
+                              hintStyle: getTextStyle(context),
                               minLines: 4,
                               maxLines: 4,
                               alignLabelWithHint: true,
                               cursorColor: IsmLiveColors.white,
-                              style:
-                                  context.dynamicTextTheme.bodyMedium?.copyWith(
-                                color: IsmLiveColors.white,
-                              ),
-                              borderColor: IsmLiveColors.white,
+                              style: getTextStyle(context),
+                              borderColor: Colors
+                                  .transparent, // Remove border since Container has it
                               radius: IsmLiveDimens.twelve,
-                              fillColor: IsmLiveColors.white.withOpacity(0.3),
+                              fillColor: Colors
+                                  .transparent, // Remove fill since Container has it
                               controller: controller.descriptionController,
                               hintText: 'Enter description',
                               onchange: (_) {
@@ -147,8 +191,8 @@ class IsmGoLiveView extends StatelessWidget {
                               },
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     if (!(controller.streamDetails?.isScheduledStream ??
                         false)) ...[
@@ -293,6 +337,7 @@ class _StreamImage extends StatelessWidget {
         id: IsmGoLiveView.updateId,
         builder: (controller) => Container(
           width: IsmLiveDimens.eighty,
+          height: IsmLiveDimens.hundred, // Fixed height to match input field
           decoration: BoxDecoration(
             color: IsmLiveColors.white.withOpacity(0.3),
             border: Border.all(color: IsmLiveColors.white),
@@ -314,47 +359,50 @@ class _StreamImage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.add,
+                      Icon(
+                        IsmGoLiveView._getAddIcon(context),
                         color: IsmLiveColors.white,
                       ),
                       IsmLiveDimens.boxHeight10,
                       Text(
                         'Add Cover',
-                        style: IsmLiveStyles.white12,
+                        style: IsmGoLiveView._getAddCoverTextStyle(context),
                       ),
                     ],
                   ),
                 )
-              : Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    !(controller.streamDetails?.streamImage?.isEmpty ?? true)
-                        ? IsmLiveImage.network(
-                            controller.streamDetails?.streamImage ?? '',
-                            name: 'U')
-                        : IsmLiveImage.file(
-                            controller.pickedImage!.path,
-                            isProfileImage: false,
-                            radius: IsmLiveDimens.twelve,
-                          ),
-                    Positioned(
-                      right: -IsmLiveDimens.ten,
-                      top: -IsmLiveDimens.ten,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          size: IsmLiveDimens.twenty,
-                          color: IsmLiveColors.white,
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      !(controller.streamDetails?.streamImage?.isEmpty ?? true)
+                          ? IsmLiveImage.network(
+                              controller.streamDetails?.streamImage ?? '',
+                              name: 'U',
+                            )
+                          : IsmLiveImage.file(
+                              controller.pickedImage!.path,
+                              isProfileImage: false,
+                              radius: IsmLiveDimens.twelve,
+                            ),
+                      Positioned(
+                        right: IsmLiveDimens.two,
+                        top: IsmLiveDimens.two,
+                        child: InkWell(
+                          child: IsmLiveImage.svg(IsmLiveAssetConstants.close_rounded_fill,
+                          height: IsmLiveDimens.twenty,
+                          width: IsmLiveDimens.twenty,),
+                          onTap: () {
+                            controller.streamDetails
+                                ?.copyWith(streamImage: null);
+                            controller.pickedImage = null;
+                            controller.update([IsmGoLiveView.updateId]);
+                          },
                         ),
-                        onPressed: () {
-                          controller.streamDetails?.copyWith(streamImage: null);
-                          controller.pickedImage = null;
-                          controller.update([IsmGoLiveView.updateId]);
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       );
@@ -386,11 +434,11 @@ class _AddProduct extends StatelessWidget {
                   ),
                 ),
                 if (selectedProducts.isNotEmpty)
-                   TextButton(
+                  TextButton(
                     onPressed: IsmLiveRouteManagement.goToAddProduct,
                     style: TextButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                      ),
+                      backgroundColor: Colors.transparent,
+                    ),
                     child: Text(
                       '+Add',
                       style: context.dynamicTextTheme.bodyMedium?.copyWith(
@@ -443,17 +491,14 @@ class _AddProduct extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
-                              Icons.add_circle_outline_rounded,
+                            Icon(
+                              IsmGoLiveView._getAddIcon(context),
                               color: IsmLiveColors.white,
                             ),
                             Text(
                               'Add products',
-                              style: context.dynamicTextTheme.labelMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: IsmLiveColors.white,
-                              ),
+                              style:
+                                  IsmGoLiveView._getAddCoverTextStyle(context),
                             ),
                           ],
                         ),
@@ -476,20 +521,24 @@ class _Restream extends StatelessWidget {
             : Column(
                 children: [
                   const Divider(),
-                  ListTile(
-                    contentPadding: IsmLiveDimens.edgeInsets0,
+                  IsmLiveDimens.boxHeight5,
+                  InkWell(
                     onTap: IsmLiveRouteManagement.goToRestreamView,
-                    title: Text(
-                      'Restream',
-                      style: context.dynamicTextTheme.bodyLarge?.copyWith(
-                        color: IsmLiveColors.white,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.keyboard_arrow_right_rounded,
-                      color: context.liveTheme?.selectedTextColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Restream',
+                          style: IsmGoLiveView.getTextStyle(context),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right_rounded,
+                          color: context.liveTheme?.selectedTextColor,
+                        )
+                      ],
                     ),
                   ),
+                  IsmLiveDimens.boxHeight5,
                   const Divider(),
                 ],
               ),
@@ -504,18 +553,23 @@ class _ScheduleStream extends StatelessWidget {
         id: IsmGoLiveView.updateId,
         builder: (controller) => !controller.isSchedulingBroadcast
             ? const SizedBox.shrink()
-            : _InputField(
-                label: 'Date & Time*',
-                controller: TextEditingController(
-                  text: controller.scheduleLiveDate.formattedDate,
-                ),
-                readOnly: true,
-                onTap: () => controller.onChangeSchedule(true),
-                suffixIcon: const UnconstrainedBox(
-                  child: IsmLiveImage.svg(
-                    IsmLiveAssetConstants.calendar,
+            : Column(
+                children: [
+                  _InputField(
+                    label: 'Date & Time*',
+                    controller: TextEditingController(
+                      text: controller.scheduleLiveDate.formattedDate,
+                    ),
+                    readOnly: true,
+                    onTap: () => controller.onChangeSchedule(true),
+                    suffixIcon: const UnconstrainedBox(
+                      child: IsmLiveImage.svg(
+                        IsmLiveAssetConstants.calendar,
+                      ),
+                    ),
                   ),
-                ),
+                  IsmLiveDimens.boxHeight50,
+                ],
               ),
       );
 }

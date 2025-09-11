@@ -20,33 +20,39 @@ class IsmLiveRadioListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
         onTap: () => onChange(!value),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Transform.scale(
-              scale: 0.8,
-              child: CupertinoSwitch(
-                value: value,
-                onChanged: onChange,
-                activeTrackColor:
-                    context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
-                inactiveTrackColor: context.liveTheme?.unselectedTextColor ??
-                    IsmLiveColors.grey,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: IsmLiveDimens.eight),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // CupertinoSwitch with controlled dimensions - no default margins
+              SizedBox(
+                height: IsmLiveDimens.twentyFive,
+                width: IsmLiveDimens.thirtyTwo,
+                child: FittedBox(
+                  fit: BoxFit.fitHeight,
+                  child: CupertinoSwitch(
+                    value: value,
+                    onChanged: onChange,
+                    activeTrackColor: context.liveTheme?.primaryColor ??
+                        IsmLiveColors.primary,
+                    inactiveTrackColor:
+                        context.liveTheme?.unselectedTextColor ??
+                            IsmLiveColors.grey,
+                  ),
+                ),
               ),
-            ),
-            IsmLiveDimens.boxWidth2,
-            Text(
-              title,
-              style: context.dynamicTextTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w400,
-                color: isDark ? IsmLiveColors.white : IsmLiveColors.black,
+              const SizedBox(width: 8.0), // Small margin after switch
+              Text(
+                title,
+                style: IsmGoLiveView.getTextStyle(context),
               ),
-            ),
-            if (showIcon) ...[
-              const Spacer(),
-              const Icon(Icons.keyboard_arrow_right_rounded),
+              if (showIcon) ...[
+                const Spacer(),
+                const Icon(Icons.keyboard_arrow_right_rounded),
+              ],
             ],
-          ],
+          ),
         ),
       );
 }

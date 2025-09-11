@@ -192,6 +192,7 @@ class IsmLiveApp extends StatefulWidget {
     Future<void> Function(String streamId)? onLeftStreamAsViewer,
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
+    IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure,
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
     String? fontFamily,
@@ -201,6 +202,7 @@ class IsmLiveApp extends StatefulWidget {
     StreamAnalyticsCallback? streamAnalyticsCallback,
     StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
+    // Legacy GoLive parameters - kept for backward compatibility
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
     AnalyticsButtonCallback? analyticsButtonCallback,
@@ -244,6 +246,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
+    IsmLiveDelegate.goLiveScreenConfigure = goLiveScreenConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
@@ -255,8 +258,19 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamAnalyticsViewersCallback =
         streamAnalyticsViewersCallback;
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
-    IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
-    IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
+
+    // Handle GoLive screen configuration - prioritize new configuration class over legacy parameters
+    if (goLiveScreenConfigure != null) {
+      IsmLiveDelegate.goLiveHeaderBuilder =
+          goLiveScreenConfigure.goLiveHeaderBuilder;
+      IsmLiveDelegate.goLiveButtonBuilder =
+          goLiveScreenConfigure.goLiveButtonBuilder;
+    } else {
+      // Fallback to legacy parameters for backward compatibility
+      IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
+      IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
+    }
+
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
@@ -377,6 +391,9 @@ class IsmLiveApp extends StatefulWidget {
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
 
+  static IsmLiveGoLiveScreenConfigure? get goLiveScreenConfigure =>
+      IsmLiveDelegate.goLiveScreenConfigure;
+
   static String? get fontFamily => IsmLiveDelegate.fontFamily;
 
   static MessageProcessCallback? get messageProcessCallback =>
@@ -465,7 +482,23 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
   }
 
-  /// Update go live header builder dynamically at runtime
+  /// Update go live screen configuration dynamically at runtime
+  static void updateGoLiveScreenConfigure(
+      IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure) {
+    IsmLiveDelegate.goLiveScreenConfigure = goLiveScreenConfigure;
+    if (goLiveScreenConfigure != null) {
+      IsmLiveDelegate.goLiveHeaderBuilder =
+          goLiveScreenConfigure.goLiveHeaderBuilder;
+      IsmLiveDelegate.goLiveButtonBuilder =
+          goLiveScreenConfigure.goLiveButtonBuilder;
+    }
+    // Trigger rebuild of go live view to apply new configuration
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
+    }
+  }
+
+  /// Update go live header builder dynamically at runtime (legacy method)
   static void updateGoLiveHeaderBuilder(
       GoLiveHeaderBuilder? goLiveHeaderBuilder) {
     IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
@@ -475,7 +508,7 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
-  /// Update go live button builder dynamically at runtime
+  /// Update go live button builder dynamically at runtime (legacy method)
   static void updateGoLiveButtonBuilder(
       GoLiveButtonBuilder? goLiveButtonBuilder) {
     IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
