@@ -55,8 +55,12 @@ class IsmLiveStreamHeader extends StatelessWidget {
               ),
               IsmLiveDimens.boxWidth10,
               IsmLiveModeratorCount(onTap: onTapModerators),
-              IsmLiveDimens.boxWidth10,
-              IsmLiveViewerCount(onTap: onTapViewers),
+              if (Get.find<IsmLiveStreamController>()
+                  .streamViewersList
+                  .isNotEmpty) ...[
+                IsmLiveDimens.boxWidth10,
+                IsmLiveViewerCount(onTap: onTapViewers),
+              ],
             ],
           ),
           IsmLiveDimens.boxHeight10,
@@ -85,10 +89,9 @@ class IsmLiveStreamHeader extends StatelessWidget {
           else
             Container(
               margin: IsmLiveDimens.edgeInsets10_0,
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Text(
-                description,
-                style:
+              child: _ExpandableDescription(
+                description: description,
+                textStyle:
                     context.textTheme.bodySmall?.copyWith(color: Colors.white),
               ),
             ),
@@ -338,5 +341,63 @@ class IsmLiveLabel extends StatelessWidget {
             ),
           ),
         ),
+      );
+}
+
+class _ExpandableDescription extends StatefulWidget {
+  const _ExpandableDescription({
+    required this.description,
+    this.textStyle,
+  });
+
+  final String description;
+  final TextStyle? textStyle;
+
+  @override
+  State<_ExpandableDescription> createState() => _ExpandableDescriptionState();
+}
+
+class _ExpandableDescriptionState extends State<_ExpandableDescription> {
+  bool _isExpanded = false;
+  late bool _showViewMore;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simple heuristic: show "View more" if text is longer than 80 characters
+    // This is a reasonable estimate for 2 lines of text
+    _showViewMore = widget.description.length > 80;
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.description,
+            style: widget.textStyle,
+            maxLines: _isExpanded ? null : 2,
+            overflow:
+                _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+          ),
+          if (_showViewMore) ...[
+            IsmLiveDimens.boxHeight4,
+            IsmLiveTapHandler(
+              onTap: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              child: Text(
+                _isExpanded ? 'View less' : 'View more',
+                style: widget.textStyle?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ],
       );
 }

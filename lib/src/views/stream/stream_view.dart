@@ -128,11 +128,12 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isSchedule;
 
   /// Builds two arrow buttons for hosts that match input field height
-  Widget _buildHostArrowButtons(BuildContext context) =>
+  Widget _buildHostArrowButtons(BuildContext context, {double? height}) =>
       GetBuilder<IsmLiveStreamController>(
         builder: (controller) => SizedBox(
-          height:
-              52, // Match input field height (16px top + 16px bottom padding + 20px text height)
+          height: height ??
+              IsmLiveDelegate.ecomConfigure?.hostArrowButtonsHeight ??
+              52, // Default height: Match input field height (16px top + 16px bottom padding + 20px text height)
           child: Row(
             children: [
               Expanded(
@@ -292,12 +293,13 @@ class _IsmLiveStreamView extends StatelessWidget {
                           color:
                               Colors.black), // Bottom-most layer for status bar
                       IsmLiveStreamBanner(streamImage),
-                      const _TopDarkGradient(),
                       IsmLivePublisherGrid(
                         streamImage: streamImage ?? '',
                         isInteractive: isInteractive,
                       ),
-                      const _BottomDarkGradient(),
+                      // Gradients positioned right after publisher grid to only overlay video content
+                      _TopDarkGradient(),
+                      _BottomDarkGradient(),
                       Align(
                         alignment: IsmLiveApp.headerPosition,
                         child: Obx(
@@ -671,7 +673,7 @@ class _StreamHeader extends StatelessWidget {
 }
 
 class _TopDarkGradient extends StatelessWidget {
-  const _TopDarkGradient();
+  _TopDarkGradient();
 
   @override
   Widget build(BuildContext context) => Positioned(
@@ -679,15 +681,17 @@ class _TopDarkGradient extends StatelessWidget {
         left: 0,
         right: 0,
         height: MediaQuery.of(context).size.height * 0.3,
-        child: const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black26,
-                Colors.transparent,
-              ],
+        child: const IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black54,
+                  Colors.transparent,
+                ],
+              ),
             ),
           ),
         ),
@@ -695,7 +699,7 @@ class _TopDarkGradient extends StatelessWidget {
 }
 
 class _BottomDarkGradient extends StatelessWidget {
-  const _BottomDarkGradient();
+  _BottomDarkGradient();
 
   @override
   Widget build(BuildContext context) => Positioned(
@@ -703,15 +707,17 @@ class _BottomDarkGradient extends StatelessWidget {
         left: 0,
         right: 0,
         height: MediaQuery.of(context).size.height * 0.3,
-        child: const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black26,
-              ],
+        child: const IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black54,
+                ],
+              ),
             ),
           ),
         ),

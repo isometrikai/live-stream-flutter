@@ -205,6 +205,14 @@ class IsmLiveInputField extends StatelessWidget {
             counterText: '',
             suffixIcon: suffixIcon,
             prefixIcon: prefixIcon,
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 38,
+              minHeight: 38,
+            ),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 38,
+              minHeight: 38,
+            ),
           ),
           validator: validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,

@@ -171,7 +171,7 @@ class _ChatMessageItem extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Flexible(

@@ -487,6 +487,8 @@ class IsmLiveDelegate {
 
   static IsmLiveInputBuilder? inputBuilder;
 
+  static IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder;
+
   static Widget? endButton;
 
   static bool showHeader = true;
@@ -620,6 +622,7 @@ class IsmLiveEcomConfigure {
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
     this.buyNowButtonBuilder,
+    this.hostArrowButtonsHeight,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
@@ -631,6 +634,7 @@ class IsmLiveEcomConfigure {
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
   final BuyNowButtonBuilder? buyNowButtonBuilder;
+  final double? hostArrowButtonsHeight;
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;
@@ -651,6 +655,7 @@ class IsmLiveGoLiveScreenConfigure {
     this.addIcon,
     this.tabSelectedTextStyle,
     this.tabUnselectedTextStyle,
+    this.titleTextStyle,
   });
 
   /// Custom header builder for the GoLive screen.
@@ -698,4 +703,11 @@ class IsmLiveGoLiveScreenConfigure {
   /// If provided, this style will be applied to the unselected tab text in the
   /// bottom tab selector.
   final TextStyle? tabUnselectedTextStyle;
+
+  /// Custom text style for title elements in GoLive screen.
+  ///
+  /// If provided, this style will be applied to title text elements in the
+  /// GoLive screen such as main titles, section headers, and other prominent text.
+  /// If not provided, the default text style will be used.
+  final TextStyle? titleTextStyle;
 }

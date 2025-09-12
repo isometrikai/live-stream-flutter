@@ -70,7 +70,7 @@ class HomeController extends GetxController {
       restrictProfileSheetOnProfileClick: true,
       goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
         goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-        // goLiveButtonBuilder: _buildCustomGoLiveButton,
+        goLiveButtonBuilder: _buildCustomGoLiveButton,
       ),
 
       // moderatorsListCallback: (context, streamId, isHost, isModerator,
@@ -185,7 +185,7 @@ class HomeController extends GetxController {
         //   label: 'Buy now',
         //   onTap: onTap,
         // ),
-
+        hostArrowButtonsHeight: 56,
         onGoLiveDispose: () {
           // Example: Cleanup operations when GoLive view is disposed
           IsmLiveLog.info('GoLive view disposed - performing cleanup');
@@ -397,9 +397,9 @@ class HomeController extends GetxController {
                             const SizedBox(width: 12),
                             // Custom Go Live text with enabled state
                             Text(
-                              isEnabled
-                                  ? 'Start Broadcasting'
-                                  : 'Enter description to continue',
+                              controller.isSchedulingBroadcast
+                                  ? 'Schedule Stream'
+                                  : 'Go Live',
                               style: TextStyle(
                                 color:
                                     isEnabled ? Colors.white : Colors.white70,

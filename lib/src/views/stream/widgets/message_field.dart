@@ -35,7 +35,10 @@ class IsmLiveMessageField extends StatelessWidget {
             if (controller.parentMessage != null) ...[
               Container(
                 padding: IsmLiveDimens.edgeInsets4,
-                margin: IsmLiveDimens.edgeInsets8_0,
+                margin: EdgeInsets.only(
+                    left: IsmLiveDimens.eight,
+                    right: IsmLiveDimens.eight,
+                    top: IsmLiveDimens.eight),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
                   color: Colors.white70,
@@ -58,15 +61,15 @@ class IsmLiveMessageField extends StatelessWidget {
                       ),
                     ),
                     IsmLiveDimens.boxWidth4,
-                    CustomIconButton(
-                      color: Colors.transparent,
+                    InkWell(
                       onTap: () {
                         controller.parentMessage = null;
                         controller.update([updateId]);
                       },
-                      icon: Icon(
-                        Icons.close_rounded,
-                        size: IsmLiveDimens.twenty,
+                      child: IsmLiveImage.svg(
+                        IsmLiveAssetConstants.close_rounded_fill,
+                        height: IsmLiveDimens.twenty,
+                        width: IsmLiveDimens.twenty,
                       ),
                     ),
                   ],
@@ -85,8 +88,9 @@ class IsmLiveMessageField extends StatelessWidget {
                             ?.copyWith(color: Colors.white),
                     controller: controller.messageFieldController,
                     hintText: 'Say Something…',
-                    contentPadding:
-                        customContentPadding ?? IsmLiveDimens.edgeInsetsR14,
+                    contentPadding: customContentPadding ??
+                        const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 12.0),
                     fillColor:
                         customFillColor ?? IsmLiveColors.white.withOpacity(0.3),
                     hintStyle: customHintStyle ??
@@ -108,36 +112,39 @@ class IsmLiveMessageField extends StatelessWidget {
                             controller.messageFieldController.text
                                 .trim()
                                 .isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(
-                              Icons.send,
-                              color: Colors.white,
+                        ? Container(
+                            child: InkWell(
+                              onTap: controller
+                                      .messageFieldController.isNotEmpty
+                                  ? () => controller.sendTextMessage(
+                                        streamId: streamId,
+                                        body: controller
+                                            .messageFieldController.text
+                                            .trim(),
+                                        parentMessage: controller.parentMessage,
+                                      )
+                                  : null,
+                              child: const Icon(
+                                Icons.send,
+                                color: Colors.white,
+                              ),
                             ),
-                            color: Colors.white,
-                            onPressed: controller
-                                    .messageFieldController.isNotEmpty
-                                ? () => controller.sendTextMessage(
-                                      streamId: streamId,
-                                      body: controller
-                                          .messageFieldController.text
-                                          .trim(),
-                                      parentMessage: controller.parentMessage,
-                                    )
-                                : null,
                           )
                         : null,
-                    prefixIcon: IconButton(
-                        icon: const Icon(
-                          Icons.mood,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          controller.toggleEmojiBoard(context);
-                        }),
+                    prefixIcon: Container(
+                      child: InkWell(
+                          onTap: () {
+                            controller.toggleEmojiBoard(context);
+                          },
+                          child: const Icon(
+                            Icons.mood,
+                            color: Colors.white,
+                          )),
+                    ),
                   ),
                 ),
-                IsmLiveDimens.boxWidth15,
                 if (IsmLiveDelegate.productStream != true) ...[
+                  IsmLiveDimens.boxWidth15,
                   CustomIconButton(
                     dimension: IsmLiveDimens.forty,
                     icon: const Icon(

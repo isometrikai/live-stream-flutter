@@ -161,6 +161,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveHeaderBuilder? streamHeader,
     IsmLiveHeaderBuilder? bottomBuilder,
     IsmLiveInputBuilder? inputBuilder,
+    IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder,
     Widget? endButton,
     Widget? endStreamScreen,
     bool showHeader = true,
@@ -216,6 +217,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.bottomBuilder = bottomBuilder;
     IsmLiveDelegate.showHeader = showHeader;
     IsmLiveDelegate.inputBuilder = inputBuilder;
+    IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
@@ -297,6 +299,7 @@ class IsmLiveApp extends StatefulWidget {
     bool isInteractive = false,
     VoidCallback? onStreamEnd,
     required BuildContext context,
+    bool isScrolling = false,
   }) async {
     assert(
       _initialized,
@@ -308,14 +311,12 @@ class IsmLiveApp extends StatefulWidget {
     }
 
     IsmLiveUtility.updateLater(() async {
-      await Get.find<IsmLiveStreamController>().joinStream(
-        stream,
-        isHost,
-        joinByScrolling: false,
-        isInteractive: isInteractive,
-        onStreamEnd: onStreamEnd,
-        context: context,
-      );
+      await Get.find<IsmLiveStreamController>().joinStream(stream, isHost,
+          joinByScrolling: false,
+          isInteractive: isInteractive,
+          onStreamEnd: onStreamEnd,
+          context: context,
+          isScrolling: isScrolling);
     });
   }
 
@@ -379,6 +380,9 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.bottomBuilder;
 
   static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
+
+  static IsmLiveCustomBottomSheetBuilder? get customBottomSheetBuilder =>
+      IsmLiveDelegate.customBottomSheetBuilder;
 
   static Widget? get endButton => IsmLiveDelegate.endButton;
 
@@ -541,6 +545,69 @@ class IsmLiveApp extends StatefulWidget {
       BorderRadius? bottomSheetBorderRadius) {
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
   }
+
+  /// Update custom bottom sheet builder dynamically at runtime
+  static void updateCustomBottomSheetBuilder(
+      IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder) {
+    IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
+  }
+
+  /// Example usage of custom bottom sheet builder:
+  ///
+  /// ```dart
+  /// IsmLiveApp.configureInterface(
+  ///   customBottomSheetBuilder: (context, title, leftLabel, rightLabel, onLeft, onRight) {
+  ///     return Container(
+  ///       padding: EdgeInsets.all(20),
+  ///       decoration: BoxDecoration(
+  ///         color: Colors.white,
+  ///         borderRadius: BorderRadius.circular(20),
+  ///       ),
+  ///       child: Column(
+  ///         mainAxisSize: MainAxisSize.min,
+  ///         children: [
+  ///           Text(
+  ///             title,
+  ///             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  ///           ),
+  ///           SizedBox(height: 20),
+  ///           Row(
+  ///             children: [
+  ///               Expanded(
+  ///                 child: ElevatedButton(
+  ///                   onPressed: onLeft,
+  ///                   child: Text(leftLabel),
+  ///                 ),
+  ///               ),
+  ///               SizedBox(width: 10),
+  ///               Expanded(
+  ///                 child: ElevatedButton(
+  ///                   onPressed: onRight,
+  ///                   child: Text(rightLabel),
+  ///                 ),
+  ///               ),
+  ///             ],
+  ///           ),
+  ///         ],
+  ///       ),
+  ///     );
+  ///   },
+  /// );
+  /// ```
+  ///
+  /// Or use the update method at runtime:
+  ///
+  /// ```dart
+  /// IsmLiveApp.updateCustomBottomSheetBuilder((context, title, leftLabel, rightLabel, onLeft, onRight) {
+  ///   return YourCustomBottomSheetWidget(
+  ///     title: title,
+  ///     leftButton: leftLabel,
+  ///     rightButton: rightLabel,
+  ///     onLeftPressed: onLeft,
+  ///     onRightPressed: onRight,
+  ///   );
+  /// });
+  /// ```
 
   static Future<void> dispose({
     bool? isStreaming,

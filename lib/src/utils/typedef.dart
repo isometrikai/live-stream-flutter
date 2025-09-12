@@ -28,3 +28,36 @@ typedef IsmLiveHeaderBuilder = Widget Function(
 );
 
 typedef IsmLiveInputBuilder = Widget Function(BuildContext, Widget);
+
+/// Builder for custom bottom sheet UI.
+///
+/// This builder allows host applications to provide a custom bottom sheet widget
+/// that will be used instead of the default IsmLiveCustomButtomSheet.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [title] - The title text to display in the bottom sheet.
+/// [leftLabel] - The label for the left button.
+/// [rightLabel] - The label for the right button.
+/// [onLeft] - The callback function for the left button action.
+/// [onRight] - The callback function for the right button action.
+///
+/// Return a Widget that will be displayed as the custom bottom sheet.
+/// The widget should handle its own layout and styling but must provide
+/// the required functionality for the left and right button actions.
+///
+/// This builder is called when showing confirmation dialogs, action sheets,
+/// and similar bottom sheet UI components throughout the SDK.
+/// Useful for implementing:
+/// - Custom bottom sheet design and branding
+/// - Integration with host app's design system
+/// - Custom button layouts and styling
+/// - Custom animations and transitions
+/// - Analytics tracking for bottom sheet interactions
+typedef IsmLiveCustomBottomSheetBuilder = Widget Function(
+  BuildContext context,
+  String title,
+  String leftLabel,
+  String rightLabel,
+  VoidCallback? onLeft,
+  VoidCallback? onRight,
+);

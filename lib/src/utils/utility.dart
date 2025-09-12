@@ -92,6 +92,58 @@ class IsmLiveUtility {
         result.contains(ConnectivityResult.ethernet);
   }
 
+  /// Opens a custom bottom sheet with the provided parameters.
+  /// If a custom bottom sheet builder is configured, it will be used;
+  /// otherwise, the default IsmLiveCustomButtomSheet will be used.
+  static Future<T?> openCustomBottomSheet<T>({
+    required String title,
+    required String leftLabel,
+    required String rightLabel,
+    VoidCallback? onLeft,
+    VoidCallback? onRight,
+    bool isDismissible = true,
+    bool? ignoreSafeArea,
+    bool enableDrag = true,
+    bool isScrollController = false,
+    Color? backgroundColor,
+  }) async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
+
+    // Check if custom bottom sheet builder is provided
+    final customBuilder = IsmLiveDelegate.customBottomSheetBuilder;
+    Widget bottomSheetWidget;
+
+    if (customBuilder != null) {
+      // Use custom builder
+      bottomSheetWidget = customBuilder(
+        context,
+        title,
+        leftLabel,
+        rightLabel,
+        onLeft,
+        onRight,
+      );
+    } else {
+      // Use default bottom sheet
+      bottomSheetWidget = IsmLiveCustomButtomSheet(
+        title: title,
+        leftLabel: leftLabel,
+        rightLabel: rightLabel,
+        onLeft: onLeft,
+        onRight: onRight,
+      );
+    }
+
+    return await openBottomSheet<T>(
+      bottomSheetWidget,
+      isDismissible: isDismissible,
+      ignoreSafeArea: ignoreSafeArea,
+      enableDrag: enableDrag,
+      isScrollController: isScrollController,
+      backgroundColor: backgroundColor,
+    );
+  }
+
   static Future<T?> openBottomSheet<T>(
     Widget child, {
     bool isDismissible = true,
