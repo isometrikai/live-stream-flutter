@@ -284,6 +284,11 @@ class IsmLiveStreamController extends GetxController
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
 
+  // Store the actual stream start time for accurate timer calculation
+  DateTime? _streamStartTime;
+  DateTime? get streamStartTime => _streamStartTime;
+  set streamStartTime(DateTime? value) => _streamStartTime = value;
+
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;

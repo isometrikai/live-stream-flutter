@@ -142,18 +142,8 @@ mixin StreamJoinMixin {
       // Log the complete RTC response for debugging
       print('  startTime: ${data.startTime}');
 
-      // Use the actual start time from the RTC token response if available
-      if (data.startTime != null) {
-        var now = DateTime.now();
-        _controller.streamDuration = now.difference(data.startTime!);
-        print(
-            'StreamTimer JOIN using RTC startTime: ${data.startTime} (UTC: ${data.startTime!.toUtc()}) duration: ${_controller.streamDuration}');
-        print('StreamTimer JOIN current time: $now (UTC: ${now.toUtc()})');
-        print(
-            'StreamTimer JOIN user: ${_controller.user?.userId} streamId: ${stream.streamId}');
-      } else {
-        _controller.streamDuration = Duration.zero;
-      }
+      // Store the start time for later calculation instead of calculating duration immediately
+      _controller._streamStartTime = data.startTime;
     }
 
     _controller.isRtmp = stream.rtmpIngest ?? false;
@@ -163,22 +153,15 @@ mixin StreamJoinMixin {
       _controller.premiumStreamCoinsController.text = stream.amount.toString();
     }
 
-    // If duration wasn't set from RTC response, fallback to using stream's startDateTime
-    if (_controller.streamDuration == Duration.zero) {
-      if (stream.startDateTime != null) {
-        var now = DateTime.now();
-        _controller.streamDuration = now.difference(stream.startDateTime!);
-        print(
-            'StreamTimer JOIN fallback using startDateTime: ${stream.startDateTime} (UTC: ${stream.startDateTime!.toUtc()}) duration: ${_controller.streamDuration}');
-        print(
-            'StreamTimer JOIN fallback current time: $now (UTC: ${now.toUtc()})');
-        print(
-            'StreamTimer JOIN fallback user: ${_controller.user?.userId} streamId: ${stream.streamId}');
-      } else {
-        _controller.streamDuration = Duration.zero;
-        print('StreamTimer JOIN no start time available, initializing to zero');
-      }
+    // Store fallback start time for later calculation
+    if (_controller._streamStartTime == null && stream.startDateTime != null) {
+      _controller._streamStartTime = stream.startDateTime;
+      print(
+          'StreamTimer JOIN stored fallback startDateTime: ${stream.startDateTime} (UTC: ${stream.startDateTime!.toUtc()})');
     }
+
+    // Initialize stream duration to zero - will be calculated just before timer starts
+    _controller.streamDuration = Duration.zero;
 
     // Connect to the stream
     await connectStream(
@@ -262,19 +245,17 @@ mixin StreamJoinMixin {
     print('  startTime: ${stream.startTime}');
     print('  startTime UTC: ${stream.startTime?.toUtc()}');
 
-    // Use the start time from the created stream for accurate timing
+    // Store the start time for later calculation instead of calculating duration immediately
+    _controller._streamStartTime = stream.startTime;
     if (stream.startTime != null) {
-      var now = DateTime.now();
-      _controller.streamDuration = now.difference(stream.startTime!);
       print(
-          'StreamTimer CREATE using server startTime: ${stream.startTime} (UTC: ${stream.startTime!.toUtc()}) duration: ${_controller.streamDuration}');
-      print('StreamTimer CREATE current time: $now (UTC: ${now.toUtc()})');
-      print(
-          'StreamTimer CREATE user: ${_controller.user?.userId} streamId: ${stream.streamId}');
+          'StreamTimer CREATE stored server startTime: ${stream.startTime} (UTC: ${stream.startTime!.toUtc()})');
     } else {
-      _controller.streamDuration = Duration.zero;
-      print('StreamTimer CREATE no start time available, initializing to zero');
+      print('StreamTimer CREATE no start time available');
     }
+
+    // Initialize stream duration to zero - will be calculated just before timer starts
+    _controller.streamDuration = Duration.zero;
 
     _controller.rtmlUrlDevice.text = stream.ingestEndpoint ?? '';
     _controller.streamKeyDevice.text = stream.streamKey ?? '';
@@ -505,11 +486,9 @@ mixin StreamJoinMixin {
 
       // Initialize timer if not already set (for direct connectStream calls)
       if (startTime != null) {
-        var now = DateTime.now();
-        _controller.streamDuration = now.difference(startTime);
+        _controller._streamStartTime = startTime;
         print(
-            'StreamTimer CONNECT direct call with startTime: $startTime (UTC: ${startTime.toUtc()}) duration: ${_controller.streamDuration}');
-        print('StreamTimer CONNECT current time: $now (UTC: ${now.toUtc()})');
+            'StreamTimer CONNECT stored direct startTime: $startTime (UTC: ${startTime.toUtc()})');
       }
 
       startStreamTimer();
@@ -659,10 +638,30 @@ mixin StreamJoinMixin {
     if (_controller.streamTimer != null) {
       return;
     }
+
+    // Calculate the accurate duration just before starting the timer
+    if (_controller._streamStartTime != null) {
+      var now = DateTime.now();
+      _controller.streamDuration =
+          now.difference(_controller._streamStartTime!);
+      print(
+          'StreamTimer CALCULATED duration at timer start: ${_controller.streamDuration}');
+      print(
+          'StreamTimer CALCULATED using startTime: ${_controller._streamStartTime} (UTC: ${_controller._streamStartTime!.toUtc()})');
+      print('StreamTimer CALCULATED current time: $now (UTC: ${now.toUtc()})');
+      print(
+          'StreamTimer CALCULATED user: ${_controller.user?.userId} streamId: ${_controller.streamId}');
+    } else {
+      _controller.streamDuration = Duration.zero;
+      print(
+          'StreamTimer CALCULATED no start time available, initializing to zero');
+    }
+
     print(
         'StreamTimer startStreamTimer duration: ${_controller.streamDuration}');
     print(
         'StreamTimer startStreamTimer user: ${_controller.user?.userId} streamId: ${_controller.streamId}');
+
     _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
