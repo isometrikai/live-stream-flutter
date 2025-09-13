@@ -11,32 +11,30 @@ mixin StreamSheetMixin {
     FocusScope.of(context).unfocus();
 
     if (isHost || (_controller.isCopublisher)) {
-      await IsmLiveUtility.openBottomSheet(
-        IsmLiveCustomButtomSheet(
-          title: isHost
-              ? IsmLiveStrings.areYouSureEndStream
-              : IsmLiveStrings.areYouSureLeaveStream,
-          leftLabel: isHost ? 'Cancel' : 'Stop stream',
-          rightLabel: isHost ? 'End Stream' : 'Leave stream',
-          onLeft: isHost
-              ? IsmLiveRoute.pop
-              : () async {
-                  IsmLiveRoute.pop();
-                  await _controller.disconnectStream(
-                    isHost: isHost,
-                    streamId: streamId,
-                    endStream: false,
-                  );
-                },
-          onRight: () async {
-            IsmLiveRoute.pop();
+      await IsmLiveUtility.openCustomBottomSheet(
+        title: isHost
+            ? IsmLiveStrings.areYouSureEndStream
+            : IsmLiveStrings.areYouSureLeaveStream,
+        leftLabel: isHost ? 'Cancel' : 'Stop stream',
+        rightLabel: isHost ? 'End Stream' : 'Leave stream',
+        onLeft: isHost
+            ? IsmLiveRoute.pop
+            : () async {
+                IsmLiveRoute.pop();
+                await _controller.disconnectStream(
+                  isHost: isHost,
+                  streamId: streamId,
+                  endStream: false,
+                );
+              },
+        onRight: () async {
+          IsmLiveRoute.pop();
 
-            await _controller.disconnectStream(
-              isHost: isHost,
-              streamId: streamId,
-            );
-          },
-        ),
+          await _controller.disconnectStream(
+            isHost: isHost,
+            streamId: streamId,
+          );
+        },
         isDismissible: false,
       );
     } else {
@@ -155,25 +153,23 @@ mixin StreamSheetMixin {
   }
 
   void schgeduleStreamSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        leftLabel: 'Edit',
-        rightLabel: 'Delete',
-        title: 'Schedule Stream',
-        onLeft: () {
-          IsmLiveRoute.pop();
-          IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
-        },
-        onRight: () async {
-          IsmLiveRoute.pop();
+    await IsmLiveUtility.openCustomBottomSheet(
+      title: 'Schedule Stream',
+      leftLabel: 'Edit',
+      rightLabel: 'Delete',
+      onLeft: () {
+        IsmLiveRoute.pop();
+        IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
+      },
+      onRight: () async {
+        IsmLiveRoute.pop();
 
-          await _controller
-              .deleteScheduledStream(_controller.streamDetails?.eventId ?? '');
-          IsmLiveRoute.pop();
-          _controller.streamDispose();
-          unawaited(_controller.getStreams());
-        },
-      ),
+        await _controller
+            .deleteScheduledStream(_controller.streamDetails?.eventId ?? '');
+        IsmLiveRoute.pop();
+        _controller.streamDispose();
+        unawaited(_controller.getStreams());
+      },
       isScrollController: true,
     );
   }
@@ -206,15 +202,13 @@ mixin StreamSheetMixin {
   }
 
   void paidStreamSheet({required num coins, required Function() onTap}) async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        leftLabel: 'Cancel',
-        rightLabel: 'Pay&Contineue',
-        title:
-            'This Stream is Primeum if you want to join you need to pay $coins coins',
-        onLeft: IsmLiveRoute.pop,
-        onRight: onTap,
-      ),
+    await IsmLiveUtility.openCustomBottomSheet(
+      title:
+          'This Stream is Primeum if you want to join you need to pay $coins coins',
+      leftLabel: 'Cancel',
+      rightLabel: 'Pay&Contineue',
+      onLeft: IsmLiveRoute.pop,
+      onRight: onTap,
       isScrollController: true,
     );
   }

@@ -249,6 +249,25 @@ class _IsmLiveStreamView extends StatelessWidget {
     );
   }
 
+  /// Calculates the dynamic bottom position for pinnedProductBuilder
+  /// to avoid overlay when reply feature is active
+  double _calculateProductBuilderBottomPosition(
+      IsmLiveStreamController controller) {
+    // Base bottom position when reply is not active
+    var baseBottomPosition = IsmLiveDimens.eighty;
+
+    // If reply feature is active (parentMessage is not null), adjust position
+    if (controller.parentMessage != null) {
+      // Add extra height to account for the reply container
+      // Reply container height: padding (8px) + margin (8px) + content height (~32px) + spacing (2px)
+      // Total additional height: approximately 50px
+      const replyContainerHeight = 50.0;
+      baseBottomPosition += replyContainerHeight;
+    }
+
+    return baseBottomPosition;
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
@@ -353,12 +372,12 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                   ),
                                             ),
                                             IsmLiveControlsWidget(
-                                              isHost: isHost,
-                                              isCopublishing:
-                                                  controller.isCopublisher,
-                                              streamId:
-                                                  controller.streamId ?? '',
-                                            ),
+                                                isHost: isHost,
+                                                isCopublishing:
+                                                    controller.isCopublisher,
+                                                streamId:
+                                                    controller.streamId ?? '',
+                                                isKeyboardOpen: isKeyboardOpen),
                                           ],
                                         ),
                                       ),
@@ -443,21 +462,26 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 ),
                               )
                             : isSchedule
-                                ? const ScheduleStreamView()
+                                ? ScheduleStreamView(
+                                    isKeyboardOpen: isKeyboardOpen)
                                 : const SizedBox.shrink(),
                       ),
                       if (IsmLiveDelegate.productStream == true &&
                           IsmLiveDelegate.ecomConfigure?.pinnedProductBuilder !=
                               null)
-                        Positioned(
-                          right: IsmLiveDimens.sixteen,
-                          bottom: IsmLiveDimens.eighty,
-                          child: IsmLiveDelegate
-                                  .ecomConfigure!.pinnedProductBuilder!(
-                                context,
-                                controller,
-                              ) ??
-                              const SizedBox.shrink(),
+                        GetBuilder<IsmLiveStreamController>(
+                          id: IsmLiveMessageField.updateId,
+                          builder: (controller) => Positioned(
+                            right: IsmLiveDimens.sixteen,
+                            bottom: _calculateProductBuilderBottomPosition(
+                                controller),
+                            child: IsmLiveDelegate
+                                    .ecomConfigure!.pinnedProductBuilder!(
+                                  context,
+                                  controller,
+                                ) ??
+                                const SizedBox.shrink(),
+                          ),
                         ),
                       Align(
                         alignment: IsmLiveApp.endStreamPosition,
@@ -725,7 +749,9 @@ class _BottomDarkGradient extends StatelessWidget {
 }
 
 class ScheduleStreamView extends StatelessWidget {
-  const ScheduleStreamView({super.key});
+  const ScheduleStreamView({super.key, required this.isKeyboardOpen});
+
+  final bool isKeyboardOpen;
 
   /// Wraps IsmLiveChatView with conditional width constraints
   /// When productStream is true, limits width to half screen width
@@ -802,6 +828,7 @@ class ScheduleStreamView extends StatelessWidget {
                             isCopublishing: false,
                             isSchedule: true,
                             streamId: controller.streamId ?? '',
+                            isKeyboardOpen: isKeyboardOpen,
                           ),
                           IsmLiveDimens.boxHeight32,
                           SizedBox(

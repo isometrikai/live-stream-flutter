@@ -392,8 +392,7 @@ class _ExpandableDescriptionState extends State<_ExpandableDescription> {
                 _isExpanded ? 'View less' : 'View more',
                 style: widget.textStyle?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),

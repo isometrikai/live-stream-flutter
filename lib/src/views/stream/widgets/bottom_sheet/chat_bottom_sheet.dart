@@ -9,44 +9,65 @@ class ChatBottomSheet extends StatelessWidget {
   final controller = Get.find<IsmLiveStreamController>();
 
   @override
-  Widget build(BuildContext context) => Container(
-        margin: IsmLiveDimens.edgeInsets16,
-        child: Row(
-          // mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: IsmLiveButton(
-                label: 'Reply',
+  Widget build(BuildContext context) => Padding(
+        padding: IsmLiveDimens.edgeInsets16_0_16_20,
+        child: IsmLiveScrollSheet(
+          separatedWidgat: IsmLiveDimens.boxHeight24,
+          title: 'Message Options',
+          showHeader: false,
+          showCancelIcon: true,
+          itemCount: (controller.isModerator ||
+                      controller.isHost ||
+                      controller.isMember) &&
+                  message.isReply == false
+              ? 2
+              : 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              // Reply item
+              return IsmLiveTapHandler(
                 onTap: () {
                   controller.parentMessage = message;
-
                   controller.update([IsmLiveMessageField.updateId]);
                   IsmLiveRoute.pop();
                 },
-              ),
-            ),
-            if ((controller.isModerator ||
-                    controller.isHost ||
-                    controller.isMember) &&
-                message.isReply == false) ...[
-              IsmLiveDimens.boxWidth8,
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.4,
-                child: IsmLiveButton(
-                  label: 'Delete',
-                  onTap: () {
-                    controller.deleteMessage(
-                      streamId: controller.streamId ?? '',
-                      messageId: message.messageId,
-                    );
-                    IsmLiveRoute.pop();
-                  },
+                child: Row(
+                  children: [
+                    IsmLiveImage.svg(
+                      IsmLiveAssetConstants.message,
+                      height: IsmLiveDimens.twentyTwo,
+                      width: IsmLiveDimens.twentyTwo,
+                    ),
+                    IsmLiveDimens.boxWidth10,
+                    const Text('Reply'),
+                  ],
                 ),
-              ),
-            ],
-          ],
+              );
+            } else {
+              // Delete item
+              return IsmLiveTapHandler(
+                onTap: () {
+                  controller.deleteMessage(
+                    streamId: controller.streamId ?? '',
+                    messageId: message.messageId,
+                  );
+                  IsmLiveRoute.pop();
+                },
+                child: Row(
+                  children: [
+                    IsmLiveImage.svg(
+                      IsmLiveAssetConstants.delete,
+                      color: IsmLiveColors.black,
+                      height: IsmLiveDimens.twentyTwo,
+                      width: IsmLiveDimens.twentyTwo,
+                    ),
+                    IsmLiveDimens.boxWidth10,
+                    const Text('Delete'),
+                  ],
+                ),
+              );
+            }
+          },
         ),
       );
 }

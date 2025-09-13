@@ -213,26 +213,24 @@ class IsmLivePkController extends GetxController
 
       if (pkDetails.metaData?.status ==
           IsmLivePkResponceToSend.rejected.value) {
-        IsmLiveUtility.openBottomSheet(
-          IsmLiveCustomButtomSheet(
-            title: 'Request for pk is rejected',
-            leftLabel: 'cancel',
-            rightLabel: 'ReSend',
-            onLeft: IsmLiveRoute.pop,
-            onRight: () {
-              sendInvitationToUserForPK(
-                reciverDetails: IsmLivePkInviteModel(
-                  streamId: pkDetails.userIdentifier ?? '',
-                  userId: pkDetails.userId ?? '',
-                  profilePic: pkDetails.userProfileImageUrl,
-                  userName: pkDetails.userName,
-                  isometrikUserId: '',
-                  streamPic: '',
-                  viewerCount: 0,
-                ),
-              );
-            },
-          ),
+        IsmLiveUtility.openCustomBottomSheet(
+          title: 'Request for pk is rejected',
+          leftLabel: 'cancel',
+          rightLabel: 'ReSend',
+          onLeft: IsmLiveRoute.pop,
+          onRight: () {
+            sendInvitationToUserForPK(
+              reciverDetails: IsmLivePkInviteModel(
+                streamId: pkDetails.userIdentifier ?? '',
+                userId: pkDetails.userId ?? '',
+                profilePic: pkDetails.userProfileImageUrl,
+                userName: pkDetails.userName,
+                isometrikUserId: '',
+                streamPic: '',
+                viewerCount: 0,
+              ),
+            );
+          },
         );
       } else {
         LocalNotificationService.showBasicNotification(
@@ -350,34 +348,32 @@ class IsmLivePkController extends GetxController
   }
 
   void stopPkBattleSheet() async {
-    await IsmLiveUtility.openBottomSheet(
-      IsmLiveCustomButtomSheet(
-        title: streamController.pkStages?.isPkStart ?? false
-            ? 'You want to stop pk battle'
-            : 'You want to end Pk',
-        leftLabel: 'cancel',
-        rightLabel:
-            streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
-        onLeft: IsmLiveRoute.pop,
-        onRight: () {
-          IsmLiveRoute.pop();
-          if (streamController.pkStages?.isPkStart ?? false) {
-            stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
+    await IsmLiveUtility.openCustomBottomSheet(
+      title: streamController.pkStages?.isPkStart ?? false
+          ? 'You want to stop pk battle'
+          : 'You want to end Pk',
+      leftLabel: 'cancel',
+      rightLabel:
+          streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
+      onLeft: IsmLiveRoute.pop,
+      onRight: () {
+        IsmLiveRoute.pop();
+        if (streamController.pkStages?.isPkStart ?? false) {
+          stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
+        } else {
+          pkEnd();
+          if (streamController.userRole?.isHost ?? false) {
+            streamController.removeMember(
+              streamId: streamController.streamId ?? '',
+              memberId:
+                  streamController.participantTracks[1].participant.identity,
+            );
           } else {
-            pkEnd();
-            if (streamController.userRole?.isHost ?? false) {
-              streamController.removeMember(
-                streamId: streamController.streamId ?? '',
-                memberId:
-                    streamController.participantTracks[1].participant.identity,
-              );
-            } else {
-              streamController.disconnectRoom();
-              streamController.closeStreamView(false);
-            }
+            streamController.disconnectRoom();
+            streamController.closeStreamView(false);
           }
-        },
-      ),
+        }
+      },
     );
   }
 

@@ -9,12 +9,14 @@ class IsmLiveControlsWidget extends StatelessWidget {
     required this.streamId,
     required this.isCopublishing,
     this.isSchedule = false,
+    required this.isKeyboardOpen,
   });
 
   final bool isHost;
   final bool isCopublishing;
   final bool isSchedule;
   final String streamId;
+  final bool isKeyboardOpen;
 
   static const String updateId = 'ism-live-controls';
 
@@ -80,10 +82,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: IsmLiveDimens.eight),
                   alignment: Alignment.bottomRight,
                   width: IsmLiveDimens.fifty,
-                  margin: IsmLiveDelegate.productStream == true
-                      ? EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.28)
-                      : null,
+                  margin:
+                      IsmLiveDelegate.productStream == true && !isKeyboardOpen
+                          ? EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height * 0.28)
+                          : null,
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemCount: options.length,

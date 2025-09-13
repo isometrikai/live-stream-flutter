@@ -72,6 +72,44 @@ class HomeController extends GetxController {
         goLiveHeaderBuilder: _buildCustomGoLiveHeader,
         goLiveButtonBuilder: _buildCustomGoLiveButton,
       ),
+      customBottomSheetBuilder:
+          (context, title, leftLabel, rightLabel, onLeft, onRight) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onLeft,
+                      child: Text(leftLabel),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onRight,
+                      child: Text(rightLabel),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+      bottomSheetBorderRadius: BorderRadius.vertical(top: Radius.circular(12)),
 
       // moderatorsListCallback: (context, streamId, isHost, isModerator,
       //     moderatorsList, hostDetails) async {
@@ -197,13 +235,13 @@ class HomeController extends GetxController {
           // This will be called every time the UI needs to check the pinned status
           return true; // Replace with your actual logic to check if product is pinned
         },
-        // pinnedProductBuilder: (context, controller) => SizedBox(
-        //   width: 150,
-        //   height: 200,
-        //   child: Container(
-        //     color: Colors.red,
-        //   ),
-        // ),
+        pinnedProductBuilder: (context, controller) => SizedBox(
+          width: 150,
+          height: 200,
+          child: Container(
+            color: Colors.red,
+          ),
+        ),
       ),
       // Custom GoLive button click handler with comprehensive data
 
