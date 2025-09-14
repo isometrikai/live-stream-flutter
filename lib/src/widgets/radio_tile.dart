@@ -45,7 +45,7 @@ class IsmLiveRadioListTile extends StatelessWidget {
               const SizedBox(width: 8.0), // Small margin after switch
               Text(
                 title,
-                style: IsmGoLiveView.getTextStyle(context),
+                style: IsmGoLiveView.getTextStyle(context, isDark),
               ),
               if (showIcon) ...[
                 const Spacer(),

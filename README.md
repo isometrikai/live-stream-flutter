@@ -91,10 +91,10 @@ IsmLiveApp.configureInterface(
           onPressed: isEnabled ? onGoLivePressed : null,
           isEnabled: isEnabled,
         ),
-    radioTileTextStyle: TextStyle(
+    radioTileTextStyle: (context, isDark) => TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w500,
-      color: Colors.black87,
+      color: isDark ? Colors.white : Colors.black87,
     ),
     addCoverTextStyle: TextStyle(
       fontSize: 14,
@@ -125,10 +125,10 @@ IsmLiveApp.configureInterface(
           onPressed: isEnabled ? onGoLivePressed : null,
           isEnabled: isEnabled,
         ),
-    radioTileTextStyle: TextStyle(
+    radioTileTextStyle: (context, isDark) => TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w500,
-      color: Colors.black87,
+      color: isDark ? Colors.white : Colors.black87,
     ),
     addCoverTextStyle: TextStyle(
       fontSize: 14,
@@ -181,7 +181,7 @@ IsmLiveApp.configureInterface(
 ```
 
 **Text Style Properties:**
-- **`radioTileTextStyle`**: Customizes text in radio tiles, switches, and toggle components
+- **`radioTileTextStyle`**: Function-based text style for radio tiles that receives context and isDark parameter for theme-aware styling
 - **`addCoverTextStyle`**: Customizes action text elements like "Add cover", "Add description", etc.
 - **`addIcon`**: Customizes the icon used for "Add" actions like "Add Cover", "Add products", etc.
 - **Fallback Support**: Uses default styling and icons if no custom configuration is provided

@@ -29,7 +29,7 @@ class IsmLiveRestreamView extends StatelessWidget {
             children: [
               ...IsmLiveRestreamType.values.map<Widget>(
                 (type) => Padding(
-                  padding: IsmLiveDimens.edgeInsets4,
+                  padding: IsmLiveDimens.edgeInsets16_8,
                   child: IsmLiveRadioListTile(
                       title: 'Restream on ${type.label}',
                       isDark: false,

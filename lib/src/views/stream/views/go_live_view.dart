@@ -24,17 +24,17 @@ class IsmGoLiveView extends StatelessWidget {
   }
 
   /// Get the appropriate text style based on configuration and theme
-  static TextStyle getTextStyle(BuildContext context) {
+  static TextStyle getTextStyle(BuildContext context, bool isDark) {
     // Check if custom radio tile text style is provided in GoLive screen configuration
     final goLiveScreenConfigure = IsmLiveDelegate.goLiveScreenConfigure;
     if (goLiveScreenConfigure?.radioTileTextStyle != null) {
-      return goLiveScreenConfigure!.radioTileTextStyle!;
+      return goLiveScreenConfigure!.radioTileTextStyle!(context, isDark);
     }
 
     // Fallback to default style
     return context.dynamicTextTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w400,
-          color: IsmLiveColors.white,
+          color: isDark ? IsmLiveColors.white : IsmLiveColors.black,
         ) ??
         const TextStyle();
   }
@@ -173,12 +173,12 @@ class IsmGoLiveView extends StatelessWidget {
                               color: IsmLiveColors.white.withOpacity(0.3),
                             ),
                             child: IsmLiveInputField(
-                              hintStyle: getTextStyle(context),
+                              hintStyle: getTextStyle(context, true),
                               minLines: 4,
                               maxLines: 4,
                               alignLabelWithHint: true,
                               cursorColor: IsmLiveColors.white,
-                              style: getTextStyle(context),
+                              style: getTextStyle(context, true),
                               borderColor: Colors
                                   .transparent, // Remove border since Container has it
                               radius: IsmLiveDimens.twelve,
@@ -390,9 +390,11 @@ class _StreamImage extends StatelessWidget {
                         right: IsmLiveDimens.two,
                         top: IsmLiveDimens.two,
                         child: InkWell(
-                          child: IsmLiveImage.svg(IsmLiveAssetConstants.close_rounded_fill,
-                          height: IsmLiveDimens.twenty,
-                          width: IsmLiveDimens.twenty,),
+                          child: IsmLiveImage.svg(
+                            IsmLiveAssetConstants.close_rounded_fill,
+                            height: IsmLiveDimens.twenty,
+                            width: IsmLiveDimens.twenty,
+                          ),
                           onTap: () {
                             controller.streamDetails
                                 ?.copyWith(streamImage: null);
@@ -529,11 +531,11 @@ class _Restream extends StatelessWidget {
                       children: [
                         Text(
                           'Restream',
-                          style: IsmGoLiveView.getTextStyle(context),
+                          style: IsmGoLiveView.getTextStyle(context, true),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.keyboard_arrow_right_rounded,
-                          color: context.liveTheme?.selectedTextColor,
+                          color: Colors.white,
                         )
                       ],
                     ),

@@ -673,10 +673,12 @@ class IsmLiveGoLiveScreenConfigure {
 
   /// Custom text style for radio tile components (switches, toggles).
   ///
-  /// If provided, this will be used for text elements in IsmLiveRadioListTile
-  /// and similar radio/toggle components in the GoLive screen.
+  /// If provided, this function will be called to generate text styles for text elements
+  /// in IsmLiveRadioListTile and similar radio/toggle components in the GoLive screen.
+  /// The function receives the context and isDark parameter to allow theme-aware styling.
   /// If not provided, the default text style will be used.
-  final TextStyle? radioTileTextStyle;
+  final TextStyle Function(BuildContext context, bool isDark)?
+      radioTileTextStyle;
 
   /// Custom text style for "Add cover" and similar action text elements.
   ///
