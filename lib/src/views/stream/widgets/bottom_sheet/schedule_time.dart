@@ -9,29 +9,34 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(IsmLiveDimens.twelve),
-          ),
+          borderRadius: IsmLiveDelegate.bottomSheetBorderRadius ??
+              BorderRadius.vertical(
+                top: Radius.circular(IsmLiveDimens.twelve),
+              ),
         ),
-        padding: IsmLiveDimens.edgeInsets8,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             IsmLiveDimens.boxHeight10,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Schedule Stream',
-                  style: context.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const IconButton(
-                  icon: Icon(Icons.close),
-                  color: IsmLiveColors.lightGray,
-                  onPressed: IsmLiveRoute.pop,
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: IsmLiveDimens.four,
+                  horizontal: IsmLiveDimens.twelve),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Schedule Stream',
+                    style: context.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const IconButton(
+                    icon: Icon(Icons.close),
+                    color: IsmLiveColors.primary,
+                    onPressed: IsmLiveRoute.pop,
+                  ),
+                ],
+              ),
             ),
             const Divider(),
             SizedBox(
@@ -45,9 +50,12 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-            const IsmLiveButton(
-              label: 'Confirm',
-              onTap: IsmLiveRoute.pop,
+            Padding(
+              padding: EdgeInsets.all(IsmLiveDimens.twelve),
+              child: const IsmLiveButton(
+                label: 'Confirm',
+                onTap: IsmLiveRoute.pop,
+              ),
             ),
           ],
         ),
