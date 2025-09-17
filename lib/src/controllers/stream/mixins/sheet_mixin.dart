@@ -153,24 +153,8 @@ mixin StreamSheetMixin {
   }
 
   void schgeduleStreamSheet() async {
-    await IsmLiveUtility.openCustomBottomSheet(
-      title: 'Schedule Stream',
-      leftLabel: 'Edit',
-      rightLabel: 'Delete',
-      onLeft: () {
-        IsmLiveRoute.pop();
-        IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
-      },
-      onRight: () async {
-        IsmLiveRoute.pop();
-
-        await _controller
-            .deleteScheduledStream(_controller.streamDetails?.eventId ?? '');
-        IsmLiveRoute.pop();
-        _controller.streamDispose();
-        unawaited(_controller.getStreams());
-      },
-      isScrollController: true,
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLiveScheduleSettingsSheet(),
     );
   }
 

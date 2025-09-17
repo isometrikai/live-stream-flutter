@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component_example/controllers/home/custom_button.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
@@ -58,7 +59,7 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: true,
+      productStream: false,
       enableFreeGift: true,
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
@@ -68,48 +69,50 @@ class HomeController extends GetxController {
       ),
 
       restrictProfileSheetOnProfileClick: true,
-      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-        goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-        goLiveButtonBuilder: _buildCustomGoLiveButton,
-      ),
-      customBottomSheetBuilder:
-          (context, title, leftLabel, rightLabel, onLeft, onRight) {
-        return Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onLeft,
-                      child: Text(leftLabel),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onRight,
-                      child: Text(rightLabel),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-      bottomSheetBorderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+      //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+      goLiveButtonBuilder: _buildCustomGoLiveButton,
+      goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
+      // ),
+      // customBottomSheetBuilder:
+      //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
+      //   return Container(
+      //     padding: EdgeInsets.all(20),
+      //     decoration: BoxDecoration(
+      //       color: Colors.white,
+      //       borderRadius: BorderRadius.circular(20),
+      //     ),
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         Text(
+      //           title,
+      //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      //         ),
+      //         SizedBox(height: 20),
+      //         Row(
+      //           children: [
+      //             Expanded(
+      //               child: ElevatedButton(
+      //                 onPressed: onLeft,
+      //                 child: Text(leftLabel),
+      //               ),
+      //             ),
+      //             SizedBox(width: 10),
+      //             Expanded(
+      //               child: ElevatedButton(
+      //                 onPressed: onRight,
+      //                 child: Text(rightLabel),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ],
+      //     ),
+      //   );
+      // },
+      bottomSheetBorderRadius:
+          const BorderRadius.vertical(top: Radius.circular(12)),
 
       // moderatorsListCallback: (context, streamId, isHost, isModerator,
       //     moderatorsList, hostDetails) async {
@@ -246,40 +249,40 @@ class HomeController extends GetxController {
       // Custom GoLive button click handler with comprehensive data
 
       // paidStream: false
-      hostOptions: [
-        IsmLiveStreamOption.bars,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.product,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ],
-      viewersOptions: [
-        IsmLiveStreamOption.gift,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speaker,
-        IsmLiveStreamOption.heart,
-      ],
-      // ismliveButtonConfig: IsmLiveButtonConfig(
-      //   primaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(
-      //     title: label,
-      //     onPress: onTap,
-      //   ),
-      //   secondaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
-      // ),
+      // hostOptions: [
+      //   IsmLiveStreamOption.bars,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.product,
+      //   IsmLiveStreamOption.rotateCamera,
+      //   IsmLiveStreamOption.settings,
+      // ],
+      // viewersOptions: [
+      //   IsmLiveStreamOption.gift,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.speaker,
+      //   IsmLiveStreamOption.heart,
+      // ],
+      ismLiveButtonConfig: IsmLiveButtonConfig(
+        primaryBuilder: (context,
+                {required label,
+                onTap,
+                required small,
+                required showBorder,
+                icon,
+                required secondary}) =>
+            CustomButton(
+          title: label,
+          onPress: onTap,
+        ),
+        secondaryBuilder: (context,
+                {required label,
+                onTap,
+                required small,
+                required showBorder,
+                icon,
+                required secondary}) =>
+            CustomButton(title: label, onPress: onTap, onlyBorder: true),
+      ),
       //   streamOptionsBgGradient : const LinearGradient(
       //     begin: Alignment.bottomCenter,
       //     end: Alignment.topCenter,
@@ -482,4 +485,82 @@ class HomeController extends GetxController {
           ),
         ),
       );
+
+  static Widget _buildCustomGoLiveSmallButton(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    VoidCallback onGoLivePressed,
+    bool isEnabled,
+  ) {
+    final scheduleTime = controller.streamDetails?.scheduleStartTime;
+    final isTimePassed = _isScheduleTimePassed(scheduleTime);
+    final formattedTime = _formatScheduleTime(scheduleTime!);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF6B6B), Color(0xFFCD0000)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: isTimePassed ? onGoLivePressed : null,
+          child: Container(
+            height: IsmLiveDimens.fifty,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Text(
+                isTimePassed ? 'Go Live' : formattedTime,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Formats schedule time to "22 Sept, 04:15 PM" format
+  static String _formatScheduleTime(DateTime scheduleTime) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+
+    final day = scheduleTime.day;
+    final month = months[scheduleTime.month - 1];
+    final hour = scheduleTime.hour;
+    final minute = scheduleTime.minute.toString().padLeft(2, '0');
+
+    // Convert to 12-hour format
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+    return '$day $month, ${displayHour.toString().padLeft(2, '0')}:$minute $period';
+  }
+
+  /// Determines if the scheduled time has passed
+  static bool _isScheduleTimePassed(DateTime? scheduleTime) {
+    if (scheduleTime == null) return true;
+    return DateTime.now().isAfter(scheduleTime);
+  }
 }

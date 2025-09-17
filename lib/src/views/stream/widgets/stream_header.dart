@@ -218,10 +218,7 @@ class _LiveTimer extends StatelessWidget {
             const IsmLiveLabel(),
             IsmLiveDimens.boxWidth10,
             const IsmLiveStreamTimer()
-          ] else
-            IsmLiveScheduleStreamTime(
-              scheduleTime: controller.streamDetails?.scheduleStartTime,
-            ),
+          ],
           IsmLiveDimens.boxWidth10,
           // IsmLiveStreamMemberCount(
           //   onTap: () => IsmLiveUtility.openBottomSheet(
@@ -391,9 +388,7 @@ class _ExpandableDescriptionState extends State<_ExpandableDescription> {
               child: Text(
                 _isExpanded ? 'View less' : 'View more',
                 style: widget.textStyle?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-                ),
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ],

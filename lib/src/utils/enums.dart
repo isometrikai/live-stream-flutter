@@ -240,14 +240,17 @@ enum IsmLiveAnalyticsOptions {
   const IsmLiveAnalyticsOptions(this.icon);
   final String icon;
 
-  static List<IsmLiveAnalyticsOptions> get optionsList => IsmLiveDelegate.liveAnalyticsOptions.isEmpty ? [
-        IsmLiveAnalyticsOptions.hearts,
-        IsmLiveAnalyticsOptions.order,
-        IsmLiveAnalyticsOptions.viewers,
-        IsmLiveAnalyticsOptions.followers,
-        IsmLiveAnalyticsOptions.earnings,
-        IsmLiveAnalyticsOptions.duration,
-      ] : IsmLiveDelegate.liveAnalyticsOptions;
+  static List<IsmLiveAnalyticsOptions> get optionsList =>
+      IsmLiveDelegate.liveAnalyticsOptions.isEmpty
+          ? [
+              IsmLiveAnalyticsOptions.hearts,
+              IsmLiveAnalyticsOptions.order,
+              IsmLiveAnalyticsOptions.viewers,
+              IsmLiveAnalyticsOptions.followers,
+              IsmLiveAnalyticsOptions.earnings,
+              IsmLiveAnalyticsOptions.duration,
+            ]
+          : IsmLiveDelegate.liveAnalyticsOptions;
 }
 
 enum IsmLiveStreamOption {
@@ -256,7 +259,7 @@ enum IsmLiveStreamOption {
   multiLive(IsmLiveAssetConstants.multi),
   share(IsmLiveAssetConstants.share),
   members(IsmLiveAssetConstants.analytics),
-  favourite(IsmLiveAssetConstants.favourite),
+  scheduleModify(IsmLiveAssetConstants.more),
   settings(IsmLiveAssetConstants.settings),
   rotateCamera(IsmLiveAssetConstants.rotateCamera),
   speaker(IsmLiveAssetConstants.speakerOn),
@@ -284,7 +287,7 @@ enum IsmLiveStreamOption {
 
   static List<IsmLiveStreamOption> get scheduleOptions => [
         IsmLiveStreamOption.share,
-        IsmLiveStreamOption.favourite,
+        IsmLiveStreamOption.scheduleModify,
       ];
 
   ///host options
@@ -362,6 +365,15 @@ enum IsmLiveHostSettings {
   final String unmuteValues;
   final String icon;
   final String offIcon;
+}
+
+enum IsmLiveScheduleSettings {
+  edit(IsmLiveAssetConstants.edit, 'Edit Stream'),
+  delete(IsmLiveAssetConstants.delete, 'Delete Stream');
+
+  const IsmLiveScheduleSettings(this.icon, this.label);
+  final String icon;
+  final String label;
 }
 
 enum IsmLiveMessageType {

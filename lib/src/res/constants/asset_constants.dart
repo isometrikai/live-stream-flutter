@@ -141,5 +141,7 @@ class IsmLiveAssetConstants {
   static const String noStreamsPlaceholder = '$_placeholders/no_streams.svg';
   static const String close_rounded_fill = '$_icons/close_rounded_fill.svg';
   static const String message = '$_icons/ism_ic_message.svg';
-  static const String delete = '$_icons/delete.svg';
+  static const String delete = '$_icons/trash.svg';
+  static const String edit = '$_icons/edit.svg';
+  static const String more = '$_icons/options_icon.svg';
 }

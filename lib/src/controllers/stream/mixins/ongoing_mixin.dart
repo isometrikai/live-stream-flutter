@@ -208,7 +208,7 @@ mixin StreamOngoingMixin {
       case IsmLiveStreamOption.multiLive:
       case IsmLiveStreamOption.share:
       case IsmLiveStreamOption.members:
-      case IsmLiveStreamOption.favourite:
+      case IsmLiveStreamOption.scheduleModify:
       case IsmLiveStreamOption.bars:
       case IsmLiveStreamOption.vs:
       case IsmLiveStreamOption.settings:
@@ -400,7 +400,24 @@ mixin StreamOngoingMixin {
         break;
       case IsmLiveStreamOption.members:
         break;
-      case IsmLiveStreamOption.favourite:
+      case IsmLiveStreamOption.scheduleModify:
+        // Check if host app wants to handle the schedule modify button click
+        final scheduleModifyCallback =
+            IsmLiveDelegate.scheduleModifyButtonCallback;
+        if (scheduleModifyCallback != null) {
+          final handled = await scheduleModifyCallback(
+            context,
+            _controller.streamId ?? '',
+            _controller.isHost,
+          );
+
+          // If host app handled the click, don't show default schedule sheet
+          if (handled) {
+            break;
+          }
+        }
+
+        // Default behavior: show schedule settings sheet
         _controller.schgeduleStreamSheet();
         break;
       case IsmLiveStreamOption.settings:
@@ -488,6 +505,25 @@ mixin StreamOngoingMixin {
       //   break;
       // case IsmLiveHostSettings.report:
       //   break;
+    }
+  }
+
+  void onScheduleSettingTap(
+    IsmLiveScheduleSettings option,
+  ) async {
+    switch (option) {
+      case IsmLiveScheduleSettings.edit:
+        IsmLiveRoute.pop();
+        IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
+        break;
+      case IsmLiveScheduleSettings.delete:
+        IsmLiveRoute.pop();
+        await _controller
+            .deleteScheduledStream(_controller.streamDetails?.eventId ?? '');
+        IsmLiveRoute.pop();
+        _controller.streamDispose();
+        unawaited(_controller.getStreams());
+        break;
     }
   }
 

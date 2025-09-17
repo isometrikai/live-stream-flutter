@@ -487,8 +487,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                         alignment: IsmLiveApp.endStreamPosition,
                         child: IsmLiveApp.endButton ??
                             IsmLiveEndStreamButton(
-                              onTapExit: () =>
-                                  IsmLiveApp.endStream(context: context),
+                              onTapExit: () => IsmLiveApp.endStream(
+                                  context: context, isSchedule: isSchedule),
                             ),
                       ),
                       if (controller.isHost) ...[
@@ -781,6 +781,92 @@ class ScheduleStreamView extends StatelessWidget {
     return chatView;
   }
 
+  /// Formats schedule time to "22 Sept, 04:15 PM" format
+  String _formatScheduleTime(DateTime scheduleTime) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+
+    final day = scheduleTime.day;
+    final month = months[scheduleTime.month - 1];
+    final hour = scheduleTime.hour;
+    final minute = scheduleTime.minute.toString().padLeft(2, '0');
+
+    // Convert to 12-hour format
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+    return '$day $month, ${displayHour.toString().padLeft(2, '0')}:$minute $period';
+  }
+
+  /// Determines if the scheduled time has passed
+  bool _isScheduleTimePassed(DateTime? scheduleTime) {
+    if (scheduleTime == null) return true;
+    return DateTime.now().isAfter(scheduleTime);
+  }
+
+  /// Gets the appropriate button content for scheduled streams
+  Widget _buildScheduledGoLiveButton(
+      BuildContext context, IsmLiveStreamController controller) {
+    final scheduleTime = controller.streamDetails?.scheduleStartTime;
+    final isTimePassed = _isScheduleTimePassed(scheduleTime);
+
+    if (isTimePassed) {
+      // Time has passed, show "Go Live" button with action
+      return IsmLiveDelegate.goLiveSmallButtonBuilder?.call(
+            context,
+            controller,
+            () => controller.startStream(context: context),
+            true, // Always enabled when time has passed
+          ) ??
+          IsmLiveButton(
+            label: 'Go Live',
+            onTap: () {
+              controller.startStream(context: context);
+            },
+          );
+    } else {
+      // Time hasn't passed yet, show schedule time
+      final formattedTime = _formatScheduleTime(scheduleTime!);
+      return IsmLiveDelegate.goLiveSmallButtonBuilder?.call(
+            context,
+            controller,
+            () => controller.startStream(
+                context: context), // Let host manage click logic
+            true, // Always enabled - let host manage the logic
+          ) ??
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.withOpacity(0.5)),
+            ),
+            child: Text(
+              formattedTime,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) => SafeArea(
         child: GetBuilder<IsmLiveStreamController>(
@@ -833,12 +919,8 @@ class ScheduleStreamView extends StatelessWidget {
                           IsmLiveDimens.boxHeight32,
                           SizedBox(
                             width: MediaQuery.of(context).size.width / 3,
-                            child: IsmLiveButton(
-                              label: 'Go Live',
-                              onTap: () {
-                                controller.startStream(context: context);
-                              },
-                            ),
+                            child: _buildScheduledGoLiveButton(
+                                context, controller),
                           ),
                         ],
                       )

@@ -206,7 +206,9 @@ class IsmLiveApp extends StatefulWidget {
     // Legacy GoLive parameters - kept for backward compatibility
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
+    GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
     AnalyticsButtonCallback? analyticsButtonCallback,
+    ScheduleModifyButtonCallback? scheduleModifyButtonCallback,
     TopViewersListCallback? topViewersListCallback,
     ModeratorsListCallback? moderatorsListCallback,
     BorderRadius? bottomSheetBorderRadius,
@@ -273,14 +275,21 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
     }
 
+    // Set standalone goLiveSmallButtonBuilder if provided
+    if (goLiveSmallButtonBuilder != null) {
+      IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
+    }
+
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
+    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
   }
 
-  static Future<void> endStream({required BuildContext context}) async =>
-      await IsmLiveDelegate.endStream(context: context);
+  static Future<void> endStream(
+          {required BuildContext context, bool isSchedule = false}) async =>
+      await IsmLiveDelegate.endStream(context: context, isSchedule: isSchedule);
 
   static void handleMqttEvent(EventModel payload) {
     assert(
@@ -427,6 +436,9 @@ class IsmLiveApp extends StatefulWidget {
   static AnalyticsButtonCallback? get analyticsButtonCallback =>
       IsmLiveDelegate.analyticsButtonCallback;
 
+  static ScheduleModifyButtonCallback? get scheduleModifyButtonCallback =>
+      IsmLiveDelegate.scheduleModifyButtonCallback;
+
   static TopViewersListCallback? get topViewersListCallback =>
       IsmLiveDelegate.topViewersListCallback;
 
@@ -522,10 +534,26 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Update go live small button builder dynamically at runtime
+  static void updateGoLiveSmallButtonBuilder(
+      GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder) {
+    IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
+    // Trigger rebuild of stream view to apply new small button
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+  }
+
   /// Update analytics button callback dynamically at runtime
   static void updateAnalyticsButtonCallback(
       AnalyticsButtonCallback? analyticsButtonCallback) {
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
+  }
+
+  /// Update schedule modify button callback dynamically at runtime
+  static void updateScheduleModifyButtonCallback(
+      ScheduleModifyButtonCallback? scheduleModifyButtonCallback) {
+    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
   }
 
   /// Update top viewers list callback dynamically at runtime

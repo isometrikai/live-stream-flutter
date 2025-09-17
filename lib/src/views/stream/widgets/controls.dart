@@ -96,6 +96,8 @@ class IsmLiveControlsWidget extends StatelessWidget {
                           ? IsmLiveDimens.fortyFive
                           : null,
                       icon: IsmLiveImage.svg(
+                        height: IsmLiveDimens.forty,
+                        width: IsmLiveDimens.forty,
                         controller.controlIcon(options[index]),
                       ),
                       onTap: () async {

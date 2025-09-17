@@ -2,7 +2,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component_example/res/theme/colors.dart';
 import 'package:flutter/material.dart';
 
-
 /// [CustomButton] widget is a custom Button.
 ///
 /// `width` is the width of [CustomButton].
@@ -90,7 +89,7 @@ class CustomButton extends StatelessWidget {
             height: height ?? double.infinity,
             padding: padding ?? IsmLiveDimens.edgeInsetsAll(IsmLiveDimens.zero),
             decoration: BoxDecoration(
-              gradient:!isDisable
+              gradient: !isDisable
                   ? ColorsValue.buttonTopBottomGradient
                   : ColorsValue.disableButtonTopBottomGradient,
               borderRadius: borderRadius,
@@ -101,36 +100,46 @@ class CustomButton extends StatelessWidget {
               //       : borderColor ?? color ?? Get.theme.primaryColor,
               // ),
             ),
-            child: titleWidget ?? (onlyBorder ? Padding(
-              padding: const EdgeInsets.all(1.5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: IsmLiveColors.white,borderRadius: borderRadius,),
-                alignment: Alignment.center,
-                child: ShaderMask(
-                  shaderCallback: (bounds) =>  ColorsValue.buttonTopBottomGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                  child: Text(
-                    '$title',
-                    style:  TextStyle(
-                      fontSize: IsmLiveDimens.fifteen,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, // required for ShaderMask
-                    ),
-                  ),
-                )
-              ),
-            ) : Center(
-                  child: Text(
-                    '$title',
-                    style: color != null
-                        ? textColor != null
-                            ? IsmLiveStyles.whiteBold15.copyWith(color: textColor)
-                            : IsmLiveStyles.whiteBold15.copyWith(color: color)
-                        : IsmLiveStyles.whiteBold15
-                            .copyWith(color: IsmLiveColors.white),
-                    textAlign: textAlign,
-                  ),
-                )),
+            child: titleWidget ??
+                (onlyBorder
+                    ? Padding(
+                        padding: const EdgeInsets.all(1.5),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: IsmLiveColors.white,
+                              borderRadius: borderRadius,
+                            ),
+                            alignment: Alignment.center,
+                            child: ShaderMask(
+                              shaderCallback: (bounds) => ColorsValue
+                                  .buttonTopBottomGradient
+                                  .createShader(Rect.fromLTWH(
+                                      0, 0, bounds.width, bounds.height)),
+                              child: Text(
+                                '$title',
+                                style: TextStyle(
+                                  fontSize: IsmLiveDimens.fifteen,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Colors.white, // required for ShaderMask
+                                ),
+                              ),
+                            )),
+                      )
+                    : Center(
+                        child: Text(
+                          '$title',
+                          style: color != null
+                              ? textColor != null
+                                  ? IsmLiveStyles.whiteBold15
+                                      .copyWith(color: textColor)
+                                  : IsmLiveStyles.whiteBold15
+                                      .copyWith(color: color)
+                              : IsmLiveStyles.whiteBold15
+                                  .copyWith(color: IsmLiveColors.white),
+                          textAlign: textAlign,
+                        ),
+                      )),
           ),
         ),
       ),

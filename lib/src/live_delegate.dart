@@ -335,6 +335,35 @@ typedef GoLiveButtonBuilder = Widget Function(
   bool isEnabled,
 );
 
+/// Builder for small Go Live button in scheduled streams.
+///
+/// This builder allows host applications to provide a custom small Go Live button widget
+/// for scheduled streams. This is a simpler, smaller button compared to the main Go Live button.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [controller] - The IsmLiveStreamController instance for accessing stream state and schedule time.
+/// [onGoLivePressed] - The callback function that should be called when the Go Live button is pressed.
+/// [isEnabled] - Whether the Go Live button should be enabled or disabled.
+///
+/// Return a Widget that will be displayed as the small Go Live button.
+/// The widget should handle its own layout and styling but must call [onGoLivePressed] when activated.
+/// The widget should also respect the [isEnabled] state for proper UX.
+///
+/// This builder is called when rendering the small Go Live button in scheduled stream view.
+/// Useful for implementing:
+/// - Custom small Go Live button design
+/// - Custom button styling for scheduled streams
+/// - Integration with host app's design system
+/// - Custom button states and animations
+/// - Analytics tracking for scheduled stream Go Live interactions
+/// - Schedule time logic and display
+typedef GoLiveSmallButtonBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamController controller,
+  VoidCallback onGoLivePressed,
+  bool isEnabled,
+);
+
 /// Callback for analytics/bars button click event.
 ///
 /// This callback is triggered when the user taps on the analytics/bars button in the stream.
@@ -363,6 +392,18 @@ typedef AnalyticsButtonCallback = Future<bool> Function(
   bool isHost,
   bool isPkGuest,
   String? pkGuestStreamId,
+);
+
+/// Callback for handling schedule modify button clicks
+/// Allows host apps to customize schedule modification behavior
+/// - Custom schedule editing flows
+/// - Integration with external scheduling systems
+/// - Custom permission checks for schedule modification
+/// - Host-specific schedule management features
+typedef ScheduleModifyButtonCallback = Future<bool> Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
 );
 
 /// Builder for custom "Buy now" button in product streams.
@@ -567,7 +608,11 @@ class IsmLiveDelegate {
 
   static GoLiveButtonBuilder? goLiveButtonBuilder;
 
+  static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
+
   static AnalyticsButtonCallback? analyticsButtonCallback;
+
+  static ScheduleModifyButtonCallback? scheduleModifyButtonCallback;
 
   static TopViewersListCallback? topViewersListCallback;
 
@@ -597,12 +642,17 @@ class IsmLiveDelegate {
     IsmLiveLog.info('IsmLiveApp : configDetails data set Successfully');
   }
 
-  static Future<void> endStream({required BuildContext context}) async {
+  static Future<void> endStream(
+      {required BuildContext context, bool isSchedule = false}) async {
     assert(Get.isRegistered<IsmLiveStreamController>(),
         'StreamController is not initialized');
     IsmLiveLog.error('Calling Leave API from Outside');
     var controller = Get.find<IsmLiveStreamController>();
     if (controller.streamId.isNullOrEmpty) {
+      IsmLiveLog.error('StreamId is null or empty ${controller.streamId}');
+      if (isSchedule) {
+        IsmLiveRoute.pop();
+      }
       return;
     }
     controller.onExit(
