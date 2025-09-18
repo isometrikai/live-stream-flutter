@@ -7,10 +7,12 @@ class IsmLivePublisherGrid extends StatelessWidget {
     super.key,
     required this.streamImage,
     this.isInteractive = false,
+    this.isSchedule = false,
   });
 
   final String streamImage;
   final bool isInteractive;
+  final bool isSchedule;
 
   static const String updateId = 'publisher-grid';
 
@@ -92,10 +94,12 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           },
                         ),
                       )
-                : NoVideoWidget(
-                    imageUrl: controller.hostDetails?.image ?? streamImage,
-                    name: controller.hostDetails?.name ?? 'U',
-                  );
+                : !isSchedule
+                    ? NoVideoWidget(
+                        imageUrl: controller.hostDetails?.image ?? streamImage,
+                        name: controller.hostDetails?.name ?? 'U',
+                      )
+                    : const SizedBox.shrink();
           },
         ),
       );

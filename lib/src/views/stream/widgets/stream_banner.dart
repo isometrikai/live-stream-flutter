@@ -8,9 +8,11 @@ class IsmLiveStreamBanner extends StatelessWidget {
   const IsmLiveStreamBanner(
     this.streamImage, {
     super.key,
+    this.isSchedule = false,
   });
 
   final String? streamImage;
+  final bool isSchedule;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -19,8 +21,8 @@ class IsmLiveStreamBanner extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: ImageFiltered(
             imageFilter: ImageFilter.blur(
-              sigmaX: 10,
-              sigmaY: 10,
+              sigmaX: isSchedule ? 0 : 10,
+              sigmaY: isSchedule ? 0 : 10,
             ),
             child: streamImage != null
                 ? IsmLiveImage.network(

@@ -18,7 +18,8 @@ class ChatBottomSheet extends StatelessWidget {
           showCancelIcon: true,
           itemCount: (controller.isModerator ||
                       controller.isHost ||
-                      controller.isMember) &&
+                      controller.isMember ||
+                      message.sentByMe) &&
                   message.isReply == false
               ? 2
               : 1,

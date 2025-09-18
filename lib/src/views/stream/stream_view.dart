@@ -311,10 +311,11 @@ class _IsmLiveStreamView extends StatelessWidget {
                       Container(
                           color:
                               Colors.black), // Bottom-most layer for status bar
-                      IsmLiveStreamBanner(streamImage),
+                      IsmLiveStreamBanner(streamImage, isSchedule: isSchedule),
                       IsmLivePublisherGrid(
                         streamImage: streamImage ?? '',
                         isInteractive: isInteractive,
+                        isSchedule: isSchedule,
                       ),
                       // Gradients positioned right after publisher grid to only overlay video content
                       _TopDarkGradient(),
@@ -817,8 +818,8 @@ class ScheduleStreamView extends StatelessWidget {
   }
 
   /// Gets the appropriate button content for scheduled streams
-  Widget _buildScheduledGoLiveButton(
-      BuildContext context, IsmLiveStreamController controller) {
+  Widget _buildScheduledGoLiveButton(BuildContext context,
+      IsmLiveStreamController controller, bool isKeyboardOpen) {
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final isTimePassed = _isScheduleTimePassed(scheduleTime);
 
@@ -898,32 +899,52 @@ class ScheduleStreamView extends StatelessWidget {
                                   ),
                                 ) ??
                                 IsmLiveMessageField(
-                                  streamId: controller.streamId ?? '',
+                                  streamId: () {
+                                    // Debug logging for streamId at line 903
+                                    final streamId =
+                                        controller.streamDetails?.streamId ??
+                                            '';
+                                    print('=== STREAM ID DEBUG (Line 903) ===');
+                                    print(
+                                        'controller.streamDetails: ${controller.streamDetails}');
+                                    print(
+                                        'controller.streamDetails?.streamId: ${controller.streamDetails?.streamId}');
+                                    print(
+                                        'controller.streamId: ${controller.streamId}');
+                                    print(
+                                        'Final streamId being passed: $streamId');
+                                    print(
+                                        'streamId is empty: ${streamId.isEmpty}');
+                                    print('===============================');
+                                    return streamId;
+                                  }(),
                                   isHost: controller.isPublishing,
                                 ),
                           ],
                         ),
                       ),
                       IsmLiveDimens.boxWidth2,
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IsmLiveControlsWidget(
-                            isHost: true,
-                            isCopublishing: false,
-                            isSchedule: true,
-                            streamId: controller.streamId ?? '',
-                            isKeyboardOpen: isKeyboardOpen,
-                          ),
-                          IsmLiveDimens.boxHeight32,
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 3,
-                            child: _buildScheduledGoLiveButton(
-                                context, controller),
-                          ),
-                        ],
-                      )
+                      if (!isKeyboardOpen)
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IsmLiveControlsWidget(
+                              isHost: true,
+                              isCopublishing: false,
+                              isSchedule: true,
+                              streamId:
+                                  controller.streamDetails?.streamId ?? '',
+                              isKeyboardOpen: isKeyboardOpen,
+                            ),
+                            IsmLiveDimens.boxHeight32,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: _buildScheduledGoLiveButton(
+                                  context, controller, isKeyboardOpen),
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),

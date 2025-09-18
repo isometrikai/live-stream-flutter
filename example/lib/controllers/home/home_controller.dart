@@ -59,7 +59,7 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: false,
+      productStream: true,
       enableFreeGift: true,
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
@@ -238,13 +238,13 @@ class HomeController extends GetxController {
           // This will be called every time the UI needs to check the pinned status
           return true; // Replace with your actual logic to check if product is pinned
         },
-        pinnedProductBuilder: (context, controller) => SizedBox(
-          width: 150,
-          height: 200,
-          child: Container(
-            color: Colors.red,
-          ),
-        ),
+        // pinnedProductBuilder: (context, controller) => SizedBox(
+        //   width: 150,
+        //   height: 200,
+        //   child: Container(
+        //     color: Colors.red,
+        //   ),
+        // ),
       ),
       // Custom GoLive button click handler with comprehensive data
 
