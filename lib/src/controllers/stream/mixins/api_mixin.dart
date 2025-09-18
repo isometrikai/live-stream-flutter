@@ -244,9 +244,9 @@ mixin StreamAPIMixin {
       if (!_controller._streamViewLoadedCallbackTriggered) {
         _controller._streamViewLoadedCallbackTriggered = true;
         IsmLiveDelegate.streamViewLoadedCallback?.call(
-          streamId,
           _controller.isHost,
           _controller.hostDetails,
+          _controller.streamDetails,
         );
       }
 

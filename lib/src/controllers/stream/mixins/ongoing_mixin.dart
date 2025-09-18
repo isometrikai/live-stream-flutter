@@ -407,7 +407,7 @@ mixin StreamOngoingMixin {
         if (scheduleModifyCallback != null) {
           final handled = await scheduleModifyCallback(
             context,
-            _controller.streamId ?? '',
+            _controller.streamDetails!,
             _controller.isHost,
           );
 

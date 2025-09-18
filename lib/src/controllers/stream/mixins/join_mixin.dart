@@ -569,6 +569,7 @@ mixin StreamJoinMixin {
   void startSeduleStream(
     IsmLiveStreamDataModel stream,
   ) {
+    _controller._streamViewLoadedCallbackTriggered = false;
     _controller.userRole = IsmLiveUserRole.host();
     var details = stream.userDetails;
 
@@ -583,6 +584,7 @@ mixin StreamJoinMixin {
         userIdentifier: '',
         userName: details?.userName ?? '',
         userProfileImageUrl: details?.userProfile ?? '');
+
     _controller.room = lk.Room();
     IsmLiveRouteManagement.goToStreamView(
       isHost: true,
@@ -594,6 +596,18 @@ mixin StreamJoinMixin {
       streamId: stream.streamId ?? '',
       isSchedule: true,
     );
+
+    IsmLiveUtility.updateLater(() {
+      // Trigger stream view loaded callback for scheduled streams (only once per stream)
+      if (!_controller._streamViewLoadedCallbackTriggered) {
+        _controller._streamViewLoadedCallbackTriggered = true;
+        IsmLiveDelegate.streamViewLoadedCallback?.call(
+          _controller.isHost,
+          _controller.hostDetails,
+          stream,
+        );
+      }
+    }, true);
   }
 
   void editScheduleStream(BuildContext context) async {

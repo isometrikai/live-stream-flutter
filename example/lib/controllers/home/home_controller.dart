@@ -69,11 +69,11 @@ class HomeController extends GetxController {
       ),
 
       restrictProfileSheetOnProfileClick: true,
-      // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-      //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-      goLiveButtonBuilder: _buildCustomGoLiveButton,
       goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
-      // ),
+      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+        goLiveButtonBuilder: _buildCustomGoLiveButton,
+        //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+      ),
       // customBottomSheetBuilder:
       //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
       //   return Container(
@@ -227,10 +227,6 @@ class HomeController extends GetxController {
         //   onTap: onTap,
         // ),
         hostArrowButtonsHeight: 56,
-        onGoLiveDispose: () {
-          // Example: Cleanup operations when GoLive view is disposed
-          IsmLiveLog.info('GoLive view disposed - performing cleanup');
-        },
         onProductAction:
             (context, streamId, hasPinnedProduct, buttonLabel, isHost) {},
         hasPinnedProductGetter: () {

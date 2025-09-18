@@ -142,9 +142,9 @@ typedef MessageProcessCallback = IsmLiveMessageModel? Function(
 /// This callback is triggered once the stream view screen is loaded and ready.
 /// Useful for performing initial setup or work for the stream screen.
 ///
-/// [streamId] - The current stream ID.
 /// [isHost] - Whether the current user is the host of the stream.
 /// [hostDetails] - The host member details (null if current user is not host or host details unavailable).
+/// [stream] - The complete stream object containing all stream details.
 ///
 /// This callback is called in the initState of the stream view widget.
 /// Useful for implementing:
@@ -156,9 +156,9 @@ typedef MessageProcessCallback = IsmLiveMessageModel? Function(
 /// - Performance monitoring
 /// - Custom initialization logic
 typedef StreamViewLoadedCallback = void Function(
-  String streamId,
   bool isHost,
   IsmLiveMemberDetailsModel? hostDetails,
+  IsmLiveStreamDataModel? stream,
 );
 
 /// Callback for heart message sending.
@@ -402,7 +402,7 @@ typedef AnalyticsButtonCallback = Future<bool> Function(
 /// - Host-specific schedule management features
 typedef ScheduleModifyButtonCallback = Future<bool> Function(
   BuildContext context,
-  String streamId,
+  IsmLiveStreamDataModel streamDetails,
   bool isHost,
 );
 
@@ -582,6 +582,10 @@ class IsmLiveDelegate {
 
   static Future<void> Function(String streamId)? onLeftStreamAsViewer;
 
+  static GoLiveClickCallback? onGoLiveClick;
+
+  static GoLiveDisposeCallback? onGoLiveDispose;
+
   static IsmLiveEcomConfigure? ecomConfigure;
 
   static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
@@ -666,8 +670,6 @@ class IsmLiveDelegate {
 class IsmLiveEcomConfigure {
   IsmLiveEcomConfigure({
     this.addProductViewBuilder,
-    this.onGoLiveClick,
-    this.onGoLiveDispose,
     this.onProductAction,
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
@@ -676,8 +678,6 @@ class IsmLiveEcomConfigure {
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
-  final GoLiveClickCallback? onGoLiveClick;
-  final GoLiveDisposeCallback? onGoLiveDispose;
   final ProductActionCallback? onProductAction;
   final Widget? Function(
           BuildContext context, IsmLiveStreamController controller)?
