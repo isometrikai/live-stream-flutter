@@ -77,23 +77,28 @@ class IsmGoLiveView extends StatelessWidget {
             controller.pickedImage = null;
             controller.descriptionController.text =
                 controller.streamDetails?.streamDescription ?? '';
-            controller.isHdBroadcast = false;
-            controller.isRecordingBroadcast = false;
-            controller.isSchedulingBroadcast = false;
+            controller.isHdBroadcast =
+                controller.streamDetails?.hdBroadcast ?? false;
+            controller.isRecordingBroadcast =
+                controller.streamDetails?.isRecorded ?? false;
+            controller.isSchedulingBroadcast =
+                controller.streamDetails?.isScheduledStream ?? false;
             controller.isPremium = false;
-            controller.isRestreamBroadcast = false;
+            controller.isRestreamBroadcast =
+                controller.streamDetails?.restream ?? false;
           }
         },
         dispose: (state) {
           var controller = Get.find<IsmLiveStreamController>();
-          if (controller.streamDetails == null) {
-            controller.selectedProductsList.clear();
-          }
+          // Always clear go-live data when disposing the go-live view
+          // This ensures clean state for next time the screen opens
+          controller.streamDispose(
+              false); // Don't call disposeAnimationController here
           controller.cameraController?.dispose();
           controller.streamDetails = null;
 
           // Call the dispose callback if provided
-          IsmLiveDelegate.ecomConfigure?.onGoLiveDispose?.call();
+          IsmLiveDelegate.onGoLiveDispose?.call();
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
@@ -194,60 +199,69 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (!(controller.streamDetails?.isScheduledStream ??
-                        false)) ...[
-                      IsmLiveDimens.boxHeight10,
-                      if (IsmLiveDelegate.hdStream ?? true)
-                        IsmLiveRadioListTile(
-                          title: 'HD Broadcast',
-                          onChange: controller.onChangeHdBroadcast,
-                          value: controller.isHdBroadcast,
-                        ),
-                      if (IsmLiveDelegate.recordeStream ?? true)
-                        IsmLiveRadioListTile(
-                          title: 'Record Broadcast',
-                          onChange: controller.onChangeRecording,
-                          value: controller.isRecordingBroadcast,
-                        ),
-                      if (IsmLiveDelegate.restreamStream ?? true)
-                        IsmLiveRadioListTile(
-                          title: 'Restream Broadcast',
-                          onChange: controller.onChangeRestream,
-                          value: controller.isRestreamBroadcast,
-                        ),
-                      if (IsmLiveDelegate.restreamStream ?? true)
-                        const _Restream(),
-                      if (controller.isRtmp) ...[
-                        IsmLiveRadioListTile(
-                          title: 'Use Persistent RTMP Stream Key',
-                          onChange: controller.onChangePersistent,
-                          value: controller.usePersistentStreamKey,
-                        ),
-                        const _PersistentStream(),
-                      ],
-                      if (IsmLiveDelegate.productStream ?? true)
-                        IsmLiveDelegate.ecomConfigure?.addProductViewBuilder !=
-                                null
-                            ? IsmLiveDelegate
-                                .ecomConfigure!.addProductViewBuilder!(context)
-                            : _AddProduct(
-                                selectedProducts:
-                                    controller.selectedProductsList,
-                                onRemoveProduct: (index) {
-                                  controller.selectedProductsList
-                                      .removeAt(index);
-                                  controller.update([updateId]);
-                                },
-                              ),
-                      if (IsmLiveDelegate.scheduleStream ?? true)
-                        IsmLiveRadioListTile(
+                    IsmLiveDimens.boxHeight10,
+                    if (IsmLiveDelegate.hdStream ?? true)
+                      IsmLiveRadioListTile(
+                        title: 'HD Broadcast',
+                        onChange: controller.onChangeHdBroadcast,
+                        value: controller.isHdBroadcast,
+                      ),
+                    if (IsmLiveDelegate.recordeStream ?? true)
+                      IsmLiveRadioListTile(
+                        title: 'Record Broadcast',
+                        onChange: controller.onChangeRecording,
+                        value: controller.isRecordingBroadcast,
+                      ),
+                    if (IsmLiveDelegate.restreamStream ?? true)
+                      IsmLiveRadioListTile(
+                        title: 'Restream Broadcast',
+                        onChange: controller.onChangeRestream,
+                        value: controller.isRestreamBroadcast,
+                      ),
+                    if (IsmLiveDelegate.restreamStream ?? true)
+                      const _Restream(),
+                    if (controller.isRtmp) ...[
+                      IsmLiveRadioListTile(
+                        title: 'Use Persistent RTMP Stream Key',
+                        onChange: controller.onChangePersistent,
+                        value: controller.usePersistentStreamKey,
+                      ),
+                      const _PersistentStream(),
+                    ],
+                    if (IsmLiveDelegate.productStream ?? true)
+                      IsmLiveDelegate.ecomConfigure?.addProductViewBuilder !=
+                              null
+                          ? IsmLiveDelegate
+                              .ecomConfigure!.addProductViewBuilder!(context)
+                          : _AddProduct(
+                              selectedProducts: controller.selectedProductsList,
+                              onRemoveProduct: (index) {
+                                controller.selectedProductsList.removeAt(index);
+                                controller.update([updateId]);
+                              },
+                            ),
+                    if (IsmLiveDelegate.scheduleStream ?? true)
+                      Opacity(
+                        opacity:
+                            controller.streamDetails?.isScheduledStream ?? false
+                                ? 0.5
+                                : 1.0,
+                        child: IsmLiveRadioListTile(
                           title: 'Schedule Live',
-                          onChange: controller.onChangeSchedule,
+                          onChange: controller
+                                      .streamDetails?.isScheduledStream ??
+                                  false
+                              ? (_) {} // Do nothing when editing scheduled stream
+                              : controller.onChangeSchedule,
                           value: controller.isSchedulingBroadcast,
                         ),
-                      const _ScheduleStream(),
-                      const SizedBox(height: 120),
-                    ]
+                      ),
+                    _ScheduleStream(
+                      isEditable:
+                          !(controller.streamDetails?.isScheduledStream ??
+                              false),
+                    ),
+                    const SizedBox(height: 120),
                   ],
                 ),
               ),
@@ -396,8 +410,8 @@ class _StreamImage extends StatelessWidget {
                             width: IsmLiveDimens.twenty,
                           ),
                           onTap: () {
-                            controller.streamDetails
-                                ?.copyWith(streamImage: null);
+                            controller.streamDetails = controller.streamDetails
+                                ?.copyWith(streamImage: '');
                             controller.pickedImage = null;
                             controller.update([IsmGoLiveView.updateId]);
                           },
@@ -548,30 +562,44 @@ class _Restream extends StatelessWidget {
 }
 
 class _ScheduleStream extends StatelessWidget {
-  const _ScheduleStream();
+  const _ScheduleStream({this.isEditable = true});
+
+  final bool isEditable;
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
         builder: (controller) => !controller.isSchedulingBroadcast
             ? const SizedBox.shrink()
-            : Column(
-                children: [
-                  _InputField(
-                    label: 'Date & Time*',
-                    controller: TextEditingController(
-                      text: controller.scheduleLiveDate.formattedDate,
-                    ),
-                    readOnly: true,
-                    onTap: () => controller.onChangeSchedule(true),
-                    suffixIcon: const UnconstrainedBox(
-                      child: IsmLiveImage.svg(
-                        IsmLiveAssetConstants.calendar,
+            : Opacity(
+                opacity: isEditable ? 1.0 : 0.5,
+                child: Column(
+                  children: [
+                    _InputField(
+                      label: 'Date & Time*',
+                      controller: TextEditingController(
+                        text: controller.scheduleLiveDate.formattedDate,
                       ),
+                      readOnly: true,
+                      onTap: isEditable
+                          ? () => controller.onChangeSchedule(true)
+                          : null,
+                      suffixIcon: isEditable
+                          ? const UnconstrainedBox(
+                              child: IsmLiveImage.svg(
+                                IsmLiveAssetConstants.calendar,
+                              ),
+                            )
+                          : const UnconstrainedBox(
+                              child: IsmLiveImage.svg(
+                                IsmLiveAssetConstants.calendar,
+                                color: Colors.grey,
+                              ),
+                            ),
                     ),
-                  ),
-                  IsmLiveDimens.boxHeight50,
-                ],
+                    IsmLiveDimens.boxHeight50,
+                  ],
+                ),
               ),
       );
 }

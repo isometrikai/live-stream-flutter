@@ -588,7 +588,7 @@ class IsmLiveStreamController extends GetxController
   Future<void> handleGoLivePress(BuildContext context) async {
     final isScheduledStream = streamDetails?.isScheduledStream ?? false;
 
-    if (IsmLiveDelegate.ecomConfigure?.onGoLiveClick != null) {
+    if (IsmLiveDelegate.onGoLiveClick != null) {
       // Handle image scenario similar to join_mixin.dart logic
       if (pickedImage == null) {
         // Try to take picture from camera first
@@ -633,7 +633,7 @@ class IsmLiveStreamController extends GetxController
         streamKeyDevice: streamKeyDevice.text,
       );
 
-      await IsmLiveDelegate.ecomConfigure!.onGoLiveClick!(
+      await IsmLiveDelegate.onGoLiveClick!(
         context,
         isScheduledStream,
         streamDetails,
@@ -722,6 +722,25 @@ class IsmLiveStreamController extends GetxController
     giftType = 0;
     premiumStreamCoinsController.clear();
     isPremium = false;
+
+    // Clear go-live specific data
+    pickedImage = null;
+    selectedGoLiveStream = IsmLiveStreamTypes.free;
+    isHdBroadcast = false;
+    isRecordingBroadcast = false;
+    isSchedulingBroadcast = false;
+    isRestreamBroadcast = false;
+    usePersistentStreamKey = false;
+    scheduleLiveDate = DateTime.now();
+    selectedProductsList.clear();
+    restreamFacebook = false;
+    restreamYoutube = false;
+    restreamInstagram = false;
+    rtmlUrl.clear();
+    streamKey.clear();
+    rtmlUrlDevice.clear();
+    streamKeyDevice.clear();
+
     await WakelockPlus.disable();
   }
 
