@@ -586,11 +586,11 @@ class IsmLiveStreamController extends GetxController
   /// Handles the Go Live button press logic
   /// This method contains all the logic from IsmGoLiveNavBar's onTap
   Future<void> handleGoLivePress(BuildContext context) async {
-    final isScheduledStream = streamDetails?.isScheduledStream ?? false;
+    final isScheduledStream = isSchedulingBroadcast;
 
     if (IsmLiveDelegate.onGoLiveClick != null) {
       // Handle image scenario similar to join_mixin.dart logic
-      if (pickedImage == null) {
+      if (pickedImage == null  && (streamDetails?.streamId?.isEmpty ?? true)) {
         // Try to take picture from camera first
         final file = await cameraController?.takePicture();
         if (file != null) {
