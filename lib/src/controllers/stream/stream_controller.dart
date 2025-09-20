@@ -590,7 +590,7 @@ class IsmLiveStreamController extends GetxController
 
     if (IsmLiveDelegate.onGoLiveClick != null) {
       // Handle image scenario similar to join_mixin.dart logic
-      if (pickedImage == null && (streamDetails?.streamId?.isEmpty ?? true)) {
+      if (pickedImage == null && streamDetails?.streamImage?.isEmpty == true) {
         // Try to take picture from camera first
         final file = await cameraController?.takePicture();
         if (file != null) {

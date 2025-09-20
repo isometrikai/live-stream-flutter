@@ -23,15 +23,6 @@ abstract class IsmLiveRouteManagement {
     String? streamImage,
     bool reJoin = false,
   }) async {
-    // Clear any existing stream data before opening new stream view
-    // But preserve data for scheduled streams
-    if (Get.isRegistered<IsmLiveStreamController>()) {
-      final controller = Get.find<IsmLiveStreamController>();
-      if (!isSchedule) {
-        controller.streamDispose(false);
-      }
-    }
-
     IsmLiveStreamBinding().dependencies();
     var widget = IsmLiveStreamView(
       listener: listener,
