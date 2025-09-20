@@ -23,6 +23,15 @@ abstract class IsmLiveRouteManagement {
     String? streamImage,
     bool reJoin = false,
   }) async {
+    // Clear any existing stream data before opening new stream view
+    // But preserve data for scheduled streams
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      final controller = Get.find<IsmLiveStreamController>();
+      if (!isSchedule) {
+        controller.streamDispose(false);
+      }
+    }
+
     IsmLiveStreamBinding().dependencies();
     var widget = IsmLiveStreamView(
       listener: listener,
@@ -50,8 +59,38 @@ abstract class IsmLiveRouteManagement {
     IsmLiveRoute.pushReplacement(IsmLiveEndStream(streamId: streamId));
   }
 
-  static void goToGoLiveView({bool popPrevious = false}) {
-    IsmLiveStreamBinding().dependencies();
+  static void goToGoLiveView({
+    bool popPrevious = false,
+    IsmLiveStreamDataModel? editStreamData,
+  }) {
+    // Only initialize binding if controller is not already registered
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    // If editing a scheduled stream, set up the controller with the existing data
+    if (editStreamData != null && Get.isRegistered<IsmLiveStreamController>()) {
+      final controller = Get.find<IsmLiveStreamController>();
+
+      // Store the edit data in a temporary variable to set it up after the view is built
+      controller.streamDetails = editStreamData;
+      controller.isSchedulingBroadcast = true;
+      controller.scheduleLiveDate =
+          editStreamData.scheduleStartTime ?? DateTime.now();
+      controller.descriptionController.text =
+          editStreamData.streamDescription ?? '';
+      controller.isHdBroadcast = editStreamData.hdBroadcast ?? false;
+      controller.isRecordingBroadcast = editStreamData.isRecorded ?? false;
+      controller.isRestreamBroadcast = editStreamData.restream ?? false;
+      // Set the selected stream type based on the existing data
+      controller.selectedGoLiveStream = editStreamData.isPaid == true
+          ? IsmLiveStreamTypes.premium
+          : IsmLiveStreamTypes.free;
+
+      // Trigger an update to refresh the UI
+      controller.update([IsmGoLiveView.updateId]);
+    }
+
     if (popPrevious) {
       IsmLiveRoute.pushReplacement(const IsmGoLiveView());
     } else {

@@ -490,7 +490,9 @@ class HomeController extends GetxController {
   ) {
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final isTimePassed = _isScheduleTimePassed(scheduleTime);
-    final formattedTime = _formatScheduleTime(scheduleTime!);
+    final formattedTime = scheduleTime != null
+        ? _formatScheduleTime(scheduleTime)
+        : 'No time set';
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(

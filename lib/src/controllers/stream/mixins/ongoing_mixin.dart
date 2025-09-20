@@ -514,7 +514,10 @@ mixin StreamOngoingMixin {
     switch (option) {
       case IsmLiveScheduleSettings.edit:
         IsmLiveRoute.pop();
-        IsmLiveRouteManagement.goToGoLiveView(popPrevious: true);
+        IsmLiveRouteManagement.goToGoLiveView(
+          popPrevious: true,
+          editStreamData: _controller.streamDetails,
+        );
         break;
       case IsmLiveScheduleSettings.delete:
         IsmLiveRoute.pop();
