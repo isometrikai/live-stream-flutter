@@ -292,9 +292,12 @@ class IsmLiveStreamController extends GetxController
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
+  bool preventDispose = false;
 
   @override
   void dispose() {
+    print(
+        'initializeAndJoinStream: Controller dispose() called, preventDispose=$preventDispose');
     IsmLiveUtility.updateLater(
       () => Get.find<IsmLiveStreamController>().streamDispose(),
     );
@@ -699,6 +702,16 @@ class IsmLiveStreamController extends GetxController
   }
 
   void streamDispose([bool callDispose = true]) async {
+    print(
+        'initializeAndJoinStream: streamDispose called preventDispose=$preventDispose, callDispose=$callDispose');
+
+    if (preventDispose) {
+      IsmLiveLog('Skipping streamDispose due to preventDispose flag');
+      print(
+          'initializeAndJoinStream: SKIPPING disposal due to preventDispose flag');
+      return;
+    }
+    print('initializeAndJoinStream: streamDisposeddd');
     // Clear PK controller data
     var pkcontroller = Get.find<IsmLivePkController>();
     pkcontroller.pkBarPersentage = 0;
@@ -721,12 +734,14 @@ class IsmLiveStreamController extends GetxController
     audioOn = true;
     giftcoinBalance = 0;
 
-    // Clear stream data
-    streamDetails = null;
-    streamId = null;
-    bytes = null;
-    parentMessage = null;
-    streamAnalytis = null;
+    // Clear stream data (but preserve essential data during rejoin)
+    if (!preventDispose) {
+      streamDetails = null;
+      streamId = null;
+      bytes = null;
+      parentMessage = null;
+      streamAnalytis = null;
+    }
 
     // Clear lists
     streamMessagesList.clear();
@@ -755,9 +770,11 @@ class IsmLiveStreamController extends GetxController
     rtmlUrlDevice.clear();
     streamKeyDevice.clear();
 
-    // Clear room and listener
-    room = null;
-    listener = null;
+    // Clear room and listener (but preserve them during rejoin)
+    if (!preventDispose) {
+      room = null;
+      listener = null;
+    }
     userRole = null;
 
     // Clear camera controller

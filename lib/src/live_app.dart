@@ -342,7 +342,11 @@ class IsmLiveApp extends StatefulWidget {
     bool isScrolling = false,
     bool isInteractive = false,
     DateTime? startTime,
+    bool? isScheduledStream,
+    String? eventId,
     required BuildContext context,
+    bool reJoin = false,
+
   }) async {
     assert(
       _initialized,
@@ -370,7 +374,10 @@ class IsmLiveApp extends StatefulWidget {
         isScrolling: isScrolling,
         isInteractive: isInteractive,
         startTime: startTime,
+        isScheduledStream: isScheduledStream,
+        eventId: eventId,
         context: context,
+        reJoin: reJoin,
       );
     });
   }

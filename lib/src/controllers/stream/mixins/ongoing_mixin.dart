@@ -766,7 +766,12 @@ mixin StreamOngoingMixin {
       }
 
       _controller.userRole = null;
-      _controller.streamId = null;
+
+      // Only clear streamId if not preventing disposal (e.g., during rejoin)
+      if (!_controller.preventDispose) {
+        _controller.streamId = null;
+      }
+
       _pkController.pkTimer?.cancel();
       _pkController.pkTimer = null;
       _controller.streamTimer?.cancel();

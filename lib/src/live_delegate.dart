@@ -653,7 +653,7 @@ class IsmLiveDelegate {
     IsmLiveLog.error('Calling Leave API from Outside');
     var controller = Get.find<IsmLiveStreamController>();
     if (controller.streamId.isNullOrEmpty) {
-      IsmLiveLog.error('StreamId is null or empty ${controller.streamId}');
+      IsmLiveLog.error('StreamId is null or empty ${controller.streamId} ');
       if (isSchedule) {
         IsmLiveRoute.pop();
       }

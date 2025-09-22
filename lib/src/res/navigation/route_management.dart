@@ -23,7 +23,11 @@ abstract class IsmLiveRouteManagement {
     String? streamImage,
     bool reJoin = false,
   }) async {
+    print('initializeAndJoinStream reJoin checkinggg -------');
+    print(
+        'initializeAndJoinStream goToStreamView called with reJoin=$reJoin, isHost=$isHost, isNewStream=$isNewStream');
     IsmLiveStreamBinding().dependencies();
+
     var widget = IsmLiveStreamView(
       listener: listener,
       room: room,
@@ -35,9 +39,38 @@ abstract class IsmLiveRouteManagement {
       isSchedule: isSchedule,
       isInteractive: isInteractive,
     );
-    if ((isHost && isNewStream) || reJoin) {
+
+    print('initializeAndJoinStream reJoin checkinggg');
+
+    // Determine if we should use pushReplacement or push
+    final shouldReplace = (isHost && isNewStream) || reJoin;
+
+    if (shouldReplace) {
+      print('initializeAndJoinStream reJoin status: $reJoin');
+
+      // Set preventDispose flag before navigation if reJoin is true
+      if (reJoin) {
+        final controller = Get.find<IsmLiveStreamController>();
+        controller.preventDispose = true;
+        print('initializeAndJoinStream preventDispose set true for reJoin');
+        print(
+            'initializeAndJoinStream controller preventDispose is now: ${controller.preventDispose}');
+      }
+
+      // Navigate to the stream view
+      print('initializeAndJoinStream: About to call pushReplacement');
       await IsmLiveRoute.pushReplacement(widget);
+      print('initializeAndJoinStream: pushReplacement completed');
+
+      // Reset preventDispose flag after navigation is complete
+      if (reJoin) {
+        final controller = Get.find<IsmLiveStreamController>();
+        controller.preventDispose = false;
+        print(
+            'initializeAndJoinStream: Reset preventDispose=false after navigation');
+      }
     } else {
+      // Regular navigation without preventing disposal
       await IsmLiveRoute.push(widget);
     }
   }

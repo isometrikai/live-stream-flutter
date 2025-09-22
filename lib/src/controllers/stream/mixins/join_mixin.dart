@@ -29,8 +29,27 @@ mixin StreamJoinMixin {
     required BuildContext context,
     bool reJoin = false,
   }) async {
-    initialize(_controller.streams.indexOf(stream));
+    // Auto-detect rejoin scenario: if controller already has data for this stream
+    // and we're not explicitly setting reJoin to false, treat it as rejoin
+    // Note: Don't check listener as it might be cleared during disposal
+    var isRejoinScenario = reJoin ||
+        (_controller.streamId == stream.streamId && _controller.room != null);
 
+    if (isRejoinScenario && !reJoin) {
+      print(
+          'initializeAndJoinStream: Auto-detected rejoin scenario for stream ${stream.streamId}');
+      reJoin = true;
+    }
+
+    // Set preventDispose flag immediately for rejoin scenarios to prevent data clearing
+    if (reJoin) {
+      _controller.preventDispose = true;
+      print(
+          'initializeAndJoinStream: Set preventDispose=true for rejoin scenario');
+    }
+
+    initialize(_controller.streams.indexOf(stream));
+    print('initializeAndJoinStream called ${stream.streamId}, reJoin=$reJoin');
     await joinStream(stream, isHost,
         joinByScrolling: joinByScrolling,
         isScrolling: isScrolling,
@@ -165,6 +184,7 @@ mixin StreamJoinMixin {
 
     // Connect to the stream
     await connectStream(
+        stream: stream,
         token: token,
         streamId: stream.streamId!,
         streamImage: stream.streamImage,
@@ -275,6 +295,7 @@ mixin StreamJoinMixin {
 
   // Connect to the stream
   Future<void> connectStream({
+    IsmLiveStreamDataModel? stream,
     required String token,
     required String streamId,
     String? streamImage,
@@ -291,10 +312,25 @@ mixin StreamJoinMixin {
     bool isInteractive = false,
     DateTime? startTime,
     required BuildContext context,
+    String? eventId,
     bool reJoin = false,
+    bool? isScheduledStream,
+    List? products,
   }) async {
     // Subscribe to the stream
     _controller.streamId = streamId;
+    print('initializeAndJoinStream initialized with streamId: $streamId');
+    _controller.streamDetails ??= stream ??
+        IsmLiveStreamDataModel(
+          streamDescription: streamDiscription,
+          streamImage: streamImage,
+          hdBroadcast: hdBroadcast,
+          restream: restream,
+          isScheduledStream: isScheduledStream,
+          startDateTime: startTime,
+          eventId: eventId,
+          products: products ?? [],
+        );
 
     // Reset callback trigger flag for new stream
     _controller._streamViewLoadedCallbackTriggered = false;
@@ -419,6 +455,7 @@ mixin StreamJoinMixin {
         IsmLiveUtility.closeLoader();
         return;
       }
+      print('initializeAndJoinStream 444444');
 
       // Set track subscription permissions
       try {
@@ -493,6 +530,9 @@ mixin StreamJoinMixin {
 
       startStreamTimer();
 
+      print(
+          'initializeAndJoinStream: joinByScrolling=$joinByScrolling, will call goToStreamView: ${!joinByScrolling}');
+
       if (!joinByScrolling) {
         try {
           IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
@@ -501,8 +541,19 @@ mixin StreamJoinMixin {
         } catch (e) {
           IsmLiveLog.error('Gift pre-cache error: $e');
         }
-
+        print('initializeAndJoinStream 555555');
         try {
+          print(
+              'initializeAndJoinStream: About to call goToStreamView with reJoin=$reJoin');
+
+          // Check if listener is null before calling goToStreamView
+          if (_controller.listener == null) {
+            print(
+                'initializeAndJoinStream: ERROR - listener is null, cannot proceed with goToStreamView');
+            IsmLiveLog.error('Cannot join stream: listener is null');
+            return;
+          }
+
           await IsmLiveRouteManagement.goToStreamView(
               isHost: isHost,
               isNewStream: isNewStream,
@@ -513,9 +564,15 @@ mixin StreamJoinMixin {
               streamId: streamId,
               isInteractive: isInteractive,
               reJoin: reJoin);
+
+          print('initializeAndJoinStream: goToStreamView completed');
         } catch (e) {
           IsmLiveLog.error('Navigation error: $e');
+          print('initializeAndJoinStream: Navigation error details: $e');
         }
+      } else {
+        print(
+            'initializeAndJoinStream: Skipping goToStreamView due to joinByScrolling=true');
       }
 
       // _controller.update([IsmLiveStreamView.updateId]);
@@ -595,6 +652,7 @@ mixin StreamJoinMixin {
       listener: lk.Room().createListener(),
       streamId: stream.streamId ?? '',
       isSchedule: true,
+      reJoin: false, // This is for scheduled streams, not rejoin
     );
 
     IsmLiveUtility.updateLater(() {

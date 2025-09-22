@@ -44,6 +44,7 @@ class IsmLiveStreamView extends StatelessWidget {
       IsmLiveStreamController controller) async {
     try {
       // Clear all stream-related data
+      // Note: streamDispose() will handle the preventDispose check internally
       controller
           .streamDispose(false); // Don't dispose animation controller here
 
@@ -63,6 +64,7 @@ class IsmLiveStreamView extends StatelessWidget {
       }
 
       // Clear stream details and related data
+      // Note: Essential data (streamId, room, listener, etc.) are already handled by streamDispose()
       controller.streamDetails = null;
       controller.pickedImage = null;
       controller.bytes = null;
@@ -71,15 +73,8 @@ class IsmLiveStreamView extends StatelessWidget {
       controller.participantTracks.clear();
       controller.participantList.clear();
 
-      // Clear room and listener
-      controller.room = null;
-      controller.listener = null;
-
       // Clear user role
       controller.userRole = null;
-
-      // Clear stream ID
-      controller.streamId = null;
 
       // Clear analytics data
       controller.streamAnalytis = null;
@@ -398,6 +393,14 @@ class _IsmLiveStreamView extends StatelessWidget {
         id: IsmLiveStreamView.updateId,
         initState: (_) async {
           var controller = Get.find<IsmLiveStreamController>();
+
+          // Reset preventDispose flag when new view is initialized
+          if (controller.preventDispose) {
+            controller.preventDispose = false;
+            print(
+                'initializeAndJoinStream preventDispose reset to false in new view');
+          }
+
           unawaited(controller.initAnimation());
 
           controller.participantList = controller.participantTracks;
@@ -424,7 +427,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           return PopScope(
             canPop: false,
             onPopInvoked: (didPop) async {
-              if (didPop) {
+              if (didPop && !controller.preventDispose) {
                 // Clean up stream data when user closes the view
                 await IsmLiveStreamView._cleanupStreamData(controller);
               }
