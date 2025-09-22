@@ -111,6 +111,8 @@ class _RtmlView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
+          print(
+              'participantTracks length: ${controller.participantTracks.length}');
           IsmLiveParticipantTrack? hostScreen;
 
           for (var value in controller.participantTracks) {
@@ -119,57 +121,63 @@ class _RtmlView extends StatelessWidget {
             }
           }
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IsmLiveDimens.boxHeight50,
-              IsmLiveDimens.boxHeight50,
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: hostScreen == null
-                    ? NoVideoWidget(
-                        imageUrl: controller.hostDetails?.image ?? '',
-                        name: controller.hostDetails?.name ?? 'U',
-                      )
-                    : ParticipantWidget.widgetFor(
-                        hostScreen,
-                        imageUrl: controller.hostDetails?.userProfileImageUrl,
-                        showStatsLayer: false,
-                        showFullVideo: true,
-                      ),
-              ),
-              GridView.builder(
-                padding: IsmLiveDimens.edgeInsets0,
-                restorationId: '',
-                itemCount: 4,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 0.5,
+          return Container(
+            color: Colors.black,
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: hostScreen == null
+                      ? NoVideoWidget(
+                          imageUrl: controller.hostDetails?.image ?? '',
+                          name: controller.hostDetails?.name ?? 'U',
+                        )
+                      : ParticipantWidget.widgetFor(
+                          hostScreen,
+                          imageUrl: controller.hostDetails?.userProfileImageUrl,
+                          showStatsLayer: false,
+                          showFullVideo: true,
+                        ),
                 ),
-                itemBuilder: (_, index) {
-                  if (controller.participantTracks.length > index &&
-                      hostScreen != controller.participantTracks[index]) {
-                    var url = '';
-                    for (var element in controller.streamMembersList) {
-                      if (element.userId ==
-                          controller
-                              .participantList[index].participant.identity) {
-                        url = element.userProfileImageUrl;
-                      }
-                    }
-
-                    return ParticipantWidget.widgetFor(
-                      controller.participantList[index],
-                      imageUrl: url,
-                    );
-                  }
-                  return const NoVideoIconWidget();
-                },
-              )
-            ],
+              ),
+            ),
           );
+          // IN RTMP NOT REQUIRED MUlTIPLE STREAMS
+          // GridView.builder(
+          //   padding: IsmLiveDimens.edgeInsets0,
+          //   restorationId: '',
+          //   itemCount: 4,
+          //   shrinkWrap: true,
+          //   physics: const NeverScrollableScrollPhysics(),
+          //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          //     crossAxisCount: 4,
+          //     childAspectRatio: 0.5,
+          //   ),
+          //   itemBuilder: (_, index) {
+          //     if (controller.participantTracks.length > index &&
+          //         hostScreen != controller.participantTracks[index]) {
+          //       var url = '';
+          //       for (var element in controller.streamMembersList) {
+          //         if (element.userId ==
+          //             controller
+          //                 .participantList[index].participant.identity) {
+          //           url = element.userProfileImageUrl;
+          //         }
+          //       }
+
+          //       return ParticipantWidget.widgetFor(
+          //         controller.participantList[index],
+          //         imageUrl: url,
+          //       );
+          //     }
+          //     return const NoVideoIconWidget();
+          //   },
+          // )
+          // ],
+          // )
         },
       );
 }
