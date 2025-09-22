@@ -335,6 +335,9 @@ mixin StreamJoinMixin {
     // Reset callback trigger flag for new stream
     _controller._streamViewLoadedCallbackTriggered = false;
 
+    // Set up background lifecycle management
+    _controller.setStreamActive(true, isHost);
+
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
     _controller.descriptionController.text =
@@ -450,6 +453,9 @@ mixin StreamJoinMixin {
       // Try to connect to the room with better error handling
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
+
+        // Store the token for background lifecycle reconnection
+        _controller.storeToken(token);
       } catch (e, st) {
         IsmLiveLog.error('Room connection error: $e', st);
         IsmLiveUtility.closeLoader();

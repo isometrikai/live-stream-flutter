@@ -102,6 +102,44 @@ mixin StreamOngoingMixin {
       _controller.listener
         ?..on<lk.RoomDisconnectedEvent>((event) async {
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
+
+          // Check if this is a background disconnection
+          if (_controller.isInBackground) {
+            IsmLiveLog.info(
+                'Room disconnected while in background - not ending stream');
+            return;
+          }
+
+          // Check if this is a client-initiated disconnection (likely background)
+          if (event.reason == lk.DisconnectReason.clientInitiated) {
+            IsmLiveLog.info(
+                'Client-initiated disconnection - checking if in background');
+            // Give a small delay to check if we're actually in background
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (_controller.isInBackground) {
+                IsmLiveLog.info(
+                    'Confirmed background disconnection - not ending stream');
+                return;
+              }
+            });
+          }
+
+          // Check if this is a join failure during reconnection
+          if (event.reason == lk.DisconnectReason.joinFailure) {
+            IsmLiveLog.info(
+                'Join failure during reconnection - not ending stream, will retry');
+            return;
+          }
+
+          // Check if this is a state mismatch (common during reconnection)
+          if (event.reason == lk.DisconnectReason.stateMismatch) {
+            IsmLiveLog.info(
+                'State mismatch during reconnection - not ending stream');
+            return;
+          }
+
+          IsmLiveLog.info(
+              'Room disconnected - this appears to be a real disconnection');
         })
         ..on<lk.ParticipantEvent>((event) {
           IsmLiveLog.info('ParticipantEvent: $event');
@@ -726,6 +764,10 @@ mixin StreamOngoingMixin {
       if (isHost) {
         unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
       }
+
+      // Set stream as inactive for background lifecycle
+      _controller.setStreamActive(false, isHost);
+
       await disconnectRoom();
 
       if (goBack) {

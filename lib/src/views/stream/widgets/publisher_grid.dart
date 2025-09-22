@@ -111,8 +111,6 @@ class _RtmlView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
-          print(
-              'participantTracks length: ${controller.participantTracks.length}');
           IsmLiveParticipantTrack? hostScreen;
 
           for (var value in controller.participantTracks) {

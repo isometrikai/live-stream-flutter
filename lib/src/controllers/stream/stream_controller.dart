@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_mixin.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -22,7 +23,9 @@ part 'mixins/sheet_mixin.dart';
 class IsmLiveStreamController extends GetxController
     with
         GetTickerProviderStateMixin,
+        WidgetsBindingObserver,
         StreamAPIMixin,
+        StreamBackgroundLifecycleMixin,
         StreamJoinMixin,
         StreamOngoingMixin,
         StreamMessageMixin,
@@ -52,6 +55,11 @@ class IsmLiveStreamController extends GetxController
   final Rx<RoomListener?> _listener = Rx<RoomListener?>(null);
   RoomListener? get listener => _listener.value;
   set listener(RoomListener? value) => _listener.value = value;
+
+  // Background state for external access
+  final RxBool _isInBackground = false.obs;
+  @override
+  bool get isInBackground => _isInBackground.value;
 
   final RxList<Widget> _heartList = <Widget>[].obs;
   List<Widget> get heartList => _heartList;
@@ -254,6 +262,7 @@ class IsmLiveStreamController extends GetxController
 
   String? pkWinnerId;
 
+  @override
   bool get isHost => userRole?.isHost ?? false;
 
   bool get isModerator => userRole?.isModerator ?? false;
@@ -707,8 +716,6 @@ class IsmLiveStreamController extends GetxController
 
     if (preventDispose) {
       IsmLiveLog('Skipping streamDispose due to preventDispose flag');
-      print(
-          'initializeAndJoinStream: SKIPPING disposal due to preventDispose flag');
       return;
     }
     print('initializeAndJoinStream: streamDisposeddd');
@@ -932,5 +939,13 @@ class IsmLiveStreamController extends GetxController
     }
 
     return isthere;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    IsmLiveLog.info('Stream controller received lifecycle state: $state');
+    super.didChangeAppLifecycleState(state);
+    // Delegate to background lifecycle mixin
+    handleBackgroundLifecycleState(state);
   }
 }
