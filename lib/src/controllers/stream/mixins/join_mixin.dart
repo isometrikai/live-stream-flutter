@@ -644,7 +644,7 @@ mixin StreamJoinMixin {
         joinTime: 0,
         metaData: details?.userMetaData ?? const IsmLiveMetaData(),
         userId: details?.id ?? '',
-        userIdentifier: '',
+        userIdentifier: details?.appUserId ?? '',
         userName: details?.userName ?? '',
         userProfileImageUrl: details?.userProfile ?? '');
 

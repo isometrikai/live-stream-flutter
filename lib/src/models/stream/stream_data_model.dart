@@ -476,6 +476,7 @@ class IsmLiveStreamDataModel {
 
 class IsmLiveUser {
   final String? id;
+  final String? appUserId;
   final String? userName;
   final String? firstName;
   final IsmLiveMetaData? userMetaData;
@@ -483,6 +484,7 @@ class IsmLiveUser {
   final String? userProfile;
   IsmLiveUser({
     this.id,
+    this.appUserId,
     this.userName,
     this.firstName,
     this.userMetaData,
@@ -492,6 +494,7 @@ class IsmLiveUser {
 
   IsmLiveUser copyWith({
     String? id,
+    String? appUserId,
     String? userName,
     String? firstName,
     IsmLiveMetaData? userMetaData,
@@ -500,6 +503,7 @@ class IsmLiveUser {
   }) =>
       IsmLiveUser(
         id: id ?? this.id,
+        appUserId: appUserId ?? this.appUserId,
         userName: userName ?? this.userName,
         firstName: firstName ?? this.firstName,
         userMetaData: userMetaData ?? this.userMetaData,
@@ -537,6 +541,7 @@ class IsmLiveUser {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'id': id,
+        'appUserId': appUserId,
         'userName': userName,
         'firstName': firstName,
         'metaData': userMetaData?.toMap(),
@@ -546,6 +551,7 @@ class IsmLiveUser {
 
   factory IsmLiveUser.fromMap(Map<String, dynamic> map) => IsmLiveUser(
         id: map['id'] != null ? map['id'] as String : null,
+        appUserId: map['appUserId'] != null ? map['appUserId'] as String : null,
         userName: map['userName'] != null ? map['userName'] as String : null,
         firstName: map['firstName'] != null ? map['firstName'] as String : null,
         userMetaData: map['metaData'] != null
@@ -563,13 +569,14 @@ class IsmLiveUser {
 
   @override
   String toString() =>
-      'IsmLiveUser(id: $id, userName: $userName, firstName: $firstName, userMetaData: $userMetaData, lastName: $lastName, userProfile: $userProfile)';
+      'IsmLiveUser(id: $id, appUserId: $appUserId, userName: $userName, firstName: $firstName, userMetaData: $userMetaData, lastName: $lastName, userProfile: $userProfile)';
 
   @override
   bool operator ==(covariant IsmLiveUser other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&
+        other.appUserId == appUserId &&
         other.userName == userName &&
         other.firstName == firstName &&
         other.userMetaData == userMetaData &&
@@ -580,6 +587,7 @@ class IsmLiveUser {
   @override
   int get hashCode =>
       id.hashCode ^
+      appUserId.hashCode ^
       userName.hashCode ^
       firstName.hashCode ^
       userMetaData.hashCode ^
