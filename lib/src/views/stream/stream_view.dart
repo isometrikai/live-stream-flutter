@@ -1073,12 +1073,14 @@ class ScheduleStreamView extends StatelessWidget {
                                   controller.streamDetails?.streamId ?? '',
                               isKeyboardOpen: isKeyboardOpen,
                             ),
-                            IsmLiveDimens.boxHeight32,
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 3,
-                              child: _buildScheduledGoLiveButton(
-                                  context, controller, isKeyboardOpen),
-                            ),
+                            if (controller.isHost) ...[
+                              IsmLiveDimens.boxHeight32,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: _buildScheduledGoLiveButton(
+                                    context, controller, isKeyboardOpen),
+                              ),
+                            ],
                           ],
                         )
                     ],

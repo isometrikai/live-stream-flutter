@@ -629,11 +629,10 @@ mixin StreamJoinMixin {
     return await _controller.goliveScheduleStream(payload);
   }
 
-  void startSeduleStream(
-    IsmLiveStreamDataModel stream,
-  ) {
+  void startSeduleStream(IsmLiveStreamDataModel stream, {bool isHost = true}) {
     _controller._streamViewLoadedCallbackTriggered = false;
-    _controller.userRole = IsmLiveUserRole.host();
+    _controller.userRole =
+    isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     var details = stream.userDetails;
 
     _controller.streamDetails = stream;

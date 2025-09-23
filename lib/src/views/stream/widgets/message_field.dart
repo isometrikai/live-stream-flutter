@@ -81,6 +81,13 @@ class IsmLiveMessageField extends StatelessWidget {
               children: [
                 Expanded(
                   child: IsmLiveInputField(
+                    onTap: () {
+                      // Ensure emoji board is hidden and explicitly request focus
+                      controller.showEmojiBoard = false;
+                      FocusScope.of(context)
+                          .requestFocus(controller.messageFocusNode);
+                      controller.update([IsmLiveStreamView.updateId]);
+                    },
                     focusNode: controller.messageFocusNode,
                     cursorColor: Colors.white,
                     style: customStyle ??

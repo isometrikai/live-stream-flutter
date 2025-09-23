@@ -767,6 +767,11 @@ class IsmLiveStreamController extends GetxController
     searchUserFieldController.clear();
     descriptionController.clear();
     messageFieldController.clear();
+    // Reset focus to avoid stale attachment after re-opening the view
+    try {
+      messageFocusNode.dispose();
+    } catch (_) {}
+    messageFocusNode = FocusNode();
     searchModeratorFieldController.clear();
     searchCopublisherFieldController.clear();
     searchExistingMembesFieldController.clear();
