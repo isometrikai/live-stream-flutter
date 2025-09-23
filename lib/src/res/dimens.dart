@@ -80,6 +80,7 @@ class IsmLiveDimens {
   static final Widget boxHeight20 = SizedBox(height: twenty);
   static final Widget boxHeight24 = SizedBox(height: twentyFour);
   static final Widget boxHeight32 = SizedBox(height: thirtyTwo);
+  static final Widget boxHeight40 = SizedBox(height: forty);
   static final Widget boxHeight50 = SizedBox(height: fifty);
   static final Widget boxHeight150 = SizedBox(height: hundred);
 

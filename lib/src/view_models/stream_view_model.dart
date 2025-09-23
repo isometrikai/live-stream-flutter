@@ -9,6 +9,9 @@ class IsmLiveStreamViewModel {
   const IsmLiveStreamViewModel(this._repository);
   final IsmLiveStreamRepository _repository;
 
+  // Public getter for repository access
+  IsmLiveStreamRepository get repository => _repository;
+
   IsmLiveDBWrapper get _dbWrapper => Get.find<IsmLiveDBWrapper>();
 
   Future<void> getUserDetails() async {

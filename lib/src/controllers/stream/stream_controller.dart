@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_mixin.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -22,7 +23,9 @@ part 'mixins/sheet_mixin.dart';
 class IsmLiveStreamController extends GetxController
     with
         GetTickerProviderStateMixin,
+        WidgetsBindingObserver,
         StreamAPIMixin,
+        StreamBackgroundLifecycleMixin,
         StreamJoinMixin,
         StreamOngoingMixin,
         StreamMessageMixin,
@@ -52,6 +55,11 @@ class IsmLiveStreamController extends GetxController
   final Rx<RoomListener?> _listener = Rx<RoomListener?>(null);
   RoomListener? get listener => _listener.value;
   set listener(RoomListener? value) => _listener.value = value;
+
+  // Background state for external access
+  final RxBool _isInBackground = false.obs;
+  @override
+  bool get isInBackground => _isInBackground.value;
 
   final RxList<Widget> _heartList = <Widget>[].obs;
   List<Widget> get heartList => _heartList;
@@ -254,6 +262,7 @@ class IsmLiveStreamController extends GetxController
 
   String? pkWinnerId;
 
+  @override
   bool get isHost => userRole?.isHost ?? false;
 
   bool get isModerator => userRole?.isModerator ?? false;
@@ -292,9 +301,12 @@ class IsmLiveStreamController extends GetxController
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
+  bool preventDispose = false;
 
   @override
   void dispose() {
+    print(
+        'initializeAndJoinStream: Controller dispose() called, preventDispose=$preventDispose');
     IsmLiveUtility.updateLater(
       () => Get.find<IsmLiveStreamController>().streamDispose(),
     );
@@ -586,11 +598,12 @@ class IsmLiveStreamController extends GetxController
   /// Handles the Go Live button press logic
   /// This method contains all the logic from IsmGoLiveNavBar's onTap
   Future<void> handleGoLivePress(BuildContext context) async {
-    final isScheduledStream = isSchedulingBroadcast;
+    final isScheduledStream = streamDetails?.isScheduledStream ?? false;
 
     if (IsmLiveDelegate.onGoLiveClick != null) {
       // Handle image scenario similar to join_mixin.dart logic
-      if (pickedImage == null  && (streamDetails?.streamId?.isEmpty ?? true)) {
+      if (pickedImage == null &&
+          (streamDetails?.streamImage?.isEmpty ?? true)) {
         // Try to take picture from camera first
         final file = await cameraController?.takePicture();
         if (file != null) {
@@ -698,18 +711,59 @@ class IsmLiveStreamController extends GetxController
   }
 
   void streamDispose([bool callDispose = true]) async {
+    print(
+        'initializeAndJoinStream: streamDispose called preventDispose=$preventDispose, callDispose=$callDispose');
+
+    if (preventDispose) {
+      IsmLiveLog('Skipping streamDispose due to preventDispose flag');
+      return;
+    }
+    print('initializeAndJoinStream: streamDisposeddd');
+    // Clear PK controller data
     var pkcontroller = Get.find<IsmLivePkController>();
     pkcontroller.pkBarPersentage = 0;
     pkcontroller.pkBarGustPersentage = 100;
     pkcontroller.pkBarHostPersentage = 100;
     pkcontroller.pkHostValue = 0;
     pkcontroller.pkGustValue = 0;
-    memberStatus = IsmLiveMemberStatus.notMember;
 
-    streamDetails = null;
+    // Clear timers
+    streamTimer?.cancel();
+    streamTimer = null;
+    pkcontroller.pkTimer?.cancel();
+    pkcontroller.pkTimer = null;
+
+    // Reset member status and UI states
+    memberStatus = IsmLiveMemberStatus.notMember;
     showEmojiBoard = false;
+    speakerOn = true;
+    videoOn = true;
+    audioOn = true;
+    giftcoinBalance = 0;
+
+    // Clear stream data (but preserve essential data during rejoin)
+    if (!preventDispose) {
+      streamDetails = null;
+      streamId = null;
+      bytes = null;
+      parentMessage = null;
+      streamAnalytis = null;
+    }
+
+    // Clear lists
     streamMessagesList.clear();
     streamViewersList.clear();
+    streamMembersList.clear();
+    analyticsViewers.clear();
+    participantTracks.clear();
+    participantList.clear();
+    giftMessages.clear();
+    giftList.clear();
+    heartList.clear();
+    copublisherRequestsList.clear();
+    selectedProductsList.clear();
+
+    // Clear text controllers
     searchUserFieldController.clear();
     descriptionController.clear();
     messageFieldController.clear();
@@ -717,29 +771,41 @@ class IsmLiveStreamController extends GetxController
     searchCopublisherFieldController.clear();
     searchExistingMembesFieldController.clear();
     searchMembersFieldController.clear();
-    copublisherRequestsList.clear();
+    premiumStreamCoinsController.clear();
+    rtmlUrl.clear();
+    streamKey.clear();
+    rtmlUrlDevice.clear();
+    streamKeyDevice.clear();
+
+    // Clear room and listener (but preserve them during rejoin)
+    if (!preventDispose) {
+      room = null;
+      listener = null;
+    }
+    userRole = null;
+
+    // Clear camera controller
+    cameraController?.dispose();
+    cameraController = null;
+    cameraFuture = null;
+
+    // Reset flags and selections
     if (callDispose) disposeAnimationController();
     giftType = 0;
-    premiumStreamCoinsController.clear();
     isPremium = false;
-
-    // Clear go-live specific data
     pickedImage = null;
     selectedGoLiveStream = IsmLiveStreamTypes.free;
+    selectedGoLiveTabItem = IsmGoLiveTabItem.defaultLive;
     isHdBroadcast = false;
     isRecordingBroadcast = false;
     isSchedulingBroadcast = false;
     isRestreamBroadcast = false;
     usePersistentStreamKey = false;
-    scheduleLiveDate = DateTime.now();
-    selectedProductsList.clear();
+    isRtmp = false;
     restreamFacebook = false;
     restreamYoutube = false;
     restreamInstagram = false;
-    rtmlUrl.clear();
-    streamKey.clear();
-    rtmlUrlDevice.clear();
-    streamKeyDevice.clear();
+    scheduleLiveDate = DateTime.now();
 
     await WakelockPlus.disable();
   }
@@ -873,5 +939,13 @@ class IsmLiveStreamController extends GetxController
     }
 
     return isthere;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    IsmLiveLog.info('Stream controller received lifecycle state: $state');
+    super.didChangeAppLifecycleState(state);
+    // Delegate to background lifecycle mixin
+    handleBackgroundLifecycleState(state);
   }
 }

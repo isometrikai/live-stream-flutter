@@ -91,6 +91,11 @@ class IsmLiveApp extends StatefulWidget {
     List<String>? mqttTopics,
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
+    // Background lifecycle configuration
+    bool enableBackgroundLifecycle = true,
+    bool enableBackgroundAudio = true,
+    bool enableBackgroundVideo = false,
+    Duration? backgroundTimeout,
   }) async {
     if (_initialized || _initializing) {
       IsmLiveLog.info(
@@ -114,6 +119,15 @@ class IsmLiveApp extends StatefulWidget {
       if (!Get.isRegistered<IsmLiveStreamController>()) {
         IsmLiveLog.info('Registering IsmLiveStreamController');
         IsmLiveStreamBinding().dependencies();
+
+        // Configure background lifecycle after controller registration
+        final streamController = Get.find<IsmLiveStreamController>();
+        streamController.configureBackgroundLifecycle(
+          enableBackgroundLifecycle: enableBackgroundLifecycle,
+          enableBackgroundAudio: enableBackgroundAudio,
+          enableBackgroundVideo: enableBackgroundVideo,
+          backgroundTimeout: backgroundTimeout,
+        );
       }
       if (!Get.isRegistered<IsmLiveMqttController>()) {
         IsmLiveLog.info('Registering IsmLiveMqttController');
@@ -342,7 +356,11 @@ class IsmLiveApp extends StatefulWidget {
     bool isScrolling = false,
     bool isInteractive = false,
     DateTime? startTime,
+    bool? isScheduledStream,
+    String? eventId,
     required BuildContext context,
+    bool reJoin = false,
+
   }) async {
     assert(
       _initialized,
@@ -370,7 +388,10 @@ class IsmLiveApp extends StatefulWidget {
         isScrolling: isScrolling,
         isInteractive: isInteractive,
         startTime: startTime,
+        isScheduledStream: isScheduledStream,
+        eventId: eventId,
         context: context,
+        reJoin: reJoin,
       );
     });
   }
@@ -656,6 +677,24 @@ class IsmLiveApp extends StatefulWidget {
   ///   );
   /// });
   /// ```
+
+  /// Configure background lifecycle management
+  static void configureBackgroundLifecycle({
+    bool enableBackgroundLifecycle = true,
+    bool enableBackgroundAudio = true,
+    bool enableBackgroundVideo = false,
+    Duration? backgroundTimeout,
+  }) {
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      final streamController = Get.find<IsmLiveStreamController>();
+      streamController.configureBackgroundLifecycle(
+        enableBackgroundLifecycle: enableBackgroundLifecycle,
+        enableBackgroundAudio: enableBackgroundAudio,
+        enableBackgroundVideo: enableBackgroundVideo,
+        backgroundTimeout: backgroundTimeout,
+      );
+    }
+  }
 
   static Future<void> dispose({
     bool? isStreaming,

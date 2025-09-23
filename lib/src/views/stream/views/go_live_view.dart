@@ -92,8 +92,8 @@ class IsmGoLiveView extends StatelessWidget {
           var controller = Get.find<IsmLiveStreamController>();
           // Always clear go-live data when disposing the go-live view
           // This ensures clean state for next time the screen opens
-          controller.streamDispose(
-              false); // Don't call disposeAnimationController here
+          // controller.streamDispose(
+          //     false); // Don't call disposeAnimationController here
           controller.cameraController?.dispose();
           controller.streamDetails = null;
           controller.pickedImage = null;

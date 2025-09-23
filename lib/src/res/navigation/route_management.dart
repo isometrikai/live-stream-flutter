@@ -23,7 +23,11 @@ abstract class IsmLiveRouteManagement {
     String? streamImage,
     bool reJoin = false,
   }) async {
+    print('initializeAndJoinStream reJoin checkinggg -------');
+    print(
+        'initializeAndJoinStream goToStreamView called with reJoin=$reJoin, isHost=$isHost, isNewStream=$isNewStream');
     IsmLiveStreamBinding().dependencies();
+
     var widget = IsmLiveStreamView(
       listener: listener,
       room: room,
@@ -35,9 +39,38 @@ abstract class IsmLiveRouteManagement {
       isSchedule: isSchedule,
       isInteractive: isInteractive,
     );
-    if ((isHost && isNewStream) || reJoin) {
+
+    print('initializeAndJoinStream reJoin checkinggg');
+
+    // Determine if we should use pushReplacement or push
+    final shouldReplace = (isHost && isNewStream) || reJoin;
+
+    if (shouldReplace) {
+      print('initializeAndJoinStream reJoin status: $reJoin');
+
+      // Set preventDispose flag before navigation if reJoin is true
+      if (reJoin) {
+        final controller = Get.find<IsmLiveStreamController>();
+        controller.preventDispose = true;
+        print('initializeAndJoinStream preventDispose set true for reJoin');
+        print(
+            'initializeAndJoinStream controller preventDispose is now: ${controller.preventDispose}');
+      }
+
+      // Navigate to the stream view
+      print('initializeAndJoinStream: About to call pushReplacement');
       await IsmLiveRoute.pushReplacement(widget);
+      print('initializeAndJoinStream: pushReplacement completed');
+
+      // Reset preventDispose flag after navigation is complete
+      if (reJoin) {
+        final controller = Get.find<IsmLiveStreamController>();
+        controller.preventDispose = false;
+        print(
+            'initializeAndJoinStream: Reset preventDispose=false after navigation');
+      }
     } else {
+      // Regular navigation without preventing disposal
       await IsmLiveRoute.push(widget);
     }
   }
@@ -50,8 +83,38 @@ abstract class IsmLiveRouteManagement {
     IsmLiveRoute.pushReplacement(IsmLiveEndStream(streamId: streamId));
   }
 
-  static void goToGoLiveView({bool popPrevious = false}) {
-    IsmLiveStreamBinding().dependencies();
+  static void goToGoLiveView({
+    bool popPrevious = false,
+    IsmLiveStreamDataModel? editStreamData,
+  }) {
+    // Only initialize binding if controller is not already registered
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    // If editing a scheduled stream, set up the controller with the existing data
+    if (editStreamData != null && Get.isRegistered<IsmLiveStreamController>()) {
+      final controller = Get.find<IsmLiveStreamController>();
+
+      // Store the edit data in a temporary variable to set it up after the view is built
+      controller.streamDetails = editStreamData;
+      controller.isSchedulingBroadcast = true;
+      controller.scheduleLiveDate =
+          editStreamData.scheduleStartTime ?? DateTime.now();
+      controller.descriptionController.text =
+          editStreamData.streamDescription ?? '';
+      controller.isHdBroadcast = editStreamData.hdBroadcast ?? false;
+      controller.isRecordingBroadcast = editStreamData.isRecorded ?? false;
+      controller.isRestreamBroadcast = editStreamData.restream ?? false;
+      // Set the selected stream type based on the existing data
+      controller.selectedGoLiveStream = editStreamData.isPaid == true
+          ? IsmLiveStreamTypes.premium
+          : IsmLiveStreamTypes.free;
+
+      // Trigger an update to refresh the UI
+      controller.update([IsmGoLiveView.updateId]);
+    }
+
     if (popPrevious) {
       IsmLiveRoute.pushReplacement(const IsmGoLiveView());
     } else {
