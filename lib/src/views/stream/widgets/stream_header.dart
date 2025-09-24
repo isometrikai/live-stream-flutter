@@ -61,6 +61,13 @@ class IsmLiveStreamHeader extends StatelessWidget {
                 IsmLiveDimens.boxWidth10,
                 IsmLiveViewerCount(onTap: onTapViewers),
               ],
+              IsmLiveDimens.boxWidth10,
+              // Cart icon - use custom builder if provided, otherwise use default
+              IsmLiveDelegate.cartBuilder?.call(
+                    context,
+                    Get.find<IsmLiveStreamController>(),
+                  ) ??
+                  const IsmLiveCartIcon(),
             ],
           ),
           IsmLiveDimens.boxHeight10,
@@ -172,6 +179,46 @@ class IsmLiveViewerCount extends StatelessWidget {
             ),
           ),
         ),
+      );
+}
+
+class IsmLiveCartIcon extends StatelessWidget {
+  const IsmLiveCartIcon({
+    super.key,
+    this.onTap,
+  });
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        builder: (controller) {
+          // Only show cart icon if:
+          // 1. User is not host, AND
+          // 2. Stream has products linked
+          final shouldShow =
+              !controller.isHost && (IsmLiveDelegate.productStream ?? false);
+
+          if (!shouldShow) {
+            return IsmLiveDimens.box0;
+          }
+
+          return IsmLiveTapHandler(
+            onTap: onTap,
+            child: Container(
+              padding: IsmLiveDimens.edgeInsets4,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white24,
+              ),
+              child: Icon(
+                Icons.shopping_cart_rounded,
+                color: IsmLiveColors.white,
+                size: IsmLiveDimens.sixteen,
+              ),
+            ),
+          );
+        },
       );
 }
 

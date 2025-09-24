@@ -227,6 +227,348 @@ IsmLiveApp.configureInterface(
   - Useful for custom analytics viewers APIs, real-time viewers data integration, custom viewers data processing, etc.
   - If not set, SDK uses default analytics viewers API
 
+- **`shareButtonCallback`**: Called when the share button is tapped in the stream interface
+  - Parameters: `context`, `streamId`, `isHost`
+  - Return `true` if your app successfully handled the share action, `false` to let SDK handle with default implementation
+  - Useful for custom share functionality, integration with external sharing services, custom share content generation, etc.
+  - If not set, SDK uses default share behavior
+
+- **`scheduleModifyButtonCallback`**: Called when the schedule modify button is tapped
+  - Parameters: `context`, `streamDetails`, `isHost`
+  - Return `true` if your app successfully handled the schedule modification, `false` to let SDK handle with default implementation
+  - Useful for custom schedule editing flows, integration with external scheduling systems, custom permission checks, etc.
+  - If not set, SDK uses default schedule modification behavior
+
+- **`analyticsButtonCallback`**: Called when the analytics button is tapped
+  - Parameters: `context`, `streamId`, `isHost`, `isPkGuest`, `pkGuestStreamId`
+  - Return `true` if your app successfully handled the analytics action, `false` to let SDK handle with default implementation
+  - Useful for custom analytics screens, custom data visualization, integration with external analytics services, etc.
+  - If not set, SDK uses default analytics sheet behavior
+
+- **`attentionDialogButtonCallback`**: Called when the "Okay" button is tapped in the stream end attention dialog
+  - Parameters: `context`
+  - Return `true` if your app successfully handled the attention dialog action, `false` to let SDK handle with default implementation
+  - Useful for custom navigation after stream ends, custom analytics tracking, integration with host app's navigation flow, etc.
+  - If not set, SDK uses default dialog dismissal behavior
+  - Note: The dialog will be closed automatically regardless of the callback result
+
+#### Attention Dialog Button Callback Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  attentionDialogButtonCallback: (context) async {
+    // Custom navigation after stream ends
+    print('Stream ended');
+    
+    // Navigate to your app's home screen or stream listing
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => YourHomeScreen()),
+      (route) => false,
+    );
+    
+    // Return true to indicate we handled the action
+    return true;
+  },
+);
+```
+
+**Advanced Usage with Analytics:**
+```dart
+IsmLiveApp.configureInterface(
+  attentionDialogButtonCallback: (context) async {
+    try {
+      // Track stream end analytics
+      await _analyticsService.trackEvent('stream_ended', {
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      
+      // Show feedback dialog before navigating
+      final shouldShowFeedback = await _shouldShowFeedbackDialog();
+      if (shouldShowFeedback) {
+        await _showFeedbackDialog(context);
+      }
+      
+      // Navigate to appropriate screen based on user preferences
+      await _navigateToNextScreen(context);
+      
+      return true; // Host app handled successfully
+    } catch (e) {
+      print('Error handling stream end: $e');
+      // Fall back to default behavior
+      return false;
+    }
+  },
+);
+```
+
+**Integration with Host App Flow:**
+```dart
+IsmLiveApp.configureInterface(
+  attentionDialogButtonCallback: (context) async {
+    // Check if user has uncompleted purchases
+    final hasUncompletedPurchases = await _checkUncompletedPurchases();
+    
+    if (hasUncompletedPurchases) {
+      // Navigate to checkout screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => CheckoutScreen(),
+        ),
+      );
+    } else {
+      // Navigate to stream history or recommendations
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => StreamHistoryScreen(),
+        ),
+      );
+    }
+    
+    return true; // Host app handled the navigation
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update attention dialog callback at runtime
+IsmLiveApp.updateAttentionDialogButtonCallback((context) async {
+  // New attention dialog handling
+  await _newStreamEndHandler(context);
+  return true;
+});
+
+// Disable custom attention dialog handling (use SDK default)
+IsmLiveApp.updateAttentionDialogButtonCallback(null);
+```
+
+#### Cart Builder
+
+- **`cartBuilder`**: Custom widget builder for shopping cart icon in stream header
+  - Parameters: `context`, `controller`
+  - Return a Widget that will be displayed as the shopping cart in the stream header
+  - Useful for custom cart icon design, cart item count display, integration with host app's shopping cart system, etc.
+  - If not set, SDK uses default cart icon (only shows when user is not host and stream has products linked)
+
+#### Cart Builder Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  cartBuilder: (context, controller) {
+    return Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white24,
+      ),
+      child: Icon(
+        Icons.shopping_cart_rounded,
+        color: Colors.white,
+        size: 16,
+      ),
+    );
+  },
+);
+```
+
+**Advanced Usage with Cart Count:**
+```dart
+IsmLiveApp.configureInterface(
+  cartBuilder: (context, controller) {
+    // Get cart count from your app's cart system
+    final cartCount = _getCartItemCount(controller.streamId ?? '');
+    
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white24,
+          ),
+          child: Icon(
+            Icons.shopping_cart_rounded,
+            color: Colors.white,
+            size: 16,
+          ),
+        ),
+        if (cartCount > 0)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                cartCount.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  },
+);
+```
+
+**Integration with Host App Cart System:**
+```dart
+IsmLiveApp.configureInterface(
+  cartBuilder: (context, controller) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to your app's cart screen
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => YourCartScreen(
+              streamId: controller.streamId ?? '',
+            ),
+          ),
+        );
+      },
+      child: StreamBuilder<List<CartItem>>(
+        stream: _cartService.getCartItemsStream(controller.streamId ?? ''),
+        builder: (context, snapshot) {
+          final cartCount = snapshot.data?.length ?? 0;
+          
+          return Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: cartCount > 0 ? Colors.orange : Colors.white24,
+            ),
+            child: Stack(
+              children: [
+                Icon(
+                  Icons.shopping_cart_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+                if (cartCount > 0)
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                        cartCount.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update cart builder at runtime
+IsmLiveApp.updateCartBuilder((context, controller) {
+  // New cart implementation
+  return CustomCartWidget(controller: controller);
+});
+
+// Disable custom cart builder (use SDK default)
+IsmLiveApp.updateCartBuilder(null);
+```
+
+#### Share Button Callback Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  shareButtonCallback: (context, streamId, isHost) async {
+    // Custom share implementation
+    print('Sharing stream: $streamId, isHost: $isHost');
+    
+    // Show custom share dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Share Stream'),
+        content: Text('Stream ID: $streamId\nIs Host: $isHost'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
+    
+    // Return true to indicate we handled the share action
+    return true;
+  },
+);
+```
+
+**Advanced Usage with External Sharing Services:**
+```dart
+IsmLiveApp.configureInterface(
+  shareButtonCallback: (context, streamId, isHost) async {
+    try {
+      // Generate custom share content
+      final shareContent = await _generateShareContent(streamId, isHost);
+      
+      // Use external sharing service (e.g., Share Plus)
+      await Share.share(
+        shareContent.text,
+        subject: shareContent.subject,
+        imagePath: shareContent.imagePath,
+      );
+      
+      // Track analytics
+      await _trackShareEvent(streamId, isHost);
+      
+      return true; // Host app handled successfully
+    } catch (e) {
+      print('Error sharing: $e');
+      return false; // Let SDK handle with default implementation
+    }
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update share callback at runtime
+IsmLiveApp.updateShareButtonCallback((context, streamId, isHost) async {
+  // New share implementation
+  return await _newShareHandler(context, streamId, isHost);
+});
+
+// Disable custom share handling (use SDK default)
+IsmLiveApp.updateShareButtonCallback(null);
+```
+
 #### Heart Message Callback Examples
 
 **Basic Usage:**
@@ -501,6 +843,11 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Custom Heart Messages  | `heartMessageCallback`    | Handle heart messages with your own API |
 | Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
 | Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
+| Custom Share Button      | `shareButtonCallback`      | Handle share button clicks with your own implementation |
+| Custom Cart Widget       | `cartBuilder`             | Customize shopping cart icon/widget in stream header |
+| Custom Schedule Modify   | `scheduleModifyButtonCallback` | Handle schedule modify button clicks with your own implementation |
+| Custom Analytics Button  | `analyticsButtonCallback`  | Handle analytics button clicks with your own implementation |
+| Custom Attention Dialog  | `attentionDialogButtonCallback` | Handle attention dialog button clicks with your own implementation |
 
 ---
 

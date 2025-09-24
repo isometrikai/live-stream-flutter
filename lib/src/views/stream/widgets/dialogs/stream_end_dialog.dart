@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,9 +26,20 @@ class IsmLiveStreamEndDialog extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           IsmLiveDimens.boxHeight20,
-          const IsmLiveButton(
+          IsmLiveButton(
             label: 'Okay',
-            onTap: IsmLiveUtility.closeDialog,
+            onTap: () {
+              // Check if host app wants to handle the attention dialog button click
+              final attentionDialogCallback =
+                  IsmLiveDelegate.attentionDialogButtonCallback;
+              if (attentionDialogCallback != null) {
+                // Call host app callback in parallel with dialog close
+                unawaited(attentionDialogCallback(context));
+              }
+
+              // Always close the dialog (in parallel with callback if provided)
+              IsmLiveUtility.closeDialog();
+            },
           ),
         ],
       );

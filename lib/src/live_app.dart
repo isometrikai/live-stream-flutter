@@ -222,8 +222,11 @@ class IsmLiveApp extends StatefulWidget {
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
     AnalyticsButtonCallback? analyticsButtonCallback,
     ScheduleModifyButtonCallback? scheduleModifyButtonCallback,
+    ShareButtonCallback? shareButtonCallback,
+    IsmLiveCartBuilder? cartBuilder,
     TopViewersListCallback? topViewersListCallback,
     ModeratorsListCallback? moderatorsListCallback,
+    AttentionDialogButtonCallback? attentionDialogButtonCallback,
     BorderRadius? bottomSheetBorderRadius,
   }) {
     // assert(_initialized,
@@ -293,8 +296,12 @@ class IsmLiveApp extends StatefulWidget {
 
     IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
     IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
+    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
+    IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
+    IsmLiveDelegate.attentionDialogButtonCallback =
+        attentionDialogButtonCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
   }
 
@@ -360,7 +367,6 @@ class IsmLiveApp extends StatefulWidget {
     String? eventId,
     required BuildContext context,
     bool reJoin = false,
-
   }) async {
     assert(
       _initialized,
@@ -463,11 +469,19 @@ class IsmLiveApp extends StatefulWidget {
   static ScheduleModifyButtonCallback? get scheduleModifyButtonCallback =>
       IsmLiveDelegate.scheduleModifyButtonCallback;
 
+  static ShareButtonCallback? get shareButtonCallback =>
+      IsmLiveDelegate.shareButtonCallback;
+
+  static IsmLiveCartBuilder? get cartBuilder => IsmLiveDelegate.cartBuilder;
+
   static TopViewersListCallback? get topViewersListCallback =>
       IsmLiveDelegate.topViewersListCallback;
 
   static ModeratorsListCallback? get moderatorsListCallback =>
       IsmLiveDelegate.moderatorsListCallback;
+
+  static AttentionDialogButtonCallback? get attentionDialogButtonCallback =>
+      IsmLiveDelegate.attentionDialogButtonCallback;
 
   static BorderRadius? get bottomSheetBorderRadius =>
       IsmLiveDelegate.bottomSheetBorderRadius;
@@ -597,6 +611,21 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
   }
 
+  /// Update share button callback dynamically at runtime
+  static void updateShareButtonCallback(
+      ShareButtonCallback? shareButtonCallback) {
+    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
+  }
+
+  /// Update cart builder dynamically at runtime
+  static void updateCartBuilder(IsmLiveCartBuilder? cartBuilder) {
+    IsmLiveDelegate.cartBuilder = cartBuilder;
+    // Trigger rebuild of stream view to apply new cart builder
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+  }
+
   /// Update top viewers list callback dynamically at runtime
   static void updateTopViewersListCallback(
       TopViewersListCallback? topViewersListCallback) {
@@ -607,6 +636,13 @@ class IsmLiveApp extends StatefulWidget {
   static void updateModeratorsListCallback(
       ModeratorsListCallback? moderatorsListCallback) {
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
+  }
+
+  /// Update attention dialog button callback dynamically at runtime
+  static void updateAttentionDialogButtonCallback(
+      AttentionDialogButtonCallback? attentionDialogButtonCallback) {
+    IsmLiveDelegate.attentionDialogButtonCallback =
+        attentionDialogButtonCallback;
   }
 
   /// Update bottom sheet border radius dynamically at runtime

@@ -434,6 +434,22 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
+        // Check if host app wants to handle the share button click
+        final shareCallback = IsmLiveDelegate.shareButtonCallback;
+        if (shareCallback != null) {
+          final handled = await shareCallback(
+            context,
+            _controller.streamId ?? '',
+            _controller.isHost,
+          );
+
+          // If host app handled the click, don't show default share behavior
+          if (handled) {
+            break;
+          }
+        }
+
+        // Default behavior: call shareStream
         _controller.shareStream();
         break;
       case IsmLiveStreamOption.members:

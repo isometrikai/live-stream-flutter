@@ -406,6 +406,19 @@ typedef ScheduleModifyButtonCallback = Future<bool> Function(
   bool isHost,
 );
 
+/// Callback for handling share button clicks
+/// Allows host apps to customize share behavior
+/// - Custom share functionality
+/// - Integration with external sharing services
+/// - Custom share content generation
+/// - Host-specific sharing features
+/// - Custom permission checks for sharing
+typedef ShareButtonCallback = Future<bool> Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+);
+
 /// Builder for custom "Buy now" button in product streams.
 ///
 /// This builder is called when rendering the "Buy now" button for viewers in product streams.
@@ -435,6 +448,37 @@ typedef BuyNowButtonBuilder = Widget Function(
   bool hasPinnedProduct,
   bool isHost,
   VoidCallback onTap,
+);
+
+/// Builder for custom shopping cart widget in stream header.
+///
+/// This builder allows host applications to provide a custom shopping cart widget
+/// that appears in the stream header beside the moderator icon.
+/// If not provided, the SDK will use the default cart icon implementation.
+///
+/// [context] - The build context where the cart widget is being rendered.
+/// [controller] - The IsmLiveStreamController instance for accessing stream state and cart data.
+///
+/// Return a Widget that will be displayed as the shopping cart in the stream header.
+/// The widget should handle its own layout and styling.
+///
+/// This builder is called when rendering the stream header for viewers in product streams.
+/// Useful for implementing:
+/// - Custom cart icon design and styling
+/// - Cart item count display
+/// - Custom cart interaction behavior
+/// - Integration with host app's shopping cart system
+/// - Custom animations and states
+/// - Analytics tracking for cart interactions
+/// - Custom cart management features
+///
+/// Note: The widget will only be displayed when:
+/// - User is not the host of the stream, AND
+/// - Stream has products linked (productsLinked = true)
+/// - Or when host app provides a custom builder (always shows when builder is provided)
+typedef IsmLiveCartBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamController controller,
 );
 
 /// Callback for top viewers list tap event.
@@ -501,6 +545,29 @@ typedef ModeratorsListCallback = Future<bool> Function(
   bool isModerator,
   List<UserDetails> moderatorsList,
   IsmLiveMemberDetailsModel? hostDetails,
+);
+
+/// Callback for attention dialog button tap event.
+///
+/// This callback is triggered when the user taps the "Okay" button in the stream end attention dialog.
+/// Host applications can use this to implement their own custom behavior when the stream ends.
+///
+/// [context] - The build context where the tap occurred.
+///
+/// Return true if your app successfully handled the attention dialog action, false to let SDK handle with default implementation.
+///
+/// This callback is called when the "Okay" button is tapped in the stream end attention dialog.
+/// Useful for implementing:
+/// - Custom navigation after stream ends
+/// - Custom analytics tracking for stream end events
+/// - Integration with host app's navigation flow
+/// - Custom cleanup or post-stream actions
+/// - Custom user feedback collection
+/// - Custom redirect to other screens
+///
+/// Note: The dialog will be closed automatically regardless of the callback result.
+typedef AttentionDialogButtonCallback = Future<bool> Function(
+  BuildContext context,
 );
 
 class IsmLiveDelegate {
@@ -618,9 +685,15 @@ class IsmLiveDelegate {
 
   static ScheduleModifyButtonCallback? scheduleModifyButtonCallback;
 
+  static ShareButtonCallback? shareButtonCallback;
+
+  static IsmLiveCartBuilder? cartBuilder;
+
   static TopViewersListCallback? topViewersListCallback;
 
   static ModeratorsListCallback? moderatorsListCallback;
+
+  static AttentionDialogButtonCallback? attentionDialogButtonCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
 
@@ -654,9 +727,9 @@ class IsmLiveDelegate {
     var controller = Get.find<IsmLiveStreamController>();
     if (controller.streamId.isNullOrEmpty) {
       IsmLiveLog.error('StreamId is null or empty ${controller.streamId} ');
-      if (isSchedule) {
-        IsmLiveRoute.pop();
-      }
+      // if (isSchedule) {
+      IsmLiveRoute.pop();
+      // }
       return;
     }
     controller.onExit(

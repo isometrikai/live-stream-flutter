@@ -74,6 +74,18 @@ class HomeController extends GetxController {
         goLiveButtonBuilder: _buildCustomGoLiveButton,
         //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
       ),
+      cartBuilder: (context, controller) => Container(
+        padding: const EdgeInsets.all(8),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white24,
+        ),
+        child: const Icon(
+          Icons.shopping_cart_outlined,
+          color: Colors.white,
+          size: 16,
+        ),
+      ),
       // customBottomSheetBuilder:
       //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
       //   return Container(
