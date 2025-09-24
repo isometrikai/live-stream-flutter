@@ -11,7 +11,7 @@ dependencies:
     path: ../
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.2
-  device_info_plus: ^11.0.0
+  device_info_plus: ^12.1.0
   flutter:
     sdk: flutter
   flutter_local_notifications: ^19.3.0
@@ -27,6 +27,9 @@ dependencies:
   package_info_plus: ^9.0.0
   pin_code_fields: ^8.0.1
   shared_preferences: ^2.2.3
+
+dependency_overrides:
+  device_info_plus: ^12.1.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
