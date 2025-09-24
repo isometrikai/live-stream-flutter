@@ -24,7 +24,7 @@ dependencies:
   in_app_purchase: ^3.2.0
   in_app_purchase_android: ^0.4.0+2
   in_app_purchase_storekit: ^0.4.2
-  package_info_plus: ^8.1.0
+  package_info_plus: ^9.0.0
   pin_code_fields: ^8.0.1
   shared_preferences: ^2.2.3
 
