@@ -71,6 +71,15 @@ mixin StreamJoinMixin {
     }
 
     try {
+      // Ensure the Camera plugin controller is released before WebRTC opens camera
+      try {
+        await _controller.cameraController?.dispose();
+        _controller.cameraController = null;
+        _controller.cameraFuture = null;
+      } catch (e) {
+        IsmLiveLog.error('cameraController dispose before WebRTC error: $e');
+      }
+
       lk.VideoParameters? videoFilter;
       if (_controller.isRestreamBroadcast) {
         videoFilter = const lk.VideoParameters(
@@ -82,9 +91,20 @@ mixin StreamJoinMixin {
         );
       }
 
+      // Resolve initial camera position for manual track creation as well
+      final resolvedCameraPosition =
+          (IsmLiveDelegate.initialCameraPositionStream ==
+                  IsmLiveCameraPosition.front)
+              ? lk.CameraPosition.front
+              : lk.CameraPosition.back;
+
       final tracks = await Future.wait([
-        lk.LocalVideoTrack.createCameraTrack(lk.CameraCaptureOptions(
-            params: videoFilter ?? lk.VideoParametersPresets.h720_169)),
+        lk.LocalVideoTrack.createCameraTrack(
+          lk.CameraCaptureOptions(
+            cameraPosition: resolvedCameraPosition,
+            params: videoFilter ?? lk.VideoParametersPresets.h720_169,
+          ),
+        ),
         lk.LocalAudioTrack.create(),
       ]);
       var localVideo = tracks[0] as lk.LocalVideoTrack;
@@ -416,10 +436,17 @@ mixin StreamJoinMixin {
               ),
             )
           : lk.VideoParametersPresets.h540_169;
+      // Resolve initial camera position from global UI configuration
+      final resolvedCameraPosition =
+          (IsmLiveDelegate.initialCameraPositionStream ==
+                  IsmLiveCameraPosition.front)
+              ? lk.CameraPosition.front
+              : lk.CameraPosition.back;
+
       var room = lk.Room(
         roomOptions: lk.RoomOptions(
           defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-            cameraPosition: lk.CameraPosition.back,
+            cameraPosition: resolvedCameraPosition,
             params: videoQuality,
           ),
           defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
@@ -632,7 +659,7 @@ mixin StreamJoinMixin {
   void startSeduleStream(IsmLiveStreamDataModel stream, {bool isHost = true}) {
     _controller._streamViewLoadedCallbackTriggered = false;
     _controller.userRole =
-    isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+        isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
     var details = stream.userDetails;
 
     _controller.streamDetails = stream;
