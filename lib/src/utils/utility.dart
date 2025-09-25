@@ -261,7 +261,7 @@ class IsmLiveUtility {
               (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: context.liveTheme?.backgroundColor ?? Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
             ),
             child: Padding(

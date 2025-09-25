@@ -228,6 +228,7 @@ class IsmLiveApp extends StatefulWidget {
     ModeratorsListCallback? moderatorsListCallback,
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     BorderRadius? bottomSheetBorderRadius,
+    IsmLiveCameraPosition? initialCameraPositionStream,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -303,6 +304,10 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.attentionDialogButtonCallback =
         attentionDialogButtonCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
+    // Camera position preference for streams (suffix to avoid other camera screens)
+    if (initialCameraPositionStream != null) {
+      IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
+    }
   }
 
   static Future<void> endStream(
@@ -656,63 +661,6 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder) {
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
   }
-
-  /// Example usage of custom bottom sheet builder:
-  ///
-  /// ```dart
-  /// IsmLiveApp.configureInterface(
-  ///   customBottomSheetBuilder: (context, title, leftLabel, rightLabel, onLeft, onRight) {
-  ///     return Container(
-  ///       padding: EdgeInsets.all(20),
-  ///       decoration: BoxDecoration(
-  ///         color: Colors.white,
-  ///         borderRadius: BorderRadius.circular(20),
-  ///       ),
-  ///       child: Column(
-  ///         mainAxisSize: MainAxisSize.min,
-  ///         children: [
-  ///           Text(
-  ///             title,
-  ///             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-  ///           ),
-  ///           SizedBox(height: 20),
-  ///           Row(
-  ///             children: [
-  ///               Expanded(
-  ///                 child: ElevatedButton(
-  ///                   onPressed: onLeft,
-  ///                   child: Text(leftLabel),
-  ///                 ),
-  ///               ),
-  ///               SizedBox(width: 10),
-  ///               Expanded(
-  ///                 child: ElevatedButton(
-  ///                   onPressed: onRight,
-  ///                   child: Text(rightLabel),
-  ///                 ),
-  ///               ),
-  ///             ],
-  ///           ),
-  ///         ],
-  ///       ),
-  ///     );
-  ///   },
-  /// );
-  /// ```
-  ///
-  /// Or use the update method at runtime:
-  ///
-  /// ```dart
-  /// IsmLiveApp.updateCustomBottomSheetBuilder((context, title, leftLabel, rightLabel, onLeft, onRight) {
-  ///   return YourCustomBottomSheetWidget(
-  ///     title: title,
-  ///     leftButton: leftLabel,
-  ///     rightButton: rightLabel,
-  ///     onLeftPressed: onLeft,
-  ///     onRightPressed: onRight,
-  ///   );
-  /// });
-  /// ```
 
   /// Configure background lifecycle management
   static void configureBackgroundLifecycle({

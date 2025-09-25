@@ -570,6 +570,12 @@ typedef AttentionDialogButtonCallback = Future<bool> Function(
   BuildContext context,
 );
 
+/// Preferred initial camera position when starting a stream
+enum IsmLiveCameraPosition {
+  front,
+  back,
+}
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -696,6 +702,11 @@ class IsmLiveDelegate {
   static AttentionDialogButtonCallback? attentionDialogButtonCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
+
+  /// Global UI preference: initial camera position when connecting to a stream room
+  /// Defaults to back camera to preserve existing behavior
+  static IsmLiveCameraPosition initialCameraPositionStream =
+      IsmLiveCameraPosition.front;
 
   /// Triggers a rebuild of the pinned product widget by updating the stream controller
   static void updatePinnedProductWidget() {

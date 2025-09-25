@@ -127,7 +127,7 @@ class _RtmlView extends StatelessWidget {
               child: Center(
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.8,
+                  height: MediaQuery.of(context).size.height,
                   child: hostScreen == null
                       ? NoVideoWidget(
                           imageUrl: controller.hostDetails?.image ?? '',
