@@ -577,6 +577,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
       // Use custom dialog with single action button
       IsmLiveUtility.showCustomDialog(
+        Material(
+          color: IsmLiveColors.transparent,
+          child:
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
           child: Column(
@@ -609,7 +612,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
               ),
             ],
           ),
-        ),
+        )),
         isDismissible: true,
       );
     } catch (e) {
