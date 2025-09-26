@@ -220,15 +220,15 @@ class IsmLiveApp extends StatefulWidget {
     StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
-    AnalyticsButtonCallback? analyticsButtonCallback,
-    ScheduleModifyButtonCallback? scheduleModifyButtonCallback,
-    ShareButtonCallback? shareButtonCallback,
     IsmLiveCartBuilder? cartBuilder,
     TopViewersListCallback? topViewersListCallback,
     ModeratorsListCallback? moderatorsListCallback,
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
+    // New control customization options
+    ControlOptionCallback? controlOptionCallback,
+    ControlWidgetBuilder? controlWidgetBuilder,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -295,9 +295,8 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
     }
 
-    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
-    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
-    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
+    IsmLiveDelegate.controlOptionCallback = controlOptionCallback;
+    IsmLiveDelegate.controlWidgetBuilder = controlWidgetBuilder;
     IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
@@ -468,15 +467,6 @@ class IsmLiveApp extends StatefulWidget {
   static GoLiveButtonBuilder? get goLiveButtonBuilder =>
       IsmLiveDelegate.goLiveScreenConfigure?.goLiveButtonBuilder;
 
-  static AnalyticsButtonCallback? get analyticsButtonCallback =>
-      IsmLiveDelegate.analyticsButtonCallback;
-
-  static ScheduleModifyButtonCallback? get scheduleModifyButtonCallback =>
-      IsmLiveDelegate.scheduleModifyButtonCallback;
-
-  static ShareButtonCallback? get shareButtonCallback =>
-      IsmLiveDelegate.shareButtonCallback;
-
   static IsmLiveCartBuilder? get cartBuilder => IsmLiveDelegate.cartBuilder;
 
   static TopViewersListCallback? get topViewersListCallback =>
@@ -602,24 +592,6 @@ class IsmLiveApp extends StatefulWidget {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
-  }
-
-  /// Update analytics button callback dynamically at runtime
-  static void updateAnalyticsButtonCallback(
-      AnalyticsButtonCallback? analyticsButtonCallback) {
-    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
-  }
-
-  /// Update schedule modify button callback dynamically at runtime
-  static void updateScheduleModifyButtonCallback(
-      ScheduleModifyButtonCallback? scheduleModifyButtonCallback) {
-    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
-  }
-
-  /// Update share button callback dynamically at runtime
-  static void updateShareButtonCallback(
-      ShareButtonCallback? shareButtonCallback) {
-    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
   }
 
   /// Update cart builder dynamically at runtime

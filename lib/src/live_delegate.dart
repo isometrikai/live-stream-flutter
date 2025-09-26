@@ -92,24 +92,6 @@ typedef GoLiveClickCallback = Future<void> Function(
 /// Useful for cleanup operations like disposing controllers, clearing data, etc.
 typedef GoLiveDisposeCallback = void Function();
 
-/// Callback for Pin Product button click.
-///
-/// [context] - The BuildContext from the SDK UI.
-/// [streamId] - The current stream ID.
-/// [hasPinnedProduct] - Whether there is currently a product pinned.
-/// [buttonLabel] - The label of the button that was tapped.
-/// [isHost] - Whether the current user is the host of the stream.
-///
-/// This callback is called when the Product Action button is tapped in the stream view.
-/// Useful for handling product pinning/buying functionality in the host application.
-typedef ProductActionCallback = void Function(
-  BuildContext context,
-  String streamId,
-  bool hasPinnedProduct,
-  String buttonLabel,
-  bool isHost,
-);
-
 /// Callback for message processing and filtering.
 ///
 /// [message] - The incoming message that can be modified or filtered.
@@ -364,59 +346,47 @@ typedef GoLiveSmallButtonBuilder = Widget Function(
   bool isEnabled,
 );
 
-/// Callback for analytics/bars button click event.
+/// Callback for handling any control option tap
+/// Allows host apps to customize any control button behavior
+/// - Custom control button functionality
+/// - Integration with external services
+/// - Custom permission checks
+/// - Host-specific control features
 ///
-/// This callback is triggered when the user taps on the analytics/bars button in the stream.
-/// Host applications can use this to implement their own analytics screen or custom behavior.
-///
-/// [context] - The build context where the tap occurred.
-/// [streamId] - The current stream ID.
-/// [isHost] - Whether the current user is the host of the stream.
-/// [isPkGuest] - Whether the current user is a PK guest.
-/// [pkGuestStreamId] - The PK guest stream ID (if applicable).
+/// [context] - The build context where the tap occurred
+/// [option] - The control option that was tapped
+/// [streamId] - The current stream ID
+/// [isHost] - Whether the current user is the host
+/// [isCopublishing] - Whether the user is copublishing
 ///
 /// Return true if the host app handled the click and wants to prevent the default behavior,
-/// false if the host app wants the SDK to handle it with the default analytics sheet.
+/// false if the host app wants the SDK to handle it with the default behavior.
+typedef ControlOptionCallback = Future<bool> Function(
+  BuildContext context,
+  IsmLiveStreamOption option,
+  String streamId,
+  bool isHost,
+  bool isCopublishing,
+);
+
+/// Builder for custom control widgets
+/// Allows host apps to replace default control widgets with custom ones
 ///
-/// This callback is called before the SDK's default analytics sheet handling.
-/// Useful for implementing:
-/// - Custom analytics screens
-/// - Custom data visualization
-/// - Integration with external analytics services
-/// - Custom user engagement tracking
-/// - Host-specific analytics features
-/// - Custom permission checks
-typedef AnalyticsButtonCallback = Future<bool> Function(
+/// [context] - The build context
+/// [option] - The control option
+/// [onTap] - The tap callback
+/// [isHost] - Whether the current user is the host
+/// [isCopublishing] - Whether the user is copublishing
+/// [streamId] - The current stream ID
+///
+/// Return a custom widget or null to use the default widget
+typedef ControlWidgetBuilder = Widget? Function(
   BuildContext context,
+  IsmLiveStreamOption option,
+  VoidCallback onTap,
+  bool isHost,
+  bool isCopublishing,
   String streamId,
-  bool isHost,
-  bool isPkGuest,
-  String? pkGuestStreamId,
-);
-
-/// Callback for handling schedule modify button clicks
-/// Allows host apps to customize schedule modification behavior
-/// - Custom schedule editing flows
-/// - Integration with external scheduling systems
-/// - Custom permission checks for schedule modification
-/// - Host-specific schedule management features
-typedef ScheduleModifyButtonCallback = Future<bool> Function(
-  BuildContext context,
-  IsmLiveStreamDataModel streamDetails,
-  bool isHost,
-);
-
-/// Callback for handling share button clicks
-/// Allows host apps to customize share behavior
-/// - Custom share functionality
-/// - Integration with external sharing services
-/// - Custom share content generation
-/// - Host-specific sharing features
-/// - Custom permission checks for sharing
-typedef ShareButtonCallback = Future<bool> Function(
-  BuildContext context,
-  String streamId,
-  bool isHost,
 );
 
 /// Builder for custom "Buy now" button in product streams.
@@ -576,6 +546,45 @@ enum IsmLiveCameraPosition {
   back,
 }
 
+/// Direction for host arrow button clicks
+enum IsmLiveArrowDirection {
+  previous,
+  next,
+}
+
+/// Callback for host arrow button clicks (pin item navigation)
+///
+/// This callback is triggered when the user taps on the left or right arrow buttons
+/// in the host interface for product navigation.
+///
+/// [direction] - The direction of the arrow that was clicked (previous or next).
+///
+/// This callback is called when arrow buttons are tapped in the host interface.
+/// Useful for implementing:
+/// - Custom product navigation
+/// - Custom content switching
+/// - Integration with host app's navigation system
+/// - Custom analytics tracking for arrow interactions
+/// - Custom UI state management
+/// - Custom business logic for arrow actions
+typedef PinItemCallback = void Function(
+  IsmLiveArrowDirection direction,
+);
+
+/// Callback for "Buy now" button clicks
+///
+/// This callback is triggered when the user taps on the "Buy now" button
+/// in the product stream interface.
+///
+/// This callback is called when the "Buy now" button is tapped.
+/// Useful for implementing:
+/// - Custom purchase flow
+/// - Integration with host app's e-commerce system
+/// - Custom analytics tracking for purchase interactions
+/// - Custom UI state management
+/// - Custom business logic for purchase actions
+typedef BuyNowCallback = void Function();
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -687,11 +696,9 @@ class IsmLiveDelegate {
 
   static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
 
-  static AnalyticsButtonCallback? analyticsButtonCallback;
+  static ControlOptionCallback? controlOptionCallback;
 
-  static ScheduleModifyButtonCallback? scheduleModifyButtonCallback;
-
-  static ShareButtonCallback? shareButtonCallback;
+  static ControlWidgetBuilder? controlWidgetBuilder;
 
   static IsmLiveCartBuilder? cartBuilder;
 
@@ -754,21 +761,23 @@ class IsmLiveDelegate {
 class IsmLiveEcomConfigure {
   IsmLiveEcomConfigure({
     this.addProductViewBuilder,
-    this.onProductAction,
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
     this.buyNowButtonBuilder,
     this.hostArrowButtonsHeight,
+    this.pinItemCallback,
+    this.buyNowCallback,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
-  final ProductActionCallback? onProductAction;
   final Widget? Function(
           BuildContext context, IsmLiveStreamController controller)?
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
   final BuyNowButtonBuilder? buyNowButtonBuilder;
   final double? hostArrowButtonsHeight;
+  final PinItemCallback? pinItemCallback;
+  final BuyNowCallback? buyNowCallback;
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;

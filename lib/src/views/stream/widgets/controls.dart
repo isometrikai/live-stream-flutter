@@ -2,6 +2,34 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+/// Live stream controls widget with support for custom widgets and unified callbacks.
+///
+/// This widget supports:
+/// 1. Custom control widgets via `IsmLiveDelegate.controlWidgetBuilder`
+/// 2. Unified option tap handling via `IsmLiveDelegate.controlOptionCallback`
+///
+/// Usage example:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   // Custom widget builder - replace specific control widgets
+///   controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+///     if (option == IsmLiveStreamOption.gift) {
+///       return MyCustomGiftButton(onTap: onTap);
+///     }
+///     return null; // Use default widget
+///   },
+///
+///   // Unified callback - handle all option taps
+///   controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+///     if (option == IsmLiveStreamOption.share) {
+///       // Custom share logic
+///       await MyCustomShareService.share(streamId);
+///       return true; // Handled, don't use default behavior
+///     }
+///     return false; // Use default behavior
+///   },
+/// );
+/// ```
 class IsmLiveControlsWidget extends StatelessWidget {
   const IsmLiveControlsWidget({
     super.key,
@@ -19,6 +47,35 @@ class IsmLiveControlsWidget extends StatelessWidget {
   final bool isKeyboardOpen;
 
   static const String updateId = 'ism-live-controls';
+
+  /// Handles option tap with unified callback support
+  static Future<void> _handleOptionTap(
+    IsmLiveStreamController controller,
+    IsmLiveStreamOption option,
+    BuildContext context,
+  ) async {
+    // Check if host app wants to handle the option tap
+    final controlCallback = IsmLiveDelegate.controlOptionCallback;
+    if (controlCallback != null) {
+      final handled = await controlCallback(
+        context,
+        option,
+        controller.streamId ?? '',
+        controller.isHost,
+        controller.isCopublisher == true,
+      );
+
+      // If host app handled the click, don't show default behavior
+      if (handled) {
+        controller.update([IsmLiveControlsWidget.updateId]);
+        return;
+      }
+    }
+
+    // Default behavior: call the original onOptionTap
+    await controller.onOptionTap(option, context);
+    controller.update([IsmLiveControlsWidget.updateId]);
+  }
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
@@ -61,18 +118,6 @@ class IsmLiveControlsWidget extends StatelessWidget {
           if (isSchedule) {
             options = IsmLiveStreamOption.scheduleOptions;
           }
-
-          // var options = !isHost
-          //     ? controller.userRole?.isPkGuest ?? false
-          //         ? IsmLiveStreamOption.pkOptions
-          //         : IsmLiveStreamOption.viewersOptions
-          //     : controller.isRtmp
-          //         ? IsmLiveStreamOption.rtmpOptions
-          //         : controller.isPk
-          //             ? IsmLiveStreamOption.pkOptions
-
-          //                 : IsmLiveStreamOption.hostOptions;
-
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -92,52 +137,60 @@ class IsmLiveControlsWidget extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: options.length,
                     separatorBuilder: (_, __) => IsmLiveDimens.boxHeight8,
-                    itemBuilder: (context, index) => CustomIconButton(
-                      dimension: options[index] == IsmLiveStreamOption.heart
-                          ? IsmLiveDimens.fortyFive
-                          : null,
-                      icon: IsmLiveImage.svg(
-                        height: options[index] != IsmLiveStreamOption.heart
-                            ? IsmLiveDimens.forty
+                    itemBuilder: (context, index) {
+                      final option = options[index];
+
+                      // Check if host app wants to provide a custom widget
+                      final customWidget =
+                          IsmLiveDelegate.controlWidgetBuilder?.call(
+                        context,
+                        option,
+                        () async {
+                          await _handleOptionTap(controller, option, context);
+                        },
+                        isHost,
+                        isCopublishing,
+                        streamId,
+                      );
+
+                      // Use custom widget if provided, otherwise use default
+                      if (customWidget != null) {
+                        return customWidget;
+                      }
+
+                      // Default widget implementation
+                      return CustomIconButton(
+                        dimension: option == IsmLiveStreamOption.heart
+                            ? IsmLiveDimens.fortyFive
                             : null,
-                        width: options[index] != IsmLiveStreamOption.heart
-                            ? IsmLiveDimens.forty
-                            : null,
-                        controller.controlIcon(options[index]),
-                      ),
-                      onTap: () async {
-                        await controller.onOptionTap(options[index], context);
-                        controller.update([IsmLiveControlsWidget.updateId]);
-                      },
-                      color: options[index] == IsmLiveStreamOption.heart
-                          ? IsmLiveColors.red
-                          : options[index] == IsmLiveStreamOption.multiLive
-                              ? !isHost && controller.isCopublisher != true
-                                  ? controller.memberStatus.canEnableVideo
-                                      ? context.theme.primaryColor
-                                      : controller.memberStatus.didRequested
-                                          ? Colors.blueGrey
-                                          : null
-                                  : null
+                        icon: IsmLiveImage.svg(
+                          height: option != IsmLiveStreamOption.heart
+                              ? IsmLiveDimens.forty
                               : null,
-                      gradient: IsmLiveDelegate.streamOptionsBgGradient,
-                    ),
+                          width: option != IsmLiveStreamOption.heart
+                              ? IsmLiveDimens.forty
+                              : null,
+                          controller.controlIcon(option),
+                        ),
+                        onTap: () async {
+                          await _handleOptionTap(controller, option, context);
+                        },
+                        color: option == IsmLiveStreamOption.heart
+                            ? IsmLiveColors.red
+                            : option == IsmLiveStreamOption.multiLive
+                                ? !isHost && controller.isCopublisher != true
+                                    ? controller.memberStatus.canEnableVideo
+                                        ? context.theme.primaryColor
+                                        : controller.memberStatus.didRequested
+                                            ? Colors.blueGrey
+                                            : null
+                                    : null
+                                : null,
+                        gradient: IsmLiveDelegate.streamOptionsBgGradient,
+                      );
+                    },
                   ),
                 ),
-                // if (isHost)
-                //   Container(
-                //     height: IsmLiveDimens.twoHundred - IsmLiveDimens.eight,
-                //     width: MediaQuery.of(context).size.width * 0.4,
-                //     padding: IsmLiveDimens.edgeInsets0_4,
-                //     child: IsmLiveProductContainer(
-                //       productName: 'SOLD',
-                //       productDisc: 'hdshhdsfhjdsjsdj',
-                //       currencyIcon: '\$',
-                //       price: 33.33,
-                //       onPress: () {},
-                //       imageUrl: '',
-                //     ),
-                //   )
               ],
             ),
           );

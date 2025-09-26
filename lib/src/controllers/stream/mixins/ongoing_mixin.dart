@@ -434,61 +434,18 @@ mixin StreamOngoingMixin {
 
         break;
       case IsmLiveStreamOption.share:
-        // Check if host app wants to handle the share button click
-        final shareCallback = IsmLiveDelegate.shareButtonCallback;
-        if (shareCallback != null) {
-          final handled = await shareCallback(
-            context,
-            _controller.streamId ?? '',
-            _controller.isHost,
-          );
-
-          // If host app handled the click, don't show default share behavior
-          if (handled) {
-            break;
-          }
-        }
-
-        // Default behavior: call shareStream
         _controller.shareStream();
         break;
       case IsmLiveStreamOption.members:
         break;
       case IsmLiveStreamOption.scheduleModify:
-        // Check if host app wants to handle the schedule modify button click
-        final scheduleModifyCallback =
-            IsmLiveDelegate.scheduleModifyButtonCallback;
-        if (scheduleModifyCallback != null) {
-          final handled = await scheduleModifyCallback(
-            context,
-            _controller.streamDetails!,
-            _controller.isHost,
-          );
-
-          // If host app handled the click, don't show default schedule sheet
-          if (handled) {
-            break;
-          }
-        }
-
-        // Default behavior: show schedule settings sheet
         _controller.schgeduleStreamSheet();
         break;
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;
       case IsmLiveStreamOption.product:
-        if (IsmLiveDelegate.ecomConfigure?.onProductAction != null) {
-          IsmLiveDelegate.ecomConfigure!.onProductAction!(
-            context,
-            _controller.streamId ?? '',
-            false,
-            'Pin Product',
-            _controller.isHost,
-          );
-        } else {
-          IsmLiveRouteManagement.goToTagProduct();
-        }
+        IsmLiveRouteManagement.goToTagProduct();
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();
@@ -497,24 +454,6 @@ mixin StreamOngoingMixin {
         await toggleSpeaker();
         break;
       case IsmLiveStreamOption.bars:
-        // Check if host app wants to handle the analytics button click
-        final analyticsCallback = IsmLiveDelegate.analyticsButtonCallback;
-        if (analyticsCallback != null) {
-          final handled = await analyticsCallback(
-            context,
-            _controller.streamId ?? '',
-            _controller.isHost,
-            _controller.userRole?.isPkGuest ?? false,
-            _pkController.pkguestStreamId,
-          );
-
-          // If host app handled the click, don't show default analytics sheet
-          if (handled) {
-            break;
-          }
-        }
-
-        // Default behavior: show analytics sheet
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
             streamId: (_controller.userRole?.isPkGuest ?? false)
