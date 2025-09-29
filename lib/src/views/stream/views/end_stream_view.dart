@@ -110,15 +110,11 @@ class IsmLiveEndStream extends StatelessWidget {
                               title = 'Earnings';
                               break;
                             case IsmLiveAnalyticsOptions.duration:
-                              return GetX<IsmLiveStreamController>(
-                                builder: (controller) =>
-                                    IsmLiveEndStreamContainer(
-                                  points: ((controller.streamAnalytis?.duration ??0) > 0) ?  Duration(seconds: controller.streamAnalytis!.duration!.toInt()).formattedTime :
-                                   controller.streamDuration.formattedTime,
-                                  title: 'Duration',
-                                  assetConstant: option.icon,
-                                ),
-                              );
+                            points = ((controller.streamAnalytis?.durationMilliSeconds ??0) > 0) ?
+                            Duration(milliseconds: controller.streamAnalytis!.durationMilliSeconds!.toInt()).formattedTime :
+                             controller.streamDuration.formattedTime;
+                            title= 'Duration';
+                          break;
                           }
 
                           return IsmLiveEndStreamContainer(
