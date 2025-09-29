@@ -42,7 +42,7 @@ class IsmLiveStreamAnalyticsModel {
       IsmLiveStreamAnalyticsModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
   final num? totalViewersCount;
-  final num? duration;
+  final num? duration;  // seconds
   final num? productCount;
   final num? soldCount;
   final num? newViewersCount;
