@@ -215,7 +215,6 @@ class IsmLiveApp extends StatefulWidget {
     String? fontFamily,
     MessageProcessCallback? messageProcessCallback,
     StreamViewLoadedCallback? streamViewLoadedCallback,
-    HeartMessageCallback? heartMessageCallback,
     StreamAnalyticsCallback? streamAnalyticsCallback,
     StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
@@ -276,7 +275,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.fontFamily = fontFamily;
     IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
-    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
+    // Heart message is now handled via controlOptionCallback
     IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
     IsmLiveDelegate.streamAnalyticsViewersCallback =
         streamAnalyticsViewersCallback;
@@ -449,8 +448,7 @@ class IsmLiveApp extends StatefulWidget {
   static StreamViewLoadedCallback? get streamViewLoadedCallback =>
       IsmLiveDelegate.streamViewLoadedCallback;
 
-  static HeartMessageCallback? get heartMessageCallback =>
-      IsmLiveDelegate.heartMessageCallback;
+  // Removed: heartMessageCallback (use controlOptionCallback instead)
 
   static StreamAnalyticsCallback? get streamAnalyticsCallback =>
       IsmLiveDelegate.streamAnalyticsCallback;
@@ -506,11 +504,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
   }
 
-  /// Update heart message callback dynamically at runtime
-  static void updateHeartMessageCallback(
-      HeartMessageCallback? heartMessageCallback) {
-    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
-  }
+  // Removed: updateHeartMessageCallback (use controlOptionCallback instead)
 
   /// Update stream analytics callback dynamically at runtime
   static void updateStreamAnalyticsCallback(

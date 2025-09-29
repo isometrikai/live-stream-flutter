@@ -143,38 +143,7 @@ typedef StreamViewLoadedCallback = void Function(
   IsmLiveStreamDataModel? stream,
 );
 
-/// Callback for heart message sending.
-///
-/// This callback is called when a user sends a heart message to the stream.
-/// Host applications can use this to implement their own heart message API
-/// or analytics tracking.
-///
-/// [streamId] - The current stream ID.
-/// [userId] - The ID of the user sending the heart.
-/// [userName] - The name of the user sending the heart.
-/// [userImage] - The profile image URL of the user sending the heart.
-/// [deviceId] - The device ID of the user.
-/// [customType] - The custom type of the heart message (default: 'like').
-///
-/// Return true if the heart message was successfully processed by the host app,
-/// false if the host app wants the SDK to handle it with the default implementation.
-///
-/// This callback is called before the SDK's default heart message handling.
-/// Useful for implementing:
-/// - Custom heart message APIs
-/// - Analytics tracking
-/// - User engagement metrics
-/// - Custom heart message processing
-/// - Integration with external services
-/// - Custom heart message validation
-typedef HeartMessageCallback = Future<bool> Function(
-  String streamId,
-  String userId,
-  String userName,
-  String userImage,
-  String deviceId,
-  String customType,
-);
+// Heart message customization is now managed through `controlOptionCallback`.
 
 /// Callback for stream analytics data.
 ///
@@ -682,7 +651,7 @@ class IsmLiveDelegate {
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
 
-  static HeartMessageCallback? heartMessageCallback;
+  // Removed: heartMessageCallback (use controlOptionCallback instead)
 
   static StreamAnalyticsCallback? streamAnalyticsCallback;
 

@@ -138,14 +138,7 @@ IsmLiveApp.configureInterface(
     );
   },
   
-  // ===== HEART MESSAGE CALLBACKS =====
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    // Handle heart messages with your own API
-    final success = await _callYourHeartMessageAPI(
-      streamId, userId, userName, userImage, deviceId, customType,
-    );
-    return success;
-  },
+  // Hearts are handled via unified controlOptionCallback using IsmLiveStreamOption.heart
   
   // ===== UI CUSTOMIZATION CALLBACKS =====
   cartBuilder: (context, controller) {
@@ -183,7 +176,7 @@ IsmLiveApp.configureInterface(
 | | `buyNowCallback` | - | Handle "Buy now" button clicks | `void` |
 | **Analytics** | `streamAnalyticsCallback` | `streamId` | Handle stream analytics with custom API | `Future<IsmLiveStreamAnalytics>` |
 | | `streamAnalyticsViewersCallback` | `streamId, skip, limit` | Handle stream viewers analytics | `Future<IsmLiveStreamAnalyticsViewers>` |
-| **Heart Messages** | `heartMessageCallback` | `streamId, userId, userName, userImage, deviceId, customType` | Handle heart messages with custom API | `Future<bool>` |
+| **Heart Messages** | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle heart interactions (`IsmLiveStreamOption.heart`) | `Future<bool>` |
 | **UI Customization** | `cartBuilder` | `context, controller` | Customize shopping cart widget | `Widget` |
 | | `attentionDialogButtonCallback` | `context` | Handle attention dialog button clicks | `Future<void>` |
 | | `showHeader` | `bool` | Show/hide stream header | - |
@@ -329,7 +322,7 @@ IsmLiveApp.configureInterface(
   - Parameter: `streamId`
   - If not set, default stop stream behavior is used
 
-- **`heartMessageCallback`**: Called when a user sends a heart message to the stream
+Deprecated: `heartMessageCallback` has been removed. Use `controlOptionCallback` with `IsmLiveStreamOption.heart` instead.
   - Parameters: `streamId`, `userId`, `userName`, `userImage`, `deviceId`, `customType`
   - Return `true` if your app successfully handled the heart message, `false` to let SDK handle with default implementation
   - Useful for custom heart message APIs, analytics tracking, user validation, rate limiting, etc.
@@ -616,29 +609,17 @@ IsmLiveApp.updateCartBuilder(null);
 ```
 
 
-#### Heart Message Callback Examples
+#### Heart Handling via Unified Control Callback
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    // Call your own API to handle heart messages
-    final success = await _callYourHeartMessageAPI(
-      streamId: streamId,
-      userId: userId,
-      userName: userName,
-      userImage: userImage,
-      deviceId: deviceId,
-      customType: customType,
-    );
-    
-    if (success) {
-      // Log analytics
-      await _logAnalytics(streamId, userId, userName);
-      return true; // Host app handled successfully
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      final handled = await _callYourHeartMessageAPI(streamId);
+      return handled; // true to prevent default, false to use SDK default
     }
-    
-    return false; // Let SDK handle with default implementation
+    return false;
   },
 );
 ```
@@ -646,19 +627,13 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Validation:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    // Validate if user can send heart messages
-    if (!_canUserSendHeart(userId)) {
-      return false; // Let SDK handle (might show error)
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      if (!_canUserSendHeart(_currentUserId)) return true; // block
+      if (_isRateLimited(_currentUserId)) return true; // block
+      return await _callYourHeartMessageAPI(streamId);
     }
-    
-    // Check rate limiting
-    if (_isRateLimited(userId)) {
-      return false;
-    }
-    
-    // Call your API
-    return await _callYourHeartMessageAPI(/* params */);
+    return false;
   },
 );
 ```
@@ -666,25 +641,26 @@ IsmLiveApp.configureInterface(
 **Premium User Handling:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    if (_isPremiumUser(userId)) {
-      // Premium users get special handling
-      return await _handlePremiumHeartMessage(/* params */);
-    } else {
-      // Regular users get standard handling
-      return await _handleRegularHeartMessage(/* params */);
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      return _isPremiumUser(_currentUserId)
+          ? await _handlePremiumHeartMessage(streamId)
+          : await _handleRegularHeartMessage(streamId);
     }
+    return false;
   },
 );
 ```
 
 **Dynamic Updates:**
 ```dart
-// Update callback at runtime
-IsmLiveApp.updateHeartMessageCallback(_newHeartMessageHandler);
-
-// Disable custom handling (use SDK default)
-IsmLiveApp.updateHeartMessageCallback(null);
+// Update via unified control callback at runtime
+IsmLiveApp.updateControlOptionCallback((context, option, streamId, isHost, isCopublishing) async {
+  if (option == IsmLiveStreamOption.heart) {
+    return await _newHeartMessageHandler(streamId);
+  }
+  return false;
+});
 ```
 
 #### Stream Analytics Callback Examples
@@ -1295,7 +1271,7 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
 | Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
 | Custom GoLive Screen   | `IsmLiveGoLiveScreenConfigure`  | Customize GoLive screen header and button |
-| Custom Heart Messages  | `heartMessageCallback`    | Handle heart messages with your own API |
+| Custom Heart Messages  | `controlOptionCallback`    | Handle hearts via `IsmLiveStreamOption.heart` |
 | Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
 | Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
 | Custom Cart Widget       | `cartBuilder`             | Customize shopping cart icon/widget in stream header |
