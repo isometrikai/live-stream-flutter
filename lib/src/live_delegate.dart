@@ -145,53 +145,86 @@ typedef StreamViewLoadedCallback = void Function(
 
 // Heart message customization is now managed through `controlOptionCallback`.
 
-/// Callback for stream analytics data.
+/// API handler for stream analytics data.
 ///
-/// This callback is called when the SDK needs to fetch stream analytics data.
-/// Host applications can use this to implement their own analytics API
-/// and return data in the expected format.
+/// This handler is called when the SDK needs to fetch stream analytics data.
+/// **Purpose**: Allows host applications to provide their own analytics API implementation
+/// instead of using the SDK's default analytics endpoint.
 ///
 /// [streamId] - The current stream ID.
 /// [isHost] - Whether the current user is the host of the stream.
 ///
-/// Return the analytics data in IsmLiveStreamAnalyticsModel format,
-/// or null if the host app wants the SDK to handle it with the default implementation.
+/// **Return Value**:
+/// - Return `IsmLiveStreamAnalyticsModel` if your API call was successful with the analytics data
+/// - Return `null` if you want the SDK to use its default analytics API
 ///
-/// This callback is called before the SDK's default analytics API call.
-/// Useful for implementing:
-/// - Custom analytics APIs
+/// **If this handler is NOT provided**, the SDK will use its default analytics API endpoint.
+///
+/// **Common use cases**:
+/// - Replace SDK's analytics API with your own backend endpoint
+/// - Implement custom analytics APIs
 /// - Real-time analytics integration
-/// - Custom analytics processing
+/// - Custom analytics processing and transformation
 /// - Integration with external analytics services
 /// - Custom analytics validation
-/// - Analytics data transformation
-typedef StreamAnalyticsCallback = Future<IsmLiveStreamAnalyticsModel?> Function(
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamAnalyticsApiHandler: (streamId, isHost) async {
+///     final data = await myApi.getStreamAnalytics(streamId);
+///     return IsmLiveStreamAnalyticsModel(
+///       totalViewersCount: data.viewers,
+///       hearts: data.hearts,
+///       // ... other fields
+///     );
+///   },
+/// );
+/// ```
+typedef StreamAnalyticsApiHandler = Future<IsmLiveStreamAnalyticsModel?>
+    Function(
   String streamId,
   bool isHost,
 );
 
-/// Callback for stream analytics viewers data.
+/// API handler for stream analytics viewers data.
 ///
-/// This callback is called when the SDK needs to fetch stream analytics viewers data.
-/// Host applications can use this to implement their own analytics viewers API
-/// and return data in the expected format.
+/// This handler is called when the SDK needs to fetch stream analytics viewers data.
+/// **Purpose**: Allows host applications to provide their own analytics viewers API implementation
+/// instead of using the SDK's default analytics viewers endpoint.
 ///
 /// [streamId] - The current stream ID.
 /// [skip] - Number of records to skip for pagination.
 /// [limit] - Number of records to return for pagination.
 ///
-/// Return the analytics viewers data as List<IsmLiveAnalyticViewerModel>,
-/// or null if the host app wants the SDK to handle it with the default implementation.
+/// **Return Value**:
+/// - Return `List<IsmLiveAnalyticViewerModel>` if your API call was successful with the viewers data
+/// - Return `null` if you want the SDK to use its default analytics viewers API
 ///
-/// This callback is called before the SDK's default analytics viewers API call.
-/// Useful for implementing:
-/// - Custom analytics viewers APIs
+/// **If this handler is NOT provided**, the SDK will use its default analytics viewers API endpoint.
+///
+/// **Common use cases**:
+/// - Replace SDK's analytics viewers API with your own backend endpoint
+/// - Implement custom analytics viewers APIs
 /// - Real-time viewers data integration
-/// - Custom viewers data processing
+/// - Custom viewers data processing and transformation
 /// - Integration with external analytics services
 /// - Custom viewers data validation
-/// - Viewers data transformation
-typedef StreamAnalyticsViewersCallback
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+///     final viewers = await myApi.getStreamViewers(streamId, skip, limit);
+///     return viewers.map((v) => IsmLiveAnalyticViewerModel(
+///       userName: v.name,
+///       profilePic: v.image,
+///       // ... other fields
+///     )).toList();
+///   },
+/// );
+/// ```
+typedef StreamAnalyticsViewersApiHandler
     = Future<List<IsmLiveAnalyticViewerModel>?> Function(
   String streamId,
   int skip,
@@ -509,6 +542,66 @@ typedef AttentionDialogButtonCallback = Future<bool> Function(
   BuildContext context,
 );
 
+/// Enum to identify the type of stream disconnection
+enum IsmLiveStreamDisconnectType {
+  /// Host is ending/stopping the stream
+  host,
+
+  /// Viewer is leaving the stream
+  viewer,
+
+  /// PK guest is leaving the stream
+  pkGuest,
+
+  /// Copublisher is leaving the stream
+  copublisher,
+}
+
+/// API handler callback for stream disconnect/exit operations.
+///
+/// This is a unified callback that **replaces the default SDK API calls** for all types of stream disconnections.
+/// It replaces the separate `onHostStopStream` and `onLeftStreamAsViewer` callbacks.
+///
+/// **Purpose**: Allows host applications to provide their own API implementation for stream disconnect operations
+/// instead of using the SDK's default API endpoints.
+///
+/// [streamId] - The current stream ID.
+/// [disconnectType] - The type of disconnection (host, viewer, pkGuest, copublisher).
+///
+/// **Return Value**:
+/// - Return `true` if your API call was successful and the SDK should proceed with cleanup
+/// - Return `false` if your API call failed and the SDK should abort the disconnect process
+///
+/// **If this callback is NOT provided**, the SDK will use its default API implementations:
+/// - For `host`: calls the SDK's `stopStream` API endpoint
+/// - For `viewer`: calls the SDK's `leaveStream` API endpoint
+/// - For `pkGuest`: calls the SDK's `pkEnd` operation
+/// - For `copublisher`: calls the SDK's `leaveMember` operation
+///
+/// **Common use cases**:
+/// - Replace SDK API calls with your own backend endpoints
+/// - Add custom authentication/authorization logic
+/// - Implement custom analytics tracking for stream exits
+/// - Add business logic specific to your application
+/// - Integrate with external services or webhooks
+/// - Implement custom retry logic and error handling
+/// - Centralize all disconnect API calls in one handler
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamDisconnectApiHandler: (streamId, disconnectType) async {
+///     // Replace SDK's API with your own
+///     final response = await myApi.disconnectStream(streamId, disconnectType);
+///     return response.success; // true = proceed, false = abort
+///   },
+/// );
+/// ```
+typedef StreamDisconnectApiHandler = Future<bool> Function(
+  String streamId,
+  IsmLiveStreamDisconnectType disconnectType,
+);
+
 /// Preferred initial camera position when starting a stream
 enum IsmLiveCameraPosition {
   front,
@@ -629,9 +722,12 @@ class IsmLiveDelegate {
 
   static LinearGradient? streamOptionsBgGradient;
 
-  static Future<void> Function(String streamId)? onHostStopStream;
-
-  static Future<void> Function(String streamId)? onLeftStreamAsViewer;
+  /// API handler for custom stream disconnect operations.
+  ///
+  /// Provides your own API implementation to replace the SDK's default disconnect endpoints.
+  ///
+  /// See [StreamDisconnectApiHandler] for detailed documentation and examples.
+  static StreamDisconnectApiHandler? streamDisconnectApiHandler;
 
   static GoLiveClickCallback? onGoLiveClick;
 
@@ -653,9 +749,17 @@ class IsmLiveDelegate {
 
   // Removed: heartMessageCallback (use controlOptionCallback instead)
 
-  static StreamAnalyticsCallback? streamAnalyticsCallback;
+  /// API handler for custom stream analytics implementation.
+  ///
+  /// Provides your own API implementation to replace the SDK's default analytics endpoint.
+  /// See [StreamAnalyticsApiHandler] for detailed documentation and examples.
+  static StreamAnalyticsApiHandler? streamAnalyticsApiHandler;
 
-  static StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback;
+  /// API handler for custom stream analytics viewers implementation.
+  ///
+  /// Provides your own API implementation to replace the SDK's default analytics viewers endpoint.
+  /// See [StreamAnalyticsViewersApiHandler] for detailed documentation and examples.
+  static StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? hostTopProfileClickCallback;
 

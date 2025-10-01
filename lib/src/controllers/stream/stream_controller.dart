@@ -812,6 +812,8 @@ class IsmLiveStreamController extends GetxController
     restreamInstagram = false;
     scheduleLiveDate = DateTime.now();
 
+    unawaited(_dbWrapper.deleteAllSecuredValues());
+
     await WakelockPlus.disable();
   }
 

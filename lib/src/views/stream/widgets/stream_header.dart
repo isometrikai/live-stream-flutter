@@ -195,7 +195,7 @@ class IsmLiveCartIcon extends StatelessWidget {
         builder: (controller) {
           // Only show cart icon if:
           // 1. User is not host, AND
-          // 2. Stream has products linked
+          // 2. Stream is  productStream
           final shouldShow =
               !controller.isHost && (IsmLiveDelegate.productStream ?? false);
 

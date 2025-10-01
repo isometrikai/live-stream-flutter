@@ -23,7 +23,7 @@ IsmLiveApp(
 If you want to control initialization and use only specific SDK features or screens:
 
 ```dart
-// In your app's startup logic (e.g., splash screen):
+// In your app's startup logic (e.g., landing screen):
 await IsmLiveApp.initialize(myConfig, navigatorKey: myNavKey);
 
 // Later, in your widget tree, use any SDK widget:
@@ -69,9 +69,27 @@ IsmLiveApp.configureInterface(
     return true; // Return true to proceed with stream creation
   },
   
-  onHostStopStream: (streamId) async {
-    // Custom logic when host stops stream
-    print('Host stopped stream: $streamId');
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Replace SDK's default disconnect API with your own implementation
+    print('Disconnecting from stream: $streamId as ${disconnectType.name}');
+    
+    // Call your custom backend API
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        await myApi.endStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.viewer:
+        await myApi.leaveStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.pkGuest:
+        await myApi.leavePkBattle(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.copublisher:
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
+    
+    return true; // Return true to proceed with SDK cleanup
   },
   
   // ===== CONTROL SYSTEM CALLBACKS =====
@@ -110,32 +128,32 @@ IsmLiveApp.configureInterface(
     // ... other e-commerce configurations
   ),
   
-  // ===== ANALYTICS CALLBACKS =====
-  streamAnalyticsCallback: (streamId) async {
-    // Handle stream analytics with your own API
-    final analyticsData = await _callYourAnalyticsAPI(streamId);
-    return IsmLiveStreamAnalytics(
-      viewers: analyticsData['viewers'] ?? 0,
-      likes: analyticsData['likes'] ?? 0,
-      comments: analyticsData['comments'] ?? 0,
-      shares: analyticsData['shares'] ?? 0,
-      gifts: analyticsData['gifts'] ?? 0,
+  // ===== ANALYTICS API HANDLERS =====
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    // Replace SDK's analytics API with your own backend call
+    final analyticsData = await myApi.getStreamAnalytics(streamId);
+    return IsmLiveStreamAnalyticsModel(
+      totalViewersCount: analyticsData['viewers'] ?? 0,
+      hearts: analyticsData['hearts'] ?? 0,
+      followers: analyticsData['followers'] ?? 0,
+      totalEarning: analyticsData['earning'] ?? 0,
+      duration: analyticsData['duration'] ?? 0,
       productCount: analyticsData['products'] ?? 0,
     );
   },
   
-  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
-    // Handle stream viewers analytics with your own API
-    final viewersData = await _callYourAnalyticsViewersAPI(streamId, skip, limit);
-    return IsmLiveStreamAnalyticsViewers(
-      viewers: viewersData.map((viewer) => IsmLiveStreamAnalyticsViewer(
-        userId: viewer['userId'],
-        userName: viewer['userName'],
-        userImage: viewer['userImage'],
-        joinedAt: DateTime.parse(viewer['joinedAt']),
-      )).toList(),
-      totalCount: viewersData['totalCount'] ?? 0,
-    );
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+    // Replace SDK's analytics viewers API with your own backend call
+    final viewersData = await myApi.getStreamViewers(streamId, skip, limit);
+    return viewersData.map((viewer) => IsmLiveAnalyticViewerModel(
+      userName: viewer['userName'],
+      profilePic: viewer['profilePic'],
+      isometrikUserId: viewer['isometrikUserId'],
+      appUserId: viewer['appUserId'],
+      firstName: viewer['firstName'],
+      lastName: viewer['lastName'],
+      timestamp: viewer['timestamp'],
+    )).toList();
   },
   
   // Hearts are handled via unified controlOptionCallback using IsmLiveStreamOption.heart
@@ -169,13 +187,13 @@ IsmLiveApp.configureInterface(
 | | `fontFamily` | `String` | Custom font family for all text | - |
 | **GoLive Screen** | `goLiveScreenConfigure` | `IsmLiveGoLiveScreenConfigure` | Customize GoLive screen appearance | - |
 | **Stream Interaction** | `onGoLiveClick` | `context, isScheduledStream, streamDetails, goLiveData` | Handle GoLive button clicks | `Future<bool>` |
-| | `onHostStopStream` | `streamId` | Handle host stop stream events | `Future<void>` |
+| | `streamDisconnectApiHandler` | `streamId, disconnectType` | Replace SDK's default disconnect API with custom implementation | `Future<bool>` |
 | **Control System** | `controlWidgetBuilder` | `context, option, onTap, isHost, isCopublishing, streamId` | Replace control buttons with custom widgets | `Widget?` |
 | | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle all control option taps | `Future<bool>` |
 | **E-commerce** | `pinItemCallback` | `direction` | Handle host arrow button clicks | `void` |
 | | `buyNowCallback` | - | Handle "Buy now" button clicks | `void` |
-| **Analytics** | `streamAnalyticsCallback` | `streamId` | Handle stream analytics with custom API | `Future<IsmLiveStreamAnalytics>` |
-| | `streamAnalyticsViewersCallback` | `streamId, skip, limit` | Handle stream viewers analytics | `Future<IsmLiveStreamAnalyticsViewers>` |
+| **Analytics** | `streamAnalyticsApiHandler` | `streamId, isHost` | Replace SDK's analytics API with custom implementation | `Future<IsmLiveStreamAnalyticsModel?>` |
+| | `streamAnalyticsViewersApiHandler` | `streamId, skip, limit` | Replace SDK's analytics viewers API with custom implementation | `Future<List<IsmLiveAnalyticViewerModel>?>` |
 | **Heart Messages** | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle heart interactions (`IsmLiveStreamOption.heart`) | `Future<bool>` |
 | **UI Customization** | `cartBuilder` | `context, controller` | Customize shopping cart widget | `Widget` |
 | | `attentionDialogButtonCallback` | `context` | Handle attention dialog button clicks | `Future<void>` |
@@ -203,8 +221,8 @@ IsmLiveApp.configureInterface(
     }
     return false; // Use default behavior
   },
-  streamAnalyticsCallback: (streamId) async {
-    return await _getCustomAnalytics(streamId);
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    return await myApi.getStreamAnalytics(streamId);
   },
 );
 ```
@@ -318,9 +336,16 @@ IsmLiveApp.configureInterface(
     - And many more stream configuration options
   - If not set, default behavior is used (edit scheduled stream or start stream)
   
-- **`onHostStopStream`**: Called when host stops the stream
-  - Parameter: `streamId`
-  - If not set, default stop stream behavior is used
+- **`streamDisconnectApiHandler`**: API handler to replace SDK's default disconnect endpoints
+  - Parameters: `streamId`, `disconnectType` (IsmLiveStreamDisconnectType enum)
+  - Disconnect types: `host`, `viewer`, `pkGuest`, `copublisher`
+  - Return `true` if your API call succeeded (SDK proceeds with cleanup), `false` if failed (SDK aborts disconnect)
+  - **Purpose**: Replace the SDK's default disconnect API calls with your own backend implementation
+  - If not set, SDK uses its default disconnect APIs:
+    - For `host`: calls SDK's `stopStream` API
+    - For `viewer`: calls SDK's `leaveStream` API
+    - For `pkGuest`: calls SDK's `pkEnd` operation
+    - For `copublisher`: calls SDK's `leaveMember` operation
 
 Deprecated: `heartMessageCallback` has been removed. Use `controlOptionCallback` with `IsmLiveStreamOption.heart` instead.
   - Parameters: `streamId`, `userId`, `userName`, `userImage`, `deviceId`, `customType`
@@ -328,17 +353,19 @@ Deprecated: `heartMessageCallback` has been removed. Use `controlOptionCallback`
   - Useful for custom heart message APIs, analytics tracking, user validation, rate limiting, etc.
   - If not set, SDK uses default heart message handling
 
-- **`streamAnalyticsCallback`**: Called when the SDK needs to fetch stream analytics data
-  - Parameters: `streamId`
-  - Return `IsmLiveStreamAnalyticsModel` if your app successfully provided analytics data, `null` to let SDK handle with default implementation
+- **`streamAnalyticsApiHandler`**: API handler to replace SDK's default analytics endpoint
+  - Parameters: `streamId`, `isHost` (bool)
+  - Return `IsmLiveStreamAnalyticsModel` if your API call was successful with analytics data, `null` to let SDK use its default
+  - **Purpose**: Replace the SDK's default analytics API calls with your own backend implementation
+  - If not set, SDK uses its default analytics API endpoint
   - Useful for custom analytics APIs, real-time analytics integration, custom analytics processing, etc.
-  - If not set, SDK uses default analytics API
 
-- **`streamAnalyticsViewersCallback`**: Called when the SDK needs to fetch stream analytics viewers data
+- **`streamAnalyticsViewersApiHandler`**: API handler to replace SDK's default analytics viewers endpoint
   - Parameters: `streamId`, `skip`, `limit`
-  - Return `List<IsmLiveAnalyticViewerModel>` if your app successfully provided viewers data, `null` to let SDK handle with default implementation
+  - Return `List<IsmLiveAnalyticViewerModel>` if your API call was successful with viewers data, `null` to let SDK use its default
+  - **Purpose**: Replace the SDK's default analytics viewers API calls with your own backend implementation
+  - If not set, SDK uses its default analytics viewers API endpoint
   - Useful for custom analytics viewers APIs, real-time viewers data integration, custom viewers data processing, etc.
-  - If not set, SDK uses default analytics viewers API
 
 
 - **`controlOptionCallback`**: Unified callback for handling any control option tap
@@ -609,6 +636,129 @@ IsmLiveApp.updateCartBuilder(null);
 ```
 
 
+#### Stream Disconnect API Handler Examples
+
+**Basic Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Replace SDK's API with your own backend call
+    print('Disconnecting: $streamId as ${disconnectType.name}');
+    
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        await myApi.endStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.viewer:
+        await myApi.leaveStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.pkGuest:
+        await myApi.leavePkBattle(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.copublisher:
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
+    
+    return true; // Success - SDK proceeds with cleanup
+  },
+);
+```
+
+**Advanced Usage with Error Handling:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    try {
+      // Call your unified disconnect API
+      final response = await myApi.disconnectStream(
+        streamId: streamId,
+        type: disconnectType.name,
+      );
+      
+      if (response.success) {
+        print('Successfully disconnected as ${disconnectType.name}');
+        return true; // Proceed with SDK cleanup
+      } else {
+        print('Disconnect failed: ${response.error}');
+        return false; // Abort disconnect
+      }
+    } catch (e) {
+      print('Error during disconnect: $e');
+      return false; // Abort on error
+    }
+  },
+);
+```
+
+**With Analytics Tracking:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Track disconnect event
+    _analyticsService.trackEvent('stream_disconnect', {
+      'stream_id': streamId,
+      'disconnect_type': disconnectType.name,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+    
+    // Different handling per disconnect type
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        // Save stream statistics before ending
+        await _saveStreamStats(streamId);
+        await myApi.endStream(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.viewer:
+        // Track viewer session duration
+        await _trackViewerSession(streamId);
+        await myApi.leaveStream(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.pkGuest:
+        // Update PK battle status
+        await myApi.updatePkStatus(streamId, 'guest_left');
+        await myApi.leavePkBattle(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.copublisher:
+        // Notify host
+        await myApi.notifyHost(streamId, 'copublisher_left');
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
+    
+    return true;
+  },
+);
+```
+
+**Retry Logic:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    int maxRetries = 3;
+    int retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        await myApi.disconnectStream(streamId, disconnectType);
+        return true; // Success
+      } catch (e) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          print('Max retries reached');
+          return false; // Failed after retries
+        }
+        await Future.delayed(Duration(seconds: 2));
+      }
+    }
+    return false;
+  },
+);
+```
+
 #### Heart Handling via Unified Control Callback
 
 **Basic Usage:**
@@ -663,14 +813,14 @@ IsmLiveApp.updateControlOptionCallback((context, option, streamId, isHost, isCop
 });
 ```
 
-#### Stream Analytics Callback Examples
+#### Stream Analytics API Handler Examples
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsCallback: (streamId) async {
-    // Call your own analytics API
-    final analyticsData = await _callYourAnalyticsAPI(streamId);
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    // Replace SDK's analytics API with your own backend call
+    final analyticsData = await myApi.getStreamAnalytics(streamId);
     
     if (analyticsData != null) {
       // Convert your data to IsmLiveStreamAnalyticsModel format
@@ -693,10 +843,10 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Real-time Analytics:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsCallback: (streamId) async {
+  streamAnalyticsApiHandler: (streamId, isHost) async {
     try {
       // Call your real-time analytics service
-      final realTimeData = await _getRealTimeAnalytics(streamId);
+      final realTimeData = await myApi.getRealTimeAnalytics(streamId, isHost);
       
       // Apply custom business logic
       final processedData = _processAnalyticsData(realTimeData);
@@ -724,21 +874,21 @@ IsmLiveApp.configureInterface(
 
 **Dynamic Updates:**
 ```dart
-// Update analytics callback at runtime
-IsmLiveApp.updateStreamAnalyticsCallback(_newAnalyticsHandler);
+// Update analytics API handler at runtime
+IsmLiveApp.updateStreamAnalyticsApiHandler(_newAnalyticsHandler);
 
 // Disable custom analytics (use SDK default)
-IsmLiveApp.updateStreamAnalyticsCallback(null);
+IsmLiveApp.updateStreamAnalyticsApiHandler(null);
 ```
 
-#### Stream Analytics Viewers Callback Examples
+#### Stream Analytics Viewers API Handler Examples
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
-    // Call your own analytics viewers API
-    final viewersData = await _callYourAnalyticsViewersAPI(
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+    // Replace SDK's analytics viewers API with your own backend call
+    final viewersData = await myApi.getStreamViewers(
       streamId: streamId,
       skip: skip,
       limit: limit,
@@ -766,10 +916,10 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Real-time Viewers Data:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
     try {
       // Call your real-time viewers analytics service
-      final realTimeViewersData = await _getRealTimeViewersAnalytics(
+      final realTimeViewersData = await myApi.getRealTimeViewers(
         streamId: streamId,
         skip: skip,
         limit: limit,
@@ -799,11 +949,11 @@ IsmLiveApp.configureInterface(
 
 **Dynamic Updates:**
 ```dart
-// Update viewers analytics callback at runtime
-IsmLiveApp.updateStreamAnalyticsViewersCallback(_newViewersAnalyticsHandler);
+// Update viewers analytics API handler at runtime
+IsmLiveApp.updateStreamAnalyticsViewersApiHandler(_newViewersAnalyticsHandler);
 
 // Disable custom viewers analytics (use SDK default)
-IsmLiveApp.updateStreamAnalyticsViewersCallback(null);
+IsmLiveApp.updateStreamAnalyticsViewersApiHandler(null);
 ```
 
 #### Control Customization Examples
@@ -1271,9 +1421,10 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
 | Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
 | Custom GoLive Screen   | `IsmLiveGoLiveScreenConfigure`  | Customize GoLive screen header and button |
+| Custom Disconnect API  | `streamDisconnectApiHandler` | Replace SDK's default disconnect endpoints with your own API |
 | Custom Heart Messages  | `controlOptionCallback`    | Handle hearts via `IsmLiveStreamOption.heart` |
-| Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
-| Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
+| Custom Analytics      | `streamAnalyticsApiHandler` | Replace SDK's analytics endpoint with your own API |
+| Custom Viewers Analytics | `streamAnalyticsViewersApiHandler` | Replace SDK's analytics viewers endpoint with your own API |
 | Custom Cart Widget       | `cartBuilder`             | Customize shopping cart icon/widget in stream header |
 | Custom Attention Dialog  | `attentionDialogButtonCallback` | Handle attention dialog button clicks with your own implementation |
 | Custom Control Widgets   | `controlWidgetBuilder`     | Replace specific control buttons with custom widgets |

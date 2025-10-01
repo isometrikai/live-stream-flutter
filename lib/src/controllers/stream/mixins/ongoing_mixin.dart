@@ -692,26 +692,44 @@ mixin StreamOngoingMixin {
     isStopStreamCall = true;
     var isEnded = false;
 
+    // Determine the disconnect type based on user role
+    IsmLiveStreamDisconnectType? disconnectType;
     if (isHost) {
-      isEnded = true;
-      if (IsmLiveDelegate.onHostStopStream != null) {
-        await IsmLiveDelegate.onHostStopStream!(streamId);
-      } else {
-        await _controller.stopStream(streamId, _controller.user?.userId ?? '');
-      }
+      disconnectType = IsmLiveStreamDisconnectType.host;
     } else if (_controller.userRole?.isPkGuest ?? false) {
-      await _pkController.pkEnd();
-      isEnded = true;
+      disconnectType = IsmLiveStreamDisconnectType.pkGuest;
     } else if (_controller.isCopublisher) {
-      await _controller.leaveMember(streamId: streamId);
-      isEnded = true;
+      disconnectType = IsmLiveStreamDisconnectType.copublisher;
     } else {
-      if (IsmLiveDelegate.onLeftStreamAsViewer != null) {
-        await IsmLiveDelegate.onLeftStreamAsViewer!(streamId);
-      } else {
-        await _controller.leaveStream(streamId);
+      disconnectType = IsmLiveStreamDisconnectType.viewer;
+    }
+
+    // Use the unified API handler if provided, otherwise use default SDK behavior
+    if (IsmLiveDelegate.streamDisconnectApiHandler != null) {
+      // Host app provides custom API implementation
+      isEnded = await IsmLiveDelegate.streamDisconnectApiHandler!(
+          streamId, disconnectType);
+    } else {
+      // Default SDK behavior
+      switch (disconnectType) {
+        case IsmLiveStreamDisconnectType.host:
+          await _controller.stopStream(
+              streamId, _controller.user?.userId ?? '');
+          isEnded = true;
+          break;
+        case IsmLiveStreamDisconnectType.pkGuest:
+          await _pkController.pkEnd();
+          isEnded = true;
+          break;
+        case IsmLiveStreamDisconnectType.copublisher:
+          await _controller.leaveMember(streamId: streamId);
+          isEnded = true;
+          break;
+        case IsmLiveStreamDisconnectType.viewer:
+          await _controller.leaveStream(streamId);
+          isEnded = true;
+          break;
       }
-      isEnded = true;
     }
 
     if (isEnded && endStream) {
@@ -730,17 +748,6 @@ mixin StreamOngoingMixin {
         closeStreamView(isHost, streamId: streamId);
       }
     }
-    //  else if (_controller.isCopublisher) {
-    //   await _controller.unpublishTracks();
-
-    //   _controller.userRole?.leaveCopublishing();
-
-    //   _controller.memberStatus = IsmLiveMemberStatus.notMember;
-
-    //   await _controller.getRTCToken(_controller.streamId ?? '',
-    //       showLoader: false);
-    //   await _controller.sortParticipants();
-    // }
 
     IsmLiveApp.onStreamEnd?.call();
     isStopStreamCall = false;

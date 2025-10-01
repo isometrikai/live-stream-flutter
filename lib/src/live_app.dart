@@ -203,8 +203,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveButtonConfig? ismLiveButtonConfig,
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
-    Future<void> Function(String streamId)? onHostStopStream,
-    Future<void> Function(String streamId)? onLeftStreamAsViewer,
+    StreamDisconnectApiHandler? streamDisconnectApiHandler,
     GoLiveClickCallback? onGoLiveClick,
     GoLiveDisposeCallback? onGoLiveDispose,
     bool productionMode = false,
@@ -215,8 +214,8 @@ class IsmLiveApp extends StatefulWidget {
     String? fontFamily,
     MessageProcessCallback? messageProcessCallback,
     StreamViewLoadedCallback? streamViewLoadedCallback,
-    StreamAnalyticsCallback? streamAnalyticsCallback,
-    StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
+    StreamAnalyticsApiHandler? streamAnalyticsApiHandler,
+    StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
     IsmLiveCartBuilder? cartBuilder,
@@ -262,8 +261,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
-    IsmLiveDelegate.onHostStopStream = onHostStopStream;
-    IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
+    IsmLiveDelegate.streamDisconnectApiHandler = streamDisconnectApiHandler;
     IsmLiveDelegate.onGoLiveClick = onGoLiveClick;
     IsmLiveDelegate.onGoLiveDispose = onGoLiveDispose;
     IsmLiveDelegate.productionMode = productionMode;
@@ -276,9 +274,9 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
     // Heart message is now handled via controlOptionCallback
-    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
-    IsmLiveDelegate.streamAnalyticsViewersCallback =
-        streamAnalyticsViewersCallback;
+    IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
+    IsmLiveDelegate.streamAnalyticsViewersApiHandler =
+        streamAnalyticsViewersApiHandler;
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
 
     // Handle GoLive screen configuration
@@ -450,11 +448,12 @@ class IsmLiveApp extends StatefulWidget {
 
   // Removed: heartMessageCallback (use controlOptionCallback instead)
 
-  static StreamAnalyticsCallback? get streamAnalyticsCallback =>
-      IsmLiveDelegate.streamAnalyticsCallback;
+  static StreamAnalyticsApiHandler? get streamAnalyticsApiHandler =>
+      IsmLiveDelegate.streamAnalyticsApiHandler;
 
-  static StreamAnalyticsViewersCallback? get streamAnalyticsViewersCallback =>
-      IsmLiveDelegate.streamAnalyticsViewersCallback;
+  static StreamAnalyticsViewersApiHandler?
+      get streamAnalyticsViewersApiHandler =>
+          IsmLiveDelegate.streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
       IsmLiveDelegate.hostTopProfileClickCallback;
@@ -506,17 +505,17 @@ class IsmLiveApp extends StatefulWidget {
 
   // Removed: updateHeartMessageCallback (use controlOptionCallback instead)
 
-  /// Update stream analytics callback dynamically at runtime
-  static void updateStreamAnalyticsCallback(
-      StreamAnalyticsCallback? streamAnalyticsCallback) {
-    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
+  /// Update stream analytics API handler dynamically at runtime
+  static void updateStreamAnalyticsApiHandler(
+      StreamAnalyticsApiHandler? streamAnalyticsApiHandler) {
+    IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
   }
 
-  /// Update stream analytics viewers callback dynamically at runtime
-  static void updateStreamAnalyticsViewersCallback(
-      StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback) {
-    IsmLiveDelegate.streamAnalyticsViewersCallback =
-        streamAnalyticsViewersCallback;
+  /// Update stream analytics viewers API handler dynamically at runtime
+  static void updateStreamAnalyticsViewersApiHandler(
+      StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler) {
+    IsmLiveDelegate.streamAnalyticsViewersApiHandler =
+        streamAnalyticsViewersApiHandler;
   }
 
   /// Update host top profile click callback dynamically at runtime
