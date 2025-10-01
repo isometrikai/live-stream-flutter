@@ -329,6 +329,8 @@ class _IsmLiveStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
+      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
     // Apply width constraint only when productStream is enabled
@@ -882,6 +884,8 @@ class ScheduleStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
+      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
     // Apply width constraint only when productStream is enabled

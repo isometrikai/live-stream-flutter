@@ -674,6 +674,10 @@ class IsmLiveDelegate {
 
   static IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder;
 
+  static IsmLiveChatMessageBuilder? chatMessageBuilder;
+
+  static IsmLiveChatItemBgColorCallback? chatItemBgColorCallback;
+
   static Widget? endButton;
 
   static bool showHeader = true;
@@ -746,8 +750,6 @@ class IsmLiveDelegate {
   static MessageProcessCallback? messageProcessCallback;
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
-
-  // Removed: heartMessageCallback (use controlOptionCallback instead)
 
   /// API handler for custom stream analytics implementation.
   ///

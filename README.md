@@ -172,6 +172,23 @@ IsmLiveApp.configureInterface(
     _navigateToCustomScreen();
   },
   
+  // ===== CHAT CUSTOMIZATION =====
+  chatItemBgColorCallback: (message) {
+    // Simple background color customization
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4);
+    }
+    return null; // Use default
+  },
+  
+  chatMessageBuilder: (context, message, defaultChild) {
+    // Advanced chat message customization
+    return Container(
+      margin: EdgeInsets.only(left: message.sentByHost ? 0 : 20),
+      child: defaultChild,
+    );
+  },
+  
   // ===== ADDITIONAL UI OPTIONS =====
   showHeader: true,
   streamHeader: (context) => CustomHeader(),
@@ -195,6 +212,8 @@ IsmLiveApp.configureInterface(
 | **Analytics** | `streamAnalyticsApiHandler` | `streamId, isHost` | Replace SDK's analytics API with custom implementation | `Future<IsmLiveStreamAnalyticsModel?>` |
 | | `streamAnalyticsViewersApiHandler` | `streamId, skip, limit` | Replace SDK's analytics viewers API with custom implementation | `Future<List<IsmLiveAnalyticViewerModel>?>` |
 | **Heart Messages** | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle heart interactions (`IsmLiveStreamOption.heart`) | `Future<bool>` |
+| **Chat Customization** | `chatItemBgColorCallback` | `message` | Customize chat message background colors | `Color?` |
+| | `chatMessageBuilder` | `context, message, defaultChild` | Full chat message UI customization | `Widget` |
 | **UI Customization** | `cartBuilder` | `context, controller` | Customize shopping cart widget | `Widget` |
 | | `attentionDialogButtonCallback` | `context` | Handle attention dialog button clicks | `Future<void>` |
 | | `showHeader` | `bool` | Show/hide stream header | - |
@@ -347,11 +366,6 @@ IsmLiveApp.configureInterface(
     - For `pkGuest`: calls SDK's `pkEnd` operation
     - For `copublisher`: calls SDK's `leaveMember` operation
 
-Deprecated: `heartMessageCallback` has been removed. Use `controlOptionCallback` with `IsmLiveStreamOption.heart` instead.
-  - Parameters: `streamId`, `userId`, `userName`, `userImage`, `deviceId`, `customType`
-  - Return `true` if your app successfully handled the heart message, `false` to let SDK handle with default implementation
-  - Useful for custom heart message APIs, analytics tracking, user validation, rate limiting, etc.
-  - If not set, SDK uses default heart message handling
 
 - **`streamAnalyticsApiHandler`**: API handler to replace SDK's default analytics endpoint
   - Parameters: `streamId`, `isHost` (bool)
@@ -634,6 +648,141 @@ IsmLiveApp.updateCartBuilder((context, controller) {
 // Disable custom cart builder (use SDK default)
 IsmLiveApp.updateCartBuilder(null);
 ```
+
+#### Chat Customization
+
+The SDK provides two ways to customize chat messages: a simple color callback for background customization and a full builder for complete UI control.
+
+##### Chat Background Color Customization
+
+- **`chatItemBgColorCallback`**: Simple callback to customize chat message background colors
+  - Parameters: `message` - The message object containing all message data
+  - Return `Color?` for the message background, or `null` to use default (`Colors.black26`)
+  - **Purpose**: Quick way to change chat bubble colors without modifying the UI structure
+  - **Recommended for**: Simple color changes based on message properties
+  - If not set, SDK uses default background color
+
+##### Chat Message Builder
+
+- **`chatMessageBuilder`**: Advanced builder for full chat message UI customization
+  - Parameters: `context`, `message`, `defaultChild`
+  - Return a `Widget` with your custom chat bubble or modified default
+  - **Purpose**: Full control over chat message appearance and structure
+  - **Use cases**: Wrapping messages with animations, borders, custom layouts, or completely custom designs
+  - If not set, SDK uses default chat message UI
+
+#### Chat Customization Examples
+
+**Simple Background Color Change:**
+```dart
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // Different colors for different message types
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4); // Purple for host
+    }
+    if (message.sentByMe) {
+      return Colors.green.withOpacity(0.3); // Green for my messages
+    }
+    return null; // null = use default (Colors.black26)
+  },
+);
+```
+
+**Advanced Background Color Logic:**
+```dart
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // VIP user gets gold background
+    if (_isVipUser(message.userId)) {
+      return Colors.amber.withOpacity(0.5);
+    }
+    
+    // Moderator gets blue background
+    if (_isModerator(message.userId)) {
+      return Colors.blue.withOpacity(0.4);
+    }
+    
+    // Host gets purple background
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4);
+    }
+    
+    // Your own messages get green background
+    if (message.sentByMe) {
+      return Colors.green.withOpacity(0.3);
+    }
+    
+    // Default for everyone else
+    return null;
+  },
+);
+```
+
+IsmLiveApp.configureInterface(
+  chatMessageBuilder: (context, message, defaultChild) {
+    // Add border and margin to host messages only
+    if (message.sentByHost) {
+      return Container(
+        margin: EdgeInsets.only(bottom: 4),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.amber, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: defaultChild, // Use the default UI inside
+      );
+    }
+    
+    // Use default for other messages
+    return defaultChild;
+  },
+);
+```
+// Update chat background color callback at runtime
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // New color scheme
+    return message.sentByHost 
+        ? Colors.blue.withOpacity(0.5) 
+        : null;
+  },
+);
+
+// Update chat message builder at runtime
+IsmLiveApp.configureInterface(
+  chatMessageBuilder: (context, message, defaultChild) {
+    // New custom wrapper
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      child: defaultChild,
+    );
+  },
+);
+
+// Disable custom chat customization (use SDK default)
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: null,
+  chatMessageBuilder: null,
+);
+```
+
+**Best Practices:**
+
+1. **Use `chatItemBgColorCallback` when**: You only need to change background colors
+   - ✅ Simple and performant
+   - ✅ Keeps default UI and behavior
+   - ✅ No need to handle tap logic
+
+2. **Use `chatMessageBuilder` when**: You need more control
+   - ✅ Custom layouts and designs
+   - ✅ Wrapping with animations or effects
+   - ✅ Adding badges, borders, or decorations
+
+3. **Combine both when**: You want colors + additional decorations
+   - ✅ `chatItemBgColorCallback` handles colors
+   - ✅ `chatMessageBuilder` adds extra UI elements
+
+4. **Performance tip**: For simple color changes, always prefer `chatItemBgColorCallback` over rebuilding the entire widget in `chatMessageBuilder`
 
 
 #### Stream Disconnect API Handler Examples
@@ -1429,6 +1578,8 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Custom Attention Dialog  | `attentionDialogButtonCallback` | Handle attention dialog button clicks with your own implementation |
 | Custom Control Widgets   | `controlWidgetBuilder`     | Replace specific control buttons with custom widgets |
 | Unified Control Handling  | `controlOptionCallback`     | Handle all control option taps with unified callback |
+| Chat Background Colors   | `chatItemBgColorCallback` | Customize chat message background colors based on message properties |
+| Chat Message UI         | `chatMessageBuilder`      | Full customization of chat message appearance and structure |
 | E-commerce Product Navigation | `pinItemCallback` | Handle host arrow button clicks for product navigation |
 | E-commerce Purchase Flow | `buyNowCallback` | Handle "Buy now" button clicks for purchase flows |
 

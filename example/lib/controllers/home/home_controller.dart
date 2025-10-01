@@ -74,6 +74,20 @@ class HomeController extends GetxController {
         goLiveButtonBuilder: _buildCustomGoLiveButton,
         //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
       ),
+      // chatMessageBuilder: (context, message, defaultChild) {
+      //   // Change background color for host messages
+
+      //   return defaultChild; // Use default for others
+      // },
+      // chatItemBgColorCallback: (message) {
+      //   // ✅ New name
+      //   if (message.sentByHost) {
+      //     return Colors.red.withOpacity(0.4);
+      //   }
+      //   return null;
+      // },
+
+      // messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
       // cartBuilder: (context, controller) => Container(
       //   padding: const EdgeInsets.all(8),
       //   decoration: const BoxDecoration(

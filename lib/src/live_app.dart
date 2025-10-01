@@ -176,6 +176,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveHeaderBuilder? bottomBuilder,
     IsmLiveInputBuilder? inputBuilder,
     IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder,
+    IsmLiveChatMessageBuilder? chatMessageBuilder,
+    IsmLiveChatItemBgColorCallback? chatItemBgColorCallback,
     Widget? endButton,
     Widget? endStreamScreen,
     bool showHeader = true,
@@ -235,6 +237,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.showHeader = showHeader;
     IsmLiveDelegate.inputBuilder = inputBuilder;
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
+    IsmLiveDelegate.chatMessageBuilder = chatMessageBuilder;
+    IsmLiveDelegate.chatItemBgColorCallback = chatItemBgColorCallback;
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
@@ -445,8 +449,6 @@ class IsmLiveApp extends StatefulWidget {
 
   static StreamViewLoadedCallback? get streamViewLoadedCallback =>
       IsmLiveDelegate.streamViewLoadedCallback;
-
-  // Removed: heartMessageCallback (use controlOptionCallback instead)
 
   static StreamAnalyticsApiHandler? get streamAnalyticsApiHandler =>
       IsmLiveDelegate.streamAnalyticsApiHandler;
