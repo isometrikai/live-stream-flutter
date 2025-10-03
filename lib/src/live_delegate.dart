@@ -619,6 +619,7 @@ enum IsmLiveArrowDirection {
 /// This callback is triggered when the user taps on the left or right arrow buttons
 /// in the host interface for product navigation.
 ///
+/// [context] - The BuildContext from the SDK UI.
 /// [direction] - The direction of the arrow that was clicked (previous or next).
 ///
 /// This callback is called when arrow buttons are tapped in the host interface.
@@ -630,6 +631,7 @@ enum IsmLiveArrowDirection {
 /// - Custom UI state management
 /// - Custom business logic for arrow actions
 typedef PinItemCallback = void Function(
+  BuildContext context,
   IsmLiveArrowDirection direction,
 );
 

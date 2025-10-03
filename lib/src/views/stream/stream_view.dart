@@ -274,6 +274,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                     onPressed: () {
                       // Left arrow action - call pinItemCallback with previous direction
                       IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
+                        context,
                         IsmLiveArrowDirection.previous,
                       );
                     },
@@ -303,6 +304,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                     onPressed: () {
                       // Right arrow action - call pinItemCallback with next direction
                       IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
+                        context,
                         IsmLiveArrowDirection.next,
                       );
                     },
