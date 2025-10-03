@@ -803,11 +803,11 @@ class IsmLiveStreamViewModel {
     required String streamId,
     required bool isHost,
   }) async {
-    // Check if host app has provided a custom stream analytics callback
-    if (IsmLiveDelegate.streamAnalyticsCallback != null) {
+    // Check if host app has provided a custom stream analytics API handler
+    if (IsmLiveDelegate.streamAnalyticsApiHandler != null) {
       try {
         final analyticsData =
-            await IsmLiveDelegate.streamAnalyticsCallback!.call(
+            await IsmLiveDelegate.streamAnalyticsApiHandler!.call(
           streamId,
           isHost,
         );
@@ -817,8 +817,8 @@ class IsmLiveStreamViewModel {
           return analyticsData;
         }
       } catch (e) {
-        IsmLiveLog.error('Error in host stream analytics callback: $e');
-        // Continue with default implementation if host callback fails
+        IsmLiveLog.error('Error in host stream analytics API handler: $e');
+        // Continue with default implementation if host handler fails
       }
     }
 
@@ -857,11 +857,11 @@ class IsmLiveStreamViewModel {
     required int skip,
     required int limit,
   }) async {
-    // Check if host app has provided a custom stream analytics viewers callback
-    if (IsmLiveDelegate.streamAnalyticsViewersCallback != null) {
+    // Check if host app has provided a custom stream analytics viewers API handler
+    if (IsmLiveDelegate.streamAnalyticsViewersApiHandler != null) {
       try {
         final viewersData =
-            await IsmLiveDelegate.streamAnalyticsViewersCallback!.call(
+            await IsmLiveDelegate.streamAnalyticsViewersApiHandler!.call(
           streamId,
           skip,
           limit,
@@ -872,8 +872,9 @@ class IsmLiveStreamViewModel {
           return viewersData;
         }
       } catch (e) {
-        IsmLiveLog.error('Error in host stream analytics viewers callback: $e');
-        // Continue with default implementation if host callback fails
+        IsmLiveLog.error(
+            'Error in host stream analytics viewers API handler: $e');
+        // Continue with default implementation if host handler fails
       }
     }
 

@@ -92,24 +92,6 @@ typedef GoLiveClickCallback = Future<void> Function(
 /// Useful for cleanup operations like disposing controllers, clearing data, etc.
 typedef GoLiveDisposeCallback = void Function();
 
-/// Callback for Pin Product button click.
-///
-/// [context] - The BuildContext from the SDK UI.
-/// [streamId] - The current stream ID.
-/// [hasPinnedProduct] - Whether there is currently a product pinned.
-/// [buttonLabel] - The label of the button that was tapped.
-/// [isHost] - Whether the current user is the host of the stream.
-///
-/// This callback is called when the Product Action button is tapped in the stream view.
-/// Useful for handling product pinning/buying functionality in the host application.
-typedef ProductActionCallback = void Function(
-  BuildContext context,
-  String streamId,
-  bool hasPinnedProduct,
-  String buttonLabel,
-  bool isHost,
-);
-
 /// Callback for message processing and filtering.
 ///
 /// [message] - The incoming message that can be modified or filtered.
@@ -161,86 +143,88 @@ typedef StreamViewLoadedCallback = void Function(
   IsmLiveStreamDataModel? stream,
 );
 
-/// Callback for heart message sending.
-///
-/// This callback is called when a user sends a heart message to the stream.
-/// Host applications can use this to implement their own heart message API
-/// or analytics tracking.
-///
-/// [streamId] - The current stream ID.
-/// [userId] - The ID of the user sending the heart.
-/// [userName] - The name of the user sending the heart.
-/// [userImage] - The profile image URL of the user sending the heart.
-/// [deviceId] - The device ID of the user.
-/// [customType] - The custom type of the heart message (default: 'like').
-///
-/// Return true if the heart message was successfully processed by the host app,
-/// false if the host app wants the SDK to handle it with the default implementation.
-///
-/// This callback is called before the SDK's default heart message handling.
-/// Useful for implementing:
-/// - Custom heart message APIs
-/// - Analytics tracking
-/// - User engagement metrics
-/// - Custom heart message processing
-/// - Integration with external services
-/// - Custom heart message validation
-typedef HeartMessageCallback = Future<bool> Function(
-  String streamId,
-  String userId,
-  String userName,
-  String userImage,
-  String deviceId,
-  String customType,
-);
+// Heart message customization is now managed through `controlOptionCallback`.
 
-/// Callback for stream analytics data.
+/// API handler for stream analytics data.
 ///
-/// This callback is called when the SDK needs to fetch stream analytics data.
-/// Host applications can use this to implement their own analytics API
-/// and return data in the expected format.
+/// This handler is called when the SDK needs to fetch stream analytics data.
+/// **Purpose**: Allows host applications to provide their own analytics API implementation
+/// instead of using the SDK's default analytics endpoint.
 ///
 /// [streamId] - The current stream ID.
 /// [isHost] - Whether the current user is the host of the stream.
 ///
-/// Return the analytics data in IsmLiveStreamAnalyticsModel format,
-/// or null if the host app wants the SDK to handle it with the default implementation.
+/// **Return Value**:
+/// - Return `IsmLiveStreamAnalyticsModel` if your API call was successful with the analytics data
+/// - Return `null` if you want the SDK to use its default analytics API
 ///
-/// This callback is called before the SDK's default analytics API call.
-/// Useful for implementing:
-/// - Custom analytics APIs
+/// **If this handler is NOT provided**, the SDK will use its default analytics API endpoint.
+///
+/// **Common use cases**:
+/// - Replace SDK's analytics API with your own backend endpoint
+/// - Implement custom analytics APIs
 /// - Real-time analytics integration
-/// - Custom analytics processing
+/// - Custom analytics processing and transformation
 /// - Integration with external analytics services
 /// - Custom analytics validation
-/// - Analytics data transformation
-typedef StreamAnalyticsCallback = Future<IsmLiveStreamAnalyticsModel?> Function(
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamAnalyticsApiHandler: (streamId, isHost) async {
+///     final data = await myApi.getStreamAnalytics(streamId);
+///     return IsmLiveStreamAnalyticsModel(
+///       totalViewersCount: data.viewers,
+///       hearts: data.hearts,
+///       // ... other fields
+///     );
+///   },
+/// );
+/// ```
+typedef StreamAnalyticsApiHandler = Future<IsmLiveStreamAnalyticsModel?>
+    Function(
   String streamId,
   bool isHost,
 );
 
-/// Callback for stream analytics viewers data.
+/// API handler for stream analytics viewers data.
 ///
-/// This callback is called when the SDK needs to fetch stream analytics viewers data.
-/// Host applications can use this to implement their own analytics viewers API
-/// and return data in the expected format.
+/// This handler is called when the SDK needs to fetch stream analytics viewers data.
+/// **Purpose**: Allows host applications to provide their own analytics viewers API implementation
+/// instead of using the SDK's default analytics viewers endpoint.
 ///
 /// [streamId] - The current stream ID.
 /// [skip] - Number of records to skip for pagination.
 /// [limit] - Number of records to return for pagination.
 ///
-/// Return the analytics viewers data as List<IsmLiveAnalyticViewerModel>,
-/// or null if the host app wants the SDK to handle it with the default implementation.
+/// **Return Value**:
+/// - Return `List<IsmLiveAnalyticViewerModel>` if your API call was successful with the viewers data
+/// - Return `null` if you want the SDK to use its default analytics viewers API
 ///
-/// This callback is called before the SDK's default analytics viewers API call.
-/// Useful for implementing:
-/// - Custom analytics viewers APIs
+/// **If this handler is NOT provided**, the SDK will use its default analytics viewers API endpoint.
+///
+/// **Common use cases**:
+/// - Replace SDK's analytics viewers API with your own backend endpoint
+/// - Implement custom analytics viewers APIs
 /// - Real-time viewers data integration
-/// - Custom viewers data processing
+/// - Custom viewers data processing and transformation
 /// - Integration with external analytics services
 /// - Custom viewers data validation
-/// - Viewers data transformation
-typedef StreamAnalyticsViewersCallback
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+///     final viewers = await myApi.getStreamViewers(streamId, skip, limit);
+///     return viewers.map((v) => IsmLiveAnalyticViewerModel(
+///       userName: v.name,
+///       profilePic: v.image,
+///       // ... other fields
+///     )).toList();
+///   },
+/// );
+/// ```
+typedef StreamAnalyticsViewersApiHandler
     = Future<List<IsmLiveAnalyticViewerModel>?> Function(
   String streamId,
   int skip,
@@ -364,59 +348,47 @@ typedef GoLiveSmallButtonBuilder = Widget Function(
   bool isEnabled,
 );
 
-/// Callback for analytics/bars button click event.
+/// Callback for handling any control option tap
+/// Allows host apps to customize any control button behavior
+/// - Custom control button functionality
+/// - Integration with external services
+/// - Custom permission checks
+/// - Host-specific control features
 ///
-/// This callback is triggered when the user taps on the analytics/bars button in the stream.
-/// Host applications can use this to implement their own analytics screen or custom behavior.
-///
-/// [context] - The build context where the tap occurred.
-/// [streamId] - The current stream ID.
-/// [isHost] - Whether the current user is the host of the stream.
-/// [isPkGuest] - Whether the current user is a PK guest.
-/// [pkGuestStreamId] - The PK guest stream ID (if applicable).
+/// [context] - The build context where the tap occurred
+/// [option] - The control option that was tapped
+/// [streamId] - The current stream ID
+/// [isHost] - Whether the current user is the host
+/// [isCopublishing] - Whether the user is copublishing
 ///
 /// Return true if the host app handled the click and wants to prevent the default behavior,
-/// false if the host app wants the SDK to handle it with the default analytics sheet.
+/// false if the host app wants the SDK to handle it with the default behavior.
+typedef ControlOptionCallback = Future<bool> Function(
+  BuildContext context,
+  IsmLiveStreamOption option,
+  String streamId,
+  bool isHost,
+  bool isCopublishing,
+);
+
+/// Builder for custom control widgets
+/// Allows host apps to replace default control widgets with custom ones
 ///
-/// This callback is called before the SDK's default analytics sheet handling.
-/// Useful for implementing:
-/// - Custom analytics screens
-/// - Custom data visualization
-/// - Integration with external analytics services
-/// - Custom user engagement tracking
-/// - Host-specific analytics features
-/// - Custom permission checks
-typedef AnalyticsButtonCallback = Future<bool> Function(
+/// [context] - The build context
+/// [option] - The control option
+/// [onTap] - The tap callback
+/// [isHost] - Whether the current user is the host
+/// [isCopublishing] - Whether the user is copublishing
+/// [streamId] - The current stream ID
+///
+/// Return a custom widget or null to use the default widget
+typedef ControlWidgetBuilder = Widget? Function(
   BuildContext context,
+  IsmLiveStreamOption option,
+  VoidCallback onTap,
+  bool isHost,
+  bool isCopublishing,
   String streamId,
-  bool isHost,
-  bool isPkGuest,
-  String? pkGuestStreamId,
-);
-
-/// Callback for handling schedule modify button clicks
-/// Allows host apps to customize schedule modification behavior
-/// - Custom schedule editing flows
-/// - Integration with external scheduling systems
-/// - Custom permission checks for schedule modification
-/// - Host-specific schedule management features
-typedef ScheduleModifyButtonCallback = Future<bool> Function(
-  BuildContext context,
-  IsmLiveStreamDataModel streamDetails,
-  bool isHost,
-);
-
-/// Callback for handling share button clicks
-/// Allows host apps to customize share behavior
-/// - Custom share functionality
-/// - Integration with external sharing services
-/// - Custom share content generation
-/// - Host-specific sharing features
-/// - Custom permission checks for sharing
-typedef ShareButtonCallback = Future<bool> Function(
-  BuildContext context,
-  String streamId,
-  bool isHost,
 );
 
 /// Builder for custom "Buy now" button in product streams.
@@ -570,11 +542,112 @@ typedef AttentionDialogButtonCallback = Future<bool> Function(
   BuildContext context,
 );
 
+/// Enum to identify the type of stream disconnection
+enum IsmLiveStreamDisconnectType {
+  /// Host is ending/stopping the stream
+  host,
+
+  /// Viewer is leaving the stream
+  viewer,
+
+  /// PK guest is leaving the stream
+  pkGuest,
+
+  /// Copublisher is leaving the stream
+  copublisher,
+}
+
+/// API handler callback for stream disconnect/exit operations.
+///
+/// This is a unified callback that **replaces the default SDK API calls** for all types of stream disconnections.
+/// It replaces the separate `onHostStopStream` and `onLeftStreamAsViewer` callbacks.
+///
+/// **Purpose**: Allows host applications to provide their own API implementation for stream disconnect operations
+/// instead of using the SDK's default API endpoints.
+///
+/// [streamId] - The current stream ID.
+/// [disconnectType] - The type of disconnection (host, viewer, pkGuest, copublisher).
+///
+/// **Return Value**:
+/// - Return `true` if your API call was successful and the SDK should proceed with cleanup
+/// - Return `false` if your API call failed and the SDK should abort the disconnect process
+///
+/// **If this callback is NOT provided**, the SDK will use its default API implementations:
+/// - For `host`: calls the SDK's `stopStream` API endpoint
+/// - For `viewer`: calls the SDK's `leaveStream` API endpoint
+/// - For `pkGuest`: calls the SDK's `pkEnd` operation
+/// - For `copublisher`: calls the SDK's `leaveMember` operation
+///
+/// **Common use cases**:
+/// - Replace SDK API calls with your own backend endpoints
+/// - Add custom authentication/authorization logic
+/// - Implement custom analytics tracking for stream exits
+/// - Add business logic specific to your application
+/// - Integrate with external services or webhooks
+/// - Implement custom retry logic and error handling
+/// - Centralize all disconnect API calls in one handler
+///
+/// **Example**:
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamDisconnectApiHandler: (streamId, disconnectType) async {
+///     // Replace SDK's API with your own
+///     final response = await myApi.disconnectStream(streamId, disconnectType);
+///     return response.success; // true = proceed, false = abort
+///   },
+/// );
+/// ```
+typedef StreamDisconnectApiHandler = Future<bool> Function(
+  String streamId,
+  IsmLiveStreamDisconnectType disconnectType,
+);
+
 /// Preferred initial camera position when starting a stream
 enum IsmLiveCameraPosition {
   front,
   back,
 }
+
+/// Direction for host arrow button clicks
+enum IsmLiveArrowDirection {
+  previous,
+  next,
+}
+
+/// Callback for host arrow button clicks (pin item navigation)
+///
+/// This callback is triggered when the user taps on the left or right arrow buttons
+/// in the host interface for product navigation.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [direction] - The direction of the arrow that was clicked (previous or next).
+///
+/// This callback is called when arrow buttons are tapped in the host interface.
+/// Useful for implementing:
+/// - Custom product navigation
+/// - Custom content switching
+/// - Integration with host app's navigation system
+/// - Custom analytics tracking for arrow interactions
+/// - Custom UI state management
+/// - Custom business logic for arrow actions
+typedef PinItemCallback = void Function(
+  BuildContext context,
+  IsmLiveArrowDirection direction,
+);
+
+/// Callback for "Buy now" button clicks
+///
+/// This callback is triggered when the user taps on the "Buy now" button
+/// in the product stream interface.
+///
+/// This callback is called when the "Buy now" button is tapped.
+/// Useful for implementing:
+/// - Custom purchase flow
+/// - Integration with host app's e-commerce system
+/// - Custom analytics tracking for purchase interactions
+/// - Custom UI state management
+/// - Custom business logic for purchase actions
+typedef BuyNowCallback = void Function();
 
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
@@ -602,6 +675,10 @@ class IsmLiveDelegate {
   static IsmLiveInputBuilder? inputBuilder;
 
   static IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder;
+
+  static IsmLiveChatMessageBuilder? chatMessageBuilder;
+
+  static IsmLiveChatItemBgColorCallback? chatItemBgColorCallback;
 
   static Widget? endButton;
 
@@ -651,9 +728,12 @@ class IsmLiveDelegate {
 
   static LinearGradient? streamOptionsBgGradient;
 
-  static Future<void> Function(String streamId)? onHostStopStream;
-
-  static Future<void> Function(String streamId)? onLeftStreamAsViewer;
+  /// API handler for custom stream disconnect operations.
+  ///
+  /// Provides your own API implementation to replace the SDK's default disconnect endpoints.
+  ///
+  /// See [StreamDisconnectApiHandler] for detailed documentation and examples.
+  static StreamDisconnectApiHandler? streamDisconnectApiHandler;
 
   static GoLiveClickCallback? onGoLiveClick;
 
@@ -673,11 +753,17 @@ class IsmLiveDelegate {
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
 
-  static HeartMessageCallback? heartMessageCallback;
+  /// API handler for custom stream analytics implementation.
+  ///
+  /// Provides your own API implementation to replace the SDK's default analytics endpoint.
+  /// See [StreamAnalyticsApiHandler] for detailed documentation and examples.
+  static StreamAnalyticsApiHandler? streamAnalyticsApiHandler;
 
-  static StreamAnalyticsCallback? streamAnalyticsCallback;
-
-  static StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback;
+  /// API handler for custom stream analytics viewers implementation.
+  ///
+  /// Provides your own API implementation to replace the SDK's default analytics viewers endpoint.
+  /// See [StreamAnalyticsViewersApiHandler] for detailed documentation and examples.
+  static StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? hostTopProfileClickCallback;
 
@@ -687,11 +773,9 @@ class IsmLiveDelegate {
 
   static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
 
-  static AnalyticsButtonCallback? analyticsButtonCallback;
+  static ControlOptionCallback? controlOptionCallback;
 
-  static ScheduleModifyButtonCallback? scheduleModifyButtonCallback;
-
-  static ShareButtonCallback? shareButtonCallback;
+  static ControlWidgetBuilder? controlWidgetBuilder;
 
   static IsmLiveCartBuilder? cartBuilder;
 
@@ -754,21 +838,23 @@ class IsmLiveDelegate {
 class IsmLiveEcomConfigure {
   IsmLiveEcomConfigure({
     this.addProductViewBuilder,
-    this.onProductAction,
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
     this.buyNowButtonBuilder,
     this.hostArrowButtonsHeight,
+    this.pinItemCallback,
+    this.buyNowCallback,
   });
 
   final AddProductViewBuilder? addProductViewBuilder;
-  final ProductActionCallback? onProductAction;
   final Widget? Function(
           BuildContext context, IsmLiveStreamController controller)?
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
   final BuyNowButtonBuilder? buyNowButtonBuilder;
   final double? hostArrowButtonsHeight;
+  final PinItemCallback? pinItemCallback;
+  final BuyNowCallback? buyNowCallback;
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;

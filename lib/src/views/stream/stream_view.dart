@@ -272,14 +272,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                       elevation: 0,
                     ),
                     onPressed: () {
-                      // Left arrow action - call onProductAction with "left"
-                      IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
+                      // Left arrow action - call pinItemCallback with previous direction
+                      IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
                         context,
-                        controller.streamId ?? '',
-                        IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
-                            false,
-                        'left', // Send "left" as the action identifier
-                        controller.isHost,
+                        IsmLiveArrowDirection.previous,
                       );
                     },
                     child: const Icon(
@@ -306,14 +302,10 @@ class _IsmLiveStreamView extends StatelessWidget {
                       elevation: 0,
                     ),
                     onPressed: () {
-                      // Right arrow action - call onProductAction with "right"
-                      IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
+                      // Right arrow action - call pinItemCallback with next direction
+                      IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
                         context,
-                        controller.streamId ?? '',
-                        IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
-                            false,
-                        'right', // Send "right" as the action identifier
-                        controller.isHost,
+                        IsmLiveArrowDirection.next,
                       );
                     },
                     child: const Icon(
@@ -339,6 +331,8 @@ class _IsmLiveStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
+      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
     // Apply width constraint only when productStream is enabled
@@ -359,14 +353,8 @@ class _IsmLiveStreamView extends StatelessWidget {
 
   /// Common method to handle "Buy now" button click functionality
   void _onBuyNowTap(BuildContext context, IsmLiveStreamController controller) {
-    // Call the product action callback if provided
-    IsmLiveDelegate.ecomConfigure?.onProductAction?.call(
-      context,
-      controller.streamId ?? '',
-      IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ?? false,
-      'Buy now',
-      controller.isHost,
-    );
+    // Call the buy now callback if provided
+    IsmLiveDelegate.ecomConfigure?.buyNowCallback?.call();
   }
 
   /// Calculates the dynamic bottom position for pinnedProductBuilder
@@ -898,6 +886,8 @@ class ScheduleStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
+      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
     // Apply width constraint only when productStream is enabled

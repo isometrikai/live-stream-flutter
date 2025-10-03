@@ -74,18 +74,32 @@ class HomeController extends GetxController {
         goLiveButtonBuilder: _buildCustomGoLiveButton,
         //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
       ),
-      cartBuilder: (context, controller) => Container(
-        padding: const EdgeInsets.all(8),
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white24,
-        ),
-        child: const Icon(
-          Icons.shopping_cart_outlined,
-          color: Colors.white,
-          size: 16,
-        ),
-      ),
+      // chatMessageBuilder: (context, message, defaultChild) {
+      //   // Change background color for host messages
+
+      //   return defaultChild; // Use default for others
+      // },
+      // chatItemBgColorCallback: (message) {
+      //   // ✅ New name
+      //   if (message.sentByHost) {
+      //     return Colors.red.withOpacity(0.4);
+      //   }
+      //   return null;
+      // },
+
+      // messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
+      // cartBuilder: (context, controller) => Container(
+      //   padding: const EdgeInsets.all(8),
+      //   decoration: const BoxDecoration(
+      //     shape: BoxShape.circle,
+      //     color: Colors.white24,
+      //   ),
+      //   child: const Icon(
+      //     Icons.shopping_cart_outlined,
+      //     color: Colors.white,
+      //     size: 16,
+      //   ),
+      // ),
       // customBottomSheetBuilder:
       //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
       //   return Container(
@@ -239,8 +253,7 @@ class HomeController extends GetxController {
         //   onTap: onTap,
         // ),
         hostArrowButtonsHeight: 56,
-        onProductAction:
-            (context, streamId, hasPinnedProduct, buttonLabel, isHost) {},
+        pinItemCallback: (direction) {},
         hasPinnedProductGetter: () {
           // Return true if a product is currently pinned, false otherwise
           // This will be called every time the UI needs to check the pinned status

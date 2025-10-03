@@ -16,7 +16,7 @@ class NoVideoWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IsmLiveImage.network(
-              imageUrl,
+              IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
               name: name,
               isProfileImage: true,
               height: IsmLiveDimens.hundred,

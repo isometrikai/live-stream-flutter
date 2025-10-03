@@ -23,7 +23,7 @@ IsmLiveApp(
 If you want to control initialization and use only specific SDK features or screens:
 
 ```dart
-// In your app's startup logic (e.g., splash screen):
+// In your app's startup logic (e.g., landing screen):
 await IsmLiveApp.initialize(myConfig, navigatorKey: myNavKey);
 
 // Later, in your widget tree, use any SDK widget:
@@ -36,54 +36,17 @@ IsmLiveStreamListing()
 
 ---
 
-### 3. Customizing Stream Behavior
+### 3. Complete Configuration Reference
 
-You can customize various stream behaviors using the `configureInterface` method:
+The SDK provides a comprehensive `configureInterface` method that allows you to customize all aspects of the live streaming experience. Here's the complete configuration with all available options:
 
 ```dart
 IsmLiveApp.configureInterface(
-  // Custom GoLive button click handler with comprehensive data
-  onGoLiveClick: (context, isScheduledStream, streamDetails, goLiveData) async {
-    // Access all user-entered details
-    print('Description: ${goLiveData.description}');
-    print('HD Broadcast: ${goLiveData.isHdBroadcast}');
-    print('Record Broadcast: ${goLiveData.isRecordingBroadcast}');
-    print('Restream Broadcast: ${goLiveData.isRestreamBroadcast}');
-    print('Premium Stream: ${goLiveData.isPremium}');
-    print('Premium Coins: ${goLiveData.premiumStreamCoins}');
-    print('Picked Image: ${goLiveData.pickedImage?.path}');
-    print('Selected Products: ${goLiveData.selectedProductsList.length}');
-    print('RTMP URL: ${goLiveData.rtmpUrl}');
-    print('Stream Key: ${goLiveData.streamKey}');
-    print('Restream Facebook: ${goLiveData.restreamFacebook}');
-    print('Restream YouTube: ${goLiveData.restreamYoutube}');
-    print('Restream Instagram: ${goLiveData.restreamInstagram}');
-    
-    // Your custom logic here
-    if (isScheduledStream) {
-      print('Scheduled stream detected - editing schedule');
-      // Handle scheduled stream
-    } else {
-      print('Regular stream detected - starting stream');
-      // Handle regular stream
-    }
-    
-    // You can perform custom actions like:
-    // - Validate user permissions
-    // - Track analytics
-    // - Show custom dialogs
-    // - Custom navigation
-    // - Process the picked image
-    // - Validate stream settings
-  },
+  // ===== CORE CONFIGURATION =====
+  productionMode: true,
+  fontFamily: 'YourCustomFont',
   
-  // Custom host stop stream handler
-  onHostStopStream: (streamId) async {
-    // Custom logic when host stops stream
-    print('Host stopped stream: $streamId');
-  },
-  
-  // GoLive screen configuration (recommended approach)
+  // ===== GO LIVE SCREEN CUSTOMIZATION =====
   goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
     goLiveHeaderBuilder: (context, controller) => CustomGoLiveHeader(),
     goLiveButtonBuilder: (context, controller, onGoLivePressed, isEnabled) => 
@@ -91,23 +54,210 @@ IsmLiveApp.configureInterface(
           onPressed: isEnabled ? onGoLivePressed : null,
           isEnabled: isEnabled,
         ),
-    radioTileTextStyle: (context, isDark) => TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      color: isDark ? Colors.white : Colors.black87,
-    ),
-    addCoverTextStyle: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      color: Colors.blue,
-    ),
+    radioTileTextStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    addCoverTextStyle: TextStyle(fontSize: 14, color: Colors.grey[600]),
+    addProductTextStyle: TextStyle(fontSize: 14, color: Colors.blue),
     addIcon: Icons.add_box_rounded,
+    // ... other GoLive screen customizations
   ),
   
-  // Other customization options...
+  // ===== STREAM INTERACTION CALLBACKS =====
+  onGoLiveClick: (context, isScheduledStream, streamDetails, goLiveData) async {
+    // Handle GoLive button click with full data access
+    print('Stream Title: ${goLiveData.title}');
+    print('Selected Products: ${goLiveData.selectedProductsList.length}');
+    return true; // Return true to proceed with stream creation
+  },
+  
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Replace SDK's default disconnect API with your own implementation
+    print('Disconnecting from stream: $streamId as ${disconnectType.name}');
+    
+    // Call your custom backend API
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        await myApi.endStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.viewer:
+        await myApi.leaveStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.pkGuest:
+        await myApi.leavePkBattle(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.copublisher:
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
+    
+    return true; // Return true to proceed with SDK cleanup
+  },
+  
+  // ===== CONTROL SYSTEM CALLBACKS =====
+  controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+    // Replace specific control buttons with custom widgets
+    if (option == IsmLiveStreamOption.gift) {
+      return CustomGiftButton(onTap: onTap);
+    }
+    return null; // Use default widget
+  },
+  
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    // Handle all control option taps with unified callback
+    if (option == IsmLiveStreamOption.gift) {
+      // Custom gift handling logic
+      _handleCustomGiftAction();
+      return true; // Handled by custom logic
+    }
+    return false; // Use default SDK behavior
+  },
+  
+  // ===== E-COMMERCE CALLBACKS =====
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: (direction) {
+      // Handle host arrow button clicks
+      if (direction == IsmLiveArrowDirection.previous) {
+        _navigateToPreviousProduct();
+      } else {
+        _navigateToNextProduct();
+      }
+    },
+    buyNowCallback: () {
+      // Handle "Buy now" button clicks
+      _showPurchaseDialog();
+    },
+    // ... other e-commerce configurations
+  ),
+  
+  // ===== ANALYTICS API HANDLERS =====
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    // Replace SDK's analytics API with your own backend call
+    final analyticsData = await myApi.getStreamAnalytics(streamId);
+    return IsmLiveStreamAnalyticsModel(
+      totalViewersCount: analyticsData['viewers'] ?? 0,
+      hearts: analyticsData['hearts'] ?? 0,
+      followers: analyticsData['followers'] ?? 0,
+      totalEarning: analyticsData['earning'] ?? 0,
+      duration: analyticsData['duration'] ?? 0,
+      productCount: analyticsData['products'] ?? 0,
+    );
+  },
+  
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+    // Replace SDK's analytics viewers API with your own backend call
+    final viewersData = await myApi.getStreamViewers(streamId, skip, limit);
+    return viewersData.map((viewer) => IsmLiveAnalyticViewerModel(
+      userName: viewer['userName'],
+      profilePic: viewer['profilePic'],
+      isometrikUserId: viewer['isometrikUserId'],
+      appUserId: viewer['appUserId'],
+      firstName: viewer['firstName'],
+      lastName: viewer['lastName'],
+      timestamp: viewer['timestamp'],
+    )).toList();
+  },
+  
+  // Hearts are handled via unified controlOptionCallback using IsmLiveStreamOption.heart
+  
+  // ===== UI CUSTOMIZATION CALLBACKS =====
+  cartBuilder: (context, controller) {
+    // Customize shopping cart widget
+    return CustomCartWidget(
+      onTap: () => _navigateToCart(),
+      itemCount: _getCartItemCount(controller.streamId ?? ''),
+    );
+  },
+  
+  attentionDialogButtonCallback: (context) async {
+    // Handle attention dialog button clicks
+    _navigateToCustomScreen();
+  },
+  
+  // ===== CHAT CUSTOMIZATION =====
+  chatItemBgColorCallback: (message) {
+    // Simple background color customization
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4);
+    }
+    return null; // Use default
+  },
+  
+  chatMessageBuilder: (context, message, defaultChild) {
+    // Advanced chat message customization
+    return Container(
+      margin: EdgeInsets.only(left: message.sentByHost ? 0 : 20),
+      child: defaultChild,
+    );
+  },
+  
+  // ===== ADDITIONAL UI OPTIONS =====
   showHeader: true,
   streamHeader: (context) => CustomHeader(),
   // ... more options
+);
+```
+
+#### Complete Callbacks Reference Table
+
+| **Category** | **Callback** | **Parameters** | **Purpose** | **Return Type** |
+|-------------|--------------|----------------|-------------|-----------------|
+| **Core Configuration** | `productionMode` | `bool` | Enable/disable production mode | - |
+| | `fontFamily` | `String` | Custom font family for all text | - |
+| **GoLive Screen** | `goLiveScreenConfigure` | `IsmLiveGoLiveScreenConfigure` | Customize GoLive screen appearance | - |
+| **Stream Interaction** | `onGoLiveClick` | `context, isScheduledStream, streamDetails, goLiveData` | Handle GoLive button clicks | `Future<bool>` |
+| | `streamDisconnectApiHandler` | `streamId, disconnectType` | Replace SDK's default disconnect API with custom implementation | `Future<bool>` |
+| **Control System** | `controlWidgetBuilder` | `context, option, onTap, isHost, isCopublishing, streamId` | Replace control buttons with custom widgets | `Widget?` |
+| | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle all control option taps | `Future<bool>` |
+| **E-commerce** | `pinItemCallback` | `direction` | Handle host arrow button clicks | `void` |
+| | `buyNowCallback` | - | Handle "Buy now" button clicks | `void` |
+| **Analytics** | `streamAnalyticsApiHandler` | `streamId, isHost` | Replace SDK's analytics API with custom implementation | `Future<IsmLiveStreamAnalyticsModel?>` |
+| | `streamAnalyticsViewersApiHandler` | `streamId, skip, limit` | Replace SDK's analytics viewers API with custom implementation | `Future<List<IsmLiveAnalyticViewerModel>?>` |
+| **Heart Messages** | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle heart interactions (`IsmLiveStreamOption.heart`) | `Future<bool>` |
+| **Chat Customization** | `chatItemBgColorCallback` | `message` | Customize chat message background colors | `Color?` |
+| | `chatMessageBuilder` | `context, message, defaultChild` | Full chat message UI customization | `Widget` |
+| **UI Customization** | `cartBuilder` | `context, controller` | Customize shopping cart widget | `Widget` |
+| | `attentionDialogButtonCallback` | `context` | Handle attention dialog button clicks | `Future<void>` |
+| | `showHeader` | `bool` | Show/hide stream header | - |
+| | `streamHeader` | `context` | Custom stream header widget | `Widget` |
+
+#### Quick Start Examples
+
+**Minimal Configuration:**
+```dart
+IsmLiveApp.configureInterface(
+  productionMode: true,
+  fontFamily: 'Roboto',
+);
+```
+
+**Basic Customization:**
+```dart
+IsmLiveApp.configureInterface(
+  productionMode: true,
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.gift) {
+      _handleCustomGift();
+      return true; // Handled by custom logic
+    }
+    return false; // Use default behavior
+  },
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    return await myApi.getStreamAnalytics(streamId);
+  },
+);
+```
+
+**Advanced E-commerce Setup:**
+```dart
+IsmLiveApp.configureInterface(
+  productionMode: true,
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: (direction) => _navigateProduct(direction),
+    buyNowCallback: () => _showCheckout(),
+  ),
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    // Handle all control interactions
+    return await _handleControlOption(option);
+  },
 );
 ```
 
@@ -205,45 +355,44 @@ IsmLiveApp.configureInterface(
     - And many more stream configuration options
   - If not set, default behavior is used (edit scheduled stream or start stream)
   
-- **`onHostStopStream`**: Called when host stops the stream
-  - Parameter: `streamId`
-  - If not set, default stop stream behavior is used
+- **`streamDisconnectApiHandler`**: API handler to replace SDK's default disconnect endpoints
+  - Parameters: `streamId`, `disconnectType` (IsmLiveStreamDisconnectType enum)
+  - Disconnect types: `host`, `viewer`, `pkGuest`, `copublisher`
+  - Return `true` if your API call succeeded (SDK proceeds with cleanup), `false` if failed (SDK aborts disconnect)
+  - **Purpose**: Replace the SDK's default disconnect API calls with your own backend implementation
+  - If not set, SDK uses its default disconnect APIs:
+    - For `host`: calls SDK's `stopStream` API
+    - For `viewer`: calls SDK's `leaveStream` API
+    - For `pkGuest`: calls SDK's `pkEnd` operation
+    - For `copublisher`: calls SDK's `leaveMember` operation
 
-- **`heartMessageCallback`**: Called when a user sends a heart message to the stream
-  - Parameters: `streamId`, `userId`, `userName`, `userImage`, `deviceId`, `customType`
-  - Return `true` if your app successfully handled the heart message, `false` to let SDK handle with default implementation
-  - Useful for custom heart message APIs, analytics tracking, user validation, rate limiting, etc.
-  - If not set, SDK uses default heart message handling
 
-- **`streamAnalyticsCallback`**: Called when the SDK needs to fetch stream analytics data
-  - Parameters: `streamId`
-  - Return `IsmLiveStreamAnalyticsModel` if your app successfully provided analytics data, `null` to let SDK handle with default implementation
+- **`streamAnalyticsApiHandler`**: API handler to replace SDK's default analytics endpoint
+  - Parameters: `streamId`, `isHost` (bool)
+  - Return `IsmLiveStreamAnalyticsModel` if your API call was successful with analytics data, `null` to let SDK use its default
+  - **Purpose**: Replace the SDK's default analytics API calls with your own backend implementation
+  - If not set, SDK uses its default analytics API endpoint
   - Useful for custom analytics APIs, real-time analytics integration, custom analytics processing, etc.
-  - If not set, SDK uses default analytics API
 
-- **`streamAnalyticsViewersCallback`**: Called when the SDK needs to fetch stream analytics viewers data
+- **`streamAnalyticsViewersApiHandler`**: API handler to replace SDK's default analytics viewers endpoint
   - Parameters: `streamId`, `skip`, `limit`
-  - Return `List<IsmLiveAnalyticViewerModel>` if your app successfully provided viewers data, `null` to let SDK handle with default implementation
+  - Return `List<IsmLiveAnalyticViewerModel>` if your API call was successful with viewers data, `null` to let SDK use its default
+  - **Purpose**: Replace the SDK's default analytics viewers API calls with your own backend implementation
+  - If not set, SDK uses its default analytics viewers API endpoint
   - Useful for custom analytics viewers APIs, real-time viewers data integration, custom viewers data processing, etc.
-  - If not set, SDK uses default analytics viewers API
 
-- **`shareButtonCallback`**: Called when the share button is tapped in the stream interface
-  - Parameters: `context`, `streamId`, `isHost`
-  - Return `true` if your app successfully handled the share action, `false` to let SDK handle with default implementation
-  - Useful for custom share functionality, integration with external sharing services, custom share content generation, etc.
-  - If not set, SDK uses default share behavior
 
-- **`scheduleModifyButtonCallback`**: Called when the schedule modify button is tapped
-  - Parameters: `context`, `streamDetails`, `isHost`
-  - Return `true` if your app successfully handled the schedule modification, `false` to let SDK handle with default implementation
-  - Useful for custom schedule editing flows, integration with external scheduling systems, custom permission checks, etc.
-  - If not set, SDK uses default schedule modification behavior
+- **`controlOptionCallback`**: Unified callback for handling any control option tap
+  - Parameters: `context`, `option`, `streamId`, `isHost`, `isCopublishing`
+  - Return `true` if your app successfully handled the control action, `false` to let SDK handle with default implementation
+  - Useful for custom control button functionality, integration with external services, custom permission checks, etc.
+  - If not set, SDK uses default control behavior
 
-- **`analyticsButtonCallback`**: Called when the analytics button is tapped
-  - Parameters: `context`, `streamId`, `isHost`, `isPkGuest`, `pkGuestStreamId`
-  - Return `true` if your app successfully handled the analytics action, `false` to let SDK handle with default implementation
-  - Useful for custom analytics screens, custom data visualization, integration with external analytics services, etc.
-  - If not set, SDK uses default analytics sheet behavior
+- **`controlWidgetBuilder`**: Builder for custom control widgets
+  - Parameters: `context`, `option`, `onTap`, `isHost`, `isCopublishing`, `streamId`
+  - Return a custom Widget or `null` to use the default widget
+  - Useful for replacing specific control buttons with custom designs, branding, or functionality
+  - If not set, SDK uses default control widgets
 
 - **`attentionDialogButtonCallback`**: Called when the "Okay" button is tapped in the stream end attention dialog
   - Parameters: `context`
@@ -500,98 +649,276 @@ IsmLiveApp.updateCartBuilder((context, controller) {
 IsmLiveApp.updateCartBuilder(null);
 ```
 
-#### Share Button Callback Examples
+#### Chat Customization
+
+The SDK provides two ways to customize chat messages: a simple color callback for background customization and a full builder for complete UI control.
+
+##### Chat Background Color Customization
+
+- **`chatItemBgColorCallback`**: Simple callback to customize chat message background colors
+  - Parameters: `message` - The message object containing all message data
+  - Return `Color?` for the message background, or `null` to use default (`Colors.black26`)
+  - **Purpose**: Quick way to change chat bubble colors without modifying the UI structure
+  - **Recommended for**: Simple color changes based on message properties
+  - If not set, SDK uses default background color
+
+##### Chat Message Builder
+
+- **`chatMessageBuilder`**: Advanced builder for full chat message UI customization
+  - Parameters: `context`, `message`, `defaultChild`
+  - Return a `Widget` with your custom chat bubble or modified default
+  - **Purpose**: Full control over chat message appearance and structure
+  - **Use cases**: Wrapping messages with animations, borders, custom layouts, or completely custom designs
+  - If not set, SDK uses default chat message UI
+
+#### Chat Customization Examples
+
+**Simple Background Color Change:**
+```dart
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // Different colors for different message types
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4); // Purple for host
+    }
+    if (message.sentByMe) {
+      return Colors.green.withOpacity(0.3); // Green for my messages
+    }
+    return null; // null = use default (Colors.black26)
+  },
+);
+```
+
+**Advanced Background Color Logic:**
+```dart
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // VIP user gets gold background
+    if (_isVipUser(message.userId)) {
+      return Colors.amber.withOpacity(0.5);
+    }
+    
+    // Moderator gets blue background
+    if (_isModerator(message.userId)) {
+      return Colors.blue.withOpacity(0.4);
+    }
+    
+    // Host gets purple background
+    if (message.sentByHost) {
+      return Colors.purple.withOpacity(0.4);
+    }
+    
+    // Your own messages get green background
+    if (message.sentByMe) {
+      return Colors.green.withOpacity(0.3);
+    }
+    
+    // Default for everyone else
+    return null;
+  },
+);
+```
+
+IsmLiveApp.configureInterface(
+  chatMessageBuilder: (context, message, defaultChild) {
+    // Add border and margin to host messages only
+    if (message.sentByHost) {
+      return Container(
+        margin: EdgeInsets.only(bottom: 4),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.amber, width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: defaultChild, // Use the default UI inside
+      );
+    }
+    
+    // Use default for other messages
+    return defaultChild;
+  },
+);
+```
+// Update chat background color callback at runtime
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: (message) {
+    // New color scheme
+    return message.sentByHost 
+        ? Colors.blue.withOpacity(0.5) 
+        : null;
+  },
+);
+
+// Update chat message builder at runtime
+IsmLiveApp.configureInterface(
+  chatMessageBuilder: (context, message, defaultChild) {
+    // New custom wrapper
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      child: defaultChild,
+    );
+  },
+);
+
+// Disable custom chat customization (use SDK default)
+IsmLiveApp.configureInterface(
+  chatItemBgColorCallback: null,
+  chatMessageBuilder: null,
+);
+```
+
+**Best Practices:**
+
+1. **Use `chatItemBgColorCallback` when**: You only need to change background colors
+   - ✅ Simple and performant
+   - ✅ Keeps default UI and behavior
+   - ✅ No need to handle tap logic
+
+2. **Use `chatMessageBuilder` when**: You need more control
+   - ✅ Custom layouts and designs
+   - ✅ Wrapping with animations or effects
+   - ✅ Adding badges, borders, or decorations
+
+3. **Combine both when**: You want colors + additional decorations
+   - ✅ `chatItemBgColorCallback` handles colors
+   - ✅ `chatMessageBuilder` adds extra UI elements
+
+4. **Performance tip**: For simple color changes, always prefer `chatItemBgColorCallback` over rebuilding the entire widget in `chatMessageBuilder`
+
+
+#### Stream Disconnect API Handler Examples
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  shareButtonCallback: (context, streamId, isHost) async {
-    // Custom share implementation
-    print('Sharing stream: $streamId, isHost: $isHost');
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Replace SDK's API with your own backend call
+    print('Disconnecting: $streamId as ${disconnectType.name}');
     
-    // Show custom share dialog
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Share Stream'),
-        content: Text('Stream ID: $streamId\nIs Host: $isHost'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
-          ),
-        ],
-      ),
-    );
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        await myApi.endStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.viewer:
+        await myApi.leaveStream(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.pkGuest:
+        await myApi.leavePkBattle(streamId);
+        break;
+      case IsmLiveStreamDisconnectType.copublisher:
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
     
-    // Return true to indicate we handled the share action
+    return true; // Success - SDK proceeds with cleanup
+  },
+);
+```
+
+**Advanced Usage with Error Handling:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    try {
+      // Call your unified disconnect API
+      final response = await myApi.disconnectStream(
+        streamId: streamId,
+        type: disconnectType.name,
+      );
+      
+      if (response.success) {
+        print('Successfully disconnected as ${disconnectType.name}');
+        return true; // Proceed with SDK cleanup
+      } else {
+        print('Disconnect failed: ${response.error}');
+        return false; // Abort disconnect
+      }
+    } catch (e) {
+      print('Error during disconnect: $e');
+      return false; // Abort on error
+    }
+  },
+);
+```
+
+**With Analytics Tracking:**
+```dart
+IsmLiveApp.configureInterface(
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    // Track disconnect event
+    _analyticsService.trackEvent('stream_disconnect', {
+      'stream_id': streamId,
+      'disconnect_type': disconnectType.name,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+    
+    // Different handling per disconnect type
+    switch (disconnectType) {
+      case IsmLiveStreamDisconnectType.host:
+        // Save stream statistics before ending
+        await _saveStreamStats(streamId);
+        await myApi.endStream(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.viewer:
+        // Track viewer session duration
+        await _trackViewerSession(streamId);
+        await myApi.leaveStream(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.pkGuest:
+        // Update PK battle status
+        await myApi.updatePkStatus(streamId, 'guest_left');
+        await myApi.leavePkBattle(streamId);
+        break;
+        
+      case IsmLiveStreamDisconnectType.copublisher:
+        // Notify host
+        await myApi.notifyHost(streamId, 'copublisher_left');
+        await myApi.stopCopublishing(streamId);
+        break;
+    }
+    
     return true;
   },
 );
 ```
 
-**Advanced Usage with External Sharing Services:**
+**Retry Logic:**
 ```dart
 IsmLiveApp.configureInterface(
-  shareButtonCallback: (context, streamId, isHost) async {
-    try {
-      // Generate custom share content
-      final shareContent = await _generateShareContent(streamId, isHost);
-      
-      // Use external sharing service (e.g., Share Plus)
-      await Share.share(
-        shareContent.text,
-        subject: shareContent.subject,
-        imagePath: shareContent.imagePath,
-      );
-      
-      // Track analytics
-      await _trackShareEvent(streamId, isHost);
-      
-      return true; // Host app handled successfully
-    } catch (e) {
-      print('Error sharing: $e');
-      return false; // Let SDK handle with default implementation
+  streamDisconnectApiHandler: (streamId, disconnectType) async {
+    int maxRetries = 3;
+    int retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        await myApi.disconnectStream(streamId, disconnectType);
+        return true; // Success
+      } catch (e) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          print('Max retries reached');
+          return false; // Failed after retries
+        }
+        await Future.delayed(Duration(seconds: 2));
+      }
     }
+    return false;
   },
 );
 ```
 
-**Dynamic Updates:**
-```dart
-// Update share callback at runtime
-IsmLiveApp.updateShareButtonCallback((context, streamId, isHost) async {
-  // New share implementation
-  return await _newShareHandler(context, streamId, isHost);
-});
-
-// Disable custom share handling (use SDK default)
-IsmLiveApp.updateShareButtonCallback(null);
-```
-
-#### Heart Message Callback Examples
+#### Heart Handling via Unified Control Callback
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    // Call your own API to handle heart messages
-    final success = await _callYourHeartMessageAPI(
-      streamId: streamId,
-      userId: userId,
-      userName: userName,
-      userImage: userImage,
-      deviceId: deviceId,
-      customType: customType,
-    );
-    
-    if (success) {
-      // Log analytics
-      await _logAnalytics(streamId, userId, userName);
-      return true; // Host app handled successfully
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      final handled = await _callYourHeartMessageAPI(streamId);
+      return handled; // true to prevent default, false to use SDK default
     }
-    
-    return false; // Let SDK handle with default implementation
+    return false;
   },
 );
 ```
@@ -599,19 +926,13 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Validation:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    // Validate if user can send heart messages
-    if (!_canUserSendHeart(userId)) {
-      return false; // Let SDK handle (might show error)
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      if (!_canUserSendHeart(_currentUserId)) return true; // block
+      if (_isRateLimited(_currentUserId)) return true; // block
+      return await _callYourHeartMessageAPI(streamId);
     }
-    
-    // Check rate limiting
-    if (_isRateLimited(userId)) {
-      return false;
-    }
-    
-    // Call your API
-    return await _callYourHeartMessageAPI(/* params */);
+    return false;
   },
 );
 ```
@@ -619,35 +940,36 @@ IsmLiveApp.configureInterface(
 **Premium User Handling:**
 ```dart
 IsmLiveApp.configureInterface(
-  heartMessageCallback: (streamId, userId, userName, userImage, deviceId, customType) async {
-    if (_isPremiumUser(userId)) {
-      // Premium users get special handling
-      return await _handlePremiumHeartMessage(/* params */);
-    } else {
-      // Regular users get standard handling
-      return await _handleRegularHeartMessage(/* params */);
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    if (option == IsmLiveStreamOption.heart) {
+      return _isPremiumUser(_currentUserId)
+          ? await _handlePremiumHeartMessage(streamId)
+          : await _handleRegularHeartMessage(streamId);
     }
+    return false;
   },
 );
 ```
 
 **Dynamic Updates:**
 ```dart
-// Update callback at runtime
-IsmLiveApp.updateHeartMessageCallback(_newHeartMessageHandler);
-
-// Disable custom handling (use SDK default)
-IsmLiveApp.updateHeartMessageCallback(null);
+// Update via unified control callback at runtime
+IsmLiveApp.updateControlOptionCallback((context, option, streamId, isHost, isCopublishing) async {
+  if (option == IsmLiveStreamOption.heart) {
+    return await _newHeartMessageHandler(streamId);
+  }
+  return false;
+});
 ```
 
-#### Stream Analytics Callback Examples
+#### Stream Analytics API Handler Examples
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsCallback: (streamId) async {
-    // Call your own analytics API
-    final analyticsData = await _callYourAnalyticsAPI(streamId);
+  streamAnalyticsApiHandler: (streamId, isHost) async {
+    // Replace SDK's analytics API with your own backend call
+    final analyticsData = await myApi.getStreamAnalytics(streamId);
     
     if (analyticsData != null) {
       // Convert your data to IsmLiveStreamAnalyticsModel format
@@ -670,10 +992,10 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Real-time Analytics:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsCallback: (streamId) async {
+  streamAnalyticsApiHandler: (streamId, isHost) async {
     try {
       // Call your real-time analytics service
-      final realTimeData = await _getRealTimeAnalytics(streamId);
+      final realTimeData = await myApi.getRealTimeAnalytics(streamId, isHost);
       
       // Apply custom business logic
       final processedData = _processAnalyticsData(realTimeData);
@@ -701,21 +1023,21 @@ IsmLiveApp.configureInterface(
 
 **Dynamic Updates:**
 ```dart
-// Update analytics callback at runtime
-IsmLiveApp.updateStreamAnalyticsCallback(_newAnalyticsHandler);
+// Update analytics API handler at runtime
+IsmLiveApp.updateStreamAnalyticsApiHandler(_newAnalyticsHandler);
 
 // Disable custom analytics (use SDK default)
-IsmLiveApp.updateStreamAnalyticsCallback(null);
+IsmLiveApp.updateStreamAnalyticsApiHandler(null);
 ```
 
-#### Stream Analytics Viewers Callback Examples
+#### Stream Analytics Viewers API Handler Examples
 
 **Basic Usage:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
-    // Call your own analytics viewers API
-    final viewersData = await _callYourAnalyticsViewersAPI(
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
+    // Replace SDK's analytics viewers API with your own backend call
+    final viewersData = await myApi.getStreamViewers(
       streamId: streamId,
       skip: skip,
       limit: limit,
@@ -743,10 +1065,10 @@ IsmLiveApp.configureInterface(
 **Advanced Usage with Real-time Viewers Data:**
 ```dart
 IsmLiveApp.configureInterface(
-  streamAnalyticsViewersCallback: (streamId, skip, limit) async {
+  streamAnalyticsViewersApiHandler: (streamId, skip, limit) async {
     try {
       // Call your real-time viewers analytics service
-      final realTimeViewersData = await _getRealTimeViewersAnalytics(
+      final realTimeViewersData = await myApi.getRealTimeViewers(
         streamId: streamId,
         skip: skip,
         limit: limit,
@@ -776,11 +1098,419 @@ IsmLiveApp.configureInterface(
 
 **Dynamic Updates:**
 ```dart
-// Update viewers analytics callback at runtime
-IsmLiveApp.updateStreamAnalyticsViewersCallback(_newViewersAnalyticsHandler);
+// Update viewers analytics API handler at runtime
+IsmLiveApp.updateStreamAnalyticsViewersApiHandler(_newViewersAnalyticsHandler);
 
 // Disable custom viewers analytics (use SDK default)
-IsmLiveApp.updateStreamAnalyticsViewersCallback(null);
+IsmLiveApp.updateStreamAnalyticsViewersApiHandler(null);
+```
+
+#### Control Customization Examples
+
+**Basic Control Widget Replacement:**
+```dart
+IsmLiveApp.configureInterface(
+  controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+    // Replace gift button with custom widget
+    if (option == IsmLiveStreamOption.gift) {
+      return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.pink,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.pink.withOpacity(0.3),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: IconButton(
+          onPressed: onTap,
+          icon: Icon(Icons.favorite, color: Colors.white),
+        ),
+      );
+    }
+    
+    // Replace share button with custom widget
+    if (option == IsmLiveStreamOption.share) {
+      return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.blue,
+        ),
+        child: IconButton(
+          onPressed: onTap,
+          icon: Icon(Icons.share, color: Colors.white),
+        ),
+      );
+    }
+    
+    // Return null to use default widget for other options
+    return null;
+  },
+);
+```
+
+**Advanced Control Widget with Branding:**
+```dart
+IsmLiveApp.configureInterface(
+  controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+    // Custom branded gift button
+    if (option == IsmLiveStreamOption.gift) {
+      return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [Colors.purple, Colors.pink],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Stack(
+          children: [
+            IconButton(
+              onPressed: onTap,
+              icon: Icon(Icons.card_giftcard, color: Colors.white),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    // Custom analytics button with count badge
+    if (option == IsmLiveStreamOption.members) {
+      return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.orange,
+        ),
+        child: Stack(
+          children: [
+            IconButton(
+              onPressed: onTap,
+              icon: Icon(Icons.analytics, color: Colors.white),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '5', // Your analytics count
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    return null; // Use default for other options
+  },
+);
+```
+
+**Unified Control Option Callback:**
+```dart
+IsmLiveApp.configureInterface(
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    // Handle gift button with custom logic
+    if (option == IsmLiveStreamOption.gift) {
+      // Check if user has enough coins
+      final userCoins = await _getUserCoins();
+      if (userCoins < 10) {
+        _showInsufficientCoinsDialog(context);
+        return true; // Handled, don't show default behavior
+      }
+      
+      // Show custom gift selection
+      await _showCustomGiftSelection(context, streamId);
+      return true; // Handled
+    }
+    
+    // Handle share with custom share service
+    if (option == IsmLiveStreamOption.share) {
+      await _shareWithCustomService(context, streamId, isHost);
+      return true; // Handled
+    }
+    
+    // Handle analytics with custom analytics screen
+    if (option == IsmLiveStreamOption.members) {
+      await _showCustomAnalyticsScreen(context, streamId, isHost);
+      return true; // Handled
+    }
+    
+    // Handle multi-live with custom permission check
+    if (option == IsmLiveStreamOption.multiLive) {
+      final canJoin = await _checkMultiLivePermission(isHost, isCopublishing);
+      if (!canJoin) {
+        _showPermissionDeniedDialog(context);
+        return true; // Handled
+      }
+      // Let default behavior handle the rest
+      return false;
+    }
+    
+    // For all other options, use default behavior
+    return false;
+  },
+);
+```
+
+**Combined Widget and Callback Usage:**
+```dart
+IsmLiveApp.configureInterface(
+  // Custom widgets for specific options
+  controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+    if (option == IsmLiveStreamOption.gift) {
+      return MyCustomGiftButton(
+        onTap: onTap,
+        isHost: isHost,
+        streamId: streamId,
+      );
+    }
+    
+    if (option == IsmLiveStreamOption.share) {
+      return MyCustomShareButton(
+        onTap: onTap,
+        isHost: isHost,
+        streamId: streamId,
+      );
+    }
+    
+    return null; // Use default for other options
+  },
+  
+  // Unified callback for all option taps
+  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+    // Custom analytics handling
+    if (option == IsmLiveStreamOption.members) {
+      await _showCustomAnalytics(context, streamId, isHost);
+      return true; // Handled
+    }
+    
+    // Custom settings handling
+    if (option == IsmLiveStreamOption.settings) {
+      await _showCustomSettings(context, streamId, isHost);
+      return true; // Handled
+    }
+    
+    // For gift and share, the custom widgets will handle their own logic
+    // So we don't need to handle them here
+    return false; // Use default behavior
+  },
+);
+```
+
+
+**Dynamic Control Updates:**
+```dart
+// Update control widget builder at runtime
+IsmLiveApp.updateControlWidgetBuilder((context, option, onTap, isHost, isCopublishing, streamId) {
+  if (option == IsmLiveStreamOption.gift) {
+    return NewCustomGiftWidget(onTap: onTap);
+  }
+  return null;
+});
+
+// Update control option callback at runtime
+IsmLiveApp.updateControlOptionCallback((context, option, streamId, isHost, isCopublishing) async {
+  if (option == IsmLiveStreamOption.share) {
+    await _newShareHandler(context, streamId, isHost);
+    return true;
+  }
+  return false;
+});
+
+// Disable custom control handling (use SDK default)
+IsmLiveApp.updateControlWidgetBuilder(null);
+IsmLiveApp.updateControlOptionCallback(null);
+```
+
+#### Unified Control System
+
+The SDK now provides a unified control system that simplifies control button customization and interaction handling:
+
+**Key Features:**
+- **Single Callback**: Use `controlOptionCallback` to handle all control option taps
+- **Custom Widgets**: Use `controlWidgetBuilder` to replace specific control buttons
+- **Clean API**: No more individual callbacks for each control type
+- **Backward Compatible**: Existing implementations continue to work
+
+**Benefits:**
+- **Simplified Code**: One callback handles all control interactions
+- **Better Maintainability**: Single point of control for all options
+- **Consistent Behavior**: All controls follow the same pattern
+- **Easy Migration**: Simple to migrate from individual callbacks
+
+#### E-commerce Callbacks
+
+The SDK provides specialized callbacks for e-commerce functionality in product streams, allowing host apps to customize product navigation and purchase flows.
+
+**Available E-commerce Callbacks:**
+
+- **`pinItemCallback`**: Called when host arrow buttons (previous/next) are tapped
+  - Parameters: `direction` (IsmLiveArrowDirection.previous or IsmLiveArrowDirection.next)
+  - Useful for custom product navigation, content switching, analytics tracking, etc.
+  - If not set, no action is taken
+
+- **`buyNowCallback`**: Called when the "Buy now" button is tapped
+  - No parameters required
+  - Useful for custom purchase flows, e-commerce integration, analytics tracking, etc.
+  - If not set, no action is taken
+
+**E-commerce Callback Examples:**
+
+**Basic Product Navigation:**
+```dart
+IsmLiveApp.configureInterface(
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: (direction) {
+      if (direction == IsmLiveArrowDirection.previous) {
+        // Navigate to previous product
+        print('Navigate to previous product');
+        _navigateToPreviousProduct();
+      } else if (direction == IsmLiveArrowDirection.next) {
+        // Navigate to next product
+        print('Navigate to next product');
+        _navigateToNextProduct();
+      }
+    },
+    buyNowCallback: () {
+      // Handle "Buy now" button click
+      print('Buy now button clicked');
+      _showPurchaseDialog();
+    },
+  ),
+);
+```
+
+**Advanced E-commerce Integration:**
+```dart
+IsmLiveApp.configureInterface(
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: (direction) {
+      // Track navigation analytics
+      _analyticsService.trackEvent('product_navigation', {
+        'direction': direction.name,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      
+      // Update product state
+      if (direction == IsmLiveArrowDirection.previous) {
+        _productController.previousProduct();
+      } else {
+        _productController.nextProduct();
+      }
+      
+      // Update UI
+      _updateProductDisplay();
+    },
+    buyNowCallback: () {
+      // Check user authentication
+      if (!_userService.isAuthenticated) {
+        _showLoginDialog();
+        return;
+      }
+      
+      // Track purchase intent
+      _analyticsService.trackEvent('purchase_intent', {
+        'product_id': _currentProduct.id,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      
+      // Navigate to checkout
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CheckoutScreen(
+            product: _currentProduct,
+          ),
+        ),
+      );
+    },
+  ),
+);
+```
+
+**Integration with External E-commerce Systems:**
+```dart
+IsmLiveApp.configureInterface(
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: (direction) {
+      // Sync with external product catalog
+      _externalCatalogService.navigateProduct(
+        direction: direction,
+        onSuccess: (product) {
+          _updateCurrentProduct(product);
+        },
+        onError: (error) {
+          _showErrorMessage('Failed to load product: $error');
+        },
+      );
+    },
+    buyNowCallback: () {
+      // Integrate with external payment system
+      _paymentService.initiatePurchase(
+        product: _currentProduct,
+        onSuccess: (transaction) {
+          _showSuccessMessage('Purchase successful!');
+        },
+        onError: (error) {
+          _showErrorMessage('Purchase failed: $error');
+        },
+      );
+    },
+  ),
+);
+```
+
+**Dynamic E-commerce Updates:**
+```dart
+// Update e-commerce configuration at runtime
+IsmLiveApp.configureInterface(
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: _newNavigationHandler,
+    buyNowCallback: _newPurchaseHandler,
+  ),
+);
+
+// Disable e-commerce callbacks (use default behavior)
+IsmLiveApp.configureInterface(
+  ecomConfigure: IsmLiveEcomConfigure(
+    pinItemCallback: null,
+    buyNowCallback: null,
+  ),
+);
 ```
 
 #### GoLive Screen Configuration Dynamic Updates
@@ -840,14 +1570,18 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Custom/Advanced        | `IsmLiveApp.initialize` + SDK widgets | Host controls init, uses any SDK feature |
 | Custom Stream Behavior  | `IsmLiveApp.configureInterface` | Customize stream interactions |
 | Custom GoLive Screen   | `IsmLiveGoLiveScreenConfigure`  | Customize GoLive screen header and button |
-| Custom Heart Messages  | `heartMessageCallback`    | Handle heart messages with your own API |
-| Custom Analytics      | `streamAnalyticsCallback` | Handle stream analytics with your own API |
-| Custom Viewers Analytics | `streamAnalyticsViewersCallback` | Handle stream viewers analytics with your own API |
-| Custom Share Button      | `shareButtonCallback`      | Handle share button clicks with your own implementation |
+| Custom Disconnect API  | `streamDisconnectApiHandler` | Replace SDK's default disconnect endpoints with your own API |
+| Custom Heart Messages  | `controlOptionCallback`    | Handle hearts via `IsmLiveStreamOption.heart` |
+| Custom Analytics      | `streamAnalyticsApiHandler` | Replace SDK's analytics endpoint with your own API |
+| Custom Viewers Analytics | `streamAnalyticsViewersApiHandler` | Replace SDK's analytics viewers endpoint with your own API |
 | Custom Cart Widget       | `cartBuilder`             | Customize shopping cart icon/widget in stream header |
-| Custom Schedule Modify   | `scheduleModifyButtonCallback` | Handle schedule modify button clicks with your own implementation |
-| Custom Analytics Button  | `analyticsButtonCallback`  | Handle analytics button clicks with your own implementation |
 | Custom Attention Dialog  | `attentionDialogButtonCallback` | Handle attention dialog button clicks with your own implementation |
+| Custom Control Widgets   | `controlWidgetBuilder`     | Replace specific control buttons with custom widgets |
+| Unified Control Handling  | `controlOptionCallback`     | Handle all control option taps with unified callback |
+| Chat Background Colors   | `chatItemBgColorCallback` | Customize chat message background colors based on message properties |
+| Chat Message UI         | `chatMessageBuilder`      | Full customization of chat message appearance and structure |
+| E-commerce Product Navigation | `pinItemCallback` | Handle host arrow button clicks for product navigation |
+| E-commerce Purchase Flow | `buyNowCallback` | Handle "Buy now" button clicks for purchase flows |
 
 ---
 

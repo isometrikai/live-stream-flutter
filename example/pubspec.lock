@@ -68,18 +68,18 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: "0db8e7b161ec6cdb2219540eaa4cf599dc963929e5f8ded3b20b3acb52712fa4"
+      sha256: d04649fab70a5d586a7b26d5ac26f700656b6aab26a16bfd5a29302589b7a973
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.21+1"
+    version: "0.6.23"
   camera_avfoundation:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: a5a90297520e3b9841331161a7511626681153849c690c138e04a2b6d0af3026
+      sha256: "98bc06fccfaa8aef0af354f33e314de9c59eedf62bfe10935521607e768d8fef"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.21+3"
+    version: "0.9.21+4"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -605,10 +605,10 @@ packages:
     dependency: "direct main"
     description:
       name: in_app_purchase_storekit
-      sha256: ceb343184fbf0f44ad68f89ef97085eec7f93f3868eef0e8a635087b9a407826
+      sha256: dab4feef532af88ddec22200e4b3809c02c9bd0da3d0864f3e8e0f7b02f95867
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.5"
+    version: "0.4.6"
   integration_test:
     dependency: "direct dev"
     description: flutter

@@ -2,15 +2,39 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+/// Builder function for customizing chat message items
+///
+/// - [context]: BuildContext for accessing theme and media query
+/// - [message]: The message object containing all message data
+/// - [defaultChild]: The default chat message widget that can be used or modified
+///
+/// Returns a custom Widget or the modified defaultChild
+typedef IsmLiveChatMessageBuilder = Widget Function(
+  BuildContext context,
+  dynamic message,
+  Widget defaultChild,
+);
+
+/// Callback function for customizing chat message background color
+///
+/// - [message]: The message object containing all message data
+///
+/// Returns a Color for the message background, or null to use default
+typedef IsmLiveChatItemBgColorCallback = Color? Function(dynamic message);
+
 class IsmLiveChatView extends StatefulWidget {
   IsmLiveChatView({
     super.key,
     required this.isHost,
     required this.streamId,
+    this.chatMessageBuilder,
+    this.chatItemBgColorCallback,
   });
 
   final bool isHost;
   final String streamId;
+  final IsmLiveChatMessageBuilder? chatMessageBuilder;
+  final IsmLiveChatItemBgColorCallback? chatItemBgColorCallback;
 
   @override
   State<IsmLiveChatView> createState() => _IsmLiveChatViewState();
@@ -96,9 +120,16 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                 itemCount: controller.streamMessagesList.length,
                 itemBuilder: (context, index) {
                   final message = controller.streamMessagesList[index];
-                  return _ChatMessageItem(
+
+                  // Get custom background color if callback provided
+                  final customBackgroundColor =
+                      widget.chatItemBgColorCallback?.call(message);
+
+                  // Build default chat message widget
+                  final defaultMessageWidget = _ChatMessageItem(
                     message: message,
                     isHost: widget.isHost,
+                    backgroundColor: customBackgroundColor,
                     onTap: () {
                       var openSheet = message.sentByHost
                           ? (controller.isCopublisher ||
@@ -115,6 +146,14 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                       }
                     },
                   );
+
+                  // Use custom builder if provided, otherwise use default
+                  return widget.chatMessageBuilder?.call(
+                        context,
+                        message,
+                        defaultMessageWidget,
+                      ) ??
+                      defaultMessageWidget;
                 },
               ),
             ),
@@ -128,11 +167,13 @@ class _ChatMessageItem extends StatelessWidget {
     required this.message,
     required this.isHost,
     required this.onTap,
+    this.backgroundColor,
   });
 
   final dynamic message;
   final bool isHost;
   final VoidCallback onTap;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -147,7 +188,7 @@ class _ChatMessageItem extends StatelessWidget {
               onTap: onTap,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: Colors.black26,
+                  color: backgroundColor ?? Colors.black26,
                   borderRadius: BorderRadius.circular(IsmLiveDimens.ten),
                 ),
                 child: Padding(

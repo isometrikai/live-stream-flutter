@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 class IsmLiveStreamAnalyticsModel {
   IsmLiveStreamAnalyticsModel({
     this.totalViewersCount,
-    this.duration,
+    this.durationMilliSeconds,
     this.productCount,
     this.soldCount,
     this.newViewersCount,
@@ -22,7 +22,7 @@ class IsmLiveStreamAnalyticsModel {
         totalViewersCount: map['totalViewersCount'] != null
             ? map['totalViewersCount'] as num
             : null,
-        duration: map['duration'] != null ? map['duration'] as num : null,
+        durationMilliSeconds: map['duration'] != null ? map['duration'] as num : null,
         productCount:
             map['productCount'] != null ? map['productCount'] as num : null,
         soldCount: map['soldCount'] != null ? map['soldCount'] as num : null,
@@ -42,7 +42,7 @@ class IsmLiveStreamAnalyticsModel {
       IsmLiveStreamAnalyticsModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
   final num? totalViewersCount;
-  final num? duration;
+  final num? durationMilliSeconds;
   final num? productCount;
   final num? soldCount;
   final num? newViewersCount;
@@ -68,7 +68,7 @@ class IsmLiveStreamAnalyticsModel {
   }) =>
       IsmLiveStreamAnalyticsModel(
         totalViewersCount: totalViewersCount ?? this.totalViewersCount,
-        duration: duration ?? this.duration,
+        durationMilliSeconds: duration ?? this.durationMilliSeconds,
         productCount: productCount ?? this.productCount,
         soldCount: soldCount ?? this.soldCount,
         newViewersCount: newViewersCount ?? this.newViewersCount,
@@ -82,7 +82,7 @@ class IsmLiveStreamAnalyticsModel {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         'totalViewersCount': totalViewersCount,
-        'duration': duration,
+        'duration': durationMilliSeconds,
         'productCount': productCount,
         'soldCount': soldCount,
         'newViewersCount': newViewersCount,
@@ -95,7 +95,7 @@ class IsmLiveStreamAnalyticsModel {
       };
 
   String get formattedDuration {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(duration?.toInt() ?? 0,
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(durationMilliSeconds?.toInt() ?? 0,
         isUtc: true);
 
     return DateFormat('HH:mm:ss').format(dateTime);
@@ -105,14 +105,14 @@ class IsmLiveStreamAnalyticsModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamAnalyticsModel(totalViewersCount: $totalViewersCount, duration: $duration, productCount: $productCount, soldCount: $soldCount, newViewersCount: $newViewersCount, earnings: $earnings, hearts: $hearts, followers: $followers, giftsCount: $giftsCount, coinsCount: $coinsCount, totalEarning: $totalEarning)';
+      'IsmLiveStreamAnalyticsModel(totalViewersCount: $totalViewersCount, duration: $durationMilliSeconds, productCount: $productCount, soldCount: $soldCount, newViewersCount: $newViewersCount, earnings: $earnings, hearts: $hearts, followers: $followers, giftsCount: $giftsCount, coinsCount: $coinsCount, totalEarning: $totalEarning)';
 
   @override
   bool operator ==(covariant IsmLiveStreamAnalyticsModel other) {
     if (identical(this, other)) return true;
 
     return other.totalViewersCount == totalViewersCount &&
-        other.duration == duration &&
+        other.durationMilliSeconds == durationMilliSeconds &&
         other.productCount == productCount &&
         other.soldCount == soldCount &&
         other.newViewersCount == newViewersCount &&
@@ -127,7 +127,7 @@ class IsmLiveStreamAnalyticsModel {
   @override
   int get hashCode =>
       totalViewersCount.hashCode ^
-      duration.hashCode ^
+      durationMilliSeconds.hashCode ^
       productCount.hashCode ^
       soldCount.hashCode ^
       newViewersCount.hashCode ^

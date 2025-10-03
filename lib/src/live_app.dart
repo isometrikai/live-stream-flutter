@@ -176,6 +176,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveHeaderBuilder? bottomBuilder,
     IsmLiveInputBuilder? inputBuilder,
     IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder,
+    IsmLiveChatMessageBuilder? chatMessageBuilder,
+    IsmLiveChatItemBgColorCallback? chatItemBgColorCallback,
     Widget? endButton,
     Widget? endStreamScreen,
     bool showHeader = true,
@@ -203,8 +205,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveButtonConfig? ismLiveButtonConfig,
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
-    Future<void> Function(String streamId)? onHostStopStream,
-    Future<void> Function(String streamId)? onLeftStreamAsViewer,
+    StreamDisconnectApiHandler? streamDisconnectApiHandler,
     GoLiveClickCallback? onGoLiveClick,
     GoLiveDisposeCallback? onGoLiveDispose,
     bool productionMode = false,
@@ -215,20 +216,19 @@ class IsmLiveApp extends StatefulWidget {
     String? fontFamily,
     MessageProcessCallback? messageProcessCallback,
     StreamViewLoadedCallback? streamViewLoadedCallback,
-    HeartMessageCallback? heartMessageCallback,
-    StreamAnalyticsCallback? streamAnalyticsCallback,
-    StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback,
+    StreamAnalyticsApiHandler? streamAnalyticsApiHandler,
+    StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
-    AnalyticsButtonCallback? analyticsButtonCallback,
-    ScheduleModifyButtonCallback? scheduleModifyButtonCallback,
-    ShareButtonCallback? shareButtonCallback,
     IsmLiveCartBuilder? cartBuilder,
     TopViewersListCallback? topViewersListCallback,
     ModeratorsListCallback? moderatorsListCallback,
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
+    // New control customization options
+    ControlOptionCallback? controlOptionCallback,
+    ControlWidgetBuilder? controlWidgetBuilder,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -237,6 +237,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.showHeader = showHeader;
     IsmLiveDelegate.inputBuilder = inputBuilder;
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
+    IsmLiveDelegate.chatMessageBuilder = chatMessageBuilder;
+    IsmLiveDelegate.chatItemBgColorCallback = chatItemBgColorCallback;
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
@@ -263,8 +265,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
-    IsmLiveDelegate.onHostStopStream = onHostStopStream;
-    IsmLiveDelegate.onLeftStreamAsViewer = onLeftStreamAsViewer;
+    IsmLiveDelegate.streamDisconnectApiHandler = streamDisconnectApiHandler;
     IsmLiveDelegate.onGoLiveClick = onGoLiveClick;
     IsmLiveDelegate.onGoLiveDispose = onGoLiveDispose;
     IsmLiveDelegate.productionMode = productionMode;
@@ -276,10 +277,10 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.fontFamily = fontFamily;
     IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
-    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
-    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
-    IsmLiveDelegate.streamAnalyticsViewersCallback =
-        streamAnalyticsViewersCallback;
+    // Heart message is now handled via controlOptionCallback
+    IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
+    IsmLiveDelegate.streamAnalyticsViewersApiHandler =
+        streamAnalyticsViewersApiHandler;
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
 
     // Handle GoLive screen configuration
@@ -295,9 +296,8 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
     }
 
-    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
-    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
-    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
+    IsmLiveDelegate.controlOptionCallback = controlOptionCallback;
+    IsmLiveDelegate.controlWidgetBuilder = controlWidgetBuilder;
     IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
@@ -450,14 +450,12 @@ class IsmLiveApp extends StatefulWidget {
   static StreamViewLoadedCallback? get streamViewLoadedCallback =>
       IsmLiveDelegate.streamViewLoadedCallback;
 
-  static HeartMessageCallback? get heartMessageCallback =>
-      IsmLiveDelegate.heartMessageCallback;
+  static StreamAnalyticsApiHandler? get streamAnalyticsApiHandler =>
+      IsmLiveDelegate.streamAnalyticsApiHandler;
 
-  static StreamAnalyticsCallback? get streamAnalyticsCallback =>
-      IsmLiveDelegate.streamAnalyticsCallback;
-
-  static StreamAnalyticsViewersCallback? get streamAnalyticsViewersCallback =>
-      IsmLiveDelegate.streamAnalyticsViewersCallback;
+  static StreamAnalyticsViewersApiHandler?
+      get streamAnalyticsViewersApiHandler =>
+          IsmLiveDelegate.streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
       IsmLiveDelegate.hostTopProfileClickCallback;
@@ -467,15 +465,6 @@ class IsmLiveApp extends StatefulWidget {
 
   static GoLiveButtonBuilder? get goLiveButtonBuilder =>
       IsmLiveDelegate.goLiveScreenConfigure?.goLiveButtonBuilder;
-
-  static AnalyticsButtonCallback? get analyticsButtonCallback =>
-      IsmLiveDelegate.analyticsButtonCallback;
-
-  static ScheduleModifyButtonCallback? get scheduleModifyButtonCallback =>
-      IsmLiveDelegate.scheduleModifyButtonCallback;
-
-  static ShareButtonCallback? get shareButtonCallback =>
-      IsmLiveDelegate.shareButtonCallback;
 
   static IsmLiveCartBuilder? get cartBuilder => IsmLiveDelegate.cartBuilder;
 
@@ -516,23 +505,19 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
   }
 
-  /// Update heart message callback dynamically at runtime
-  static void updateHeartMessageCallback(
-      HeartMessageCallback? heartMessageCallback) {
-    IsmLiveDelegate.heartMessageCallback = heartMessageCallback;
+  // Removed: updateHeartMessageCallback (use controlOptionCallback instead)
+
+  /// Update stream analytics API handler dynamically at runtime
+  static void updateStreamAnalyticsApiHandler(
+      StreamAnalyticsApiHandler? streamAnalyticsApiHandler) {
+    IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
   }
 
-  /// Update stream analytics callback dynamically at runtime
-  static void updateStreamAnalyticsCallback(
-      StreamAnalyticsCallback? streamAnalyticsCallback) {
-    IsmLiveDelegate.streamAnalyticsCallback = streamAnalyticsCallback;
-  }
-
-  /// Update stream analytics viewers callback dynamically at runtime
-  static void updateStreamAnalyticsViewersCallback(
-      StreamAnalyticsViewersCallback? streamAnalyticsViewersCallback) {
-    IsmLiveDelegate.streamAnalyticsViewersCallback =
-        streamAnalyticsViewersCallback;
+  /// Update stream analytics viewers API handler dynamically at runtime
+  static void updateStreamAnalyticsViewersApiHandler(
+      StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler) {
+    IsmLiveDelegate.streamAnalyticsViewersApiHandler =
+        streamAnalyticsViewersApiHandler;
   }
 
   /// Update host top profile click callback dynamically at runtime
@@ -602,24 +587,6 @@ class IsmLiveApp extends StatefulWidget {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
-  }
-
-  /// Update analytics button callback dynamically at runtime
-  static void updateAnalyticsButtonCallback(
-      AnalyticsButtonCallback? analyticsButtonCallback) {
-    IsmLiveDelegate.analyticsButtonCallback = analyticsButtonCallback;
-  }
-
-  /// Update schedule modify button callback dynamically at runtime
-  static void updateScheduleModifyButtonCallback(
-      ScheduleModifyButtonCallback? scheduleModifyButtonCallback) {
-    IsmLiveDelegate.scheduleModifyButtonCallback = scheduleModifyButtonCallback;
-  }
-
-  /// Update share button callback dynamically at runtime
-  static void updateShareButtonCallback(
-      ShareButtonCallback? shareButtonCallback) {
-    IsmLiveDelegate.shareButtonCallback = shareButtonCallback;
   }
 
   /// Update cart builder dynamically at runtime
