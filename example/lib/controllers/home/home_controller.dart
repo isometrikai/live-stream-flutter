@@ -253,7 +253,7 @@ class HomeController extends GetxController {
         //   onTap: onTap,
         // ),
         hostArrowButtonsHeight: 56,
-        pinItemCallback: (direction) {},
+        pinItemCallback: (direction, context) {},
         hasPinnedProductGetter: () {
           // Return true if a product is currently pinned, false otherwise
           // This will be called every time the UI needs to check the pinned status
