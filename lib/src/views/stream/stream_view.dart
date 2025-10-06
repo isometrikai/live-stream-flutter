@@ -1030,18 +1030,6 @@ class ScheduleStreamView extends StatelessWidget {
                                     final streamId =
                                         controller.streamDetails?.streamId ??
                                             '';
-                                    print('=== STREAM ID DEBUG (Line 903) ===');
-                                    print(
-                                        'controller.streamDetails: ${controller.streamDetails}');
-                                    print(
-                                        'controller.streamDetails?.streamId: ${controller.streamDetails?.streamId}');
-                                    print(
-                                        'controller.streamId: ${controller.streamId}');
-                                    print(
-                                        'Final streamId being passed: $streamId');
-                                    print(
-                                        'streamId is empty: ${streamId.isEmpty}');
-                                    print('===============================');
                                     return streamId;
                                   }(),
                                   isHost: controller.isPublishing,

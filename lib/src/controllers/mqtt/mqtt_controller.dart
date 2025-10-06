@@ -758,8 +758,16 @@ class IsmLiveMqttController extends GetxController {
           _pkController.pkTimer = null;
           break;
         case IsmLiveActions.streamStartPresence:
-          unawaited(_streamController.getStreams());
-
+          // Use delegate if provided, otherwise use internal refresh
+          if (IsmLiveDelegate.streamListingRefreshCallback != null) {
+            IsmLiveDelegate.streamListingRefreshCallback!(
+              'streamStartPresence',
+              null,
+              payload,
+            );
+          } else {
+            unawaited(_streamController.getStreams());
+          }
           break;
         case IsmLiveActions.streamStarted:
           break;
@@ -773,8 +781,17 @@ class IsmLiveMqttController extends GetxController {
             _disconnectRoom();
             _streamController.closeStreamView(false, fromMqtt: true);
           }
-          _updateStreamListing();
 
+          // Use delegate if provided, otherwise use internal refresh
+          if (IsmLiveDelegate.streamListingRefreshCallback != null) {
+            IsmLiveDelegate.streamListingRefreshCallback!(
+              'streamStopped',
+              streamId,
+              payload,
+            );
+          } else {
+            _updateStreamListing();
+          }
           break;
         case IsmLiveActions.viewerJoined:
           if (streamId == _streamController.streamId) {

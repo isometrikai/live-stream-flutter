@@ -1513,6 +1513,24 @@ IsmLiveApp.configureInterface(
 );
 ```
 
+#### Stream Listing Refresh Callback
+
+When using custom stream listing pages, you can handle stream listing refresh events:
+
+```dart
+IsmLiveApp.configureInterface(
+  streamListingRefreshCallback: (eventType, streamId, payload) {
+    if (eventType == 'streamStartPresence') {
+      // Refresh your custom stream listing
+      myCustomStreamListingController.refresh();
+    } else if (eventType == 'streamStopped') {
+      // Remove stream from your custom listing
+      myCustomStreamListingController.removeStream(streamId);
+    }
+  },
+);
+```
+
 #### GoLive Screen Configuration Dynamic Updates
 
 You can update GoLive screen configuration at runtime using the new configuration class:
@@ -1582,6 +1600,7 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | Chat Message UI         | `chatMessageBuilder`      | Full customization of chat message appearance and structure |
 | E-commerce Product Navigation | `pinItemCallback` | Handle host arrow button clicks for product navigation |
 | E-commerce Purchase Flow | `buyNowCallback` | Handle "Buy now" button clicks for purchase flows |
+| Custom Stream Listing Refresh | `streamListingRefreshCallback` | Handle stream listing refresh events for custom stream listing pages |
 
 ---
 
