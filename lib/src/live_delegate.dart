@@ -858,7 +858,7 @@ class IsmLiveEcomConfigure {
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
     this.buyNowButtonBuilder,
-    this.hostArrowButtonsHeight,
+    this.hostArrowButtonsSize,
     this.pinItemCallback,
     this.buyNowCallback,
   });
@@ -869,7 +869,7 @@ class IsmLiveEcomConfigure {
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
   final BuyNowButtonBuilder? buyNowButtonBuilder;
-  final double? hostArrowButtonsHeight;
+  final double? hostArrowButtonsSize;
   final PinItemCallback? pinItemCallback;
   final BuyNowCallback? buyNowCallback;
 

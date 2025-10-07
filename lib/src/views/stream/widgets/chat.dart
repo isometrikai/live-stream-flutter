@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 /// Returns a custom Widget or the modified defaultChild
 typedef IsmLiveChatMessageBuilder = Widget Function(
   BuildContext context,
-  dynamic message,
+  IsmLiveChatModel message,
   Widget defaultChild,
 );
 
@@ -20,7 +20,8 @@ typedef IsmLiveChatMessageBuilder = Widget Function(
 /// - [message]: The message object containing all message data
 ///
 /// Returns a Color for the message background, or null to use default
-typedef IsmLiveChatItemBgColorCallback = Color? Function(dynamic message);
+typedef IsmLiveChatItemBgColorCallback = Color? Function(
+    IsmLiveChatModel message);
 
 class IsmLiveChatView extends StatefulWidget {
   IsmLiveChatView({
@@ -170,7 +171,7 @@ class _ChatMessageItem extends StatelessWidget {
     this.backgroundColor,
   });
 
-  final dynamic message;
+  final IsmLiveChatModel message;
   final bool isHost;
   final VoidCallback onTap;
   final Color? backgroundColor;

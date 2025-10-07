@@ -395,6 +395,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _checkRoomStateAndResume() {
     IsmLiveLog.info('Checking room state and handling resume...');
 
+    // Check if stream is still active before proceeding
+    if (!_isStreamActive.value) {
+      IsmLiveLog.info('Stream is not active, skipping room state check');
+      return;
+    }
+
     // Prevent multiple simultaneous reconnection attempts
     if (_isReconnecting) {
       IsmLiveLog.info('Reconnection already in progress, skipping');
@@ -443,8 +449,24 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           // Try to reconnect
           await room.connect(IsmLiveApis.wsUrl, _storedToken!);
 
+          // Check if stream is still active after connect
+          if (!_isStreamActive.value) {
+            IsmLiveLog.info(
+                'Stream became inactive during reconnection, aborting');
+            _isReconnecting = false;
+            return;
+          }
+
           // Wait a moment for connection to stabilize
           await Future.delayed(const Duration(milliseconds: 1000));
+
+          // Check again after delay
+          if (!_isStreamActive.value) {
+            IsmLiveLog.info(
+                'Stream became inactive during stabilization delay, aborting');
+            _isReconnecting = false;
+            return;
+          }
 
           // Check if reconnection was successful
           if (room.connectionState == lk.ConnectionState.connected) {
@@ -463,7 +485,10 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         } catch (e) {
           IsmLiveLog.error('Single reconnection attempt failed with error: $e');
           _isReconnecting = false;
-          _callApiAndShowDialog();
+          // Check if stream is still active before calling API
+          if (_isStreamActive.value) {
+            _callApiAndShowDialog();
+          }
         }
       } else {
         IsmLiveLog.info('No stored token available, calling API immediately');
@@ -473,7 +498,10 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     } catch (e) {
       IsmLiveLog.error('Error in single reconnection: $e');
       _isReconnecting = false;
-      _callApiAndShowDialog();
+      // Check if stream is still active before calling API
+      if (_isStreamActive.value) {
+        _callApiAndShowDialog();
+      }
     }
   }
 
@@ -491,6 +519,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       final isStreamActive =
           await _checkStreamActiveStatus(_controller.streamId!);
 
+      // Check again after async operation - stream might have been closed
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream became inactive during API call, skipping dialog');
+        return;
+      }
+
       if (isStreamActive) {
         IsmLiveLog.info(
             'API check: Stream is still active but reconnection failed');
@@ -503,8 +538,10 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       }
     } catch (e) {
       IsmLiveLog.error('Error in immediate API call: $e');
-      // On error, show connection issue dialog as fallback
-      _showConnectionFailedDialog();
+      // Check if stream is still active before showing error dialog
+      if (_isStreamActive.value) {
+        _showConnectionFailedDialog();
+      }
     }
   }
 
@@ -517,14 +554,22 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       // Wait 1 second before API check
       await Future.delayed(const Duration(seconds: 1));
 
+      // Check if stream is still active after delay
       if (!_isStreamActive.value || _controller.streamId == null) {
         IsmLiveLog.info(
-            'Stream not active or streamId is null, skipping API check');
+            'Stream not active or streamId is null after delay, skipping API check');
         return;
       }
 
       final isStreamActive =
           await _checkStreamActiveStatus(_controller.streamId!);
+
+      // Check again after async operation - stream might have been closed
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream became inactive during delayed API call, skipping dialog');
+        return;
+      }
 
       if (isStreamActive) {
         IsmLiveLog.info('API check after reconnection: Stream is still active');
@@ -536,8 +581,10 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       }
     } catch (e) {
       IsmLiveLog.error('Error in delayed API call: $e');
-      // On error, show dialog as fallback
-      _showStreamEndedDialog();
+      // Check if stream is still active before showing error dialog
+      if (_isStreamActive.value) {
+        _showStreamEndedDialog();
+      }
     }
   }
 
@@ -571,6 +618,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   /// Show dialog when stream has ended
   void _showStreamEndedDialog() {
     try {
+      // Final check before showing dialog
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info('Stream is not active, skipping stream ended dialog');
+        return;
+      }
+
       final message = _isHost.value
           ? 'Stream has been stopped. Please start a new stream'
           : 'The stream you were watching has ended. Please browse other streams';
@@ -578,41 +631,40 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       // Use custom dialog with single action button
       IsmLiveUtility.showCustomDialog(
         Material(
-          color: IsmLiveColors.transparent,
-          child:
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 16.0),
-                child: Text(
-                  message,
-                  style: IsmLiveStyles.black16,
-                  textAlign: TextAlign.center,
-                  maxLines: 8,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            color: IsmLiveColors.transparent,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 320),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 16.0),
+                    child: Text(
+                      message,
+                      style: IsmLiveStyles.black16,
+                      textAlign: TextAlign.center,
+                      maxLines: 8,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IsmLiveDimens.boxHeight40,
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: IsmLiveButton(
+                      onTap: () {
+                        IsmLiveUtility.closeDialog();
+                        // Close the current stream screen
+                        IsmLiveRoute.pop();
+                      },
+                      label: 'Exit',
+                    ),
+                  ),
+                ],
               ),
-              IsmLiveDimens.boxHeight40,
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: IsmLiveButton(
-                  onTap: () {
-                    IsmLiveUtility.closeDialog();
-                    // Close the current stream screen
-                    IsmLiveRoute.pop();
-                  },
-                  label: 'Exit',
-                ),
-              ),
-            ],
-          ),
-        )),
+            )),
         isDismissible: true,
       );
     } catch (e) {
@@ -623,6 +675,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   /// Show dialog when connection failed but stream is still active
   void _showConnectionFailedDialog() {
     try {
+      // Final check before showing dialog
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream is not active, skipping connection failed dialog');
+        return;
+      }
+
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'
           : 'Unable to reconnect to the stream. Please try again or browse other streams';

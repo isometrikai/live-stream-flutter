@@ -247,78 +247,83 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
-  /// Builds two arrow buttons for hosts that match input field height
-  Widget _buildHostArrowButtons(BuildContext context, {double? height}) =>
+  /// Builds two arrow buttons for hosts with customizable size
+  Widget _buildHostArrowButtons(BuildContext context, {double? size}) =>
       GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => SizedBox(
-          height: height ??
-              IsmLiveDelegate.ecomConfigure?.hostArrowButtonsHeight ??
-              52, // Default height: Match input field height (16px top + 16px bottom padding + 20px text height)
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(right: 4),
-                  height: double.infinity, // Fill the available height
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.2),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            12), // Match input field border radius
+        builder: (controller) {
+          final buttonSize = size ??
+              IsmLiveDelegate.ecomConfigure?.hostArrowButtonsSize ??
+              52; // Default size (height and width)
+          return SizedBox(
+            height: buttonSize,
+            width: buttonSize * 2 +
+                8, // Width for 2 buttons + spacing (4px right + 4px left)
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    height: double.infinity, // Fill the available height
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // Match input field border radius
+                        ),
+                        padding: EdgeInsets.zero,
+                        elevation: 0,
                       ),
-                      padding: EdgeInsets.zero,
-                      elevation: 0,
-                    ),
-                    onPressed: () {
-                      // Left arrow action - call pinItemCallback with previous direction
-                      IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
-                        context,
-                        IsmLiveArrowDirection.previous,
-                      );
-                    },
-                    child: const Icon(
-                      Icons.keyboard_arrow_left,
-                      color: Colors.white,
-                      size: 24,
+                      onPressed: () {
+                        // Left arrow action - call pinItemCallback with previous direction
+                        IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
+                          context,
+                          IsmLiveArrowDirection.previous,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.keyboard_arrow_left,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(left: 4),
-                  height: double.infinity, // Fill the available height
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.2),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            12), // Match input field border radius
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 4),
+                    height: double.infinity, // Fill the available height
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // Match input field border radius
+                        ),
+                        padding: EdgeInsets.zero,
+                        elevation: 0,
                       ),
-                      padding: EdgeInsets.zero,
-                      elevation: 0,
-                    ),
-                    onPressed: () {
-                      // Right arrow action - call pinItemCallback with next direction
-                      IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
-                        context,
-                        IsmLiveArrowDirection.next,
-                      );
-                    },
-                    child: const Icon(
-                      Icons.keyboard_arrow_right,
-                      color: Colors.white,
-                      size: 24,
+                      onPressed: () {
+                        // Right arrow action - call pinItemCallback with next direction
+                        IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
+                          context,
+                          IsmLiveArrowDirection.next,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.keyboard_arrow_right,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       );
 
   /// Wraps IsmLiveChatView with conditional width constraints
@@ -511,7 +516,6 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       child: Row(
                                         children: [
                                           Expanded(
-                                            flex: 3,
                                             child: IsmLiveApp.inputBuilder
                                                     ?.call(
                                                   context,
@@ -537,8 +541,15 @@ class _IsmLiveStreamView extends StatelessWidget {
                                             if (IsmLiveDelegate.ecomConfigure
                                                     ?.hasPinnedProduct ??
                                                 false) ...[
-                                              Expanded(
-                                                flex: 2,
+                                              IsmLiveDimens.boxWidth8,
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.5,
+                                                ),
                                                 child: controller.isHost &&
                                                         (IsmLiveDelegate
                                                                 .ecomConfigure
@@ -569,7 +580,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                                   context,
                                                                   controller),
                                                         ),
-                                              )
+                                              ),
                                             ]
                                           ]
                                         ],
@@ -942,56 +953,61 @@ class ScheduleStreamView extends StatelessWidget {
   }
 
   /// Gets the appropriate button content for scheduled streams
+  /// with max width constraint of half screen width
   Widget _buildScheduledGoLiveButton(BuildContext context,
       IsmLiveStreamController controller, bool isKeyboardOpen) {
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final isTimePassed = _isScheduleTimePassed(scheduleTime);
 
-    if (isTimePassed) {
-      // Time has passed, show "Go Live" button with action
-      return IsmLiveDelegate.goLiveSmallButtonBuilder?.call(
-            context,
-            controller,
-            () => controller.startStream(context: context),
-            true, // Always enabled when time has passed
-          ) ??
-          IsmLiveButton(
-            label: 'Go Live',
-            onTap: () {
-              controller.startStream(context: context);
-            },
-          );
+    Widget buttonWidget;
+
+    // Use custom builder if provided
+    if (IsmLiveDelegate.goLiveSmallButtonBuilder != null) {
+      buttonWidget = IsmLiveDelegate.goLiveSmallButtonBuilder!.call(
+        context,
+        controller,
+        () => controller.startStream(context: context),
+        true, // Always enabled - let host manage the logic
+      );
+    } else if (isTimePassed) {
+      // Time has passed, show "Go Live" button
+      buttonWidget = IsmLiveButton(
+        label: 'Go Live',
+        onTap: () {
+          controller.startStream(context: context);
+        },
+      );
     } else {
       // Time hasn't passed yet, show schedule time
       final formattedTime = scheduleTime != null
           ? _formatScheduleTime(scheduleTime)
           : 'No time set';
-      return IsmLiveDelegate.goLiveSmallButtonBuilder?.call(
-            context,
-            controller,
-            () => controller.startStream(
-                context: context), // Let host manage click logic
-            true, // Always enabled - let host manage the logic
-          ) ??
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.withOpacity(0.5)),
-            ),
-            child: Text(
-              formattedTime,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          );
+      buttonWidget = Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.withOpacity(0.5)),
+        ),
+        child: Text(
+          formattedTime,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
     }
+
+    // Wrap with ConstrainedBox to set max width to half screen width
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.5,
+      ),
+      child: buttonWidget,
+    );
   }
 
   @override
@@ -1051,14 +1067,9 @@ class ScheduleStreamView extends StatelessWidget {
                                   controller.streamDetails?.streamId ?? '',
                               isKeyboardOpen: isKeyboardOpen,
                             ),
-                            if (controller.isHost) ...[
-                              IsmLiveDimens.boxHeight32,
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 3,
-                                child: _buildScheduledGoLiveButton(
-                                    context, controller, isKeyboardOpen),
-                              ),
-                            ],
+                            IsmLiveDimens.boxHeight32,
+                            _buildScheduledGoLiveButton(
+                                context, controller, isKeyboardOpen),
                           ],
                         )
                     ],

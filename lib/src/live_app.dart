@@ -640,6 +640,13 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
   }
 
+  /// Triggers a rebuild of stream view
+  static void rebuildStreamUi() {
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+  }
+
   /// Configure background lifecycle management
   static void configureBackgroundLifecycle({
     bool enableBackgroundLifecycle = true,

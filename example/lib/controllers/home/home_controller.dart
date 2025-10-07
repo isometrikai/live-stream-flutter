@@ -246,13 +246,16 @@ class HomeController extends GetxController {
         //         'User picked image: ${goLiveData.pickedImage!.path}');
         //   }
         // },
-        // buyNowButtonBuilder:
-        //     (context, streamId, hasPinnedProduct, isHost, onTap) =>
-        //         IsmLiveButton.secondary(
-        //   label: 'Buy now',
-        //   onTap: onTap,
-        // ),
-        hostArrowButtonsHeight: 56,
+        buyNowButtonBuilder:
+            (context, streamId, hasPinnedProduct, isHost, onTap) => SizedBox(
+          width: IsmLiveDimens.oneHundredTwenty,
+          height: IsmLiveDimens.fifty,
+          child: IsmLiveButton.secondary(
+            label: 'Buy it',
+            onTap: onTap,
+          ),
+        ),
+        hostArrowButtonsSize: 56,
         pinItemCallback: (direction, context) {},
         hasPinnedProductGetter: () {
           // Return true if a product is currently pinned, false otherwise
@@ -524,7 +527,8 @@ class HomeController extends GetxController {
         ? _formatScheduleTime(scheduleTime)
         : 'No time set';
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      width: IsmLiveDimens.oneHundredFifty,
+      margin: const EdgeInsets.only(bottom: 4),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFFFF6B6B), Color(0xFFCD0000)],
