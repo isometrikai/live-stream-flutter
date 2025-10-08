@@ -225,6 +225,7 @@ class IsmLiveApp extends StatefulWidget {
     ModeratorsListCallback? moderatorsListCallback,
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     StreamListingRefreshCallback? streamListingRefreshCallback,
+    OnStreamScrollCallback? onStreamScrollCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     // New control customization options
@@ -305,6 +306,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.attentionDialogButtonCallback =
         attentionDialogButtonCallback;
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
+    IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
     // Camera position preference for streams (suffix to avoid other camera screens)
     if (initialCameraPositionStream != null) {
@@ -485,6 +487,9 @@ class IsmLiveApp extends StatefulWidget {
   static StreamListingRefreshCallback? get streamListingRefreshCallback =>
       IsmLiveDelegate.streamListingRefreshCallback;
 
+  static OnStreamScrollCallback? get onStreamScrollCallback =>
+      IsmLiveDelegate.onStreamScrollCallback;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;
@@ -632,6 +637,12 @@ class IsmLiveApp extends StatefulWidget {
   static void updateStreamListingRefreshCallback(
       StreamListingRefreshCallback? streamListingRefreshCallback) {
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
+  }
+
+  /// Update stream scroll callback dynamically at runtime
+  static void updateOnStreamScrollCallback(
+      OnStreamScrollCallback? onStreamScrollCallback) {
+    IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
   }
 
   /// Update custom bottom sheet builder dynamically at runtime
