@@ -664,6 +664,34 @@ typedef StreamListingRefreshCallback = void Function(
   Map<String, dynamic> payload,
 );
 
+/// Callback for stream scroll events.
+///
+/// This callback is triggered when the user scrolls to a different stream in the stream view.
+/// This is a notification-only callback that does not block or affect the SDK's scroll behavior.
+/// The callback is called asynchronously (fire and forget) to notify the host app of the scroll event.
+///
+/// [context] - The build context where the scroll occurred.
+/// [currentStreamId] - The ID of the stream being left.
+/// [nextStreamIndex] - The index of the stream being scrolled to.
+/// [nextStream] - The stream data model of the stream being scrolled to.
+/// [isHost] - Whether the current user is the host of the current stream.
+///
+/// This callback is called when a stream scroll is initiated, but does not wait for completion.
+/// Useful for implementing:
+/// - Custom analytics tracking for stream scrolling
+/// - Logging stream transitions
+/// - Notifying external services about scroll events
+/// - Triggering background tasks
+/// - Custom event tracking
+/// - Stream engagement metrics
+typedef OnStreamScrollCallback = void Function(
+  BuildContext context,
+  String currentStreamId,
+  int nextStreamIndex,
+  IsmLiveStreamDataModel nextStream,
+  bool isHost,
+);
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -801,6 +829,8 @@ class IsmLiveDelegate {
   static AttentionDialogButtonCallback? attentionDialogButtonCallback;
 
   static StreamListingRefreshCallback? streamListingRefreshCallback;
+
+  static OnStreamScrollCallback? onStreamScrollCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
 

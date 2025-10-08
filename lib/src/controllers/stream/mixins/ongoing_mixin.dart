@@ -606,6 +606,15 @@ mixin StreamOngoingMixin {
       return;
     }
 
+    // Notify host app about stream scroll (fire and forget)
+    IsmLiveDelegate.onStreamScrollCallback?.call(
+      context,
+      _controller.streamId ?? '',
+      index,
+      _controller.streams[index],
+      _controller.isHost,
+    );
+
     IsmLiveUtility.showLoader();
     onChangeCall = true;
     if (_controller.streams.length - 1 == index + 1) {

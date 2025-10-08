@@ -189,6 +189,13 @@ IsmLiveApp.configureInterface(
     );
   },
   
+  // ===== STREAM SCROLL CALLBACK =====
+  onStreamScrollCallback: (context, currentStreamId, nextStreamIndex, nextStream, isHost) {
+    // Notification when user scrolls to a different stream
+    print('Scrolling from $currentStreamId to stream at index $nextStreamIndex');
+    _trackStreamScrollEvent(currentStreamId, nextStreamIndex);
+  },
+  
   // ===== ADDITIONAL UI OPTIONS =====
   showHeader: true,
   streamHeader: (context) => CustomHeader(),
@@ -214,6 +221,7 @@ IsmLiveApp.configureInterface(
 | **Heart Messages** | `controlOptionCallback` | `context, option, streamId, isHost, isCopublishing` | Handle heart interactions (`IsmLiveStreamOption.heart`) | `Future<bool>` |
 | **Chat Customization** | `chatItemBgColorCallback` | `message` | Customize chat message background colors | `Color?` |
 | | `chatMessageBuilder` | `context, message, defaultChild` | Full chat message UI customization | `Widget` |
+| **Stream Events** | `onStreamScrollCallback` | `context, currentStreamId, nextStreamIndex, nextStream, isHost` | Notification when user scrolls to a different stream | `void` |
 | **UI Customization** | `cartBuilder` | `context, controller` | Customize shopping cart widget | `Widget` |
 | | `attentionDialogButtonCallback` | `context` | Handle attention dialog button clicks | `Future<void>` |
 | | `showHeader` | `bool` | Show/hide stream header | - |
@@ -1531,6 +1539,110 @@ IsmLiveApp.configureInterface(
 );
 ```
 
+#### Stream Scroll Callback
+
+The `onStreamScrollCallback` is a notification-only callback that is triggered when a user scrolls to a different stream in the stream view. This callback does not block or affect the SDK's scroll behavior - it simply notifies the host app about the scroll event.
+
+**Available Callbacks:**
+
+- **`onStreamScrollCallback`**: Called when user scrolls to a different stream (notification only)
+  - Parameters: `context`, `currentStreamId`, `nextStreamIndex`, `nextStream`, `isHost`
+  - This is a fire-and-forget callback that runs asynchronously
+  - SDK continues with its default scroll behavior immediately after calling the callback
+  - Useful for analytics tracking, logging stream transitions, notifying external services, etc.
+  - If not set, no notification is sent
+
+#### Stream Scroll Callback Examples
+
+**Basic Analytics Tracking:**
+```dart
+IsmLiveApp.configureInterface(
+  onStreamScrollCallback: (context, currentStreamId, nextStreamIndex, nextStream, isHost) {
+    // Track stream scroll event
+    print('User scrolled from stream $currentStreamId to index $nextStreamIndex');
+    
+    // Log analytics (SDK won't wait for this to complete)
+    _analyticsService.trackStreamScroll(
+      fromStreamId: currentStreamId,
+      toStreamId: nextStream.streamId ?? '',
+      streamIndex: nextStreamIndex,
+      isHost: isHost,
+    );
+  },
+);
+```
+
+**Advanced Usage with External Services:**
+```dart
+IsmLiveApp.configureInterface(
+  onStreamScrollCallback: (context, currentStreamId, nextStreamIndex, nextStream, isHost) {
+    // Notify external services about stream transition
+    _externalService.notifyStreamScroll({
+      'previous_stream_id': currentStreamId,
+      'next_stream_id': nextStream.streamId ?? '',
+      'next_stream_index': nextStreamIndex,
+      'is_host': isHost,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+    
+    // Update user engagement metrics
+    _engagementService.updateStreamMetrics(
+      currentStreamId: currentStreamId,
+      nextStreamId: nextStream.streamId ?? '',
+    );
+    
+    // Log to custom logging service
+    _logger.info('Stream scroll: $currentStreamId -> ${nextStream.streamId}');
+  },
+);
+```
+
+**Integration with Recommendation System:**
+```dart
+IsmLiveApp.configureInterface(
+  onStreamScrollCallback: (context, currentStreamId, nextStreamIndex, nextStream, isHost) {
+    // Feed data to recommendation algorithm
+    _recommendationService.trackUserBehavior(
+      userId: _currentUser.id,
+      action: 'stream_scroll',
+      fromStream: currentStreamId,
+      toStream: nextStream.streamId ?? '',
+      streamMetadata: {
+        'stream_title': nextStream.streamDescription,
+        'stream_type': nextStream.streamType,
+        'host_id': nextStream.userId,
+      },
+    );
+    
+    // Preload next stream data for smoother experience
+    if (nextStreamIndex < _totalStreams - 1) {
+      _preloadService.preloadStreamData(nextStreamIndex + 1);
+    }
+  },
+);
+```
+
+**Dynamic Updates:**
+```dart
+// Update stream scroll callback at runtime
+IsmLiveApp.updateOnStreamScrollCallback(
+  (context, currentStreamId, nextStreamIndex, nextStream, isHost) {
+    // New scroll tracking logic
+    _newAnalyticsHandler.trackScroll(currentStreamId, nextStreamIndex);
+  },
+);
+
+// Disable stream scroll callback (no notifications)
+IsmLiveApp.updateOnStreamScrollCallback(null);
+```
+
+**Important Notes:**
+- This is a **notification-only** callback - it does not affect the scroll behavior
+- The callback is called **asynchronously** (fire and forget) - SDK doesn't wait for completion
+- Perfect for **analytics, logging, and external service notifications**
+- **Not suitable** for preventing or modifying the scroll behavior
+- Any async operations inside the callback won't block the SDK's scroll flow
+
 #### GoLive Screen Configuration Dynamic Updates
 
 You can update GoLive screen configuration at runtime using the new configuration class:
@@ -1601,6 +1713,7 @@ assert(IsmLiveApp.isInitialized, 'Call IsmLiveApp.initialize before using SDK wi
 | E-commerce Product Navigation | `pinItemCallback` | Handle host arrow button clicks for product navigation |
 | E-commerce Purchase Flow | `buyNowCallback` | Handle "Buy now" button clicks for purchase flows |
 | Custom Stream Listing Refresh | `streamListingRefreshCallback` | Handle stream listing refresh events for custom stream listing pages |
+| Stream Scroll Notification | `onStreamScrollCallback` | Receive notifications when user scrolls to a different stream (fire and forget) |
 
 ---
 
