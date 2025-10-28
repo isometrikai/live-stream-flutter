@@ -21,6 +21,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
         id: updateId,
         builder: (controller) => Obx(
           () {
+            print('participantTracks ${controller.participantTracks.length}');
             if (controller.isRtmp) {
               return controller.participantTracks.isNotEmpty
                   ? const _RtmlView()
