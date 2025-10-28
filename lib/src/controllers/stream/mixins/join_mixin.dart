@@ -419,30 +419,30 @@ mixin StreamJoinMixin {
 
     // Show appropriate message based on the user's role
     var message = '';
+    IsmLiveStreamTranslations? translation;
     try {
-      final translation = context.liveTranslations?.streamTranslations;
-      if (isHost) {
-        if (isNewStream) {
-          message = translation?.preparingYourStream ??
-              IsmLiveStrings.preparingYourStream;
-        } else {
-          message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
-        }
-      } else if (isCopublisher) {
-        message =
-            translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
-      } else if (isPkGust) {
-        message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
-      } else {
-        message =
-            translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
-      }
+      translation = context.liveTranslations?.streamTranslations;
     } catch (e) {
-      // Fallback message if context access fails
-      message = isHost
-          ? (isNewStream ? 'Preparing your stream...' : 'Reconnecting...')
-          : 'Joining live stream...';
+      // If translation access fails, set to null so static strings are used
+      translation = null;
       IsmLiveLog.error('Translation access error: $e');
+    }
+
+    if (isHost) {
+      if (isNewStream) {
+        message = translation?.preparingYourStream ??
+            IsmLiveStrings.preparingYourStream;
+      } else {
+        message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
+      }
+    } else if (isCopublisher) {
+      message =
+          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
+    } else if (isPkGust) {
+      message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
+    } else {
+      message =
+          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
 
     if (!joinByScrolling) {

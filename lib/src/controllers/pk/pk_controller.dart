@@ -473,23 +473,23 @@ class IsmLivePkController extends GetxController
     if (token == null) {
       return;
     }
-
+    streamController.preventDispose = true;
     await streamController.disconnectRoom(false);
     // await streamController.room?.dispose();
 
     await streamController.connectStream(
-      hdBroadcast: hdBroadcast,
-      streamDiscription: streamDiscription,
-      streamImage: streamImage,
-      token: token,
-      streamId: reciverStreamId,
-      isHost: false,
-      isNewStream: false,
-      isCopublisher: false,
-      isPk: true,
-      isPkGust: true,
-      context: context,
-    );
+        hdBroadcast: hdBroadcast,
+        streamDiscription: streamDiscription,
+        streamImage: streamImage,
+        token: token,
+        streamId: reciverStreamId,
+        isHost: false,
+        isNewStream: false,
+        isCopublisher: false,
+        isPk: true,
+        isPkGust: true,
+        context: context,
+        reJoin: true);
 
     await streamController.sortParticipants();
   }
