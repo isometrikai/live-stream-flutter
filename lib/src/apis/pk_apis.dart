@@ -194,11 +194,12 @@ class IsmLivePkApis {
 
   Future<IsmLiveResponseModel> pkEnd({
     required String inviteId,
+    required bool intentToStop,
   }) async {
     var payload = {
       'InviteId': inviteId,
       'action': 'END',
-      'intentToStop': false,
+      'intentToStop': intentToStop,
     };
     return await _apiWrapper.makeRequest(
       IsmLiveApis.pkEnd,

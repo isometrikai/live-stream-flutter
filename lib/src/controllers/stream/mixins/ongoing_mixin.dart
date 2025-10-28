@@ -227,7 +227,7 @@ mixin StreamOngoingMixin {
         _controller.participantTracks.length == 2 &&
         ((_controller.userRole?.isHost ?? false) ||
             (_controller.userRole?.isPkGuest ?? false))) {
-      if (Get.isBottomSheetOpen ?? false) {
+      if (IsmLiveUtility.isAnyBottomSheetOpen) {
         IsmLiveRoute.pop();
       }
       IsmLiveDebouncer(durationtime: 3000).run(() async {
@@ -727,7 +727,7 @@ mixin StreamOngoingMixin {
           isEnded = true;
           break;
         case IsmLiveStreamDisconnectType.pkGuest:
-          await _pkController.pkEnd();
+          await _pkController.pkEnd(intentToStop: false);
           isEnded = true;
           break;
         case IsmLiveStreamDisconnectType.copublisher:
@@ -807,7 +807,7 @@ mixin StreamOngoingMixin {
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
-      if (Get.isBottomSheetOpen ?? false) {
+      if (IsmLiveUtility.isAnyBottomSheetOpen) {
         IsmLiveRoute.pop();
       }
       IsmLiveRoute.pop();

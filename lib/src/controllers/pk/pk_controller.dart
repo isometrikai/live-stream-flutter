@@ -140,9 +140,13 @@ class IsmLivePkController extends GetxController
         pkDuration -= const Duration(
           seconds: 1,
         );
-        if (pkDuration.inSeconds == 0) {
+        if (pkDuration.inSeconds <= 0) {
           pkTimer?.cancel();
           pkTimer = null;
+          final currentPkId = pkId;
+          if (currentPkId != null && currentPkId.isNotEmpty) {
+            declainrPkBattleResult(pkId: currentPkId);
+          }
         }
       },
     );
@@ -207,7 +211,7 @@ class IsmLivePkController extends GetxController
     }
 
     if (pkDetails.userId != streamController.user?.userId) {
-      if (Get.isBottomSheetOpen ?? false) {
+      if (IsmLiveUtility.isAnyBottomSheetOpen) {
         IsmLiveRoute.pop();
       }
 
@@ -356,20 +360,21 @@ class IsmLivePkController extends GetxController
       rightLabel:
           streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
       onLeft: IsmLiveRoute.pop,
-      onRight: () {
+      onRight: () async {
         IsmLiveRoute.pop();
         if (streamController.pkStages?.isPkStart ?? false) {
           stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
         } else {
-          pkEnd();
           if (streamController.userRole?.isHost ?? false) {
+            pkEnd(intentToStop: false);
             streamController.removeMember(
               streamId: streamController.streamId ?? '',
               memberId:
                   streamController.participantTracks[1].participant.identity,
             );
           } else {
-            streamController.disconnectRoom();
+            await pkEnd(intentToStop: false);
+            await streamController.disconnectRoom();
             streamController.closeStreamView(false);
           }
         }
@@ -562,6 +567,23 @@ class IsmLivePkController extends GetxController
     );
   }
 
+  Future<void> declainrPkBattleResult({
+    required String pkId,
+  }) async {
+    pkTimer?.cancel();
+    pkTimer = null;
+    streamController.pkStages?.removePkStart();
+    streamController.pkStages?.makePkStop();
+    await pkWinner(pkId);
+    IsmLiveDebouncer(
+      durationtime: 6000,
+    ).run(() {
+      streamController.pkStages?.removePkStop();
+      streamController.update([IsmLivePublisherGrid.updateId]);
+      streamController.update([IsmLiveStreamView.updateId]);
+    });
+  }
+
   Future<void> pkWinner(String pkId) async {
     var res = await _viewModel.pkWinner(
       pkId: pkId,
@@ -573,9 +595,12 @@ class IsmLivePkController extends GetxController
     streamController.update([IsmLiveStreamView.updateId]);
   }
 
-  Future<void> pkEnd() async {
+  Future<void> pkEnd({
+    required bool intentToStop,
+  }) async {
     await _viewModel.pkEnd(
-      inviteId,
+      inviteId: inviteId,
+      intentToStop: intentToStop,
     );
     streamController.pkStages = null;
   }

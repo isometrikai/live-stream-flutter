@@ -687,36 +687,39 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           : 'Unable to reconnect to the stream. Please try again or browse other streams';
 
       IsmLiveUtility.showCustomDialog(
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 16.0),
-                child: Text(
-                  message,
-                  style: IsmLiveStyles.black16,
-                  textAlign: TextAlign.center,
-                  maxLines: 8,
-                  overflow: TextOverflow.ellipsis,
+        Material(
+          color: IsmLiveColors.transparent,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16.0),
+                  child: Text(
+                    message,
+                    style: IsmLiveStyles.black16,
+                    textAlign: TextAlign.center,
+                    maxLines: 8,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              IsmLiveDimens.boxHeight50,
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: IsmLiveButton(
-                  onTap: () {
-                    IsmLiveUtility.closeDialog();
-                    IsmLiveRoute.pop();
-                  },
-                  label: 'Exit',
+                IsmLiveDimens.boxHeight50,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: IsmLiveButton(
+                    onTap: () {
+                      IsmLiveUtility.closeDialog();
+                      IsmLiveRoute.pop();
+                    },
+                    label: 'Exit',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         isDismissible: true,
