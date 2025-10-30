@@ -50,11 +50,18 @@ mixin StreamJoinMixin {
 
     initialize(_controller.streams.indexOf(stream));
     print('initializeAndJoinStream called ${stream.streamId}, reJoin=$reJoin');
-    await joinStream(stream, isHost,
-        joinByScrolling: joinByScrolling,
-        isScrolling: isScrolling,
-        context: context,
-        reJoin: reJoin);
+    if (stream.isScheduledStream == true &&
+        (stream.streamId == null ||
+            stream.streamId?.isEmpty == true ||
+            stream.streamId?.contains('0000') == true)) {
+      startSeduleStream(stream, isScrolling: isScrolling);
+    } else {
+      await joinStream(stream, isHost,
+          joinByScrolling: joinByScrolling,
+          isScrolling: isScrolling,
+          context: context,
+          reJoin: reJoin);
+    }
   }
 
 // Initialize the page controller
@@ -656,7 +663,8 @@ mixin StreamJoinMixin {
     return await _controller.goliveScheduleStream(payload);
   }
 
-  void startSeduleStream(IsmLiveStreamDataModel stream, {bool isHost = true}) {
+  void startSeduleStream(IsmLiveStreamDataModel stream,
+      {bool isHost = true, bool isScrolling = false}) {
     _controller._streamViewLoadedCallbackTriggered = false;
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
@@ -679,7 +687,7 @@ mixin StreamJoinMixin {
       isHost: true,
       isNewStream: false,
       room: lk.Room(),
-      isScrolling: false,
+      isScrolling: isScrolling,
       streamImage: stream.streamImage,
       listener: lk.Room().createListener(),
       streamId: stream.streamId ?? '',
