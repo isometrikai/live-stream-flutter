@@ -50,18 +50,24 @@ mixin StreamJoinMixin {
 
     initialize(_controller.streams.indexOf(stream));
     print('initializeAndJoinStream called ${stream.streamId}, reJoin=$reJoin');
+    await joinStream(
+      stream,
+      isHost,
+      joinByScrolling: joinByScrolling,
+      isScrolling: isScrolling,
+      context: context,
+      reJoin: reJoin,
+    );
+  }
+
+  bool isScheduleStreamNotStartedYet(IsmLiveStreamDataModel stream) {
     if (stream.isScheduledStream == true &&
         (stream.streamId == null ||
             stream.streamId?.isEmpty == true ||
             stream.streamId?.contains('0000') == true)) {
-      startSeduleStream(stream, isScrolling: isScrolling);
-    } else {
-      await joinStream(stream, isHost,
-          joinByScrolling: joinByScrolling,
-          isScrolling: isScrolling,
-          context: context,
-          reJoin: reJoin);
+      return true;
     }
+    return false;
   }
 
 // Initialize the page controller
@@ -163,6 +169,16 @@ mixin StreamJoinMixin {
     required BuildContext context,
     bool reJoin = false,
   }) async {
+    // Handle scheduled stream not started yet here to avoid duplicate navigation during scrolling
+    if (isScheduleStreamNotStartedYet(stream)) {
+      startSeduleStream(
+        stream,
+        isHost: isHost,
+        isScrolling: isScrolling,
+        joinByScrolling: joinByScrolling,
+      );
+      return;
+    }
     // Get the token for the stream based on whether the user is a host or not
     if (onStreamEnd != null) {
       IsmLiveApp.onStreamEnd = onStreamEnd;
@@ -663,8 +679,12 @@ mixin StreamJoinMixin {
     return await _controller.goliveScheduleStream(payload);
   }
 
-  void startSeduleStream(IsmLiveStreamDataModel stream,
-      {bool isHost = true, bool isScrolling = false}) {
+  void startSeduleStream(
+    IsmLiveStreamDataModel stream, {
+    bool isHost = true,
+    bool isScrolling = false,
+    bool joinByScrolling = false,
+  }) {
     _controller._streamViewLoadedCallbackTriggered = false;
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
@@ -683,17 +703,19 @@ mixin StreamJoinMixin {
         userProfileImageUrl: details?.userProfile ?? '');
 
     _controller.room = lk.Room();
-    IsmLiveRouteManagement.goToStreamView(
-      isHost: true,
-      isNewStream: false,
-      room: lk.Room(),
-      isScrolling: isScrolling,
-      streamImage: stream.streamImage,
-      listener: lk.Room().createListener(),
-      streamId: stream.streamId ?? '',
-      isSchedule: true,
-      reJoin: false, // This is for scheduled streams, not rejoin
-    );
+    if (!joinByScrolling) {
+      IsmLiveRouteManagement.goToStreamView(
+        isHost: isHost,
+        isNewStream: false,
+        room: lk.Room(),
+        isScrolling: isScrolling,
+        streamImage: stream.streamImage,
+        listener: lk.Room().createListener(),
+        streamId: stream.streamId ?? '',
+        isSchedule: true,
+        reJoin: false, // This is for scheduled streams, not rejoin
+      );
+    }
 
     IsmLiveUtility.updateLater(() {
       // Trigger stream view loaded callback for scheduled streams (only once per stream)

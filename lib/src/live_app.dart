@@ -356,6 +356,27 @@ class IsmLiveApp extends StatefulWidget {
     });
   }
 
+  static Future<void> initializeAndJoinStream(
+      {required IsmLiveStreamDataModel stream,
+        required bool isHost,
+        required BuildContext context,
+        bool isScrolling = false}) async {
+    assert(
+    _initialized,
+    'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    IsmLiveUtility.updateLater(() async {
+      await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
+          stream, isHost,
+          context: context, isScrolling: isScrolling);
+    });
+  }
+
   static Future<void> connectStream({
     required String token,
     required String streamId,
