@@ -718,6 +718,22 @@ mixin StreamAPIMixin {
     if (res) {
       _controller.streamMembersList
           .removeWhere((element) => element.userId == _controller.user?.userId);
+      // Proactively unpublish local tracks to reflect UI immediately, in case
+      // LiveKit events (ParticipantDisconnected/Unpublished) arrive later.
+      try {
+        await _controller.room?.localParticipant?.unpublishAllTracks();
+      } catch (_) {}
+
+      // Reset local role/state from copublishing
+      try {
+        _controller.userRole?.leaveCopublishing();
+        _controller.memberStatus = IsmLiveMemberStatus.notMember;
+      } catch (_) {}
+
+      // Force recompute of visible tracks and refresh UI
+      try {
+        await _controller.sortParticipants();
+      } catch (_) {}
 
       _controller.update([IsmLiveMembersSheet.updateId]);
     }

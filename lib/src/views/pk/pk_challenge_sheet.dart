@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 class IsmLivePkChallengeSheet extends StatelessWidget {
   const IsmLivePkChallengeSheet({super.key});
 
+  static const List<String> _durations = ['1', '3', '5', '10'];
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: IsmLiveDimens.edgeInsets16,
@@ -55,9 +57,9 @@ class IsmLivePkChallengeSheet extends StatelessWidget {
               height: IsmLiveDimens.thirty,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 4,
+                itemCount: _durations.length,
                 itemBuilder: (context, index) {
-                  var time = (index + 1 * 2).toString();
+                  final time = _durations[index];
                   return GetX<IsmLivePkController>(
                       builder: (controller) => IsmLiveTapHandler(
                             onTap: () {

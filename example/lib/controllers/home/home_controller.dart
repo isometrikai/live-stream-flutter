@@ -5,7 +5,6 @@ import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
 import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-import 'package:appscrip_live_stream_component_example/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -59,21 +58,21 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: true,
-      enableFreeGift: true,
+      productStream: false,
+      enableFreeGift: false,
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,
-      inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
-        defaultMessageField: defaultMessageField,
-      ),
+      // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+      //   defaultMessageField: defaultMessageField,
+      // ),
 
       restrictProfileSheetOnProfileClick: true,
-      goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
-      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-        goLiveButtonBuilder: _buildCustomGoLiveButton,
-        //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-      ),
+      // goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
+      // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+      //   goLiveButtonBuilder: _buildCustomGoLiveButton,
+      //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+      // ),
       // chatMessageBuilder: (context, message, defaultChild) {
       //   // Change background color for host messages
 
@@ -273,45 +272,45 @@ class HomeController extends GetxController {
       // Custom GoLive button click handler with comprehensive data
 
       // paidStream: false
-      hostOptions: [
-        IsmLiveStreamOption.bars,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.product,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-      ],
-      rtmpOptions: [
-        IsmLiveStreamOption.bars,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.product,
-      ],
-      viewersOptions: [
-        IsmLiveStreamOption.gift,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speaker,
-        IsmLiveStreamOption.heart,
-      ],
-      ismLiveButtonConfig: IsmLiveButtonConfig(
-        primaryBuilder: (context,
-                {required label,
-                onTap,
-                required small,
-                required showBorder,
-                icon,
-                required secondary}) =>
-            CustomButton(
-          title: label,
-          onPress: onTap,
-        ),
-        secondaryBuilder: (context,
-                {required label,
-                onTap,
-                required small,
-                required showBorder,
-                icon,
-                required secondary}) =>
-            CustomButton(title: label, onPress: onTap, onlyBorder: true),
-      ),
+      // hostOptions: [
+      //   IsmLiveStreamOption.bars,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.product,
+      //   IsmLiveStreamOption.rotateCamera,
+      //   IsmLiveStreamOption.settings,
+      // ],
+      // rtmpOptions: [
+      //   IsmLiveStreamOption.bars,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.product,
+      // ],
+      // viewersOptions: [
+      //   IsmLiveStreamOption.gift,
+      //   IsmLiveStreamOption.share,
+      //   IsmLiveStreamOption.speaker,
+      //   IsmLiveStreamOption.heart,
+      // ],
+      // ismLiveButtonConfig: IsmLiveButtonConfig(
+      //   primaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(
+      //     title: label,
+      //     onPress: onTap,
+      //   ),
+      //   secondaryBuilder: (context,
+      //           {required label,
+      //           onTap,
+      //           required small,
+      //           required showBorder,
+      //           icon,
+      //           required secondary}) =>
+      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+      // ),
       //   streamOptionsBgGradient : const LinearGradient(
       //     begin: Alignment.bottomCenter,
       //     end: Alignment.topCenter,

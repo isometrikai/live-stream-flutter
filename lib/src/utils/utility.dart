@@ -11,6 +11,7 @@ class IsmLiveUtility {
   const IsmLiveUtility._();
 
   static bool _initialized = false;
+  static int _bottomSheetCount = 0;
 
   static Future<void> initialize(IsmLiveConfigData config) async {
     _initialized = true;
@@ -156,20 +157,42 @@ class IsmLiveUtility {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().showEmojiBoard = false;
     }
-    return await showModalBottomSheet<T>(
-      context: IsmLiveUtility.navigatorKey.currentContext!,
-      isDismissible: isDismissible,
-      isScrollControlled: isScrollController,
-      enableDrag: enableDrag,
-      backgroundColor: backgroundColor ?? IsmLiveColors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: IsmLiveDelegate.bottomSheetBorderRadius ??
-            BorderRadius.vertical(
-              top: Radius.circular(IsmLiveDimens.thirty),
-            ),
-      ),
-      builder: (context) => SafeArea(child: child),
-    );
+
+    _bottomSheetCount++;
+
+    try {
+      final result = await showModalBottomSheet<T>(
+        context: IsmLiveUtility.navigatorKey.currentContext!,
+        isDismissible: isDismissible,
+        isScrollControlled: isScrollController,
+        enableDrag: enableDrag,
+        backgroundColor: backgroundColor ?? IsmLiveColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: IsmLiveDelegate.bottomSheetBorderRadius ??
+              BorderRadius.vertical(
+                top: Radius.circular(IsmLiveDimens.thirty),
+              ),
+        ),
+        builder: (context) => SafeArea(child: child),
+      );
+
+      _bottomSheetCount--;
+
+      return result;
+    } catch (e) {
+      _bottomSheetCount--;
+      rethrow;
+    }
+  }
+
+  /// Returns true if a modal bottom sheet (from showModalBottomSheet or Get.bottomSheet) is currently the top route.
+  static bool get isAnyBottomSheetOpen => _bottomSheetCount > 0;
+
+  /// Closes the bottom sheet if one is open at the top of the stack.
+  static void closeBottomSheetIfOpen() {
+    if (_bottomSheetCount > 0) {
+      IsmLiveRoute.pop();
+    }
   }
 
   static Future<TimeOfDay> pickTime({
@@ -261,7 +284,8 @@ class IsmLiveUtility {
               (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: context.liveTheme?.backgroundColor ?? Theme.of(context).colorScheme.surface,
+              color: context.liveTheme?.backgroundColor ??
+                  Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
             ),
             child: Padding(

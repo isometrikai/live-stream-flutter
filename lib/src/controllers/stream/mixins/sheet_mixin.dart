@@ -129,13 +129,13 @@ mixin StreamSheetMixin {
             await _controller.room!.disconnect();
 
             await _controller.connectStream(
-              token: token,
-              streamId: _controller.streamId ?? '',
-              isHost: false,
-              isNewStream: false,
-              isCopublisher: true,
-              context: context,
-            );
+                token: token,
+                streamId: _controller.streamId ?? '',
+                isHost: false,
+                isNewStream: false,
+                isCopublisher: true,
+                context: context,
+                reJoin: true);
 
             await _controller.sortParticipants();
           }

@@ -110,8 +110,10 @@ class IsmLivePkRepository {
 
   Future<IsmLiveResponseModel> pkEnd({
     required String inviteId,
+    required bool intentToStop,
   }) async =>
       await _api.pkEnd(
         inviteId: inviteId,
+        intentToStop: intentToStop,
       );
 }
