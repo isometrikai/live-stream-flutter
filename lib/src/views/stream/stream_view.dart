@@ -220,7 +220,7 @@ class IsmLiveStreamView extends StatelessWidget {
                         isHost: false,
                         isNewStream: false,
                         isInteractive: isInteractive,
-                        isSchedule: isSchedule,
+                        isSchedule: stream.isScheduledStream ?? isSchedule,
                       );
                     },
                   ),
