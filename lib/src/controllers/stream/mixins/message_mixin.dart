@@ -92,14 +92,88 @@ mixin StreamMessageMixin {
       case IsmLiveMessageType.pkStart:
         _pkController.pkStartEvent(payload ?? {});
         break;
-      case IsmLiveMessageType.pkAccepted:
-        IsmLiveLog.success('Pk Accpected Message');
+      case IsmLiveMessageType.changeStream:
+        await _changeStream(processedMessage);
         break;
       case IsmLiveMessageType.pkStop:
         _pkController.pkStopEvent(payload ?? {}, true);
         break;
       case IsmLiveMessageType.gift3D:
         break;
+    }
+  }
+
+  Future<void> _changeStream(IsmLiveMessageModel processedMessage) async {
+    IsmLiveLog.info('Change Stream Message');
+    IsmLiveLog.info(
+        'Change Stream action ${processedMessage.metaData?.rawJson?['action']}');
+    if (processedMessage.metaData?.rawJson?['action'] == 'ACCEPT_PK' &&
+        (_controller.userRole?.isHost == true)) return;
+
+    var oldStreamId = _controller.streamId ?? '';
+    var newStreamId = processedMessage.metaData?.rawJson?['streamId'] ?? '';
+    if (processedMessage.metaData?.rawJson?['intentToStop'] == true) {
+      IsmLiveLog.info('Intent to stop stream');
+      IsmLiveUtility.showCustomDialog(const IsmLiveStreamEndDialog());
+      // call stop brodcast ignore
+    }
+
+    if (processedMessage.metaData?.rawJson?['action'] == 'END') {
+      IsmLiveLog.info('PK END');
+    }
+
+    if (_controller.userRole?.isHost == true ||
+        _controller.userRole?.isPkGuest == true) {
+      if (_controller.userRole?.isPkGuest == true) {
+        // Co-publisher needs to disconnect and rejoin the appropriate stream
+        IsmLiveLog.info(
+            'Change Stream: This user PK Guest, first need to disconnect from stream $oldStreamId \n then join on original-streamId $newStreamId');
+
+        await _controller.disconnectStream(
+            isHost: _controller.userRole?.isHost ?? false,
+            streamId: oldStreamId);
+
+        final matching =
+            _controller.streams.where((e) => e.streamId == newStreamId);
+        if (matching.isNotEmpty && _controller.storedToken != null) {
+          final stream = matching.first;
+          await _controller.connectStream(
+            token: _controller.storedToken ?? '',
+            streamId: stream.streamId!,
+            streamImage: stream.streamImage,
+            isHost: true,
+            isNewStream: true,
+            hdBroadcast: stream.hdBroadcast ?? false,
+            restream: stream.restream ?? false,
+            context: Get.context!,
+          );
+        } else {
+          IsmLiveLog.error(
+              'Stream not found for streamId: $newStreamId or token not found');
+        }
+      }
+    } else {
+      IsmLiveLog.info(
+          'Change Stream: This user viewer, first need to disconnect from stream $oldStreamId \n then join on original-streamId $newStreamId');
+
+      await _controller.disconnectStream(
+          isHost: _controller.userRole?.isHost ?? false,
+          streamId: oldStreamId,
+          goBack: false);
+
+      final matching =
+          _controller.streams.where((e) => e.streamId == newStreamId);
+      if (matching.isNotEmpty) {
+        final stream = matching.first;
+        await _controller.initializeAndJoinStream(
+          stream,
+          false,
+          context: Get.context!,
+          reJoin: true,
+        );
+      } else {
+        IsmLiveLog.error('Stream not found for streamId: $newStreamId');
+      }
     }
   }
 

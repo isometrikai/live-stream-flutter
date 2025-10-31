@@ -578,12 +578,13 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamMembersList
                 .removeWhere((e) => e.userId == memberId);
-            await Future.delayed(const Duration(milliseconds: 300));
-            _updateStream([IsmLiveMembersSheet.updateId]);
             if (userId != initiatorId && userId == memberId) {
-              _disconnectRoom();
+              await _streamController.disconnectRoom();
               IsmLiveRoute.pop();
             }
+            await Future.delayed(const Duration(milliseconds: 300));
+            _updateStream();
+
             // if (memberId == userId) {
             //   unawaited(_streamController.unpublishTracks());
             // }

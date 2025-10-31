@@ -366,12 +366,12 @@ class IsmLivePkController extends GetxController
           stopPkBattle(action: 'FORCE_STOP', pkId: pkId ?? '');
         } else {
           if (streamController.userRole?.isHost ?? false) {
-            pkEnd(intentToStop: false);
             streamController.removeMember(
               streamId: streamController.streamId ?? '',
               memberId:
                   streamController.participantTracks[1].participant.identity,
             );
+            pkEnd(intentToStop: false);
           } else {
             await pkEnd(intentToStop: false);
             await streamController.disconnectRoom();

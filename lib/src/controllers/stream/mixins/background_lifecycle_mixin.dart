@@ -36,6 +36,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   bool get isInBackground => _isInBackground.value;
   bool get isStreamActive => _isStreamActive.value;
   bool get isHost => _isHost.value;
+  String? get storedToken => _storedToken;
 
   // Get the controller instance
   IsmLiveStreamController get _controller => this as IsmLiveStreamController;

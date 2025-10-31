@@ -287,9 +287,8 @@ enum IsmLiveStreamOption {
 
   static List<IsmLiveStreamOption> get scheduleOptions => [
         IsmLiveStreamOption.share,
-      if (IsmLiveDelegate.productStream == true) IsmLiveStreamOption.product,
+        if (IsmLiveDelegate.productStream == true) IsmLiveStreamOption.product,
         IsmLiveStreamOption.scheduleModify,
-
       ];
 
   ///host options
@@ -385,7 +384,7 @@ enum IsmLiveMessageType {
   gift3D(10),
   remove(1),
   pkStart(23),
-  pkAccepted(21),
+  changeStream(21),
   pk(20),
   pkStop(22),
   presence(4);
@@ -399,7 +398,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.remove.value: IsmLiveMessageType.remove,
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
-        IsmLiveMessageType.pkAccepted.value: IsmLiveMessageType.pkAccepted,
+        IsmLiveMessageType.changeStream.value: IsmLiveMessageType.changeStream,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
         IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
       }[data] ??
