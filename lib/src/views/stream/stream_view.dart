@@ -247,6 +247,19 @@ class _IsmLiveStreamView extends StatelessWidget {
   final bool isInteractive;
   final bool isSchedule;
 
+  /// Validates if streamId is valid
+  /// Returns true if streamId is valid (not empty, not null, and doesn't start with '00000')
+  /// Returns false otherwise
+  static bool isValidStreamId(String? streamId) {
+    if (streamId == null || streamId.isEmpty) {
+      return false;
+    }
+    if (streamId.startsWith('00000')) {
+      return false;
+    }
+    return true;
+  }
+
   /// Builds two arrow buttons for hosts with customizable size
   Widget _buildHostArrowButtons(BuildContext context, {double? size}) =>
       GetBuilder<IsmLiveStreamController>(
@@ -525,6 +538,11 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                             '',
                                                     isHost:
                                                         controller.isPublishing,
+                                                    disabled:
+                                                        !_IsmLiveStreamView
+                                                            .isValidStreamId(
+                                                                controller
+                                                                    .streamId),
                                                   ),
                                                 ) ??
                                                 IsmLiveMessageField(
@@ -532,6 +550,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                       controller.streamId ?? '',
                                                   isHost:
                                                       controller.isPublishing,
+                                                  disabled: !_IsmLiveStreamView
+                                                      .isValidStreamId(
+                                                          controller.streamId),
                                                 ),
                                           ),
                                           if (IsmLiveDelegate.productStream ==
@@ -1038,6 +1059,9 @@ class ScheduleStreamView extends StatelessWidget {
                                   IsmLiveMessageField(
                                     streamId: controller.streamId ?? '',
                                     isHost: controller.isPublishing,
+                                    disabled:
+                                        !_IsmLiveStreamView.isValidStreamId(
+                                            controller.streamId),
                                   ),
                                 ) ??
                                 IsmLiveMessageField(
@@ -1049,6 +1073,8 @@ class ScheduleStreamView extends StatelessWidget {
                                     return streamId;
                                   }(),
                                   isHost: controller.isPublishing,
+                                  disabled: !_IsmLiveStreamView.isValidStreamId(
+                                      controller.streamDetails?.streamId),
                                 ),
                           ],
                         ),

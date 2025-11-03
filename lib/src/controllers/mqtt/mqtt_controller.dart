@@ -661,34 +661,35 @@ class IsmLiveMqttController extends GetxController {
           }
           break;
         case IsmLiveActions.moderatorAdded:
-          final moderatorId = payload['moderatorId'] as String? ?? '';
-          final moderatorName = payload['moderatorName'] as String? ?? '';
-          final moderatorIdentifier =
-              payload['moderatorIdentifier'] as String? ?? '';
-          final moderatorProfilePic =
-              payload['moderatorProfilePic'] as String? ?? '';
-          final message = IsmLiveMessageModel(
-            streamId: streamId!,
-            senderName: moderatorName,
-            senderIdentifier: moderatorIdentifier,
-            senderProfileImageUrl: moderatorProfilePic,
-            senderId: moderatorId,
-            messageType: IsmLiveMessageType.normal,
-            messageId: '',
-            body: '$moderatorName is a moderator now',
-            isEvent: true,
-          );
-
-          unawaited(_streamController.handleMessage(message: message));
-          if (userId == moderatorId) {
-            final hostName = payload['initiatorName'];
-            IsmLiveUtility.showCustomDialog(
-              IsmLiveModeratorDialog(
-                hostName: hostName,
-                streamId: streamId,
-              ),
-              isDismissible: false,
+          if (_streamController.streamId == streamId) {
+            final moderatorId = payload['moderatorId'] as String? ?? '';
+            final moderatorName = payload['moderatorName'] as String? ?? '';
+            final moderatorIdentifier =
+                payload['moderatorIdentifier'] as String? ?? '';
+            final moderatorProfilePic =
+                payload['moderatorProfilePic'] as String? ?? '';
+            final message = IsmLiveMessageModel(
+              streamId: streamId!,
+              senderName: moderatorName,
+              senderIdentifier: moderatorIdentifier,
+              senderProfileImageUrl: moderatorProfilePic,
+              senderId: moderatorId,
+              messageType: IsmLiveMessageType.normal,
+              messageId: '',
+              body: '$moderatorName is a moderator now',
+              isEvent: true,
             );
+            unawaited(_streamController.handleMessage(message: message));
+            if (userId == moderatorId) {
+              final hostName = payload['initiatorName'];
+              IsmLiveUtility.showCustomDialog(
+                IsmLiveModeratorDialog(
+                  hostName: hostName,
+                  streamId: streamId,
+                ),
+                isDismissible: false,
+              );
+            }
           }
           break;
         case IsmLiveActions.moderatorLeft:
