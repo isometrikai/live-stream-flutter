@@ -6,11 +6,13 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class IsmLiveStreamListing extends StatefulWidget {
-  const IsmLiveStreamListing({super.key});
+  const IsmLiveStreamListing({super.key, this.showBackArrow = false});
 
   static const String updateId = 'ismlive-stream-view';
 
   static const String route = IsmLiveRoutes.streamListing;
+
+  final bool showBackArrow;
 
   @override
   State<IsmLiveStreamListing> createState() => _IsmLiveStreamListingState();
@@ -33,7 +35,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   Widget build(BuildContext context) =>
       IsmLiveDelegate.homeScreen ??
       Scaffold(
-        appBar: const IsmLiveAppbar(),
+        appBar: IsmLiveAppbar(showBackArrow: widget.showBackArrow),
         floatingActionButton: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
