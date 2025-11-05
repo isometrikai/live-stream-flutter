@@ -39,7 +39,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
         floatingActionButton: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const IsmLiveCreateStreamFAB(),
+            const IsmLiveCreateStream(),
             IsmLiveDimens.boxWidth10,
             const IsmLiveStreamingScrolling(),
           ],
