@@ -180,6 +180,7 @@ mixin StreamAPIMixin {
                 .toList(),
             hdBroadcast: _controller.isHdBroadcast,
             enableRecording: _controller.isRecordingBroadcast,
+            audioOnly: _controller.isAudioOnly,
             streamDescription: _controller.descriptionController.isEmpty
                 ? 'N/A'
                 : _controller.descriptionController.text,

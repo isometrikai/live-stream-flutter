@@ -124,6 +124,10 @@ class IsmGoLiveView extends StatelessWidget {
                       ),
                     );
                   }
+                  // For audio-only mode, don't show camera preview
+                  if (controller.isAudioOnly) {
+                    return const SizedBox.shrink();
+                  }
                   if (controller.cameraController == null) {
                     return const SizedBox();
                   }

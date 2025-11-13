@@ -9,8 +9,15 @@ mixin StreamJoinMixin {
   // Check if Go Live is enabled by checking if the description controller is not empty
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
 
-// Initialize the Go Live process by requesting camera permission and initializing the camera controller
+// Initialize the Go Live process; for audio-only skip camera and request mic
   Future<void> initializationOfGoLive() async {
+    if (_controller.isAudioOnly) {
+      await Permission.microphone.request();
+      _controller.cameraController = null;
+      _controller.cameraFuture = Future.value();
+      _controller.update([IsmGoLiveView.updateId]);
+      return;
+    }
     await Permission.camera.request();
     _controller.cameraController = CameraController(
       IsmLiveUtility.cameras[1],
@@ -93,40 +100,46 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('cameraController dispose before WebRTC error: $e');
       }
 
-      lk.VideoParameters? videoFilter;
-      if (_controller.isRestreamBroadcast) {
-        videoFilter = const lk.VideoParameters(
-          dimensions: lk.VideoDimensions(480, 640),
-          encoding: lk.VideoEncoding(
-            maxFramerate: 30,
-            maxBitrate: 2500000,
+      // Audio-only path: publish mic only
+      if (_controller.isAudioOnly) {
+        final localAudio = await lk.LocalAudioTrack.create();
+        await _controller.room!.localParticipant!.publishAudioTrack(localAudio);
+      } else {
+        lk.VideoParameters? videoFilter;
+        if (_controller.isRestreamBroadcast) {
+          videoFilter = const lk.VideoParameters(
+            dimensions: lk.VideoDimensions(480, 640),
+            encoding: lk.VideoEncoding(
+              maxFramerate: 30,
+              maxBitrate: 2500000,
+            ),
+          );
+        }
+
+        // Resolve initial camera position for manual track creation as well
+        final resolvedCameraPosition =
+            (IsmLiveDelegate.initialCameraPositionStream ==
+                    IsmLiveCameraPosition.front)
+                ? lk.CameraPosition.front
+                : lk.CameraPosition.back;
+
+        final tracks = await Future.wait([
+          lk.LocalVideoTrack.createCameraTrack(
+            lk.CameraCaptureOptions(
+              cameraPosition: resolvedCameraPosition,
+              params: videoFilter ?? lk.VideoParametersPresets.h720_169,
+            ),
           ),
-        );
+          lk.LocalAudioTrack.create(),
+        ]);
+        var localVideo = tracks[0] as lk.LocalVideoTrack;
+        var localAudio = tracks[1] as lk.LocalAudioTrack;
+
+        await Future.wait<dynamic>([
+          _controller.room!.localParticipant!.publishVideoTrack(localVideo),
+          _controller.room!.localParticipant!.publishAudioTrack(localAudio),
+        ]);
       }
-
-      // Resolve initial camera position for manual track creation as well
-      final resolvedCameraPosition =
-          (IsmLiveDelegate.initialCameraPositionStream ==
-                  IsmLiveCameraPosition.front)
-              ? lk.CameraPosition.front
-              : lk.CameraPosition.back;
-
-      final tracks = await Future.wait([
-        lk.LocalVideoTrack.createCameraTrack(
-          lk.CameraCaptureOptions(
-            cameraPosition: resolvedCameraPosition,
-            params: videoFilter ?? lk.VideoParametersPresets.h720_169,
-          ),
-        ),
-        lk.LocalAudioTrack.create(),
-      ]);
-      var localVideo = tracks[0] as lk.LocalVideoTrack;
-      var localAudio = tracks[1] as lk.LocalAudioTrack;
-
-      await Future.wait<dynamic>([
-        _controller.room!.localParticipant!.publishVideoTrack(localVideo),
-        _controller.room!.localParticipant!.publishAudioTrack(localAudio),
-      ]);
     } catch (e) {
       IsmLiveLog.error('enableMyVideo error: $e');
       // Don't rethrow - let the stream continue without video/audio if needed
@@ -210,6 +223,7 @@ mixin StreamJoinMixin {
 
     _controller.isRtmp = stream.rtmpIngest ?? false;
     _controller.isPremium = stream.isPaid ?? false;
+    _controller.isAudioOnly = stream.audioOnly ?? false;
 
     if (_controller.isPremium) {
       _controller.premiumStreamCoinsController.text = stream.amount.toString();
@@ -529,18 +543,30 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('Track subscription permissions error: $e');
       }
 
-      // Enable video if the user is a host or copublisher
+      // Enable video/audio if the user is a host or copublisher
       if (!_controller.isRtmp) {
         try {
-          if (isHost || isCopublisher || isPkGust) {
-            await enableMyVideo();
+          if (_controller.isAudioOnly) {
+            // For audio-only: only enable audio, no video
+            unawaited(
+              _controller.toggleAudio(
+                value: isHost || isCopublisher,
+              ),
+            );
+            // LiveKit automatically subscribes to audio tracks for playback
+            // No manual subscription needed for viewers
+          } else {
+            // Normal video stream flow
+            if (isHost || isCopublisher || isPkGust) {
+              await enableMyVideo();
+            }
+            // Toggle audio if the user is a host or copublisher
+            unawaited(
+              _controller.toggleAudio(
+                value: isHost || isCopublisher,
+              ),
+            );
           }
-          // Toggle audio if the user is a host or copublisher
-          unawaited(
-            _controller.toggleAudio(
-              value: isHost || isCopublisher,
-            ),
-          );
         } catch (e) {
           IsmLiveLog.error('Video/Audio enable error: $e');
         }

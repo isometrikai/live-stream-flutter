@@ -128,13 +128,13 @@ enum IsmLiveMeetingType {
 enum IsmLiveStreamType {
   all(0, IsmLiveStrings.all),
   scheduledStreams(1, IsmLiveStrings.scheduled),
-  // audioOnly(1, IsmLiveStrings.audioOnly),
   pk(2, IsmLiveStrings.pk),
   // private(3, IsmLiveStrings.private),
   // ecommerce(4, IsmLiveStrings.ecommerce),
   restream(5, IsmLiveStrings.reStream),
   hd(6, IsmLiveStrings.hd),
-  recorded(7, IsmLiveStrings.recorded);
+  recorded(7, IsmLiveStrings.recorded),
+  audioOnly(8, IsmLiveStrings.audioOnly);
   // multilive(8, IsmLiveStrings.multiLive);
 
   const IsmLiveStreamType(this.value, this.label);
@@ -576,7 +576,8 @@ enum IsmLiveRestreamType {
 
 enum IsmGoLiveTabItem {
   defaultLive('Single/Multi Guest Live'),
-  liveFromDevice('Live From Device');
+  liveFromDevice('Live From Device'),
+  audioLive('Audio Live');
 
   const IsmGoLiveTabItem(this.label);
   final String label;

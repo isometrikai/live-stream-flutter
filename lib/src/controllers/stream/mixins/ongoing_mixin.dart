@@ -155,6 +155,7 @@ mixin StreamOngoingMixin {
           //   _controller.userRole?.leaveCopublishing();
           // }
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
+          sortParticipants();
         })
         ..on<lk.RoomRecordingStatusChanged>((event) {})
         ..on<lk.LocalTrackPublishedEvent>((_) => sortParticipants())
@@ -168,6 +169,10 @@ mixin StreamOngoingMixin {
         })
         ..on<lk.DataReceivedEvent>((event) {
           IsmLiveLog.info('DataReceivedEvent: ${event.topic} $event');
+        })
+        ..on<lk.ActiveSpeakersChangedEvent>((event) {
+          // Trigger UI updates for visualizers when active speakers change
+          _controller.update([IsmLivePublisherGrid.updateId]);
         })
         ..on<lk.AudioPlaybackStatusChanged>((event) async {
           IsmLiveLog.info('DataReceivedEvent: ${event.isPlaying} $event');
@@ -194,29 +199,55 @@ mixin StreamOngoingMixin {
     }
     var userMediaTracks = <IsmLiveParticipantTrack>[];
 
-    final localParticipantTracks =
-        room.localParticipant?.videoTrackPublications;
-    if (localParticipantTracks != null) {
-      for (var t in localParticipantTracks) {
+    // For audio-only streams, include all participants regardless of current track state
+    if (_controller.isAudioOnly) {
+      // Always add local participant
+      if (room.localParticipant != null) {
         userMediaTracks.add(
           IsmLiveParticipantTrack(
             participant: room.localParticipant!,
-            videoTrack: t.track,
-            isScreenShare: t.isScreenShare,
+            videoTrack: null,
+            isScreenShare: false,
           ),
         );
       }
-    }
 
-    for (var participant in room.remoteParticipants.values) {
-      for (var t in participant.videoTrackPublications) {
+      // Add all remote participants
+      for (var participant in room.remoteParticipants.values) {
         userMediaTracks.add(
           IsmLiveParticipantTrack(
             participant: participant,
-            videoTrack: t.track,
-            isScreenShare: t.isScreenShare,
+            videoTrack: null,
+            isScreenShare: false,
           ),
         );
+      }
+    } else {
+      // Original logic for video streams
+      final localParticipantTracks =
+          room.localParticipant?.videoTrackPublications;
+      if (localParticipantTracks != null) {
+        for (var t in localParticipantTracks) {
+          userMediaTracks.add(
+            IsmLiveParticipantTrack(
+              participant: room.localParticipant!,
+              videoTrack: t.track,
+              isScreenShare: t.isScreenShare,
+            ),
+          );
+        }
+      }
+
+      for (var participant in room.remoteParticipants.values) {
+        for (var t in participant.videoTrackPublications) {
+          userMediaTracks.add(
+            IsmLiveParticipantTrack(
+              participant: participant,
+              videoTrack: t.track,
+              isScreenShare: t.isScreenShare,
+            ),
+          );
+        }
       }
     }
 

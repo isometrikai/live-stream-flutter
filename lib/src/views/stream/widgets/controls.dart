@@ -118,6 +118,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
           if (isSchedule) {
             options = IsmLiveStreamOption.scheduleOptions;
           }
+          // Hide video-specific controls in audio-only mode
+          if (controller.isAudioOnly) {
+            options = options
+                .where((e) => e != IsmLiveStreamOption.rotateCamera)
+                .toList();
+          }
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,

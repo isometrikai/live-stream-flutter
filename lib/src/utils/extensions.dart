@@ -55,8 +55,8 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
     switch (this) {
       case IsmLiveStreamType.all:
         return model.copyWith(fetchLive: true);
-      // case IsmLiveStreamType.audioOnly:
-      //   return model.copyWith(audioOnly: true);
+      case IsmLiveStreamType.audioOnly:
+        return model.copyWith(audioOnly: true);
       // case IsmLiveStreamType.multilive:
       //   return model.copyWith(multiLive: true);
       // case IsmLiveStreamType.private:

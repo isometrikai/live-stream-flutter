@@ -1,4 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/widgets/audio_only_participant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,6 +23,78 @@ class IsmLivePublisherGrid extends StatelessWidget {
         builder: (controller) => Obx(
           () {
             print('participantTracks ${controller.participantTracks.length}');
+            if (controller.isAudioOnly) {
+              if (controller.participantTracks.isNotEmpty) {
+                return IsmLiveAudioOnlyGrid(
+                  participantTracks: controller.participantTracks,
+                  streamMembersList: controller.streamMembersList,
+                  onParticipantTap: (participant, displayName) {
+                    if (!(controller.isHost)) return;
+                    IsmLiveUtility.openBottomSheet(
+                      Padding(
+                        padding: IsmLiveDimens.edgeInsets16,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              displayName,
+                              style: IsmLiveStyles.whiteBold16,
+                              textAlign: TextAlign.center,
+                            ),
+                            IsmLiveDimens.boxHeight16,
+                            IsmLiveButton(
+                              label: 'Mute/Unmute',
+                              onTap: () async {
+                                await controller.toggleRemoteParticipantAudio(
+                                    participant, true);
+                                IsmLiveRoute.pop();
+                              },
+                            ),
+                            IsmLiveDimens.boxHeight8,
+                            IsmLiveButton(
+                              label: 'Remove',
+                              onTap: () {
+                                controller.kickoutViewer(
+                                  streamId: controller.streamId ?? '',
+                                  viewerId: participant.identity,
+                                );
+                                IsmLiveRoute.pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      isScrollController: true,
+                    );
+                  },
+                );
+              } else {
+                // Fallback: show host avatar when no participants yet
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IsmLiveImage.network(
+                        IsmLiveDelegate.getUserProfileUrl?.call(
+                                controller.hostDetails?.image ?? streamImage) ??
+                            controller.hostDetails?.image ??
+                            streamImage,
+                        name: controller.hostDetails?.name ?? 'U',
+                        isProfileImage: true,
+                        height: 120,
+                        width: 120,
+                      ),
+                      IsmLiveDimens.boxHeight16,
+                      Text(
+                        controller.hostDetails?.name ?? 'U',
+                        style: IsmLiveStyles.whiteBold16,
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }
             if (controller.isRtmp) {
               return controller.participantTracks.isNotEmpty
                   ? const _RtmlView()

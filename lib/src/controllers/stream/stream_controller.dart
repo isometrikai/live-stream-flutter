@@ -91,6 +91,8 @@ class IsmLiveStreamController extends GetxController
 
   bool isSchedulingBroadcast = false;
 
+  bool isAudioOnly = false;
+
   bool restreamFacebook = false;
   bool restreamYoutube = false;
   bool restreamInstagram = false;
@@ -581,6 +583,11 @@ class IsmLiveStreamController extends GetxController
     update([IsmGoLiveView.updateId]);
   }
 
+  void onChangeAudioOnly(bool value) {
+    isAudioOnly = value;
+    update([IsmGoLiveView.updateId]);
+  }
+
   /// Determines if the Go Live button should be enabled
   /// Based on validation rules like description input, etc.
   bool get isGoLiveButtonEnabled {
@@ -811,6 +818,7 @@ class IsmLiveStreamController extends GetxController
     restreamYoutube = false;
     restreamInstagram = false;
     scheduleLiveDate = DateTime.now();
+    isAudioOnly = false;
 
     // unawaited(_dbWrapper.deleteAllSecuredValues());
 
@@ -875,10 +883,17 @@ class IsmLiveStreamController extends GetxController
       if (room == null || room?.localParticipant == null) {
         return;
       }
-      await Future.wait([
-        room!.localParticipant!.setCameraEnabled(true),
-        room!.localParticipant!.setMicrophoneEnabled(true),
-      ]);
+      if (isAudioOnly) {
+        await Future.wait([
+          room!.localParticipant!.setCameraEnabled(false),
+          room!.localParticipant!.setMicrophoneEnabled(true),
+        ]);
+      } else {
+        await Future.wait([
+          room!.localParticipant!.setCameraEnabled(true),
+          room!.localParticipant!.setMicrophoneEnabled(true),
+        ]);
+      }
     } catch (e) {
       IsmLiveLog.error(e);
     }
@@ -917,6 +932,17 @@ class IsmLiveStreamController extends GetxController
       IsmLiveLog('could not restart track: $error');
       return;
     }
+  }
+
+  /// Locally mute/unmute a remote participant's audio by (un)subscribing
+  Future<void> toggleRemoteParticipantAudio(
+      lk.Participant participant, bool mute) async {
+    IsmLiveLog.info(
+        'toggleRemoteParticipantAudio invoked for ${participant.identity} mute=$mute');
+    IsmLiveUtility.showMessage(
+      message: 'Global mic lock requires server/backend. Implementing UI only.',
+      type: IsmLiveSnackbarType.information,
+    );
   }
 
   Future<void> animateToPage(int index) async =>

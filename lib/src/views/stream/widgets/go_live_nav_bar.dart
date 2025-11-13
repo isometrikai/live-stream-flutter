@@ -69,6 +69,10 @@ class _GoLiveTabSelector extends StatelessWidget {
                         controller.onChangeRtmp(
                             controller.selectedGoLiveTabItem ==
                                 IsmGoLiveTabItem.liveFromDevice);
+                        // Set audio-only mode based on selected tab
+                        controller.onChangeAudioOnly(
+                            controller.selectedGoLiveTabItem ==
+                                IsmGoLiveTabItem.audioLive);
                         controller.onChangePersistent(false);
 
                         controller.update([IsmGoLiveView.updateId]);
