@@ -36,9 +36,15 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                 trailing: SizedBox(
                   width: IsmLiveDimens.oneHundredTwenty,
                   height: IsmLiveDimens.forty,
-                  child: const IsmLiveButton(
+                  child: IsmLiveButton(
                     label: 'Add Coins',
-                    onTap: IsmLiveRouteManagement.goToCoinsPlanWallet,
+                    onTap: () {
+                      if (IsmLiveDelegate.addCoinsClickCallback != null) {
+                        IsmLiveDelegate.addCoinsClickCallback!(context);
+                      } else {
+                        IsmLiveRouteManagement.goToCoinsPlanWallet();
+                      }
+                    },
                   ),
                 ),
                 subtitle: Row(
@@ -119,8 +125,14 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                                       'Balance is not sufficient to send gift\n Add coins to the wallet ',
                                   onPress: () {
                                     IsmLiveUtility.closeDialog();
-                                    IsmLiveRouteManagement
-                                        .goToCoinsPlanWallet();
+                                    if (IsmLiveDelegate.addCoinsClickCallback !=
+                                        null) {
+                                      IsmLiveDelegate
+                                          .addCoinsClickCallback!(context);
+                                    } else {
+                                      IsmLiveRouteManagement
+                                          .goToCoinsPlanWallet();
+                                    }
                                   });
                               return;
                             }

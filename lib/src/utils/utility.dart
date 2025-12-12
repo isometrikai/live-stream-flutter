@@ -328,14 +328,23 @@ class IsmLiveUtility {
 
   /// Close any open dialog.
   static void closeDialog() {
-    // No direct equivalent for Get.isDialogOpen, so just try to pop
-    IsmLiveRoute.pop<void>();
+    // Check if we can pop before attempting to pop
+    if (IsmLiveRoute.canPop()) {
+      IsmLiveRoute.pop<void>();
+    }
   }
 
   /// Close any open snackbar
   static void closeSnackbar() {
-    // No direct equivalent for Get.isSnackbarOpen, so just try to pop
-    IsmLiveRoute.pop<void>();
+    // Snackbars don't use routes, use ScaffoldMessenger instead
+    try {
+      final context = IsmLiveUtility.navigatorKey.currentContext;
+      if (context != null) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    } catch (e) {
+      // Ignore errors when hiding snackbar
+    }
   }
 
   /// Safely extract error message from response data
@@ -364,10 +373,26 @@ class IsmLiveUtility {
     IsmLiveSnackbarType type = IsmLiveSnackbarType.information,
     Function()? onTap,
     String? actionName,
+    bool closeDialogs = false,
   }) {
     if (message == null || message.isEmpty) return;
-    closeDialog();
-    closeSnackbar();
+
+    // Only close dialogs if explicitly requested (to avoid closing screens)
+    if (closeDialogs) {
+      try {
+        closeDialog();
+      } catch (e) {
+        // Ignore errors when closing dialog
+      }
+    }
+
+    // Hide any existing snackbar (safely - uses ScaffoldMessenger)
+    try {
+      closeSnackbar();
+    } catch (e) {
+      // Ignore errors when hiding snackbar
+    }
+
     var backgroundColor = Colors.black;
     switch (type) {
       case IsmLiveSnackbarType.error:
@@ -428,6 +453,7 @@ class IsmLiveUtility {
   }
 
   static List<CameraDescription> cameras = [];
+  static Future<List<CameraDescription>>? camerasInitializationFuture;
 
   /// Image Type List For Every Platform
   static List<String> imageTypeList = [

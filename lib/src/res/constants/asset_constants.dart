@@ -144,4 +144,6 @@ class IsmLiveAssetConstants {
   static const String delete = '$_icons/trash.svg';
   static const String edit = '$_icons/edit.svg';
   static const String more = '$_icons/options_icon.svg';
+  static const String takePhoto = '$_icons/take_photo.svg';
+  static const String chooseFromGallery = '$_icons/choose_from_gallery.svg';
 }

@@ -2,6 +2,7 @@ export 'analytics_bottom_sheet.dart';
 export 'chat_bottom_sheet.dart';
 export 'copublisher_request_sheet.dart';
 export 'copublisher_sheet.dart';
+export 'cover_photo_options_sheet.dart';
 export 'members_sheet.dart';
 export 'moderators_sheet.dart';
 export 'premium_stream_sheet.dart';

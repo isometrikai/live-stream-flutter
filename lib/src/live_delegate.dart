@@ -649,6 +649,25 @@ typedef PinItemCallback = void Function(
 /// - Custom business logic for purchase actions
 typedef BuyNowCallback = void Function();
 
+/// Callback for "Add Coins" button clicks
+///
+/// This callback is triggered when the user taps on the "Add Coins" button
+/// in the gifts sheet interface.
+///
+/// [context] - The BuildContext from the SDK UI.
+///
+/// This callback is called when the "Add Coins" button is tapped.
+/// Useful for implementing:
+/// - Custom navigation to coins/wallet screen
+/// - Integration with host app's payment system
+/// - Custom analytics tracking for add coins interactions
+/// - Custom UI state management
+/// - Custom business logic for add coins actions
+///
+/// If this callback is NOT provided, the SDK will use its default navigation
+/// to the coins plan wallet screen.
+typedef AddCoinsClickCallback = void Function(BuildContext context);
+
 /// Callback for stream listing refresh events.
 ///
 /// This callback is triggered when stream listing data needs to be refreshed
@@ -831,6 +850,8 @@ class IsmLiveDelegate {
   static StreamListingRefreshCallback? streamListingRefreshCallback;
 
   static OnStreamScrollCallback? onStreamScrollCallback;
+
+  static AddCoinsClickCallback? addCoinsClickCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
 

@@ -346,6 +346,63 @@ class _StreamTypes extends StatelessWidget {
 class _StreamImage extends StatelessWidget {
   const _StreamImage();
 
+  Future<void> _showCoverPhotoOptions(
+    BuildContext context,
+    IsmLiveStreamController controller,
+  ) async {
+    final result = await IsmLiveUtility.openBottomSheet<bool>(
+      IsmLiveCoverPhotoOptionsSheet(
+        onCameraTap: () async {
+          IsmLiveRoute.pop(true); // Pass true to indicate camera was selected
+        },
+        onGalleryTap: () async {
+          IsmLiveRoute.pop(
+              false); // Pass false to indicate gallery was selected
+        },
+      ),
+      backgroundColor: IsmLiveColors.white,
+    );
+
+    if (result != null) {
+      // Store the current camera controller state
+      final existingController = controller.cameraController;
+
+      // Dispose the background camera controller before opening camera screen
+      // to prevent conflicts
+      if (existingController != null &&
+          existingController.value.isInitialized) {
+        try {
+          await existingController.dispose();
+          controller.cameraController = null;
+          controller.cameraFuture = null;
+          controller.update([IsmGoLiveView.updateId]);
+        } catch (e) {
+          IsmLiveLog.error('Error disposing camera controller: $e');
+        }
+      }
+
+      XFile? file;
+      if (result) {
+        // Camera was selected
+        file = await FileManager.pickCameraImage();
+      } else {
+        // Gallery was selected
+        file = await FileManager.pickGalleryImage();
+      }
+
+      // Reinitialize the background camera preview after returning
+      if (file != null) {
+        controller.pickedImage = file;
+        controller.update([IsmGoLiveView.updateId]);
+      }
+
+      // Reinitialize the background camera preview
+      if (controller.cameraController == null) {
+        unawaited(controller.initializationOfGoLive());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
@@ -362,14 +419,7 @@ class _StreamImage extends StatelessWidget {
                   (controller.pickedImage == null ||
                       controller.pickedImage!.path.isNullOrEmpty)
               ? IsmLiveTapHandler(
-                  onTap: () async {
-                    var file = await FileManager.pickGalleryImage();
-                    unawaited(controller.initializationOfGoLive());
-                    if (file != null) {
-                      controller.pickedImage = file;
-                      controller.update([IsmGoLiveView.updateId]);
-                    }
-                  },
+                  onTap: () => _showCoverPhotoOptions(context, controller),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

@@ -226,6 +226,7 @@ class IsmLiveApp extends StatefulWidget {
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     StreamListingRefreshCallback? streamListingRefreshCallback,
     OnStreamScrollCallback? onStreamScrollCallback,
+    AddCoinsClickCallback? addCoinsClickCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     // New control customization options
@@ -307,6 +308,7 @@ class IsmLiveApp extends StatefulWidget {
         attentionDialogButtonCallback;
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
     IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
+    IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
     // Camera position preference for streams (suffix to avoid other camera screens)
     if (initialCameraPositionStream != null) {
@@ -358,12 +360,12 @@ class IsmLiveApp extends StatefulWidget {
 
   static Future<void> initializeAndJoinStream(
       {required IsmLiveStreamDataModel stream,
-        required bool isHost,
-        required BuildContext context,
-        bool isScrolling = false}) async {
+      required bool isHost,
+      required BuildContext context,
+      bool isScrolling = false}) async {
     assert(
-    _initialized,
-    'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
 
     if (!Get.isRegistered<IsmLiveStreamController>()) {
@@ -510,6 +512,9 @@ class IsmLiveApp extends StatefulWidget {
 
   static OnStreamScrollCallback? get onStreamScrollCallback =>
       IsmLiveDelegate.onStreamScrollCallback;
+
+  static AddCoinsClickCallback? get addCoinsClickCallback =>
+      IsmLiveDelegate.addCoinsClickCallback;
 
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {

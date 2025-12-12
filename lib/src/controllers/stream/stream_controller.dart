@@ -7,6 +7,7 @@ import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/bac
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 import 'package:permission_handler/permission_handler.dart';
@@ -600,25 +601,22 @@ class IsmLiveStreamController extends GetxController
   Future<void> handleGoLivePress(BuildContext context) async {
     final isScheduledStream = streamDetails?.isScheduledStream ?? false;
 
-    if (IsmLiveDelegate.onGoLiveClick != null) {
-      // Handle image scenario similar to join_mixin.dart logic
-      if (pickedImage == null &&
-          (streamDetails?.streamImage?.isEmpty ?? true)) {
-        // Try to take picture from camera first
-        final file = await cameraController?.takePicture();
-        if (file != null) {
-          pickedImage = file;
-          update([IsmGoLiveView.updateId]);
-        } else {
-          // If camera fails, pick from gallery
-          var file = await FileManager.pickGalleryImage();
-          if (file != null) {
-            pickedImage = file;
-            update([IsmGoLiveView.updateId]);
-          }
-        }
-      }
+    // Check if cover photo is selected - show toast immediately if not
+    if (pickedImage == null && (streamDetails?.streamImage?.isEmpty ?? true)) {
+      final toastContext = IsmLiveUtility.navigatorKey.currentContext;
 
+      Fluttertoast.showToast(
+        msg: IsmLiveStrings.pleaseSelectCoverPhoto,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: toastContext != null
+            ? toastContext.dynamicTextTheme.bodyMedium?.fontSize ?? 16.0
+            : 16.0,
+      );
+      return;
+    }
+
+    if (IsmLiveDelegate.onGoLiveClick != null) {
       // Create comprehensive data object with all user-entered details
       final goLiveData = IsmLiveGoLiveData(
         isScheduledStream: isScheduledStream,

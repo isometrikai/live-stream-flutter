@@ -36,8 +36,12 @@ class _CameraScreenViewState extends State<CameraScreenView> {
   }
 
   void startInit() async {
+    // Use front camera (index 1) if available, otherwise use back camera (index 0)
+    final cameraIndex = IsmLiveUtility.cameras.length > 1 ? 1 : 0;
+    isCameraFront = cameraIndex == 1;
+    
     cameraControllerback = CameraController(
-      IsmLiveUtility.cameras[0],
+      IsmLiveUtility.cameras[cameraIndex],
       ResolutionPreset.ultraHigh,
       imageFormatGroup: ImageFormatGroup.yuv420,
       enableAudio: true,
@@ -95,42 +99,44 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: IsmLiveDimens.edgeInsets16,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: IsmLiveRoute.pop,
-                      child: SvgPicture.asset(
-                        IsmLiveAssetConstants.backRounded,
-                      ),
-                    ),
-                    if (!isCameraFront)
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: IsmLiveDimens.edgeInsets16,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       InkWell(
-                        onTap: () async {
-                          await cameraControllerback.setFlashMode(
-                            flash ? FlashMode.off : FlashMode.torch,
-                          );
-                          flash = !flash;
-                          setState(() {});
-                        },
-                        child: Container(
-                          height: IsmLiveDimens.forty,
-                          width: IsmLiveDimens.forty,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: IsmLiveColors.white.withOpacity(.3),
-                          ),
-                          child: Icon(
-                            flash ? Icons.flash_on : Icons.flash_off,
-                            color: IsmLiveColors.white,
-                          ),
+                        onTap: IsmLiveRoute.pop,
+                        child: SvgPicture.asset(
+                          IsmLiveAssetConstants.backRounded,
                         ),
                       ),
-                  ],
+                      if (!isCameraFront)
+                        InkWell(
+                          onTap: () async {
+                            await cameraControllerback.setFlashMode(
+                              flash ? FlashMode.off : FlashMode.torch,
+                            );
+                            flash = !flash;
+                            setState(() {});
+                          },
+                          child: Container(
+                            height: IsmLiveDimens.forty,
+                            width: IsmLiveDimens.forty,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: IsmLiveColors.white.withOpacity(.3),
+                            ),
+                            child: Icon(
+                              flash ? Icons.flash_on : Icons.flash_off,
+                              color: IsmLiveColors.white,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

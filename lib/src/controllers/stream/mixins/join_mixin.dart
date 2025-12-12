@@ -11,13 +11,68 @@ mixin StreamJoinMixin {
 
 // Initialize the Go Live process by requesting camera permission and initializing the camera controller
   Future<void> initializationOfGoLive() async {
-    await Permission.camera.request();
-    _controller.cameraController = CameraController(
-      IsmLiveUtility.cameras[1],
-      ResolutionPreset.medium,
-    );
-    _controller.cameraFuture = _controller.cameraController!.initialize();
+    // Prevent multiple simultaneous initializations
+    if (_controller.cameraFuture != null) {
+      return;
+    }
+
+    // Set a placeholder future immediately to prevent multiple calls
+    _controller.cameraFuture = _initializeCameraAsync();
     _controller.update([IsmGoLiveView.updateId]);
+  }
+
+  Future<void> _initializeCameraAsync() async {
+    try {
+      // Request permission without blocking
+      final permissionStatus = await Permission.camera.request();
+
+      if (!permissionStatus.isGranted) {
+        IsmLiveLog.error('Camera permission not granted');
+        return;
+      }
+
+      // Wait for cameras to be available from IsmLiveHandler.initialize() if it's still initializing
+      if (IsmLiveUtility.camerasInitializationFuture != null) {
+        try {
+          await IsmLiveUtility.camerasInitializationFuture;
+        } catch (e) {
+          IsmLiveLog.error('Error waiting for camera initialization: $e');
+        }
+      }
+
+      // If still empty after waiting, try to get cameras directly (but only if not already initializing)
+      if (IsmLiveUtility.cameras.isEmpty &&
+          IsmLiveUtility.camerasInitializationFuture == null) {
+        try {
+          IsmLiveUtility.camerasInitializationFuture = availableCameras();
+          IsmLiveUtility.cameras =
+              await IsmLiveUtility.camerasInitializationFuture!;
+        } catch (e) {
+          IsmLiveLog.error('Failed to get available cameras: $e');
+          return;
+        }
+      }
+
+      // Check if we have at least one camera available
+      if (IsmLiveUtility.cameras.isEmpty) {
+        IsmLiveLog.error('No cameras available');
+        return;
+      }
+
+      // Use front camera (index 1) if available, otherwise use back camera (index 0)
+      final cameraIndex = IsmLiveUtility.cameras.length > 1 ? 1 : 0;
+
+      _controller.cameraController = CameraController(
+        IsmLiveUtility.cameras[cameraIndex],
+        ResolutionPreset.medium,
+      );
+      await _controller.cameraController!.initialize();
+      _controller.update([IsmGoLiveView.updateId]);
+    } catch (e) {
+      IsmLiveLog.error('Failed to initialize camera: $e');
+      _controller.cameraController?.dispose();
+      _controller.cameraController = null;
+    }
   }
 
 // Initialize and join a stream
@@ -252,6 +307,22 @@ mixin StreamJoinMixin {
       return;
     }
 
+    // Check if cover photo is selected - show toast immediately if not
+    if (_controller.pickedImage == null &&
+        (_controller.streamDetails?.streamImage?.isEmpty ?? true)) {
+      final toastContext = IsmLiveUtility.navigatorKey.currentContext;
+
+      Fluttertoast.showToast(
+        msg: IsmLiveStrings.pleaseSelectCoverPhoto,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        fontSize: toastContext != null
+            ? toastContext.dynamicTextTheme.bodyMedium?.fontSize ?? 16.0
+            : 16.0,
+      );
+      return;
+    }
+
     // Create a stream
     dynamic stream;
     final String? image;
@@ -264,19 +335,6 @@ mixin StreamJoinMixin {
       stream = res;
       image = _controller.streamDetails?.streamImage;
     } else {
-      if (_controller.pickedImage == null) {
-        final file = await _controller.cameraController?.takePicture();
-        if (file != null) {
-          _controller.pickedImage = file;
-          _controller.update([IsmGoLiveView.updateId]);
-        } else {
-          var file = await FileManager.pickGalleryImage();
-          if (file != null) {
-            _controller.pickedImage = file;
-            _controller.update([IsmGoLiveView.updateId]);
-          }
-        }
-      }
       var data = await _controller.createStream(context: context);
       if (data == null) {
         return;

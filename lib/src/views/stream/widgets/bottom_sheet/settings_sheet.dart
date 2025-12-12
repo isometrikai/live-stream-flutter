@@ -34,6 +34,7 @@ class IsmLiveSettingsSheet extends StatelessWidget {
                     controller.controlSetting(
                       IsmLiveHostSettings.values[index],
                     ),
+                    style: context.dynamicTextTheme.bodyMedium,
                   ),
                 ],
               ),

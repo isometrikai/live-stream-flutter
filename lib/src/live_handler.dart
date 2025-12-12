@@ -21,9 +21,14 @@ class IsmLiveHandler {
   static Future<void> initialize() async {
     Get.put(IsmLiveApiWrapper(Client()), permanent: true);
     Get.lazyPut(IsmLivePreferencesManager.new);
-    unawaited(availableCameras().then((value) {
-      IsmLiveUtility.cameras = value;
-    }));
+    
+    // Store the future to prevent multiple calls to availableCameras()
+    if (IsmLiveUtility.camerasInitializationFuture == null) {
+      IsmLiveUtility.camerasInitializationFuture = availableCameras();
+      unawaited(IsmLiveUtility.camerasInitializationFuture!.then((value) {
+        IsmLiveUtility.cameras = value;
+      }));
+    }
 
     debugPrint(
         'LiveStream: IsmLiveApiWrapper ??:  ${Get.find<IsmLiveApiWrapper>()}');
