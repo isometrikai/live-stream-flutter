@@ -22,42 +22,91 @@ class CameraScreenView extends StatefulWidget {
 }
 
 class _CameraScreenViewState extends State<CameraScreenView> {
-  late CameraController cameraControllerback;
+  CameraController? cameraControllerback;
   var isRecording = false;
   var flash = false;
   var isCameraFront = false;
   Timer? timer;
   var duration = const Duration();
+  var _isInitializing = false;
+  var _hasError = false;
 
   @override
   void initState() {
-    startInit();
     super.initState();
+    startInit();
   }
 
-  void startInit() async {
-    // Use front camera (index 1) if available, otherwise use back camera (index 0)
-    final cameraIndex = IsmLiveUtility.cameras.length > 1 ? 1 : 0;
-    isCameraFront = cameraIndex == 1;
-    
-    cameraControllerback = CameraController(
-      IsmLiveUtility.cameras[cameraIndex],
-      ResolutionPreset.ultraHigh,
-      imageFormatGroup: ImageFormatGroup.yuv420,
-      enableAudio: true,
-    );
-    await cameraControllerback.initialize();
-    flash = false;
-    await cameraControllerback.setFlashMode(FlashMode.off);
-    if (mounted) {
-      setState(() {});
+  Future<void> startInit() async {
+    if (_isInitializing || !mounted) return;
+
+    _isInitializing = true;
+    _hasError = false;
+
+    try {
+      // Wait for cameras to be initialized if they're still loading
+      if (IsmLiveUtility.camerasInitializationFuture != null) {
+        await IsmLiveUtility.camerasInitializationFuture;
+      }
+
+      // Check if cameras are available
+      if (IsmLiveUtility.cameras.isEmpty) {
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+            _isInitializing = false;
+          });
+        }
+        return;
+      }
+
+      // Use front camera (index 1) if available, otherwise use back camera (index 0)
+      final cameraIndex = IsmLiveUtility.cameras.length > 1 ? 1 : 0;
+      isCameraFront = cameraIndex == 1;
+
+      cameraControllerback = CameraController(
+        IsmLiveUtility.cameras[cameraIndex],
+        ResolutionPreset.ultraHigh,
+        imageFormatGroup: ImageFormatGroup.yuv420,
+        enableAudio: true,
+      );
+
+      await cameraControllerback!.initialize();
+      flash = false;
+      await cameraControllerback!.setFlashMode(FlashMode.off);
+
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+        });
+      }
+    } catch (e) {
+      IsmLiveLog.error('Failed to initialize camera: $e');
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isInitializing = false;
+        });
+      }
+      cameraControllerback?.dispose();
+      cameraControllerback = null;
     }
   }
 
   @override
   void dispose() {
-    cameraControllerback.dispose();
+    timer?.cancel();
+    _disposeCamera();
     super.dispose();
+  }
+
+  void _disposeCamera() {
+    if (cameraControllerback != null) {
+      if (cameraControllerback!.value.isInitialized) {
+        cameraControllerback!.dispose();
+      }
+      cameraControllerback = null;
+    }
   }
 
   void startTimer() async {
@@ -77,9 +126,37 @@ class _CameraScreenViewState extends State<CameraScreenView> {
           fit: StackFit.expand,
           children: [
             Center(
-              child: cameraControllerback.value.isInitialized
-                  ? CameraPreview(cameraControllerback)
-                  : const CircularProgressIndicator.adaptive(),
+              child: _hasError
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.white,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Failed to initialize camera',
+                          style: IsmLiveStyles.white12.copyWith(
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _hasError = false;
+                            });
+                            startInit();
+                          },
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    )
+                  : cameraControllerback?.value.isInitialized == true
+                      ? CameraPreview(cameraControllerback!)
+                      : const CircularProgressIndicator.adaptive(),
             ),
             Container(
               height: MediaQuery.of(context).size.height,
@@ -111,16 +188,32 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                         onTap: IsmLiveRoute.pop,
                         child: SvgPicture.asset(
                           IsmLiveAssetConstants.backRounded,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                         ),
                       ),
-                      if (!isCameraFront)
+                      if (!isCameraFront &&
+                          cameraControllerback?.value.isInitialized == true)
                         InkWell(
                           onTap: () async {
-                            await cameraControllerback.setFlashMode(
-                              flash ? FlashMode.off : FlashMode.torch,
-                            );
-                            flash = !flash;
-                            setState(() {});
+                            if (cameraControllerback?.value.isInitialized !=
+                                true) return;
+                            try {
+                              await cameraControllerback!.setFlashMode(
+                                flash ? FlashMode.off : FlashMode.torch,
+                              );
+                              if (mounted) {
+                                setState(() {
+                                  flash = !flash;
+                                });
+                              }
+                            } catch (e) {
+                              IsmLiveLog.error('Failed to toggle flash: $e');
+                            }
                           },
                           child: Container(
                             height: IsmLiveDimens.forty,
@@ -205,50 +298,109 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           },
                           child: SvgPicture.asset(
                             IsmLiveAssetConstants.galerryRoundedSvg,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.photo_library,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
                         ),
                         GestureDetector(
-                          onTap: widget.isPhotoRequired
-                              ? () async {
-                                  final picture =
-                                      await cameraControllerback.takePicture();
-                                  IsmLiveRoute.pop<XFile>(picture);
-                                }
-                              : () async {
-                                  if (isRecording) {
-                                    isRecording = false;
-                                    timer?.cancel();
-                                    setState(() {});
-                                    final recording = await cameraControllerback
-                                        .stopVideoRecording();
-                                    IsmLiveRoute.pop<XFile>(recording);
-                                  } else {
-                                    await cameraControllerback
-                                        .startVideoRecording();
-                                    isRecording = true;
-                                    startTimer();
-                                    setState(() {});
-                                  }
-                                },
+                          onTap: cameraControllerback?.value.isInitialized !=
+                                  true
+                              ? null
+                              : widget.isPhotoRequired
+                                  ? () async {
+                                      if (cameraControllerback
+                                              ?.value.isInitialized !=
+                                          true) return;
+                                      try {
+                                        final picture =
+                                            await cameraControllerback!
+                                                .takePicture();
+                                        if (mounted) {
+                                          IsmLiveRoute.pop<XFile>(picture);
+                                        }
+                                      } catch (e) {
+                                        IsmLiveLog.error(
+                                            'Failed to take picture: $e');
+                                      }
+                                    }
+                                  : () async {
+                                      if (cameraControllerback
+                                              ?.value.isInitialized !=
+                                          true) return;
+                                      try {
+                                        if (isRecording) {
+                                          isRecording = false;
+                                          timer?.cancel();
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                          final recording =
+                                              await cameraControllerback!
+                                                  .stopVideoRecording();
+                                          if (mounted) {
+                                            IsmLiveRoute.pop<XFile>(recording);
+                                          }
+                                        } else {
+                                          await cameraControllerback!
+                                              .startVideoRecording();
+                                          if (mounted) {
+                                            setState(() {
+                                              isRecording = true;
+                                            });
+                                            startTimer();
+                                          }
+                                        }
+                                      } catch (e) {
+                                        IsmLiveLog.error(
+                                            'Failed to record video: $e');
+                                        if (mounted) {
+                                          setState(() {
+                                            isRecording = false;
+                                          });
+                                        }
+                                        timer?.cancel();
+                                      }
+                                    },
                           onLongPressStart: (_) {
-                            if (widget.isOnlyImage) return;
-                            cameraControllerback.startVideoRecording().then(
+                            if (widget.isOnlyImage ||
+                                cameraControllerback?.value.isInitialized !=
+                                    true) return;
+                            cameraControllerback!.startVideoRecording().then(
                               (value) {
-                                isRecording = true;
-                                startTimer();
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {
+                                    isRecording = true;
+                                  });
+                                  startTimer();
+                                }
                               },
-                            );
+                            ).catchError((e) {
+                              IsmLiveLog.error(
+                                  'Failed to start video recording: $e');
+                            });
                           },
                           onLongPressEnd: (_) {
-                            if (widget.isOnlyImage) return;
+                            if (widget.isOnlyImage ||
+                                cameraControllerback?.value.isInitialized !=
+                                    true) return;
                             timer?.cancel();
-                            setState(() {});
-                            cameraControllerback.stopVideoRecording().then(
+                            if (mounted) {
+                              setState(() {});
+                            }
+                            cameraControllerback!.stopVideoRecording().then(
                               (value) {
-                                IsmLiveRoute.pop<XFile>(value);
+                                if (mounted) {
+                                  IsmLiveRoute.pop<XFile>(value);
+                                }
                               },
-                            );
+                            ).catchError((e) {
+                              IsmLiveLog.error(
+                                  'Failed to stop video recording: $e');
+                            });
                           },
                           child: Container(
                             padding: IsmLiveDimens.edgeInsets4,
@@ -276,17 +428,64 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                         ),
                         InkWell(
                           onTap: () async {
-                            var cameraPos = isCameraFront ? 0 : 1;
-                            isCameraFront = !isCameraFront;
-                            cameraControllerback = CameraController(
-                              IsmLiveUtility.cameras[cameraPos],
-                              ResolutionPreset.high,
-                            );
-                            await cameraControllerback.initialize();
-                            setState(() {});
+                            if (IsmLiveUtility.cameras.length < 2) return;
+                            if (_isInitializing) return;
+
+                            _isInitializing = true;
+
+                            try {
+                              // Stop any ongoing recording
+                              if (isRecording) {
+                                timer?.cancel();
+                                await cameraControllerback
+                                    ?.stopVideoRecording();
+                                isRecording = false;
+                              }
+
+                              // Dispose old controller
+                              _disposeCamera();
+
+                              // Switch camera
+                              final cameraPos = isCameraFront ? 0 : 1;
+                              isCameraFront = !isCameraFront;
+
+                              cameraControllerback = CameraController(
+                                IsmLiveUtility.cameras[cameraPos],
+                                ResolutionPreset.high,
+                                imageFormatGroup: ImageFormatGroup.yuv420,
+                                enableAudio: true,
+                              );
+
+                              await cameraControllerback!.initialize();
+                              flash = false;
+                              await cameraControllerback!
+                                  .setFlashMode(FlashMode.off);
+
+                              if (mounted) {
+                                setState(() {
+                                  _isInitializing = false;
+                                });
+                              }
+                            } catch (e) {
+                              IsmLiveLog.error('Failed to switch camera: $e');
+                              _disposeCamera();
+                              if (mounted) {
+                                setState(() {
+                                  _hasError = true;
+                                  _isInitializing = false;
+                                });
+                              }
+                            }
                           },
                           child: SvgPicture.asset(
-                              IsmLiveAssetConstants.switchCameraSvg),
+                            IsmLiveAssetConstants.switchCameraSvg,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.flip_camera_ios,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
                         ),
                       ],
                     ),

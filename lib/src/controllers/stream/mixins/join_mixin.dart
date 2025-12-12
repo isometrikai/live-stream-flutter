@@ -40,23 +40,44 @@ mixin StreamJoinMixin {
         }
       }
 
-      // If still empty after waiting, try to get cameras directly (but only if not already initializing)
-      if (IsmLiveUtility.cameras.isEmpty &&
-          IsmLiveUtility.camerasInitializationFuture == null) {
-        try {
-          IsmLiveUtility.camerasInitializationFuture = availableCameras();
-          IsmLiveUtility.cameras =
-              await IsmLiveUtility.camerasInitializationFuture!;
-        } catch (e) {
-          IsmLiveLog.error('Failed to get available cameras: $e');
+      // Retry logic: Sometimes camera needs a moment to be released
+      var retryCount = 0;
+      const maxRetries = 3;
+      const retryDelay = Duration(milliseconds: 300);
+
+      while (retryCount < maxRetries) {
+        // If still empty after waiting, try to get cameras directly (but only if not already initializing)
+        if (IsmLiveUtility.cameras.isEmpty &&
+            IsmLiveUtility.camerasInitializationFuture == null) {
+          try {
+            IsmLiveUtility.camerasInitializationFuture = availableCameras();
+            IsmLiveUtility.cameras =
+                await IsmLiveUtility.camerasInitializationFuture!;
+          } catch (e) {
+            IsmLiveLog.error('Failed to get available cameras: $e');
+            if (retryCount < maxRetries - 1) {
+              await Future.delayed(retryDelay);
+              retryCount++;
+              continue;
+            }
+            return;
+          }
+        }
+
+        // Check if we have at least one camera available
+        if (IsmLiveUtility.cameras.isNotEmpty) {
+          break;
+        }
+
+        if (retryCount < maxRetries - 1) {
+          IsmLiveLog.info(
+              'No cameras available, retrying... (${retryCount + 1}/$maxRetries)');
+          await Future.delayed(retryDelay);
+          retryCount++;
+        } else {
+          IsmLiveLog.error('No cameras available after $maxRetries retries');
           return;
         }
-      }
-
-      // Check if we have at least one camera available
-      if (IsmLiveUtility.cameras.isEmpty) {
-        IsmLiveLog.error('No cameras available');
-        return;
       }
 
       // Use front camera (index 1) if available, otherwise use back camera (index 0)
@@ -72,6 +93,7 @@ mixin StreamJoinMixin {
       IsmLiveLog.error('Failed to initialize camera: $e');
       _controller.cameraController?.dispose();
       _controller.cameraController = null;
+      _controller.cameraFuture = null;
     }
   }
 

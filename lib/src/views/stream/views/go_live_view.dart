@@ -376,6 +376,8 @@ class _StreamImage extends StatelessWidget {
           controller.cameraController = null;
           controller.cameraFuture = null;
           controller.update([IsmGoLiveView.updateId]);
+          // Wait a bit for camera to be fully released
+          await Future.delayed(const Duration(milliseconds: 300));
         } catch (e) {
           IsmLiveLog.error('Error disposing camera controller: $e');
         }
@@ -385,6 +387,9 @@ class _StreamImage extends StatelessWidget {
       if (result) {
         // Camera was selected
         file = await FileManager.pickCameraImage();
+        // Wait for camera_view.dart to fully release the camera before reinitializing
+        // This prevents "No cameras available" errors
+        await Future.delayed(const Duration(milliseconds: 500));
       } else {
         // Gallery was selected
         file = await FileManager.pickGalleryImage();
@@ -396,9 +401,14 @@ class _StreamImage extends StatelessWidget {
         controller.update([IsmGoLiveView.updateId]);
       }
 
-      // Reinitialize the background camera preview
-      if (controller.cameraController == null) {
-        unawaited(controller.initializationOfGoLive());
+      // Reinitialize the background camera preview only if controller is null
+      // and we're still on the go-live screen
+      if (controller.cameraController == null && context.mounted) {
+        // Wait a bit more to ensure camera is fully available
+        await Future.delayed(const Duration(milliseconds: 200));
+        if (context.mounted && controller.cameraController == null) {
+          unawaited(controller.initializationOfGoLive());
+        }
       }
     }
   }
