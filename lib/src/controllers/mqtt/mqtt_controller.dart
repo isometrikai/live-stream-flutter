@@ -668,6 +668,22 @@ class IsmLiveMqttController extends GetxController {
                 payload['moderatorIdentifier'] as String? ?? '';
             final moderatorProfilePic =
                 payload['moderatorProfilePic'] as String? ?? '';
+            final initiatorName = payload['initiatorName'] as String? ?? '';
+
+            // Add moderator to moderatorsList
+            final moderatorExists = _streamController.moderatorsList
+                .any((e) => e.userId == moderatorId);
+            if (!moderatorExists) {
+              _streamController.moderatorsList.add(
+                UserDetails(
+                  userId: moderatorId,
+                  userName: moderatorName,
+                  userIdentifier: moderatorIdentifier,
+                  userProfileImageUrl: moderatorProfilePic,
+                ),
+              );
+            }
+
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: moderatorName,
@@ -681,13 +697,15 @@ class IsmLiveMqttController extends GetxController {
             );
             unawaited(_streamController.handleMessage(message: message));
             if (userId == moderatorId) {
-              final hostName = payload['initiatorName'];
-              IsmLiveUtility.showCustomDialog(
-                IsmLiveModeratorDialog(
-                  hostName: hostName,
+              // Show bottom sheet instead of dialog
+              IsmLiveUtility.openBottomSheet(
+                IsmLiveModeratorBottomSheet(
+                  type: IsmLiveModeratorBottomSheetType.addedToModerator,
+                  moderatorName: moderatorName,
+                  initiatorName: initiatorName,
                   streamId: streamId,
                 ),
-                isDismissible: false,
+                isDismissible: true,
               );
             }
           }

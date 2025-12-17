@@ -4,6 +4,7 @@ export 'copublisher_request_sheet.dart';
 export 'copublisher_sheet.dart';
 export 'cover_photo_options_sheet.dart';
 export 'members_sheet.dart';
+export 'moderator_bottom_sheet.dart';
 export 'moderators_sheet.dart';
 export 'premium_stream_sheet.dart';
 export 'product_discount_sheet.dart';

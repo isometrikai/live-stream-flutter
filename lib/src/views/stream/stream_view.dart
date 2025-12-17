@@ -745,6 +745,56 @@ class _StreamHeader extends StatelessWidget {
                 controller.participantTracks.length == 2,
             isPaidStream: controller.isPremium,
             onTapModerators: () async {
+              // If user is a moderator (not host), show moderator status bottom sheet
+              if (controller.isModerator && !controller.isHost) {
+                IsmLiveUtility.openBottomSheet(
+                  IsmLiveModeratorBottomSheet(
+                    type: IsmLiveModeratorBottomSheetType.currentlyModerating,
+                    streamId: streamId,
+                  ),
+                  isDismissible: true,
+                );
+                return;
+              }
+
+              // If user is a host, show host moderator bottom sheet
+              if (controller.isHost) {
+                IsmLiveUtility.openBottomSheet(
+                  IsmLiveModeratorBottomSheet(
+                    type: IsmLiveModeratorBottomSheetType.hostModerating,
+                    streamId: streamId,
+                    onManageModerators: () async {
+                      // Check if host app wants to handle the moderators list tap
+                      final moderatorsCallback =
+                          IsmLiveDelegate.moderatorsListCallback;
+                      if (moderatorsCallback != null) {
+                        final handled = await moderatorsCallback(
+                          context,
+                          streamId,
+                          controller.isHost,
+                          controller.isModerator,
+                          controller.moderatorsList,
+                          controller.hostDetails,
+                        );
+
+                        // If host app handled the tap, don't show default moderators sheet
+                        if (handled) {
+                          return;
+                        }
+                      }
+
+                      // Default behavior: show moderators sheet
+                      IsmLiveUtility.openBottomSheet(
+                        const IsmLiveModeratorsSheet(),
+                        isScrollController: true,
+                      );
+                    },
+                  ),
+                  isDismissible: true,
+                );
+                return;
+              }
+
               // Check if host app wants to handle the moderators list tap
               final moderatorsCallback = IsmLiveDelegate.moderatorsListCallback;
               if (moderatorsCallback != null) {

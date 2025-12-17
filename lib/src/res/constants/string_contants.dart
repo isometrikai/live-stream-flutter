@@ -98,4 +98,17 @@ class IsmLiveStrings {
 
   static const String takePhoto = 'Take photo';
   static const String chooseFromGallery = 'Choose from gallery';
+
+  // Moderator bottom sheet strings
+  static const String addedToModeratorGroupTitle =
+      'Added to moderator\'s group of broadcast';
+  static const String addedToModeratorGroupDescription =
+      '@moderatorName has been added to the moderator\'s group of broadcast by @initiatorName. Being a moderator one can kick out members and viewers, reply-to and delete messages';
+  static const String currentlyModeratingTitle =
+      'You\'re currently moderating the broadcast';
+  static const String currentlyModeratingDescription =
+      'Being a moderator you can kickout members and viewers, reply to and delete messages.';
+  static const String gotIt = 'Got It';
+  static const String manageModerators = 'Manage Moderators';
+  static const String stopModerating = 'Stop Moderating';
 }
