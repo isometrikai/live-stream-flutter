@@ -93,13 +93,14 @@ class FileManager {
     var croppedFile = await ImageCropper().cropImage(
       sourcePath: sourcePath,
       compressQuality: 100,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1.5),
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Cropper',
           toolbarColor: IsmLiveColors.black,
           toolbarWidgetColor: IsmLiveColors.white,
           initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
+          lockAspectRatio: true,
           cropStyle: CropStyle.rectangle,
         ),
         IOSUiSettings(title: 'Cropper', cropStyle: CropStyle.rectangle)
