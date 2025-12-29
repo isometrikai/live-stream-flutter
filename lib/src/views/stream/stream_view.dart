@@ -746,14 +746,13 @@ class _StreamHeader extends StatelessWidget {
             isPaidStream: controller.isPremium,
             onTapModerators: () async {
               // If user is a moderator (not host), show moderator status bottom sheet
-              if (controller.isModerator && !controller.isHost || true) {
+              if (controller.isModerator && !controller.isHost) {
                 IsmLiveUtility.openBottomSheet(
                   IsmLiveModeratorBottomSheet(
                     type: IsmLiveModeratorBottomSheetType.currentlyModerating,
                     streamId: streamId,
                   ),
                   isDismissible: true,
-                  isScrollController: true,
                 );
                 return;
               }
