@@ -702,7 +702,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
                   child: Text(
                     message,
                     style: IsmLiveStyles.black16,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     maxLines: 8,
                     overflow: TextOverflow.ellipsis,
                   ),
