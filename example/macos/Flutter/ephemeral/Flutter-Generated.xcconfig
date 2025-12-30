@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/home/umer/snap/flutter/common/flutter
-FLUTTER_APPLICATION_PATH=/home/umer/Documents/live-stream-flutter/example
+FLUTTER_ROOT=/Users/appscripengineer/Documents/flutter
+FLUTTER_APPLICATION_PATH=/Users/appscripengineer/Documents/GitHub/projects/live-stream-flutter/example
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.2

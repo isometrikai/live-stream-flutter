@@ -23,7 +23,8 @@ class AgentDetailsModel {
     required this.isFirstTimeLogin,
   });
 
-  factory AgentDetailsModel.fromMap(Map<String, dynamic> map) => AgentDetailsModel(
+  factory AgentDetailsModel.fromMap(Map<String, dynamic> map) =>
+      AgentDetailsModel(
         clientName: map['clientName'] as String,
         userId: map['userId'] as String,
         keycloakUserId: map['keycloakUserId'] as String,
@@ -45,7 +46,8 @@ class AgentDetailsModel {
         isFirstTimeLogin: map['isFirstTimeLogin'] as bool,
       );
 
-  factory AgentDetailsModel.fromJson(String source) => AgentDetailsModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AgentDetailsModel.fromJson(String source) =>
+      AgentDetailsModel.fromMap(json.decode(source) as Map<String, dynamic>);
   final String clientName;
   final String userId;
   final String keycloakUserId;
@@ -208,7 +210,8 @@ class TokenModel {
         tokenType: map['token_type'] as String,
       );
 
-  factory TokenModel.fromJson(String source) => TokenModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory TokenModel.fromJson(String source) =>
+      TokenModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String accessToken;
   final num expiresIn;

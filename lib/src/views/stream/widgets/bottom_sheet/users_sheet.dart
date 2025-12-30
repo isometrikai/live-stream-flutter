@@ -36,27 +36,29 @@ class IsmLiveUsersSheet extends StatelessWidget {
             var notShowbotton = controller.checkCanMakeModerator(user.userId);
 
             return InkWell(
-              onTap: IsmLiveDelegate.restrictProfileSheetOnProfileClick ? null :() {
-                IsmLiveUtility.openBottomSheet(
-                  StreamLiveSheet(
-                    widget: IsmLiveImage.network(
-                      imageUrl,
-                      isProfileImage: true,
-                      name: user.userName,
-                      height: IsmLiveDimens.hundred,
-                      width: IsmLiveDimens.hundred,
-                    ),
-                    title: user.userName,
-                    subTitle: null,
-                    buttonLable: 'View Profile',
-                    onTap: () {
-                      IsmLiveDelegate.openUserProfileView
-                          ?.call(user.userIdentifier);
+              onTap: IsmLiveDelegate.restrictProfileSheetOnProfileClick
+                  ? null
+                  : () {
+                      IsmLiveUtility.openBottomSheet(
+                        StreamLiveSheet(
+                          widget: IsmLiveImage.network(
+                            imageUrl,
+                            isProfileImage: true,
+                            name: user.userName,
+                            height: IsmLiveDimens.hundred,
+                            width: IsmLiveDimens.hundred,
+                          ),
+                          title: user.userName,
+                          subTitle: null,
+                          buttonLable: 'View Profile',
+                          onTap: () {
+                            IsmLiveDelegate.openUserProfileView
+                                ?.call(user.userIdentifier);
+                          },
+                        ),
+                        isScrollController: true,
+                      );
                     },
-                  ),
-                  isScrollController: true,
-                );
-              },
               child: ListTile(
                 leading: IsmLiveImage.network(
                   imageUrl,

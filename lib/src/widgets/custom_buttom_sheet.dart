@@ -26,7 +26,7 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
           children: [
             IsmLiveDimens.boxHeight10,
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Text(
                 title,
                 style: context.textTheme.titleMedium,

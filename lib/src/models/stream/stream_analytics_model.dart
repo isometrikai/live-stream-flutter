@@ -22,7 +22,8 @@ class IsmLiveStreamAnalyticsModel {
         totalViewersCount: map['totalViewersCount'] != null
             ? map['totalViewersCount'] as num
             : null,
-        durationMilliSeconds: map['duration'] != null ? map['duration'] as num : null,
+        durationMilliSeconds:
+            map['duration'] != null ? map['duration'] as num : null,
         productCount:
             map['productCount'] != null ? map['productCount'] as num : null,
         soldCount: map['soldCount'] != null ? map['soldCount'] as num : null,
@@ -95,7 +96,8 @@ class IsmLiveStreamAnalyticsModel {
       };
 
   String get formattedDuration {
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(durationMilliSeconds?.toInt() ?? 0,
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(
+        durationMilliSeconds?.toInt() ?? 0,
         isUtc: true);
 
     return DateFormat('HH:mm:ss').format(dateTime);

@@ -21,7 +21,7 @@ class IsmLiveHandler {
   static Future<void> initialize() async {
     Get.put(IsmLiveApiWrapper(Client()), permanent: true);
     Get.lazyPut(IsmLivePreferencesManager.new);
-    
+
     // Store the future to prevent multiple calls to availableCameras()
     if (IsmLiveUtility.camerasInitializationFuture == null) {
       IsmLiveUtility.camerasInitializationFuture = availableCameras();

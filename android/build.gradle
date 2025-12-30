@@ -29,7 +29,7 @@ android {
         namespace 'com.example.appscrip_live_stream_component'
     }
 
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
