@@ -51,6 +51,8 @@ class ChatBottomSheet extends StatelessWidget {
                   controller.deleteMessage(
                     streamId: controller.streamId ?? '',
                     messageId: message.messageId,
+                    isReply: message.isReply,
+                    parentMessageId: message.parentId,
                   );
                   IsmLiveRoute.pop();
                 },

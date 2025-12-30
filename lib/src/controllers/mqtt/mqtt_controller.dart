@@ -637,6 +637,7 @@ class IsmLiveMqttController extends GetxController {
           break;
 
         case IsmLiveActions.messageRemoved:
+        case IsmLiveActions.messageReplyRemoved:
           if (_streamController.streamId == streamId) {
             final messageId = payload['messageId'] as String?;
             final userName = payload['initiatorName'] as String? ?? '';
@@ -646,8 +647,6 @@ class IsmLiveMqttController extends GetxController {
             await _streamController.messageRemoved(messageId, userName);
             _updateStream();
           }
-          break;
-        case IsmLiveActions.messageReplyRemoved:
           break;
         case IsmLiveActions.messageReplySent:
         case IsmLiveActions.messageSent:

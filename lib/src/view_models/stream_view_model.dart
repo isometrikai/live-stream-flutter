@@ -365,11 +365,15 @@ class IsmLiveStreamViewModel {
   Future<bool> deleteMessage({
     required String streamId,
     required String messageId,
+    required bool isReply,
+    String? parentMessageId,
   }) async {
     try {
       var res = await _repository.deleteMessage(
         streamId: streamId,
         messageId: messageId,
+        isReply: isReply,
+        parentMessageId: parentMessageId,
       );
 
       return !res.hasError;

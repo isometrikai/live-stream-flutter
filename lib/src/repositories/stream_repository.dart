@@ -289,13 +289,20 @@ class IsmLiveStreamRepository {
   Future<IsmLiveResponseModel> deleteMessage({
     required String streamId,
     required String messageId,
+    required bool isReply,
+    String? parentMessageId,
   }) {
+    var api =
+        isReply ? IsmLiveApis.deleteReplyMessage : IsmLiveApis.deleteMessage;
     var payload = {
       'streamId': streamId,
       'messageId': messageId,
     };
+    if (isReply && parentMessageId != null) {
+      payload['parentMessageId'] = parentMessageId;
+    }
     return _apiWrapper.makeRequest(
-      '${IsmLiveApis.deleteMessage}?${payload.makeQuery()}',
+      '$api?${payload.makeQuery()}',
       type: IsmLiveRequestType.delete,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: false,

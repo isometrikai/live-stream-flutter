@@ -70,6 +70,7 @@ class IsmLiveApis {
   static const String leaveStream = '$viewer/leave';
   static const String postMessage = '$_streaming/message';
   static const String deleteMessage = '$_streaming/message';
+  static const String deleteReplyMessage = '$_streaming/message/reply';
   static const String messages = '$_streaming/messages';
   static const String messagesCount = '$_streaming/messages/count';
   static const String replyMessage = '$_streaming/message/reply';

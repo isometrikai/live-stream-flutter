@@ -470,10 +470,14 @@ mixin StreamAPIMixin {
   Future<bool> deleteMessage({
     required String streamId,
     required String messageId,
+    required bool isReply,
+    String? parentMessageId,
   }) =>
       _controller.viewModel.deleteMessage(
         streamId: streamId,
         messageId: messageId,
+        isReply: isReply,
+        parentMessageId: parentMessageId,
       );
 
 //Uploads an image for a live stream.
