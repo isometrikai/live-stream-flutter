@@ -650,7 +650,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  IsmLiveDimens.boxHeight40,
+                  IsmLiveDimens.boxHeight16,
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
