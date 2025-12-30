@@ -24,7 +24,7 @@ class ChatBottomSheet extends StatelessWidget {
               ? 2
               : 1,
           itemBuilder: (context, index) {
-            if (index == 0) {
+            if (index == 0 && message.isReply == false) {
               // Reply item
               return IsmLiveTapHandler(
                 onTap: () {

@@ -188,6 +188,9 @@ mixin StreamJoinMixin {
               ? lk.CameraPosition.front
               : lk.CameraPosition.back;
 
+      // Sync the position variable with the actual camera position
+      _controller.position = resolvedCameraPosition;
+
       final tracks = await Future.wait([
         lk.LocalVideoTrack.createCameraTrack(
           lk.CameraCaptureOptions(
@@ -545,6 +548,9 @@ mixin StreamJoinMixin {
                   IsmLiveCameraPosition.front)
               ? lk.CameraPosition.front
               : lk.CameraPosition.back;
+
+      // Sync the position variable with the actual camera position
+      _controller.position = resolvedCameraPosition;
 
       var room = lk.Room(
         roomOptions: lk.RoomOptions(
