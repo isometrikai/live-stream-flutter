@@ -125,6 +125,11 @@ class _CameraScreenViewState extends State<CameraScreenView> {
         body: Stack(
           fit: StackFit.expand,
           children: [
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.black,
+            ),
             Center(
               child: _hasError
                   ? Column(
@@ -155,26 +160,12 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                       ],
                     )
                   : cameraControllerback?.value.isInitialized == true
-                      ? CameraPreview(cameraControllerback!)
+                      ? SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: CameraPreview(cameraControllerback!),
+                        )
                       : const CircularProgressIndicator.adaptive(),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    IsmLiveColors.black.withOpacity(.6),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.6),
-                  ],
-                ),
-              ),
             ),
             SafeArea(
               child: Align(
@@ -186,13 +177,18 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                     children: [
                       InkWell(
                         onTap: IsmLiveRoute.pop,
-                        child: SvgPicture.asset(
-                          IsmLiveAssetConstants.backRounded,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 24,
+                        child: Container(
+                          height: IsmLiveDimens.forty,
+                          width: IsmLiveDimens.forty,
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            IsmLiveAssetConstants.backRounded,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
                         ),
                       ),
@@ -218,13 +214,11 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           child: Container(
                             height: IsmLiveDimens.forty,
                             width: IsmLiveDimens.forty,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: IsmLiveColors.white.withOpacity(.3),
-                            ),
+                            alignment: Alignment.center,
                             child: Icon(
                               flash ? Icons.flash_on : Icons.flash_off,
                               color: IsmLiveColors.white,
+                              size: 24,
                             ),
                           ),
                         ),
@@ -296,13 +290,20 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             IsmLiveRoute.pop<XFile>(
                                 XFile(pickedFile.files.first.path ?? ''));
                           },
-                          child: SvgPicture.asset(
-                            IsmLiveAssetConstants.galerryRoundedSvg,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.photo_library,
-                              color: Colors.white,
-                              size: 24,
+                          child: Container(
+                            height: IsmLiveDimens.forty,
+                            width: IsmLiveDimens.forty,
+                            alignment: Alignment.center,
+                            child: SvgPicture.asset(
+                              IsmLiveAssetConstants.galerryRoundedSvg,
+                              width: 45,
+                              height: 45,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                Icons.photo_library,
+                                color: Colors.white,
+                                size: 45,
+                              ),
                             ),
                           ),
                         ),
@@ -477,13 +478,29 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               }
                             }
                           },
-                          child: SvgPicture.asset(
-                            IsmLiveAssetConstants.switchCameraSvg,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.flip_camera_ios,
-                              color: Colors.white,
-                              size: 24,
+                          child: Container(
+                            height: IsmLiveDimens.forty,
+                            width: IsmLiveDimens.forty,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: IsmLiveColors.white.withOpacity(.3),
+                            ),
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 45,
+                              height: 45,
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: SvgPicture.asset(
+                                  IsmLiveAssetConstants.switchCameraSvg,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(
+                                    Icons.flip_camera_ios,
+                                    color: Colors.white,
+                                    size: 45,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
