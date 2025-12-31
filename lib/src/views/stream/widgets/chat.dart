@@ -45,6 +45,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   final messagesListController = ScrollController();
   final _controller = Get.find<IsmLiveStreamController>();
   bool _isScrolling = false;
+  int _previousMessageCount = 0;
 
   @override
   void initState() {
@@ -86,11 +87,19 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
-          // Scroll to bottom when new message arrives
+          // Scroll to bottom only when new message arrives (not on updates)
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (controller.streamMessagesList.isNotEmpty) {
+            final currentMessageCount = controller.streamMessagesList.length;
+            // Reset counter if messages were cleared (e.g., stream ended)
+            if (currentMessageCount == 0) {
+              _previousMessageCount = 0;
+              return;
+            }
+            // Only scroll if message count increased (new message added)
+            if (currentMessageCount > _previousMessageCount) {
               _scrollToBottom();
             }
+            _previousMessageCount = currentMessageCount;
           });
 
           return ShaderMask(
