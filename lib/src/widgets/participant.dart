@@ -187,14 +187,8 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
 
   @override
   Widget build(BuildContext ctx) => Container(
-        foregroundDecoration: BoxDecoration(
-          border: widget.participant.isSpeaking
-              ? Border.all(
-                  width: IsmLiveDimens.one,
-                  color: Colors.blue,
-                )
-              : null,
-        ),
+        // Blue border removed - was causing unwanted border around stream view
+        foregroundDecoration: null,
         decoration: BoxDecoration(
           color: context.liveTheme?.streamBackgroundColor ??
               Theme.of(ctx).cardColor.withAlpha(80),
