@@ -130,9 +130,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
               width: MediaQuery.of(context).size.width,
               color: Colors.black,
             ),
-            Center(
-              child: _hasError
-                  ? Column(
+            _hasError
+                ? Center(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
@@ -158,14 +158,35 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           child: const Text('Retry'),
                         ),
                       ],
-                    )
-                  : cameraControllerback?.value.isInitialized == true
-                      ? SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.7,
+                    ),
+                  )
+                : cameraControllerback?.value.isInitialized == true
+                    ? SafeArea(
+                        child: Align(
+                          alignment: Alignment.topCenter,
                           child: CameraPreview(cameraControllerback!),
-                        )
-                      : const CircularProgressIndicator.adaptive(),
+                        ),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    IsmLiveColors.black.withOpacity(.6),
+                    IsmLiveColors.black.withOpacity(.2),
+                    IsmLiveColors.black.withOpacity(.2),
+                    IsmLiveColors.black.withOpacity(.2),
+                    IsmLiveColors.black.withOpacity(.2),
+                    IsmLiveColors.black.withOpacity(.6),
+                  ],
+                ),
+              ),
             ),
             SafeArea(
               child: Align(
