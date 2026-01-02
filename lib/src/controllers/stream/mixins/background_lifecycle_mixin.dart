@@ -243,19 +243,30 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
   void _pauseVideoForBackground() {
     if (_videoPausedByBackground) return;
-    _videoPausedByBackground = true;
 
     try {
       // Only pause video if user is a host (has local video track)
       if (_isHost.value) {
+        // Check if video was already manually paused by user
+        if (!_controller.videoOn) {
+          IsmLiveLog.info(
+              'Video was already manually paused before going to background, not setting background pause flag');
+          return; // Don't set _videoPausedByBackground flag, so video won't auto-resume
+        }
+
+        // Video was enabled, so pause it for background and set flag
         IsmLiveLog.info(
             'Pausing host video for background using existing toggleVideo method');
+        _videoPausedByBackground = true;
         _controller.toggleVideo(value: false);
       } else {
         IsmLiveLog.info('Viewer going to background - no local video to pause');
       }
     } catch (e) {
       IsmLiveLog.error('Error pausing video for background: $e');
+
+      // Reset flag on error
+      _videoPausedByBackground = false;
 
       // If it's a camera error, increment error count
       if (e.toString().contains('CAMERA_ERROR') ||
