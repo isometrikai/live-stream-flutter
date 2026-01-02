@@ -128,19 +128,23 @@ class IsmGoLiveView extends StatelessWidget {
                     return const SizedBox();
                   }
 
-                  return controller.selectedGoLiveTabItem ==
-                          IsmGoLiveTabItem.defaultLive
-                      ? SizedBox.expand(
-                          child: CameraPreview(
+                  final scale = MediaQuery.of(context).size.height /
+                      MediaQuery.of(context).size.width;
+
+                  return Transform.scale(
+                    scale: scale,
+                    child: controller.selectedGoLiveTabItem ==
+                            IsmGoLiveTabItem.defaultLive
+                        ? CameraPreview(
                             controller.cameraController!,
                             child: SizedBox(
                               height: context.height,
                               width: context.width,
                               child: const ColoredBox(color: Colors.black38),
                             ),
-                          ),
-                        )
-                      : const SizedBox();
+                          )
+                        : null,
+                  );
                 },
               ),
               SingleChildScrollView(
