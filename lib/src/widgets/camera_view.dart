@@ -312,18 +312,18 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                 XFile(pickedFile.files.first.path ?? ''));
                           },
                           child: Container(
-                            height: IsmLiveDimens.forty,
-                            width: IsmLiveDimens.forty,
+                            height: IsmLiveDimens.thirtyFive,
+                            width: IsmLiveDimens.thirtyFive,
                             alignment: Alignment.center,
                             child: SvgPicture.asset(
                               IsmLiveAssetConstants.galerryRoundedSvg,
-                              width: 45,
-                              height: 45,
+                              width: IsmLiveDimens.thirtyFive,
+                              height: IsmLiveDimens.thirtyFive,
                               errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(
+                                  Icon(
                                 Icons.photo_library,
                                 color: Colors.white,
-                                size: 45,
+                                size: IsmLiveDimens.thirtyFive,
                               ),
                             ),
                           ),
@@ -500,21 +500,21 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             }
                           },
                           child: Container(
-                            height: IsmLiveDimens.forty,
-                            width: IsmLiveDimens.forty,
+                            height: IsmLiveDimens.thirtyFive,
+                            width: IsmLiveDimens.thirtyFive,
                             alignment: Alignment.center,
                             child: SizedBox(
-                              width: 45,
-                              height: 45,
+                              width: IsmLiveDimens.thirtyFive,
+                              height: IsmLiveDimens.thirtyFive,
                               child: FittedBox(
                                 fit: BoxFit.fill,
                                 child: SvgPicture.asset(
                                   IsmLiveAssetConstants.switchCameraSvg,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
+                                      Icon(
                                     Icons.flip_camera_ios,
                                     color: Colors.white,
-                                    size: 45,
+                                    size: IsmLiveDimens.thirtyFive,
                                   ),
                                 ),
                               ),
