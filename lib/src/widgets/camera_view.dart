@@ -426,8 +426,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           },
                           child: Container(
                             padding: IsmLiveDimens.edgeInsets4,
-                            height: IsmLiveDimens.seventy,
-                            width: IsmLiveDimens.seventy,
+                            height: IsmLiveDimens.sixty,
+                            width: IsmLiveDimens.sixty,
                             decoration: BoxDecoration(
                               color: IsmLiveColors.transparent,
                               shape: BoxShape.circle,
@@ -437,8 +437,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               ),
                             ),
                             child: Container(
-                              height: IsmLiveDimens.sixty,
-                              width: IsmLiveDimens.sixty,
+                              height: IsmLiveDimens.fifty,
+                              width: IsmLiveDimens.fifty,
                               decoration: BoxDecoration(
                                 color: isRecording
                                     ? IsmLiveColors.black
@@ -502,10 +502,6 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           child: Container(
                             height: IsmLiveDimens.forty,
                             width: IsmLiveDimens.forty,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: IsmLiveColors.white.withOpacity(.3),
-                            ),
                             alignment: Alignment.center,
                             child: SizedBox(
                               width: 45,
