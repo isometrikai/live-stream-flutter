@@ -46,7 +46,7 @@ class IsmLiveDimens {
 
   static final double thirty = 30.sp;
   static final double thirtyTwo = 32.sp;
-
+  static final double thirtyFive = 35.sp; 
   static final double forty = 40.sp;
   static final double fourtyFour = 44.sp;
   static final double fortyFive = 45.sp;
