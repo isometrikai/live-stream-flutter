@@ -162,14 +162,44 @@ abstract class IsmLiveRouteManagement {
     }
   }
 
-  static void goToCoinsPlanWallet() {
+  static void goToCoinsPlanWallet({bool fromStream = false}) {
     CoinsPlansWalletBinding().dependencies();
-    IsmLiveRoute.push(const CoinsPlansWalletView());
+    if (fromStream) {
+      IsmLiveUtility.openBottomSheet(
+        Builder(
+          builder: (context) {
+            final screenHeight = MediaQuery.of(context).size.height;
+            return SizedBox(
+              height: screenHeight * 0.9,
+              child: const CoinsPlansWalletView(fromStream: true),
+            );
+          },
+        ),
+        isScrollController: true,
+      );
+    } else {
+      IsmLiveRoute.push(const CoinsPlansWalletView());
+    }
   }
 
-  static void goToCoinTransaction() {
+  static void goToCoinTransaction({bool fromStream = false}) {
     CoinsPlansWalletBinding().dependencies();
-    IsmLiveRoute.push(const IsmLiveCoinTransactions());
+    if (fromStream) {
+      IsmLiveUtility.openBottomSheet(
+        Builder(
+          builder: (context) {
+            final screenHeight = MediaQuery.of(context).size.height;
+            return SizedBox(
+              height: screenHeight * 0.9,
+              child: const IsmLiveCoinTransactions(),
+            );
+          },
+        ),
+        isScrollController: true,
+      );
+    } else {
+      IsmLiveRoute.push(const IsmLiveCoinTransactions());
+    }
   }
 }
 

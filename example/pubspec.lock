@@ -76,10 +76,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: "474d8355961658d43f1c976e2fa1ca715505bea1adbd56df34c581aaa70ec41f"
+      sha256: bc7a96998258adddd0b653dd693b0874537707d58b0489708f2a646e4f124246
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.26+2"
+    version: "0.6.27"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -100,10 +100,10 @@ packages:
     dependency: transitive
     description:
       name: camera_web
-      sha256: "3bc7bb1657a0f29c34116453c5d5e528c23efcf5e75aac0a3387cf108040bf65"
+      sha256: "57f49a635c8bf249d07fb95eb693d7e4dda6796dedb3777f9127fb54847beba7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.5+2"
+    version: "0.3.5+3"
   characters:
     dependency: transitive
     description:
@@ -252,10 +252,10 @@ packages:
     dependency: transitive
     description:
       name: ffi
-      sha256: "289279317b4b16eb2bb7e271abccd4bf84ec9bdcbe999e278a94b804f5630418"
+      sha256: d07d37192dbf97461359c1518788f203b0c9102cfd2c35a716b823741219542c
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   file:
     dependency: transitive
     description:
@@ -754,10 +754,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.16.0"
   mime:
     dependency: transitive
     description:
@@ -778,10 +778,10 @@ packages:
     dependency: transitive
     description:
       name: mqtt_client
-      sha256: "8bcd0bd6dd85343df249164f9d4b2232002b2ce8742875431421863d3cbcd0db"
+      sha256: "5bef6fd43ffcd6a06c0835f709c9dc12877f98eb8daf9a44d641c18450fcd67b"
       url: "https://pub.dev"
     source: hosted
-    version: "10.11.3"
+    version: "10.11.5"
   mqtt_helper:
     dependency: transitive
     description:
@@ -1200,10 +1200,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
+      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.7"
+    version: "0.7.6"
   timezone:
     dependency: transitive
     description:

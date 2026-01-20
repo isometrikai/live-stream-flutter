@@ -42,7 +42,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                       if (IsmLiveDelegate.addCoinsClickCallback != null) {
                         IsmLiveDelegate.addCoinsClickCallback!(context);
                       } else {
-                        IsmLiveRouteManagement.goToCoinsPlanWallet();
+                        IsmLiveUtility.closeBottomSheetIfOpen();
+                        IsmLiveRouteManagement.goToCoinsPlanWallet(
+                            fromStream: true);
                       }
                     },
                   ),
