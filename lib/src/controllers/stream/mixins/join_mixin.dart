@@ -9,6 +9,74 @@ mixin StreamJoinMixin {
   // Check if Go Live is enabled by checking if the description controller is not empty
   bool get isGoLiveEnabled => _controller.descriptionController.isNotEmpty;
 
+  // ---------------------------------------------------------------------------
+  // Shared video quality presets
+  //
+  // NOTE:
+  // - Use ONE source of truth for dimensions/bitrates across:
+  //   - camera capture (manual track creation)
+  //   - room default capture options
+  //   - publish options / simulcast layers
+  // ---------------------------------------------------------------------------
+
+  // HD: 1080p portrait, 30fps ~6Mbps (industry-standard live baseline)
+  static const lk.VideoParameters _lkHdVideoParams = lk.VideoParameters(
+    dimensions: lk.VideoDimensions(1080, 1920),
+    encoding: lk.VideoEncoding(
+      maxFramerate: 30,
+      maxBitrate: 6000 * 1000,
+    ),
+  );
+
+  // SD: 30fps ~3Mbps
+  static const lk.VideoParameters _lkSdVideoParams = lk.VideoParameters(
+    dimensions: lk.VideoDimensions(720, 1280),
+    encoding: lk.VideoEncoding(
+      maxFramerate: 25,
+      maxBitrate: 2500 * 1000,
+    ),
+  );
+
+  /// Restream: quality between SD and full HD, tuned for external platforms.
+  static const lk.VideoParameters _lkRestreamVideoParams = lk.VideoParameters(
+    dimensions: lk.VideoDimensions(720, 1280),
+    encoding: lk.VideoEncoding(
+      maxFramerate: 30,
+      maxBitrate: 4000 * 1000,
+    ),
+  );
+
+  lk.VideoParameters _resolveLkVideoParams({
+    required bool hdBroadcast,
+    required bool restream,
+  }) {
+    if (hdBroadcast) return _lkHdVideoParams;
+    if (restream) return _lkRestreamVideoParams;
+    return _lkSdVideoParams;
+  }
+
+  List<VideoParameters> _resolveSimulcastLayers({
+    required bool hdBroadcast,
+    required bool restream,
+  }) {
+    // Keep simulcast layers aligned with capture/publish quality.
+    final lkParams = _resolveLkVideoParams(
+      hdBroadcast: hdBroadcast,
+      restream: restream,
+    );
+
+    return [
+      VideoParameters(
+        dimensions: VideoDimensions(
+            lkParams.dimensions.width, lkParams.dimensions.height),
+        encoding: VideoEncoding(
+          maxFramerate: lkParams.encoding!.maxFramerate,
+          maxBitrate: lkParams.encoding!.maxBitrate,
+        ),
+      ),
+    ];
+  }
+
 // Initialize the Go Live process by requesting camera permission and initializing the camera controller
   Future<void> initializationOfGoLive() async {
     // Prevent multiple simultaneous initializations
@@ -170,16 +238,10 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('cameraController dispose before WebRTC error: $e');
       }
 
-      lk.VideoParameters? videoFilter;
-      if (_controller.isRestreamBroadcast) {
-        videoFilter = const lk.VideoParameters(
-          dimensions: lk.VideoDimensions(480, 640),
-          encoding: lk.VideoEncoding(
-            maxFramerate: 30,
-            maxBitrate: 2500000,
-          ),
-        );
-      }
+      final captureParams = _resolveLkVideoParams(
+        hdBroadcast: _controller.isHdBroadcast,
+        restream: _controller.isRestreamBroadcast,
+      );
 
       // Resolve initial camera position for manual track creation as well
       final resolvedCameraPosition =
@@ -195,7 +257,7 @@ mixin StreamJoinMixin {
         lk.LocalVideoTrack.createCameraTrack(
           lk.CameraCaptureOptions(
             cameraPosition: resolvedCameraPosition,
-            params: videoFilter ?? lk.VideoParametersPresets.h720_169,
+            params: captureParams,
           ),
         ),
         lk.LocalAudioTrack.create(),
@@ -533,15 +595,17 @@ mixin StreamJoinMixin {
     }
 
     try {
-      final videoQuality = hdBroadcast || restream
-          ? const lk.VideoParameters(
-              dimensions: lk.VideoDimensions(480, 640),
-              encoding: lk.VideoEncoding(
-                maxFramerate: 30,
-                maxBitrate: 2500000,
-              ),
-            )
-          : lk.VideoParametersPresets.h540_169;
+      // Setting video presets based on the hdBroadcast param
+      final resolvedVideoParams = _resolveLkVideoParams(
+        hdBroadcast: hdBroadcast,
+        restream: restream,
+      );
+
+      final videoSimulcastLayers = _resolveSimulcastLayers(
+        hdBroadcast: hdBroadcast,
+        restream: restream,
+      );
+
       // Resolve initial camera position from global UI configuration
       final resolvedCameraPosition =
           (IsmLiveDelegate.initialCameraPositionStream ==
@@ -556,7 +620,7 @@ mixin StreamJoinMixin {
         roomOptions: lk.RoomOptions(
           defaultCameraCaptureOptions: lk.CameraCaptureOptions(
             cameraPosition: resolvedCameraPosition,
-            params: videoQuality,
+            params: resolvedVideoParams,
           ),
           defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
             noiseSuppression: true,
@@ -566,7 +630,8 @@ mixin StreamJoinMixin {
             typingNoiseDetection: true,
           ),
           defaultVideoPublishOptions: lk.VideoPublishOptions(
-            videoEncoding: videoQuality.encoding,
+            videoEncoding: resolvedVideoParams.encoding,
+            videoSimulcastLayers: videoSimulcastLayers,
           ),
           defaultAudioPublishOptions: const lk.AudioPublishOptions(
             dtx: true,
