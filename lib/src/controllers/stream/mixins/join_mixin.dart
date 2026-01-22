@@ -156,6 +156,9 @@ mixin StreamJoinMixin {
         ResolutionPreset.medium,
       );
       await _controller.cameraController!.initialize();
+      // Lock camera orientation to portrait to prevent rotation on iOS
+      await _controller.cameraController!
+          .lockCaptureOrientation(DeviceOrientation.portraitUp);
       _controller.update([IsmGoLiveView.updateId]);
     } catch (e) {
       IsmLiveLog.error('Failed to initialize camera: $e');

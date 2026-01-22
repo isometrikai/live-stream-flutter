@@ -4,6 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 /// Camera View Screen
@@ -74,6 +75,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
       await cameraControllerback!.initialize();
       flash = false;
       await cameraControllerback!.setFlashMode(FlashMode.off);
+      // Lock camera orientation to portrait to prevent rotation on iOS
+      await cameraControllerback!
+          .lockCaptureOrientation(DeviceOrientation.portraitUp);
 
       if (mounted) {
         setState(() {
@@ -482,6 +486,10 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                               flash = false;
                               await cameraControllerback!
                                   .setFlashMode(FlashMode.off);
+                              // Lock camera orientation to portrait to prevent rotation on iOS
+                              await cameraControllerback!
+                                  .lockCaptureOrientation(
+                                      DeviceOrientation.portraitUp);
 
                               if (mounted) {
                                 setState(() {
