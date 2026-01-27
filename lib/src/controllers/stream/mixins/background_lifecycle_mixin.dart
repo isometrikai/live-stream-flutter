@@ -636,6 +636,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         return;
       }
 
+      // Close any open dialog before showing the stream ended dialog
+      IsmLiveUtility.closeDialogIfOpen();
+
       final message = _isHost.value
           ? 'Stream has been stopped. Please start a new stream'
           : 'The stream you were watching has ended. Please browse other streams';

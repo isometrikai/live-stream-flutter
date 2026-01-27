@@ -334,6 +334,30 @@ class IsmLiveUtility {
     }
   }
 
+  /// Check if a dialog is currently open by checking the current route type
+  static bool get isDialogOpen {
+    try {
+      final context = IsmLiveUtility.navigatorKey.currentContext;
+      if (context == null) return false;
+
+      final modalRoute = ModalRoute.of(context);
+      if (modalRoute == null) return false;
+
+      // Check if the current route is a DialogRoute
+      // DialogRoute is the type used by showDialog
+      return modalRoute is DialogRoute;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Close dialog only if one is currently open
+  static void closeDialogIfOpen() {
+    if (isDialogOpen) {
+      closeDialog();
+    }
+  }
+
   /// Close any open snackbar
   static void closeSnackbar() {
     // Snackbars don't use routes, use ScaffoldMessenger instead

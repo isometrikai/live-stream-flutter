@@ -94,7 +94,27 @@ class IsmGoLiveView extends StatelessWidget {
           // This ensures clean state for next time the screen opens
           // controller.streamDispose(
           //     false); // Don't call disposeAnimationController here
-          controller.cameraController?.dispose();
+
+          // Store camera controller reference before clearing
+          // This prevents the UI from trying to use it during disposal
+          final cameraController = controller.cameraController;
+
+          // Clear references immediately to prevent UI from using the camera
+          // This is critical for smooth navigation on iOS
+          controller.cameraController = null;
+          controller.cameraFuture = null;
+
+          // Dispose camera asynchronously in a non-blocking way
+          // This prevents UI freezing on iOS during navigation
+          if (cameraController != null) {
+            unawaited(
+              cameraController.dispose().catchError((error) {
+                // Log error but don't block navigation
+                IsmLiveLog.error('Error disposing camera controller: $error');
+              }),
+            );
+          }
+
           controller.streamDetails = null;
           controller.pickedImage = null;
           // Call the dispose callback if provided
