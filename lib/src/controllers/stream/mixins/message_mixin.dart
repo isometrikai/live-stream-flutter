@@ -108,7 +108,9 @@ mixin StreamMessageMixin {
     IsmLiveLog.info(
         'Change Stream action ${processedMessage.metaData?.rawJson?['action']}');
     if (processedMessage.metaData?.rawJson?['action'] == 'ACCEPT_PK' &&
-        (_controller.userRole?.isHost == true)) return;
+        (_controller.userRole?.isHost == true)) {
+      return;
+    }
 
     var oldStreamId = _controller.streamId ?? '';
     var newStreamId = processedMessage.metaData?.rawJson?['streamId'] ?? '';

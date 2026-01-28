@@ -222,7 +222,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                         InkWell(
                           onTap: () async {
                             if (cameraControllerback?.value.isInitialized !=
-                                true) return;
+                                true) {
+                              return;
+                            }
                             try {
                               await cameraControllerback!.setFlashMode(
                                 flash ? FlashMode.off : FlashMode.torch,
@@ -301,7 +303,7 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                 await FilePicker.platform.pickFiles(
                               type: FileType.custom,
                               allowMultiple: false,
-                              allowCompression: true,
+                              compressionQuality: 100,
                               allowedExtensions: allowedExtensions,
                             );
 
@@ -340,7 +342,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                   ? () async {
                                       if (cameraControllerback
                                               ?.value.isInitialized !=
-                                          true) return;
+                                          true) {
+                                        return;
+                                      }
                                       try {
                                         final picture =
                                             await cameraControllerback!
@@ -356,7 +360,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                                   : () async {
                                       if (cameraControllerback
                                               ?.value.isInitialized !=
-                                          true) return;
+                                          true) {
+                                        return;
+                                      }
                                       try {
                                         if (isRecording) {
                                           isRecording = false;
@@ -394,7 +400,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           onLongPressStart: (_) {
                             if (widget.isOnlyImage ||
                                 cameraControllerback?.value.isInitialized !=
-                                    true) return;
+                                    true) {
+                              return;
+                            }
                             cameraControllerback!.startVideoRecording().then(
                               (value) {
                                 if (mounted) {
@@ -412,7 +420,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           onLongPressEnd: (_) {
                             if (widget.isOnlyImage ||
                                 cameraControllerback?.value.isInitialized !=
-                                    true) return;
+                                    true) {
+                              return;
+                            }
                             timer?.cancel();
                             if (mounted) {
                               setState(() {});

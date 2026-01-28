@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 ///
 class CustomButton extends StatelessWidget {
   const CustomButton({
-    Key? key,
+    super.key,
     this.width,
     this.onPress,
     this.title,
@@ -37,7 +37,7 @@ class CustomButton extends StatelessWidget {
     this.radius,
     this.elevation,
     this.onlyBorder = false,
-  }) : super(key: key);
+  });
 
   final String? title;
   final double? width;

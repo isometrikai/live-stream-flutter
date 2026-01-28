@@ -69,7 +69,7 @@ class IsmLiveStreamAnalyticsModel {
   }) =>
       IsmLiveStreamAnalyticsModel(
         totalViewersCount: totalViewersCount ?? this.totalViewersCount,
-        durationMilliSeconds: duration ?? this.durationMilliSeconds,
+        durationMilliSeconds: duration ?? durationMilliSeconds,
         productCount: productCount ?? this.productCount,
         soldCount: soldCount ?? this.soldCount,
         newViewersCount: newViewersCount ?? this.newViewersCount,

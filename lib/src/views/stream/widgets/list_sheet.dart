@@ -1,5 +1,4 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/stream/analytis_viewer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
