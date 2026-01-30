@@ -606,6 +606,13 @@ mixin StreamOngoingMixin {
       return;
     }
 
+    // Guard: avoid RangeError when streams list is empty or index is invalid
+    if (_controller.streams.isEmpty ||
+        index < 0 ||
+        index >= _controller.streams.length) {
+      return;
+    }
+
     // Notify host app about stream scroll (fire and forget)
     IsmLiveDelegate.onStreamScrollCallback?.call(
       context,
