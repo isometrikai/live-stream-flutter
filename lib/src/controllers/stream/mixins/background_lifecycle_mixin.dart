@@ -697,6 +697,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         return;
       }
 
+      // Close any open dialog before showing the stream ended dialog
+      IsmLiveUtility.closeDialogIfOpen();
+
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'
           : 'Unable to reconnect to the stream. Please try again or browse other streams';

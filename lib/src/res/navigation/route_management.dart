@@ -57,9 +57,9 @@ abstract class IsmLiveRouteManagement {
             'initializeAndJoinStream controller preventDispose is now: ${controller.preventDispose}');
       }
 
-      // Navigate to the stream view
+      // Navigate to the stream view with snappier transition
       print('initializeAndJoinStream: About to call pushReplacement');
-      await IsmLiveRoute.pushReplacement(widget);
+      await IsmLiveRoute.pushReplacementStreamView(widget);
       print('initializeAndJoinStream: pushReplacement completed');
 
       // Reset preventDispose flag after navigation is complete
@@ -70,8 +70,8 @@ abstract class IsmLiveRouteManagement {
             'initializeAndJoinStream: Reset preventDispose=false after navigation');
       }
     } else {
-      // Regular navigation without preventing disposal
-      await IsmLiveRoute.push(widget);
+      // Regular navigation with snappier transition
+      await IsmLiveRoute.pushStreamView(widget);
     }
   }
 
@@ -116,9 +116,9 @@ abstract class IsmLiveRouteManagement {
     }
 
     if (popPrevious) {
-      IsmLiveRoute.pushReplacement(const IsmGoLiveView());
+      IsmLiveRoute.pushReplacementWithTransition(const IsmGoLiveView());
     } else {
-      IsmLiveRoute.push(const IsmGoLiveView());
+      IsmLiveRoute.pushWithTransition(const IsmGoLiveView());
     }
   }
 

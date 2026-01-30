@@ -54,7 +54,7 @@ class IsmGoLiveView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
-        initState: (state) async {
+        initState: (state) {
           var controller = Get.find<IsmLiveStreamController>();
 
           if (controller.streamDetails == null) {

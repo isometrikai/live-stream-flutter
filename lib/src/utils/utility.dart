@@ -687,6 +687,53 @@ class IsmLiveRoute {
         result: result,
       );
 
+  /// Snappy transition duration (250ms) for smoother open/close than Material 300ms.
+  static const Duration _snappyTransitionDuration =
+      Duration(milliseconds: 250);
+
+  /// Builds a slide-from-right route with snappy duration and easeOutCubic curve.
+  static PageRouteBuilder<T> _snappySlideRoute<T>(Widget child) =>
+      PageRouteBuilder<T>(
+        pageBuilder: (context, animation, secondaryAnimation) => child,
+        transitionDuration: _snappyTransitionDuration,
+        reverseTransitionDuration: _snappyTransitionDuration,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            )),
+            child: child,
+          );
+        },
+      );
+
+  /// Push with snappier transition for smoother open/close (stream view, go-live view, etc.).
+  static Future<T?> pushWithTransition<T>(Widget child) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.push<T>(
+        _snappySlideRoute<T>(child),
+      );
+
+  /// Replace with snappier transition for smoother open/close.
+  static Future<T?> pushReplacementWithTransition<T, TO>(Widget child,
+          {TO? result}) async =>
+      await IsmLiveUtility.navigatorKey.currentState?.pushReplacement<T, TO>(
+        _snappySlideRoute<T>(child),
+        result: result,
+      );
+
+  /// Push the stream view with a snappier transition for smoother open/close.
+  static Future<T?> pushStreamView<T>(Widget child) async =>
+      pushWithTransition<T>(child);
+
+  /// Replace with stream view using the same snappier transition.
+  static Future<T?> pushReplacementStreamView<T, TO>(Widget child,
+          {TO? result}) async =>
+      pushReplacementWithTransition<T, TO>(child, result: result);
+
   /// Replace the current route by pushing a named route and removing the previous one.
   static Future<T?> pushReplacementNamed<T, TO>(String routeName,
           {TO? result, Object? arguments}) async =>

@@ -397,7 +397,7 @@ class _IsmLiveStreamView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
-        initState: (_) async {
+        initState: (_) {
           var controller = Get.find<IsmLiveStreamController>();
 
           // Reset preventDispose flag when new view is initialized
@@ -411,7 +411,8 @@ class _IsmLiveStreamView extends StatelessWidget {
 
           controller.participantList = controller.participantTracks;
 
-          await WakelockPlus.enable();
+          // Defer wakelock so first frame paints immediately for a snappier open.
+          unawaited(WakelockPlus.enable());
 
           // Note: streamViewLoadedCallback is now triggered when hostDetails becomes available
           // in the _getStreamMembers method of api_mixin.dart
@@ -432,10 +433,11 @@ class _IsmLiveStreamView extends StatelessWidget {
           final isKeyboardOpen = mediaQuery.viewInsets.bottom > 0;
           return PopScope(
             canPop: false,
-            onPopInvoked: (didPop) async {
+            onPopInvoked: (didPop) {
               if (didPop && !controller.preventDispose) {
-                // Clean up stream data when user closes the view
-                await IsmLiveStreamView._cleanupStreamData(controller);
+                // Clean up stream data in background so pop transition stays smooth.
+                // Awaiting cleanup here was blocking the route transition and causing lag.
+                unawaited(IsmLiveStreamView._cleanupStreamData(controller));
               }
             },
             child: Scaffold(
