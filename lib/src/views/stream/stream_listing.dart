@@ -42,6 +42,22 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
             const IsmLiveCreateStream(),
             IsmLiveDimens.boxWidth10,
             const IsmLiveStreamingScrolling(),
+            IsmLiveDimens.boxWidth10,
+            IsmLiveTapHandler(
+              onTap: () => Get.to<void>(() => const IsmLiveRecordingListView()),
+              child: Container(
+                padding: IsmLiveDimens.edgeInsets16,
+                decoration: BoxDecoration(
+                  color:
+                      context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
+                ),
+                child: const Icon(
+                  Icons.video_library_outlined,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

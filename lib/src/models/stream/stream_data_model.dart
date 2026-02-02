@@ -157,6 +157,69 @@ class IsmLiveStreamDataModel {
             : null,
       );
 
+  /// Creates [IsmLiveStreamDataModel] from the recordings API response item.
+  factory IsmLiveStreamDataModel.fromRecordingMap(Map<String, dynamic> map) {
+    final startTime = map['startTime'];
+    final endTime = map['endTime'];
+    int? duration;
+    if (startTime != null && endTime != null) {
+      final start =
+          startTime is int ? startTime : int.tryParse(startTime.toString());
+      final end = endTime is int ? endTime : int.tryParse(endTime.toString());
+      if (start != null && end != null)
+        duration = ((end - start) / 1000).round();
+    }
+    final createdBy = map['createdBy'] as String?;
+    final initiatorName = map['initiatorName'] as String?;
+    final initiatorImage = map['initiatorImage'] as String?;
+    final initiatorIdentifier = map['initiatorIdentifier'] as String?;
+    IsmLiveUser? userDetails;
+    if (initiatorName != null || initiatorImage != null || createdBy != null) {
+      userDetails = IsmLiveUser(
+        id: createdBy,
+        appUserId: initiatorIdentifier,
+        userName: initiatorName,
+        userProfile: initiatorImage,
+      );
+    }
+    return IsmLiveStreamDataModel(
+      streamId: map['streamId'] != null ? map['streamId'] as String : null,
+      streamTitle: initiatorName ?? map['streamDescription'] as String?,
+      streamImage:
+          map['streamImage'] != null ? map['streamImage'] as String : null,
+      startDateTime: startTime != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              startTime is int ? startTime : int.parse(startTime.toString()))
+          : null,
+      recordUrl:
+          map['recordingUrl'] != null ? map['recordingUrl'] as String : null,
+      streamDescription: map['streamDescription'] != null
+          ? map['streamDescription'] as String
+          : null,
+      isRecorded: true,
+      isPublicStream: map['isPublic'] != null ? map['isPublic'] as bool : null,
+      userId: createdBy,
+      viewersCount:
+          map['viewersCount'] != null ? map['viewersCount'] as int : null,
+      duration: duration,
+      userDetails: userDetails,
+      hdBroadcast:
+          map['hdBroadcast'] != null ? map['hdBroadcast'] as bool : null,
+      restream: map['restream'] != null ? map['restream'] as bool : null,
+      productsLinked:
+          map['productsLinked'] != null ? map['productsLinked'] as bool : null,
+      productsCount:
+          map['productsCount'] != null ? map['productsCount'] as int : null,
+      selfHosted: map['selfHosted'] != null ? map['selfHosted'] as bool : null,
+      rtmpIngest: map['rtmpIngest'] != null ? map['rtmpIngest'] as bool : null,
+      persistRtmpIngestEndpoint: map['persistRtmpIngestEndpoint'] != null
+          ? map['persistRtmpIngestEndpoint'] as bool
+          : null,
+      products:
+          map['products'] != null ? List.from(map['products'] as List) : [],
+    );
+  }
+
   factory IsmLiveStreamDataModel.fromJson(String source) =>
       IsmLiveStreamDataModel.fromMap(
           json.decode(source) as Map<String, dynamic>);

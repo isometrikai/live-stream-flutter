@@ -711,6 +711,66 @@ typedef OnStreamScrollCallback = void Function(
   bool isHost,
 );
 
+/// Configuration for the Stream Recording Player.
+///
+/// The host app provides required callbacks for record view count and fetch stream products.
+/// All other callbacks are optional for delete, report, share, navigation, and follow.
+class IsmLiveStreamRecordingPlayerConfig {
+  const IsmLiveStreamRecordingPlayerConfig({
+    required this.onRecordViewCount,
+    required this.onFetchStreamProducts,
+    this.getCurrentUserId,
+    this.getCurrentStoreId,
+    this.onDeleteStream,
+    this.onReportStream,
+    this.onShare,
+    this.onNavigateToCart,
+    this.onNavigateToSocialPost,
+    this.onOpenUserProfile,
+    this.onFollowUser,
+  });
+
+  /// Invoked when a recording starts playing (initial or after swipe). Host performs record view count API.
+  final Future<void> Function(String streamId) onRecordViewCount;
+
+  /// Invoked when a recording starts playing. Host fetches products and returns [IsmLiveStreamRecordingProductList].
+  final Future<IsmLiveStreamRecordingProductList> Function(
+    String streamId,
+    int page,
+    String? q,
+  ) onFetchStreamProducts;
+
+  /// Optional. For "my stream" vs others and follow button visibility.
+  final String? Function()? getCurrentUserId;
+
+  /// Optional. For "my stream" and product ownership display.
+  final String? Function()? getCurrentStoreId;
+
+  /// Optional. Called when user chooses Delete in more options.
+  final Future<void> Function(String streamId)? onDeleteStream;
+
+  /// Optional. Called when user chooses Report. [userId] is the streamer's user id.
+  final Future<void> Function(String streamId, String? userId)? onReportStream;
+
+  /// Optional. Host can share product or stream link.
+  final Future<void> Function(
+    IsmLiveStreamRecordingProduct? product,
+    IsmLiveStreamRecordingItem stream,
+  )? onShare;
+
+  /// Optional. For top bar cart action.
+  final VoidCallback? onNavigateToCart;
+
+  /// Optional. For top bar social post action.
+  final VoidCallback? onNavigateToSocialPost;
+
+  /// Optional. When user taps streamer profile.
+  final void Function(String userId)? onOpenUserProfile;
+
+  /// Optional. When user taps follow in follow sheet.
+  final Future<void> Function(String userId)? onFollowUser;
+}
+
 class IsmLiveDelegate {
   factory IsmLiveDelegate() => instance;
 
@@ -854,6 +914,21 @@ class IsmLiveDelegate {
   static AddCoinsClickCallback? addCoinsClickCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
+
+  /// Configuration for the Stream Recording Player. Set via [IsmLiveApp.configureInterface].
+  static IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig;
+
+  /// No-op config used when [streamRecordingPlayerConfig] is null so the player
+  /// can open for internal/testing (video plays; view count and products are no-ops).
+  static IsmLiveStreamRecordingPlayerConfig
+      get defaultStreamRecordingPlayerConfig =>
+          _defaultStreamRecordingPlayerConfig;
+  static final IsmLiveStreamRecordingPlayerConfig
+      _defaultStreamRecordingPlayerConfig = IsmLiveStreamRecordingPlayerConfig(
+    onRecordViewCount: (_) async {},
+    onFetchStreamProducts: (_, __, ___) async =>
+        const IsmLiveStreamRecordingProductList(items: []),
+  );
 
   /// Global UI preference: initial camera position when connecting to a stream room
   /// Defaults to back camera to preserve existing behavior

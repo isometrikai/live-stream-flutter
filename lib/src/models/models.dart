@@ -15,6 +15,7 @@ export 'properties/properties.dart';
 export 'request/request.dart';
 export 'response_model.dart';
 export 'stream/stream.dart';
+export 'stream_recording/stream_recording.dart';
 export 'translations/translations.dart';
 export 'user_model.dart';
 export 'user_role.dart';

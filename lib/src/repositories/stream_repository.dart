@@ -58,6 +58,13 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
+  Future<IsmLiveResponseModel> getRecordings() => _apiWrapper.makeRequest(
+        IsmLiveApis.getRecordings,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
+      );
+
   Future<IsmLiveResponseModel> getRTCToken(String streamId, bool showLoader) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.viewer,

@@ -232,6 +232,7 @@ class IsmLiveApp extends StatefulWidget {
     // New control customization options
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
+    IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -314,6 +315,7 @@ class IsmLiveApp extends StatefulWidget {
     if (initialCameraPositionStream != null) {
       IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
     }
+    IsmLiveDelegate.streamRecordingPlayerConfig = streamRecordingPlayerConfig;
   }
 
   static Future<void> endStream(

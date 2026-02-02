@@ -899,4 +899,9 @@ mixin StreamAPIMixin {
       _controller.giftcoinBalance = res.balance?.toInt() ?? 0;
     }
   }
+
+  Future<void> fetchRecordings() async {
+    _controller.recordingsList = await _controller.viewModel.getRecordings();
+    _controller.update([IsmLiveRecordingListView.updateId]);
+  }
 }

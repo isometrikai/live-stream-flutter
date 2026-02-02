@@ -244,6 +244,8 @@ class IsmLiveStreamController extends GetxController
 
   List<IsmLiveStreamDataModel> get streams => streamsMap[streamType]!;
 
+  List<IsmLiveStreamDataModel> recordingsList = [];
+
   List<UserDetails> usersList = [];
 
   List<UserDetails> moderatorsList = [];

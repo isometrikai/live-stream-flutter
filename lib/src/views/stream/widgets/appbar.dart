@@ -8,10 +8,12 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.height,
     this.showBackArrow = false,
+    this.title,
   });
 
   final double? height;
   final bool showBackArrow;
+  final String? title;
 
   static const String updateId = 'ismlive-appbar';
 
@@ -83,7 +85,7 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
           title: Text(
-            IsmLiveStrings.title,
+            title ?? IsmLiveStrings.title,
             style: IsmLiveStyles.blackBold16,
           ),
         ),

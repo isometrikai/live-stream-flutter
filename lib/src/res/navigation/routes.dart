@@ -9,6 +9,7 @@ class IsmLiveRoutes {
   static const String addProduct = '/add-product';
 
   static const String streamListing = '/stream-listing';
+  static const String recordingList = '/recording-list';
 
   static const String ismLiveStreamRoom = '/ismLiveStreamRoom';
 

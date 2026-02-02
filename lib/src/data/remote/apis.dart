@@ -91,4 +91,5 @@ class IsmLiveApis {
   static const String products = '$_streaming/ecommerce/products';
   // static const String getEndStream = '$_streaming/analytics';
   static const String restreamChannel = '$_streaming/restream/channel';
+  static const String getRecordings = '$_streaming/stream/recordings';
 }

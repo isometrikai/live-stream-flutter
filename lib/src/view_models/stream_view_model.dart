@@ -70,6 +70,23 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<List<IsmLiveStreamDataModel>> getRecordings() async {
+    try {
+      var res = await _repository.getRecordings();
+      if (res.hasError || res.statusCode != 200) {
+        return [];
+      }
+      var list = jsonDecode(res.data)['recordings'] as List? ?? [];
+      return list
+          .map((e) => IsmLiveStreamDataModel.fromRecordingMap(
+              e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
   Future<IsmLiveRTCModel?> getRTCToken(String streamId, bool showLoader) async {
     try {
       var res = await _repository.getRTCToken(streamId, showLoader);

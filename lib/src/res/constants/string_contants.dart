@@ -28,6 +28,8 @@ class IsmLiveStrings {
   static const String reStream = 'Restream';
   static const String hd = 'HD';
   static const String recorded = 'Recorded';
+  static const String recordings = 'Recordings';
+  static const String noRecordings = 'No Recordings';
 
   static const String normal = 'Normal';
   static const String threeD = '3D';
