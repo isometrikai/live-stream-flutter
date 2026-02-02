@@ -2,97 +2,121 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 
 /// Right rail: Products, Share, More.
+/// All taps use [IsmLiveStreamRecordingControlOption]; [IsmLiveDelegate.controlOptionCallback]
+/// is tried first, then [IsmLiveStreamRecordingPlayerConfig.onControlOption].
 class IsmLiveStreamRecordingRightControls extends StatelessWidget {
   const IsmLiveStreamRecordingRightControls({
     super.key,
     required this.config,
     required this.recording,
-    required this.products,
-    required this.onAllProducts,
-    required this.onMore,
-    required this.onFollow,
   });
 
   final IsmLiveStreamRecordingPlayerConfig config;
   final IsmLiveStreamRecordingItem recording;
-  final List<IsmLiveStreamRecordingProduct> products;
-  final VoidCallback onAllProducts;
-  final VoidCallback onMore;
-  final VoidCallback onFollow;
+
+  static IsmLiveStreamOption? _toStreamOption(
+      IsmLiveStreamRecordingControlOption option) {
+    switch (option) {
+      case IsmLiveStreamRecordingControlOption.product:
+        return IsmLiveStreamOption.product;
+      case IsmLiveStreamRecordingControlOption.share:
+        return IsmLiveStreamOption.share;
+      case IsmLiveStreamRecordingControlOption.settings:
+        return IsmLiveStreamOption.settings;
+      default:
+        return null;
+    }
+  }
+
+  Future<void> _handleOptionTap(
+    BuildContext context,
+    IsmLiveStreamRecordingControlOption option,
+  ) async {
+    final streamOption = _toStreamOption(option);
+    if (streamOption != null) {
+      final controlCallback = IsmLiveDelegate.controlOptionCallback;
+      if (controlCallback != null) {
+        final handled = await controlCallback(
+          context,
+          streamOption,
+          recording.streamId,
+          false,
+          false,
+        );
+        if (handled) return;
+      }
+    }
+    config.onControlOption?.call(context, option, recording);
+  }
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _ActionButton(
-            icon: Icons.grid_view_rounded,
-            label: 'Products',
-            count: products.length,
-            onTap: onAllProducts,
+  Widget build(BuildContext context) {
+    final currentUserId = config.getCurrentUserId?.call();
+    final streamerUserId = recording.userId;
+    final isSelfStream = currentUserId != null &&
+        currentUserId.isNotEmpty &&
+        streamerUserId != null &&
+        streamerUserId.isNotEmpty &&
+        currentUserId == streamerUserId;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        _ControlItem(
+          option: IsmLiveStreamOption.product,
+          onTap: () => _handleOptionTap(
+              context, IsmLiveStreamRecordingControlOption.product),
+        ),
+        IsmLiveDimens.boxHeight8,
+        _ControlItem(
+          option: IsmLiveStreamOption.share,
+          onTap: () => _handleOptionTap(
+              context, IsmLiveStreamRecordingControlOption.share),
+        ),
+        if (!isSelfStream) ...[
+          IsmLiveDimens.boxHeight8,
+          _ControlItem(
+            option: IsmLiveStreamOption.settings,
+            onTap: () => _handleOptionTap(
+                context, IsmLiveStreamRecordingControlOption.settings),
           ),
-          if (config.onShare != null)
-            _ActionButton(
-              icon: Icons.share_rounded,
-              label: 'Share',
-              onTap: () => config.onShare!(null, recording),
-            ),
-          _ActionButton(
-            icon: Icons.more_horiz_rounded,
-            label: 'More',
-            onTap: onMore,
-          ),
-          if (recording.userId != null &&
-              recording.userId!.isNotEmpty &&
-              config.onFollowUser != null)
-            _ActionButton(
-              icon: Icons.person_add_rounded,
-              label: 'Follow',
-              onTap: onFollow,
-            ),
         ],
-      );
+      ],
+    );
+  }
 }
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    this.count,
+/// Single right-side control: same look as stream [IsmLiveControlsWidget] (CustomIconButton + optional count/label).
+class _ControlItem extends StatelessWidget {
+  const _ControlItem({
+    this.option,
+    this.icon,
     required this.onTap,
-  });
+  }) : assert(option != null || icon != null);
 
-  final IconData icon;
-  final String label;
-  final int? count;
+  final IsmLiveStreamOption? option;
+  final IconData? icon;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: Icon(icon, color: Colors.white, size: 28),
-              onPressed: onTap,
-            ),
-            if (count != null && count! > 0)
-              Text(
-                count.toString(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-              )
-            else
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-              ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final Widget iconWidget = option != null
+        ? IsmLiveImage.svg(
+            height: IsmLiveDimens.forty,
+            width: IsmLiveDimens.forty,
+            option!.icon,
+          )
+        : Icon(icon!, color: IsmLiveColors.white, size: IsmLiveDimens.forty);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: IsmLiveDimens.eight),
+      child: CustomIconButton(
+        dimension: IsmLiveDimens.fifty,
+        icon: iconWidget,
+        onTap: onTap,
+        gradient: IsmLiveDelegate.streamOptionsBgGradient,
+      ),
+    );
+  }
 }

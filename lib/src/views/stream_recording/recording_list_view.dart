@@ -93,13 +93,10 @@ class _IsmLiveRecordingListViewState extends State<IsmLiveRecordingListView> {
                                 IsmLiveDelegate.streamRecordingPlayerConfig ??
                                     IsmLiveDelegate
                                         .defaultStreamRecordingPlayerConfig;
-                            Get.to<void>(
-                              () => IsmLiveStreamRecordingPlayerView(
-                                recordings: items,
-                                initialIndex: index.clamp(0, items.length - 1),
-                                config: config,
-                              ),
-                              fullscreenDialog: true,
+                            IsmLiveRouteManagement.goToStreamRecordingPlayer(
+                              recordings: items,
+                              initialIndex: index.clamp(0, items.length - 1),
+                              config: config,
                             );
                           },
                           child: IsmLiveStreamCard(e, isCreatedByMe: false),

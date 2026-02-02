@@ -1,21 +1,16 @@
-import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-/// Bottom bar: product strip, progress bar, play/pause, seek.
+/// Bottom bar: progress bar, play/pause, seek.
 class IsmLiveStreamRecordingBottomControls extends StatefulWidget {
   const IsmLiveStreamRecordingBottomControls({
     super.key,
     required this.videoController,
-    required this.products,
     required this.onPlayPause,
-    required this.onAllProducts,
   });
 
   final VideoPlayerController? videoController;
-  final List<IsmLiveStreamRecordingProduct> products;
   final VoidCallback onPlayPause;
-  final VoidCallback onAllProducts;
 
   @override
   State<IsmLiveStreamRecordingBottomControls> createState() =>
@@ -74,39 +69,6 @@ class _IsmLiveStreamRecordingBottomControlsState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.products.isNotEmpty) ...[
-            SizedBox(
-              height: 64,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.products.length + 1,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  if (index == widget.products.length) {
-                    return GestureDetector(
-                      onTap: widget.onAllProducts,
-                      child: Container(
-                        width: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white24,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.grid_view, color: Colors.white),
-                        ),
-                      ),
-                    );
-                  }
-                  final product = widget.products[index];
-                  return _ProductChip(
-                    product: product,
-                    onTap: widget.onAllProducts,
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
           Row(
             children: [
               IconButton(
@@ -154,39 +116,4 @@ class _IsmLiveStreamRecordingBottomControlsState
     final s = d.inSeconds % 60;
     return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
-}
-
-class _ProductChip extends StatelessWidget {
-  const _ProductChip({
-    required this.product,
-    required this.onTap,
-  });
-
-  final IsmLiveStreamRecordingProduct product;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 64,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white38),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: product.imageUrl != null && product.imageUrl!.isNotEmpty
-                ? Image.network(
-                    product.imageUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Icon(
-                      Icons.image_not_supported,
-                      color: Colors.white54,
-                    ),
-                  )
-                : const Icon(Icons.image, color: Colors.white54),
-          ),
-        ),
-      );
 }

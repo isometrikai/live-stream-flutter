@@ -143,6 +143,19 @@ typedef StreamViewLoadedCallback = void Function(
   IsmLiveStreamDataModel? stream,
 );
 
+/// Callback for stream recording player loaded event.
+///
+/// This callback is triggered when a recording starts playing (initial load or
+/// after swipe to another recording). The host app can perform initial API
+/// calls here (e.g. record view count, fetch products for the stream).
+///
+/// [context] - The build context from the player.
+/// [recording] - The recording item that is now playing.
+typedef StreamRecordingPlayerLoadedCallback = void Function(
+  BuildContext context,
+  IsmLiveStreamRecordingItem recording,
+);
+
 // Heart message customization is now managed through `controlOptionCallback`.
 
 /// API handler for stream analytics data.
@@ -711,64 +724,43 @@ typedef OnStreamScrollCallback = void Function(
   bool isHost,
 );
 
+/// Control option types for the Stream Recording Player.
+/// Used by [IsmLiveStreamRecordingPlayerConfig.onControlOption].
+enum IsmLiveStreamRecordingControlOption {
+  product,
+  share,
+  settings,
+  deleteStream,
+  reportStream,
+  navigateToCart,
+  navigateToSocialPost,
+  openUserProfile,
+}
+
+/// Called when the user triggers a control action in the recording player.
+/// [option] identifies the action (product, share, delete, etc.).
+typedef IsmLiveStreamRecordingControlOptionCallback = void Function(
+  BuildContext context,
+  IsmLiveStreamRecordingControlOption option,
+  IsmLiveStreamRecordingItem recording,
+);
+
 /// Configuration for the Stream Recording Player.
 ///
-/// The host app provides required callbacks for record view count and fetch stream products.
-/// All other callbacks are optional for delete, report, share, navigation, and follow.
+/// Use [IsmLiveDelegate.streamRecordingPlayerLoadedCallback] for initial-load
+/// logic. Use [onControlOption] for all control actions (product, share, more, etc.).
 class IsmLiveStreamRecordingPlayerConfig {
   const IsmLiveStreamRecordingPlayerConfig({
-    required this.onRecordViewCount,
-    required this.onFetchStreamProducts,
     this.getCurrentUserId,
-    this.getCurrentStoreId,
-    this.onDeleteStream,
-    this.onReportStream,
-    this.onShare,
-    this.onNavigateToCart,
-    this.onNavigateToSocialPost,
-    this.onOpenUserProfile,
-    this.onFollowUser,
+    this.onControlOption,
   });
 
-  /// Invoked when a recording starts playing (initial or after swipe). Host performs record view count API.
-  final Future<void> Function(String streamId) onRecordViewCount;
-
-  /// Invoked when a recording starts playing. Host fetches products and returns [IsmLiveStreamRecordingProductList].
-  final Future<IsmLiveStreamRecordingProductList> Function(
-    String streamId,
-    int page,
-    String? q,
-  ) onFetchStreamProducts;
-
-  /// Optional. For "my stream" vs others and follow button visibility.
+  /// Optional. For "my stream" vs others.
   final String? Function()? getCurrentUserId;
 
-  /// Optional. For "my stream" and product ownership display.
-  final String? Function()? getCurrentStoreId;
-
-  /// Optional. Called when user chooses Delete in more options.
-  final Future<void> Function(String streamId)? onDeleteStream;
-
-  /// Optional. Called when user chooses Report. [userId] is the streamer's user id.
-  final Future<void> Function(String streamId, String? userId)? onReportStream;
-
-  /// Optional. Host can share product or stream link.
-  final Future<void> Function(
-    IsmLiveStreamRecordingProduct? product,
-    IsmLiveStreamRecordingItem stream,
-  )? onShare;
-
-  /// Optional. For top bar cart action.
-  final VoidCallback? onNavigateToCart;
-
-  /// Optional. For top bar social post action.
-  final VoidCallback? onNavigateToSocialPost;
-
-  /// Optional. When user taps streamer profile.
-  final void Function(String userId)? onOpenUserProfile;
-
-  /// Optional. When user taps follow in follow sheet.
-  final Future<void> Function(String userId)? onFollowUser;
+  /// Optional. Single handler for control option taps (product, share, settings,
+  /// deleteStream, reportStream, navigateToCart, navigateToSocialPost, openUserProfile).
+  final IsmLiveStreamRecordingControlOptionCallback? onControlOption;
 }
 
 class IsmLiveDelegate {
@@ -875,6 +867,11 @@ class IsmLiveDelegate {
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
 
+  /// Called when the stream recording player has loaded a recording (initial or after swipe).
+  /// Host can use this for initial API calls (e.g. record view count, fetch products).
+  static StreamRecordingPlayerLoadedCallback?
+      streamRecordingPlayerLoadedCallback;
+
   /// API handler for custom stream analytics implementation.
   ///
   /// Provides your own API implementation to replace the SDK's default analytics endpoint.
@@ -919,16 +916,13 @@ class IsmLiveDelegate {
   static IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig;
 
   /// No-op config used when [streamRecordingPlayerConfig] is null so the player
-  /// can open for internal/testing (video plays; view count and products are no-ops).
+  /// can open for internal/testing (video plays; initial API is via [streamRecordingPlayerLoadedCallback]).
   static IsmLiveStreamRecordingPlayerConfig
       get defaultStreamRecordingPlayerConfig =>
           _defaultStreamRecordingPlayerConfig;
-  static final IsmLiveStreamRecordingPlayerConfig
-      _defaultStreamRecordingPlayerConfig = IsmLiveStreamRecordingPlayerConfig(
-    onRecordViewCount: (_) async {},
-    onFetchStreamProducts: (_, __, ___) async =>
-        const IsmLiveStreamRecordingProductList(items: []),
-  );
+  static const IsmLiveStreamRecordingPlayerConfig
+      _defaultStreamRecordingPlayerConfig =
+      IsmLiveStreamRecordingPlayerConfig();
 
   /// Global UI preference: initial camera position when connecting to a stream room
   /// Defaults to back camera to preserve existing behavior

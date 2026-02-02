@@ -47,7 +47,7 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
               ),
               onTap: onClose,
             ),
-            if (_isOwnStream && config.onDeleteStream != null)
+            if (_isOwnStream && config.onControlOption != null)
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
                 title: Text(
@@ -57,15 +57,19 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onTap: () async {
-                  await config.onDeleteStream!(recording.streamId);
+                onTap: () {
+                  config.onControlOption!(
+                    context,
+                    IsmLiveStreamRecordingControlOption.deleteStream,
+                    recording,
+                  );
                   if (context.mounted) {
                     onClose();
                     Navigator.of(context).pop();
                   }
                 },
               ),
-            if (!_isOwnStream && config.onReportStream != null)
+            if (!_isOwnStream && config.onControlOption != null)
               ListTile(
                 leading: const Icon(Icons.flag_outlined, color: Colors.orange),
                 title: Text(
@@ -75,9 +79,12 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onTap: () async {
-                  await config.onReportStream!(
-                      recording.streamId, recording.userId);
+                onTap: () {
+                  config.onControlOption!(
+                    context,
+                    IsmLiveStreamRecordingControlOption.reportStream,
+                    recording,
+                  );
                   if (context.mounted) {
                     onClose();
                     Navigator.of(context).pop();

@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -8,8 +7,8 @@ import 'package:video_player/video_player.dart';
 /// Full-screen stream recording player with vertical swipe between recordings.
 ///
 /// Uses [config] if provided, otherwise [IsmLiveDelegate.streamRecordingPlayerConfig].
-/// Requires [IsmLiveStreamRecordingPlayerConfig.onRecordViewCount] and
-/// [IsmLiveStreamRecordingPlayerConfig.onFetchStreamProducts] to be set.
+/// Host app can open via [IsmLiveApp.openStreamRecordingPlayer] or
+/// [IsmLiveRouteManagement.goToStreamRecordingPlayer].
 class IsmLiveStreamRecordingPlayerView extends StatefulWidget {
   const IsmLiveStreamRecordingPlayerView({
     super.key,
@@ -17,6 +16,8 @@ class IsmLiveStreamRecordingPlayerView extends StatefulWidget {
     this.initialIndex = 0,
     this.config,
   });
+
+  static const String route = IsmLiveRoutes.streamRecordingPlayer;
 
   /// List of recording items; [initialIndex] selects the first visible.
   final List<IsmLiveStreamRecordingItem> recordings;
@@ -37,12 +38,7 @@ class _IsmLiveStreamRecordingPlayerViewState
   late PageController _pageController;
   VideoPlayerController? _videoController;
   int _currentIndex = 0;
-  List<IsmLiveStreamRecordingProduct> _products = [];
-  bool _productsHasMore = false;
-  int _productsPage = 1;
   bool _showOverlay = true;
-  Timer? _overlayTimer;
-  bool _isLoadingProducts = false;
 
   IsmLiveStreamRecordingPlayerConfig get _config =>
       widget.config ??
@@ -58,16 +54,6 @@ class _IsmLiveStreamRecordingPlayerViewState
     _pageController = PageController(initialPage: widget.initialIndex);
     _currentIndex = widget.initialIndex;
     WidgetsBinding.instance.addPostFrameCallback((_) => _initCurrentPage());
-    _startOverlayTimer();
-  }
-
-  void _startOverlayTimer() {
-    _overlayTimer?.cancel();
-    _overlayTimer = Timer(const Duration(seconds: 3), () {
-      if (mounted && _showOverlay) {
-        setState(() => _showOverlay = false);
-      }
-    });
   }
 
   Future<void> _initCurrentPage() async {
@@ -89,34 +75,8 @@ class _IsmLiveStreamRecordingPlayerViewState
     await _videoController!.play();
     if (mounted) setState(() {});
 
-    final config = _config;
-    unawaited(config.onRecordViewCount(recording.streamId));
-    await _fetchProducts(recording.streamId, 1, null);
-  }
-
-  Future<void> _fetchProducts(String streamId, int page, String? q) async {
-    final config = _config;
-    if (_isLoadingProducts) return;
-    _isLoadingProducts = true;
-    if (mounted) setState(() {});
-    try {
-      final list = await config.onFetchStreamProducts(streamId, page, q);
-      if (!mounted) return;
-      setState(() {
-        if (page == 1) {
-          _products = list.items;
-        } else {
-          _products = [..._products, ...list.items];
-        }
-        _productsHasMore = list.hasMore;
-        _productsPage = list.page;
-        _isLoadingProducts = false;
-      });
-    } catch (_) {
-      if (mounted) {
-        setState(() => _isLoadingProducts = false);
-      }
-    }
+    IsmLiveDelegate.streamRecordingPlayerLoadedCallback
+        ?.call(context, recording);
   }
 
   Future<void> _disposeVideo() async {
@@ -139,8 +99,6 @@ class _IsmLiveStreamRecordingPlayerViewState
       _videoController!.play();
     }
     setState(() {});
-    _showOverlay = true;
-    _startOverlayTimer();
   }
 
   void _onClose() {
@@ -149,7 +107,6 @@ class _IsmLiveStreamRecordingPlayerViewState
 
   @override
   void dispose() {
-    _overlayTimer?.cancel();
     _disposeVideo();
     _pageController.dispose();
     super.dispose();
@@ -185,7 +142,6 @@ class _IsmLiveStreamRecordingPlayerViewState
                   videoController: isActive ? _videoController : null,
                   onTap: () {
                     setState(() => _showOverlay = !_showOverlay);
-                    if (_showOverlay) _startOverlayTimer();
                   },
                 );
               },
@@ -207,9 +163,7 @@ class _IsmLiveStreamRecordingPlayerViewState
                 bottom: 0,
                 child: IsmLiveStreamRecordingBottomControls(
                   videoController: _videoController,
-                  products: _products,
                   onPlayPause: _togglePlayPause,
-                  onAllProducts: () => _showAllProductsSheet(context),
                 ),
               ),
               Positioned(
@@ -220,10 +174,6 @@ class _IsmLiveStreamRecordingPlayerViewState
                   child: IsmLiveStreamRecordingRightControls(
                     config: config,
                     recording: _currentRecording,
-                    products: _products,
-                    onAllProducts: () => _showAllProductsSheet(context),
-                    onMore: () => _showMoreOptionsSheet(context),
-                    onFollow: () => _showFollowUserSheet(context),
                   ),
                 ),
               ),
@@ -238,52 +188,6 @@ class _IsmLiveStreamRecordingPlayerViewState
             ],
           ],
         ),
-      ),
-    );
-  }
-
-  void _showAllProductsSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => IsmLiveStreamRecordingAllProductsSheet(
-        products: _products,
-        hasMore: _productsHasMore,
-        page: _productsPage,
-        onLoadMore: () => _fetchProducts(
-          _currentRecording.streamId,
-          _productsPage + 1,
-          null,
-        ),
-        config: _config,
-        recording: _currentRecording,
-      ),
-    );
-  }
-
-  void _showMoreOptionsSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => IsmLiveStreamRecordingMoreOptionsSheet(
-        recording: _currentRecording,
-        config: _config,
-        onClose: () => Navigator.of(ctx).pop(),
-      ),
-    );
-  }
-
-  void _showFollowUserSheet(BuildContext context) {
-    final userId = _currentRecording.userId;
-    if (userId == null || userId.isEmpty) return;
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => IsmLiveStreamRecordingFollowUserSheet(
-        recording: _currentRecording,
-        config: _config,
-        onClose: () => Navigator.of(ctx).pop(),
       ),
     );
   }

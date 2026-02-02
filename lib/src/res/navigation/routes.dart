@@ -10,6 +10,7 @@ class IsmLiveRoutes {
 
   static const String streamListing = '/stream-listing';
   static const String recordingList = '/recording-list';
+  static const String streamRecordingPlayer = '/stream-recording-player';
 
   static const String ismLiveStreamRoom = '/ismLiveStreamRoom';
 

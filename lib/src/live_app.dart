@@ -233,6 +233,7 @@ class IsmLiveApp extends StatefulWidget {
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
+    StreamRecordingPlayerLoadedCallback? streamRecordingPlayerLoadedCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -316,6 +317,8 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
     }
     IsmLiveDelegate.streamRecordingPlayerConfig = streamRecordingPlayerConfig;
+    IsmLiveDelegate.streamRecordingPlayerLoadedCallback =
+        streamRecordingPlayerLoadedCallback;
   }
 
   static Future<void> endStream(
@@ -543,6 +546,17 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
   }
 
+  static StreamRecordingPlayerLoadedCallback?
+      get streamRecordingPlayerLoadedCallback =>
+          IsmLiveDelegate.streamRecordingPlayerLoadedCallback;
+
+  static void updateStreamRecordingPlayerLoadedCallback(
+      StreamRecordingPlayerLoadedCallback?
+          streamRecordingPlayerLoadedCallback) {
+    IsmLiveDelegate.streamRecordingPlayerLoadedCallback =
+        streamRecordingPlayerLoadedCallback;
+  }
+
   // Removed: updateHeartMessageCallback (use controlOptionCallback instead)
 
   /// Update stream analytics API handler dynamically at runtime
@@ -684,6 +698,29 @@ class IsmLiveApp extends StatefulWidget {
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
+  }
+
+  /// Opens the stream recording player. Host app can use this to play a list of
+  /// recordings (e.g. from missed streams or search). Uses
+  /// [IsmLiveDelegate.streamRecordingPlayerConfig] when [config] is null.
+  ///
+  /// Example:
+  /// ```dart
+  /// await IsmLiveApp.openStreamRecordingPlayer(
+  ///   recordings: listOfIsmLiveStreamRecordingItem,
+  ///   initialIndex: 0,
+  /// );
+  /// ```
+  static Future<void> openStreamRecordingPlayer({
+    required List<IsmLiveStreamRecordingItem> recordings,
+    int initialIndex = 0,
+    IsmLiveStreamRecordingPlayerConfig? config,
+  }) async {
+    await IsmLiveRouteManagement.goToStreamRecordingPlayer(
+      recordings: recordings,
+      initialIndex: initialIndex,
+      config: config,
+    );
   }
 
   /// Configure background lifecycle management

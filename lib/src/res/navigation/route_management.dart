@@ -201,6 +201,26 @@ abstract class IsmLiveRouteManagement {
       IsmLiveRoute.push(const IsmLiveCoinTransactions());
     }
   }
+
+  /// Opens the stream recording player with the given recordings.
+  /// Host app can use this or [IsmLiveApp.openStreamRecordingPlayer].
+  static Future<void> goToStreamRecordingPlayer({
+    required List<IsmLiveStreamRecordingItem> recordings,
+    int initialIndex = 0,
+    IsmLiveStreamRecordingPlayerConfig? config,
+  }) async {
+    if (recordings.isEmpty) return;
+    await IsmLiveUtility.navigatorKey.currentState?.push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => IsmLiveStreamRecordingPlayerView(
+          recordings: recordings,
+          initialIndex: initialIndex.clamp(0, recordings.length - 1),
+          config: config,
+        ),
+        fullscreenDialog: true,
+      ),
+    );
+  }
 }
 
 class LiveStreamRoute {
