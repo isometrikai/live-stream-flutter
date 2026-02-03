@@ -465,17 +465,22 @@ class _IsmLiveStreamView extends StatelessWidget {
                       Align(
                         alignment: IsmLiveApp.headerPosition,
                         child: Obx(
-                          () => ((controller.room?.localParticipant != null) &&
-                                      IsmLiveApp.showHeader) ||
-                                  isSchedule
-                              ? IsmLiveApp.streamHeader?.call(
-                                    context,
-                                    controller.hostDetails,
-                                    controller.descriptionController.text,
-                                  ) ??
-                                  _StreamHeader(
-                                      streamId: controller.streamId ?? '')
-                              : IsmLiveDimens.box0,
+                          () {
+                            if (!((controller.room?.localParticipant != null) &&
+                                    IsmLiveApp.showHeader) &&
+                                !isSchedule) {
+                              return IsmLiveDimens.box0;
+                            }
+                            final defaultHeader = _StreamHeader(
+                                streamId: controller.streamId ?? '');
+                            return IsmLiveApp.streamHeader?.call(
+                                  context,
+                                  controller.hostDetails,
+                                  controller.descriptionController.text,
+                                  defaultHeader,
+                                ) ??
+                                defaultHeader;
+                          },
                         ),
                       ),
                       Obx(

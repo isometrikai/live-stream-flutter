@@ -124,42 +124,10 @@ class _RecordingProfileChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
         onTap: () async {
-          final hostTopProfileCallback =
-              IsmLiveDelegate.hostTopProfileClickCallback;
-          if (hostTopProfileCallback != null) {
-            final handled = await hostTopProfileCallback(
-              context,
-              false,
-              userIdentifier,
-              name,
-              imageUrl,
-              description,
-            );
-            if (handled) return;
-          }
-          IsmLiveUtility.openBottomSheet(
-            StreamLiveSheet(
-              widget: IsmLiveImage.network(
-                imageUrl,
-                isProfileImage: true,
-                name: name,
-                height: IsmLiveDimens.hundred,
-                width: IsmLiveDimens.hundred,
-              ),
-              title: name,
-              subTitle: description.trim().isEmpty ? null : description,
-              buttonLable: 'View Profile',
-              onTap: () {
-                config.onControlOption?.call(
-                  context,
-                  IsmLiveStreamRecordingControlOption.openUserProfile,
-                  recording,
-                );
-                IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
-                IsmLiveRoute.pop();
-              },
-            ),
-            isScrollController: true,
+          config.onControlOption?.call(
+            context,
+            IsmLiveStreamRecordingControlOption.openUserProfile,
+            recording,
           );
         },
         child: Container(

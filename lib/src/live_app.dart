@@ -172,7 +172,7 @@ class IsmLiveApp extends StatefulWidget {
   }
 
   static void configureInterface({
-    IsmLiveHeaderBuilder? streamHeader,
+    IsmLiveStreamHeaderBuilder? streamHeader,
     IsmLiveHeaderBuilder? bottomBuilder,
     IsmLiveInputBuilder? inputBuilder,
     IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder,
@@ -233,7 +233,6 @@ class IsmLiveApp extends StatefulWidget {
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
-    StreamRecordingPlayerLoadedCallback? streamRecordingPlayerLoadedCallback,
   }) {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -317,8 +316,6 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
     }
     IsmLiveDelegate.streamRecordingPlayerConfig = streamRecordingPlayerConfig;
-    IsmLiveDelegate.streamRecordingPlayerLoadedCallback =
-        streamRecordingPlayerLoadedCallback;
   }
 
   static Future<void> endStream(
@@ -444,7 +441,8 @@ class IsmLiveApp extends StatefulWidget {
   static set onStreamEnd(VoidCallback? callback) =>
       IsmLiveDelegate.onStreamEnd = callback;
 
-  static IsmLiveHeaderBuilder? get streamHeader => IsmLiveDelegate.streamHeader;
+  static IsmLiveStreamHeaderBuilder? get streamHeader =>
+      IsmLiveDelegate.streamHeader;
 
   static IsmLiveHeaderBuilder? get bottomBuilder =>
       IsmLiveDelegate.bottomBuilder;
@@ -544,17 +542,6 @@ class IsmLiveApp extends StatefulWidget {
   static void updateStreamViewLoadedCallback(
       StreamViewLoadedCallback? streamViewLoadedCallback) {
     IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
-  }
-
-  static StreamRecordingPlayerLoadedCallback?
-      get streamRecordingPlayerLoadedCallback =>
-          IsmLiveDelegate.streamRecordingPlayerLoadedCallback;
-
-  static void updateStreamRecordingPlayerLoadedCallback(
-      StreamRecordingPlayerLoadedCallback?
-          streamRecordingPlayerLoadedCallback) {
-    IsmLiveDelegate.streamRecordingPlayerLoadedCallback =
-        streamRecordingPlayerLoadedCallback;
   }
 
   // Removed: updateHeartMessageCallback (use controlOptionCallback instead)

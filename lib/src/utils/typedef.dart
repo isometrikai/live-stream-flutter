@@ -22,9 +22,18 @@ typedef FutureFunction = Future<void> Function();
 typedef RoomListener = EventsListener<RoomEvent>;
 
 typedef IsmLiveHeaderBuilder = Widget Function(
-  BuildContext,
-  IsmLiveMemberDetailsModel?,
-  String,
+  BuildContext context,
+  IsmLiveMemberDetailsModel? hostDetails,
+  String description,
+);
+
+/// Builder for the stream header. Receives [defaultHeader] so the host can use
+/// it as-is, wrap it, or replace it with a fully custom widget.
+typedef IsmLiveStreamHeaderBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveMemberDetailsModel? hostDetails,
+  String description,
+  Widget defaultHeader,
 );
 
 typedef IsmLiveInputBuilder = Widget Function(BuildContext, Widget);

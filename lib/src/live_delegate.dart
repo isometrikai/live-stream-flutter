@@ -747,16 +747,21 @@ typedef IsmLiveStreamRecordingControlOptionCallback = void Function(
 
 /// Configuration for the Stream Recording Player.
 ///
-/// Use [IsmLiveDelegate.streamRecordingPlayerLoadedCallback] for initial-load
-/// logic. Use [onControlOption] for all control actions (product, share, more, etc.).
+/// Use [onLoaded] for initial-load logic (e.g. record view count, fetch products).
+/// Use [onControlOption] for all control actions (product, share, more, etc.).
 class IsmLiveStreamRecordingPlayerConfig {
   const IsmLiveStreamRecordingPlayerConfig({
     this.getCurrentUserId,
+    this.onLoaded,
     this.onControlOption,
   });
 
   /// Optional. For "my stream" vs others.
   final String? Function()? getCurrentUserId;
+
+  /// Optional. Called when a recording has loaded and started playing (initial or after swipe).
+  /// Host can perform initial API calls here (e.g. record view count, fetch products).
+  final StreamRecordingPlayerLoadedCallback? onLoaded;
 
   /// Optional. Single handler for control option taps (product, share, settings,
   /// deleteStream, reportStream, navigateToCart, navigateToSocialPost, openUserProfile).
@@ -782,7 +787,7 @@ class IsmLiveDelegate {
 
   static Function(String id)? unsubscribStreamById;
 
-  static IsmLiveHeaderBuilder? streamHeader;
+  static IsmLiveStreamHeaderBuilder? streamHeader;
 
   static IsmLiveHeaderBuilder? bottomBuilder;
 
@@ -867,11 +872,6 @@ class IsmLiveDelegate {
 
   static StreamViewLoadedCallback? streamViewLoadedCallback;
 
-  /// Called when the stream recording player has loaded a recording (initial or after swipe).
-  /// Host can use this for initial API calls (e.g. record view count, fetch products).
-  static StreamRecordingPlayerLoadedCallback?
-      streamRecordingPlayerLoadedCallback;
-
   /// API handler for custom stream analytics implementation.
   ///
   /// Provides your own API implementation to replace the SDK's default analytics endpoint.
@@ -916,7 +916,7 @@ class IsmLiveDelegate {
   static IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig;
 
   /// No-op config used when [streamRecordingPlayerConfig] is null so the player
-  /// can open for internal/testing (video plays; initial API is via [streamRecordingPlayerLoadedCallback]).
+  /// can open for internal/testing (video plays; initial API is via config [onLoaded]).
   static IsmLiveStreamRecordingPlayerConfig
       get defaultStreamRecordingPlayerConfig =>
           _defaultStreamRecordingPlayerConfig;

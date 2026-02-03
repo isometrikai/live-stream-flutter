@@ -75,8 +75,7 @@ class _IsmLiveStreamRecordingPlayerViewState
     await _videoController!.play();
     if (mounted) setState(() {});
 
-    IsmLiveDelegate.streamRecordingPlayerLoadedCallback
-        ?.call(context, recording);
+    _config.onLoaded?.call(context, recording);
   }
 
   Future<void> _disposeVideo() async {

@@ -14,38 +14,10 @@ class IsmLiveStreamRecordingRightControls extends StatelessWidget {
   final IsmLiveStreamRecordingPlayerConfig config;
   final IsmLiveStreamRecordingItem recording;
 
-  static IsmLiveStreamOption? _toStreamOption(
-      IsmLiveStreamRecordingControlOption option) {
-    switch (option) {
-      case IsmLiveStreamRecordingControlOption.product:
-        return IsmLiveStreamOption.product;
-      case IsmLiveStreamRecordingControlOption.share:
-        return IsmLiveStreamOption.share;
-      case IsmLiveStreamRecordingControlOption.settings:
-        return IsmLiveStreamOption.settings;
-      default:
-        return null;
-    }
-  }
-
   Future<void> _handleOptionTap(
     BuildContext context,
     IsmLiveStreamRecordingControlOption option,
   ) async {
-    final streamOption = _toStreamOption(option);
-    if (streamOption != null) {
-      final controlCallback = IsmLiveDelegate.controlOptionCallback;
-      if (controlCallback != null) {
-        final handled = await controlCallback(
-          context,
-          streamOption,
-          recording.streamId,
-          false,
-          false,
-        );
-        if (handled) return;
-      }
-    }
     config.onControlOption?.call(context, option, recording);
   }
 
