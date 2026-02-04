@@ -37,6 +37,7 @@ class _IsmLiveStreamRecordingPlayerViewState
     extends State<IsmLiveStreamRecordingPlayerView> {
   late PageController _pageController;
   VideoPlayerController? _videoController;
+  final Map<int, VideoPlayerController> _preloadedControllers = {};
   int _currentIndex = 0;
   bool _showOverlay = true;
 
@@ -62,25 +63,95 @@ class _IsmLiveStreamRecordingPlayerViewState
     final urls = recording.recordedUrls;
     if (urls.isEmpty) return;
 
-    // Clear controller from widget tree first so no widget holds it, then dispose.
+    final url = urls.first;
     final oldController = _videoController;
-    _videoController = null;
+
+    // Use preloaded controller if it matches current page to avoid any loading flash.
+    final preloaded = _preloadedControllers[_currentIndex];
+    if (preloaded != null &&
+        preloaded.value.isInitialized &&
+        _urlForRecording(recording) == url) {
+      _preloadedControllers.remove(_currentIndex);
+      await oldController?.dispose();
+      _disposePreloadedExcept(null);
+      _videoController = preloaded;
+      if (mounted) {
+        setState(() {});
+        await _videoController!.play();
+      }
+      _preloadAdjacent();
+      _config.onLoaded?.call(context, recording);
+      return;
+    }
+
+    // Build new controller without clearing current — keeps previous video visible until new is ready (no blink).
+    final newController = VideoPlayerController.networkUrl(Uri.parse(url));
+    await newController.initialize();
+    if (!mounted) return;
+    await newController.play();
+    if (!mounted) return;
+
+    _videoController = newController;
     if (mounted) setState(() {});
     await oldController?.dispose();
-
-    final url = urls.first;
-    _videoController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await _videoController!.initialize();
-    if (!mounted) return;
-    await _videoController!.play();
-    if (mounted) setState(() {});
+    _disposePreloadedExcept(null);
+    _preloadAdjacent();
 
     _config.onLoaded?.call(context, recording);
+  }
+
+  static String? _urlForRecording(IsmLiveStreamRecordingItem r) {
+    final urls = r.recordedUrls;
+    return urls.isEmpty ? null : urls.first;
+  }
+
+  void _disposePreloadedExcept(int? keepIndex) {
+    for (final entry in _preloadedControllers.entries.toList()) {
+      if (entry.key != keepIndex) {
+        entry.value.dispose();
+        _preloadedControllers.remove(entry.key);
+      }
+    }
+  }
+
+  void _preloadAdjacent() {
+    final n = widget.recordings.length;
+    if (n == 0) return;
+    final nextIndex = _currentIndex + 1;
+    final prevIndex = _currentIndex - 1;
+    if (nextIndex < n && !_preloadedControllers.containsKey(nextIndex)) {
+      _preloadIndex(nextIndex);
+    }
+    if (prevIndex >= 0 && !_preloadedControllers.containsKey(prevIndex)) {
+      _preloadIndex(prevIndex);
+    }
+  }
+
+  Future<void> _preloadIndex(int index) async {
+    if (index < 0 || index >= widget.recordings.length) return;
+    final recording = widget.recordings[index];
+    final url = _urlForRecording(recording);
+    if (url == null) return;
+    try {
+      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      await controller.initialize();
+      if (!mounted) {
+        controller.dispose();
+        return;
+      }
+      _preloadedControllers[index] = controller;
+    } catch (_) {
+      // Ignore preload failures; page will load on demand.
+    }
   }
 
   Future<void> _disposeVideo() async {
     await _videoController?.dispose();
     _videoController = null;
+    for (final c in _preloadedControllers.values) {
+      await c.dispose();
+    }
+    _preloadedControllers.clear();
   }
 
   void _onPageChanged(int index) {

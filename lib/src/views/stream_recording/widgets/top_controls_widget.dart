@@ -57,28 +57,6 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
             _RecordingViewCount(count: recording.recordViewCount),
             IsmLiveDimens.boxWidth10,
           ],
-          if (config.onControlOption != null) ...[
-            IsmLiveTapHandler(
-              onTap: () => config.onControlOption!.call(
-                context,
-                IsmLiveStreamRecordingControlOption.navigateToCart,
-                recording,
-              ),
-              child: Container(
-                padding: IsmLiveDimens.edgeInsets4,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white24,
-                ),
-                child: Icon(
-                  Icons.shopping_cart_rounded,
-                  color: IsmLiveColors.white,
-                  size: IsmLiveDimens.sixteen,
-                ),
-              ),
-            ),
-            IsmLiveDimens.boxWidth10,
-          ],
           const Spacer(),
           SafeArea(
             top: false,
