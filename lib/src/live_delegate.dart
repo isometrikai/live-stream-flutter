@@ -862,6 +862,24 @@ class IsmLiveDelegate {
 
   static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
 
+  /// Free/Premium tab colors (from goLiveScreenConfigure). Used by _StreamTypes.
+  static Color? streamTypeSelectedColor;
+  static Color? streamTypeUnselectedColor;
+  static Color? streamTypeSelectedTextColor;
+  static Color? streamTypeUnselectedTextColor;
+
+  /// Switch/toggle theme (from goLiveScreenConfigure). Used by IsmLiveRadioListTile.
+  static Color? switchActiveTrackColor;
+  static Color? switchInactiveTrackColor;
+
+  /// Primary button theme (confirm, schedule, etc.). Used by IsmLiveButton.
+  static Color? primaryButtonColor;
+  static Color? primaryButtonForegroundColor;
+
+  /// Go Live screen theme. Used by go_live_view.
+  static Color? goLiveScaffoldBackgroundColor;
+  static Color? goLiveInputFillColor;
+
   static bool enableFreeGift = false;
 
   static bool restrictProfileSheetOnProfileClick = false;
@@ -1013,6 +1031,16 @@ class IsmLiveGoLiveScreenConfigure {
     this.tabSelectedTextStyle,
     this.tabUnselectedTextStyle,
     this.titleTextStyle,
+    this.streamTypeSelectedColor,
+    this.streamTypeUnselectedColor,
+    this.streamTypeSelectedTextColor,
+    this.streamTypeUnselectedTextColor,
+    this.switchActiveTrackColor,
+    this.switchInactiveTrackColor,
+    this.primaryButtonColor,
+    this.primaryButtonForegroundColor,
+    this.goLiveScaffoldBackgroundColor,
+    this.goLiveInputFillColor,
   });
 
   /// Custom header builder for the GoLive screen.
@@ -1069,4 +1097,38 @@ class IsmLiveGoLiveScreenConfigure {
   /// GoLive screen such as main titles, section headers, and other prominent text.
   /// If not provided, the default text style will be used.
   final TextStyle? titleTextStyle;
+
+  /// Background color for the selected Free/Premium stream type tab.
+  /// If null, defaults to black.
+  final Color? streamTypeSelectedColor;
+
+  /// Background color for the unselected Free/Premium stream type tab.
+  /// If null, defaults to white with opacity 0.2.
+  final Color? streamTypeUnselectedColor;
+
+  /// Text color for the selected Free/Premium stream type tab.
+  /// If null, defaults to white.
+  final Color? streamTypeSelectedTextColor;
+
+  /// Text color for the unselected Free/Premium stream type tab.
+  /// If null, defaults to black.
+  final Color? streamTypeUnselectedTextColor;
+
+  /// Active (on) track color for switch/toggle. If null, uses liveTheme?.primaryColor ?? IsmLiveColors.primary.
+  final Color? switchActiveTrackColor;
+
+  /// Inactive (off) track color for switch/toggle. If null, uses liveTheme?.unselectedTextColor ?? IsmLiveColors.grey.
+  final Color? switchInactiveTrackColor;
+
+  /// Primary button background (e.g. schedule confirm). If null, uses liveTheme/IsmLiveColors.primary.
+  final Color? primaryButtonColor;
+
+  /// Primary button foreground (text/icon). If null, uses liveTheme/IsmLiveColors.white.
+  final Color? primaryButtonForegroundColor;
+
+  /// Go Live screen scaffold background. If null, defaults to IsmLiveColors.black.
+  final Color? goLiveScaffoldBackgroundColor;
+
+  /// Go Live screen input/description fill color. If null, defaults to white with opacity.
+  final Color? goLiveInputFillColor;
 }

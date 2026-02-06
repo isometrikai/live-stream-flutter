@@ -179,7 +179,8 @@ class _Primary extends StatelessWidget {
                 return context.liveTheme?.primaryButtonTheme?.disableColor ??
                     IsmLiveColors.grey;
               }
-              return context.liveTheme?.primaryButtonTheme?.backgroundColor ??
+              return IsmLiveDelegate.primaryButtonColor ??
+                  context.liveTheme?.primaryButtonTheme?.backgroundColor ??
                   context.liveTheme?.primaryColor ??
                   IsmLiveColors.primary;
             },
@@ -189,7 +190,8 @@ class _Primary extends StatelessWidget {
               if (states.isDisabled) {
                 return IsmLiveColors.black;
               }
-              return context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+              return IsmLiveDelegate.primaryButtonForegroundColor ??
+                  context.liveTheme?.primaryButtonTheme?.foregroundColor ??
                   IsmLiveColors.white;
             },
           ),

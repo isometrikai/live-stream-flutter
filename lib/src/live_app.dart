@@ -293,6 +293,26 @@ class IsmLiveApp extends StatefulWidget {
           goLiveScreenConfigure.goLiveHeaderBuilder;
       IsmLiveDelegate.goLiveButtonBuilder =
           goLiveScreenConfigure.goLiveButtonBuilder;
+      IsmLiveDelegate.streamTypeSelectedColor =
+          goLiveScreenConfigure.streamTypeSelectedColor;
+      IsmLiveDelegate.streamTypeUnselectedColor =
+          goLiveScreenConfigure.streamTypeUnselectedColor;
+      IsmLiveDelegate.streamTypeSelectedTextColor =
+          goLiveScreenConfigure.streamTypeSelectedTextColor;
+      IsmLiveDelegate.streamTypeUnselectedTextColor =
+          goLiveScreenConfigure.streamTypeUnselectedTextColor;
+      IsmLiveDelegate.switchActiveTrackColor =
+          goLiveScreenConfigure.switchActiveTrackColor;
+      IsmLiveDelegate.switchInactiveTrackColor =
+          goLiveScreenConfigure.switchInactiveTrackColor;
+      IsmLiveDelegate.primaryButtonColor =
+          goLiveScreenConfigure.primaryButtonColor;
+      IsmLiveDelegate.primaryButtonForegroundColor =
+          goLiveScreenConfigure.primaryButtonForegroundColor;
+      IsmLiveDelegate.goLiveScaffoldBackgroundColor =
+          goLiveScreenConfigure.goLiveScaffoldBackgroundColor;
+      IsmLiveDelegate.goLiveInputFillColor =
+          goLiveScreenConfigure.goLiveInputFillColor;
     }
 
     // Set standalone goLiveSmallButtonBuilder if provided

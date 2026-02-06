@@ -122,7 +122,8 @@ class IsmGoLiveView extends StatelessWidget {
         },
         builder: (controller) => Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: IsmLiveColors.black,
+          backgroundColor: IsmLiveDelegate.goLiveScaffoldBackgroundColor ??
+              IsmLiveColors.black,
           extendBody: true,
           bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
@@ -195,7 +196,8 @@ class IsmGoLiveView extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.circular(IsmLiveDimens.twelve),
                               border: Border.all(color: IsmLiveColors.white),
-                              color: IsmLiveColors.white.withOpacity(0.3),
+                              color: IsmLiveDelegate.goLiveInputFillColor ??
+                                  IsmLiveColors.white.withOpacity(0.3),
                             ),
                             child: IsmLiveInputField(
                               hintStyle: getTextStyle(context, true),
@@ -297,69 +299,73 @@ class _StreamTypes extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
-        builder: (controller) => Row(
-          children: IsmLiveStreamTypes.values.map((e) {
-            final isSelected = controller.selectedGoLiveStream == e;
+        builder: (controller) {
+          final selectedBg = IsmLiveDelegate.streamTypeSelectedColor ?? Colors.black;
+          final unselectedBg = IsmLiveDelegate.streamTypeUnselectedColor ?? Colors.white.withOpacity(0.2);
+          final selectedText = IsmLiveDelegate.streamTypeSelectedTextColor ?? Colors.white;
+          final unselectedText = IsmLiveDelegate.streamTypeUnselectedTextColor ?? Colors.black;
+          return Row(
+            children: IsmLiveStreamTypes.values.map((e) {
+              final isSelected = controller.selectedGoLiveStream == e;
 
-            controller.isPremium =
-                controller.selectedGoLiveStream == IsmLiveStreamTypes.premium;
+              controller.isPremium =
+                  controller.selectedGoLiveStream == IsmLiveStreamTypes.premium;
 
-            return Expanded(
-              child: IsmLiveTapHandler(
-                onTap: () {
-                  controller.selectedGoLiveStream = e;
+              return Expanded(
+                child: IsmLiveTapHandler(
+                  onTap: () {
+                    controller.selectedGoLiveStream = e;
 
-                  if (!controller.isPremium) {
-                    controller.premiumStreamSheet();
-                  }
+                    if (!controller.isPremium) {
+                      controller.premiumStreamSheet();
+                    }
 
-                  controller.update([IsmGoLiveView.updateId]);
-                },
-                child: Container(
-                  margin: IsmLiveDimens.edgeInsets2,
-                  height: IsmLiveDimens.fifty,
-                  width: IsmLiveDimens.hundred,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                    border: isSelected
-                        ? null
-                        : Border.all(color: Colors.white, width: 0.5),
-                    color: !isSelected
-                        ? Colors.white.withOpacity(0.2)
-                        : Colors.black,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (controller.premiumStreamCoinsController.isEmpty &&
-                          e == IsmLiveStreamTypes.premium)
-                        const Icon(
-                          Icons.diamond,
-                          color: Colors.white,
-                        ),
-                      if (controller.premiumStreamCoinsController.isNotEmpty &&
-                          e == IsmLiveStreamTypes.premium) ...[
-                        const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                        Text(
-                          ' ${controller.premiumStreamCoinsController.text} coins',
-                          style: context.dynamicTextTheme.labelLarge?.copyWith(
-                            color: !isSelected ? Colors.black : Colors.white,
+                    controller.update([IsmGoLiveView.updateId]);
+                  },
+                  child: Container(
+                    margin: IsmLiveDimens.edgeInsets2,
+                    height: IsmLiveDimens.fifty,
+                    width: IsmLiveDimens.hundred,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                      border: isSelected
+                          ? null
+                          : Border.all(color: Colors.white, width: 0.5),
+                      color: isSelected ? selectedBg : unselectedBg,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (controller.premiumStreamCoinsController.isEmpty &&
+                            e == IsmLiveStreamTypes.premium)
+                          Icon(
+                            Icons.diamond,
+                            color: isSelected ? selectedText : unselectedText,
                           ),
-                        ),
-                      ] else
-                        Text(
-                          e.value,
-                          style: context.dynamicTextTheme.labelLarge?.copyWith(
-                            color: !isSelected ? Colors.black : Colors.white,
+                        if (controller.premiumStreamCoinsController.isNotEmpty &&
+                            e == IsmLiveStreamTypes.premium) ...[
+                          const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                          Text(
+                            ' ${controller.premiumStreamCoinsController.text} coins',
+                            style: context.dynamicTextTheme.labelLarge?.copyWith(
+                              color: isSelected ? selectedText : unselectedText,
+                            ),
                           ),
-                        ),
-                    ],
+                        ] else
+                          Text(
+                            e.value,
+                            style: context.dynamicTextTheme.labelLarge?.copyWith(
+                              color: isSelected ? selectedText : unselectedText,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
+              );
+            }).toList(),
+          );
+        },
       );
 }
 
@@ -440,7 +446,8 @@ class _StreamImage extends StatelessWidget {
           width: IsmLiveDimens.eighty,
           height: IsmLiveDimens.hundred, // Fixed height to match input field
           decoration: BoxDecoration(
-            color: IsmLiveColors.white.withOpacity(0.3),
+            color: IsmLiveDelegate.goLiveInputFillColor ??
+                IsmLiveColors.white.withOpacity(0.3),
             border: Border.all(color: IsmLiveColors.white),
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),
@@ -577,7 +584,8 @@ class _AddProduct extends StatelessWidget {
                       height: IsmLiveDimens.hundred,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: Colors.white30,
+                          color: IsmLiveDelegate.goLiveInputFillColor ??
+                              Colors.white30,
                           border: Border.all(color: IsmLiveColors.white),
                           borderRadius:
                               BorderRadius.circular(IsmLiveDimens.sixteen),
@@ -782,7 +790,7 @@ class _InputField extends StatelessWidget {
             ),
             onTap: onTap,
             readOnly: readOnly,
-            fillColor: Colors.white30,
+            fillColor: IsmLiveDelegate.goLiveInputFillColor ?? Colors.white30,
             radius: IsmLiveDimens.twelve,
             borderColor: IsmLiveColors.white,
             suffixIcon: suffixIcon,
