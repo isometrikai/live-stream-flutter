@@ -12,24 +12,25 @@ class CoinsPlansWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<CoinsPlansWalletController>(
         id: updateId,
-        builder: (controller) => SafeArea(
-          child: Scaffold(
+        builder: (controller) => Scaffold(
+          backgroundColor: IsmLiveColors.white,
+          appBar: AppBar(
             backgroundColor: IsmLiveColors.white,
-            appBar: AppBar(
-              backgroundColor: IsmLiveColors.transparent,
-              automaticallyImplyLeading: false,
-              centerTitle: true,
-              title: Text(
-                'Coins Wallet',
-                style: context.textTheme.bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              leading: const InkWell(
-                onTap: IsmLiveRoute.pop,
-                child: Icon(Icons.arrow_back),
-              ),
+            surfaceTintColor: IsmLiveColors.white,
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            title: Text(
+              'Coins Wallet',
+              style: context.textTheme.bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            body: Padding(
+            leading: const InkWell(
+              onTap: IsmLiveRoute.pop,
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+          body: SafeArea(
+            child: Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: IsmLiveDimens.fifteen,
                   vertical: IsmLiveDimens.twelve),
