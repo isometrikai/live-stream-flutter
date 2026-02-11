@@ -27,17 +27,20 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
               label: 'Save',
               onTap: () {
                 var contr = Get.find<IsmLiveStreamController>();
+                
+                // Find existing channel matching the type, if any
+                final existingChannel = contr.restreamChannels
+                    .cast<dynamic>()
+                    .firstWhere(
+                      (element) => element.channelType == type.value,
+                      orElse: () => null,
+                    );
+                
                 contr.onSaveRestreamSettings(
                   channelName: type.label,
                   channeltype: type.value,
                   enable: contr.isRestreamType(type),
-                  channelId: contr.restreamChannels.isEmpty
-                      ? null
-                      : contr.restreamChannels
-                          .firstWhere(
-                            (element) => element.channelType == type.value,
-                          )
-                          .channelId,
+                  channelId: existingChannel?.channelId,
                 );
               }),
         ),
@@ -45,19 +48,22 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
           id: updateId,
           initState: (state) {
             var contr = Get.find<IsmLiveStreamController>();
-            if (contr.restreamChannels.any(
-              (element) => element.channelType == type.value,
-            )) {
-              var a = contr.restreamChannels.firstWhere(
-                (element) => element.channelType == type.value,
-              );
-
-              var lastSlashIndex = a.ingestUrl?.lastIndexOf('/') ?? 0;
+            
+            // Find existing channel matching the type
+            final existingChannel = contr.restreamChannels
+                .cast<dynamic>()
+                .firstWhere(
+                  (element) => element.channelType == type.value,
+                  orElse: () => null,
+                );
+            
+            if (existingChannel != null) {
+              var lastSlashIndex = existingChannel.ingestUrl?.lastIndexOf('/') ?? 0;
 
               contr.rtmlUrl.text =
-                  a.ingestUrl?.substring(0, lastSlashIndex) ?? '';
+                  existingChannel.ingestUrl?.substring(0, lastSlashIndex) ?? '';
               contr.streamKey.text =
-                  a.ingestUrl?.substring(lastSlashIndex + 1) ?? '';
+                  existingChannel.ingestUrl?.substring(lastSlashIndex + 1) ?? '';
             }
           },
           builder: (controller) => Padding(

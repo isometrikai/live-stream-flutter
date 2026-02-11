@@ -57,6 +57,10 @@ class IsmGoLiveView extends StatelessWidget {
         initState: (state) {
           var controller = Get.find<IsmLiveStreamController>();
 
+          // Ensure stream is marked as inactive to prevent any dialogs from background lifecycle mixin
+          // This prevents _showConnectionFailedDialog from showing when navigating from stream_view
+          controller.setStreamActive(false, false);
+
           if (controller.streamDetails == null) {
             controller.cameraFuture = null;
             unawaited(controller.initializationOfGoLive());
@@ -117,6 +121,11 @@ class IsmGoLiveView extends StatelessWidget {
 
           controller.streamDetails = null;
           controller.pickedImage = null;
+          
+          // Ensure stream is marked as inactive when disposing go_live_view
+          // This prevents any pending dialogs from showing after navigation
+          controller.setStreamActive(false, false);
+          
           // Call the dispose callback if provided
           IsmLiveDelegate.onGoLiveDispose?.call();
         },
@@ -126,46 +135,47 @@ class IsmGoLiveView extends StatelessWidget {
           extendBody: true,
           bottomNavigationBar: const IsmGoLiveNavBar(),
           body: Stack(
-            fit: StackFit.loose,
+            fit: StackFit.expand,
             children: [
-              FutureBuilder(
-                future: controller.cameraFuture,
-                builder: (_, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const IsmLiveLoader(isDialog: false);
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error while initializing Camera',
-                        style: context.dynamicTextTheme.bodyLarge?.copyWith(
-                          color: IsmLiveColors.white,
+              Positioned.fill(
+                child: FutureBuilder(
+                  future: controller.cameraFuture,
+                  builder: (_, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const IsmLiveLoader(isDialog: false);
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error while initializing Camera',
+                          style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                            color: IsmLiveColors.white,
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  if (controller.cameraController == null) {
-                    return const SizedBox();
-                  }
+                      );
+                    }
+                    if (controller.cameraController == null) {
+                      return const SizedBox();
+                    }
 
-                  final scale = MediaQuery.of(context).size.height /
-                      MediaQuery.of(context).size.width;
-
-                  return Transform.scale(
-                    scale: scale,
-                    child: controller.selectedGoLiveTabItem ==
+                    return controller.selectedGoLiveTabItem ==
                             IsmGoLiveTabItem.defaultLive
-                        ? CameraPreview(
-                            controller.cameraController!,
+                        ? FittedBox(
+                            fit: BoxFit.cover,
                             child: SizedBox(
-                              height: context.height,
-                              width: context.width,
-                              child: const ColoredBox(color: Colors.black38),
+                              width: controller
+                                  .cameraController!.value.previewSize!.height,
+                              height: controller
+                                  .cameraController!.value.previewSize!.width,
+                              child: CameraPreview(
+                                controller.cameraController!,
+                                child: const ColoredBox(color: Colors.black38),
+                              ),
                             ),
                           )
-                        : null,
-                  );
-                },
+                        : const SizedBox();
+                  },
+                ),
               ),
               SingleChildScrollView(
                 padding: IsmLiveDimens.edgeInsets16,

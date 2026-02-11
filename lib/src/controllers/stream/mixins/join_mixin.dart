@@ -22,6 +22,7 @@ mixin StreamJoinMixin {
   // HD: 1080p portrait, 30fps ~6Mbps (industry-standard live baseline)
   static const lk.VideoParameters _lkHdVideoParams = lk.VideoParameters(
     dimensions: lk.VideoDimensions(1080, 1920),
+    // lk.VideoDimensionsPresets.h1080_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 30,
       maxBitrate: 6000 * 1000,
@@ -31,6 +32,7 @@ mixin StreamJoinMixin {
   // SD: 30fps ~3Mbps
   static const lk.VideoParameters _lkSdVideoParams = lk.VideoParameters(
     dimensions: lk.VideoDimensions(720, 1280),
+    // lk.VideoDimensionsPresets.h720_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 25,
       maxBitrate: 2500 * 1000,
@@ -40,6 +42,7 @@ mixin StreamJoinMixin {
   /// Restream: quality between SD and full HD, tuned for external platforms.
   static const lk.VideoParameters _lkRestreamVideoParams = lk.VideoParameters(
     dimensions: lk.VideoDimensions(720, 1280),
+    // lk.VideoDimensionsPresets.h720_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 30,
       maxBitrate: 4000 * 1000,
@@ -634,7 +637,6 @@ mixin StreamJoinMixin {
           ),
           defaultVideoPublishOptions: lk.VideoPublishOptions(
             videoEncoding: resolvedVideoParams.encoding,
-            videoSimulcastLayers: videoSimulcastLayers,
           ),
           defaultAudioPublishOptions: const lk.AudioPublishOptions(
             dtx: true,

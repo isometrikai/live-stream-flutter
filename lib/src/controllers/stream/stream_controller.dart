@@ -853,6 +853,8 @@ class IsmLiveStreamController extends GetxController
       messageFocusNode.unfocus();
     }
     showEmojiBoard = !showEmojiBoard;
+
+    update([IsmLiveMessageField.updateId]);
   }
 
   void searchMembers(String values) async {
@@ -895,9 +897,13 @@ class IsmLiveStreamController extends GetxController
     videoOn = value ?? !videoOn;
     try {
       await participant.setCameraEnabled(videoOn);
+      // Update UI to reflect the change
+      update();
     } catch (error) {
       videoOn = !videoOn;
       IsmLiveLog('muteUnmuteVideo function  error  $error');
+      // Update UI even on error to show correct state
+      update();
     }
   }
 

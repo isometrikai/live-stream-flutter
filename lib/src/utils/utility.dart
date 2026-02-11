@@ -334,18 +334,50 @@ class IsmLiveUtility {
     }
   }
 
-  /// Check if a dialog is currently open by checking the current route type
+  /// Check if a dialog is currently open by checking the Navigator's top route
+  /// 
+  /// This method checks if there's a DialogRoute or CupertinoDialogRoute
+  /// on top of the Navigator stack. When a dialog is shown, it becomes the
+  /// top route, so we check if there's a route on top.
   static bool get isDialogOpen {
     try {
+      final navigatorState = IsmLiveUtility.navigatorKey.currentState;
+      if (navigatorState == null) return false;
+
       final context = IsmLiveUtility.navigatorKey.currentContext;
       if (context == null) return false;
 
-      final modalRoute = ModalRoute.of(context);
-      if (modalRoute == null) return false;
+      // Check if there's a route that can be popped (indicates a route on top)
+      if (!navigatorState.canPop()) return false;
 
-      // Check if the current route is a DialogRoute
-      // DialogRoute is the type used by showDialog
-      return modalRoute is DialogRoute;
+      // When a dialog is shown (via showDialog or showCupertinoDialog),
+      // it becomes the top route on the Navigator stack.
+      // ModalRoute.of(context) returns the route containing the context,
+      // which is the underlying screen, not the dialog route.
+      //
+      // If ModalRoute.of(context) returns null, it means the context
+      // doesn't have a route associated with it, but that doesn't mean
+      // there's no dialog - it just means we can't check via this method.
+      // In this case, if canPop() is true, there's a route on top.
+      final currentRoute = ModalRoute.of(context);
+      
+      // If currentRoute is null, check if there's a route on top via canPop
+      // This handles cases where the context doesn't have a route
+      if (currentRoute == null) {
+        // If we can pop, there's a route on top (likely a dialog if opened via showDialog/showCupertinoDialog)
+        return navigatorState.canPop();
+      }
+
+      // If currentRoute.isCurrent is false, there's a route on top
+      // This indicates a modal (like a dialog) is displayed
+      if (!currentRoute.isCurrent) {
+        // There's a route on top - if it was opened via showDialog/showCupertinoDialog, it's a dialog
+        return true;
+      }
+
+      // If currentRoute.isCurrent is true, check if it's itself a DialogRoute
+      // This handles edge cases where the dialog context might be passed directly
+      return currentRoute is DialogRoute || currentRoute is CupertinoDialogRoute;
     } catch (e) {
       return false;
     }

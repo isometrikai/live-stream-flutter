@@ -375,23 +375,33 @@ class _IsmLiveStreamView extends StatelessWidget {
     IsmLiveDelegate.ecomConfigure?.buyNowCallback?.call();
   }
 
-  /// Calculates the dynamic bottom position for pinnedProductBuilder
-  /// to avoid overlay when reply feature is active
+  /// Calculates the dynamic bottom position for `pinnedProductBuilder`.
+  ///
+  /// Takes into account:
+  /// - The reply container (when `parentMessage` is not null)
+  /// - The emoji board (when `showEmojiBoard` is true)
+  ///
+  /// so that the pinned product does not get overlapped by these UI elements.
   double _calculateProductBuilderBottomPosition(
       IsmLiveStreamController controller) {
-    // Base bottom position when reply is not active
-    var baseBottomPosition = IsmLiveDimens.eighty;
+    // Base bottom position when neither reply nor emoji board is visible
+    var bottom = IsmLiveDimens.eighty;
 
     // If reply feature is active (parentMessage is not null), adjust position
     if (controller.parentMessage != null) {
-      // Add extra height to account for the reply container
-      // Reply container height: padding (8px) + margin (8px) + content height (~32px) + spacing (2px)
-      // Total additional height: approximately 50px
+      // Approximate reply container height (padding + margin + content)
       const replyContainerHeight = 50.0;
-      baseBottomPosition += replyContainerHeight;
+      bottom += replyContainerHeight;
     }
 
-    return baseBottomPosition;
+    // If emoji board is visible, push the pinned product further up
+    if (controller.showEmojiBoard) {
+      // Approximate height of the emoji picker + small spacing
+      const emojiBoardHeight = 260.0;
+      bottom += emojiBoardHeight;
+    }
+
+    return bottom;
   }
 
   @override
@@ -450,7 +460,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                   color: Colors.black, // Ensures status bar area is always dark
                   child: Stack(
                     children: [
-                      Container(
+                      const ColoredBox(
                           color:
                               Colors.black), // Bottom-most layer for status bar
                       IsmLiveStreamBanner(streamImage, isSchedule: isSchedule),
@@ -460,8 +470,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                         isSchedule: isSchedule,
                       ),
                       // Gradients positioned right after publisher grid to only overlay video content
-                      _TopDarkGradient(),
-                      _BottomDarkGradient(),
+                      const _TopDarkGradient(),
+                      const _BottomDarkGradient(),
                       Align(
                         alignment: IsmLiveApp.headerPosition,
                         child: Obx(
@@ -871,7 +881,7 @@ class _StreamHeader extends StatelessWidget {
 }
 
 class _TopDarkGradient extends StatelessWidget {
-  _TopDarkGradient();
+  const _TopDarkGradient();
 
   @override
   Widget build(BuildContext context) => Positioned(
@@ -897,7 +907,7 @@ class _TopDarkGradient extends StatelessWidget {
 }
 
 class _BottomDarkGradient extends StatelessWidget {
-  _BottomDarkGradient();
+  const _BottomDarkGradient();
 
   @override
   Widget build(BuildContext context) => Positioned(
