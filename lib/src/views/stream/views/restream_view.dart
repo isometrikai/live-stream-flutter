@@ -11,36 +11,52 @@ class IsmLiveRestreamView extends StatelessWidget {
   static const String updateId = 'ism-restream-view';
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Restream Channel',
-            style: context.textTheme.titleMedium,
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
+    return Scaffold(
+      backgroundColor: context.liveTheme?.backgroundColor ??
+          (isDarkMode ? const Color(0xFF121212) : Colors.white),
+      appBar: AppBar(
+        backgroundColor: context.liveTheme?.backgroundColor ??
+            (isDarkMode ? const Color(0xFF121212) : Colors.white),
+        title: Text(
+          IsmLiveStrings.restreamChannel,
+          style: context.textTheme.titleMedium?.copyWith(
+            color: context.liveTheme?.primaryColor ??
+                (isDarkMode ? Colors.white : Colors.black),
           ),
-          centerTitle: true,
         ),
-        body: GetBuilder<IsmLiveStreamController>(
-          id: updateId,
-          initState: (_) {
-            Get.find<IsmLiveStreamController>().getRestreamChannels();
-          },
-          builder: (controller) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...IsmLiveRestreamType.values.map<Widget>(
-                (type) => Padding(
-                  padding: IsmLiveDimens.edgeInsets16_8,
-                  child: IsmLiveRadioListTile(
-                      title: 'Restream on ${type.label}',
-                      isDark: false,
-                      showIcon: true,
-                      onChange: (value) =>
-                          controller.onTapRestreamType(type, value),
-                      value: controller.isRestreamType(type)),
+        centerTitle: true,
+        iconTheme: IconThemeData(
+          color: context.liveTheme?.primaryColor ??
+              (isDarkMode ? Colors.white : Colors.black),
+        ),
+      ),
+      body: GetBuilder<IsmLiveStreamController>(
+        id: updateId,
+        initState: (_) {
+          Get.find<IsmLiveStreamController>().getRestreamChannels();
+        },
+        builder: (controller) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...IsmLiveRestreamType.values.map<Widget>(
+              (type) => Padding(
+                padding: IsmLiveDimens.edgeInsets16_8,
+                child: IsmLiveRadioListTile(
+                  title: '${IsmLiveStrings.restreamOn} ${type.label}',
+                  isDark: isDarkMode,
+                  showIcon: true,
+                  onChange: (value) =>
+                      controller.onTapRestreamType(type, value),
+                  value: controller.isRestreamType(type),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

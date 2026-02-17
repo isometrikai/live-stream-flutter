@@ -1,3 +1,4 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -44,35 +45,41 @@ class _IsmLiveStreamRecordingVideoWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.black);
+    final fgColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.white);
+
     final controller = widget.controller;
     if (controller == null) {
-      return const ColoredBox(
-        color: Colors.black,
+      return ColoredBox(
+        color: bgColor,
         child: Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: fgColor),
         ),
       );
     }
 
     if (controller.value.hasError) {
       return ColoredBox(
-        color: Colors.black,
+        color: bgColor,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, color: Colors.white, size: 48),
+              Icon(Icons.error_outline, color: fgColor, size: 48),
               const SizedBox(height: 16),
               Text(
-                'Failed to load video',
+                IsmLiveStrings.failedToLoadVideo,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
+                      color: fgColor,
                     ),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: controller.initialize,
-                child: const Text('Retry'),
+                child: Text(IsmLiveStrings.retry),
               ),
             ],
           ),
@@ -81,10 +88,10 @@ class _IsmLiveStreamRecordingVideoWidgetState
     }
 
     if (!controller.value.isInitialized) {
-      return const ColoredBox(
-        color: Colors.black,
+      return ColoredBox(
+        color: bgColor,
         child: Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: fgColor),
         ),
       );
     }

@@ -8,15 +8,32 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
   static const String updateId = 'analytics-sheet';
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: updateId,
-        initState: (state) async {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            final controller = Get.find<IsmLiveStreamController>();
-            controller.streamAnalytics(streamId);
-          });
-        },
-        builder: (controller) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textIconColor = isDarkMode ? Colors.white : Colors.black;
+    final dividerColor = context.liveTheme?.borderColor ??
+        (isDarkMode ? const Color(0xFF1E1E1E) : Colors.grey.shade300);
+
+    return GetBuilder<IsmLiveStreamController>(
+      id: updateId,
+      initState: (state) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final controller = Get.find<IsmLiveStreamController>();
+          controller.streamAnalytics(streamId);
+        });
+      },
+      builder: (controller) => Container(
+        decoration: BoxDecoration(
+          color: context.liveTheme?.backgroundColor ??
+              (isDarkMode ? const Color(0xFF121212) : Colors.white),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                  IsmLiveDimens.thirty,
+            ),
+          ),
+        ),
+        child: Padding(
           padding: IsmLiveDimens.edgeInsets8,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -38,25 +55,24 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                     width: IsmLiveDimens.ninty,
                     isProfileImage: true,
                   ),
-                  const IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: IsmLiveColors.lightGray,
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: textIconColor),
                     onPressed: IsmLiveRoute.pop,
                   ),
                 ],
               ),
               IsmLiveDimens.boxHeight16,
               Text(
-                'Live stream',
+                IsmLiveStrings.liveStream,
                 style: context.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: textIconColor,
                 ),
               ),
               IsmLiveDimens.boxHeight16,
-              const Divider(
+              Divider(
                 thickness: 0.5,
+                color: dividerColor,
               ),
               GridView(
                 shrinkWrap: true,
@@ -73,33 +89,34 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                   switch (option) {
                     case IsmLiveAnalyticsOptions.hearts:
                       points = '${controller.streamAnalytis?.hearts ?? 0}';
-                      title = 'Hearts';
-                      color = Colors.black;
+                      title = IsmLiveStrings.hearts;
+                      color = textIconColor;
                       break;
                     case IsmLiveAnalyticsOptions.order:
                       points = '${controller.streamAnalytis?.soldCount ?? 0}';
-                      title = 'Order';
+                      title = IsmLiveStrings.order;
                       break;
                     case IsmLiveAnalyticsOptions.viewers:
                       points =
                           '${controller.streamAnalytis?.totalViewersCount ?? 0}';
-                      title = 'Viewers';
+                      title = IsmLiveStrings.viewers;
                       break;
                     case IsmLiveAnalyticsOptions.followers:
                       points = '${controller.streamAnalytis?.followers ?? 0}';
-                      title = 'Followers';
+                      title = IsmLiveStrings.followers;
                       break;
                     case IsmLiveAnalyticsOptions.earnings:
                       points =
                           '${controller.streamAnalytis?.totalEarning ?? 0}';
-                      title = 'Earnings';
+                      title = IsmLiveStrings.earnings;
                       break;
                     case IsmLiveAnalyticsOptions.duration:
                       return GetX<IsmLiveStreamController>(
                         builder: (controller) => IsmLiveEndStreamContainer(
                           points: controller.streamDuration.formattedTime,
-                          title: 'Duration',
+                          title: IsmLiveStrings.duration,
                           assetConstant: option.icon,
+                          color: textIconColor,
                         ),
                       );
                   }
@@ -108,12 +125,14 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                     points: points,
                     title: title,
                     assetConstant: option.icon,
-                    color: color,
+                    color: color ?? textIconColor,
                   );
                 }).toList(),
               ),
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }

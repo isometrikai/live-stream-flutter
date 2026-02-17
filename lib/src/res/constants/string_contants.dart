@@ -113,4 +113,125 @@ class IsmLiveStrings {
   static const String gotIt = 'Got It';
   static const String manageModerators = 'Manage Moderators';
   static const String stopModerating = 'Stop Moderating';
+  static const String noModerator = 'No Moderator';
+  static const String searchModerators = 'Search Moderators';
+  static const String moderators = 'Moderators';
+  static const String viewProfile = 'View Profile';
+  static const String searchUsers = 'Search Users';
+
+  // Copublisher sheet strings
+  static const String searchRequest = 'Search Request';
+  static const String noRequestUsers = 'No request users';
+  static const String accepted = 'Accepted';
+  static const String deny = 'Denied';
+  static const String noUsers = 'No users';
+  static const String searchUser = 'Search User';
+
+  // Premium stream sheet strings
+  static const String premiumBroadcast = 'Premium Broadcast';
+  static const String setCoinsFromFans =
+      'Set coins you want to get from your fans';
+  static const String enterCoins = 'Enter coins';
+  static const String save = 'Save';
+
+  // Restream view strings
+  static const String restreamChannel = 'Restream Channel';
+  static const String restreamOn = 'Restream on';
+  static const String enableStreamOn = 'Enable stream on';
+  static const String rtmlUrl = 'RTML URL';
+  static const String streamKey = 'Stream key';
+  static const String enterRtmlUrl = 'Enter RTML URL';
+  static const String enterStreamKey = 'Enter Stream key';
+  static const String streamKeyHint =
+      'Key will be generated after you start a new stream';
+  static const String rtmpStreamInstruction =
+      'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device.';
+  static const String youtubeStreamUrlInstruction =
+      'You have to enter the youtube stream url here,\n';
+  static const String clickHereToKnowMore = 'click here to know more.';
+
+  // Schedule stream strings
+  static const String scheduleStream = 'Schedule Stream';
+  static const String confirm = 'Confirm';
+  static const String streamSchedule = 'Stream Schedule';
+  static const String editScheduleStream = 'Edit Schedule Stream';
+  static const String editStream = 'Edit Stream';
+  static const String deleteStream = 'Delete Stream';
+
+  // End stream view / Analytics sheet strings
+  static const String liveStreamEnded = 'Live stream ended!';
+  static const String liveStream = 'Live stream';
+  static const String hearts = 'Hearts';
+  static const String order = 'Order';
+  static const String viewers = 'Viewers';
+  static const String followers = 'Followers';
+  static const String earnings = 'Earnings';
+  static const String duration = 'Duration';
+  static const String viewer = 'Viewer';
+
+  // Sheet mixin / exit & dialogs
+  static const String cancel = 'Cancel';
+  static const String stopStream = 'Stop stream';
+  static const String endStream = 'End Stream';
+  static const String leaveStream = 'Leave stream';
+  static const String requestDeniedByHost = 'Request denied by the host';
+  static const String requestedCopublishing = 'Requested Co-publishing';
+  static const String sendRequest = 'Send Request';
+  static const String startVideo = 'Start Video';
+  static const String premiumStreamPayToJoinMessage =
+      'This stream is premium. To join you need to pay %s coins';
+  static const String payAndContinue = 'Pay & Continue';
+
+  // PK sheet strings
+  static const String pkWithFriends = 'PK With Friends';
+  static const String search = 'search';
+  static const String noDataFound = 'no data found';
+  static const String invite = 'invite';
+  static const String accept = 'Accept';
+  static const String reject = 'Reject';
+  static const String pkChallengeSettings = 'PK Challenge Settings';
+  static const String pkChallengeSettingsDescription =
+      'Configure your PK challenge by modifying the settings below';
+  static const String winnerTakesAll = 'Winner takes all';
+  static const String winnerTakesAllDescription =
+      'This would transfer all the gifts earned by the looser to the winner';
+  static const String choosePkChallengeDuration =
+      'Choose PK Challenge Duration';
+  static const String confirmAndStart = 'Confirm & Start';
+  static const String minShort = 'min';
+
+  // Stream recording player strings
+  static const String recording = 'Recording';
+  static const String failedToLoadVideo = 'Failed to load video';
+  static const String retry = 'Retry';
+
+  // Coins / wallet strings
+  static const String coinsWallet = 'Coins Wallet';
+  static const String totalCoins = 'Total Coins';
+  static const String coins = 'Coins';
+  static const String transactions = 'Transactions';
+  static const String totalMoney = 'Total Money';
+  static const String coinTransactions = 'Coin Transactions';
+  static const String noData = 'No Data';
+  static const String transactionId = 'TransactionId:';
+
+  // Stream UI + sheets strings
+  static const String searchCopublisher = 'Search Copublisher';
+  static const String okay = 'Okay';
+  static const String discountPercentage = 'Discount Percentage';
+  static const String enterDiscountPercentage = 'Enter discount percentage';
+  static const String add = 'Add';
+  static const String addProducts = 'Add Products';
+  static const String noProductsAvailable =
+      'There are no products available to tag';
+  static const String selected = 'Selected';
+  static const String topViewers = 'Top Viewers';
+  static const String noViewers = 'No Viewers';
+  static const String tagProducts = 'Tag Products';
+  static const String pinItem = 'Pin Item';
+  static const String messageOptions = 'Message Options';
+  static const String reply = 'Reply';
+  static const String delete = 'Delete';
+  static const String myBalance = 'My Balance';
+  static const String addCoins = 'Add Coins';
 }

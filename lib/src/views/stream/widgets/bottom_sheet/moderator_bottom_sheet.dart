@@ -27,8 +27,24 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<IsmLiveStreamController>();
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final titleColor = isDarkMode ? Colors.white : Colors.black;
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey[600]!);
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
 
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
       padding: EdgeInsets.only(
         left: IsmLiveDimens.twelve,
         right: IsmLiveDimens.twelve,
@@ -48,6 +64,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                   IsmLiveStrings.addedToModeratorGroupTitle,
                   style: context.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: titleColor,
                   ),
                 ),
                 IsmLiveDimens.boxHeight16,
@@ -56,7 +73,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                       .replaceAll('@moderatorName', moderatorName ?? 'User')
                       .replaceAll('@initiatorName', initiatorName ?? 'Host'),
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: subtitleColor,
                   ),
                 ),
               ] else ...[
@@ -64,13 +81,14 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                   IsmLiveStrings.currentlyModeratingTitle,
                   style: context.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: titleColor,
                   ),
                 ),
                 IsmLiveDimens.boxHeight16,
                 Text(
                   IsmLiveStrings.currentlyModeratingDescription,
                   style: context.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: subtitleColor,
                   ),
                 ),
               ],
@@ -130,12 +148,13 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          const Positioned(
+          Positioned(
             top: 0,
             right: 0,
             child: CustomIconButton(
               icon: IsmLiveImage.svg(
                 IsmLiveAssetConstants.cancel,
+                color: iconColor,
               ),
               color: Colors.transparent,
               onTap: IsmLiveRoute.pop,

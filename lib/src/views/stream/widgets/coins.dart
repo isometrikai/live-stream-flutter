@@ -14,7 +14,9 @@ class IsmLiveCoins extends StatelessWidget {
         padding: IsmLiveDimens.edgeInsets4,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-          color: Colors.black12,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.black54
+              : Colors.black12,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

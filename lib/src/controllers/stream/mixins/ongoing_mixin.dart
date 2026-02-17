@@ -263,12 +263,92 @@ mixin StreamOngoingMixin {
     }
   }
 
+  /// Gets the actual video status from the room's local participant
+  /// Checks if video track is published and enabled (not muted)
+  bool _getActualVideoStatus() {
+    try {
+      final room = _controller.room;
+      if (room == null || room.localParticipant == null) {
+        return _controller.videoOn; // Fallback to boolean if room not available
+      }
+
+      final localParticipant = room.localParticipant!;
+      final videoTrackPublication = localParticipant.videoTrackPublications
+          .where((pub) => !pub.isScreenShare)
+          .firstOrNull;
+
+      if (videoTrackPublication == null) {
+        // No video track published, video is off
+        return false;
+      }
+
+      // Check if track exists and is not muted
+      final track = videoTrackPublication.track;
+      if (track == null) {
+        return false;
+      }
+
+      // Track is enabled if it exists and is not muted
+      final isEnabled = !track.muted;
+      
+      // Sync the boolean with actual status to keep it accurate
+      if (_controller.videoOn != isEnabled) {
+        _controller.videoOn = isEnabled;
+      }
+
+      return isEnabled;
+    } catch (e) {
+      IsmLiveLog.error('Error getting actual video status: $e');
+      // Fallback to boolean on error
+      return _controller.videoOn;
+    }
+  }
+
+  /// Gets the actual audio status from the room's local participant
+  /// Checks if audio track is published and enabled (not muted)
+  bool _getActualAudioStatus() {
+    try {
+      final room = _controller.room;
+      if (room == null || room.localParticipant == null) {
+        return _controller.audioOn; // Fallback to boolean if room not available
+      }
+
+      final localParticipant = room.localParticipant!;
+      final audioTrackPublication = localParticipant.audioTrackPublications.firstOrNull;
+
+      if (audioTrackPublication == null) {
+        // No audio track published, audio is off
+        return false;
+      }
+
+      // Check if track exists and is not muted
+      final track = audioTrackPublication.track;
+      if (track == null) {
+        return false;
+      }
+
+      // Track is enabled if it exists and is not muted
+      final isEnabled = !track.muted;
+      
+      // Sync the boolean with actual status to keep it accurate
+      if (_controller.audioOn != isEnabled) {
+        _controller.audioOn = isEnabled;
+      }
+
+      return isEnabled;
+    } catch (e) {
+      IsmLiveLog.error('Error getting actual audio status: $e');
+      // Fallback to boolean on error
+      return _controller.audioOn;
+    }
+  }
+
   String controlSettingIcon(IsmLiveHostSettings option) {
     switch (option) {
       case IsmLiveHostSettings.muteMyVideo:
-        return _controller.videoOn ? option.icon : option.offIcon;
+        return _getActualVideoStatus() ? option.icon : option.offIcon;
       case IsmLiveHostSettings.muteMyAudio:
-        return _controller.audioOn ? option.icon : option.offIcon;
+        return _getActualAudioStatus() ? option.icon : option.offIcon;
     }
   }
 
@@ -276,9 +356,9 @@ mixin StreamOngoingMixin {
   String controlSetting(IsmLiveHostSettings option) {
     switch (option) {
       case IsmLiveHostSettings.muteMyVideo:
-        return _controller.videoOn ? option.muteValues : option.unmuteValues;
+        return _getActualVideoStatus() ? option.muteValues : option.unmuteValues;
       case IsmLiveHostSettings.muteMyAudio:
-        return _controller.audioOn ? option.muteValues : option.unmuteValues;
+        return _getActualAudioStatus() ? option.muteValues : option.unmuteValues;
       // case IsmLiveHostSettings.muteRemoteVideo:
       //   return option.muteValues;
       // case IsmLiveHostSettings.muteRemoteAudio:
@@ -454,12 +534,17 @@ mixin StreamOngoingMixin {
         await toggleSpeaker();
         break;
       case IsmLiveStreamOption.bars:
+        final context = IsmLiveUtility.navigatorKey.currentContext!;
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
             streamId: (_controller.userRole?.isPkGuest ?? false)
                 ? _pkController.pkguestStreamId ?? ''
                 : _controller.streamId ?? '',
           ),
+          backgroundColor: context.liveTheme?.backgroundColor ??
+              (Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF121212)
+                  : Colors.white),
         );
         break;
       case IsmLiveStreamOption.vs:

@@ -8,6 +8,7 @@ A comprehensive Flutter SDK for integrating live streaming capabilities into you
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
+- [Dark Mode Support](#dark-mode-support)
 - [API Reference](#api-reference)
 - [Platform Setup](#platform-setup)
 - [Examples](#examples)
@@ -24,6 +25,7 @@ A comprehensive Flutter SDK for integrating live streaming capabilities into you
 - 🎁 **Gifts & Interactions**: Send gifts, hearts, and engage with streams
 - 👥 **Multi-user Features**: PK battles, co-publishing, multi-live
 - 🎨 **Customizable UI**: Extensive customization options for all components
+- 🌙 **Dark Mode Support**: Full dark mode support with automatic theme switching
 - 📱 **Cross-platform**: Android, iOS, and Web support
 - 🔔 **Notifications**: Real-time notifications and updates
 - 🎬 **Stream Recording**: Play recorded streams with product integration
@@ -275,6 +277,281 @@ IsmLiveApp.configureInterface(
   },
 );
 ```
+
+---
+
+## Dark Mode Support
+
+The SDK provides comprehensive dark mode support that seamlessly integrates with Flutter's Material Theme system. All UI components automatically adapt to light and dark themes, providing a consistent user experience.
+
+### Overview
+
+The SDK's dark mode implementation:
+- ✅ Automatically follows system theme preferences
+- ✅ Supports manual theme switching (`ThemeMode.light`, `ThemeMode.dark`, `ThemeMode.system`)
+- ✅ Integrates with Flutter's `ThemeData` and `Brightness`
+- ✅ Provides customizable theme properties for both light and dark modes
+- ✅ All components (buttons, inputs, cards, sheets, icons) support dark mode
+
+### Quick Setup
+
+The easiest way to enable dark mode is to configure your `MaterialApp` (or `GetMaterialApp`) with both `theme` and `darkTheme` properties, and include `IsmLiveDataExtension` in both:
+
+```dart
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      themeMode: ThemeMode.system, // Follow system theme
+      theme: ThemeData(
+        brightness: Brightness.light,
+        extensions: const [
+          IsmLiveDataExtension(
+            theme: IsmLiveThemeData(
+              primaryColor: IsmLiveColors.black,
+              backgroundColor: IsmLiveColors.white,
+              cardBackgroundColor: IsmLiveColors.white,
+              // ... other light theme properties
+            ),
+          ),
+        ],
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        extensions: const [
+          IsmLiveDataExtension(
+            theme: IsmLiveThemeData(
+              primaryColor: IsmLiveColors.white,
+              backgroundColor: Color(0xFF121212),
+              cardBackgroundColor: Color(0xFF1E1E1E),
+              // ... other dark theme properties
+            ),
+          ),
+        ],
+      ),
+      builder: (context, child) {
+        return IsmLiveData(
+          child: child!,
+        );
+      },
+      home: HomeScreen(),
+    );
+  }
+}
+```
+
+### Configuration Methods
+
+#### Method 1: Material Theme Extension (Recommended)
+
+Configure dark mode through Flutter's `ThemeData` extensions. This approach integrates seamlessly with your app's existing theme system:
+
+```dart
+GetMaterialApp(
+  themeMode: ThemeMode.system, // or ThemeMode.light, ThemeMode.dark
+  theme: ThemeData(
+    brightness: Brightness.light,
+    extensions: [
+      IsmLiveDataExtension(
+        theme: IsmLiveThemeData(
+          primaryColor: Colors.black,
+          backgroundColor: Colors.white,
+          cardBackgroundColor: Colors.white,
+          borderColor: Colors.grey.shade300,
+          selectedTextColor: Colors.white,
+          unselectedTextColor: Colors.grey,
+          primaryButtonTheme: IsmLiveButtonThemeData(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            disableColor: Colors.grey,
+          ),
+          secondaryButtonTheme: IsmLiveButtonThemeData(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            disableColor: Colors.grey,
+          ),
+        ),
+      ),
+    ],
+  ),
+  darkTheme: ThemeData(
+    brightness: Brightness.dark,
+    extensions: [
+      IsmLiveDataExtension(
+        theme: IsmLiveThemeData(
+          primaryColor: Colors.white,
+          backgroundColor: const Color(0xFF121212),
+          cardBackgroundColor: const Color(0xFF1E1E1E),
+          borderColor: const Color(0xFF1E1E1E),
+          selectedTextColor: Colors.white,
+          unselectedTextColor: const Color(0xFFB0B0B0),
+          primaryButtonTheme: IsmLiveButtonThemeData(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            disableColor: const Color(0xFF424242),
+          ),
+          secondaryButtonTheme: IsmLiveButtonThemeData(
+            backgroundColor: const Color(0xFF2C2C2C),
+            foregroundColor: Colors.white,
+            disableColor: const Color(0xFF424242),
+          ),
+        ),
+      ),
+    ],
+  ),
+  builder: (context, child) {
+    return IsmLiveData(child: child!);
+  },
+)
+```
+
+#### Method 2: IsmLiveData Widget Parameters
+
+Alternatively, configure themes directly through `IsmLiveData` widget parameters:
+
+```dart
+IsmLiveData(
+  lightTheme: IsmLiveThemeData(
+    primaryColor: Colors.black,
+    backgroundColor: Colors.white,
+    // ... light theme properties
+  ),
+  darkTheme: IsmLiveThemeData(
+    primaryColor: Colors.white,
+    backgroundColor: const Color(0xFF121212),
+    // ... dark theme properties
+  ),
+  themeMode: ThemeMode.system, // Optional: defaults to system
+  child: YourApp(),
+)
+```
+
+**Priority Order:**
+1. Explicit `IsmLiveData` parameters (`lightTheme`/`darkTheme`)
+2. Material Theme extension (for current brightness)
+3. Single `theme` parameter (backward compatibility)
+4. SDK defaults
+
+### Theme Properties
+
+`IsmLiveThemeData` provides comprehensive customization options:
+
+| Property | Description | Light Default | Dark Default |
+|----------|-------------|---------------|--------------|
+| `primaryColor` | Primary accent color | `Colors.black` | `Colors.white` |
+| `secondaryColor` | Secondary accent color | `IsmLiveColors.secondary` | `IsmLiveColors.secondary` |
+| `backgroundColor` | Main background color | `Colors.white` | `Color(0xFF121212)` |
+| `cardBackgroundColor` | Card/sheet background | `Colors.white` | `Color(0xFF1E1E1E)` |
+| `borderColor` | Border color | `IsmLiveColors.border` | `Color(0xFF1E1E1E)` |
+| `selectedTextColor` | Selected text color | `Colors.white` | `Colors.white` |
+| `unselectedTextColor` | Unselected text color | `Colors.grey` | `Color(0xFFB0B0B0)` |
+| `primaryButtonTheme` | Primary button styling | Black bg, white text | White bg, black text |
+| `secondaryButtonTheme` | Secondary button styling | White bg, black text | Dark bg, white text |
+| `buttonRadius` | Button border radius | `null` | `null` |
+| `iconButtonRadius` | Icon button radius | `null` | `null` |
+| `fontFamily` | Custom font family | `null` | `null` |
+
+### Components with Dark Mode Support
+
+All SDK components automatically support dark mode:
+
+- ✅ **Stream Listing** - TabBar, stream cards, headers
+- ✅ **Input Fields** - Text inputs, borders, hints, cursors
+- ✅ **Buttons** - Primary, secondary, icon buttons
+- ✅ **Bottom Sheets** - Premium stream sheet, cover photo options, etc.
+- ✅ **Cards** - Stream cards, product cards
+- ✅ **Icons** - SVG icons with theme-aware colors
+- ✅ **App Bars** - Headers, titles, action buttons
+- ✅ **Radio Tiles** - Restream options, settings
+- ✅ **Text** - All text elements adapt to theme
+
+### Accessing Theme in Code
+
+Access the current theme data in your widgets:
+
+```dart
+// Get theme data
+final theme = context.liveTheme;
+
+// Check if dark mode is active
+final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+// Use theme colors
+Container(
+  color: context.liveTheme?.backgroundColor ?? Colors.white,
+  child: Text(
+    'Hello',
+    style: TextStyle(
+      color: context.liveTheme?.primaryColor ?? Colors.black,
+    ),
+  ),
+)
+```
+
+### Custom Theme Example
+
+Create a custom dark theme that matches your brand:
+
+```dart
+darkTheme: ThemeData(
+  brightness: Brightness.dark,
+  extensions: [
+    IsmLiveDataExtension(
+      theme: IsmLiveThemeData(
+        primaryColor: const Color(0xFF00D4FF), // Custom accent
+        backgroundColor: const Color(0xFF0A0A0A), // Darker background
+        cardBackgroundColor: const Color(0xFF1A1A1A),
+        borderColor: const Color(0xFF2A2A2A),
+        selectedTextColor: Colors.white,
+        unselectedTextColor: const Color(0xFF888888),
+        primaryButtonTheme: IsmLiveButtonThemeData(
+          backgroundColor: const Color(0xFF00D4FF),
+          foregroundColor: Colors.black,
+          disableColor: const Color(0xFF444444),
+        ),
+        secondaryButtonTheme: IsmLiveButtonThemeData(
+          backgroundColor: const Color(0xFF1A1A1A),
+          foregroundColor: Colors.white,
+          disableColor: const Color(0xFF444444),
+        ),
+      ),
+    ),
+  ],
+),
+```
+
+### Best Practices
+
+1. **Always provide both themes**: Define both `theme` and `darkTheme` in your `MaterialApp` for best user experience
+2. **Use system theme by default**: Set `themeMode: ThemeMode.system` to respect user preferences
+3. **Test both modes**: Verify your customizations work in both light and dark modes
+4. **Consistent colors**: Use theme properties (`context.liveTheme`) instead of hardcoded colors
+5. **Accessibility**: Ensure sufficient contrast between text and backgrounds in both themes
+
+### Troubleshooting
+
+**Problem**: Dark mode not working
+
+**Solution**:
+- Ensure `IsmLiveData` widget wraps your app (use `builder` in `MaterialApp`)
+- Verify both `theme` and `darkTheme` are provided with `IsmLiveDataExtension`
+- Check that `themeMode` is set correctly (`ThemeMode.system`, `ThemeMode.dark`, or `ThemeMode.light`)
+- Ensure `brightness` is set correctly in both `ThemeData` instances
+
+**Problem**: Some components not adapting to dark mode
+
+**Solution**:
+- Check that you're using SDK components (not custom implementations)
+- Verify theme properties are provided for both light and dark themes
+- Use `context.liveTheme` instead of hardcoded colors in custom widgets
 
 ---
 

@@ -8,14 +8,30 @@ class IsmLiveSettingsSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textIconColor = isDarkMode ? Colors.white : Colors.black;
+
+    return GetBuilder<IsmLiveStreamController>(
+      builder: (controller) => Container(
+        decoration: BoxDecoration(
+          color: context.liveTheme?.backgroundColor ??
+              (isDarkMode ? const Color(0xFF121212) : Colors.white),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                  IsmLiveDimens.thirty,
+            ),
+          ),
+        ),
+        child: Padding(
           padding: IsmLiveDimens.edgeInsets16_0_16_20,
           child: IsmLiveScrollSheet(
             separatedWidgat: IsmLiveDimens.boxHeight24,
             title: 'Settings',
             showHeader: false,
             showCancelIcon: true,
+            cancelIconColor: textIconColor,
             itemCount: IsmLiveHostSettings.values.length,
             itemBuilder: (context, index) => IsmLiveTapHandler(
               onTap: () {
@@ -28,18 +44,23 @@ class IsmLiveSettingsSheet extends StatelessWidget {
                   IsmLiveImage.svg(
                     controller
                         .controlSettingIcon(IsmLiveHostSettings.values[index]),
+                    color: textIconColor,
                   ),
                   IsmLiveDimens.boxWidth10,
                   Text(
                     controller.controlSetting(
                       IsmLiveHostSettings.values[index],
                     ),
-                    style: context.dynamicTextTheme.bodyMedium,
+                    style: context.dynamicTextTheme.bodyMedium?.copyWith(
+                      color: textIconColor,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }

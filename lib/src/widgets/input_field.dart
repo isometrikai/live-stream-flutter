@@ -157,24 +157,46 @@ class IsmLiveInputField extends StatelessWidget {
           onFieldSubmitted: onFieldSubmit,
           maxLines: maxLines ?? 1,
           minLines: minLines ?? 1,
-          style: style,
+          style: style ??
+              TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? context.liveTheme?.selectedTextColor ?? Colors.white
+                    : Colors.black,
+              ),
           onTap: onTap,
-          cursorColor: cursorColor,
+          cursorColor: cursorColor ??
+              (Theme.of(context).brightness == Brightness.dark
+                  ? context.liveTheme?.primaryColor ?? Colors.white
+                  : IsmLiveColors.black),
           readOnly: readOnly,
           controller: controller,
           decoration: InputDecoration(
             filled: true,
             alignLabelWithHint: alignLabelWithHint,
-            fillColor: fillColor ?? IsmLiveColors.white,
+            fillColor: fillColor ??
+                (Theme.of(context).brightness == Brightness.dark
+                    ? context.liveTheme?.cardBackgroundColor ??
+                        const Color(0xFF1E1E1E)
+                    : IsmLiveColors.white),
             hintText: hintText,
-            hintStyle: hintStyle,
+            hintStyle: hintStyle ??
+                TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? context.liveTheme?.unselectedTextColor ??
+                          Colors.grey[400]
+                      : Colors.grey[600],
+                ),
             isDense: true,
             contentPadding: contentPadding,
             border: OutlineInputBorder(
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.black,
+                color: borderColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? context.liveTheme?.borderColor ??
+                            const Color(0xFF1E1E1E)
+                        : IsmLiveColors.black),
                 width: 1,
               ),
             ),
@@ -182,7 +204,11 @@ class IsmLiveInputField extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.black,
+                color: borderColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? context.liveTheme?.borderColor ??
+                            const Color(0xFF1E1E1E)
+                        : IsmLiveColors.black),
                 width: 1,
               ),
             ),
@@ -190,15 +216,19 @@ class IsmLiveInputField extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.black,
-                width: 1,
+                color: borderColor ??
+                    context.liveTheme?.primaryColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : IsmLiveColors.black),
+                width: 2,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius:
                   BorderRadius.circular(radius ?? IsmLiveDimens.twentyFive),
               borderSide: BorderSide(
-                color: borderColor ?? IsmLiveColors.black,
+                color: borderColor ?? IsmLiveColors.red,
                 width: 1,
               ),
             ),

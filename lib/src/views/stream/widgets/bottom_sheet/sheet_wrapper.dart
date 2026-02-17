@@ -20,6 +20,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
     this.onPressClearIcon,
     this.placeHolder,
     this.placeHolderText,
+    this.cancelIconColor,
   });
 
   final String title;
@@ -38,6 +39,7 @@ class IsmLiveScrollSheet extends StatelessWidget {
   final Widget? trailing;
   final bool showHeader;
   final Widget? separatedWidgat;
+  final Color? cancelIconColor;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -78,11 +80,15 @@ class IsmLiveScrollSheet extends StatelessWidget {
             if (showCancelIcon)
               Padding(
                 padding: IsmLiveDimens.edgeInsets16_08_16_0,
-                child: const Align(
+                child: Align(
                   alignment: Alignment.bottomRight,
                   child: CustomIconButton(
                     icon: IsmLiveImage.svg(
                       IsmLiveAssetConstants.cancel,
+                      color: cancelIconColor ??
+                          (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black),
                     ),
                     color: Colors.transparent,
                     onTap: IsmLiveRoute.pop,

@@ -8,7 +8,34 @@ class IsmLivePkViewersSheet extends StatelessWidget {
   static const String updateId = 'pk-viewers-sheet';
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
+    final selectedTabBg = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final selectedTabTextColor =
+        selectedTabBg.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final unselectedTabColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
+    final unselectedTabBg = context.liveTheme?.cardBackgroundColor ??
+        (isDarkMode ? const Color(0xFF2C2C2C) : Colors.grey.shade100);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: Padding(
         padding: IsmLiveDimens.edgeInsetsT16,
         child: SingleChildScrollView(
           child: Column(
@@ -16,9 +43,12 @@ class IsmLivePkViewersSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IsmLiveDimens.boxHeight16,
-              Text(
-                '     Viewers',
-                style: IsmLiveStyles.blackBold20,
+              Padding(
+                padding: const EdgeInsets.only(left: 24),
+                child: Text(
+                  IsmLiveStrings.viewers,
+                  style: IsmLiveStyles.blackBold20.copyWith(color: textColor),
+                ),
               ),
               IsmLiveDimens.boxHeight10,
               GetX<IsmLivePkController>(
@@ -42,9 +72,7 @@ class IsmLivePkViewersSheet extends StatelessWidget {
 
                       return DecoratedBox(
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.black //context.liveTheme?.primaryColor
-                              : Colors.grey.shade100,
+                          color: isSelected ? selectedTabBg : unselectedTabBg,
                           borderRadius:
                               BorderRadius.circular(IsmLiveDimens.eighty),
                         ),
@@ -53,12 +81,10 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                           child: Text(
                             type.label,
                             style: context.textTheme.titleSmall?.copyWith(
-                                color: isSelected
-                                    ? IsmLiveColors
-                                        .white //context.liveTheme?.selectedTextColor
-                                    : IsmLiveColors
-                                        .grey //context.liveTheme?.unselectedTextColor,
-                                ),
+                              color: isSelected
+                                  ? selectedTabTextColor
+                                  : unselectedTabColor,
+                            ),
                           ),
                         ),
                       );
@@ -77,7 +103,7 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                         showSearchBar: false,
                         showHeader: false,
                         title: '',
-                        placeHolderText: 'no data found',
+                        placeHolderText: IsmLiveStrings.noDataFound,
                         itemCount: 5,
                         itemBuilder: (context, index) => ListTile(
                           leading: IsmLiveImage.network(
@@ -86,18 +112,18 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
-                          title: const Text('@tayne22'),
-                          subtitle: const Row(
+                          title: Text('@tayne22', style: TextStyle(color: textColor)),
+                          subtitle: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.remove_red_eye),
-                              Text('123'),
+                              Icon(Icons.remove_red_eye, color: subtitleColor),
+                              Text('123', style: TextStyle(color: subtitleColor)),
                             ],
                           ),
                         ),
                       ),
                       IsmLiveScrollSheet(
-                        placeHolderText: 'No data found',
+                        placeHolderText: IsmLiveStrings.noDataFound,
                         showHeader: false,
                         title: '',
                         itemCount: 5,
@@ -108,12 +134,12 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
-                          title: const Text('@tayne22'),
-                          subtitle: const Row(
+                          title: Text('@tayne22', style: TextStyle(color: textColor)),
+                          subtitle: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.remove_red_eye),
-                              Text('123'),
+                              Icon(Icons.remove_red_eye, color: subtitleColor),
+                              Text('123', style: TextStyle(color: subtitleColor)),
                             ],
                           ),
                         ),
@@ -125,5 +151,7 @@ class IsmLivePkViewersSheet extends StatelessWidget {
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }

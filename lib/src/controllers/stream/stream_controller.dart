@@ -673,8 +673,14 @@ class IsmLiveStreamController extends GetxController
 
   void onChangeSchedule(bool value) async {
     if (value) {
+      final context = IsmLiveUtility.navigatorKey.currentContext!;
       await IsmLiveUtility.openBottomSheet(
-          const IsmLiveScheduleTimeBottomSheet());
+        const IsmLiveScheduleTimeBottomSheet(),
+        backgroundColor: context.liveTheme?.backgroundColor ??
+            (Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF121212)
+                : Colors.white),
+      );
     }
     isSchedulingBroadcast = value;
 
@@ -853,6 +859,8 @@ class IsmLiveStreamController extends GetxController
       messageFocusNode.unfocus();
     }
     showEmojiBoard = !showEmojiBoard;
+
+    update([IsmLiveMessageField.updateId]);
   }
 
   void searchMembers(String values) async {
@@ -895,9 +903,13 @@ class IsmLiveStreamController extends GetxController
     videoOn = value ?? !videoOn;
     try {
       await participant.setCameraEnabled(videoOn);
+      // Update UI to reflect the change
+      update();
     } catch (error) {
       videoOn = !videoOn;
       IsmLiveLog('muteUnmuteVideo function  error  $error');
+      // Update UI even on error to show correct state
+      update();
     }
   }
 

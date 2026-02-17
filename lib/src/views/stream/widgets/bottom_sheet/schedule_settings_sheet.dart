@@ -8,12 +8,28 @@ class IsmLiveScheduleSettingsSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return GetBuilder<IsmLiveStreamController>(
+      builder: (controller) => Container(
+        decoration: BoxDecoration(
+          color: context.liveTheme?.backgroundColor ??
+              (isDarkMode ? const Color(0xFF121212) : Colors.white),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                  IsmLiveDimens.thirty,
+            ),
+          ),
+        ),
+        child: Padding(
           padding: IsmLiveDimens.edgeInsets16_0_16_20,
           child: IsmLiveScrollSheet(
             separatedWidgat: IsmLiveDimens.boxHeight24,
-            title: 'Schedule Stream',
+            title: IsmLiveStrings.scheduleStream,
             showHeader: false,
             showCancelIcon: true,
             itemCount: IsmLiveScheduleSettings.values.length,
@@ -27,15 +43,21 @@ class IsmLiveScheduleSettingsSheet extends StatelessWidget {
                 children: [
                   IsmLiveImage.svg(
                     IsmLiveScheduleSettings.values[index].icon,
+                    color: iconColor,
                   ),
                   IsmLiveDimens.boxWidth10,
                   Text(
                     IsmLiveScheduleSettings.values[index].label,
+                    style: context.dynamicTextTheme.bodyMedium?.copyWith(
+                      color: iconColor,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }

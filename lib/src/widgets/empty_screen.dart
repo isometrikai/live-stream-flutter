@@ -13,22 +13,30 @@ class IsmLiveEmptyScreen extends StatelessWidget {
   final String placeHolder;
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IsmLiveImage.svg(
-              placeHolder,
-              color: context.liveTheme?.primaryColor ?? IsmLiveColors.primary,
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : IsmLiveColors.primary);
+    final textColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : IsmLiveColors.grey);
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IsmLiveImage.svg(
+            placeHolder,
+            color: iconColor,
+          ),
+          IsmLiveDimens.boxHeight16,
+          Text(
+            label,
+            style: context.textTheme.titleMedium?.copyWith(
+              color: textColor,
             ),
-            IsmLiveDimens.boxHeight16,
-            Text(
-              label,
-              style: context.textTheme.titleMedium?.copyWith(
-                color: IsmLiveColors.grey,
-              ),
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }

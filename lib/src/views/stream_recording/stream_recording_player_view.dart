@@ -187,8 +187,8 @@ class _IsmLiveStreamRecordingPlayerViewState
     final config = _config;
     if (widget.recordings.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Recording')),
-        body: const Center(child: Text('No recordings')),
+        appBar: AppBar(title: const Text(IsmLiveStrings.recording)),
+        body: Center(child: Text(IsmLiveStrings.noRecordings)),
       );
     }
 

@@ -47,6 +47,7 @@ class _IsmLiveStreamRecordingBottomControlsState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const iconColor = Colors.white;
     final controller = widget.videoController;
     final position = controller?.value.position ?? Duration.zero;
     final duration = controller?.value.duration ?? Duration.zero;
@@ -76,7 +77,7 @@ class _IsmLiveStreamRecordingBottomControlsState
                   controller?.value.isPlaying == true
                       ? Icons.pause_rounded
                       : Icons.play_arrow_rounded,
-                  color: Colors.white,
+                  color: iconColor,
                 ),
                 onPressed: widget.onPlayPause,
               ),
@@ -102,7 +103,7 @@ class _IsmLiveStreamRecordingBottomControlsState
               ),
               Text(
                 '${_formatDuration(position)} / ${_formatDuration(duration)}',
-                style: theme.textTheme.bodySmall?.copyWith(color: Colors.white),
+                style: theme.textTheme.bodySmall?.copyWith(color: iconColor),
               ),
             ],
           ),

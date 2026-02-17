@@ -43,12 +43,18 @@ class _IsmLiveRecordingListViewState extends State<IsmLiveRecordingListView> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: IsmLiveAppbar(
-          showBackArrow: widget.showBackArrow,
-          title: IsmLiveStrings.recordings,
-        ),
-        body: GetBuilder<IsmLiveStreamController>(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: IsmLiveAppbar(
+        showBackArrow: widget.showBackArrow,
+        title: IsmLiveStrings.recordings,
+      ),
+      body: GetBuilder<IsmLiveStreamController>(
           id: IsmLiveRecordingListView.updateId,
           builder: (controller) => SmartRefresher(
             controller: _refreshController,
@@ -104,7 +110,8 @@ class _IsmLiveRecordingListViewState extends State<IsmLiveRecordingListView> {
                       }).toList(),
                     ),
                   ),
-          ),
         ),
-      );
+      ),
+    );
+  }
 }

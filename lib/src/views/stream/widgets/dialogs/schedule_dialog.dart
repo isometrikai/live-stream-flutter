@@ -1,63 +1,77 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class IsmLiveScheduleDialog extends StatelessWidget {
   const IsmLiveScheduleDialog({super.key, required this.message});
   final DateTime message;
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Stream Schedule',
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          IsmLiveStrings.streamSchedule,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: textColor,
           ),
-          IsmLiveDimens.boxHeight8,
-          Text(
-            'at ${message.formattedDate}',
-            style: context.textTheme.bodyMedium,
-          ),
-          IsmLiveDimens.boxHeight20,
-          const IsmLiveButton(
-            label: 'Continue',
-            onTap: IsmLiveUtility.closeDialog,
-          ),
-        ],
-      );
+          textAlign: TextAlign.center,
+        ),
+        IsmLiveDimens.boxHeight8,
+        Text(
+          'at ${message.formattedDate}',
+          style: context.textTheme.bodyMedium?.copyWith(color: textColor),
+        ),
+        IsmLiveDimens.boxHeight20,
+        IsmLiveButton(
+          label: IsmLiveStrings.tvContinue,
+          onTap: IsmLiveUtility.closeDialog,
+        ),
+      ],
+    );
+  }
 }
 
 class IsmLiveEditScheduleDialog extends StatelessWidget {
   const IsmLiveEditScheduleDialog({super.key, required this.message});
   final DateTime message;
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Edit Schedule Stream',
-            style: context.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          IsmLiveStrings.editScheduleStream,
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: textColor,
           ),
-          IsmLiveDimens.boxHeight8,
-          Text(
-            'at ${message.formattedDate}',
-            style: context.textTheme.bodyMedium,
-          ),
-          IsmLiveDimens.boxHeight20,
-          const IsmLiveButton(
-            label: 'Continue',
-            onTap: IsmLiveUtility.closeDialog,
-          ),
-        ],
-      );
+          textAlign: TextAlign.center,
+        ),
+        IsmLiveDimens.boxHeight8,
+        Text(
+          'at ${message.formattedDate}',
+          style: context.textTheme.bodyMedium?.copyWith(color: textColor),
+        ),
+        IsmLiveDimens.boxHeight20,
+        IsmLiveButton(
+          label: IsmLiveStrings.tvContinue,
+          onTap: IsmLiveUtility.closeDialog,
+        ),
+      ],
+    );
+  }
 }

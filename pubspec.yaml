@@ -10,7 +10,7 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   camera: ^0.11.3
-  connectivity_plus: ^6.1.3
+  connectivity_plus: ^7.0.0
   emoji_picker_flutter: ^4.3.0
   file_picker: ^10.3.10
   flutter:
@@ -34,7 +34,7 @@ dependencies:
   in_app_purchase_android: ^0.4.0+2
   in_app_purchase_storekit: ^0.4.2
   intl: ^0.20.2
-  livekit_client: ^2.5.1
+  livekit_client: ^2.6.2
 #  mqtt_helper: ^1.0.2
   mqtt_helper:
     git:
