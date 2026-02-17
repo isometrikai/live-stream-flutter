@@ -2,6 +2,13 @@ part of '../stream_controller.dart';
 
 mixin StreamSheetMixin {
   IsmLiveStreamController get _controller => Get.find();
+
+  Color? _sheetBackgroundColor(BuildContext context) =>
+      context.liveTheme?.backgroundColor ??
+      (Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF121212)
+          : Colors.white);
+
   // Function to handle exit actions from the stream
   void onExit({
     required bool isHost,
@@ -15,8 +22,9 @@ mixin StreamSheetMixin {
         title: isHost
             ? IsmLiveStrings.areYouSureEndStream
             : IsmLiveStrings.areYouSureLeaveStream,
-        leftLabel: isHost ? 'Cancel' : 'Stop stream',
-        rightLabel: isHost ? 'End Stream' : 'Leave stream',
+        leftLabel: isHost ? IsmLiveStrings.cancel : IsmLiveStrings.stopStream,
+        rightLabel:
+            isHost ? IsmLiveStrings.endStream : IsmLiveStrings.leaveStream,
         onLeft: isHost
             ? IsmLiveRoute.pop
             : () async {
@@ -36,6 +44,7 @@ mixin StreamSheetMixin {
           );
         },
         isDismissible: false,
+        backgroundColor: _sheetBackgroundColor(context),
       );
     } else {
       await _controller.disconnectStream(
@@ -47,6 +56,7 @@ mixin StreamSheetMixin {
 
 // Function to handle showing gifts bottom sheet
   void giftsSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       IsmLiveGiftsSheet(
         onTap: (gift) => _controller.sendGiftMessage(
@@ -55,19 +65,24 @@ mixin StreamSheetMixin {
         ),
       ),
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
 // Function to handle showing settings bottom sheet
   void settingSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveSettingsSheet(),
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   void pkChallengeSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLivePkChallengeSheet(),
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
@@ -81,10 +96,10 @@ mixin StreamSheetMixin {
               context.liveTranslations?.requestCopublishingDescription ??
                   IsmLiveStrings.requestCopublishingDescription,
           label: _controller.memberStatus.isRejected
-              ? 'Request denied by the host'
+              ? IsmLiveStrings.requestDeniedByHost
               : _controller.memberStatus.didRequested
-                  ? 'Requested Co-publishing'
-                  : 'Send Request',
+                  ? IsmLiveStrings.requestedCopublishing
+                  : IsmLiveStrings.sendRequest,
           images: [
             _controller.user?.profileUrl ?? '',
             _controller.hostDetails?.userProfileImageUrl ?? '',
@@ -100,6 +115,7 @@ mixin StreamSheetMixin {
                     _controller.memberStatus = IsmLiveMemberStatus.requested;
                   }
                 }),
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
@@ -115,7 +131,7 @@ mixin StreamSheetMixin {
         description:
             context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
                 IsmLiveStrings.hostAcceptedCopublishRequestDescription,
-        label: 'Start Video',
+        label: IsmLiveStrings.startVideo,
         images: [
           _controller.user?.profileUrl ?? '',
         ],
@@ -141,27 +157,34 @@ mixin StreamSheetMixin {
           }
         },
       ),
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   // Function to handle showing copublishing host bottom sheet
   void copublishingHostSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveCopublishingHostSheet(),
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   void schgeduleStreamSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveScheduleSettingsSheet(),
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   void pkSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLivePkSheet(),
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
@@ -179,25 +202,32 @@ mixin StreamSheetMixin {
   }
 
   void rtmpSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       const IsmLiveRtmpSheet(),
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   void paidStreamSheet({required num coins, required Function() onTap}) async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openCustomBottomSheet(
-      title:
-          'This Stream is Primeum if you want to join you need to pay $coins coins',
-      leftLabel: 'Cancel',
-      rightLabel: 'Pay&Contineue',
+      title: IsmLiveStrings.premiumStreamPayToJoinMessage.replaceFirst(
+        '%s',
+        coins.toString(),
+      ),
+      leftLabel: IsmLiveStrings.cancel,
+      rightLabel: IsmLiveStrings.payAndContinue,
       onLeft: IsmLiveRoute.pop,
       onRight: onTap,
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 
   void premiumStreamSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       IsmLivePremiumStreamSheet(
         textController: _controller.premiumStreamCoinsController,
@@ -209,6 +239,7 @@ mixin StreamSheetMixin {
         },
       ),
       isScrollController: true,
+      backgroundColor: _sheetBackgroundColor(context),
     );
   }
 }

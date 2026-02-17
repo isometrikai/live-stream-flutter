@@ -337,6 +337,7 @@ class IsmLivePkController extends GetxController
     String? inviteId,
     String? reciverStreamId,
   }) async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
       IsmLivePkInviteSheet(
         description: description,
@@ -348,6 +349,10 @@ class IsmLivePkController extends GetxController
         inviteId: inviteId,
         reciverStreamId: reciverStreamId,
       ),
+      backgroundColor: context.liveTheme?.backgroundColor ??
+          (Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF121212)
+              : Colors.white),
     );
   }
 

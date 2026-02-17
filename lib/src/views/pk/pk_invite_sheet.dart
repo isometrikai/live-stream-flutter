@@ -31,7 +31,30 @@ class IsmLivePkInviteSheet extends StatelessWidget {
   var controller = Get.find<IsmLivePkController>();
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final dividerColor = context.liveTheme?.borderColor ??
+        (isDarkMode ? const Color(0xFF1E1E1E) : Colors.grey.shade300);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: Padding(
         padding: IsmLiveDimens.edgeInsets16.copyWith(
           top: IsmLiveDimens.thirtyTwo,
         ),
@@ -65,9 +88,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                   ),
                   const Align(
                     alignment: Alignment.center,
-                    child: IsmLiveImage.svg(
-                      IsmLiveAssetConstants.linking,
-                    ),
+                    child: IsmLiveImage.svg(IsmLiveAssetConstants.linking),
                   ),
                 ],
               ),
@@ -77,13 +98,16 @@ class IsmLivePkInviteSheet extends StatelessWidget {
               title,
               style: context.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: textColor,
               ),
               textAlign: TextAlign.center,
             ),
             IsmLiveDimens.boxHeight10,
             Text(
               description,
-              style: context.textTheme.bodyMedium,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: subtitleColor,
+              ),
               textAlign: TextAlign.center,
             ),
             IsmLiveDimens.boxHeight20,
@@ -94,7 +118,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: IsmLiveButton(
-                      label: 'Reject',
+                      label: IsmLiveStrings.reject,
                       onTap: () {
                         IsmLiveRoute.pop();
                         controller.invitationPk(
@@ -109,7 +133,7 @@ class IsmLivePkInviteSheet extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: IsmLiveButton(
-                      label: 'Accept',
+                      label: IsmLiveStrings.accept,
                       onTap: () {
                         IsmLiveRoute.pop();
                         controller.invitationPk(
@@ -127,8 +151,12 @@ class IsmLivePkInviteSheet extends StatelessWidget {
               LinearProgressIndicator(
                 minHeight: IsmLiveDimens.ten,
                 borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                color: iconColor,
+                backgroundColor: dividerColor,
               ),
           ],
         ),
-      );
+      ),
+    );
+  }
 }

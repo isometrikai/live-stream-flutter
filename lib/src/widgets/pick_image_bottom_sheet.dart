@@ -18,7 +18,27 @@ class PickImageSheet extends StatelessWidget {
   final void Function(XFile?)? afterPicking;
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      padding: IsmLiveDimens.edgeInsets16,
+      child: GetBuilder<IsmLiveStreamController>(
         builder: (controller) {
           var attachments = FileManager.attachmentBottomList(
             enableVideo: enableVideo,
@@ -56,11 +76,14 @@ class PickImageSheet extends StatelessWidget {
                     IsmLiveImage.svg(
                       attachments[index].iconPath,
                       dimensions: IsmLiveDimens.fifty,
+                      color: iconColor,
                     ),
                     IsmLiveDimens.boxHeight10,
                     Text(
                       attachments[index].label.tr,
-                      style: context.textTheme.labelLarge,
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: textColor,
+                      ),
                     ),
                   ],
                 ),
@@ -68,5 +91,7 @@ class PickImageSheet extends StatelessWidget {
             ),
           );
         },
-      );
+      ),
+    );
+  }
 }

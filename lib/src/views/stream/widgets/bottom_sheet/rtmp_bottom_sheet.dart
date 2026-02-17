@@ -7,7 +7,22 @@ class IsmLiveRtmpSheet extends StatelessWidget {
   const IsmLiveRtmpSheet();
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
         builder: (controller) => Padding(
           padding: IsmLiveDimens.edgeInsets16,
@@ -16,7 +31,7 @@ class IsmLiveRtmpSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _InputField(
-                label: 'RTML URL',
+                label: IsmLiveStrings.rtmlUrl,
                 readOnly: true,
                 controller: controller.rtmlUrlDevice,
                 onTap: () {
@@ -24,12 +39,11 @@ class IsmLiveRtmpSheet extends StatelessWidget {
                     ClipboardData(text: controller.rtmlUrlDevice.text),
                   );
                 },
-                suffixIcon: const Icon(Icons.copy),
               ),
               IsmLiveDimens.boxHeight10,
               _InputField(
-                label: 'Stream Key',
-                hint: 'Key will be generated after you start a new stream',
+                label: IsmLiveStrings.streamKey,
+                hint: IsmLiveStrings.streamKeyHint,
                 readOnly: true,
                 controller: controller.streamKeyDevice,
                 onTap: () {
@@ -37,22 +51,23 @@ class IsmLiveRtmpSheet extends StatelessWidget {
                     ClipboardData(text: controller.streamKeyDevice.text),
                   );
                 },
-                suffixIcon: const Icon(Icons.copy),
               ),
               IsmLiveDimens.boxHeight10,
               Text.rich(
                 const TextSpan(
-                  text:
-                      'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device.',
+                  text: IsmLiveStrings.rtmpStreamInstruction,
                 ),
                 style: context.textTheme.labelMedium?.copyWith(
-                  color: IsmLiveColors.black,
+                  color: context.liveTheme?.primaryColor ??
+                      (isDarkMode ? Colors.white : Colors.black),
                 ),
               )
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _InputField extends StatelessWidget {
@@ -61,7 +76,6 @@ class _InputField extends StatelessWidget {
     this.hint,
     required this.controller,
     this.readOnly = false,
-    this.suffixIcon,
     this.onTap,
   });
 
@@ -69,36 +83,51 @@ class _InputField extends StatelessWidget {
   final String? hint;
   final TextEditingController controller;
   final bool readOnly;
-  final Widget? suffixIcon;
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: context.textTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.black,
-            ),
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final borderColor = context.liveTheme?.borderColor ??
+        (isDarkMode ? const Color(0xFF1E1E1E) : IsmLiveColors.black);
+    final fillColor = context.liveTheme?.cardBackgroundColor ??
+        (isDarkMode ? const Color(0xFF1E1E1E) : Colors.white);
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: context.textTheme.labelLarge?.copyWith(
+            color: textColor,
           ),
-          IsmLiveDimens.boxHeight4,
-          IsmLiveInputField(
-            controller: controller,
-            hintText: hint ?? 'Enter $label',
-            hintStyle: context.textTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.black,
-            ),
-            style: context.textTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.black,
-            ),
-            onTap: onTap,
-            readOnly: readOnly,
-            fillColor: Colors.white,
-            radius: IsmLiveDimens.twelve,
-            borderColor: IsmLiveColors.black,
-            suffixIcon: suffixIcon,
+        ),
+        IsmLiveDimens.boxHeight4,
+        IsmLiveInputField(
+          controller: controller,
+          hintText: hint ?? 'Enter $label',
+          hintStyle: context.textTheme.labelLarge?.copyWith(
+            color: context.liveTheme?.unselectedTextColor ??
+                (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey),
           ),
-        ],
-      );
+          style: context.textTheme.labelLarge?.copyWith(
+            color: textColor,
+          ),
+          onTap: onTap,
+          readOnly: readOnly,
+          fillColor: fillColor,
+          radius: IsmLiveDimens.twelve,
+          borderColor: borderColor,
+          suffixIcon: Icon(
+            Icons.copy,
+            color: iconColor,
+          ),
+        ),
+      ],
+    );
+  }
 }

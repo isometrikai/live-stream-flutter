@@ -12,13 +12,29 @@ class IsmLiveCoverPhotoOptionsSheet extends StatelessWidget {
   final VoidCallback onGalleryTap;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textIconColor = isDarkMode ? Colors.white : Colors.black;
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: context.liveTheme?.backgroundColor ??
+            (isDarkMode ? const Color(0xFF121212) : Colors.white),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: Padding(
         padding: IsmLiveDimens.edgeInsets16_0_16_20,
         child: IsmLiveScrollSheet(
           separatedWidgat: IsmLiveDimens.boxHeight24,
           title: '',
           showHeader: false,
           showCancelIcon: true,
+          cancelIconColor: textIconColor,
           itemCount: 2,
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -27,13 +43,16 @@ class IsmLiveCoverPhotoOptionsSheet extends StatelessWidget {
                 onTap: onCameraTap,
                 child: Row(
                   children: [
-                    const IsmLiveImage.svg(
+                    IsmLiveImage.svg(
                       IsmLiveAssetConstants.takePhoto,
+                      color: textIconColor,
                     ),
                     IsmLiveDimens.boxWidth10,
                     Text(
                       IsmLiveStrings.takePhoto,
-                      style: context.dynamicTextTheme.bodyMedium,
+                      style: context.dynamicTextTheme.bodyMedium?.copyWith(
+                        color: textIconColor,
+                      ),
                     ),
                   ],
                 ),
@@ -44,13 +63,16 @@ class IsmLiveCoverPhotoOptionsSheet extends StatelessWidget {
                 onTap: onGalleryTap,
                 child: Row(
                   children: [
-                    const IsmLiveImage.svg(
+                    IsmLiveImage.svg(
                       IsmLiveAssetConstants.chooseFromGallery,
+                      color: textIconColor,
                     ),
                     IsmLiveDimens.boxWidth10,
                     Text(
                       IsmLiveStrings.chooseFromGallery,
-                      style: context.dynamicTextTheme.bodyMedium,
+                      style: context.dynamicTextTheme.bodyMedium?.copyWith(
+                        color: textIconColor,
+                      ),
                     ),
                   ],
                 ),
@@ -58,5 +80,7 @@ class IsmLiveCoverPhotoOptionsSheet extends StatelessWidget {
             }
           },
         ),
-      );
+      ),
+    );
+  }
 }

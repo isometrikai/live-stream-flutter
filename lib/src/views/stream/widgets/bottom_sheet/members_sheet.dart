@@ -8,13 +8,28 @@ class IsmLiveMembersSheet extends StatelessWidget {
   static const String updateId = 'members_sheet';
 
   @override
-  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        id: updateId,
-        initState: (_) {
-          Get.find<IsmLiveStreamController>()
-            ..searchExistingMembesFieldController.clear();
-        },
-        builder: (controller) => IsmLiveScrollSheet(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+
+    return GetBuilder<IsmLiveStreamController>(
+      id: updateId,
+      initState: (_) {
+        Get.find<IsmLiveStreamController>()
+          ..searchExistingMembesFieldController.clear();
+      },
+      builder: (controller) => Container(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+              IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                  IsmLiveDimens.thirty,
+            ),
+          ),
+        ),
+        child: IsmLiveScrollSheet(
           showSearchBar: true,
           onPressClearIcon: () {
             controller.searchExistingMembesFieldController.clear();
@@ -22,9 +37,9 @@ class IsmLiveMembersSheet extends StatelessWidget {
                 controller.searchExistingMembesFieldController.text);
           },
           textEditingController: controller.searchExistingMembesFieldController,
-          hintText: 'Search Copublisher',
+          hintText: IsmLiveStrings.searchCopublisher,
           onchange: controller.searchMember,
-          title: 'Members',
+          title: IsmLiveStrings.members,
           controller: controller.existingMembersListController,
           itemCount: controller.streamMembersList.length,
           itemBuilder: (context, index) {
@@ -67,5 +82,7 @@ class IsmLiveMembersSheet extends StatelessWidget {
             );
           },
         ),
-      );
+      ),
+    );
+  }
 }

@@ -96,11 +96,18 @@ class _RecordingProfileChip extends StatelessWidget {
   final IsmLiveStreamRecordingItem recording;
   final IsmLiveStreamRecordingPlayerConfig config;
 
-  Color _color(BuildContext context) =>
-      context.liveTheme?.backgroundColor ?? IsmLiveColors.white;
-
   @override
-  Widget build(BuildContext context) => IsmLiveTapHandler(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final pillColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final pillFillColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.2)
+        : Colors.black.withValues(alpha: 0.2);
+    final textColor =
+        pillColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+
+    return IsmLiveTapHandler(
         onTap: () async {
           config.onControlOption?.call(
             context,
@@ -111,9 +118,9 @@ class _RecordingProfileChip extends StatelessWidget {
         child: Container(
           width: IsmLiveDimens.hundredFourty,
           decoration: BoxDecoration(
-            color: _color(context).withOpacity(0.3),
+            color: pillFillColor,
             borderRadius: BorderRadius.circular(IsmLiveDimens.hundred),
-            border: Border.all(color: _color(context)),
+            border: Border.all(color: pillColor),
           ),
           padding: IsmLiveDimens.edgeInsets2,
           child: Row(
@@ -125,14 +132,14 @@ class _RecordingProfileChip extends StatelessWidget {
                 isProfileImage: true,
                 height: IsmLiveDimens.forty,
                 width: IsmLiveDimens.forty,
-                border: Border.all(color: _color(context)),
+                border: Border.all(color: pillColor),
               ),
               IsmLiveDimens.boxWidth4,
               SizedBox(
                 width: IsmLiveDimens.seventy,
                 child: Text(
                   '@$name',
-                  style: IsmLiveStyles.white12,
+                  style: IsmLiveStyles.white12.copyWith(color: textColor),
                   maxLines: 1,
                 ),
               ),
@@ -140,6 +147,7 @@ class _RecordingProfileChip extends StatelessWidget {
           ),
         ),
       );
+  }
 }
 
 /// View count chip matching [IsmLiveViewerCount] style (recording has no tap sheet).

@@ -10,7 +10,26 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
   final UserDetails user;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: Padding(
         padding: IsmLiveDimens.edgeInsets16,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -26,8 +45,14 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(user.userName),
-                Text(user.userIdentifier),
+                Text(
+                  user.userName,
+                  style: TextStyle(color: textColor),
+                ),
+                Text(
+                  user.userIdentifier,
+                  style: TextStyle(color: subtitleColor),
+                ),
               ],
             ),
             const Spacer(flex: 2),
@@ -37,5 +62,7 @@ class IsmLiveLogoutBottomSheet extends StatelessWidget {
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
 }

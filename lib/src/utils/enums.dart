@@ -369,8 +369,8 @@ enum IsmLiveHostSettings {
 }
 
 enum IsmLiveScheduleSettings {
-  edit(IsmLiveAssetConstants.edit, 'Edit Stream'),
-  delete(IsmLiveAssetConstants.delete, 'Delete Stream');
+  edit(IsmLiveAssetConstants.edit, IsmLiveStrings.editStream),
+  delete(IsmLiveAssetConstants.delete, IsmLiveStrings.deleteStream);
 
   const IsmLiveScheduleSettings(this.icon, this.label);
   final String icon;

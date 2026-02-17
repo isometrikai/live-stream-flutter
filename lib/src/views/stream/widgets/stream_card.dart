@@ -22,7 +22,7 @@ class IsmLiveStreamCard extends StatelessWidget {
           height: IsmLiveDimens.twoHundredTwenty,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(IsmLiveDimens.sixteen),
-            color: Colors.black,
+            color: context.liveTheme?.cardBackgroundColor ?? Colors.black,
             image: DecorationImage(
               image: CachedNetworkImageProvider(
                 stream.streamImage ?? '',
@@ -72,7 +72,11 @@ class IsmLiveStreamCard extends StatelessWidget {
                                   ? stream.scheduleStartTime!.formattedDate
                                   : 'Continue',
                               style: context.textTheme.labelSmall?.copyWith(
-                                color: Colors.white,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+                                        IsmLiveColors.black
+                                    : context.liveTheme?.selectedTextColor ??
+                                        IsmLiveColors.white,
                               ),
                             ),
                           ),
@@ -98,7 +102,8 @@ class IsmLiveStreamCard extends StatelessWidget {
                             stream.userDetails?.userName ?? 'U',
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
+                              color: context.liveTheme?.selectedTextColor ??
+                                  IsmLiveColors.white,
                             ),
                           ),
                         ),
@@ -107,7 +112,8 @@ class IsmLiveStreamCard extends StatelessWidget {
                     Text(
                       stream.streamDescription ?? '',
                       style: context.textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
+                        color: context.liveTheme?.selectedTextColor ??
+                            IsmLiveColors.white,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

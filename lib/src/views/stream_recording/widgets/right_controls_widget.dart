@@ -73,13 +73,18 @@ class _ControlItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
     final Widget iconWidget = option != null
         ? IsmLiveImage.svg(
             height: IsmLiveDimens.forty,
             width: IsmLiveDimens.forty,
             option!.icon,
+            color: iconColor,
           )
-        : Icon(icon!, color: IsmLiveColors.white, size: IsmLiveDimens.forty);
+        : Icon(icon!, color: iconColor, size: IsmLiveDimens.forty);
 
     return Padding(
       padding: EdgeInsets.only(bottom: IsmLiveDimens.eight),

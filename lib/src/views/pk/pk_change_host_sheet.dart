@@ -21,54 +21,81 @@ class IsmLivePkChangeHostSheet extends StatelessWidget {
   final Function()? onTap;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: IsmLiveDimens.edgeInsets16.copyWith(
-          top: IsmLiveDimens.thirtyTwo,
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey.shade400);
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IsmLiveImage.network(
-              image,
-              name: title,
-              height: IsmLiveDimens.hundred,
-              width: IsmLiveDimens.hundred,
-              isProfileImage: true,
+      ),
+      padding: IsmLiveDimens.edgeInsets16.copyWith(
+        top: IsmLiveDimens.thirtyTwo,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IsmLiveImage.network(
+            image,
+            name: title,
+            height: IsmLiveDimens.hundred,
+            width: IsmLiveDimens.hundred,
+            isProfileImage: true,
+          ),
+          IsmLiveDimens.boxHeight10,
+          Text(
+            title,
+            style: context.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
-            IsmLiveDimens.boxHeight10,
-            Text(
-              title,
-              style: context.textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          IsmLiveDimens.boxHeight5,
+          Text(
+            description,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: subtitleColor,
             ),
-            IsmLiveDimens.boxHeight5,
-            Text(
-              description,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: Colors.grey.shade400),
-              textAlign: TextAlign.center,
-            ),
-            IsmLiveDimens.boxHeight5,
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.person),
-                IsmLiveDimens.boxWidth2,
-                Text(followers),
-                IsmLiveDimens.boxWidth32,
-                const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
-                IsmLiveDimens.boxWidth2,
-                Text(coins),
-              ],
-            ),
-            IsmLiveDimens.boxHeight32,
-            IsmLiveButton(
-              label: lable,
-              onTap: onTap,
-            ),
-          ],
-        ),
-      );
+            textAlign: TextAlign.center,
+          ),
+          IsmLiveDimens.boxHeight5,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.person, color: iconColor),
+              IsmLiveDimens.boxWidth2,
+              Text(followers, style: TextStyle(color: textColor)),
+              IsmLiveDimens.boxWidth32,
+              IsmLiveImage.svg(
+                IsmLiveAssetConstants.coinSvg,
+                color: iconColor,
+              ),
+              IsmLiveDimens.boxWidth2,
+              Text(coins, style: TextStyle(color: textColor)),
+            ],
+          ),
+          IsmLiveDimens.boxHeight32,
+          IsmLiveButton(
+            label: lable,
+            onTap: onTap,
+          ),
+        ],
+      ),
+    );
+  }
 }

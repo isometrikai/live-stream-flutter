@@ -18,7 +18,10 @@ class IsmLiveTabButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? context.liveTheme?.primaryColor
-                  : Colors.grey.shade100,
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? context.liveTheme?.cardBackgroundColor ??
+                          Colors.grey.shade800
+                      : Colors.grey.shade100),
               borderRadius: BorderRadius.circular(IsmLiveDimens.eighty),
             ),
             child: Padding(
@@ -27,7 +30,11 @@ class IsmLiveTabButton extends StatelessWidget {
                 type.label,
                 style: context.textTheme.titleSmall?.copyWith(
                   color: isSelected
-                      ? context.liveTheme?.selectedTextColor
+                      ? (Theme.of(context).brightness == Brightness.dark
+                          ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+                              IsmLiveColors.black
+                          : context.liveTheme?.selectedTextColor ??
+                              IsmLiveColors.white)
                       : context.liveTheme?.unselectedTextColor,
                   fontWeight: FontWeight.bold,
                 ),

@@ -796,6 +796,10 @@ class _StreamHeader extends StatelessWidget {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
                 isScrollController: true,
+                backgroundColor: context.liveTheme?.backgroundColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF121212)
+                        : Colors.white),
               );
             },
             onTapViewers: (viewerList) async {

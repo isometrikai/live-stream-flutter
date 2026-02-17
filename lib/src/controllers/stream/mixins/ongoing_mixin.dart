@@ -534,12 +534,17 @@ mixin StreamOngoingMixin {
         await toggleSpeaker();
         break;
       case IsmLiveStreamOption.bars:
+        final context = IsmLiveUtility.navigatorKey.currentContext!;
         await IsmLiveUtility.openBottomSheet(
           IsmliveAnalyticsSheet(
             streamId: (_controller.userRole?.isPkGuest ?? false)
                 ? _pkController.pkguestStreamId ?? ''
                 : _controller.streamId ?? '',
           ),
+          backgroundColor: context.liveTheme?.backgroundColor ??
+              (Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF121212)
+                  : Colors.white),
         );
         break;
       case IsmLiveStreamOption.vs:

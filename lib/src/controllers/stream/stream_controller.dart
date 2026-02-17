@@ -673,8 +673,14 @@ class IsmLiveStreamController extends GetxController
 
   void onChangeSchedule(bool value) async {
     if (value) {
+      final context = IsmLiveUtility.navigatorKey.currentContext!;
       await IsmLiveUtility.openBottomSheet(
-          const IsmLiveScheduleTimeBottomSheet());
+        const IsmLiveScheduleTimeBottomSheet(),
+        backgroundColor: context.liveTheme?.backgroundColor ??
+            (Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF121212)
+                : Colors.white),
+      );
     }
     isSchedulingBroadcast = value;
 

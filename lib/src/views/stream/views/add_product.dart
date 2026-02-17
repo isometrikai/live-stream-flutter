@@ -9,18 +9,30 @@ class IsmLiveAddProduct extends StatelessWidget {
 
   final bool productList = false;
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            'Add Products',
-            style: context.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final iconColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        backgroundColor: bgColor,
+        title: Text(
+          IsmLiveStrings.addProducts,
+          style: context.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
-          elevation: 0,
-          centerTitle: true,
-          iconTheme: const IconThemeData(color: Colors.black),
         ),
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: iconColor),
+      ),
         body: GetBuilder<IsmLiveStreamController>(
           id: updateId,
           initState: (state) {
@@ -30,9 +42,10 @@ class IsmLiveAddProduct extends StatelessWidget {
             control.fetchProducts();
           },
           builder: (controller) => controller.productsList.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'There are no products available to tag',
+                    IsmLiveStrings.noProductsAvailable,
+                    style: TextStyle(color: textColor),
                   ),
                 )
               : Padding(
@@ -46,7 +59,7 @@ class IsmLiveAddProduct extends StatelessWidget {
                         fillColor: IsmLiveColors.fieldColor,
                         controller: controller.searchProductFieldController,
                         hintText: 'Search',
-                        prefixIcon: const Icon(Icons.search),
+                        prefixIcon: Icon(Icons.search, color: iconColor),
                         onchange: (value) {
                           controller.productsList.clear();
                           controller.fetchProducts(
@@ -94,7 +107,9 @@ class IsmLiveAddProduct extends StatelessWidget {
                       if (controller.selectedProductsList.isNotEmpty) ...[
                         IsmLiveDimens.boxHeight10,
                         Text(
-                            'Selected (${controller.selectedProductsList.length})'),
+                          '${IsmLiveStrings.selected} (${controller.selectedProductsList.length})',
+                          style: TextStyle(color: textColor),
+                        ),
                         IsmLiveDimens.boxHeight10,
                         SizedBox(
                           height: IsmLiveDimens.sixty,
@@ -141,8 +156,8 @@ class IsmLiveAddProduct extends StatelessWidget {
                         ),
                       ],
                       IsmLiveDimens.boxHeight10,
-                      const IsmLiveButton(
-                        label: 'Continue',
+                      IsmLiveButton(
+                        label: IsmLiveStrings.tvContinue,
                         onTap: IsmLiveRoute.pop,
                       ),
                       IsmLiveDimens.boxHeight10,
@@ -150,5 +165,6 @@ class IsmLiveAddProduct extends StatelessWidget {
                   ),
                 ),
         ),
-      );
+    );
+  }
 }

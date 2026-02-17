@@ -380,6 +380,7 @@ class _StreamImage extends StatelessWidget {
     BuildContext context,
     IsmLiveStreamController controller,
   ) async {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final result = await IsmLiveUtility.openBottomSheet<bool>(
       IsmLiveCoverPhotoOptionsSheet(
         onCameraTap: () async {
@@ -390,7 +391,8 @@ class _StreamImage extends StatelessWidget {
               false); // Pass false to indicate gallery was selected
         },
       ),
-      backgroundColor: IsmLiveColors.white,
+      backgroundColor: context.liveTheme?.backgroundColor ??
+          (isDarkMode ? const Color(0xFF121212) : Colors.white),
     );
 
     if (result != null) {

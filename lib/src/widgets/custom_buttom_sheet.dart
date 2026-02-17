@@ -19,7 +19,23 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
   final VoidCallback? onRight;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = context.liveTheme?.backgroundColor ??
+        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final titleColor = isDarkMode ? Colors.white : Colors.black;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
+                IsmLiveDimens.thirty,
+          ),
+        ),
+      ),
+      child: Padding(
         padding: IsmLiveDimens.edgeInsets16,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -29,7 +45,9 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Text(
                 title,
-                style: context.textTheme.titleMedium,
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: titleColor,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -53,5 +71,7 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
 }
