@@ -76,38 +76,42 @@ class IsmLiveHandler {
     VoidCallback? logoutCallback,
     bool isLoading = true,
   }) async {
-    if (isLoading) {
-      IsmLiveUtility.showLoader();
-    }
+    try{
+      if (isLoading) {
+        IsmLiveUtility.showLoader();
+      }
 
-    await Future.wait([
-      if ((isStreaming ?? false) &&
-          Get.isRegistered<IsmLiveStreamController>()) ...[
-        Get.find<IsmLiveStreamController>().unsubscribeUser(),
-      ],
-      if (Get.isRegistered<IsmLiveMqttController>()) ...[
-        Get.find<IsmLiveMqttController>().unsubscribeTopics(),
-        // Get.find<IsmLiveMqttController>().disconnect(),
-      ],
-    ]);
+      await Future.wait([
+        if ((isStreaming ?? false) &&
+            Get.isRegistered<IsmLiveStreamController>()) ...[
+          Get.find<IsmLiveStreamController>().unsubscribeUser(),
+        ],
+        if (Get.isRegistered<IsmLiveMqttController>()) ...[
+          Get.find<IsmLiveMqttController>().unsubscribeTopics(),
+          // Get.find<IsmLiveMqttController>().disconnect(),
+        ],
+      ]);
 
-    if (Get.isRegistered<IsmLiveMqttController>()) {
-      unawaited(Get.delete<IsmLiveMqttController>(force: true));
-    }
-    if (Get.isRegistered<IsmLiveApiWrapper>()) {
-      unawaited(Get.delete<IsmLiveApiWrapper>(force: true));
-    }
-    if (Get.isRegistered<IsmLiveDBWrapper>()) {
-      unawaited(Get.delete<IsmLiveDBWrapper>(force: true));
-    }
-    if (Get.isRegistered<IsmLiveStreamController>()) {
-      unawaited(Get.delete<IsmLiveStreamController>(force: true));
-    }
-    IsmLiveUtility.config = null;
-    (logoutCallback ?? onLogout)?.call();
+      if (Get.isRegistered<IsmLiveMqttController>()) {
+        unawaited(Get.delete<IsmLiveMqttController>(force: true));
+      }
+      if (Get.isRegistered<IsmLiveApiWrapper>()) {
+        unawaited(Get.delete<IsmLiveApiWrapper>(force: true));
+      }
+      if (Get.isRegistered<IsmLiveDBWrapper>()) {
+        unawaited(Get.delete<IsmLiveDBWrapper>(force: true));
+      }
+      if (Get.isRegistered<IsmLiveStreamController>()) {
+        unawaited(Get.delete<IsmLiveStreamController>(force: true));
+      }
+      IsmLiveUtility.config = null;
+      (logoutCallback ?? onLogout)?.call();
 
-    if (isLoading) {
-      IsmLiveUtility.closeLoader();
+      if (isLoading) {
+        IsmLiveUtility.closeLoader();
+      }
+    }catch (e) {
+      debugPrint('LiveStream: Error in dispose: $e');
     }
   }
 }
