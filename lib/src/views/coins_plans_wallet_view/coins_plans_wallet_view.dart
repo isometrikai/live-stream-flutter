@@ -10,58 +10,6 @@ class CoinsPlansWalletView extends StatelessWidget {
   static const updateId = 'coin-plans-wallet-view';
 
   @override
-  Widget build(BuildContext context) => GetBuilder<CoinsPlansWalletController>(
-        id: updateId,
-        builder: (controller) => Scaffold(
-          backgroundColor: IsmLiveColors.white,
-          appBar: AppBar(
-            backgroundColor: IsmLiveColors.white,
-            surfaceTintColor: IsmLiveColors.white,
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: Text(
-              'Coins Wallet',
-              style: context.textTheme.bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            leading: const InkWell(
-              onTap: IsmLiveRoute.pop,
-              child: Icon(Icons.arrow_back),
-            ),
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: IsmLiveDimens.fifteen,
-                  vertical: IsmLiveDimens.twelve),
-              child: CustomScrollView(
-                shrinkWrap: true,
-                slivers: [
-                  SliverAppBar(
-                    toolbarHeight: MediaQuery.of(context).size.height * .11,
-                    automaticallyImplyLeading: false,
-                    pinned: true,
-                    backgroundColor: IsmLiveColors.white,
-                    surfaceTintColor: IsmLiveColors.white,
-                    flexibleSpace: DecoratedBox(
-                      decoration: BoxDecoration(
-                          color: IsmLiveColors.white,
-                          borderRadius:
-                              BorderRadius.circular(IsmLiveDimens.eight),
-                          border: Border.all(color: Colors.purple.shade100)),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: IsmLiveDimens.fifteen,
-                          vertical: IsmLiveDimens.twelve,
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: IsmLiveDimens.thirty,
-                              height: IsmLiveDimens.thirty,
-                              child: const IsmLiveImage.svg(
-                                IsmLiveAssetConstants.coinSvg,
-                              ),
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final bgColor = context.liveTheme?.backgroundColor ??
