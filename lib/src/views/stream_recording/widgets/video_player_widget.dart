@@ -79,7 +79,7 @@ class _IsmLiveStreamRecordingVideoWidgetState
               const SizedBox(height: 16),
               TextButton(
                 onPressed: controller.initialize,
-                child: Text(IsmLiveStrings.retry),
+                child: const Text(IsmLiveStrings.retry),
               ),
             ],
           ),

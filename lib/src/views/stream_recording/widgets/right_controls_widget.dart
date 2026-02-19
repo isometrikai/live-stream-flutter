@@ -40,12 +40,12 @@ class IsmLiveStreamRecordingRightControls extends StatelessWidget {
           onTap: () => _handleOptionTap(
               context, IsmLiveStreamRecordingControlOption.product),
         ),
-        IsmLiveDimens.boxHeight8,
-        _ControlItem(
-          option: IsmLiveStreamOption.share,
-          onTap: () => _handleOptionTap(
-              context, IsmLiveStreamRecordingControlOption.share),
-        ),
+        // IsmLiveDimens.boxHeight8,
+        // _ControlItem(
+        //   option: IsmLiveStreamOption.share,
+        //   onTap: () => _handleOptionTap(
+        //       context, IsmLiveStreamRecordingControlOption.share),
+        // ),
         if (!isSelfStream) ...[
           IsmLiveDimens.boxHeight8,
           _ControlItem(
@@ -73,9 +73,7 @@ class _ControlItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.black);
+    final iconColor = Colors.white;
 
     final Widget iconWidget = option != null
         ? IsmLiveImage.svg(
