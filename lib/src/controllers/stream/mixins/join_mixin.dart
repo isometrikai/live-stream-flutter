@@ -89,7 +89,7 @@ mixin StreamJoinMixin {
 
     // Set a placeholder future immediately to prevent multiple calls
     _controller.cameraFuture = _initializeCameraAsync();
-    _controller.update([IsmGoLiveView.updateId]);
+    _controller.update([IsmGoLiveView.cameraUpdateId]);
   }
 
   Future<void> _initializeCameraAsync() async {
@@ -162,7 +162,7 @@ mixin StreamJoinMixin {
       // Lock camera orientation to portrait to prevent rotation on iOS
       await _controller.cameraController!
           .lockCaptureOrientation(DeviceOrientation.portraitUp);
-      _controller.update([IsmGoLiveView.updateId]);
+      _controller.update([IsmGoLiveView.cameraUpdateId]);
     } catch (e) {
       IsmLiveLog.error('Failed to initialize camera: $e');
       _controller.cameraController?.dispose();

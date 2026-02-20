@@ -10,6 +10,7 @@ class IsmGoLiveView extends StatelessWidget {
   const IsmGoLiveView({super.key});
 
   static const String updateId = 'ismlive-go-live';
+  static const String cameraUpdateId = 'ismlive-go-live-camera';
 
   /// Get the appropriate text style for "Add Cover" and similar action text based on configuration
   static TextStyle _getAddCoverTextStyle(BuildContext context) {
@@ -137,45 +138,8 @@ class IsmGoLiveView extends StatelessWidget {
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Positioned.fill(
-                child: FutureBuilder(
-                  future: controller.cameraFuture,
-                  builder: (_, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return const IsmLiveLoader(isDialog: false);
-                    }
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          'Error while initializing Camera',
-                          style: context.dynamicTextTheme.bodyLarge?.copyWith(
-                            color: IsmLiveColors.white,
-                          ),
-                        ),
-                      );
-                    }
-                    if (controller.cameraController == null) {
-                      return const SizedBox();
-                    }
-
-                    return controller.selectedGoLiveTabItem ==
-                            IsmGoLiveTabItem.defaultLive
-                        ? FittedBox(
-                            fit: BoxFit.cover,
-                            child: SizedBox(
-                              width: controller
-                                  .cameraController!.value.previewSize!.height,
-                              height: controller
-                                  .cameraController!.value.previewSize!.width,
-                              child: CameraPreview(
-                                controller.cameraController!,
-                                child: const ColoredBox(color: Colors.black38),
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  },
-                ),
+              const Positioned.fill(
+                child: _CameraPreviewBackground(),
               ),
               SingleChildScrollView(
                 padding: IsmLiveDimens.edgeInsets16,
@@ -407,7 +371,7 @@ class _StreamImage extends StatelessWidget {
           await existingController.dispose();
           controller.cameraController = null;
           controller.cameraFuture = null;
-          controller.update([IsmGoLiveView.updateId]);
+          controller.update([IsmGoLiveView.cameraUpdateId]);
           // Wait a bit for camera to be fully released
           await Future.delayed(const Duration(milliseconds: 300));
         } catch (e) {
@@ -800,6 +764,55 @@ class _InputField extends StatelessWidget {
             suffixIcon: suffixIcon,
           ),
         ],
+      );
+}
+
+class _CameraPreviewBackground extends StatelessWidget {
+  const _CameraPreviewBackground();
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmGoLiveView.cameraUpdateId,
+        builder: (controller) => RepaintBoundary(
+          child: FutureBuilder(
+            future: controller.cameraFuture,
+            builder: (_, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const IsmLiveLoader(isDialog: false);
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Error while initializing Camera',
+                    style: context.dynamicTextTheme.bodyLarge?.copyWith(
+                      color: IsmLiveColors.white,
+                    ),
+                  ),
+                );
+              }
+              if (controller.cameraController == null) {
+                return const SizedBox();
+              }
+
+              return controller.selectedGoLiveTabItem ==
+                      IsmGoLiveTabItem.defaultLive
+                  ? FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: controller
+                            .cameraController!.value.previewSize!.height,
+                        height: controller
+                            .cameraController!.value.previewSize!.width,
+                        child: CameraPreview(
+                          controller.cameraController!,
+                          child: const ColoredBox(color: Colors.black38),
+                        ),
+                      ),
+                    )
+                  : const SizedBox();
+            },
+          ),
+        ),
       );
 }
 

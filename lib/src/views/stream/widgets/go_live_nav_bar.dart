@@ -71,7 +71,11 @@ class _GoLiveTabSelector extends StatelessWidget {
                                 IsmGoLiveTabItem.liveFromDevice);
                         controller.onChangePersistent(false);
 
-                        controller.update([IsmGoLiveView.updateId]);
+                        // Update both IDs: updateId for general UI, cameraUpdateId for camera preview visibility
+                        controller.update([
+                          IsmGoLiveView.updateId,
+                          IsmGoLiveView.cameraUpdateId,
+                        ]);
                       },
                       child: Padding(
                         padding: IsmLiveDimens.edgeInsets0_4,

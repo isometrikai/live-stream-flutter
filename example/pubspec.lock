@@ -730,10 +730,10 @@ packages:
     dependency: transitive
     description:
       name: livekit_client
-      sha256: f47bc27cb726016a480f32941562e64f5acc63c21b4900d582c2d0de27edae7d
+      sha256: "23bfefc9faa0de004c6d805817418abd9fae91a0dce8eb242d82876374f85750"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.2"
+    version: "2.6.3"
   logger:
     dependency: transitive
     description:
