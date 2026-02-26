@@ -6,6 +6,7 @@ export 'cover_photo_options_sheet.dart';
 export 'members_sheet.dart';
 export 'moderator_bottom_sheet.dart';
 export 'moderators_sheet.dart';
+export 'add_moderators_bottom_sheet.dart';
 export 'premium_stream_sheet.dart';
 export 'product_discount_sheet.dart';
 export 'rtmp_bottom_sheet.dart';

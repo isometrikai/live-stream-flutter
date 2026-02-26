@@ -118,6 +118,8 @@ class IsmLiveStrings {
   static const String moderators = 'Moderators';
   static const String viewProfile = 'View Profile';
   static const String searchUsers = 'Search Users';
+  static const String addModerator = 'Add Moderator';
+  static const String searchByUsername = 'Search by username';
 
   // Copublisher sheet strings
   static const String searchRequest = 'Search Request';

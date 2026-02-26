@@ -792,14 +792,56 @@ class _StreamHeader extends StatelessWidget {
                 }
               }
 
-              // Default behavior: show moderators sheet
+              // Ensure we have latest moderators before deciding flow
+              await controller.fetchModerators(
+                forceFetch: true,
+                streamId: streamId,
+              );
+
+              final hostUserId = controller.hostDetails?.userId;
+              final hostIdentifier = controller.hostDetails?.userIdentifier;
+
+              final nonHostModerators = controller.moderatorsList.where(
+                (moderator) {
+                  if (hostUserId != null && moderator.userId == hostUserId) {
+                    return false;
+                  }
+                  if (hostIdentifier != null &&
+                      moderator.userIdentifier == hostIdentifier) {
+                    return false;
+                  }
+                  return true;
+                },
+              ).toList();
+
+              final sheetContext =
+                  IsmLiveUtility.navigatorKey.currentContext ?? context;
+
+              // If no moderators (excluding host), open Add Moderator flow
+              if (nonHostModerators.isEmpty) {
+                IsmLiveUtility.openBottomSheet(
+                  const AddModeratorsBottomSheet(),
+                  isScrollController: true,
+                  backgroundColor:
+                      sheetContext.liveTheme?.backgroundColor ??
+                          (Theme.of(sheetContext).brightness ==
+                                  Brightness.dark
+                              ? const Color(0xFF121212)
+                              : Colors.white),
+                );
+                return;
+              }
+
+              // If we have moderators, show moderators sheet first
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
                 isScrollController: true,
-                backgroundColor: context.liveTheme?.backgroundColor ??
-                    (Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF121212)
-                        : Colors.white),
+                backgroundColor:
+                    sheetContext.liveTheme?.backgroundColor ??
+                        (Theme.of(sheetContext).brightness ==
+                                Brightness.dark
+                            ? const Color(0xFF121212)
+                            : Colors.white),
               );
             },
             onTapViewers: (viewerList) async {
