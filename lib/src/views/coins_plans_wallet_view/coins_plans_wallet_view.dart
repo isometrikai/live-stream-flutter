@@ -25,236 +25,234 @@ class CoinsPlansWalletView extends StatelessWidget {
 
     return GetBuilder<CoinsPlansWalletController>(
       id: updateId,
-      builder: (controller) => SafeArea(
-        child: Scaffold(
+      builder: (controller) => Scaffold(
+        backgroundColor: bgColor,
+        appBar: AppBar(
           backgroundColor: bgColor,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            title: Text(
-              IsmLiveStrings.coinsWallet,
-              style: context.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-            leading: InkWell(
-              onTap: IsmLiveRoute.pop,
-              child: Icon(Icons.arrow_back, color: iconColor),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text(
+            IsmLiveStrings.coinsWallet,
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
-          body: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: IsmLiveDimens.fifteen,
-                vertical: IsmLiveDimens.twelve),
-            child: CustomScrollView(
-              shrinkWrap: true,
-              slivers: [
-                SliverAppBar(
-                  toolbarHeight: MediaQuery.of(context).size.height * .11,
-                  automaticallyImplyLeading: false,
-                  pinned: true,
-                  backgroundColor: bgColor,
-                  surfaceTintColor: bgColor,
-                  flexibleSpace: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                      border: Border.all(color: borderColor),
+          iconTheme: IconThemeData(color: iconColor),
+          leading: InkWell(
+            onTap: IsmLiveRoute.pop,
+            child: Icon(Icons.arrow_back, color: iconColor),
+          ),
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: IsmLiveDimens.fifteen,
+              vertical: IsmLiveDimens.twelve),
+          child: CustomScrollView(
+            shrinkWrap: true,
+            slivers: [
+              SliverAppBar(
+                toolbarHeight: MediaQuery.of(context).size.height * .11,
+                automaticallyImplyLeading: false,
+                pinned: true,
+                backgroundColor: bgColor,
+                surfaceTintColor: bgColor,
+                flexibleSpace: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: IsmLiveDimens.fifteen,
+                      vertical: IsmLiveDimens.twelve,
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: IsmLiveDimens.fifteen,
-                        vertical: IsmLiveDimens.twelve,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: IsmLiveDimens.thirty,
+                          height: IsmLiveDimens.thirty,
+                          child: const IsmLiveImage.svg(
+                            IsmLiveAssetConstants.coinSvg,
+                          ),
+                        ),
+                        IsmLiveDimens.boxWidth8,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              IsmLiveStrings.totalCoins,
+                              style: IsmLiveStyles.blackBold16.copyWith(
+                                color: subtitleColor,
+                                fontSize: IsmLiveDimens.twelve,
+                              ),
+                            ),
+                            IsmLiveDimens.boxHeight2,
+                            Text(
+                              '${controller.coinBalance.formatWithKAndL()} ${IsmLiveStrings.coins}',
+                              style: IsmLiveStyles.blackBold16.copyWith(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IsmLiveDimens.boxWidth50,
+                        Flexible(
+                          child: IsmLiveButton(
+                            label: IsmLiveStrings.transactions,
+                            small: true,
+                            onTap: () {
+                              if (fromStream) {
+                                IsmLiveUtility.closeBottomSheetIfOpen();
+                              }
+                              IsmLiveRouteManagement.goToCoinTransaction(
+                                  fromStream: fromStream);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SliverAppBar(
+                toolbarHeight: MediaQuery.of(context).size.height * .11,
+                automaticallyImplyLeading: false,
+                pinned: true,
+                backgroundColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                flexibleSpace: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: IsmLiveDimens.fifteen,
+                      vertical: IsmLiveDimens.twelve,
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: IsmLiveDimens.thirty,
+                          height: IsmLiveDimens.thirty,
+                          child: const IsmLiveImage.svg(
+                            IsmLiveAssetConstants.cash,
+                          ),
+                        ),
+                        IsmLiveDimens.boxWidth8,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              IsmLiveStrings.totalMoney,
+                              style: IsmLiveStyles.blackBold16.copyWith(
+                                color: subtitleColor,
+                                fontSize: IsmLiveDimens.twelve,
+                              ),
+                            ),
+                            IsmLiveDimens.boxHeight2,
+                            Text(
+                              '\$ ${controller.balance.formatWithKAndL()} ',
+                              style: IsmLiveStyles.blackBold16.copyWith(
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SliverGrid.builder(
+                itemCount: controller.storePlans.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: IsmLiveDimens.ten,
+                  mainAxisSpacing: IsmLiveDimens.ten,
+                  childAspectRatio: 200 / 220,
+                  crossAxisCount: 3,
+                ),
+                itemBuilder: (context, index) {
+                  final _storePlan = controller.storePlans[index];
+                  final _apiPlan = controller.apiPlans[index];
+                  return InkWell(
+                    onTap: () => controller.onTapBuyPlan(
+                      apiPlan: _apiPlan,
+                      storePlan: _storePlan,
+                    ),
+                    borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: context.liveTheme?.borderColor ??
+                              (Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF1E1E1E)
+                                  : IsmLiveColors.border),
+                        ),
+                        color: Colors.transparent,
+                        borderRadius:
+                            BorderRadius.circular(IsmLiveDimens.eight),
                       ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: IsmLiveDimens.thirty,
-                            height: IsmLiveDimens.thirty,
-                            child: const IsmLiveImage.svg(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: IsmLiveDimens.five,
+                          vertical: IsmLiveDimens.five + IsmLiveDimens.two,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IsmLiveDimens.boxHeight10,
+                            Text(
+                              '${_apiPlan.numberOfUnits} ${IsmLiveStrings.coins}',
+                              style: IsmLiveStyles.black16.copyWith(
+                                fontSize: IsmLiveDimens.twelve,
+                                color: textColor,
+                              ),
+                            ),
+                            IsmLiveDimens.boxHeight32,
+                            const IsmLiveImage.svg(
                               IsmLiveAssetConstants.coinSvg,
                             ),
-                          ),
-                          IsmLiveDimens.boxWidth8,
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                IsmLiveStrings.totalCoins,
-                                style: IsmLiveStyles.blackBold16.copyWith(
-                                  color: subtitleColor,
-                                  fontSize: IsmLiveDimens.twelve,
-                                ),
+                            Text(
+                              _storePlan.price,
+                              style: IsmLiveStyles.black16.copyWith(
+                                fontSize: IsmLiveDimens.twelve,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
                               ),
-                              IsmLiveDimens.boxHeight2,
-                              Text(
-                                '${controller.coinBalance.formatWithKAndL()} ${IsmLiveStrings.coins}',
-                                style: IsmLiveStyles.blackBold16.copyWith(
-                                  color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          IsmLiveDimens.boxWidth50,
-                          Flexible(
-                            child: IsmLiveButton(
-                              label: IsmLiveStrings.transactions,
-                              small: true,
-                              onTap: () {
-                                if (fromStream) {
-                                  IsmLiveUtility.closeBottomSheetIfOpen();
-                                }
-                                IsmLiveRouteManagement.goToCoinTransaction(
-                                    fromStream: fromStream);
-                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SliverAppBar(
-                  toolbarHeight: MediaQuery.of(context).size.height * .11,
-                  automaticallyImplyLeading: false,
-                  pinned: true,
-                  backgroundColor: Colors.transparent,
-                  surfaceTintColor: Colors.transparent,
-                  flexibleSpace: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: bgColor,
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: IsmLiveDimens.fifteen,
-                        vertical: IsmLiveDimens.twelve,
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: IsmLiveDimens.thirty,
-                            height: IsmLiveDimens.thirty,
-                            child: const IsmLiveImage.svg(
-                              IsmLiveAssetConstants.cash,
-                            ),
-                          ),
-                          IsmLiveDimens.boxWidth8,
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                IsmLiveStrings.totalMoney,
-                                style: IsmLiveStyles.blackBold16.copyWith(
-                                  color: subtitleColor,
-                                  fontSize: IsmLiveDimens.twelve,
-                                ),
-                              ),
-                              IsmLiveDimens.boxHeight2,
-                              Text(
-                                '\$ ${controller.balance.formatWithKAndL()} ',
-                                style: IsmLiveStyles.blackBold16.copyWith(
-                                  color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SliverGrid.builder(
-                  itemCount: controller.storePlans.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing: IsmLiveDimens.ten,
-                    mainAxisSpacing: IsmLiveDimens.ten,
-                    childAspectRatio: 200 / 220,
-                    crossAxisCount: 3,
-                  ),
-                  itemBuilder: (context, index) {
-                    final _storePlan = controller.storePlans[index];
-                    final _apiPlan = controller.apiPlans[index];
-                    return InkWell(
-                      onTap: () => controller.onTapBuyPlan(
-                        apiPlan: _apiPlan,
-                        storePlan: _storePlan,
-                      ),
-                      borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: context.liveTheme?.borderColor ??
-                                (Theme.of(context).brightness == Brightness.dark
-                                    ? const Color(0xFF1E1E1E)
-                                    : IsmLiveColors.border),
-                          ),
-                          color: Colors.transparent,
-                          borderRadius:
-                              BorderRadius.circular(IsmLiveDimens.eight),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: IsmLiveDimens.five,
-                            vertical: IsmLiveDimens.five + IsmLiveDimens.two,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IsmLiveDimens.boxHeight10,
-                              Text(
-                                '${_apiPlan.numberOfUnits} ${IsmLiveStrings.coins}',
-                                style: IsmLiveStyles.black16.copyWith(
-                                  fontSize: IsmLiveDimens.twelve,
-                                  color: textColor,
-                                ),
-                              ),
-                              IsmLiveDimens.boxHeight32,
-                              IsmLiveImage.svg(
-                                IsmLiveAssetConstants.coinSvg,
-                                color: iconColor,
-                              ),
-                              Text(
-                                _storePlan.price,
-                                style: IsmLiveStyles.black16.copyWith(
-                                  fontSize: IsmLiveDimens.twelve,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                ),
-                              ),
-                              IsmLiveDimens.boxHeight10,
-                              // DecoratedBox(
-                              //   decoration: BoxDecoration(
-                              //     color: IsmLiveColors.white,
-                              //     borderRadius: BorderRadius.circular(
-                              //         IsmLiveDimens.eight),
-                              //     border: Border.all(
-                              //       color: const Color(0xffE4E4F7),
-                              //     ),
-                              //   ),
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.all(8.0),
-                              //     child: Text(
-                              //       'Plan ${index + 1}',
-                              //       style: IsmLiveStyles.black16.copyWith(
-                              //           fontSize: IsmLiveDimens.twelve),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                            IsmLiveDimens.boxHeight10,
+                            // DecoratedBox(
+                            //   decoration: BoxDecoration(
+                            //     color: IsmLiveColors.white,
+                            //     borderRadius: BorderRadius.circular(
+                            //         IsmLiveDimens.eight),
+                            //     border: Border.all(
+                            //       color: const Color(0xffE4E4F7),
+                            //     ),
+                            //   ),
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(8.0),
+                            //     child: Text(
+                            //       'Plan ${index + 1}',
+                            //       style: IsmLiveStyles.black16.copyWith(
+                            //           fontSize: IsmLiveDimens.twelve),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
