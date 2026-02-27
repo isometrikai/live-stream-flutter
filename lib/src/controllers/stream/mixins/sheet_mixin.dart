@@ -10,7 +10,7 @@ mixin StreamSheetMixin {
           : Colors.white);
 
   // Function to handle exit actions from the stream
-  void onExit({
+  Future<void> onExit({
     required bool isHost,
     required String streamId,
     required BuildContext context,

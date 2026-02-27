@@ -596,8 +596,10 @@ mixin StreamJoinMixin {
           translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
     }
 
+    var loaderShown = false;
     if (!joinByScrolling) {
       IsmLiveUtility.showLoader(message);
+      loaderShown = true;
     }
 
     try {
@@ -621,6 +623,13 @@ mixin StreamJoinMixin {
 
       // Sync the position variable with the actual camera position
       _controller.position = resolvedCameraPosition;
+
+      if (_controller.room != null &&
+          _controller.room!.connectionState !=
+              lk.ConnectionState.disconnected) {
+        await _controller.room!.disconnect();
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
 
       var room = lk.Room(
         roomOptions: lk.RoomOptions(
@@ -702,8 +711,9 @@ mixin StreamJoinMixin {
         }
       }
 
-      if (!joinByScrolling) {
+      if (loaderShown) {
         IsmLiveUtility.closeLoader();
+        loaderShown = false;
       }
 
       // Wrap API calls in try-catch
@@ -800,6 +810,10 @@ mixin StreamJoinMixin {
       }
       _controller.userRole = null;
       IsmLiveLog.error('ConnectStream error: $e', st);
+    } finally {
+      if (loaderShown) {
+        IsmLiveUtility.closeLoader();
+      }
     }
   }
 
