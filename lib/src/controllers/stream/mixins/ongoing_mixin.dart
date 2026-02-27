@@ -290,7 +290,7 @@ mixin StreamOngoingMixin {
 
       // Track is enabled if it exists and is not muted
       final isEnabled = !track.muted;
-      
+
       // Sync the boolean with actual status to keep it accurate
       if (_controller.videoOn != isEnabled) {
         _controller.videoOn = isEnabled;
@@ -314,7 +314,8 @@ mixin StreamOngoingMixin {
       }
 
       final localParticipant = room.localParticipant!;
-      final audioTrackPublication = localParticipant.audioTrackPublications.firstOrNull;
+      final audioTrackPublication =
+          localParticipant.audioTrackPublications.firstOrNull;
 
       if (audioTrackPublication == null) {
         // No audio track published, audio is off
@@ -329,7 +330,7 @@ mixin StreamOngoingMixin {
 
       // Track is enabled if it exists and is not muted
       final isEnabled = !track.muted;
-      
+
       // Sync the boolean with actual status to keep it accurate
       if (_controller.audioOn != isEnabled) {
         _controller.audioOn = isEnabled;
@@ -356,9 +357,13 @@ mixin StreamOngoingMixin {
   String controlSetting(IsmLiveHostSettings option) {
     switch (option) {
       case IsmLiveHostSettings.muteMyVideo:
-        return _getActualVideoStatus() ? option.muteValues : option.unmuteValues;
+        return _getActualVideoStatus()
+            ? option.muteValues
+            : option.unmuteValues;
       case IsmLiveHostSettings.muteMyAudio:
-        return _getActualAudioStatus() ? option.muteValues : option.unmuteValues;
+        return _getActualAudioStatus()
+            ? option.muteValues
+            : option.unmuteValues;
       // case IsmLiveHostSettings.muteRemoteVideo:
       //   return option.muteValues;
       // case IsmLiveHostSettings.muteRemoteAudio:
@@ -846,6 +851,7 @@ mixin StreamOngoingMixin {
 
       if (goBack) {
         unawaited(_controller.getStreams());
+        await Future.delayed(const Duration(seconds: 1));
         closeStreamView(isHost, streamId: streamId);
       }
     }
@@ -882,7 +888,10 @@ mixin StreamOngoingMixin {
       _controller.streamTimer?.cancel();
       _controller.streamTimer = null;
 
-      _controller.streamDispose(callDispose);
+      IsmLiveUtility.updateLater(() {
+        _controller.streamDispose(callDispose);
+      });
+      await Future.delayed(const Duration(seconds: 1));
     } catch (e, st) {
       IsmLiveLog.error(' end stream  $e , $st');
     }
