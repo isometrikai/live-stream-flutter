@@ -221,7 +221,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         IsmLiveRoute.pop();
                         final ctx = IsmLiveUtility.navigatorKey.currentContext!;
                         IsmLiveUtility.openBottomSheet(
-                          const AddModeratorsBottomSheet(),
+                          const AddModeratorsListBottomSheet(),
                           isScrollController: true,
                           backgroundColor: ctx.liveTheme?.backgroundColor ??
                               (Theme.of(ctx).brightness == Brightness.dark

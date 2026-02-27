@@ -820,7 +820,7 @@ class _StreamHeader extends StatelessWidget {
               // If no moderators (excluding host), open Add Moderator flow
               if (nonHostModerators.isEmpty) {
                 IsmLiveUtility.openBottomSheet(
-                  const AddModeratorsBottomSheet(),
+                  const AddModeratorsListBottomSheet(),
                   isScrollController: true,
                   backgroundColor:
                       sheetContext.liveTheme?.backgroundColor ??

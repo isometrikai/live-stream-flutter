@@ -9,15 +9,15 @@ import 'package:get/get.dart';
 /// This keeps the general UX of the reference implementation (search,
 /// scrollable list with "Add" chips and a bottom confirm button) but is
 /// implemented using only the SDK's own theming and controller API.
-class AddModeratorsBottomSheet extends StatefulWidget {
-  const AddModeratorsBottomSheet({super.key});
+class AddModeratorsListBottomSheet extends StatefulWidget {
+  const AddModeratorsListBottomSheet({super.key});
 
   @override
-  State<AddModeratorsBottomSheet> createState() =>
-      _AddModeratorsBottomSheetState();
+  State<AddModeratorsListBottomSheet> createState() =>
+      _AddModeratorsListBottomSheetState();
 }
 
-class _AddModeratorsBottomSheetState extends State<AddModeratorsBottomSheet> {
+class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
   final Set<String> _selectedUserIds = <String>{};
   bool _isSearching = false;
