@@ -964,7 +964,7 @@ class IsmLiveDelegate {
       // }
       return;
     }
-    controller.onExit(
+    await controller.onExit(
       isHost: controller.isHost,
       streamId: controller.streamId!,
       context: context,

@@ -882,9 +882,7 @@ mixin StreamOngoingMixin {
       _controller.streamTimer?.cancel();
       _controller.streamTimer = null;
 
-      IsmLiveUtility.updateLater(
-        () => _controller.streamDispose(callDispose),
-      );
+      _controller.streamDispose(callDispose);
     } catch (e, st) {
       IsmLiveLog.error(' end stream  $e , $st');
     }
