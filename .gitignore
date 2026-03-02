@@ -28,3 +28,29 @@ migrate_working_dir/
 .dart_tool/
 .packages
 build/
+
+# VS Code
+.vscode/
+
+# Flutter generated
+**/GeneratedPluginRegistrant.*
+**/ephemeral/
+
+# macOS
+macos/Flutter/ephemeral/
+
+# Example app
+example/pubspec.lock
+example/macos/Flutter/ephemeral/
+
+# iOS (example app)
+example/ios/Pods/
+example/ios/Podfile.lock
+example/ios/Runner.xcodeproj/project.pbxproj
+example/ios/Flutter/
+example/ios/Runner.xcodeproj/xcuserdata/
+
+# macOS (example app)
+example/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Lock files (for plugin example)
