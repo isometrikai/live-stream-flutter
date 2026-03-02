@@ -57,21 +57,18 @@ class IsmLiveStrings {
   static const String youAreLiveNow = 'You’re Live Now';
   static const String tvContinue = 'Continue';
 
-  static const String areYouSureEndStream =
-      'Are you sure that you want to end your live stream?';
+  static const String areYouSureEndStream = 'Are you sure that you want to end your live stream?';
   static const String areYouSureLeaveStream = 'Are you sure?';
 
   static const String kickoutMessage =
       'The host has removed you from the stream, you can watch other live videos';
   static const String streamEnded =
       'The host has ended the stream you were watching, but don\'t worry! You can check out other live videos';
-  static const String addedModerator =
-      '@name has added you as a moderator in a stream';
+  static const String addedModerator = '@name has added you as a moderator in a stream';
 
   static const String attention = 'Attention';
 
-  static const String requestCopublishingTitle =
-      'Request to be in this live video';
+  static const String requestCopublishingTitle = 'Request to be in this live video';
 
   static const String requestCopublishingDescription =
       'Anyone can watch, some of yours followers may get notified elizabeth can save this to igtv, which means it\'ll appear on their profile and anywhere else the igtv video shows.';
@@ -80,8 +77,7 @@ class IsmLiveStrings {
       'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day.\nWarning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
   static const String weSentNotificationToFollowersText =
       'We’ve sent a notification to your followers. Your fans will join the broadcast soon';
-  static const String broadcastingRulesTitle =
-      '📢 Broadcasting Rules & Regulations';
+  static const String broadcastingRulesTitle = '📢 Broadcasting Rules & Regulations';
   static const String viewerConductTitle = '🛑 Viewer Conduct';
   static const String welcomeToStreamRulesText =
       'Welcome to the stream! To ensure a safe, respectful, and enjoyable experience for everyone, please follow these rules:';
@@ -95,19 +91,16 @@ class IsmLiveStrings {
   static const String hostAcceptedCopublishRequestDescription =
       'You can now join the live video as a co-publisher and start publishing';
 
-  static const String pleaseSelectCoverPhoto =
-      'Please select a cover photo to go live';
+  static const String pleaseSelectCoverPhoto = 'Please select a cover photo to go live';
 
   static const String takePhoto = 'Take photo';
   static const String chooseFromGallery = 'Choose from gallery';
 
   // Moderator bottom sheet strings
-  static const String addedToModeratorGroupTitle =
-      'Added to moderator\'s group of broadcast';
+  static const String addedToModeratorGroupTitle = 'Added to moderator\'s group of broadcast';
   static const String addedToModeratorGroupDescription =
       '@moderatorName has been added to the moderator\'s group of broadcast by @initiatorName. Being a moderator one can kick out members and viewers, reply-to and delete messages';
-  static const String currentlyModeratingTitle =
-      'You\'re currently moderating the broadcast';
+  static const String currentlyModeratingTitle = 'You\'re currently moderating the broadcast';
   static const String currentlyModeratingDescription =
       'Being a moderator you can kickout members and viewers, reply to and delete messages.';
   static const String gotIt = 'Got It';
@@ -131,8 +124,7 @@ class IsmLiveStrings {
 
   // Premium stream sheet strings
   static const String premiumBroadcast = 'Premium Broadcast';
-  static const String setCoinsFromFans =
-      'Set coins you want to get from your fans';
+  static const String setCoinsFromFans = 'Set coins you want to get from your fans';
   static const String enterCoins = 'Enter coins';
   static const String save = 'Save';
 
@@ -144,8 +136,7 @@ class IsmLiveStrings {
   static const String streamKey = 'Stream key';
   static const String enterRtmlUrl = 'Enter RTML URL';
   static const String enterStreamKey = 'Enter Stream key';
-  static const String streamKeyHint =
-      'Key will be generated after you start a new stream';
+  static const String streamKeyHint = 'Key will be generated after you start a new stream';
   static const String rtmpStreamInstruction =
       'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device.';
   static const String youtubeStreamUrlInstruction =
@@ -197,8 +188,7 @@ class IsmLiveStrings {
   static const String winnerTakesAll = 'Winner takes all';
   static const String winnerTakesAllDescription =
       'This would transfer all the gifts earned by the looser to the winner';
-  static const String choosePkChallengeDuration =
-      'Choose PK Challenge Duration';
+  static const String choosePkChallengeDuration = 'Choose PK Challenge Duration';
   static const String confirmAndStart = 'Confirm & Start';
   static const String minShort = 'min';
 
@@ -224,8 +214,7 @@ class IsmLiveStrings {
   static const String enterDiscountPercentage = 'Enter discount percentage';
   static const String add = 'Add';
   static const String addProducts = 'Add Products';
-  static const String noProductsAvailable =
-      'There are no products available to tag';
+  static const String noProductsAvailable = 'There are no products available to tag';
   static const String selected = 'Selected';
   static const String topViewers = 'Top Viewers';
   static const String noViewers = 'No Viewers';

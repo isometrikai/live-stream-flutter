@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,9 +19,7 @@ class _DefaultGoLiveButton extends StatelessWidget {
         padding: IsmLiveDimens.edgeInsets16_0,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: isEnabled
-                ? IsmLiveColors.red
-                : IsmLiveColors.red.withOpacity(0.5),
+            color: isEnabled ? IsmLiveColors.red : IsmLiveColors.red.withOpacity(0.5),
             borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
           ),
           child: Column(
@@ -53,9 +53,7 @@ class _GoLiveTabSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmGoLiveView.updateId,
-        builder: (controller) => (!(controller
-                        .streamDetails?.isScheduledStream ??
-                    false) &&
+        builder: (controller) => (!(controller.streamDetails?.isScheduledStream ?? false) &&
                 (IsmLiveDelegate.multiLiveStream ?? true))
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,8 +65,7 @@ class _GoLiveTabSelector extends StatelessWidget {
                         controller.selectedGoLiveTabItem = e;
 
                         controller.onChangeRtmp(
-                            controller.selectedGoLiveTabItem ==
-                                IsmGoLiveTabItem.liveFromDevice);
+                            controller.selectedGoLiveTabItem == IsmGoLiveTabItem.liveFromDevice);
                         controller.onChangePersistent(false);
 
                         // Update both IDs: updateId for general UI, cameraUpdateId for camera preview visibility
@@ -86,14 +83,11 @@ class _GoLiveTabSelector extends StatelessWidget {
                             Text(
                               e.label,
                               style: (isSelected
-                                      ? IsmLiveDelegate.goLiveScreenConfigure
-                                          ?.tabSelectedTextStyle
-                                      : IsmLiveDelegate.goLiveScreenConfigure
-                                          ?.tabUnselectedTextStyle) ??
+                                      ? IsmLiveDelegate.goLiveScreenConfigure?.tabSelectedTextStyle
+                                      : IsmLiveDelegate
+                                          .goLiveScreenConfigure?.tabUnselectedTextStyle) ??
                                   context.dynamicTextTheme.labelLarge?.copyWith(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.white54,
+                                    color: isSelected ? Colors.white : Colors.white54,
                                   ),
                             ),
                             if (isSelected) ...[
@@ -122,12 +116,27 @@ class _GoLiveTabSelector extends StatelessWidget {
 class IsmGoLiveNavBar extends StatelessWidget {
   const IsmGoLiveNavBar({super.key});
 
+  VoidCallback _buildGoLiveHandler(
+    IsmLiveStreamController controller,
+    BuildContext context,
+    bool isEnabled,
+  ) =>
+      () {
+        if (!isEnabled) return;
+        IsmLiveUtility.hideKeyboard();
+        // Defer heavy work to the next frame for smoother transition.
+        IsmLiveUtility.updateLater(() {
+          unawaited(controller.handleGoLivePress(context));
+        });
+      };
+
   @override
   Widget build(BuildContext context) => SafeArea(
         child: GetBuilder<IsmLiveStreamController>(
           id: IsmGoLiveView.updateId,
           builder: (controller) {
             final isEnabled = controller.isGoLiveButtonEnabled;
+            final onGoLivePressed = _buildGoLiveHandler(controller, context, isEnabled);
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -135,12 +144,11 @@ class IsmGoLiveNavBar extends StatelessWidget {
                 IsmLiveDelegate.goLiveButtonBuilder?.call(
                       context,
                       controller,
-                      () => controller.handleGoLivePress(context),
+                      onGoLivePressed,
                       isEnabled,
                     ) ??
                     _DefaultGoLiveButton(
-                      onGoLivePressed: () =>
-                          controller.handleGoLivePress(context),
+                      onGoLivePressed: onGoLivePressed,
                       isEnabled: isEnabled,
                     ),
                 const Divider(),

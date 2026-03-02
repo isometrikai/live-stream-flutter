@@ -13,8 +13,7 @@ class AddModeratorsListBottomSheet extends StatefulWidget {
   const AddModeratorsListBottomSheet({super.key});
 
   @override
-  State<AddModeratorsListBottomSheet> createState() =>
-      _AddModeratorsListBottomSheetState();
+  State<AddModeratorsListBottomSheet> createState() => _AddModeratorsListBottomSheetState();
 }
 
 class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSheet> {
@@ -105,8 +104,8 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = context.liveTheme?.backgroundColor ??
-        (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final backgroundColor =
+        context.liveTheme?.backgroundColor ?? (isDarkMode ? const Color(0xFF121212) : Colors.white);
     final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return GetBuilder<IsmLiveStreamController>(
@@ -153,8 +152,7 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
             color: backgroundColor,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(
-                IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ??
-                    IsmLiveDimens.thirty,
+                IsmLiveDelegate.bottomSheetBorderRadius?.topLeft.x ?? IsmLiveDimens.thirty,
               ),
             ),
           ),
@@ -178,13 +176,11 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                             itemCount: filteredUsers.length,
                             itemBuilder: (context, index) {
                               final user = filteredUsers[index];
-                              final imageUrl = IsmLiveDelegate.getUserProfileUrl
-                                      ?.call(user.profileUrl) ??
-                                  user.profileUrl;
-                              final isSelected =
-                                  _selectedUserIds.contains(user.userId);
-                              final canAdd = !controller
-                                  .checkCanMakeModerator(user.userId);
+                              final imageUrl =
+                                  IsmLiveDelegate.getUserProfileUrl?.call(user.profileUrl) ??
+                                      user.profileUrl;
+                              final isSelected = _selectedUserIds.contains(user.userId);
+                              final canAdd = !controller.checkCanMakeModerator(user.userId);
 
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 8),
@@ -203,11 +199,8 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                                   subtitle: Text(
                                     user.userIdentifier,
                                     style: TextStyle(
-                                      color: context
-                                              .liveTheme?.unselectedTextColor ??
-                                          (isDarkMode
-                                              ? const Color(0xFFB0B0B0)
-                                              : Colors.grey),
+                                      color: context.liveTheme?.unselectedTextColor ??
+                                          (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -217,28 +210,23 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                                           height: 32,
                                           child: OutlinedButton(
                                             style: OutlinedButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                 horizontal: 12,
                                               ),
                                               side: BorderSide(
-                                                color: context.liveTheme
-                                                        ?.primaryColor ??
+                                                color: context.liveTheme?.primaryColor ??
                                                     IsmLiveColors.primary,
                                               ),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                                borderRadius: BorderRadius.circular(8),
                                               ),
                                               backgroundColor: isSelected
-                                                  ? context.liveTheme
-                                                          ?.primaryColor ??
+                                                  ? context.liveTheme?.primaryColor ??
                                                       IsmLiveColors.primary
                                                   : Colors.transparent,
                                               foregroundColor: isSelected
                                                   ? Colors.white
-                                                  : context.liveTheme
-                                                          ?.primaryColor ??
+                                                  : context.liveTheme?.primaryColor ??
                                                       IsmLiveColors.primary,
                                             ),
                                             onPressed: () => _toggleSelection(
@@ -300,8 +288,7 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
 
   Widget _buildSearchBar(BuildContext context, Color textColor) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final fillColor =
-        isDarkMode ? Colors.white.withOpacity(0.06) : const Color(0xFFF5F5F5);
+    final fillColor = isDarkMode ? Colors.white.withOpacity(0.06) : const Color(0xFFF5F5F5);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),

@@ -12,12 +12,10 @@ class CoinsPlansWalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = context.liveTheme?.backgroundColor ??
-        (isDarkMode ? const Color(0xFF121212) : Colors.white);
-    final textColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.black);
-    final iconColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.black);
+    final bgColor =
+        context.liveTheme?.backgroundColor ?? (isDarkMode ? const Color(0xFF121212) : Colors.white);
+    final textColor = context.liveTheme?.primaryColor ?? (isDarkMode ? Colors.white : Colors.black);
+    final iconColor = context.liveTheme?.primaryColor ?? (isDarkMode ? Colors.white : Colors.black);
     final subtitleColor = context.liveTheme?.unselectedTextColor ??
         (isDarkMode ? const Color(0xFFB0B0B0) : const Color(0xffB1B6D1));
     final borderColor = context.liveTheme?.borderColor ??
@@ -46,8 +44,7 @@ class CoinsPlansWalletView extends StatelessWidget {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: IsmLiveDimens.fifteen,
-              vertical: IsmLiveDimens.twelve),
+              horizontal: IsmLiveDimens.fifteen, vertical: IsmLiveDimens.twelve),
           child: CustomScrollView(
             shrinkWrap: true,
             slivers: [
@@ -107,8 +104,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                               if (fromStream) {
                                 IsmLiveUtility.closeBottomSheetIfOpen();
                               }
-                              IsmLiveRouteManagement.goToCoinTransaction(
-                                  fromStream: fromStream);
+                              IsmLiveRouteManagement.goToCoinTransaction(fromStream: fromStream);
                             },
                           ),
                         ),
@@ -195,8 +191,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                                   : IsmLiveColors.border),
                         ),
                         color: Colors.transparent,
-                        borderRadius:
-                            BorderRadius.circular(IsmLiveDimens.eight),
+                        borderRadius: BorderRadius.circular(IsmLiveDimens.eight),
                       ),
                       child: Padding(
                         padding: EdgeInsets.symmetric(

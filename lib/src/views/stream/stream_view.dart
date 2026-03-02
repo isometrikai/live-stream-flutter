@@ -40,13 +40,11 @@ class IsmLiveStreamView extends StatelessWidget {
   static const String updateId = 'ismlive-stream-view';
 
   /// Clean up stream data when the view is closed
-  static Future<void> _cleanupStreamData(
-      IsmLiveStreamController controller) async {
+  static Future<void> _cleanupStreamData(IsmLiveStreamController controller) async {
     try {
       // Clear all stream-related data
       // Note: streamDispose() will handle the preventDispose check internally
-      controller
-          .streamDispose(false); // Don't dispose animation controller here
+      controller.streamDispose(false); // Don't dispose animation controller here
 
       // Clear camera controller if exists
       controller.cameraController?.dispose();
@@ -209,8 +207,8 @@ class IsmLiveStreamView extends StatelessWidget {
                     controller: controller.pageController,
                     scrollDirection: Axis.vertical,
                     pageSnapping: true,
-                    onPageChanged: (index) => controller.onStreamScroll(
-                        index: index, context: context),
+                    onPageChanged: (index) =>
+                        controller.onStreamScroll(index: index, context: context),
                     itemBuilder: (_, index) {
                       final stream = controller.streams[index];
                       return _IsmLiveStreamView(
@@ -269,8 +267,7 @@ class _IsmLiveStreamView extends StatelessWidget {
               52; // Default size (height and width)
           return SizedBox(
             height: buttonSize,
-            width: buttonSize * 2 +
-                8, // Width for 2 buttons + spacing (4px right + 4px left)
+            width: buttonSize * 2 + 8, // Width for 2 buttons + spacing (4px right + 4px left)
             child: Row(
               children: [
                 Expanded(
@@ -282,8 +279,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                         backgroundColor: Colors.white.withOpacity(0.2),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              12), // Match input field border radius
+                          borderRadius:
+                              BorderRadius.circular(12), // Match input field border radius
                         ),
                         padding: EdgeInsets.zero,
                         elevation: 0,
@@ -312,8 +309,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                         backgroundColor: Colors.white.withOpacity(0.2),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              12), // Match input field border radius
+                          borderRadius:
+                              BorderRadius.circular(12), // Match input field border radius
                         ),
                         padding: EdgeInsets.zero,
                         elevation: 0,
@@ -382,8 +379,7 @@ class _IsmLiveStreamView extends StatelessWidget {
   /// - The emoji board (when `showEmojiBoard` is true)
   ///
   /// so that the pinned product does not get overlapped by these UI elements.
-  double _calculateProductBuilderBottomPosition(
-      IsmLiveStreamController controller) {
+  double _calculateProductBuilderBottomPosition(IsmLiveStreamController controller) {
     // Base bottom position when neither reply nor emoji board is visible
     var bottom = IsmLiveDimens.eighty;
 
@@ -413,8 +409,7 @@ class _IsmLiveStreamView extends StatelessWidget {
           // Reset preventDispose flag when new view is initialized
           if (controller.preventDispose) {
             controller.preventDispose = false;
-            print(
-                'initializeAndJoinStream preventDispose reset to false in new view');
+            print('initializeAndJoinStream preventDispose reset to false in new view');
           }
 
           unawaited(controller.initAnimation());
@@ -452,17 +447,14 @@ class _IsmLiveStreamView extends StatelessWidget {
             },
             child: Scaffold(
               extendBodyBehindAppBar: true,
-              backgroundColor: context.liveTheme?.streamBackgroundColor ??
-                  IsmLiveColors.black,
+              backgroundColor: context.liveTheme?.streamBackgroundColor ?? IsmLiveColors.black,
               body: SafeArea(
                 top: false,
                 child: Container(
                   color: Colors.black, // Ensures status bar area is always dark
                   child: Stack(
                     children: [
-                      const ColoredBox(
-                          color:
-                              Colors.black), // Bottom-most layer for status bar
+                      const ColoredBox(color: Colors.black), // Bottom-most layer for status bar
                       IsmLiveStreamBanner(streamImage, isSchedule: isSchedule),
                       IsmLivePublisherGrid(
                         streamImage: streamImage ?? '',
@@ -481,8 +473,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                                 !isSchedule) {
                               return IsmLiveDimens.box0;
                             }
-                            final defaultHeader = _StreamHeader(
-                                streamId: controller.streamId ?? '');
+                            final defaultHeader =
+                                _StreamHeader(streamId: controller.streamId ?? '');
                             return IsmLiveApp.streamHeader?.call(
                                   context,
                                   controller.hostDetails,
@@ -503,26 +495,20 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       child: Padding(
                                         padding: IsmLiveDimens.edgeInsets8_0,
                                         child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Expanded(
-                                              child: IsmLiveApp.bottomBuilder
-                                                      ?.call(
+                                              child: IsmLiveApp.bottomBuilder?.call(
                                                     context,
                                                     controller.hostDetails,
-                                                    controller
-                                                        .descriptionController
-                                                        .text,
+                                                    controller.descriptionController.text,
                                                   ) ??
                                                   Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       _buildChatView(
                                                         context,
-                                                        isHost:
-                                                            controller.isHost,
+                                                        isHost: controller.isHost,
                                                         streamId: streamId,
                                                       ),
                                                       IsmLiveDimens.boxHeight8,
@@ -531,92 +517,65 @@ class _IsmLiveStreamView extends StatelessWidget {
                                             ),
                                             IsmLiveControlsWidget(
                                                 isHost: isHost,
-                                                isCopublishing:
-                                                    controller.isCopublisher,
-                                                streamId:
-                                                    controller.streamId ?? '',
+                                                isCopublishing: controller.isCopublisher,
+                                                streamId: controller.streamId ?? '',
                                                 isKeyboardOpen: isKeyboardOpen),
                                           ],
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: IsmLiveDimens.twelve),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: IsmLiveDimens.twelve),
                                       child: Row(
                                         children: [
                                           Expanded(
-                                            child: IsmLiveApp.inputBuilder
-                                                    ?.call(
+                                            child: IsmLiveApp.inputBuilder?.call(
                                                   context,
                                                   IsmLiveMessageField(
-                                                    streamId:
-                                                        controller.streamId ??
-                                                            '',
-                                                    isHost:
-                                                        controller.isPublishing,
-                                                    disabled:
-                                                        !_IsmLiveStreamView
-                                                            .isValidStreamId(
-                                                                controller
-                                                                    .streamId),
+                                                    streamId: controller.streamId ?? '',
+                                                    isHost: controller.isPublishing,
+                                                    disabled: !_IsmLiveStreamView.isValidStreamId(
+                                                        controller.streamId),
                                                   ),
                                                 ) ??
                                                 IsmLiveMessageField(
-                                                  streamId:
-                                                      controller.streamId ?? '',
-                                                  isHost:
-                                                      controller.isPublishing,
-                                                  disabled: !_IsmLiveStreamView
-                                                      .isValidStreamId(
-                                                          controller.streamId),
+                                                  streamId: controller.streamId ?? '',
+                                                  isHost: controller.isPublishing,
+                                                  disabled: !_IsmLiveStreamView.isValidStreamId(
+                                                      controller.streamId),
                                                 ),
                                           ),
-                                          if (IsmLiveDelegate.productStream ==
-                                                  true &&
+                                          if (IsmLiveDelegate.productStream == true &&
                                               !isKeyboardOpen) ...[
                                             // Determine button visibility and label based on conditions
-                                            if (IsmLiveDelegate.ecomConfigure
-                                                    ?.hasPinnedProduct ??
+                                            if (IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
                                                 false) ...[
                                               IsmLiveDimens.boxWidth8,
                                               ConstrainedBox(
                                                 constraints: BoxConstraints(
-                                                  maxWidth:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.5,
+                                                  maxWidth: MediaQuery.of(context).size.width * 0.5,
                                                 ),
                                                 child: controller.isHost &&
                                                         (IsmLiveDelegate
-                                                                .ecomConfigure
-                                                                ?.hasPinnedProduct ??
+                                                                .ecomConfigure?.hasPinnedProduct ??
                                                             false)
-                                                    ? _buildHostArrowButtons(
-                                                        context)
+                                                    ? _buildHostArrowButtons(context)
                                                     : IsmLiveDelegate
-                                                            .ecomConfigure
-                                                            ?.buyNowButtonBuilder
+                                                            .ecomConfigure?.buyNowButtonBuilder
                                                             ?.call(
                                                           context,
-                                                          controller.streamId ??
-                                                              '',
-                                                          IsmLiveDelegate
-                                                                  .ecomConfigure
+                                                          controller.streamId ?? '',
+                                                          IsmLiveDelegate.ecomConfigure
                                                                   ?.hasPinnedProduct ??
                                                               false,
                                                           controller.isHost,
-                                                          () => _onBuyNowTap(
-                                                              context,
-                                                              controller),
+                                                          () => _onBuyNowTap(context, controller),
                                                         ) ??
                                                         IsmLiveButton(
                                                           label: 'Buy now',
                                                           onTap: () =>
-                                                              _onBuyNowTap(
-                                                                  context,
-                                                                  controller),
+                                                              _onBuyNowTap(context, controller),
                                                         ),
                                               ),
                                             ]
@@ -625,30 +584,23 @@ class _IsmLiveStreamView extends StatelessWidget {
                                       ),
                                     ),
                                     IsmLiveDimens.boxHeight8,
-                                    if (IsmLiveApp
-                                        .endStreamPosition.isBottomAligned)
-                                      ...[],
-                                    if (controller.showEmojiBoard)
-                                      const IsmLiveEmojis(),
+                                    if (IsmLiveApp.endStreamPosition.isBottomAligned) ...[],
+                                    if (controller.showEmojiBoard) const IsmLiveEmojis(),
                                   ],
                                 ),
                               )
                             : isSchedule
-                                ? ScheduleStreamView(
-                                    isKeyboardOpen: isKeyboardOpen)
+                                ? ScheduleStreamView(isKeyboardOpen: isKeyboardOpen)
                                 : const SizedBox.shrink(),
                       ),
                       if (IsmLiveDelegate.productStream == true &&
-                          IsmLiveDelegate.ecomConfigure?.pinnedProductBuilder !=
-                              null)
+                          IsmLiveDelegate.ecomConfigure?.pinnedProductBuilder != null)
                         GetBuilder<IsmLiveStreamController>(
                           id: IsmLiveMessageField.updateId,
                           builder: (controller) => Positioned(
                             right: IsmLiveDimens.sixteen,
-                            bottom: _calculateProductBuilderBottomPosition(
-                                controller),
-                            child: IsmLiveDelegate
-                                    .ecomConfigure!.pinnedProductBuilder!(
+                            bottom: _calculateProductBuilderBottomPosition(controller),
+                            child: IsmLiveDelegate.ecomConfigure!.pinnedProductBuilder!(
                                   context,
                                   controller,
                                 ) ??
@@ -659,8 +611,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                         alignment: IsmLiveApp.endStreamPosition,
                         child: IsmLiveApp.endButton ??
                             IsmLiveEndStreamButton(
-                              onTapExit: () => IsmLiveApp.endStream(
-                                  context: context, isSchedule: isSchedule),
+                              onTapExit: () =>
+                                  IsmLiveApp.endStream(context: context, isSchedule: isSchedule),
                             ),
                       ),
                       if (controller.isHost) ...[
@@ -687,8 +639,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                             duration: const Duration(
                               milliseconds: 100,
                             ),
-                            child:
-                                const IsmLiveImage.svg(IsmLiveAssetConstants.v),
+                            child: const IsmLiveImage.svg(IsmLiveAssetConstants.v),
                           ),
                         ),
                         AnimatedBuilder(
@@ -698,8 +649,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                             duration: const Duration(
                               milliseconds: 100,
                             ),
-                            child:
-                                const IsmLiveImage.svg(IsmLiveAssetConstants.s),
+                            child: const IsmLiveImage.svg(IsmLiveAssetConstants.s),
                           ),
                         ),
                       ],
@@ -721,8 +671,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                       if ((controller.pkStages?.isPkStart ?? false) &&
                           controller.participantTracks.length > 1)
                         const IsmLivePkTimerContainer(),
-                      if ((controller.pkStages?.isPkStop ?? false) &&
-                          controller.pkWinnerId == null)
+                      if ((controller.pkStages?.isPkStop ?? false) && controller.pkWinnerId == null)
                         const Align(
                           alignment: Alignment.center,
                           child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),
@@ -806,28 +755,24 @@ class _StreamHeader extends StatelessWidget {
                   if (hostUserId != null && moderator.userId == hostUserId) {
                     return false;
                   }
-                  if (hostIdentifier != null &&
-                      moderator.userIdentifier == hostIdentifier) {
+                  if (hostIdentifier != null && moderator.userIdentifier == hostIdentifier) {
                     return false;
                   }
                   return true;
                 },
               ).toList();
 
-              final sheetContext =
-                  IsmLiveUtility.navigatorKey.currentContext ?? context;
+              final sheetContext = IsmLiveUtility.navigatorKey.currentContext ?? context;
 
               // If no moderators (excluding host), open Add Moderator flow
               if (nonHostModerators.isEmpty) {
                 IsmLiveUtility.openBottomSheet(
                   const AddModeratorsListBottomSheet(),
                   isScrollController: true,
-                  backgroundColor:
-                      sheetContext.liveTheme?.backgroundColor ??
-                          (Theme.of(sheetContext).brightness ==
-                                  Brightness.dark
-                              ? const Color(0xFF121212)
-                              : Colors.white),
+                  backgroundColor: sheetContext.liveTheme?.backgroundColor ??
+                      (Theme.of(sheetContext).brightness == Brightness.dark
+                          ? const Color(0xFF121212)
+                          : Colors.white),
                 );
                 return;
               }
@@ -836,12 +781,10 @@ class _StreamHeader extends StatelessWidget {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
                 isScrollController: true,
-                backgroundColor:
-                    sheetContext.liveTheme?.backgroundColor ??
-                        (Theme.of(sheetContext).brightness ==
-                                Brightness.dark
-                            ? const Color(0xFF121212)
-                            : Colors.white),
+                backgroundColor: sheetContext.liveTheme?.backgroundColor ??
+                    (Theme.of(sheetContext).brightness == Brightness.dark
+                        ? const Color(0xFF121212)
+                        : Colors.white),
               );
             },
             onTapViewers: (viewerList) async {
@@ -874,30 +817,28 @@ class _StreamHeader extends StatelessWidget {
                   builder: (controller) => IsmLiveListSheet(
                     scrollController: controller.viewerListController,
                     items: controller.streamViewersList,
-                    trailing: (_, viewer) =>
-                        controller.isModerator || controller.isHost
-                            ? viewer.userId == controller.user?.userId
-                                ? IsmLiveDimens.box0
-                                : SizedBox(
-                                    width: IsmLiveDimens.hundred,
-                                    child: IsmLiveButton(
-                                      label: 'kick out',
-                                      onTap: () {
-                                        controller.kickoutViewer(
-                                          streamId: streamId,
-                                          viewerId: viewer.userId,
-                                        );
-                                      },
-                                    ),
-                                  )
-                            : IsmLiveDimens.box0,
+                    trailing: (_, viewer) => controller.isModerator || controller.isHost
+                        ? viewer.userId == controller.user?.userId
+                            ? IsmLiveDimens.box0
+                            : SizedBox(
+                                width: IsmLiveDimens.hundred,
+                                child: IsmLiveButton(
+                                  label: 'kick out',
+                                  onTap: () {
+                                    controller.kickoutViewer(
+                                      streamId: streamId,
+                                      viewerId: viewer.userId,
+                                    );
+                                  },
+                                ),
+                              )
+                        : IsmLiveDimens.box0,
                     onViewerProfileTap: (viewer, index) {
                       if (!IsmLiveDelegate.restrictProfileSheetOnProfileClick) {
                         IsmLiveUtility.openBottomSheet(
                           StreamLiveSheet(
                             widget: IsmLiveImage.network(
-                              IsmLiveDelegate.getUserProfileUrl
-                                      ?.call(viewer.imageUrl ?? '') ??
+                              IsmLiveDelegate.getUserProfileUrl?.call(viewer.imageUrl ?? '') ??
                                   viewer.imageUrl ??
                                   '',
                               isProfileImage: true,
@@ -909,8 +850,7 @@ class _StreamHeader extends StatelessWidget {
                             subTitle: null,
                             buttonLable: 'View Profile',
                             onTap: () {
-                              IsmLiveDelegate.openUserProfileView
-                                  ?.call(viewer.identifier);
+                              IsmLiveDelegate.openUserProfileView?.call(viewer.identifier);
                             },
                           ),
                           isScrollController: true,
@@ -1050,8 +990,8 @@ class ScheduleStreamView extends StatelessWidget {
 
   /// Gets the appropriate button content for scheduled streams
   /// with max width constraint of half screen width
-  Widget _buildScheduledGoLiveButton(BuildContext context,
-      IsmLiveStreamController controller, bool isKeyboardOpen) {
+  Widget _buildScheduledGoLiveButton(
+      BuildContext context, IsmLiveStreamController controller, bool isKeyboardOpen) {
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final isTimePassed = _isScheduleTimePassed(scheduleTime);
 
@@ -1075,9 +1015,8 @@ class ScheduleStreamView extends StatelessWidget {
       );
     } else {
       // Time hasn't passed yet, show schedule time
-      final formattedTime = scheduleTime != null
-          ? _formatScheduleTime(scheduleTime)
-          : 'No time set';
+      final formattedTime =
+          scheduleTime != null ? _formatScheduleTime(scheduleTime) : 'No time set';
       buttonWidget = Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
@@ -1135,16 +1074,13 @@ class ScheduleStreamView extends StatelessWidget {
                                     streamId: controller.streamId ?? '',
                                     isHost: controller.isPublishing,
                                     disabled:
-                                        !_IsmLiveStreamView.isValidStreamId(
-                                            controller.streamId),
+                                        !_IsmLiveStreamView.isValidStreamId(controller.streamId),
                                   ),
                                 ) ??
                                 IsmLiveMessageField(
                                   streamId: () {
                                     // Debug logging for streamId at line 903
-                                    final streamId =
-                                        controller.streamDetails?.streamId ??
-                                            '';
+                                    final streamId = controller.streamDetails?.streamId ?? '';
                                     return streamId;
                                   }(),
                                   isHost: controller.isPublishing,
@@ -1164,13 +1100,11 @@ class ScheduleStreamView extends StatelessWidget {
                               isHost: true,
                               isCopublishing: false,
                               isSchedule: true,
-                              streamId:
-                                  controller.streamDetails?.streamId ?? '',
+                              streamId: controller.streamDetails?.streamId ?? '',
                               isKeyboardOpen: isKeyboardOpen,
                             ),
                             IsmLiveDimens.boxHeight32,
-                            _buildScheduledGoLiveButton(
-                                context, controller, isKeyboardOpen),
+                            _buildScheduledGoLiveButton(context, controller, isKeyboardOpen),
                           ],
                         )
                     ],

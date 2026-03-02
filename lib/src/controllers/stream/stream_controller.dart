@@ -949,14 +949,16 @@ class IsmLiveStreamController extends GetxController
   }
 
   bool checkCanMakeModerator(String userId) {
-    final isMember = streamMembersList.any(
+    var isthere = streamMembersList.any(
       (element) => element.userId == userId,
     );
-    final isModerator = moderatorsList.any(
-      (element) => element.userId == userId,
-    );
+    if (!isthere) {
+      return moderatorsList.any(
+        (element) => element.userId == userId,
+      );
+    }
 
-    return isMember || isModerator;
+    return isthere;
   }
 
   @override
