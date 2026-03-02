@@ -40,7 +40,7 @@ class IsmLiveStreamView extends StatelessWidget {
   static const String updateId = 'ismlive-stream-view';
 
   /// Clean up stream data when the view is closed
-  static Future<void> _cleanupStreamData(
+  static Future<void> cleanupStreamData(
       IsmLiveStreamController controller) async {
     try {
       // Clear all stream-related data
@@ -447,7 +447,7 @@ class _IsmLiveStreamView extends StatelessWidget {
               if (didPop && !controller.preventDispose) {
                 // Clean up stream data in background so pop transition stays smooth.
                 // Awaiting cleanup here was blocking the route transition and causing lag.
-                unawaited(IsmLiveStreamView._cleanupStreamData(controller));
+                unawaited(IsmLiveStreamView.cleanupStreamData(controller));
               }
             },
             child: Scaffold(
@@ -822,12 +822,10 @@ class _StreamHeader extends StatelessWidget {
                 IsmLiveUtility.openBottomSheet(
                   const AddModeratorsListBottomSheet(),
                   isScrollController: true,
-                  backgroundColor:
-                      sheetContext.liveTheme?.backgroundColor ??
-                          (Theme.of(sheetContext).brightness ==
-                                  Brightness.dark
-                              ? const Color(0xFF121212)
-                              : Colors.white),
+                  backgroundColor: sheetContext.liveTheme?.backgroundColor ??
+                      (Theme.of(sheetContext).brightness == Brightness.dark
+                          ? const Color(0xFF121212)
+                          : Colors.white),
                 );
                 return;
               }
@@ -836,12 +834,10 @@ class _StreamHeader extends StatelessWidget {
               IsmLiveUtility.openBottomSheet(
                 const IsmLiveModeratorsSheet(),
                 isScrollController: true,
-                backgroundColor:
-                    sheetContext.liveTheme?.backgroundColor ??
-                        (Theme.of(sheetContext).brightness ==
-                                Brightness.dark
-                            ? const Color(0xFF121212)
-                            : Colors.white),
+                backgroundColor: sheetContext.liveTheme?.backgroundColor ??
+                    (Theme.of(sheetContext).brightness == Brightness.dark
+                        ? const Color(0xFF121212)
+                        : Colors.white),
               );
             },
             onTapViewers: (viewerList) async {
