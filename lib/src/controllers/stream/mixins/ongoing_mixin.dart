@@ -891,7 +891,11 @@ mixin StreamOngoingMixin {
       IsmLiveUtility.updateLater(() {
         _controller.streamDispose(callDispose);
       });
-      await Future.delayed(const Duration(seconds: 1));
+      if (!_controller.isHost) {
+        await Future.delayed(const Duration(
+            seconds:
+                1)); // host app getting random black screen issue for viewer while stress testing (join-left-join)
+      }
     } catch (e, st) {
       IsmLiveLog.error(' end stream  $e , $st');
     }
