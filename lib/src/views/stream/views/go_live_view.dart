@@ -122,10 +122,7 @@ class IsmGoLiveView extends StatelessWidget {
 
           controller.streamDetails = null;
           controller.pickedImage = null;
-          
-          // Ensure stream is marked as inactive when disposing go_live_view
-          // This prevents any pending dialogs from showing after navigation
-          controller.setStreamActive(false, false);
+
           
           // Call the dispose callback if provided
           IsmLiveDelegate.onGoLiveDispose?.call();

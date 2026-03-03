@@ -335,7 +335,7 @@ class IsmLiveUtility {
   }
 
   /// Check if a dialog is currently open by checking the Navigator's top route
-  /// 
+  ///
   /// This method checks if there's a DialogRoute or CupertinoDialogRoute
   /// on top of the Navigator stack. When a dialog is shown, it becomes the
   /// top route, so we check if there's a route on top.
@@ -360,7 +360,7 @@ class IsmLiveUtility {
       // there's no dialog - it just means we can't check via this method.
       // In this case, if canPop() is true, there's a route on top.
       final currentRoute = ModalRoute.of(context);
-      
+
       // If currentRoute is null, check if there's a route on top via canPop
       // This handles cases where the context doesn't have a route
       if (currentRoute == null) {
@@ -377,7 +377,8 @@ class IsmLiveUtility {
 
       // If currentRoute.isCurrent is true, check if it's itself a DialogRoute
       // This handles edge cases where the dialog context might be passed directly
-      return currentRoute is DialogRoute || currentRoute is CupertinoDialogRoute;
+      return currentRoute is DialogRoute ||
+          currentRoute is CupertinoDialogRoute;
     } catch (e) {
       return false;
     }
@@ -388,6 +389,12 @@ class IsmLiveUtility {
     if (isDialogOpen) {
       closeDialog();
     }
+  }
+
+  static void popUntilStreamView() {
+    IsmLiveUtility.navigatorKey.currentState?.popUntil(
+      (route) => route.settings.name == IsmLiveStreamView.route,
+    );
   }
 
   /// Close any open snackbar
@@ -720,51 +727,56 @@ class IsmLiveRoute {
       );
 
   /// Snappy transition duration (250ms) for smoother open/close than Material 300ms.
-  static const Duration _snappyTransitionDuration =
-      Duration(milliseconds: 250);
+  static const Duration _snappyTransitionDuration = Duration(milliseconds: 250);
 
   /// Builds a slide-from-right route with snappy duration and easeOutCubic curve.
-  static PageRouteBuilder<T> _snappySlideRoute<T>(Widget child) =>
+  /// [routeName] is used for [RouteSettings.name] so [popUntil] can match this route.
+  static PageRouteBuilder<T> _snappySlideRoute<T>(Widget child,
+          {String? routeName}) =>
       PageRouteBuilder<T>(
+        settings: routeName != null ? RouteSettings(name: routeName) : null,
         pageBuilder: (context, animation, secondaryAnimation) => child,
         transitionDuration: _snappyTransitionDuration,
         reverseTransitionDuration: _snappyTransitionDuration,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            )),
-            child: child,
-          );
-        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          )),
+          child: child,
+        ),
       );
 
   /// Push with snappier transition for smoother open/close (stream view, go-live view, etc.).
-  static Future<T?> pushWithTransition<T>(Widget child) async =>
+  /// [routeName] sets [RouteSettings.name] so [popUntil] can stop at this route.
+  static Future<T?> pushWithTransition<T>(Widget child,
+          {String? routeName}) async =>
       await IsmLiveUtility.navigatorKey.currentState?.push<T>(
-        _snappySlideRoute<T>(child),
+        _snappySlideRoute<T>(child, routeName: routeName),
       );
 
   /// Replace with snappier transition for smoother open/close.
   static Future<T?> pushReplacementWithTransition<T, TO>(Widget child,
-          {TO? result}) async =>
+          {TO? result, String? routeName}) async =>
       await IsmLiveUtility.navigatorKey.currentState?.pushReplacement<T, TO>(
-        _snappySlideRoute<T>(child),
+        _snappySlideRoute<T>(child, routeName: routeName),
         result: result,
       );
 
   /// Push the stream view with a snappier transition for smoother open/close.
+  /// Uses [IsmLiveStreamView.route] so [popUntil] (e.g. [popUntilStreamView]) can stop at it.
   static Future<T?> pushStreamView<T>(Widget child) async =>
-      pushWithTransition<T>(child);
+      pushWithTransition<T>(child, routeName: IsmLiveStreamView.route);
 
   /// Replace with stream view using the same snappier transition.
   static Future<T?> pushReplacementStreamView<T, TO>(Widget child,
           {TO? result}) async =>
-      pushReplacementWithTransition<T, TO>(child, result: result);
+      pushReplacementWithTransition<T, TO>(child,
+          result: result, routeName: IsmLiveStreamView.route);
 
   /// Replace the current route by pushing a named route and removing the previous one.
   static Future<T?> pushReplacementNamed<T, TO>(String routeName,

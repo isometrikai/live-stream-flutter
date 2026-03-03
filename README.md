@@ -41,7 +41,7 @@ dependencies:
   appscrip_live_stream_component:
     git:
       url: https://github.com/your-repo/live-stream-flutter.git
-      ref: feature/dependency
+      ref: main
 ```
 
 Then run:
