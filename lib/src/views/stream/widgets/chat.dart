@@ -141,13 +141,28 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                     isHost: widget.isHost,
                     backgroundColor: customBackgroundColor,
                     onTap: () {
-                      var openSheet = message.sentByHost
+                      final openSheet = message.sentByHost
                           ? (controller.isCopublisher ||
                               controller.isModerator ||
                               controller.isMember ||
                               controller.isHost)
                           : true;
-                      if (!message.isEvent && !message.isDeleted && openSheet) {
+
+                      // Block actions for replies whose parent message is deleted
+                      final hasDeletedParent = message.isReply &&
+                          controller.streamMessagesList
+                              .cast<IsmLiveChatModel?>()
+                              .firstWhere(
+                                (e) => e?.messageId == message.parentId,
+                                orElse: () => null,
+                              )
+                              ?.isDeleted ==
+                              true;
+
+                      if (!message.isEvent &&
+                          !message.isDeleted &&
+                          !hasDeletedParent &&
+                          openSheet) {
                         IsmLiveUtility.openBottomSheet(
                           ChatBottomSheet(
                             message: message,

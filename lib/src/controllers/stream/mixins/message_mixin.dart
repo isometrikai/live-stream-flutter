@@ -310,6 +310,16 @@ mixin StreamMessageMixin {
     );
 
     _controller.streamMessagesList[index] = message;
+
+    // Also update all reply messages that reference this message as parent
+    for (var i = 0; i < _controller.streamMessagesList.length; i++) {
+      final reply = _controller.streamMessagesList[i];
+      if (reply.isReply && reply.parentId == messageId) {
+        _controller.streamMessagesList[i] = reply.copyWith(
+          parentBody: '$userName Deleted Message',
+        );
+      }
+    }
     _controller._streamMessagesList.refresh();
   }
 }
