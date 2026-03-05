@@ -93,6 +93,9 @@ class IsmLiveStreamController extends GetxController
 
   bool isSchedulingBroadcast = false;
 
+  /// When false, go-live view builds a lightweight placeholder to keep enter transition smooth.
+  bool goLiveContentReady = false;
+
   bool restreamFacebook = false;
   bool restreamYoutube = false;
   bool restreamInstagram = false;
@@ -185,6 +188,13 @@ class IsmLiveStreamController extends GetxController
   CameraController? cameraController;
 
   final getStreamDebouncer = IsmLiveDebouncer();
+
+  /// RTC token used for deferred room connection from `stream_view`.
+  String? rtcToken;
+
+  /// Indicates that `connectStream` deferred the actual LiveKit connection
+  /// and that `_IsmLiveStreamView` should complete it after navigation.
+  bool pendingConnection = false;
 
   Future? cameraFuture;
 
