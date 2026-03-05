@@ -851,7 +851,11 @@ mixin StreamOngoingMixin {
 
       if (goBack) {
         unawaited(_controller.getStreams());
-        await Future.delayed(const Duration(seconds: 1));
+        if (!isHost) {
+          await Future.delayed(const Duration(
+              seconds:
+                  1)); // host app getting random black screen issue for viewer while stress testing (join-left-join)
+        }
         closeStreamView(isHost, streamId: streamId);
       }
     }

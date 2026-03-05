@@ -21,8 +21,8 @@ mixin StreamJoinMixin {
 
   // HD: 1080p portrait, 30fps ~6Mbps (industry-standard live baseline)
   static const lk.VideoParameters _lkHdVideoParams = lk.VideoParameters(
-    dimensions: lk.VideoDimensions(1080, 1920),
-    // lk.VideoDimensionsPresets.h1080_169,
+    dimensions: // lk.VideoDimensions(1080, 1920),
+        lk.VideoDimensionsPresets.h1080_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 30,
       maxBitrate: 6000 * 1000,
@@ -31,8 +31,8 @@ mixin StreamJoinMixin {
 
   // SD: 30fps ~3Mbps
   static const lk.VideoParameters _lkSdVideoParams = lk.VideoParameters(
-    dimensions: lk.VideoDimensions(720, 1280),
-    // lk.VideoDimensionsPresets.h720_169,
+    dimensions: // lk.VideoDimensions(720, 1280),
+        lk.VideoDimensionsPresets.h720_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 25,
       maxBitrate: 2500 * 1000,
@@ -41,8 +41,8 @@ mixin StreamJoinMixin {
 
   /// Restream: quality between SD and full HD, tuned for external platforms.
   static const lk.VideoParameters _lkRestreamVideoParams = lk.VideoParameters(
-    dimensions: lk.VideoDimensions(720, 1280),
-    // lk.VideoDimensionsPresets.h720_169,
+    dimensions: // lk.VideoDimensions(720, 1280),
+        lk.VideoDimensionsPresets.h720_169,
     encoding: lk.VideoEncoding(
       maxFramerate: 30,
       maxBitrate: 4000 * 1000,
@@ -58,27 +58,8 @@ mixin StreamJoinMixin {
     return _lkSdVideoParams;
   }
 
-  List<VideoParameters> _resolveSimulcastLayers({
-    required bool hdBroadcast,
-    required bool restream,
-  }) {
-    // Keep simulcast layers aligned with capture/publish quality.
-    final lkParams = _resolveLkVideoParams(
-      hdBroadcast: hdBroadcast,
-      restream: restream,
-    );
-
-    return [
-      VideoParameters(
-        dimensions: VideoDimensions(
-            lkParams.dimensions.width, lkParams.dimensions.height),
-        encoding: VideoEncoding(
-          maxFramerate: lkParams.encoding!.maxFramerate,
-          maxBitrate: lkParams.encoding!.maxBitrate,
-        ),
-      ),
-    ];
-  }
+  // Note: Simulcast layers are currently not used; keep the resolver ready
+  // for future multi-bitrate setups if needed.
 
 // Initialize the Go Live process by requesting camera permission and initializing the camera controller
   Future<void> initializationOfGoLive() async {
@@ -484,6 +465,7 @@ mixin StreamJoinMixin {
       hdBroadcast: _controller.isHdBroadcast,
       restream: _controller.isRestreamBroadcast,
       context: context,
+      deferConnection: true,
     );
   }
 
@@ -510,7 +492,13 @@ mixin StreamJoinMixin {
     bool reJoin = false,
     bool? isScheduledStream,
     List? products,
+    // When true, heavy LiveKit connection work is deferred and completed
+    // from `stream_view` after navigation for a smoother transition.
+    bool deferConnection = false,
   }) async {
+    // Store token for background lifecycle / deferred connect flows
+    _controller.rtcToken = token;
+
     // Subscribe to the stream
     _controller.streamId = streamId;
     print('initializeAndJoinStream initialized with streamId: $streamId');
@@ -568,48 +556,100 @@ mixin StreamJoinMixin {
       IsmLiveLog.error('MQTT subscription error: $e');
     }
 
-    // Show appropriate message based on the user's role
-    var message = '';
-    IsmLiveStreamTranslations? translation;
-    try {
-      translation = context.liveTranslations?.streamTranslations;
-    } catch (e) {
-      // If translation access fails, set to null so static strings are used
-      translation = null;
-      IsmLiveLog.error('Translation access error: $e');
-    }
+    // If we want a snappier transition for host-initiated streams,
+    // defer the heavy LiveKit connection to `stream_view` and navigate now.
+    if (deferConnection && !joinByScrolling) {
+      _controller.pendingConnection = true;
+      try {
+        final dummyRoom = lk.Room();
+        final dummyListener = dummyRoom.createListener();
 
-    if (isHost) {
-      if (isNewStream) {
-        message = translation?.preparingYourStream ??
-            IsmLiveStrings.preparingYourStream;
-      } else {
-        message = translation?.reconnecting ?? IsmLiveStrings.reconnecting;
+        print(
+            'initializeAndJoinStream (deferred): About to call goToStreamView with reJoin=$reJoin');
+
+        await IsmLiveRouteManagement.goToStreamView(
+          isHost: isHost,
+          isNewStream: isNewStream,
+          room: dummyRoom,
+          isScrolling: isScrolling,
+          streamImage: streamImage,
+          listener: dummyListener,
+          streamId: streamId,
+          isInteractive: isInteractive,
+          reJoin: reJoin,
+        );
+        print(
+            'initializeAndJoinStream (deferred): goToStreamView completed, connection will be finished from stream_view');
+      } catch (e, st) {
+        IsmLiveLog.error('Navigation error (deferred connect): $e', st);
+        print('initializeAndJoinStream (deferred): Navigation error: $e');
       }
-    } else if (isCopublisher) {
-      message =
-          translation?.enablingYourVideo ?? IsmLiveStrings.enablingYourVideo;
-    } else if (isPkGust) {
-      message = translation?.pkMessage ?? IsmLiveStrings.pkMessage;
-    } else {
-      message =
-          translation?.joiningLiveStream ?? IsmLiveStrings.joiningLiveStream;
+      return;
     }
 
+    await _connectRoomAndInitialize(
+      stream: stream,
+      token: token,
+      streamId: streamId,
+      streamImage: streamImage,
+      streamDiscription: streamDiscription,
+      hdBroadcast: hdBroadcast,
+      restream: restream,
+      isHost: isHost,
+      isCopublisher: isCopublisher,
+      isPk: isPk,
+      isPkGust: isPkGust,
+      isNewStream: isNewStream,
+      joinByScrolling: joinByScrolling,
+      isScrolling: isScrolling,
+      isInteractive: isInteractive,
+      startTime: startTime,
+      context: context,
+      eventId: eventId,
+      reJoin: reJoin,
+      isScheduledStream: isScheduledStream,
+      products: products,
+      performNavigation: !joinByScrolling,
+      showLoader: true,
+    );
+  }
+
+  Future<void> _connectRoomAndInitialize({
+    IsmLiveStreamDataModel? stream,
+    required String token,
+    required String streamId,
+    String? streamImage,
+    String? streamDiscription,
+    bool hdBroadcast = false,
+    bool restream = false,
+    required bool isHost,
+    bool isCopublisher = false,
+    bool isPk = false,
+    bool isPkGust = false,
+    required bool isNewStream,
+    bool joinByScrolling = false,
+    bool isScrolling = false,
+    bool isInteractive = false,
+    DateTime? startTime,
+    required BuildContext context,
+    String? eventId,
+    bool reJoin = false,
+    bool? isScheduledStream,
+    List? products,
+    required bool performNavigation,
+    bool showLoader = true,
+  }) async {
     var loaderShown = false;
-    if (!joinByScrolling) {
-      IsmLiveUtility.showLoader(message);
+    if (!joinByScrolling && showLoader) {
+      // Show a generic loader; detailed user-facing message was already
+      // computed in the calling method.
+      IsmLiveUtility.showLoader();
       loaderShown = true;
     }
 
     try {
       // Setting video presets based on the hdBroadcast param
       final resolvedVideoParams = _resolveLkVideoParams(
-        hdBroadcast: hdBroadcast,
-        restream: restream,
-      );
-
-      final videoSimulcastLayers = _resolveSimulcastLayers(
         hdBroadcast: hdBroadcast,
         restream: restream,
       );
@@ -753,9 +793,9 @@ mixin StreamJoinMixin {
       startStreamTimer();
 
       print(
-          'initializeAndJoinStream: joinByScrolling=$joinByScrolling, will call goToStreamView: ${!joinByScrolling}');
+          'initializeAndJoinStream: joinByScrolling=$joinByScrolling, performNavigation=$performNavigation');
 
-      if (!joinByScrolling) {
+      if (performNavigation) {
         try {
           IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
           IsmLiveGifts.animated
@@ -794,10 +834,8 @@ mixin StreamJoinMixin {
         }
       } else {
         print(
-            'initializeAndJoinStream: Skipping goToStreamView due to joinByScrolling=true');
+            'initializeAndJoinStream: Skipping goToStreamView (performNavigation=false)');
       }
-
-      // _controller.update([IsmLiveStreamView.updateId]);
     } catch (e, st) {
       try {
         unawaited(
@@ -815,6 +853,59 @@ mixin StreamJoinMixin {
         IsmLiveUtility.closeLoader();
       }
     }
+  }
+
+  /// Completes a previously deferred LiveKit connection from `stream_view`.
+  Future<void> completeDeferredConnection({
+    required BuildContext context,
+    required bool isHost,
+    required bool isNewStream,
+    required bool isInteractive,
+    required bool isSchedule,
+  }) async {
+    if (!_controller.pendingConnection ||
+        _controller.rtcToken == null ||
+        _controller.streamId == null) {
+      return;
+    }
+
+    final token = _controller.rtcToken!;
+    final streamId = _controller.streamId!;
+    final details = _controller.streamDetails;
+
+    final streamImage = details?.streamImage;
+    final streamDiscription =
+        details?.streamDescription ?? _controller.descriptionController.text;
+    final hdBroadcast = details?.hdBroadcast ?? _controller.isHdBroadcast;
+    final restream = details?.restream ?? _controller.isRestreamBroadcast;
+
+    await _connectRoomAndInitialize(
+      stream: details,
+      token: token,
+      streamId: streamId,
+      streamImage: streamImage,
+      streamDiscription: streamDiscription,
+      hdBroadcast: hdBroadcast,
+      restream: restream,
+      isHost: isHost,
+      isCopublisher: false,
+      isPk: details?.isPkChallenge ?? false,
+      isPkGust: false,
+      isNewStream: isNewStream,
+      joinByScrolling: false,
+      isScrolling: false,
+      isInteractive: isInteractive,
+      startTime: details?.startDateTime,
+      context: context,
+      eventId: details?.eventId,
+      reJoin: false,
+      isScheduledStream: details?.isScheduledStream ?? isSchedule,
+      products: details?.products,
+      performNavigation: false,
+      showLoader: false,
+    );
+
+    _controller.pendingConnection = false;
   }
 
   Future<IsmLiveScheduleRTCModule?> goLiveSchedule() async {

@@ -428,15 +428,42 @@ class _IsmLiveStreamView extends StatelessWidget {
           // in the _getStreamMembers method of api_mixin.dart
 
           IsmLiveUtility.updateLater(() {
-            if (isHost) {
-              if (controller.isRtmp && !controller.usePersistentStreamKey) {
-                controller.rtmpSheet();
-              } else if (controller.isRtmp) {
-              } else {
-                Get.find<IsmLiveStreamController>().askPublish();
-              }
+            if (!isHost) {
+              return;
+            }
+
+            if (controller.isRtmp && !controller.usePersistentStreamKey) {
+              controller.rtmpSheet();
+              return;
+            } else if (controller.isRtmp) {
+              return;
+            }
+
+            // For non-deferred connections, keep the original askPublish behavior.
+            // When connection is deferred, video/audio will be enabled as part of
+            // the deferred LiveKit connection flow.
+            if (!controller.pendingConnection) {
+              Get.find<IsmLiveStreamController>().askPublish();
             }
           });
+
+          // If connectStream deferred the heavy LiveKit connection, complete it
+          // from here *after* the first frame so that navigation stays smooth
+          // and dialog/overlay operations happen outside the build phase.
+          if (controller.pendingConnection) {
+            IsmLiveUtility.updateLater(() {
+              if (!controller.pendingConnection) return;
+              unawaited(
+                controller.completeDeferredConnection(
+                  context: context,
+                  isHost: isHost,
+                  isNewStream: isNewStream,
+                  isInteractive: isInteractive,
+                  isSchedule: isSchedule,
+                ),
+              );
+            });
+          }
         },
         builder: (controller) {
           final mediaQuery = MediaQuery.of(context);

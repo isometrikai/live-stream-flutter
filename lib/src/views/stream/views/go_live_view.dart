@@ -58,14 +58,23 @@ class IsmGoLiveView extends StatelessWidget {
         initState: (state) {
           var controller = Get.find<IsmLiveStreamController>();
 
+          // Build lightweight placeholder on first frame so transition doesn't stall (see builder).
+          controller.goLiveContentReady = false;
+
           // Ensure stream is marked as inactive to prevent any dialogs from background lifecycle mixin
           // This prevents _showConnectionFailedDialog from showing when navigating from stream_view
           controller.setStreamActive(false, false);
 
           if (controller.streamDetails == null) {
             controller.cameraFuture = null;
-            unawaited(controller.initializationOfGoLive());
-            unawaited(controller.userDetails());
+            // Defer heavy camera and user initialization until after the first
+            // frame so that the navigation transition stays smooth.
+            IsmLiveUtility.updateLater(() {
+              unawaited(controller.initializationOfGoLive());
+              unawaited(controller.userDetails());
+              controller.goLiveContentReady = true;
+              controller.update([updateId]);
+            });
             controller.premiumStreamCoinsController.clear();
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
@@ -77,7 +86,14 @@ class IsmGoLiveView extends StatelessWidget {
             controller.isRestreamBroadcast = false;
           } else if (controller.streamDetails?.isScheduledStream ?? false) {
             controller.premiumStreamCoinsController.clear();
-            unawaited(controller.initializationOfGoLive());
+            controller.cameraFuture = null;
+            // Defer camera initialization for scheduled streams as well to
+            // avoid blocking the route transition.
+            IsmLiveUtility.updateLater(() {
+              unawaited(controller.initializationOfGoLive());
+              controller.goLiveContentReady = true;
+              controller.update([updateId]);
+            });
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
             controller.descriptionController.text =
@@ -91,6 +107,12 @@ class IsmGoLiveView extends StatelessWidget {
             controller.isPremium = false;
             controller.isRestreamBroadcast =
                 controller.streamDetails?.restream ?? false;
+          } else {
+            // streamDetails != null and not scheduled: still defer full build for smooth transition
+            IsmLiveUtility.updateLater(() {
+              controller.goLiveContentReady = true;
+              controller.update([updateId]);
+            });
           }
         },
         dispose: (state) {
@@ -99,6 +121,7 @@ class IsmGoLiveView extends StatelessWidget {
           // This ensures clean state for next time the screen opens
           // controller.streamDispose(
           //     false); // Don't call disposeAnimationController here
+          controller.goLiveContentReady = false;
 
           // Store camera controller reference before clearing
           // This prevents the UI from trying to use it during disposal
@@ -123,142 +146,159 @@ class IsmGoLiveView extends StatelessWidget {
           controller.streamDetails = null;
           controller.pickedImage = null;
 
-          
-          // Call the dispose callback if provided
-          IsmLiveDelegate.onGoLiveDispose?.call();
+          // Defer delegate callback so it doesn't block the frame and leave transition
+          final onDispose = IsmLiveDelegate.onGoLiveDispose;
+          if (onDispose != null) {
+            Future.microtask(onDispose);
+          }
         },
-        builder: (controller) => Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: IsmLiveColors.black,
-          extendBody: true,
-          bottomNavigationBar: const IsmGoLiveNavBar(),
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              const Positioned.fill(
-                child: _CameraPreviewBackground(),
-              ),
-              SingleChildScrollView(
-                padding: IsmLiveDimens.edgeInsets16,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IsmLiveDimens.boxHeight32,
-                    // Use custom header builder if provided, otherwise use default header
-                    IsmLiveDelegate.goLiveHeaderBuilder
-                            ?.call(context, controller) ??
-                        const _DefaultGoLiveHeader(),
-                    if (!(controller.streamDetails?.isScheduledStream ??
-                            false) &&
-                        (IsmLiveDelegate.paidStream ?? true))
-                      const _StreamTypes(),
-                    IsmLiveDimens.boxHeight20,
-                    Row(
-                      children: [
-                        const _StreamImage(),
-                        IsmLiveDimens.boxWidth10,
-                        Expanded(
-                          child: Container(
-                            height: IsmLiveDimens
-                                .hundred, // Fixed height to match _StreamImage
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(IsmLiveDimens.twelve),
-                              border: Border.all(color: IsmLiveColors.white),
-                              color: IsmLiveColors.white.withOpacity(0.3),
-                            ),
-                            child: IsmLiveInputField(
-                              hintStyle: getTextStyle(context, true),
-                              minLines: 4,
-                              maxLines: 4,
-                              alignLabelWithHint: true,
-                              cursorColor: IsmLiveColors.white,
-                              style: getTextStyle(context, true),
-                              borderColor: Colors
-                                  .transparent, // Remove border since Container has it
-                              radius: IsmLiveDimens.twelve,
-                              fillColor: Colors
-                                  .transparent, // Remove fill since Container has it
-                              controller: controller.descriptionController,
-                              hintText: 'Enter description',
-                              onchange: (_) {
-                                controller.update([updateId]);
-                              },
+        builder: (controller) {
+          // First frame: lightweight body so enter transition doesn't stall
+          if (!controller.goLiveContentReady) {
+            return const Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: IsmLiveColors.black,
+              extendBody: true,
+              bottomNavigationBar: IsmGoLiveNavBar(),
+              body: Center(child: IsmLiveLoader(isDialog: false)),
+            );
+          }
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: IsmLiveColors.black,
+            extendBody: true,
+            bottomNavigationBar: const IsmGoLiveNavBar(),
+            body: Stack(
+              fit: StackFit.expand,
+              children: [
+                const Positioned.fill(
+                  child: _CameraPreviewBackground(),
+                ),
+                SingleChildScrollView(
+                  padding: IsmLiveDimens.edgeInsets16,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IsmLiveDimens.boxHeight32,
+                      // Use custom header builder if provided, otherwise use default header
+                      IsmLiveDelegate.goLiveHeaderBuilder
+                              ?.call(context, controller) ??
+                          const _DefaultGoLiveHeader(),
+                      if (!(controller.streamDetails?.isScheduledStream ??
+                              false) &&
+                          (IsmLiveDelegate.paidStream ?? true))
+                        const _StreamTypes(),
+                      IsmLiveDimens.boxHeight20,
+                      Row(
+                        children: [
+                          const _StreamImage(),
+                          IsmLiveDimens.boxWidth10,
+                          Expanded(
+                            child: Container(
+                              height: IsmLiveDimens
+                                  .hundred, // Fixed height to match _StreamImage
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(IsmLiveDimens.twelve),
+                                border: Border.all(color: IsmLiveColors.white),
+                                color: IsmLiveColors.white.withOpacity(0.3),
+                              ),
+                              child: IsmLiveInputField(
+                                hintStyle: getTextStyle(context, true),
+                                minLines: 4,
+                                maxLines: 4,
+                                alignLabelWithHint: true,
+                                cursorColor: IsmLiveColors.white,
+                                style: getTextStyle(context, true),
+                                borderColor: Colors
+                                    .transparent, // Remove border since Container has it
+                                radius: IsmLiveDimens.twelve,
+                                fillColor: Colors
+                                    .transparent, // Remove fill since Container has it
+                                controller: controller.descriptionController,
+                                hintText: 'Enter description',
+                                onchange: (_) {
+                                  controller.update([updateId]);
+                                },
+                              ),
                             ),
                           ),
+                        ],
+                      ),
+                      IsmLiveDimens.boxHeight10,
+                      if (IsmLiveDelegate.hdStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'HD Broadcast',
+                          onChange: controller.onChangeHdBroadcast,
+                          value: controller.isHdBroadcast,
                         ),
+                      if (IsmLiveDelegate.recordeStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'Record Broadcast',
+                          onChange: controller.onChangeRecording,
+                          value: controller.isRecordingBroadcast,
+                        ),
+                      if (IsmLiveDelegate.restreamStream ?? true)
+                        IsmLiveRadioListTile(
+                          title: 'Restream Broadcast',
+                          onChange: controller.onChangeRestream,
+                          value: controller.isRestreamBroadcast,
+                        ),
+                      if (IsmLiveDelegate.restreamStream ?? true)
+                        const _Restream(),
+                      if (controller.isRtmp) ...[
+                        IsmLiveRadioListTile(
+                          title: 'Use Persistent RTMP Stream Key',
+                          onChange: controller.onChangePersistent,
+                          value: controller.usePersistentStreamKey,
+                        ),
+                        const _PersistentStream(),
                       ],
-                    ),
-                    IsmLiveDimens.boxHeight10,
-                    if (IsmLiveDelegate.hdStream ?? true)
-                      IsmLiveRadioListTile(
-                        title: 'HD Broadcast',
-                        onChange: controller.onChangeHdBroadcast,
-                        value: controller.isHdBroadcast,
-                      ),
-                    if (IsmLiveDelegate.recordeStream ?? true)
-                      IsmLiveRadioListTile(
-                        title: 'Record Broadcast',
-                        onChange: controller.onChangeRecording,
-                        value: controller.isRecordingBroadcast,
-                      ),
-                    if (IsmLiveDelegate.restreamStream ?? true)
-                      IsmLiveRadioListTile(
-                        title: 'Restream Broadcast',
-                        onChange: controller.onChangeRestream,
-                        value: controller.isRestreamBroadcast,
-                      ),
-                    if (IsmLiveDelegate.restreamStream ?? true)
-                      const _Restream(),
-                    if (controller.isRtmp) ...[
-                      IsmLiveRadioListTile(
-                        title: 'Use Persistent RTMP Stream Key',
-                        onChange: controller.onChangePersistent,
-                        value: controller.usePersistentStreamKey,
-                      ),
-                      const _PersistentStream(),
-                    ],
-                    if (IsmLiveDelegate.productStream ?? true)
-                      IsmLiveDelegate.ecomConfigure?.addProductViewBuilder !=
-                              null
-                          ? IsmLiveDelegate
-                              .ecomConfigure!.addProductViewBuilder!(context)
-                          : _AddProduct(
-                              selectedProducts: controller.selectedProductsList,
-                              onRemoveProduct: (index) {
-                                controller.selectedProductsList.removeAt(index);
-                                controller.update([updateId]);
-                              },
-                            ),
-                    if (IsmLiveDelegate.scheduleStream ?? true)
-                      Opacity(
-                        opacity:
-                            controller.streamDetails?.isScheduledStream ?? false
-                                ? 0.5
-                                : 1.0,
-                        child: IsmLiveRadioListTile(
-                          title: 'Schedule Live',
-                          onChange: controller
-                                      .streamDetails?.isScheduledStream ??
-                                  false
-                              ? (_) {} // Do nothing when editing scheduled stream
-                              : controller.onChangeSchedule,
-                          value: controller.isSchedulingBroadcast,
+                      if (IsmLiveDelegate.productStream ?? true)
+                        IsmLiveDelegate.ecomConfigure?.addProductViewBuilder !=
+                                null
+                            ? IsmLiveDelegate
+                                .ecomConfigure!.addProductViewBuilder!(context)
+                            : _AddProduct(
+                                selectedProducts:
+                                    controller.selectedProductsList,
+                                onRemoveProduct: (index) {
+                                  controller.selectedProductsList
+                                      .removeAt(index);
+                                  controller.update([updateId]);
+                                },
+                              ),
+                      if (IsmLiveDelegate.scheduleStream ?? true)
+                        Opacity(
+                          opacity:
+                              controller.streamDetails?.isScheduledStream ??
+                                      false
+                                  ? 0.5
+                                  : 1.0,
+                          child: IsmLiveRadioListTile(
+                            title: 'Schedule Live',
+                            onChange: controller
+                                        .streamDetails?.isScheduledStream ??
+                                    false
+                                ? (_) {} // Do nothing when editing scheduled stream
+                                : controller.onChangeSchedule,
+                            value: controller.isSchedulingBroadcast,
+                          ),
                         ),
+                      _ScheduleStream(
+                        isEditable:
+                            !(controller.streamDetails?.isScheduledStream ??
+                                false),
                       ),
-                    _ScheduleStream(
-                      isEditable:
-                          !(controller.streamDetails?.isScheduledStream ??
-                              false),
-                    ),
-                    const SizedBox(height: 120),
-                  ],
+                      const SizedBox(height: 120),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       );
 }
 
