@@ -11,6 +11,7 @@ class IsmGoLiveView extends StatelessWidget {
 
   static const String updateId = 'ismlive-go-live';
   static const String cameraUpdateId = 'ismlive-go-live-camera';
+  static const String buttonUpdateId = 'ismlive-go-live-button';
 
   /// Get the appropriate text style for "Add Cover" and similar action text based on configuration
   static TextStyle _getAddCoverTextStyle(BuildContext context) {
@@ -219,7 +220,7 @@ class IsmGoLiveView extends StatelessWidget {
                                 controller: controller.descriptionController,
                                 hintText: 'Enter description',
                                 onchange: (_) {
-                                  controller.update([updateId]);
+                                  controller.update([buttonUpdateId]);
                                 },
                               ),
                             ),
