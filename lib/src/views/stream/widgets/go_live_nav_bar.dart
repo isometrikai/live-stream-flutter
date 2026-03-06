@@ -125,7 +125,7 @@ class IsmGoLiveNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SafeArea(
         child: GetBuilder<IsmLiveStreamController>(
-          id: IsmGoLiveView.updateId,
+          id: IsmGoLiveView.buttonUpdateId,
           builder: (controller) {
             final isEnabled = controller.isGoLiveButtonEnabled;
             return Column(
