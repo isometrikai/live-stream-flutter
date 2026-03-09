@@ -914,9 +914,7 @@ mixin StreamOngoingMixin {
     if (isHost) {
       IsmLiveRouteManagement.goToEndStreamView(streamId!);
     } else {
-      if (IsmLiveUtility.isAnyBottomSheetOpen) {
-        IsmLiveRoute.pop();
-      }
+      IsmLiveUtility.popUntilStreamView();
       IsmLiveRoute.pop();
       if (fromMqtt) {
         IsmLiveUtility.showCustomDialog(const IsmLiveStreamEndDialog());
