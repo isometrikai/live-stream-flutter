@@ -65,7 +65,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                         if (IsmLiveDelegate.addCoinsClickCallback != null) {
                           IsmLiveDelegate.addCoinsClickCallback!(context);
                         } else {
-                          IsmLiveUtility.closeBottomSheetIfOpen();
+                          IsmLiveUtility.popUntilStreamView();
                           IsmLiveRouteManagement.goToCoinsPlanWallet(
                               fromStream: true);
                         }
@@ -78,9 +78,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                       SizedBox(
                         height: IsmLiveDimens.twentyFive,
                         width: IsmLiveDimens.twentyFive,
-                        child: IsmLiveImage.svg(
+                        child: const IsmLiveImage.svg(
                           IsmLiveAssetConstants.coinSvg,
-                          color: iconColor,
                         ),
                       ),
                       IsmLiveDimens.boxWidth4,
@@ -100,7 +99,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                 height: IsmLiveDimens.hundred,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
-                    var categoryDetails = pkController.giftCategoriesList[index];
+                    var categoryDetails =
+                        pkController.giftCategoriesList[index];
                     return IsmLiveTapHandler(
                       onTap: () async {
                         controller.giftType = index;
@@ -125,7 +125,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.4,
                 child: ((pkController.localGift?.isEmpty ?? true) ||
-                        (pkController.localGift?[controller.giftType]?.isEmpty ??
+                        (pkController
+                                .localGift?[controller.giftType]?.isEmpty ??
                             true))
                     ? Center(
                         child: Text(
@@ -159,7 +160,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                                         'Balance is not sufficient to send gift\n Add coins to the wallet ',
                                     onPress: () {
                                       IsmLiveUtility.closeDialog();
-                                      if (IsmLiveDelegate.addCoinsClickCallback !=
+                                      if (IsmLiveDelegate
+                                              .addCoinsClickCallback !=
                                           null) {
                                         IsmLiveDelegate
                                             .addCoinsClickCallback!(context);
@@ -187,8 +189,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             },
                           );
                         },
-                        itemCount:
-                            pkController.localGift?[controller.giftType]?.length,
+                        itemCount: pkController
+                            .localGift?[controller.giftType]?.length,
                       ),
               ),
             ],

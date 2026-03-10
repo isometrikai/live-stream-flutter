@@ -188,13 +188,6 @@ class IsmLiveUtility {
   /// Returns true if a modal bottom sheet (from showModalBottomSheet or Get.bottomSheet) is currently the top route.
   static bool get isAnyBottomSheetOpen => _bottomSheetCount > 0;
 
-  /// Closes the bottom sheet if one is open at the top of the stack.
-  static void closeBottomSheetIfOpen() {
-    if (_bottomSheetCount > 0) {
-      IsmLiveRoute.pop();
-    }
-  }
-
   static Future<TimeOfDay> pickTime({
     required BuildContext context,
     required TimeOfDay initialTime,

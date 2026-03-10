@@ -774,7 +774,6 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.publisherTimeout:
           break;
         case IsmLiveActions.publishStarted:
-          // IsmLiveUtility.closeBottomSheetIfOpen();
           break;
         case IsmLiveActions.publishStopped:
           _pkController.pkTimer?.cancel();

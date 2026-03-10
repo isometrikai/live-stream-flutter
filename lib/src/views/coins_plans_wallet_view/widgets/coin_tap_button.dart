@@ -25,8 +25,11 @@ class IsmLiveCoinTransacyionsTabButton extends StatelessWidget {
                 type.label,
                 style: context.textTheme.titleSmall?.copyWith(
                   color: isSelected
-                      ? context.liveTheme?.selectedTextColor
-                      : Colors.grey,
+                      ? (context.liveTheme?.primaryColor ??
+                          (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black))
+                      : (context.liveTheme?.unselectedTextColor ?? Colors.grey),
                   fontWeight: FontWeight.bold,
                 ),
               ),

@@ -49,8 +49,15 @@ class CoinsPlansWalletController extends GetxController
   RefreshController get refreshController =>
       _refreshControllers[coinTransactionType]!;
 
+  RefreshController refreshControllerFor(IsmLiveCoinTransactionType type) =>
+      _refreshControllers[type]!;
+
   List<IsmLiveCoinTransactionModel> get transactions =>
       _transactions[coinTransactionType]!;
+
+  List<IsmLiveCoinTransactionModel> transactionsFor(
+          IsmLiveCoinTransactionType type) =>
+      _transactions[type]!;
 
   final Rx<IsmLiveCoinTransactionType> _coinTransactionType =
       IsmLiveCoinTransactionType.debit.obs;
