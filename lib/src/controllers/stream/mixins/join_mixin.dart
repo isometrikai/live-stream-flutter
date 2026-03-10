@@ -1059,10 +1059,20 @@ mixin StreamJoinMixin {
 
     _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
-      (timer) {
-        _controller.streamDuration += const Duration(
-          seconds: 1,
-        );
+          (timer) {
+        try {
+          if(_controller == null) {
+            timer.cancel();
+            return;
+          }
+          _controller.streamDuration += const Duration(
+            seconds: 1,
+          );
+        } catch (e) {
+          debugPrint('timer is disposed....${e.toString()}');
+          timer.cancel(); // Stops the timer permanently
+          return;
+        }
       },
     );
   }
