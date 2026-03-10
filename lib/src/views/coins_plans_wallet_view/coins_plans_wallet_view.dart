@@ -105,7 +105,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                             small: true,
                             onTap: () {
                               if (fromStream) {
-                                IsmLiveUtility.closeBottomSheetIfOpen();
+                                IsmLiveUtility.popUntilStreamView();
                               }
                               IsmLiveRouteManagement.goToCoinTransaction(
                                   fromStream: fromStream);

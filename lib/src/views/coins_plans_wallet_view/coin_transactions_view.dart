@@ -64,8 +64,9 @@ class IsmLiveCoinTransactions extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 controller: controller.coninTranscationTabController,
                 children: [
-                  ...IsmLiveCoinTransactionType.values
-                      .map((e) => const _CoinTransactionsListing()),
+                  ...IsmLiveCoinTransactionType.values.map(
+                    (e) => _CoinTransactionsListing(type: e),
+                  ),
                 ],
               ),
             ),
@@ -77,28 +78,30 @@ class IsmLiveCoinTransactions extends StatelessWidget {
 }
 
 class _CoinTransactionsListing extends StatelessWidget {
-  const _CoinTransactionsListing();
+  const _CoinTransactionsListing({required this.type});
+
+  final IsmLiveCoinTransactionType type;
 
   @override
   Widget build(BuildContext context) => GetBuilder<CoinsPlansWalletController>(
         id: IsmLiveCoinTransactions.updateId,
         builder: (controller) => SmartRefresher(
-          controller: controller.refreshController,
+          controller: controller.refreshControllerFor(type),
           enablePullDown: true,
           enablePullUp: true,
           onLoading: () {
-            controller.refreshController.loadComplete();
+            controller.refreshControllerFor(type).loadComplete();
             controller.fetchTransactions(
-              type: controller.coinTransactionType,
-              skip: controller.transactions.length,
+              type: type,
+              skip: controller.transactionsFor(type).length,
               moreFetch: true,
             );
           },
           onRefresh: () {
-            controller.refreshController.refreshCompleted();
-            controller.fetchTransactions(type: controller.coinTransactionType);
+            controller.refreshControllerFor(type).refreshCompleted();
+            controller.fetchTransactions(type: type);
           },
-          child: controller.transactions.isEmpty
+          child: controller.transactionsFor(type).isEmpty
               ? const IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noData,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
@@ -112,15 +115,13 @@ class _CoinTransactionsListing extends StatelessWidget {
                     final subtitleColor = context
                             .liveTheme?.unselectedTextColor ??
                         (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
-                    final iconColor = context.liveTheme?.primaryColor ??
-                        (isDarkMode ? Colors.white : Colors.black);
 
                     return ListView.builder(
                       padding: IsmLiveDimens.edgeInsets16,
                       itemBuilder: (context, index) {
-                        var tracsactionValue = controller.transactions[index];
-                        final isCredit =
-                            controller.coinTransactionType.value == 2;
+                        var tracsactionValue =
+                            controller.transactionsFor(type)[index];
+                        final isCredit = type.value == 2;
                         return ListTile(
                           contentPadding: IsmLiveDimens.edgeInsets0,
                           leading: Container(
@@ -172,7 +173,7 @@ class _CoinTransactionsListing extends StatelessWidget {
                           ),
                         );
                       },
-                      itemCount: controller.transactions.length,
+                      itemCount: controller.transactionsFor(type).length,
                       shrinkWrap: true,
                     );
                   },

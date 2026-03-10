@@ -44,8 +44,34 @@ class IsmLiveApiWrapper {
 
     final uri = Uri.parse(url);
 
-    IsmLiveLog.info(
-        '[Request] - ${type.name.toUpperCase()} - $uri\nHeaders :- $headers\n$payload');
+    // Logging must never affect the actual API call. Keep this 100% safe.
+    try {
+      // Log-only cURL: must be type-safe because `payload` can be non-String
+      // (e.g. Uint8List for binary flows) in some integrators.
+      final body = type != IsmLiveRequestType.upload
+          ? _stringifyBodyForCurl(
+              payload: payload,
+              shouldEncodePayload: shouldEncodePayload,
+            )
+          : null;
+      final curlCommand = _toCurl(
+        uri: uri,
+        type: type,
+        headers: headers,
+        body: body,
+        multipartField: type == IsmLiveRequestType.upload ? field : null,
+        multipartFilePath: type == IsmLiveRequestType.upload ? filePath : null,
+        multipartFields:
+            type == IsmLiveRequestType.upload && payload is Map<String, String>
+                ? payload
+                : null,
+      );
+      IsmLiveLog.info('[cURL] $curlCommand');
+    } catch (e, st) {
+      IsmLiveLog.info(
+          '[Request] - ${type.name.toUpperCase()} - $uri (cURL log failed: ${e.runtimeType})');
+      IsmLiveLog.error(e, st);
+    }
 
     if (showLoader) IsmLiveUtility.showLoader(message);
     if (await IsmLiveUtility.isNetworkAvailable) {
@@ -359,5 +385,88 @@ class IsmLiveApiWrapper {
           statusCode: response.statusCode,
         );
     }
+  }
+
+  /// Builds a copy-pasteable cURL command for the request (for developer debugging).
+  static String _toCurl({
+    required Uri uri,
+    required IsmLiveRequestType type,
+    required Map<String, String> headers,
+    String? body,
+    String? multipartField,
+    String? multipartFilePath,
+    Map<String, String>? multipartFields,
+  }) {
+    String escapeSingleQuotes(String s) => s.replaceAll("'", r"'\''");
+
+    final buffer = StringBuffer("curl");
+    buffer.write(" -X ${_curlMethod(type)}");
+    buffer.write(" '${escapeSingleQuotes(uri.toString())}'");
+
+    for (final entry in headers.entries) {
+      buffer.write(" -H '${escapeSingleQuotes(entry.key)}: ${escapeSingleQuotes(entry.value)}'");
+    }
+
+    if (type == IsmLiveRequestType.upload) {
+      if (multipartField != null && multipartFilePath != null) {
+        buffer.write(
+            " -F '${escapeSingleQuotes(multipartField)}=@${escapeSingleQuotes(multipartFilePath)}'");
+      }
+      if (multipartFields != null && multipartFields.isNotEmpty) {
+        for (final entry in multipartFields.entries) {
+          buffer.write(
+              " -F '${escapeSingleQuotes(entry.key)}=${escapeSingleQuotes(entry.value)}'");
+        }
+      }
+    } else if (body != null && body.isNotEmpty) {
+      buffer.write(" -d '${escapeSingleQuotes(body)}'");
+    }
+
+    return buffer.toString();
+  }
+
+  static String _curlMethod(IsmLiveRequestType type) {
+    // cURL uses HTTP methods; uploads here are multipart POST.
+    switch (type) {
+      case IsmLiveRequestType.get:
+        return 'GET';
+      case IsmLiveRequestType.post:
+        return 'POST';
+      case IsmLiveRequestType.put:
+        return 'PUT';
+      case IsmLiveRequestType.patch:
+        return 'PATCH';
+      case IsmLiveRequestType.delete:
+        return 'DELETE';
+      case IsmLiveRequestType.upload:
+        return 'POST';
+    }
+  }
+
+  static String? _stringifyBodyForCurl({
+    required dynamic payload,
+    required bool shouldEncodePayload,
+  }) {
+    if (payload == null) return null;
+    if (payload is String) return payload;
+
+    if (shouldEncodePayload) {
+      try {
+        return jsonEncode(payload);
+      } catch (_) {
+        // Fall back to a best-effort representation.
+      }
+    }
+
+    // Avoid crashes for binary bodies; keep logs useful but safe.
+    if (payload is List<int>) {
+      try {
+        return 'base64:${base64Encode(payload)}';
+      } catch (_) {
+        return 'binary(${payload.length} bytes)';
+      }
+    }
+
+    return payload.toString();
   }
 }
