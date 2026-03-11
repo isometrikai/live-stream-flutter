@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 /// Camera View Screen
 
@@ -182,12 +181,12 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    IsmLiveColors.black.withOpacity(.6),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.2),
-                    IsmLiveColors.black.withOpacity(.6),
+                    IsmLiveColors.black.withValues(alpha: .6),
+                    IsmLiveColors.black.withValues(alpha: .2),
+                    IsmLiveColors.black.withValues(alpha: .2),
+                    IsmLiveColors.black.withValues(alpha: .2),
+                    IsmLiveColors.black.withValues(alpha: .2),
+                    IsmLiveColors.black.withValues(alpha: .6),
                   ],
                 ),
               ),
@@ -206,14 +205,10 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                           height: IsmLiveDimens.forty,
                           width: IsmLiveDimens.forty,
                           alignment: Alignment.center,
-                          child: SvgPicture.asset(
-                            IsmLiveAssetConstants.backRounded,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 24,
-                            ),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 24,
                           ),
                         ),
                       ),
@@ -266,7 +261,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                       child: Container(
                         padding: IsmLiveDimens.edgeInsets4_8,
                         decoration: BoxDecoration(
-                          color: IsmLiveColors.white.withOpacity(.3),
+                          color: IsmLiveColors.white
+                              .withValues(alpha: .3),
                           borderRadius: BorderRadius.circular(
                             IsmLiveDimens.twelve,
                           ),
@@ -321,16 +317,10 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             height: IsmLiveDimens.thirtyFive,
                             width: IsmLiveDimens.thirtyFive,
                             alignment: Alignment.center,
-                            child: SvgPicture.asset(
-                              IsmLiveAssetConstants.galerryRoundedSvg,
-                              width: IsmLiveDimens.thirtyFive,
-                              height: IsmLiveDimens.thirtyFive,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Icon(
-                                Icons.photo_library,
-                                color: Colors.white,
-                                size: IsmLiveDimens.thirtyFive,
-                              ),
+                            child: Icon(
+                              Icons.photo_library,
+                              color: Colors.white,
+                              size: IsmLiveDimens.thirtyFive,
                             ),
                           ),
                         ),
@@ -524,17 +514,10 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                             child: SizedBox(
                               width: IsmLiveDimens.thirtyFive,
                               height: IsmLiveDimens.thirtyFive,
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                child: SvgPicture.asset(
-                                  IsmLiveAssetConstants.switchCameraSvg,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(
-                                    Icons.flip_camera_ios,
-                                    color: Colors.white,
-                                    size: IsmLiveDimens.thirtyFive,
-                                  ),
-                                ),
+                              child: Icon(
+                                Icons.flip_camera_ios,
+                                color: Colors.white,
+                                size: IsmLiveDimens.thirtyFive,
                               ),
                             ),
                           ),
@@ -546,7 +529,8 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                         margin: IsmLiveDimens.edgeInsets10_0,
                         padding: IsmLiveDimens.edgeInsets8_4,
                         decoration: BoxDecoration(
-                          color: IsmLiveColors.white.withOpacity(.3),
+                          color: IsmLiveColors.white
+                              .withValues(alpha: .3),
                           borderRadius: BorderRadius.circular(
                             IsmLiveDimens.twelve,
                           ),
