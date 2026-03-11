@@ -1,106 +1,274 @@
-import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'dart:async';
+
+import 'package:appscrip_live_stream_component/src/views/stream_recording/recording_video_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
-/// Wraps [VideoPlayer] with loading and error/retry UI.
-class IsmLiveStreamRecordingVideoWidget extends StatefulWidget {
-  const IsmLiveStreamRecordingVideoWidget({
+/// Auto-playing, visibility-aware video player for recordings.
+///
+/// This widget owns its [VideoPlayerController] via [RecordingVideoCacheManager]
+/// and exposes basic playback controls to the parent through its [State].
+class IsmLiveRecordingAutoVideoPlayer extends StatefulWidget {
+  const IsmLiveRecordingAutoVideoPlayer({
     super.key,
-    this.controller,
+    required this.url,
+    this.isMuted = false,
+    this.onProgress,
+    this.onCompleted,
   });
 
-  final VideoPlayerController? controller;
+  final String url;
+  final bool isMuted;
+  final void Function(Duration total, Duration position)? onProgress;
+  final VoidCallback? onCompleted;
+
+  /// Access the state from a [GlobalKey].
+  static _IsmLiveRecordingAutoVideoPlayerState? of(GlobalKey key) =>
+      key.currentState as _IsmLiveRecordingAutoVideoPlayerState?;
 
   @override
-  State<IsmLiveStreamRecordingVideoWidget> createState() =>
-      _IsmLiveStreamRecordingVideoWidgetState();
+  State<IsmLiveRecordingAutoVideoPlayer> createState() =>
+      _IsmLiveRecordingAutoVideoPlayerState();
 }
 
-class _IsmLiveStreamRecordingVideoWidgetState
-    extends State<IsmLiveStreamRecordingVideoWidget> {
-  @override
-  void didUpdateWidget(IsmLiveStreamRecordingVideoWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      widget.controller?.addListener(_listener);
-      oldWidget.controller?.removeListener(_listener);
-    }
-  }
+class _IsmLiveRecordingAutoVideoPlayerState
+    extends State<IsmLiveRecordingAutoVideoPlayer> {
+  final RecordingVideoCacheManager _cache = RecordingVideoCacheManager.instance;
+  VideoPlayerController? _controller;
+  bool _isInitializing = false;
+  bool _isVisible = false;
+  bool _isManuallyPaused = false;
+  bool _isDisposed = false;
+  int _lastProgressMillis = 0;
+  Timer? _stuckTimer;
+  int _recoveryAttempts = 0;
+  static const int _maxRecoveryAttempts = 5;
+
+  bool get isPlaying =>
+      _controller != null && _controller!.value.isPlaying == true;
+
+  Duration? get duration =>
+      _controller != null && _controller!.value.isInitialized
+          ? _controller!.value.duration
+          : null;
 
   @override
   void initState() {
     super.initState();
-    widget.controller?.addListener(_listener);
+    _initializeIfNeeded();
   }
 
-  void _listener() {
-    if (mounted) setState(() {});
+  @override
+  void didUpdateWidget(IsmLiveRecordingAutoVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      _initializeIfNeeded();
+    }
+    if (oldWidget.isMuted != widget.isMuted &&
+        _controller != null &&
+        _controller!.value.isInitialized) {
+      _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+    }
+  }
+
+  Future<void> _initializeIfNeeded() async {
+    if (_isInitializing || widget.url.isEmpty) return;
+    _isInitializing = true;
+    setState(() {});
+    try {
+      final controller = await _cache.getOrCreate(widget.url);
+      if (_isDisposed) {
+        await controller.dispose();
+        return;
+      }
+      _attachController(controller);
+      if (mounted) {
+        setState(() {});
+      }
+      if (_isVisible && !_isManuallyPaused) {
+        _playInternal();
+      }
+    } finally {
+      _isInitializing = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _attachController(VideoPlayerController controller) {
+    _controller?.removeListener(_handleProgress);
+    _controller = controller;
+    _controller!.addListener(_handleProgress);
+    _controller!.setLooping(true);
+    _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+  }
+
+  void _handleProgress() {
+    if (_isDisposed ||
+        _controller == null ||
+        !_controller!.value.isInitialized) {
+      return;
+    }
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final position = _controller!.value.position;
+    final total = _controller!.value.duration;
+
+    if (now - _lastProgressMillis >= 200) {
+      _lastProgressMillis = now;
+      widget.onProgress?.call(total, position);
+    }
+
+    // Detect completion with a small threshold.
+    if (total.inMilliseconds > 0 &&
+        (total.inMilliseconds - position.inMilliseconds).abs() <= 300) {
+      widget.onCompleted?.call();
+    }
+  }
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    if (_isDisposed) return;
+    final wasVisible = _isVisible;
+    _isVisible = info.visibleFraction > 0.5;
+
+    if (wasVisible == _isVisible) return;
+
+    if (_controller == null || !_controller!.value.isInitialized) {
+      if (_isVisible) {
+        _initializeIfNeeded();
+      }
+      return;
+    }
+
+    if (_isVisible && !_isManuallyPaused) {
+      _cache.markVisible(widget.url);
+      _playInternal();
+      _startStuckDetection();
+    } else {
+      _cache.markNotVisible(widget.url);
+      _controller!.pause();
+      _stopStuckDetection();
+    }
+  }
+
+  void _startStuckDetection() {
+    _stuckTimer?.cancel();
+    _recoveryAttempts = 0;
+    _stuckTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      _checkStuck();
+    });
+  }
+
+  void _stopStuckDetection() {
+    _stuckTimer?.cancel();
+    _stuckTimer = null;
+  }
+
+  Future<void> _checkStuck() async {
+    if (_isDisposed || !_isVisible || _isManuallyPaused) {
+      _stopStuckDetection();
+      return;
+    }
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return;
+    }
+    if (_controller!.value.isPlaying) {
+      _stopStuckDetection();
+      return;
+    }
+
+    _recoveryAttempts++;
+    _playInternal();
+    if (_recoveryAttempts >= _maxRecoveryAttempts) {
+      _stopStuckDetection();
+      await _cache.clear(widget.url);
+      _controller = null;
+      await _initializeIfNeeded();
+    }
+  }
+
+  void pause() {
+    if (_controller == null || !_controller!.value.isInitialized) return;
+    _isManuallyPaused = true;
+    _controller!.pause();
+  }
+
+  void play() {
+    _isManuallyPaused = false;
+    if (_isVisible) {
+      _playInternal();
+    }
+  }
+
+  Future<void> seekTo(Duration position) async {
+    if (_controller == null || !_controller!.value.isInitialized) return;
+    await _controller!.seekTo(position);
+  }
+
+  void _playInternal() {
+    if (_controller == null || !_controller!.value.isInitialized) return;
+    _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+    _controller!.play();
   }
 
   @override
   void dispose() {
-    widget.controller?.removeListener(_listener);
+    _isDisposed = true;
+    _stopStuckDetection();
+    _controller?.removeListener(_handleProgress);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = context.liveTheme?.backgroundColor ??
-        (isDarkMode ? const Color(0xFF121212) : Colors.black);
-    final fgColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.white);
+    final controller = _controller;
+    final isReady = controller != null && controller.value.isInitialized;
 
-    final controller = widget.controller;
-    if (controller == null) {
-      return ColoredBox(
-        color: bgColor,
-        child: Center(
-          child: CircularProgressIndicator(color: fgColor),
-        ),
-      );
-    }
-
-    if (controller.value.hasError) {
-      return ColoredBox(
-        color: bgColor,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.error_outline, color: fgColor, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                IsmLiveStrings.failedToLoadVideo,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: fgColor,
-                    ),
+    return VisibilityDetector(
+      key: Key('recording_video_${widget.url}'),
+      onVisibilityChanged: _onVisibilityChanged,
+      child: ColoredBox(
+        color: Colors.black,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (isReady)
+              _buildVideoContent(controller)
+            else
+              const Center(
+                child: CircularProgressIndicator(color: Colors.white),
               ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: controller.initialize,
-                child: const Text(IsmLiveStrings.retry),
-              ),
-            ],
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideoContent(VideoPlayerController controller) {
+    final size = controller.value.size;
+    final hasValidSize = size.width > 0 && size.height > 0;
+
+    if (!hasValidSize) {
+      return FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: size.width == 0 ? 1 : size.width,
+          height: size.height == 0 ? 1 : size.height,
+          child: VideoPlayer(controller),
         ),
       );
     }
 
-    if (!controller.value.isInitialized) {
-      return ColoredBox(
-        color: bgColor,
-        child: Center(
-          child: CircularProgressIndicator(color: fgColor),
-        ),
-      );
-    }
+    final isPortrait = size.height > size.width;
+    final fit = isPortrait ? BoxFit.cover : BoxFit.contain;
 
     return FittedBox(
-      fit: BoxFit.cover,
+      fit: fit,
       child: SizedBox(
-        width: controller.value.size.width,
-        height: controller.value.size.height,
+        width: size.width,
+        height: size.height,
         child: VideoPlayer(controller),
       ),
     );
