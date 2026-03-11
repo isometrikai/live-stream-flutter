@@ -2,7 +2,9 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_player/video_player.dart';
+
+import 'recording_video_cache_manager.dart';
+import 'widgets/video_player_widget.dart';
 
 /// Full-screen stream recording player with vertical swipe between recordings.
 ///
@@ -36,10 +38,12 @@ class IsmLiveStreamRecordingPlayerView extends StatefulWidget {
 class _IsmLiveStreamRecordingPlayerViewState
     extends State<IsmLiveStreamRecordingPlayerView> {
   late PageController _pageController;
-  VideoPlayerController? _videoController;
-  final Map<int, VideoPlayerController> _preloadedControllers = {};
   int _currentIndex = 0;
   bool _showOverlay = true;
+
+  final RecordingVideoCacheManager _cacheManager =
+      RecordingVideoCacheManager.instance;
+  final Map<int, GlobalKey> _pageKeys = {};
 
   IsmLiveStreamRecordingPlayerConfig get _config =>
       widget.config ??
@@ -54,119 +58,27 @@ class _IsmLiveStreamRecordingPlayerViewState
     super.initState();
     _pageController = PageController(initialPage: widget.initialIndex);
     _currentIndex = widget.initialIndex;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initCurrentPage());
-  }
-
-  Future<void> _initCurrentPage() async {
-    if (widget.recordings.isEmpty) return;
-    final recording = _currentRecording;
-    final urls = recording.recordedUrls;
-    if (urls.isEmpty) return;
-
-    final url = urls.first;
-    final oldController = _videoController;
-
-    // Use preloaded controller if it matches current page to avoid any loading flash.
-    final preloaded = _preloadedControllers[_currentIndex];
-    if (preloaded != null &&
-        preloaded.value.isInitialized &&
-        _urlForRecording(recording) == url) {
-      _preloadedControllers.remove(_currentIndex);
-      await oldController?.dispose();
-      _disposePreloadedExcept(null);
-      _videoController = preloaded;
-      if (mounted) {
-        setState(() {});
-        await _videoController!.play();
-      }
-      _preloadAdjacent();
-      _config.onLoaded?.call(context, recording);
-      return;
-    }
-
-    // Build new controller without clearing current — keeps previous video visible until new is ready (no blink).
-    final newController = VideoPlayerController.networkUrl(Uri.parse(url));
-    await newController.initialize();
-    if (!mounted) return;
-    await newController.play();
-    if (!mounted) return;
-
-    _videoController = newController;
-    if (mounted) setState(() {});
-    await oldController?.dispose();
-    _disposePreloadedExcept(null);
-    _preloadAdjacent();
-
-    _config.onLoaded?.call(context, recording);
-  }
-
-  static String? _urlForRecording(IsmLiveStreamRecordingItem r) {
-    final urls = r.recordedUrls;
-    return urls.isEmpty ? null : urls.first;
-  }
-
-  void _disposePreloadedExcept(int? keepIndex) {
-    for (final entry in _preloadedControllers.entries.toList()) {
-      if (entry.key != keepIndex) {
-        entry.value.dispose();
-        _preloadedControllers.remove(entry.key);
-      }
-    }
-  }
-
-  void _preloadAdjacent() {
-    final n = widget.recordings.length;
-    if (n == 0) return;
-    final nextIndex = _currentIndex + 1;
-    final prevIndex = _currentIndex - 1;
-    if (nextIndex < n && !_preloadedControllers.containsKey(nextIndex)) {
-      _preloadIndex(nextIndex);
-    }
-    if (prevIndex >= 0 && !_preloadedControllers.containsKey(prevIndex)) {
-      _preloadIndex(prevIndex);
-    }
-  }
-
-  Future<void> _preloadIndex(int index) async {
-    if (index < 0 || index >= widget.recordings.length) return;
-    final recording = widget.recordings[index];
-    final url = _urlForRecording(recording);
-    if (url == null) return;
-    try {
-      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
-      await controller.initialize();
-      if (!mounted) {
-        controller.dispose();
-        return;
-      }
-      _preloadedControllers[index] = controller;
-    } catch (_) {
-      // Ignore preload failures; page will load on demand.
-    }
-  }
-
-  Future<void> _disposeVideo() async {
-    await _videoController?.dispose();
-    _videoController = null;
-    for (final c in _preloadedControllers.values) {
-      await c.dispose();
-    }
-    _preloadedControllers.clear();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadAround(_currentIndex);
+      _config.onLoaded?.call(context, _currentRecording);
+    });
   }
 
   void _onPageChanged(int index) {
     if (index == _currentIndex) return;
     setState(() => _currentIndex = index);
-    // Defer init so the widget tree rebuilds with null controller before we dispose the old one.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initCurrentPage());
+    _preloadAround(index);
   }
 
   void _togglePlayPause() {
-    if (_videoController == null) return;
-    if (_videoController!.value.isPlaying) {
-      _videoController!.pause();
+    final key = _pageKeys[_currentIndex];
+    if (key == null) return;
+    final state = IsmLiveRecordingAutoVideoPlayer.of(key);
+    if (state == null) return;
+    if (state.isPlaying) {
+      state.pause();
     } else {
-      _videoController!.play();
+      state.play();
     }
     setState(() {});
   }
@@ -177,9 +89,30 @@ class _IsmLiveStreamRecordingPlayerViewState
 
   @override
   void dispose() {
-    _disposeVideo();
+    _cacheManager.clearAll();
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _preloadAround(int index) async {
+    if (widget.recordings.isEmpty) return;
+    final urls = <String>[];
+
+    void addUrlFor(int i) {
+      if (i < 0 || i >= widget.recordings.length) return;
+      final recording = widget.recordings[i];
+      final recorded = recording.recordedUrls;
+      if (recorded.isNotEmpty) {
+        urls.add(recorded.first);
+      }
+    }
+
+    addUrlFor(index);
+    addUrlFor(index + 1);
+    addUrlFor(index - 1);
+
+    await _cacheManager.precacheMedia(urls);
+    await _cacheManager.clearOutsideRange(urls);
   }
 
   @override
@@ -207,9 +140,11 @@ class _IsmLiveStreamRecordingPlayerViewState
               itemBuilder: (context, index) {
                 final recording = widget.recordings[index];
                 final isActive = index == _currentIndex;
+                _pageKeys[index] ??= GlobalKey();
                 return _RecordingPage(
                   recording: recording,
-                  videoController: isActive ? _videoController : null,
+                  isActive: isActive,
+                  playerKey: _pageKeys[index]!,
                   onTap: () {
                     setState(() => _showOverlay = !_showOverlay);
                   },
@@ -232,7 +167,7 @@ class _IsmLiveStreamRecordingPlayerViewState
                 right: 0,
                 bottom: 0,
                 child: IsmLiveStreamRecordingBottomControls(
-                  videoController: _videoController,
+                  videoController: null,
                   onPlayPause: _togglePlayPause,
                 ),
               ),
@@ -251,7 +186,12 @@ class _IsmLiveStreamRecordingPlayerViewState
                 child: GestureDetector(
                   onTap: _togglePlayPause,
                   child: IsmLiveStreamRecordingCenterPlayButton(
-                    isPlaying: _videoController?.value.isPlaying ?? false,
+                    isPlaying: _pageKeys[_currentIndex] != null
+                        ? (IsmLiveRecordingAutoVideoPlayer.of(
+                                    _pageKeys[_currentIndex]!)
+                                ?.isPlaying ??
+                            false)
+                        : false,
                   ),
                 ),
               ),
@@ -266,19 +206,24 @@ class _IsmLiveStreamRecordingPlayerViewState
 class _RecordingPage extends StatelessWidget {
   const _RecordingPage({
     required this.recording,
-    required this.videoController,
+    required this.isActive,
+    required this.playerKey,
     required this.onTap,
   });
 
   final IsmLiveStreamRecordingItem recording;
-  final VideoPlayerController? videoController;
+  final bool isActive;
+  final GlobalKey playerKey;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
-        child: IsmLiveStreamRecordingVideoWidget(
-          controller: videoController,
-        ),
+        child: isActive && recording.recordedUrls.isNotEmpty
+            ? IsmLiveRecordingAutoVideoPlayer(
+                key: playerKey,
+                url: recording.recordedUrls.first,
+              )
+            : const ColoredBox(color: Colors.black),
       );
 }
