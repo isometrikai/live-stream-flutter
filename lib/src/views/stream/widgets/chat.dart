@@ -141,12 +141,33 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                     isHost: widget.isHost,
                     backgroundColor: customBackgroundColor,
                     onTap: () {
-                      final openSheet = message.sentByHost
+                      // Any of these role flags being true means the user is not a "viewer"
+                      final isPrivilegedUser = controller.isHost ||
+                          controller.isModerator ||
+                          controller.isCopublisher ||
+                          controller.isMember;
+
+                      // Viewer: none of the role flags are true
+                      final isViewer = !isPrivilegedUser;
+
+                      // Existing restriction for host messages:
+                      // only privileged roles or members can act on host messages.
+                      final openSheetByMessageSource = message.sentByHost
                           ? (controller.isCopublisher ||
                               controller.isModerator ||
                               controller.isMember ||
                               controller.isHost)
                           : true;
+
+                      // New restriction:
+                      // - Plain viewers can only act on their own messages.
+                      // - Privileged users retain existing behavior.
+                      final openSheetByUserRole = isViewer
+                          ? message.sentByMe
+                          : true;
+
+                      final canOpenSheet =
+                          openSheetByMessageSource && openSheetByUserRole;
 
                       // Block actions for replies whose parent message is deleted
                       final hasDeletedParent = message.isReply &&
@@ -162,7 +183,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                       if (!message.isEvent &&
                           !message.isDeleted &&
                           !hasDeletedParent &&
-                          openSheet) {
+                          canOpenSheet) {
                         IsmLiveUtility.openBottomSheet(
                           ChatBottomSheet(
                             message: message,

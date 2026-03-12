@@ -637,8 +637,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       }
 
       // Close any open dialog before showing the stream ended dialog
-      // IsmLiveUtility.closeDialogIfOpen();
-
       IsmLiveUtility.popUntilStreamView();
 
       final message = _isHost.value
@@ -700,7 +698,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       }
 
       // Close any open dialog before showing the stream ended dialog
-      IsmLiveUtility.closeDialogIfOpen();
+      IsmLiveUtility.popUntilStreamView();
 
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'

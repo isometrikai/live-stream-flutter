@@ -765,6 +765,7 @@ class IsmLiveStreamController extends GetxController
       bytes = null;
       parentMessage = null;
       streamAnalytis = null;
+      hostDetails = null;
     }
 
     // Clear lists
