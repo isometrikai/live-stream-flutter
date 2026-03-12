@@ -375,9 +375,13 @@ class IsmLiveApp extends StatefulWidget {
     }
 
     IsmLiveUtility.updateLater(() async {
-      await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
-          stream, isHost,
-          context: context, isScrolling: isScrolling);
+      try {
+        await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
+            stream, isHost,
+            context: context, isScrolling: isScrolling);
+      } catch (e) {
+        IsmLiveLog.error('Error in initializeAndJoinStream: $e');
+      }
     });
   }
 

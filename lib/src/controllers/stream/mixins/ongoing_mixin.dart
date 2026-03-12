@@ -875,8 +875,9 @@ mixin StreamOngoingMixin {
     }
 
     try {
-      if (_controller.room?.connectionState !=
-          lk.ConnectionState.disconnected) {
+      if (_controller.room != null &&
+          _controller.room?.connectionState !=
+              lk.ConnectionState.disconnected) {
         await _controller.room?.disconnect();
       }
 

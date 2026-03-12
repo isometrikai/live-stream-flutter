@@ -385,9 +385,13 @@ class IsmLiveUtility {
   }
 
   static void popUntilStreamView() {
-    IsmLiveUtility.navigatorKey.currentState?.popUntil(
-      (route) => route.settings.name == IsmLiveStreamView.route,
-    );
+    try {
+      IsmLiveUtility.navigatorKey.currentState?.popUntil(
+        (route) => route.settings.name == IsmLiveStreamView.route,
+      );
+    } catch (e) {
+      IsmLiveLog.error('Error in popUntilStreamView: $e');
+    }
   }
 
   /// Close any open snackbar

@@ -16,6 +16,11 @@ class ChatBottomSheet extends StatelessWidget {
     final textColor = context.liveTheme?.primaryColor ??
         (isDarkMode ? Colors.white : Colors.black);
 
+    final isPrivilegedUser =
+        controller.isHost || controller.isModerator || controller.isCopublisher;
+
+    final canDelete = isPrivilegedUser || message.sentByMe;
+
     return Padding(
       padding: IsmLiveDimens.edgeInsets16_0_16_20,
       child: IsmLiveScrollSheet(
@@ -23,13 +28,7 @@ class ChatBottomSheet extends StatelessWidget {
         title: IsmLiveStrings.messageOptions,
         showHeader: false,
         showCancelIcon: true,
-        itemCount: (controller.isModerator ||
-                    controller.isHost ||
-                    controller.isMember ||
-                    message.sentByMe) &&
-                message.isReply == false
-            ? 2
-            : 1,
+        itemCount: !message.isReply && canDelete ? 2 : 1,
         itemBuilder: (context, index) {
           if (index == 0 && message.isReply == false) {
             // Reply item
@@ -56,7 +55,7 @@ class ChatBottomSheet extends StatelessWidget {
               ),
             );
           } else {
-            // Delete item
+            // Delete item (only when `canDelete` is true, controlled by itemCount)
             return IsmLiveTapHandler(
               onTap: () {
                 controller.deleteMessage(

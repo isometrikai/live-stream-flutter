@@ -369,7 +369,8 @@ mixin StreamJoinMixin {
         hdBroadcast: stream.hdBroadcast ?? false,
         isInteractive: isInteractive,
         context: context,
-        reJoin: reJoin);
+        reJoin: reJoin,
+        deferConnection: true);
   }
 
 // Start streaming
@@ -1059,9 +1060,9 @@ mixin StreamJoinMixin {
 
     _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
-          (timer) {
+      (timer) {
         try {
-          if(_controller == null) {
+          if (_controller == null) {
             timer.cancel();
             return;
           }
