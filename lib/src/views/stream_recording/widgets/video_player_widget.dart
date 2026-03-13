@@ -16,12 +16,15 @@ class IsmLiveRecordingAutoVideoPlayer extends StatefulWidget {
     this.isMuted = false,
     this.onProgress,
     this.onCompleted,
+    this.onControllerReady,
   });
 
   final String url;
   final bool isMuted;
   final void Function(Duration total, Duration position)? onProgress;
   final VoidCallback? onCompleted;
+   // Notifies when a controller is first attached (for overlays).
+  final void Function(VideoPlayerController controller)? onControllerReady;
 
   /// Access the state from a [GlobalKey].
   static _IsmLiveRecordingAutoVideoPlayerState? of(GlobalKey key) =>
@@ -52,6 +55,9 @@ class _IsmLiveRecordingAutoVideoPlayerState
       _controller != null && _controller!.value.isInitialized
           ? _controller!.value.duration
           : null;
+
+  /// Exposes the underlying controller for overlays (e.g. bottom bar seek/progress).
+  VideoPlayerController? get controller => _controller;
 
   @override
   void initState() {
@@ -103,6 +109,8 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _controller!.addListener(_handleProgress);
     _controller!.setLooping(true);
     _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+    // Inform parent that a usable controller is now available.
+    widget.onControllerReady?.call(_controller!);
   }
 
   void _handleProgress() {
