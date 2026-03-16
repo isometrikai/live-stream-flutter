@@ -142,7 +142,7 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                           mainAxisSpacing: IsmLiveDimens.eight,
                           crossAxisCount: 3,
                         ),
-                        itemBuilder: (_, index) {
+                        itemBuilder: (context, index) {
                           final gift = pkController
                               .localGift?[controller.giftType]?[index];
                           final giftCategory = pkController
@@ -151,6 +151,13 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             key: ValueKey(gift),
                             gift: gift!,
                             onTap: () {
+                              if (IsmLiveDelegate.giftClickCallback != null) {
+                                IsmLiveDelegate.giftClickCallback!(
+                                  context,
+                                  gift,
+                                );
+                              }
+
                               if (controller.giftcoinBalance <
                                       (gift.virtualCurrency ?? 0) &&
                                   !IsmLiveDelegate.enableFreeGift) {

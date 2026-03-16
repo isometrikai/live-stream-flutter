@@ -681,6 +681,26 @@ typedef BuyNowCallback = void Function();
 /// to the coins plan wallet screen.
 typedef AddCoinsClickCallback = void Function(BuildContext context);
 
+/// Callback for gift item click events in the gifts sheet.
+///
+/// This callback is triggered whenever a user taps on a gift in the gifts grid.
+///
+/// [context] - The BuildContext from the SDK UI.
+/// [gift] - The selected gift item.
+///
+/// This is a notification-style callback and **does not** override the default
+/// gift sending behavior. The SDK will continue to handle balance checks,
+/// dialogs, and sending the gift as usual.
+///
+/// Useful for:
+/// - Custom analytics for gift interactions
+/// - Logging or tracking user behavior
+/// - Triggering auxiliary UI in the host app
+typedef GiftClickCallback = void Function(
+  BuildContext context,
+  IsmLiveGiftsCategoryModel gift,
+);
+
 /// Callback for stream listing refresh events.
 ///
 /// This callback is triggered when stream listing data needs to be refreshed
@@ -909,6 +929,8 @@ class IsmLiveDelegate {
   static OnStreamScrollCallback? onStreamScrollCallback;
 
   static AddCoinsClickCallback? addCoinsClickCallback;
+
+  static GiftClickCallback? giftClickCallback;
 
   static BorderRadius? bottomSheetBorderRadius;
 

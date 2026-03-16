@@ -35,13 +35,18 @@ class CoinsPlansWalletView extends StatelessWidget {
             IsmLiveStrings.coinsWallet,
             style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: textColor,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
           ),
           iconTheme: IconThemeData(color: iconColor),
           leading: InkWell(
             onTap: IsmLiveRoute.pop,
-            child: Icon(Icons.arrow_back, color: iconColor),
+            child: Icon(Icons.arrow_back,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black),
           ),
         ),
         body: Padding(

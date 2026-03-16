@@ -27,10 +27,15 @@ class IsmLiveCoinTransactions extends StatelessWidget {
           IsmLiveStrings.coinTransactions,
           style: context.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: textColor,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
           ),
         ),
-        iconTheme: IconThemeData(color: textColor),
+        iconTheme: IconThemeData(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black),
       ),
       body: GetBuilder<CoinsPlansWalletController>(
         builder: (controller) => Column(

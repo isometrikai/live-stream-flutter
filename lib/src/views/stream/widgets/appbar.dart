@@ -40,7 +40,7 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                         Text(
                           'Add Coins',
                           style: IsmLiveStyles.black16.copyWith(
-                            color: context.liveTheme?.primaryColor ??
+                            color:
                                 (Theme.of(context).brightness == Brightness.dark
                                     ? Colors.white
                                     : Colors.black),
@@ -92,10 +92,9 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
           title: Text(
             title ?? IsmLiveStrings.title,
             style: IsmLiveStyles.blackBold16.copyWith(
-              color: context.liveTheme?.primaryColor ??
-                  (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black),
+              color: (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
             ),
           ),
         ),
