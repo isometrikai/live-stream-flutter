@@ -25,6 +25,8 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
     final userIdentifier = recording.userId ?? '';
     final description = '';
 
+    final shouldShowCart = IsmLiveDelegate.productStream ?? false;
+
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.paddingOf(context).top + 8,
@@ -55,6 +57,16 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
           IsmLiveDimens.boxWidth10,
           if (recording.recordViewCount > 0) ...[
             _RecordingViewCount(count: recording.recordViewCount),
+            IsmLiveDimens.boxWidth10,
+          ],
+          if (shouldShowCart) ...[
+            _RecordingCartIcon(
+              onTap: () => config.onControlOption?.call(
+                context,
+                IsmLiveStreamRecordingControlOption.navigateToCart,
+                recording,
+              ),
+            ),
             IsmLiveDimens.boxWidth10,
           ],
           const Spacer(),
@@ -108,45 +120,45 @@ class _RecordingProfileChip extends StatelessWidget {
         pillColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
     return IsmLiveTapHandler(
-        onTap: () async {
-          config.onControlOption?.call(
-            context,
-            IsmLiveStreamRecordingControlOption.openUserProfile,
-            recording,
-          );
-        },
-        child: Container(
-          width: IsmLiveDimens.hundredFourty,
-          decoration: BoxDecoration(
-            color: pillFillColor,
-            borderRadius: BorderRadius.circular(IsmLiveDimens.hundred),
-            border: Border.all(color: pillColor),
-          ),
-          padding: IsmLiveDimens.edgeInsets2,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IsmLiveImage.network(
-                imageUrl,
-                name: name,
-                isProfileImage: true,
-                height: IsmLiveDimens.forty,
-                width: IsmLiveDimens.forty,
-                border: Border.all(color: pillColor),
-              ),
-              IsmLiveDimens.boxWidth4,
-              SizedBox(
-                width: IsmLiveDimens.seventy,
-                child: Text(
-                  '@$name',
-                  style: IsmLiveStyles.white12.copyWith(color: textColor),
-                  maxLines: 1,
-                ),
-              ),
-            ],
-          ),
+      onTap: () async {
+        config.onControlOption?.call(
+          context,
+          IsmLiveStreamRecordingControlOption.openUserProfile,
+          recording,
+        );
+      },
+      child: Container(
+        width: IsmLiveDimens.hundredFourty,
+        decoration: BoxDecoration(
+          color: pillFillColor,
+          borderRadius: BorderRadius.circular(IsmLiveDimens.hundred),
+          border: Border.all(color: pillColor),
         ),
-      );
+        padding: IsmLiveDimens.edgeInsets2,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IsmLiveImage.network(
+              imageUrl,
+              name: name,
+              isProfileImage: true,
+              height: IsmLiveDimens.forty,
+              width: IsmLiveDimens.forty,
+              border: Border.all(color: pillColor),
+            ),
+            IsmLiveDimens.boxWidth4,
+            SizedBox(
+              width: IsmLiveDimens.seventy,
+              child: Text(
+                '@$name',
+                style: IsmLiveStyles.white12.copyWith(color: textColor),
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -188,4 +200,29 @@ class _RecordingViewCount extends StatelessWidget {
     if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
     return count.toString();
   }
+}
+
+class _RecordingCartIcon extends StatelessWidget {
+  const _RecordingCartIcon({
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => IsmLiveTapHandler(
+        onTap: onTap,
+        child: Container(
+          padding: IsmLiveDimens.edgeInsets4,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white24,
+          ),
+          child: Icon(
+            Icons.shopping_cart_rounded,
+            color: IsmLiveColors.white,
+            size: IsmLiveDimens.sixteen,
+          ),
+        ),
+      );
 }
