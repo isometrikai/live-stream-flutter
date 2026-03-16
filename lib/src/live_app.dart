@@ -227,6 +227,7 @@ class IsmLiveApp extends StatefulWidget {
     StreamListingRefreshCallback? streamListingRefreshCallback,
     OnStreamScrollCallback? onStreamScrollCallback,
     AddCoinsClickCallback? addCoinsClickCallback,
+    GiftClickCallback? giftClickCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     // New control customization options
@@ -310,6 +311,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
     IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
     IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
+    IsmLiveDelegate.giftClickCallback = giftClickCallback;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
     // Camera position preference for streams (suffix to avoid other camera screens)
     if (initialCameraPositionStream != null) {
