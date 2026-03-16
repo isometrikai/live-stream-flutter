@@ -363,7 +363,7 @@ class IsmLiveApp extends StatefulWidget {
   static Future<void> initializeAndJoinStream(
       {required IsmLiveStreamDataModel stream,
       required bool isHost,
-      required BuildContext context,
+      required BuildContext context, VoidCallback? onStreamEnd,
       bool isScrolling = false}) async {
     assert(
       _initialized,
@@ -378,7 +378,7 @@ class IsmLiveApp extends StatefulWidget {
       try {
         await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
             stream, isHost,
-            context: context, isScrolling: isScrolling);
+            context: context, isScrolling: isScrolling, onStreamEnd: onStreamEnd );
       } catch (e) {
         IsmLiveLog.error('Error in initializeAndJoinStream: $e');
       }

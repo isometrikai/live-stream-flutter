@@ -159,7 +159,7 @@ mixin StreamJoinMixin {
     bool joinByScrolling = false,
     bool isScrolling = false,
     required BuildContext context,
-    bool reJoin = false,
+    bool reJoin = false, VoidCallback? onStreamEnd,
   }) async {
     // Auto-detect rejoin scenario: if controller already has data for this stream
     // and we're not explicitly setting reJoin to false, treat it as rejoin
@@ -188,7 +188,7 @@ mixin StreamJoinMixin {
       joinByScrolling: joinByScrolling,
       isScrolling: isScrolling,
       context: context,
-      reJoin: reJoin,
+      reJoin: reJoin, onStreamEnd : onStreamEnd
     );
   }
 

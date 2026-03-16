@@ -126,6 +126,9 @@ class IsmLiveStreamRepository {
           'createdBy': user?.userId,
           'streamImage': streamModel.streamImage,
           'amount': streamModel.paymentAmount,
+          'metaData': {
+            'portrait': true, // for portrait
+          },
         },
         showLoader: true,
       );
