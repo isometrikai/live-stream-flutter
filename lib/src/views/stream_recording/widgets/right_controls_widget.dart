@@ -40,12 +40,12 @@ class IsmLiveStreamRecordingRightControls extends StatelessWidget {
           onTap: () => _handleOptionTap(
               context, IsmLiveStreamRecordingControlOption.product),
         ),
-        // IsmLiveDimens.boxHeight8,
-        // _ControlItem(
-        //   option: IsmLiveStreamOption.share,
-        //   onTap: () => _handleOptionTap(
-        //       context, IsmLiveStreamRecordingControlOption.share),
-        // ),
+        IsmLiveDimens.boxHeight8,
+        _ControlItem(
+          option: IsmLiveStreamOption.share,
+          onTap: () => _handleOptionTap(
+              context, IsmLiveStreamRecordingControlOption.share),
+        ),
         if (!isSelfStream) ...[
           IsmLiveDimens.boxHeight8,
           _ControlItem(
