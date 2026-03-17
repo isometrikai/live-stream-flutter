@@ -162,27 +162,25 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
                       // New restriction:
                       // - Plain viewers can only act on their own messages.
                       // - Privileged users retain existing behavior.
-                      final openSheetByUserRole = isViewer
-                          ? message.sentByMe
-                          : true;
+                      final openSheetByUserRole =
+                          isViewer ? message.sentByMe : true;
 
                       final canOpenSheet =
                           openSheetByMessageSource && openSheetByUserRole;
 
                       // Block actions for replies whose parent message is deleted
-                      final hasDeletedParent = message.isReply &&
-                          controller.streamMessagesList
-                              .cast<IsmLiveChatModel?>()
-                              .firstWhere(
-                                (e) => e?.messageId == message.parentId,
-                                orElse: () => null,
-                              )
-                              ?.isDeleted ==
-                              true;
+                      // final hasDeletedParent = message.isReply &&
+                      //     controller.streamMessagesList
+                      //         .cast<IsmLiveChatModel?>()
+                      //         .firstWhere(
+                      //           (e) => e?.messageId == message.parentId,
+                      //           orElse: () => null,
+                      //         )
+                      //         ?.isDeleted ==
+                      //         true;
 
                       if (!message.isEvent &&
                           !message.isDeleted &&
-                          !hasDeletedParent &&
                           canOpenSheet) {
                         IsmLiveUtility.openBottomSheet(
                           ChatBottomSheet(
