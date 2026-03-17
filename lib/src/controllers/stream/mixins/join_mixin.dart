@@ -161,6 +161,7 @@ mixin StreamJoinMixin {
     required BuildContext context,
     bool reJoin = false, VoidCallback? onStreamEnd,
   }) async {
+    final t0 = DateTime.now();
     // Auto-detect rejoin scenario: if controller already has data for this stream
     // and we're not explicitly setting reJoin to false, treat it as rejoin
     // Note: Don't check listener as it might be cleared during disposal
@@ -190,6 +191,8 @@ mixin StreamJoinMixin {
       context: context,
       reJoin: reJoin, onStreamEnd : onStreamEnd
     );
+    final ms = DateTime.now().difference(t0).inMilliseconds;
+    IsmLiveLog.info('[JoinFlow] initializeAndJoinStream (controller) done in ${ms}ms');
   }
 
   bool isScheduleStreamNotStartedYet(IsmLiveStreamDataModel stream) {
@@ -298,6 +301,7 @@ mixin StreamJoinMixin {
     required BuildContext context,
     bool reJoin = false,
   }) async {
+    final t0 = DateTime.now();
     // Handle scheduled stream not started yet here to avoid duplicate navigation during scrolling
     if (isScheduleStreamNotStartedYet(stream)) {
       startSeduleStream(
@@ -316,6 +320,8 @@ mixin StreamJoinMixin {
     var token = '';
     if (isHost) {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
+      final ms = DateTime.now().difference(t0).inMilliseconds;
+      IsmLiveLog.info('[JoinFlow] joinStream: token (host/secured) in ${ms}ms');
 
       if (token.trim().isEmpty) {
         await _controller.stopStream(
@@ -324,6 +330,8 @@ mixin StreamJoinMixin {
       }
     } else {
       var data = await _controller.getRTCToken(stream.streamId ?? '');
+      final ms = DateTime.now().difference(t0).inMilliseconds;
+      IsmLiveLog.info('[JoinFlow] joinStream: getRTCToken in ${ms}ms');
       if (data == null) {
         return;
       }
@@ -371,6 +379,8 @@ mixin StreamJoinMixin {
         context: context,
         reJoin: reJoin,
         deferConnection: true);
+    final joinMs = DateTime.now().difference(t0).inMilliseconds;
+    IsmLiveLog.info('[JoinFlow] joinStream total done in ${joinMs}ms');
   }
 
 // Start streaming
@@ -497,6 +507,7 @@ mixin StreamJoinMixin {
     // from `stream_view` after navigation for a smoother transition.
     bool deferConnection = false,
   }) async {
+    final t0 = DateTime.now();
     // Store token for background lifecycle / deferred connect flows
     _controller.rtcToken = token;
 
@@ -556,6 +567,8 @@ mixin StreamJoinMixin {
     } catch (e) {
       IsmLiveLog.error('MQTT subscription error: $e');
     }
+    final mqttMs = DateTime.now().difference(t0).inMilliseconds;
+    IsmLiveLog.info('[JoinFlow] connectStream: after MQTT in ${mqttMs}ms');
 
     // If we want a snappier transition for host-initiated streams,
     // defer the heavy LiveKit connection to `stream_view` and navigate now.
@@ -578,6 +591,10 @@ mixin StreamJoinMixin {
           streamId: streamId,
           isInteractive: isInteractive,
           reJoin: reJoin,
+        );
+        final deferMs = DateTime.now().difference(t0).inMilliseconds;
+        IsmLiveLog.info(
+          '[JoinFlow] connectStream: deferred path, goToStreamView done in ${deferMs}ms',
         );
         print(
             'initializeAndJoinStream (deferred): goToStreamView completed, connection will be finished from stream_view');
@@ -613,6 +630,8 @@ mixin StreamJoinMixin {
       performNavigation: !joinByScrolling,
       showLoader: true,
     );
+    final connectMs = DateTime.now().difference(t0).inMilliseconds;
+    IsmLiveLog.info('[JoinFlow] connectStream total done in ${connectMs}ms');
   }
 
   Future<void> _connectRoomAndInitialize({
@@ -640,6 +659,7 @@ mixin StreamJoinMixin {
     required bool performNavigation,
     bool showLoader = true,
   }) async {
+    final t0 = DateTime.now();
     var loaderShown = false;
     if (!joinByScrolling && showLoader) {
       // Show a generic loader; detailed user-facing message was already
@@ -717,6 +737,8 @@ mixin StreamJoinMixin {
         IsmLiveUtility.closeLoader();
         return;
       }
+      final roomConnectMs = DateTime.now().difference(t0).inMilliseconds;
+      IsmLiveLog.info('[JoinFlow] _connectRoomAndInitialize: room.connect in ${roomConnectMs}ms');
       print('initializeAndJoinStream 444444');
 
       // Set track subscription permissions
@@ -756,6 +778,8 @@ mixin StreamJoinMixin {
         IsmLiveUtility.closeLoader();
         loaderShown = false;
       }
+      final videoAudioMs = DateTime.now().difference(t0).inMilliseconds;
+      IsmLiveLog.info('[JoinFlow] _connectRoomAndInitialize: video/audio enabled in ${videoAudioMs}ms');
 
       // Wrap API calls in try-catch
       try {
@@ -774,6 +798,8 @@ mixin StreamJoinMixin {
       } catch (e) {
         IsmLiveLog.error('Stream members/viewer fetch error: $e');
       }
+      final membersMs = DateTime.now().difference(t0).inMilliseconds;
+      IsmLiveLog.info('[JoinFlow] _connectRoomAndInitialize: members/viewer fetch started at ${membersMs}ms');
 
       try {
         _controller.initializeStream(
@@ -804,6 +830,8 @@ mixin StreamJoinMixin {
         } catch (e) {
           IsmLiveLog.error('Gift pre-cache error: $e');
         }
+        final beforeNavMs = DateTime.now().difference(t0).inMilliseconds;
+        IsmLiveLog.info('[JoinFlow] _connectRoomAndInitialize: about to navigate at ${beforeNavMs}ms');
         print('initializeAndJoinStream 555555');
         try {
           print(
@@ -828,6 +856,10 @@ mixin StreamJoinMixin {
               isInteractive: isInteractive,
               reJoin: reJoin);
 
+          final totalConnectMs = DateTime.now().difference(t0).inMilliseconds;
+          IsmLiveLog.info(
+            '[JoinFlow] _connectRoomAndInitialize: SUCCESS total ${totalConnectMs}ms',
+          );
           print('initializeAndJoinStream: goToStreamView completed');
         } catch (e) {
           IsmLiveLog.error('Navigation error: $e');
@@ -870,6 +902,8 @@ mixin StreamJoinMixin {
       return;
     }
 
+    final t0 = DateTime.now();
+    IsmLiveLog.info('[JoinFlow] completeDeferredConnection started');
     final token = _controller.rtcToken!;
     final streamId = _controller.streamId!;
     final details = _controller.streamDetails;
@@ -906,6 +940,8 @@ mixin StreamJoinMixin {
       showLoader: false,
     );
 
+    final ms = DateTime.now().difference(t0).inMilliseconds;
+    IsmLiveLog.info('[JoinFlow] completeDeferredConnection done in ${ms}ms');
     _controller.pendingConnection = false;
   }
 
