@@ -27,6 +27,21 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
 
     final shouldShowCart = IsmLiveDelegate.productStream ?? false;
 
+    Widget buildControl(
+      IsmLiveStreamRecordingControlWidgetSlot slot,
+      Widget defaultChild, {
+      VoidCallback? onTap,
+    }) =>
+        config.controlWidgetBuilder?.call(
+          context,
+          slot,
+          recording,
+          config,
+          defaultChild,
+          onTap: onTap,
+        ) ??
+        defaultChild;
+
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.paddingOf(context).top + 8,
@@ -46,13 +61,23 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IsmLiveDimens.boxWidth10,
-          _RecordingProfileChip(
-            name: name,
-            imageUrl: imageUrl,
-            description: description,
-            userIdentifier: userIdentifier,
-            recording: recording,
-            config: config,
+          buildControl(
+            IsmLiveStreamRecordingControlWidgetSlot.topProfile,
+            _RecordingProfileChip(
+              name: name,
+              imageUrl: imageUrl,
+              description: description,
+              userIdentifier: userIdentifier,
+              recording: recording,
+              config: config,
+            ),
+            onTap: () {
+              config.onControlOption?.call(
+                context,
+                IsmLiveStreamRecordingControlOption.openUserProfile,
+                recording,
+              );
+            },
           ),
           IsmLiveDimens.boxWidth10,
           if (recording.recordViewCount > 0) ...[
@@ -60,7 +85,15 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
             IsmLiveDimens.boxWidth10,
           ],
           if (shouldShowCart) ...[
-            _RecordingCartIcon(
+            buildControl(
+              IsmLiveStreamRecordingControlWidgetSlot.topCart,
+              _RecordingCartIcon(
+                onTap: () => config.onControlOption?.call(
+                  context,
+                  IsmLiveStreamRecordingControlOption.navigateToCart,
+                  recording,
+                ),
+              ),
               onTap: () => config.onControlOption?.call(
                 context,
                 IsmLiveStreamRecordingControlOption.navigateToCart,
@@ -70,18 +103,22 @@ class IsmLiveStreamRecordingTopControls extends StatelessWidget {
             IsmLiveDimens.boxWidth10,
           ],
           const Spacer(),
-          SafeArea(
-            top: false,
-            child: IsmLiveTapHandler(
-              onTap: onClose,
-              child: Padding(
-                padding: IsmLiveDimens.edgeInsets10_0,
-                child: const Icon(
-                  Icons.close,
-                  color: IsmLiveColors.white,
+          buildControl(
+            IsmLiveStreamRecordingControlWidgetSlot.topClose,
+            SafeArea(
+              top: false,
+              child: IsmLiveTapHandler(
+                onTap: onClose,
+                child: Padding(
+                  padding: IsmLiveDimens.edgeInsets10_0,
+                  child: const Icon(
+                    Icons.close,
+                    color: IsmLiveColors.white,
+                  ),
                 ),
               ),
             ),
+            onTap: onClose,
           ),
         ],
       ),

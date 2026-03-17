@@ -365,41 +365,27 @@ class IsmLiveApp extends StatefulWidget {
   static Future<void> initializeAndJoinStream(
       {required IsmLiveStreamDataModel stream,
       required bool isHost,
-      required BuildContext context, VoidCallback? onStreamEnd,
+      required BuildContext context,
+      VoidCallback? onStreamEnd,
       bool isScrolling = false}) async {
     assert(
       _initialized,
       'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
     );
 
-    final flowStart = DateTime.now();
-    IsmLiveLog.info(
-      '[JoinFlow] started streamId=${stream.streamId} isHost=$isHost at ${flowStart.toIso8601String()}',
-    );
-
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
-      final ms = DateTime.now().difference(flowStart).inMilliseconds;
-      IsmLiveLog.info('[JoinFlow] binding registered in ${ms}ms');
     }
 
     IsmLiveUtility.updateLater(() async {
-      final updateLaterFired = DateTime.now();
-      final msToSchedule = updateLaterFired.difference(flowStart).inMilliseconds;
-      IsmLiveLog.info('[JoinFlow] updateLater fired at +${msToSchedule}ms');
       try {
         await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
             stream, isHost,
-            context: context, isScrolling: isScrolling, onStreamEnd: onStreamEnd);
-        final totalMs = DateTime.now().difference(flowStart).inMilliseconds;
-        IsmLiveLog.info(
-          '[JoinFlow] SUCCESS streamId=${stream.streamId} totalTime=${totalMs}ms',
-        );
+            context: context,
+            isScrolling: isScrolling,
+            onStreamEnd: onStreamEnd);
       } catch (e) {
-        final totalMs = DateTime.now().difference(flowStart).inMilliseconds;
-        IsmLiveLog.error(
-          '[JoinFlow] FAILED after ${totalMs}ms streamId=${stream.streamId}: $e',
-        );
+        IsmLiveLog.error('Error in initializeAndJoinStream: $e');
       }
     });
   }

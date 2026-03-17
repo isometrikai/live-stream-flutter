@@ -263,30 +263,50 @@ class _RecordingOverlay extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: IsmLiveStreamRecordingTopControls(
-              recording: recording,
-              config: config,
-              onClose: onClose,
-            ),
+            child: config.topControlsBuilder?.call(
+                  context,
+                  recording,
+                  config,
+                  onClose,
+                ) ??
+                IsmLiveStreamRecordingTopControls(
+                  recording: recording,
+                  config: config,
+                  onClose: onClose,
+                ),
           ),
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: IsmLiveStreamRecordingBottomControls(
-              videoController: videoController,
-              onPlayPause: onPlayPause,
-            ),
+            child: config.bottomControlsBuilder?.call(
+                  context,
+                  recording,
+                  config,
+                  videoController,
+                  onPlayPause,
+                ) ??
+                IsmLiveStreamRecordingBottomControls(
+                  recording: recording,
+                  config: config,
+                  videoController: videoController,
+                  onPlayPause: onPlayPause,
+                ),
           ),
           Positioned(
             right: 8,
             top: 0,
             bottom: 0,
             child: Center(
-              child: IsmLiveStreamRecordingRightControls(
-                config: config,
-                recording: recording,
-              ),
+              child: config.rightControlsBuilder?.call(
+                    context,
+                    recording,
+                    config,
+                  ) ??
+                  IsmLiveStreamRecordingRightControls(
+                    config: config,
+                    recording: recording,
+                  ),
             ),
           ),
           // Center play icon should only be visible when video is NOT playing.

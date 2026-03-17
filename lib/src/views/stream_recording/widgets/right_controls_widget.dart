@@ -31,27 +31,53 @@ class IsmLiveStreamRecordingRightControls extends StatelessWidget {
         streamerUserId.isNotEmpty &&
         currentUserId == streamerUserId;
 
+    Widget buildControl(
+      IsmLiveStreamRecordingControlWidgetSlot slot,
+      IsmLiveStreamOption option,
+      VoidCallback onTap,
+    ) {
+      final defaultChild = _ControlItem(option: option, onTap: onTap);
+      return config.controlWidgetBuilder?.call(
+            context,
+            slot,
+            recording,
+            config,
+            defaultChild,
+            onTap: onTap,
+          ) ??
+          defaultChild;
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _ControlItem(
-          option: IsmLiveStreamOption.product,
-          onTap: () => _handleOptionTap(
-              context, IsmLiveStreamRecordingControlOption.product),
+        buildControl(
+          IsmLiveStreamRecordingControlWidgetSlot.rightProduct,
+          IsmLiveStreamOption.product,
+          () => _handleOptionTap(
+            context,
+            IsmLiveStreamRecordingControlOption.product,
+          ),
         ),
         IsmLiveDimens.boxHeight8,
-        _ControlItem(
-          option: IsmLiveStreamOption.share,
-          onTap: () => _handleOptionTap(
-              context, IsmLiveStreamRecordingControlOption.share),
+        buildControl(
+          IsmLiveStreamRecordingControlWidgetSlot.rightShare,
+          IsmLiveStreamOption.share,
+          () => _handleOptionTap(
+            context,
+            IsmLiveStreamRecordingControlOption.share,
+          ),
         ),
         if (!isSelfStream) ...[
           IsmLiveDimens.boxHeight8,
-          _ControlItem(
-            option: IsmLiveStreamOption.settings,
-            onTap: () => _handleOptionTap(
-                context, IsmLiveStreamRecordingControlOption.settings),
+          buildControl(
+            IsmLiveStreamRecordingControlWidgetSlot.rightSettings,
+            IsmLiveStreamOption.settings,
+            () => _handleOptionTap(
+              context,
+              IsmLiveStreamRecordingControlOption.settings,
+            ),
           ),
         ],
       ],
