@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 // For e-commerce related delegates, see IsmLiveECommerceDelegate.
 
 /// Callback for product selection.
@@ -757,12 +758,70 @@ enum IsmLiveStreamRecordingControlOption {
   openUserProfile,
 }
 
+/// Slots in the Stream Recording Player UI that can be overridden by the host.
+///
+/// Use [IsmLiveStreamRecordingPlayerConfig.controlWidgetBuilder] to replace
+/// a specific widget while keeping the rest of the SDK layout intact.
+enum IsmLiveStreamRecordingControlWidgetSlot {
+  // Top controls
+  topProfile,
+  topCart,
+  topClose,
+
+  // Right controls
+  rightProduct,
+  rightShare,
+  rightSettings,
+
+  // Bottom controls
+  bottomPlayPause,
+  bottomSeekBar,
+  bottomDuration,
+}
+
 /// Called when the user triggers a control action in the recording player.
 /// [option] identifies the action (product, share, delete, etc.).
 typedef IsmLiveStreamRecordingControlOptionCallback = void Function(
   BuildContext context,
   IsmLiveStreamRecordingControlOption option,
   IsmLiveStreamRecordingItem recording,
+);
+
+/// Builder that can override specific widgets in the Stream Recording Player.
+///
+/// Return `null` to keep [defaultChild].
+typedef IsmLiveStreamRecordingControlWidgetBuilder = Widget? Function(
+  BuildContext context,
+  IsmLiveStreamRecordingControlWidgetSlot slot,
+  IsmLiveStreamRecordingItem recording,
+  IsmLiveStreamRecordingPlayerConfig config,
+  Widget defaultChild, {
+  VoidCallback? onTap,
+  VideoPlayerController? videoController,
+});
+
+/// Builder for the top controls in the Stream Recording Player.
+typedef IsmLiveStreamRecordingTopControlsBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamRecordingItem recording,
+  IsmLiveStreamRecordingPlayerConfig config,
+  VoidCallback onClose,
+);
+
+/// Builder for the bottom controls in the Stream Recording Player.
+typedef IsmLiveStreamRecordingBottomControlsBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamRecordingItem recording,
+  IsmLiveStreamRecordingPlayerConfig config,
+  VideoPlayerController? videoController,
+  VoidCallback onPlayPause,
+);
+
+/// Builder for the right controls in the Stream Recording Player.
+typedef IsmLiveStreamRecordingRightControlsBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamRecordingItem recording,
+  IsmLiveStreamRecordingPlayerConfig config,
 );
 
 /// Configuration for the Stream Recording Player.
@@ -774,6 +833,10 @@ class IsmLiveStreamRecordingPlayerConfig {
     this.getCurrentUserId,
     this.onLoaded,
     this.onControlOption,
+    this.controlWidgetBuilder,
+    this.topControlsBuilder,
+    this.bottomControlsBuilder,
+    this.rightControlsBuilder,
   });
 
   /// Optional. For "my stream" vs others.
@@ -786,6 +849,19 @@ class IsmLiveStreamRecordingPlayerConfig {
   /// Optional. Single handler for control option taps (product, share, settings,
   /// deleteStream, reportStream, navigateToCart, navigateToSocialPost, openUserProfile).
   final IsmLiveStreamRecordingControlOptionCallback? onControlOption;
+
+  /// Optional. Override individual control widgets (top/bottom/right) without
+  /// replacing the whole controls widget.
+  final IsmLiveStreamRecordingControlWidgetBuilder? controlWidgetBuilder;
+
+  /// Optional. If provided, replaces [IsmLiveStreamRecordingTopControls] widget.
+  final IsmLiveStreamRecordingTopControlsBuilder? topControlsBuilder;
+
+  /// Optional. If provided, replaces [IsmLiveStreamRecordingBottomControls] widget.
+  final IsmLiveStreamRecordingBottomControlsBuilder? bottomControlsBuilder;
+
+  /// Optional. If provided, replaces [IsmLiveStreamRecordingRightControls] widget.
+  final IsmLiveStreamRecordingRightControlsBuilder? rightControlsBuilder;
 }
 
 class IsmLiveDelegate {

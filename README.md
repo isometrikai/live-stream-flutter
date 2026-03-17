@@ -280,6 +280,104 @@ IsmLiveApp.configureInterface(
 
 ---
 
+## Stream Recording Player Customization
+
+The SDK includes a full-screen **Stream Recording Player** (`IsmLiveStreamRecordingPlayerView`) with top/bottom/right controls. Customize recording-related behavior and UI via `IsmLiveStreamRecordingPlayerConfig` (set it using `IsmLiveApp.configureInterface()`).
+
+### Configure recording callbacks
+
+```dart
+IsmLiveApp.configureInterface(
+  streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+    getCurrentUserId: () => myAuth.userId,
+    onLoaded: (context, recording) async {
+      // Called when a recording becomes visible (initial open and after swipe).
+      // Use this for host-side APIs: view count, fetch products, analytics, etc.
+    },
+    onControlOption: (context, option, recording) {
+      // Handle control actions from the recording player.
+      // Example: product/share/settings/delete/report/cart/profile.
+    },
+  ),
+);
+```
+
+### Replace the entire controls widgets (top / bottom / right)
+
+Provide builders to fully replace the SDK default controls. If a builder is `null`, the SDK falls back to the default widgets:
+`IsmLiveStreamRecordingTopControls`, `IsmLiveStreamRecordingBottomControls`, `IsmLiveStreamRecordingRightControls`.
+
+```dart
+IsmLiveApp.configureInterface(
+  streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+    topControlsBuilder: (context, recording, config, onClose) {
+      return MyRecordingTopControls(
+        recording: recording,
+        onClose: onClose,
+      );
+    },
+    bottomControlsBuilder:
+        (context, recording, config, videoController, onPlayPause) {
+      return MyRecordingBottomControls(
+        controller: videoController,
+        onPlayPause: onPlayPause,
+        recording: recording,
+      );
+    },
+    rightControlsBuilder: (context, recording, config) {
+      return MyRecordingRightControls(recording: recording);
+    },
+  ),
+);
+```
+
+**Notes**
+- **Best practice**: keep recording-player customization inside `IsmLiveStreamRecordingPlayerConfig` (isolated from live-stream UI).
+- Builders are invoked per visible recording page; keep them lightweight and rely on your own state-management if needed.
+
+### Replace a specific control widget (fine-grained overrides)
+
+If you only need to customize a single control (for example, swap the Share button on the right rail, or replace the play/pause button), use `controlWidgetBuilder`. Return `null` to keep the SDK default widget.
+
+```dart
+IsmLiveApp.configureInterface(
+  streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+    controlWidgetBuilder: (
+      context,
+      slot,
+      recording,
+      config,
+      defaultChild, {
+      onTap,
+      videoController,
+    }) {
+      if (slot == IsmLiveStreamRecordingControlWidgetSlot.rightShare) {
+        return IconButton(
+          icon: const Icon(Icons.ios_share, color: Colors.white),
+          onPressed: onTap,
+        );
+      }
+
+      if (slot == IsmLiveStreamRecordingControlWidgetSlot.bottomPlayPause) {
+        final isPlaying = videoController?.value.isPlaying ?? false;
+        return IconButton(
+          icon: Icon(
+            isPlaying ? Icons.pause_circle : Icons.play_circle,
+            color: Colors.white,
+            size: 32,
+          ),
+          onPressed: onTap,
+        );
+      }
+
+      return null; // keep SDK default for all other slots
+    },
+  ),
+);
+```
+
+---
+
 ## Dark Mode Support
 
 The SDK provides comprehensive dark mode support that seamlessly integrates with Flutter's Material Theme system. All UI components automatically adapt to light and dark themes, providing a consistent user experience.

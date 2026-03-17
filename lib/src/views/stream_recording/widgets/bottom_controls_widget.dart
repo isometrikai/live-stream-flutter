@@ -1,3 +1,4 @@
+import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -5,10 +6,14 @@ import 'package:video_player/video_player.dart';
 class IsmLiveStreamRecordingBottomControls extends StatefulWidget {
   const IsmLiveStreamRecordingBottomControls({
     super.key,
+    required this.recording,
+    required this.config,
     required this.videoController,
     required this.onPlayPause,
   });
 
+  final IsmLiveStreamRecordingItem recording;
+  final IsmLiveStreamRecordingPlayerConfig config;
   final VideoPlayerController? videoController;
   final VoidCallback onPlayPause;
 
@@ -52,6 +57,22 @@ class _IsmLiveStreamRecordingBottomControlsState
     final position = controller?.value.position ?? Duration.zero;
     final duration = controller?.value.duration ?? Duration.zero;
 
+    Widget buildControl(
+      IsmLiveStreamRecordingControlWidgetSlot slot,
+      Widget defaultChild, {
+      VoidCallback? onTap,
+    }) =>
+        widget.config.controlWidgetBuilder?.call(
+          context,
+          slot,
+          widget.recording,
+          widget.config,
+          defaultChild,
+          onTap: onTap,
+          videoController: controller,
+        ) ??
+        defaultChild;
+
     return Container(
       padding: EdgeInsets.only(
         left: 12,
@@ -72,38 +93,48 @@ class _IsmLiveStreamRecordingBottomControlsState
         children: [
           Row(
             children: [
-              IconButton(
-                icon: Icon(
-                  controller?.value.isPlaying == true
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  color: iconColor,
+              buildControl(
+                IsmLiveStreamRecordingControlWidgetSlot.bottomPlayPause,
+                IconButton(
+                  icon: Icon(
+                    controller?.value.isPlaying == true
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded,
+                    color: iconColor,
+                  ),
+                  onPressed: widget.onPlayPause,
                 ),
-                onPressed: widget.onPlayPause,
+                onTap: widget.onPlayPause,
               ),
               Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: Colors.white,
-                    inactiveTrackColor: Colors.white38,
-                    thumbColor: Colors.white,
-                  ),
-                  child: Slider(
-                    value: position.inMilliseconds.toDouble(),
-                    max: duration.inMilliseconds > 0
-                        ? duration.inMilliseconds.toDouble()
-                        : 1,
-                    onChanged: (v) {
-                      controller?.seekTo(
-                        Duration(milliseconds: v.round()),
-                      );
-                    },
+                child: buildControl(
+                  IsmLiveStreamRecordingControlWidgetSlot.bottomSeekBar,
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.white,
+                      inactiveTrackColor: Colors.white38,
+                      thumbColor: Colors.white,
+                    ),
+                    child: Slider(
+                      value: position.inMilliseconds.toDouble(),
+                      max: duration.inMilliseconds > 0
+                          ? duration.inMilliseconds.toDouble()
+                          : 1,
+                      onChanged: (v) {
+                        controller?.seekTo(
+                          Duration(milliseconds: v.round()),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-              Text(
-                '${_formatDuration(position)} / ${_formatDuration(duration)}',
-                style: theme.textTheme.bodySmall?.copyWith(color: iconColor),
+              buildControl(
+                IsmLiveStreamRecordingControlWidgetSlot.bottomDuration,
+                Text(
+                  '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                  style: theme.textTheme.bodySmall?.copyWith(color: iconColor),
+                ),
               ),
             ],
           ),
