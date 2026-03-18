@@ -1,6 +1,7 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
+import 'package:appscrip_live_stream_component/src/views/stream/widgets/stream_listing_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mqtt_helper/mqtt_helper.dart';
@@ -802,7 +803,7 @@ class _IsmLiveAppState extends State<IsmLiveApp> {
               child: const IsmLiveStreamListing(),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const IsmLiveStreamListingShimmer();
         },
       );
 }

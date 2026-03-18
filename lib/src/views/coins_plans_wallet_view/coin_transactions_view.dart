@@ -22,6 +22,10 @@ class IsmLiveCoinTransactions extends StatelessWidget {
       backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: bgColor,
+        leading: const BackButton(
+          color: Colors.black,
+          onPressed: IsmLiveRoute.pop,
+        ),
         centerTitle: true,
         title: Text(
           IsmLiveStrings.coinTransactions,

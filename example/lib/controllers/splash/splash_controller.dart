@@ -16,8 +16,14 @@ class SplashController extends GetxController {
   }
 
   var isLoggedIn = false;
+  bool _didStart = false;
 
   void startOnInit(BuildContext context) async {
+    if (_didStart) {
+      return;
+    }
+    _didStart = true;
+
     isLoggedIn = dbWrapper.getBoolValue(LocalKeys.isLoggedIn);
     if (isLoggedIn) {
       RouteManagement.goToHome(context);
