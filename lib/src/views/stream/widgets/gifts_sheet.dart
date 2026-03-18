@@ -151,13 +151,6 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             key: ValueKey(gift),
                             gift: gift!,
                             onTap: () {
-                              if (IsmLiveDelegate.giftClickCallback != null) {
-                                IsmLiveDelegate.giftClickCallback!(
-                                  context,
-                                  gift,
-                                );
-                              }
-
                               if (controller.giftcoinBalance <
                                       (gift.virtualCurrency ?? 0) &&
                                   !IsmLiveDelegate.enableFreeGift) {
@@ -181,6 +174,14 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                               }
 
                               IsmLiveRoute.pop();
+
+                              if (IsmLiveDelegate.giftClickCallback != null) {
+                                IsmLiveDelegate.giftClickCallback!(
+                                  context,
+                                  gift,
+                                );
+                                return;
+                              }
 
                               if (giftCategory.giftTitle == '3D') {
                                 onTap(gift);
