@@ -16,6 +16,7 @@ class HomeController extends GetxController {
   late String userType;
 
   late IsmLiveConfigData configData;
+  bool _isLoggingOut = false;
 
   @override
   Future<void> onInit() async {
@@ -345,6 +346,20 @@ class HomeController extends GetxController {
   }
 
   void logout(BuildContext context) async {
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+
+    // Reset live-stream component singletons/controllers (otherwise previous
+    // user state can remain in memory after logout).
+    //
+    // Important: dispose() triggers the package onLogout callback. In this
+    // example, onLogout is wired to call this same method, so we pass a noop
+    // callback to avoid re-entrant navigation loops.
+    await IsmLiveApp.dispose(isLoading: false, logoutCallback: () {});
+
+    // Ensure next login doesn't reuse the previous user's config.
+    kConfigData.value = null;
+
     dbWrapper.deleteBox();
 
     await dbWrapper.deleteAllSecuredValues();

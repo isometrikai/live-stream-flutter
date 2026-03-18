@@ -12,10 +12,12 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<SplashController>(
-        builder: (controller) {
+        initState: (state) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            controller.startOnInit(context);
+            state.controller?.startOnInit(context);
           });
+        },
+        builder: (controller) {
           return const Scaffold(
             body: Center(
               child: Hero(
