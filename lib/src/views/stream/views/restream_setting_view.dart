@@ -15,7 +15,7 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: context.liveTheme?.backgroundColor ??
           (isDarkMode ? const Color(0xFF121212) : Colors.white),
@@ -25,95 +25,93 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
         title: Text(
           type.label,
           style: context.textTheme.titleMedium?.copyWith(
-            color: context.liveTheme?.primaryColor ??
-                (isDarkMode ? Colors.white : Colors.black),
+            color: isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         centerTitle: true,
         iconTheme: IconThemeData(
-          color: context.liveTheme?.primaryColor ??
-              (isDarkMode ? Colors.white : Colors.black),
+          color: isDarkMode ? Colors.white : Colors.black,
         ),
       ),
       body: GetBuilder<IsmLiveStreamController>(
-          id: updateId,
-          initState: (state) {
-            var contr = Get.find<IsmLiveStreamController>();
-            
-            // Find existing channel matching the type
-            final existingChannel = contr.restreamChannels
-                .cast<dynamic>()
-                .firstWhere(
-                  (element) => element.channelType == type.value,
-                  orElse: () => null,
-                );
-            
-            if (existingChannel != null) {
-              var lastSlashIndex = existingChannel.ingestUrl?.lastIndexOf('/') ?? 0;
+        id: updateId,
+        initState: (state) {
+          var contr = Get.find<IsmLiveStreamController>();
 
-              contr.rtmlUrl.text =
-                  existingChannel.ingestUrl?.substring(0, lastSlashIndex) ?? '';
-              contr.streamKey.text =
-                  existingChannel.ingestUrl?.substring(lastSlashIndex + 1) ?? '';
-            }
-          },
-          builder: (controller) => Padding(
-            padding: IsmLiveDimens.edgeInsets16_8,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IsmLiveRestreamLinkTile(type),
-                  IsmLiveDimens.boxHeight10,
-                  IsmLiveRadioListTile(
-                    title: '${IsmLiveStrings.enableStreamOn} ${type.label}',
-                    isDark: isDarkMode,
-                    onChange: (value) =>
-                        controller.onChangeRestreamType(type, value),
-                    value: controller.isRestreamType(type),
+          // Find existing channel matching the type
+          final existingChannel =
+              contr.restreamChannels.cast<dynamic>().firstWhere(
+                    (element) => element.channelType == type.value,
+                    orElse: () => null,
+                  );
+
+          if (existingChannel != null) {
+            var lastSlashIndex =
+                existingChannel.ingestUrl?.lastIndexOf('/') ?? 0;
+
+            contr.rtmlUrl.text =
+                existingChannel.ingestUrl?.substring(0, lastSlashIndex) ?? '';
+            contr.streamKey.text =
+                existingChannel.ingestUrl?.substring(lastSlashIndex + 1) ?? '';
+          }
+        },
+        builder: (controller) => Padding(
+          padding: IsmLiveDimens.edgeInsets16_8,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IsmLiveRestreamLinkTile(type),
+                IsmLiveDimens.boxHeight10,
+                IsmLiveRadioListTile(
+                  title: '${IsmLiveStrings.enableStreamOn} ${type.label}',
+                  isDark: isDarkMode,
+                  onChange: (value) =>
+                      controller.onChangeRestreamType(type, value),
+                  value: controller.isRestreamType(type),
+                ),
+                IsmLiveDimens.boxHeight8,
+                if (controller.isRestreamType(type)) ...[
+                  _InputField(
+                    label: IsmLiveStrings.rtmlUrl,
+                    controller: controller.rtmlUrl,
+                  ),
+                  IsmLiveDimens.boxHeight16,
+                  _InputField(
+                    label: IsmLiveStrings.streamKey,
+                    controller: controller.streamKey,
                   ),
                   IsmLiveDimens.boxHeight8,
-                  if (controller.isRestreamType(type)) ...[
-                    _InputField(
-                      label: IsmLiveStrings.rtmlUrl,
-                      controller: controller.rtmlUrl,
-                    ),
-                    IsmLiveDimens.boxHeight16,
-                    _InputField(
-                      label: IsmLiveStrings.streamKey,
-                      controller: controller.streamKey,
-                    ),
-                    IsmLiveDimens.boxHeight8,
-                    Text.rich(
-                      TextSpan(
-                        text: IsmLiveStrings.youtubeStreamUrlInstruction,
-                        style: TextStyle(
-                          color: context.liveTheme?.unselectedTextColor ??
-                              (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
-                        ),
-                        children: [
-                          TextSpan(
-                            text: IsmLiveStrings.clickHereToKnowMore,
-                            style: TextStyle(
-                              color: context.liveTheme?.primaryColor ??
-                                  (isDarkMode
-                                      ? Colors.lightBlue[300]
-                                      : Colors.blue),
-                            ),
-                          ),
-                        ],
-                      ),
-                      style: context.textTheme.labelMedium?.copyWith(
+                  Text.rich(
+                    TextSpan(
+                      text: IsmLiveStrings.youtubeStreamUrlInstruction,
+                      style: TextStyle(
                         color: context.liveTheme?.unselectedTextColor ??
                             (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
                       ),
+                      children: [
+                        TextSpan(
+                          text: IsmLiveStrings.clickHereToKnowMore,
+                          style: TextStyle(
+                            color: context.liveTheme?.primaryColor ??
+                                (isDarkMode
+                                    ? Colors.lightBlue[300]
+                                    : Colors.blue),
+                          ),
+                        ),
+                      ],
                     ),
-                  ]
-                ],
-              ),
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: context.liveTheme?.unselectedTextColor ??
+                          (isDarkMode ? Colors.grey[400] : Colors.grey[600]),
+                    ),
+                  ),
+                ]
+              ],
             ),
           ),
         ),
+      ),
       bottomNavigationBar: Container(
         color: context.liveTheme?.backgroundColor ??
             (isDarkMode ? const Color(0xFF121212) : Colors.white),
@@ -122,15 +120,14 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
           label: IsmLiveStrings.save,
           onTap: () {
             var contr = Get.find<IsmLiveStreamController>();
-            
+
             // Find existing channel matching the type, if any
-            final existingChannel = contr.restreamChannels
-                .cast<dynamic>()
-                .firstWhere(
-                  (element) => element.channelType == type.value,
-                  orElse: () => null,
-                );
-            
+            final existingChannel =
+                contr.restreamChannels.cast<dynamic>().firstWhere(
+                      (element) => element.channelType == type.value,
+                      orElse: () => null,
+                    );
+
             contr.onSaveRestreamSettings(
               channelName: type.label,
               channeltype: type.value,
@@ -161,7 +158,7 @@ class _InputField extends StatelessWidget {
         : label == IsmLiveStrings.streamKey
             ? IsmLiveStrings.enterStreamKey
             : 'Enter $label';
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -80,6 +80,108 @@ class IsmLiveApp extends StatefulWidget {
     return Get.find<IsmLiveStreamController>();
   }
 
+  /// Returns all supported restream platform types.
+  ///
+  /// Host apps can use this helper to render channel options in their own UI.
+  static List<IsmLiveRestreamType> getSupportedRestreamTypes() =>
+      List<IsmLiveRestreamType>.unmodifiable(IsmLiveRestreamType.values);
+
+  /// Fetches the list of configured restream channels for the current user.
+  ///
+  /// This is a convenience wrapper around the internal `StreamViewModel`
+  /// implementation so that host apps can directly access the SDK's
+  /// configured restream destinations.
+  ///
+  /// Returns an empty list if the request fails.
+  static Future<List<IsmLiveReStreamModel>> getRestreamChannels() async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.getRestreamChannels();
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.getRestreamChannels failed: $e\n$stack');
+      return <IsmLiveReStreamModel>[];
+    }
+  }
+
+  /// Adds or updates a restream channel configuration for the current user.
+  ///
+  /// This delegates to the internal `StreamViewModel.addRestreamChannel`
+  /// implementation and returns the raw `data` string from the API response.
+  /// Returns an empty string if the request fails.
+  static Future<String> addRestreamChannel({
+    required String url,
+    required String channelName,
+    required int channelType,
+    required bool enable,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.addRestreamChannel(
+        url: url,
+        channelName: channelName,
+        channelType: channelType,
+        enable: enable,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.addRestreamChannel failed: $e\n$stack');
+      return '';
+    }
+  }
+
+  /// Edits an existing restream channel configuration for the current user.
+  ///
+  /// This delegates to the internal `StreamViewModel.editRestreamChannel`
+  /// implementation and returns `true` when the API call succeeds.
+  /// Returns `false` if the request fails.
+  static Future<bool> editRestreamChannel({
+    required String url,
+    required String channelId,
+    required String channelName,
+    required int channelType,
+    required bool enable,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.editRestreamChannel(
+        url: url,
+        channelId: channelId,
+        channelName: channelName,
+        channelType: channelType,
+        enable: enable,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.editRestreamChannel failed: $e\n$stack');
+      return false;
+    }
+  }
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
