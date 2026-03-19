@@ -813,7 +813,7 @@ mixin StreamAPIMixin {
       for (var i in res) {
         _controller.onChangeRestreamType(
           IsmLiveRestreamType.channelType(i.channelType ?? -1),
-          true,
+          i.enabled ?? false,
         );
       }
     }
