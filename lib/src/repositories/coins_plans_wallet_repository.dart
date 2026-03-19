@@ -11,7 +11,7 @@ class CoinsPlansWalletRepository {
   }) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.getCurrencyPlans,
-        baseUrl: IsmLiveApis.baseUrlWallet,
+        baseUrl: IsmLiveApis.baseUrlAsPerMode,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoader,
@@ -22,7 +22,7 @@ class CoinsPlansWalletRepository {
           {required Map<String, dynamic> data, required}) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.purchaseCoinsPlans,
-        baseUrl: IsmLiveApis.baseUrlStream,
+        baseUrl: IsmLiveApis.baseUrlAsPerMode,
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: data,
@@ -35,7 +35,7 @@ class CoinsPlansWalletRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchCoins}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlWallet,
+      baseUrl: IsmLiveApis.baseUrlAsPerMode,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: false,
@@ -57,7 +57,7 @@ class CoinsPlansWalletRepository {
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchTransactions}?${payload.makeQuery()}',
-      baseUrl: IsmLiveApis.baseUrlWallet,
+      baseUrl: IsmLiveApis.baseUrlAsPerMode,
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: true,
