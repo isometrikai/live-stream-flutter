@@ -241,12 +241,8 @@ class _GiftItem extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IsmLiveImage.svg(
+                    const IsmLiveImage.svg(
                       IsmLiveAssetConstants.coinSvg,
-                      color: context.liveTheme?.primaryColor ??
-                          (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black),
                     ),
                     IsmLiveDimens.boxWidth4,
                     Text(

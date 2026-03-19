@@ -22,16 +22,6 @@ class AppConstants {
   static const String projectId = '0113c44d-86d3-423d-b92a-1be6511f7b8f';
   static const String licenseKey = 'lic-IMK/+mao5KikRmifcmkjavAZa4vGnIwiRTz';
 
-  // static const String licenseKey = 'lic-IMKPioj9hM3hMCh5eoeRC+d+l2TuxWOyPK3';
-  // static const String keySetId = '40063abb-5af1-4fd4-a7f0-adc4767810b1';
-  // static const String projectId = 'e1241039-2fef-4830-b927-5bb3424f1764';
-  // static const String accountId = '5eb3db9ba9252000014f82ff';
-
-  // static const String appSecret =
-  //     'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgAyRZTfiQE.Cd8oTBl0_bylLMQ45YXxUYqyIhbxstGEwCRIgLlQC3Y';
-  // static const String userSecret =
-  //     'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDVlYjNkYjliYTkyNTIwMDAwMTRmODJmZm0AAAAIa2V5c2V0SWRtAAAAJDQwMDYzYWJiLTVhZjEtNGZkNC1hN2YwLWFkYzQ3Njc4MTBiMW0AAAAJcHJvamVjdElkbQAAACRlMTI0MTAzOS0yZmVmLTQ4MzAtYjkyNy01YmIzNDI0ZjE3NjRkAAZzaWduZWRuBgA2RZTfiQE.ci4LzhsWp_E8bTTFVymYqWrCfCBm92uJ1QlczU1PvbY';
-
   static const String licenseKeyCallQwik =
       'lic-IMKXFhpiprTyYbDZcVFkxQI7hbYRPPgDIWB';
   static const String keySetIdCallQwik = 'Demo Keyset';
@@ -47,17 +37,3 @@ class AppConstants {
   static const String mqttHost = 'connections.isometrik.io';
   static const int mqttPort = 2052;
 }
-
-/*
-{ "accountId": "65fac77b6a4e7c0001d4dc36"
-    "userSecret": "SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1ZmFjNzdiNmE0ZTdjMDAwMWQ0ZGMzNm0AAAAIa2V5c2V0SWRtAAAAJDY3M2E4MjRjLWUwNjktNDRlZS04NWY1LWYxMWVmZmZkNWUxNW0AAAAJcHJvamVjdElkbQAAACQ2NDA3YWY1NS1jNTBkLTQ3ZDItOWIyZS01NTdmMWY1ZmY0MDRkAAZzaWduZWRuBgBQ0JxbjgE.ZKih77MLvSYpxEMUSGEopAMVRyM6w_-lYWlgjTLBNCk",
-    "subscribeKey": "sub-IMKHzLoe2MDG8RSadie/yNbxlhYvApPpU8/",
-    "publishKey": "pub-IMKo2udqF+j9YkIHcybf8PwBXyPiYZKz+Wj",
-    "projectId": "6407af55-c50d-47d2-9b2e-557f1f5ff404",
-  
-    "licenseKey": "lic-IMKXFhpiprTyYbDZcVFkxQI7hbYRPPgDIWB",
-    "keysetName": "Demo Keyset",
-    "keysetId": "673a824c-e069-44ee-85f5-f11efffd5e15",
-    "appSecret": "SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1ZmFjNzdiNmE0ZTdjMDAwMWQ0ZGMzNm0AAAAIa2V5c2V0SWRtAAAAJDY3M2E4MjRjLWUwNjktNDRlZS04NWY1LWYxMWVmZmZkNWUxNW0AAAAJcHJvamVjdElkbQAAACQ2NDA3YWY1NS1jNTBkLTQ3ZDItOWIyZS01NTdmMWY1ZmY0MDRkAAZzaWduZWRuBgBQ0JxbjgE.Ep4179UmRq4zDLCsvO3u5kisCS5P2XlCkwyGeLP46F8"
-}
- */
