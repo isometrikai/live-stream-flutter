@@ -13,7 +13,7 @@ class IsmLiveRestreamView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: context.liveTheme?.backgroundColor ??
           (isDarkMode ? const Color(0xFF121212) : Colors.white),
@@ -23,14 +23,12 @@ class IsmLiveRestreamView extends StatelessWidget {
         title: Text(
           IsmLiveStrings.restreamChannel,
           style: context.textTheme.titleMedium?.copyWith(
-            color: context.liveTheme?.primaryColor ??
-                (isDarkMode ? Colors.white : Colors.black),
+            color: isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         centerTitle: true,
         iconTheme: IconThemeData(
-          color: context.liveTheme?.primaryColor ??
-              (isDarkMode ? Colors.white : Colors.black),
+          color: isDarkMode ? Colors.white : Colors.black,
         ),
       ),
       body: GetBuilder<IsmLiveStreamController>(
