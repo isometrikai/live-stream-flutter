@@ -74,15 +74,17 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                         Positioned(
                           right: 2,
                           bottom: 2,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: IsmLiveApp.isMqttConnected
-                                  ? IsmLiveColors.green
-                                  : IsmLiveColors.red,
-                              borderRadius:
-                                  BorderRadius.circular(IsmLiveDimens.ten),
+                          child: Obx(
+                            () => DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: IsmLiveApp.isMqttConnectedRx.value
+                                    ? IsmLiveColors.green
+                                    : IsmLiveColors.red,
+                                borderRadius:
+                                    BorderRadius.circular(IsmLiveDimens.ten),
+                              ),
+                              child: const SizedBox.square(dimension: 8),
                             ),
-                            child: const SizedBox.square(dimension: 8),
                           ),
                         ),
                       ],

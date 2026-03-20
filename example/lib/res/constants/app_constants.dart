@@ -22,18 +22,6 @@ class AppConstants {
   static const String projectId = '0113c44d-86d3-423d-b92a-1be6511f7b8f';
   static const String licenseKey = 'lic-IMK/+mao5KikRmifcmkjavAZa4vGnIwiRTz';
 
-  static const String licenseKeyCallQwik =
-      'lic-IMKXFhpiprTyYbDZcVFkxQI7hbYRPPgDIWB';
-  static const String keySetIdCallQwik = 'Demo Keyset';
-  static const String projectIdCallQwik =
-      '6407af55-c50d-47d2-9b2e-557f1f5ff404';
-  static const String accountIdCallQwik = '65fac77b6a4e7c0001d4dc36';
-
-  static const String appSecretCallQwik =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1ZmFjNzdiNmE0ZTdjMDAwMWQ0ZGMzNm0AAAAIa2V5c2V0SWRtAAAAJDY3M2E4MjRjLWUwNjktNDRlZS04NWY1LWYxMWVmZmZkNWUxNW0AAAAJcHJvamVjdElkbQAAACQ2NDA3YWY1NS1jNTBkLTQ3ZDItOWIyZS01NTdmMWY1ZmY0MDRkAAZzaWduZWRuBgBQ0JxbjgE.Ep4179UmRq4zDLCsvO3u5kisCS5P2XlCkwyGeLP46F8';
-  static const String userSecretCallQwik =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDY1ZmFjNzdiNmE0ZTdjMDAwMWQ0ZGMzNm0AAAAIa2V5c2V0SWRtAAAAJDY3M2E4MjRjLWUwNjktNDRlZS04NWY1LWYxMWVmZmZkNWUxNW0AAAAJcHJvamVjdElkbQAAACQ2NDA3YWY1NS1jNTBkLTQ3ZDItOWIyZS01NTdmMWY1ZmY0MDRkAAZzaWduZWRuBgBQ0JxbjgE.ZKih77MLvSYpxEMUSGEopAMVRyM6w_-lYWlgjTLBNCk';
-
-  static const String mqttHost = 'connections.isometrik.io';
-  static const int mqttPort = 2052;
+  static const String mqttHost = 'connections.isometrik.ai';
+  static const int mqttPort = 2086;
 }

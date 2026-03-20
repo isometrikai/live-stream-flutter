@@ -60,9 +60,8 @@ class IsmLiveListSheet extends StatelessWidget {
               ),
             ),
             if (items.isEmpty) ...[
-              IsmLiveImage.svg(
+              const IsmLiveImage.svg(
                 IsmLiveAssetConstants.viewer_placeholder,
-                color: iconColor,
               ),
               IsmLiveDimens.boxHeight2,
               Text(
