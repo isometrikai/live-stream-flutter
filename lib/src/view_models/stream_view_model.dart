@@ -313,12 +313,14 @@ class IsmLiveStreamViewModel {
   Future<List<IsmLiveMessageModel>> fetchMessages({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
+    showDialog = true,
   }) async {
     var messageType = getMessageModel.messageType ?? [0];
 
     try {
       var res = await _repository.fetchMessages(
           showLoading: showLoading,
+          showDialog: showDialog,
           payload: getMessageModel.toMap(),
           messageType: messageType);
       if (res.hasError) {

@@ -303,6 +303,11 @@ class IsmLiveStreamController extends GetxController
 
   Timer? streamTimer;
 
+  // Fallback polling when MQTT is disconnected so chat still updates.
+  Timer? _mqttChatFallbackTimer;
+  StreamSubscription<bool>? _mqttChatFallbackConnSubscription;
+  bool _mqttChatFallbackInFlight = false;
+
   final Rx<Duration> _streamDuration = Duration.zero.obs;
   Duration get streamDuration => _streamDuration.value;
   set streamDuration(Duration value) => _streamDuration.value = value;
@@ -749,6 +754,13 @@ class IsmLiveStreamController extends GetxController
     streamTimer = null;
     pkcontroller.pkTimer?.cancel();
     pkcontroller.pkTimer = null;
+
+    // Stop MQTT disconnected chat polling (if any)
+    _mqttChatFallbackTimer?.cancel();
+    _mqttChatFallbackTimer = null;
+    _mqttChatFallbackConnSubscription?.cancel();
+    _mqttChatFallbackConnSubscription = null;
+    _mqttChatFallbackInFlight = false;
 
     // Reset member status and UI states
     memberStatus = IsmLiveMemberStatus.notMember;

@@ -30,8 +30,12 @@ mixin StreamOngoingMixin {
     // unawaited(_controller.statusCopublisherRequest(streamId));
     // Manage moderator status
     _manageModerator(streamId);
-    // Fetch message count and initial messages if not host
-    if (!isHost) {
+    final mqttConnectedAtJoin = IsmLiveApp.isMqttConnected;
+
+    // Fetch message count and initial messages:
+    // - Viewers: always (existing behavior)
+    // - Host: only if MQTT is already disconnected, so the chat isn't blank
+    if (!isHost || !mqttConnectedAtJoin) {
       await _controller.fetchMessagesCount(
         showLoading: false,
         getMessageModel: IsmLiveGetMessageModel(
@@ -57,6 +61,9 @@ mixin StreamOngoingMixin {
       }
     }
 
+    // Start/stop polling for chat updates when MQTT disconnects.
+    _setupMqttDisconnectedChatFallback(streamId: streamId);
+
     // Sort participants and update UI
     unawaited(sortParticipants());
     // Toggle speaker if on mobile platform
@@ -67,6 +74,146 @@ mixin StreamOngoingMixin {
     IsmLiveUtility.updateLater(() {
       _controller.update([IsmLiveStreamView.updateId]);
     });
+  }
+
+  void _setupMqttDisconnectedChatFallback({
+    required String streamId,
+  }) {
+    _stopMqttDisconnectedChatFallback();
+    _controller._mqttChatFallbackConnSubscription?.cancel();
+    _controller._mqttChatFallbackConnSubscription =
+        IsmLiveApp.isMqttConnectedRx.stream.listen((connected) {
+      if (connected) {
+        // MQTT is back: stop interval mechanism immediately.
+        _stopMqttDisconnectedChatFallback();
+        return;
+      }
+
+      // MQTT disconnected: start interval mechanism (if not already running).
+      unawaited(_startMqttDisconnectedChatFallback(streamId));
+    });
+
+    // Start immediately if MQTT is already disconnected at join time.
+    if (!IsmLiveApp.isMqttConnected) {
+      unawaited(_startMqttDisconnectedChatFallback(streamId));
+    }
+  }
+
+  void _stopMqttDisconnectedChatFallback() {
+    _controller._mqttChatFallbackTimer?.cancel();
+    _controller._mqttChatFallbackTimer = null;
+    _controller._mqttChatFallbackInFlight = false;
+  }
+
+  Future<void> _startMqttDisconnectedChatFallback(String streamId) async {
+    if (IsmLiveApp.isMqttConnected) return;
+    if (_controller._mqttChatFallbackTimer != null) return;
+
+    // If we have no messages yet, do a one-time initial catch-up using the
+    // existing pagination API.
+    if (_controller.streamMessagesList.isEmpty) {
+      await _controller.fetchMessagesCount(
+        showLoading: false,
+        getMessageModel: IsmLiveGetMessageModel(
+          streamId: streamId,
+          messageType: [IsmLiveMessageType.normal.value],
+        ),
+      );
+
+      if (_controller.messagesCount != 0) {
+        await _controller.fetchMessages(
+          showLoading: false,
+          getMessageModel: IsmLiveGetMessageModel(
+            streamId: streamId,
+            messageType: [IsmLiveMessageType.normal.value],
+            sort: 1,
+            skip: _controller.messagesCount < 10
+                ? 0
+                : (_controller.messagesCount - 10),
+            limit: 10,
+            senderIdsExclusive: false,
+          ),
+        );
+      }
+    }
+
+    // Interval mechanism: run only while MQTT is disconnected.
+    final interval = IsmLiveDelegate.mqttChatFallbackInterval;
+    final safeInterval = interval.inMilliseconds <= 0
+        ? const Duration(seconds: 6)
+        : interval;
+    _controller._mqttChatFallbackTimer = Timer.periodic(
+      safeInterval,
+      (timer) => unawaited(_pollNewMqttMessages(streamId)),
+    );
+
+    // Immediate run so we don't wait for the first tick.
+    unawaited(_pollNewMqttMessages(streamId));
+  }
+
+  Future<void> _pollNewMqttMessages(String streamId) async {
+    // Only fetch while MQTT is disconnected.
+    if (IsmLiveApp.isMqttConnected) {
+      _stopMqttDisconnectedChatFallback();
+      return;
+    }
+
+    // Reduce background load; skip ticks while app isn't active.
+    if (_controller.isInBackground) return;
+
+    if (_controller._mqttChatFallbackInFlight) return;
+    _controller._mqttChatFallbackInFlight = true;
+    try {
+      if (_controller.streamId == null || _controller.streamId!.isEmpty) {
+        return;
+      }
+
+      // If there are no messages yet (e.g. host joined while MQTT was connected),
+      // do a one-time initial catch-up using the existing pagination API.
+      if (_controller.streamMessagesList.isEmpty) {
+        await _controller.fetchMessagesCount(
+          showLoading: false,
+          getMessageModel: IsmLiveGetMessageModel(
+            streamId: streamId,
+            messageType: [IsmLiveMessageType.normal.value],
+          ),
+        );
+
+        if (_controller.messagesCount != 0) {
+          await _controller.fetchMessages(
+            showLoading: false,
+            getMessageModel: IsmLiveGetMessageModel(
+              streamId: streamId,
+              messageType: [IsmLiveMessageType.normal.value],
+              sort: 1,
+              skip: _controller.messagesCount < 10
+                  ? 0
+                  : (_controller.messagesCount - 10),
+              limit: 10,
+              senderIdsExclusive: false,
+            ),
+          );
+        }
+        return;
+      }
+
+      final lastTimestampMs = _controller.streamMessagesList
+          .map((m) => m.timeStamp.millisecondsSinceEpoch)
+          .fold<int>(0, (prev, ms) => ms > prev ? ms : prev);
+
+      if (lastTimestampMs == 0) return;
+
+      await _controller.fetchNewMessagesSinceTimestamp(
+        streamId: streamId,
+        lastMessageTimestamp: lastTimestampMs,
+        limit: 10,
+        showDialog: false,
+      );
+    } catch (e, st) {
+      IsmLiveLog.error('MQTT chat fallback poll failed: $e', st);
+    } finally {
+      _controller._mqttChatFallbackInFlight = false;
+    }
   }
 
 // Function to manage moderator status

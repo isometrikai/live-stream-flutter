@@ -549,7 +549,8 @@ mixin StreamJoinMixin {
         IsmLiveDelegate.subscribStreamById!(streamId);
       } else {
         if (!isCopublisher && _controller._mqttController != null) {
-          await _controller._mqttController?.subscribeStream(streamId);
+          // Don't block join/start on MQTT topic subscription/reconnect.
+          unawaited(_controller._mqttController?.subscribeStream(streamId));
         }
       }
     } catch (e) {
