@@ -133,12 +133,6 @@ class IsmLiveMqttController extends GetxController {
             'IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
         debugPrint(
             'IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
-        // Register handlers early so app can continue even if the
-        // initial MQTT connection attempt blocks/never succeeds.
-        _mqttHelper
-            .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
-        _mqttHelper.onEvent(_onEvent);
-
         unawaited(
           _mqttHelper
               .initialize(
@@ -173,6 +167,11 @@ class IsmLiveMqttController extends GetxController {
             IsmLiveLog.error('MQTT initialize failed: $e', st);
           }),
         );
+
+        _mqttHelper
+            .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
+        _mqttHelper.onEvent(_onEvent);
+
       } catch (e) {
         IsmLiveLog.error('mqtt issue mqttcontroller 145 line');
       }
