@@ -133,38 +133,46 @@ class IsmLiveMqttController extends GetxController {
             'IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
         debugPrint(
             'IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
-        await _mqttHelper.initialize(
-          MqttConfig(
-            serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-            projectConfig: ProjectConfig(
-              deviceId: deviceId,
-              username: _config?.username ?? '',
-              password: _config?.password ?? '',
-              userIdentifier: userId,
-            ),
-            enableLogging: true,
-            webSocketConfig: _config!.socketConfig != null
-                ? WebSocketConfig.fromMap(
-                    _config!.socketConfig!.toMap(),
-                  )
-                : null,
-            secure: _config!.secure,
-          ),
-          callbacks: MqttCallbacks(
-            onConnected: _onConnected,
-            onDisconnected: _onDisconnected,
-            onSubscribeFail: _onSubscribeFailed,
-            onSubscribed: _onSubscribed,
-            onUnsubscribed: _onUnSubscribed,
-            pongCallback: _pong,
-          ),
-          autoSubscribe: true,
-          topics: _topics,
-        );
-
+        // Register handlers early so app can continue even if the
+        // initial MQTT connection attempt blocks/never succeeds.
         _mqttHelper
             .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
         _mqttHelper.onEvent(_onEvent);
+
+        unawaited(
+          _mqttHelper
+              .initialize(
+            MqttConfig(
+              serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
+              projectConfig: ProjectConfig(
+                deviceId: deviceId,
+                username: _config?.username ?? '',
+                password: _config?.password ?? '',
+                userIdentifier: userId,
+              ),
+              enableLogging: true,
+              webSocketConfig: _config!.socketConfig != null
+                  ? WebSocketConfig.fromMap(
+                      _config!.socketConfig!.toMap(),
+                    )
+                  : null,
+              secure: _config!.secure,
+            ),
+            callbacks: MqttCallbacks(
+              onConnected: _onConnected,
+              onDisconnected: _onDisconnected,
+              onSubscribeFail: _onSubscribeFailed,
+              onSubscribed: _onSubscribed,
+              onUnsubscribed: _onUnSubscribed,
+              pongCallback: _pong,
+            ),
+            autoSubscribe: true,
+            topics: _topics,
+          )
+              .catchError((Object e, StackTrace st) {
+            IsmLiveLog.error('MQTT initialize failed: $e', st);
+          }),
+        );
       } catch (e) {
         IsmLiveLog.error('mqtt issue mqttcontroller 145 line');
       }
@@ -174,8 +182,9 @@ class IsmLiveMqttController extends GetxController {
   Future<void> subscribeStream(String streamId) async {
     try {
       if (!IsmLiveApp.isMqttConnected) {
-        IsmLiveLog.info('MQTT is not connected, attempting to reconnect');
-        await reconnect();
+        // Don't block host/viewer join on MQTT reconnect.
+        IsmLiveLog.info('MQTT is not connected; reconnecting in background');
+        unawaited(reconnect());
       }
       var topic = '$_topicPrefix/$streamId';
       // Ensure this topic is tracked for auto-resubscribe on reconnects

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
@@ -266,10 +268,19 @@ class IsmLiveApp extends StatefulWidget {
     _mqttInitialized = true;
 
     IsmLiveLog.info('mqtt setup from starting');
-    await Get.find<IsmLiveMqttController>().setup(
-      topics: topics,
-      topicChannels: topicChannels,
-      shouldInitializeMqtt: shouldInitializeMqtt,
+    // IMPORTANT: Do not block SDK initialization on MQTT connection.
+    // MQTT may take a long time or fail entirely; host/viewer must still
+    // be able to start and watch the stream.
+    unawaited(
+      Get.find<IsmLiveMqttController>()
+          .setup(
+            topics: topics,
+            topicChannels: topicChannels,
+            shouldInitializeMqtt: shouldInitializeMqtt,
+          )
+          .catchError((Object e, StackTrace st) {
+        IsmLiveLog.error('MQTT setup failed: $e', st);
+      }),
     );
   }
 
@@ -332,6 +343,7 @@ class IsmLiveApp extends StatefulWidget {
     GiftClickCallback? giftClickCallback,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
+    Duration? mqttChatFallbackInterval,
     // New control customization options
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
@@ -420,6 +432,10 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
     }
     IsmLiveDelegate.streamRecordingPlayerConfig = streamRecordingPlayerConfig;
+
+    // Chat polling fallback while MQTT disconnected (host can override).
+    IsmLiveDelegate.mqttChatFallbackInterval =
+        mqttChatFallbackInterval ?? const Duration(seconds: 6);
   }
 
   static Future<void> endStream(

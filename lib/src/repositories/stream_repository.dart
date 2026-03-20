@@ -255,6 +255,7 @@ class IsmLiveStreamRepository {
     required bool showLoading,
     required List<int> messageType,
     required Map<String, dynamic> payload,
+    required bool showDialog,
   }) {
     payload['messageType'] = null;
     return _apiWrapper.makeRequest(
@@ -262,6 +263,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.get,
       headers: IsmLiveUtility.tokenHeader(),
       showLoader: showLoading,
+      showDialog: showDialog,
     );
   }
 

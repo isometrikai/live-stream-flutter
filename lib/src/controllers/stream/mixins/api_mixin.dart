@@ -308,6 +308,29 @@ mixin StreamAPIMixin {
         ),
       );
 
+  /// Fetches messages newer than [lastMessageTimestamp] and appends them to
+  /// the chat list.
+  ///
+  /// This is used as a fallback when MQTT is disconnected, so we still show
+  /// chat events by catching up from the API.
+  Future<void> fetchNewMessagesSinceTimestamp({
+    required String streamId,
+    required int lastMessageTimestamp,
+    int limit = 10,
+    bool showDialog = true,
+  }) async {
+    if (lastMessageTimestamp <= 0) return;
+
+    // Polling already runs at a controlled interval, so we fetch directly
+    // (no debouncer) to ensure awaiting matches in-flight protection.
+    await _fetchNewMessagesSinceTimestamp(
+      streamId: streamId,
+      lastMessageTimestamp: lastMessageTimestamp,
+      limit: limit,
+      showDialog: showDialog,
+    );
+  }
+
   Future<void> _fetchMessages({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
@@ -332,6 +355,38 @@ mixin StreamAPIMixin {
     } else {
       _controller.messagesCount = 0;
     }
+  }
+
+  Future<void> _fetchNewMessagesSinceTimestamp({
+    required String streamId,
+    required int lastMessageTimestamp,
+    required int limit,
+    bool showDialog = true,
+  }) async {
+    final res = await _controller.viewModel.fetchMessages(
+      showLoading: false,
+      showDialog: showDialog,
+      getMessageModel: IsmLiveGetMessageModel(
+        streamId: streamId,
+        messageType: [IsmLiveMessageType.normal.value],
+        sort: 1,
+        limit: limit,
+        lastMessageTimestamp: lastMessageTimestamp,
+        senderIdsExclusive: false,
+      ),
+    );
+
+    // Process messages through host callback (mark as non-MQTT origin).
+    final processedMessages = res
+        .map((message) => _processMessage(message, false))
+        .whereType<IsmLiveMessageModel>()
+        .toList();
+
+    // Ensure chronological order when appending.
+    processedMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+
+    if (processedMessages.isEmpty) return;
+    await _controller.addMessages(processedMessages, true);
   }
 
   // Process message through host app's callback if provided

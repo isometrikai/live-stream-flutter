@@ -939,6 +939,13 @@ class IsmLiveDelegate {
 
   static bool productionMode = false;
 
+  /// How often the SDK polls chat messages from the API while MQTT is
+  /// disconnected.
+  ///
+  /// Default is 6 seconds. Host apps can override via
+  /// [IsmLiveApp.configureInterface].
+  static Duration mqttChatFallbackInterval = const Duration(seconds: 6);
+
   static IsmLiveButtonConfig? ismLiveButtonConfig;
 
   static LinearGradient? streamOptionsBgGradient;
