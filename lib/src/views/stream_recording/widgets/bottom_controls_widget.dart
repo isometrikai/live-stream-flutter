@@ -63,8 +63,11 @@ class _IsmLiveStreamRecordingBottomControlsState
     final theme = Theme.of(context);
     const iconColor = Colors.white;
     final controller = widget.videoController;
-    final position = controller?.value.position ?? Duration.zero;
-    final duration = controller?.value.duration ?? Duration.zero;
+    final value = controller?.value;
+    final position = value?.position ?? Duration.zero;
+    final duration = value?.duration ?? Duration.zero;
+    final showPause =
+        value != null && (value.isPlaying || value.isBuffering);
 
     Widget buildControl(
       IsmLiveStreamRecordingControlWidgetSlot slot,
@@ -106,7 +109,7 @@ class _IsmLiveStreamRecordingBottomControlsState
                 IsmLiveStreamRecordingControlWidgetSlot.bottomPlayPause,
                 IconButton(
                   icon: Icon(
-                    controller?.value.isPlaying == true
+                    showPause
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
                     color: iconColor,
