@@ -196,6 +196,11 @@ class IsmLiveStreamController extends GetxController
   /// and that `_IsmLiveStreamView` should complete it after navigation.
   bool pendingConnection = false;
 
+  /// True only while a viewer is actively joining the stream room.
+  final RxBool _isViewerJoiningStream = false.obs;
+  bool get isViewerJoiningStream => _isViewerJoiningStream.value;
+  set isViewerJoiningStream(bool value) => _isViewerJoiningStream.value = value;
+
   Future? cameraFuture;
 
   XFile? pickedImage;
@@ -740,6 +745,7 @@ class IsmLiveStreamController extends GetxController
       IsmLiveLog('Skipping streamDispose due to preventDispose flag');
       return;
     }
+    isViewerJoiningStream = false;
     print('initializeAndJoinStream: streamDisposeddd');
     // Clear PK controller data
     var pkcontroller = Get.find<IsmLivePkController>();

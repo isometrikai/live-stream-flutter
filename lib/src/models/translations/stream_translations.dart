@@ -5,6 +5,7 @@ class IsmLiveStreamTranslations {
     this.preparingYourStream,
     this.reconnecting,
     this.joiningLiveStream,
+    this.connectingToLiveStream,
     this.enablingYourVideo,
     this.pkMessage,
   });
@@ -13,6 +14,7 @@ class IsmLiveStreamTranslations {
   final String? preparingYourStream;
   final String? reconnecting;
   final String? joiningLiveStream;
+  final String? connectingToLiveStream;
   final String? enablingYourVideo;
   final String? pkMessage;
 }

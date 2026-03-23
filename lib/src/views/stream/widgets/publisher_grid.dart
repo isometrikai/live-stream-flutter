@@ -28,6 +28,10 @@ class IsmLivePublisherGrid extends StatelessWidget {
                   : NoVideoWidget(
                       imageUrl: controller.hostDetails?.image ?? streamImage,
                       name: controller.hostDetails?.name ?? 'U',
+                      showConnectingState: controller.isViewerJoiningStream,
+                      connectingText: context.liveTranslations?.streamTranslations
+                              ?.connectingToLiveStream ??
+                          IsmLiveStrings.connectingToLiveStream,
                     );
             }
             return controller.participantTracks.isNotEmpty
@@ -99,6 +103,12 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     ? NoVideoWidget(
                         imageUrl: controller.hostDetails?.image ?? streamImage,
                         name: controller.hostDetails?.name ?? 'U',
+                        showConnectingState: controller.isViewerJoiningStream,
+                        connectingText: context
+                                .liveTranslations
+                                ?.streamTranslations
+                                ?.connectingToLiveStream ??
+                            IsmLiveStrings.connectingToLiveStream,
                       )
                     : const SizedBox.shrink();
           },
@@ -133,6 +143,10 @@ class _RtmlView extends StatelessWidget {
                       ? NoVideoWidget(
                           imageUrl: controller.hostDetails?.image ?? '',
                           name: controller.hostDetails?.name ?? 'U',
+                          showConnectingState: controller.isViewerJoiningStream,
+                          connectingText: context.liveTranslations
+                                  ?.streamTranslations?.connectingToLiveStream ??
+                              IsmLiveStrings.connectingToLiveStream,
                         )
                       : ParticipantWidget.widgetFor(
                           hostScreen,

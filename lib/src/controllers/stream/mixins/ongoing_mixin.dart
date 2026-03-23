@@ -139,9 +139,8 @@ mixin StreamOngoingMixin {
 
     // Interval mechanism: run only while MQTT is disconnected.
     final interval = IsmLiveDelegate.mqttChatFallbackInterval;
-    final safeInterval = interval.inMilliseconds <= 0
-        ? const Duration(seconds: 6)
-        : interval;
+    final safeInterval =
+        interval.inMilliseconds <= 0 ? const Duration(seconds: 6) : interval;
     _controller._mqttChatFallbackTimer = Timer.periodic(
       safeInterval,
       (timer) => unawaited(_pollNewMqttMessages(streamId)),
@@ -927,6 +926,7 @@ mixin StreamOngoingMixin {
     bool endStream = true,
     bool isScrolling = false,
   }) async {
+    _controller.isViewerJoiningStream = false;
     if (_controller.streamId?.isEmpty ?? true) {
       if (!isScrolling) {
         // IsmLiveUtility.closeLoader();
@@ -1014,6 +1014,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
+    _controller.isViewerJoiningStream = false;
     if (IsmLiveDelegate.unsubscribStreamById != null) {
       IsmLiveDelegate.unsubscribStreamById!(_controller.streamId!);
     } else {
