@@ -44,6 +44,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
   bool _isManuallyPaused = false;
   bool _isDisposed = false;
   int _lastProgressMillis = 0;
+  bool _wasBuffering = false;
   Timer? _stuckTimer;
   int _recoveryAttempts = 0;
   static const int _maxRecoveryAttempts = 5;
@@ -92,7 +93,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
       if (mounted) {
         setState(() {});
       }
-      if (_isVisible && !_isManuallyPaused) {
+      if (!_isManuallyPaused) {
         _playInternal();
       }
     } finally {
@@ -121,8 +122,18 @@ class _IsmLiveRecordingAutoVideoPlayerState
     }
 
     final now = DateTime.now().millisecondsSinceEpoch;
-    final position = _controller!.value.position;
-    final total = _controller!.value.duration;
+    final value = _controller!.value;
+    final position = value.position;
+    final total = value.duration;
+
+    if (_wasBuffering &&
+        !value.isBuffering &&
+        _isVisible &&
+        !_isManuallyPaused &&
+        !value.isPlaying) {
+      _playInternal();
+    }
+    _wasBuffering = value.isBuffering;
 
     if (now - _lastProgressMillis >= 200) {
       _lastProgressMillis = now;
@@ -182,6 +193,9 @@ class _IsmLiveRecordingAutoVideoPlayerState
     if (_controller == null || !_controller!.value.isInitialized) {
       return;
     }
+    if (_controller!.value.isBuffering) {
+      return;
+    }
     if (_controller!.value.isPlaying) {
       _stopStuckDetection();
       return;
@@ -205,9 +219,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
 
   void play() {
     _isManuallyPaused = false;
-    if (_isVisible) {
-      _playInternal();
-    }
+    _playInternal();
   }
 
   Future<void> seekTo(Duration position) async {
@@ -221,11 +233,21 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _controller!.play();
   }
 
+  void _stopPlayback({bool mute = true}) {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return;
+    if (mute) {
+      controller.setVolume(0.0);
+    }
+    unawaited(controller.pause());
+  }
+
   @override
   void dispose() {
     _isDisposed = true;
     _stopStuckDetection();
     _cache.markNotVisible(widget.url);
+    _stopPlayback();
     _controller?.removeListener(_handleProgress);
     super.dispose();
   }
