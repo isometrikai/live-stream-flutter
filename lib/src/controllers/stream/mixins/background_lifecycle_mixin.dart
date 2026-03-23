@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
@@ -426,7 +427,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     // Simple robust approach for both streamer and viewer
     if (room != null && connectionState == lk.ConnectionState.connected) {
       IsmLiveLog.info('Room is already connected, resuming stream');
-      _resumeStream();
+      _resumeStreamAfterApiConfirmation();
     } else if (room != null &&
         connectionState == lk.ConnectionState.disconnected) {
       IsmLiveLog.info('Room is disconnected, attempting single reconnection');
@@ -484,7 +485,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           if (room.connectionState == lk.ConnectionState.connected) {
             IsmLiveLog.info('Single reconnection successful');
             _isReconnecting = false;
-            _resumeStream();
+            _resumeStreamAfterApiConfirmation();
 
             // Call API with 1 second delay after successful reconnection
             _callApiWithDelay();
@@ -514,6 +515,43 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       if (_isStreamActive.value) {
         _callApiAndShowDialog();
       }
+    }
+  }
+
+  /// Resume stream only after API confirms it can continue.
+  /// This specifically gates camera re-enable for hosts when video was paused by background.
+  void _resumeStreamAfterApiConfirmation() async {
+    // Camera resume is only relevant for host when background paused local video.
+    final shouldGateCameraResume = _isHost.value && _videoPausedByBackground;
+    if (!shouldGateCameraResume) {
+      _resumeStream();
+      return;
+    }
+
+    if (!_isStreamActive.value || _controller.streamId == null) {
+      IsmLiveLog.info(
+          'Skipping camera resume confirmation: stream inactive or streamId is null');
+      return;
+    }
+
+    IsmLiveLog.info(
+        'Confirming stream continuation via fetchModerators before camera resume');
+    final isStreamActive = await _checkStreamActiveStatus(_controller.streamId!);
+
+    // Stream may close while awaiting API response.
+    if (!_isStreamActive.value) {
+      IsmLiveLog.info(
+          'Stream became inactive during camera resume confirmation, aborting');
+      return;
+    }
+
+    if (isStreamActive) {
+      IsmLiveLog.info('Stream confirmed active, proceeding with resume');
+      _resumeStream();
+    } else {
+      IsmLiveLog.info(
+          'Stream continuation not confirmed, keeping camera off and showing status dialog');
+      _callApiAndShowDialog();
     }
   }
 
@@ -627,6 +665,21 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
+  void _stopStreamTimerForInfoDialog() {
+    _controller.streamTimer?.cancel();
+    _controller.streamTimer = null;
+  }
+
+  bool _canShowInfoDialogOnCurrentScreen() {
+    final currentRoute = Get.currentRoute;
+    final isOnStreamView = currentRoute == IsmLiveRoutes.streamView;
+    if (!isOnStreamView) {
+      IsmLiveLog.info(
+          'Skipping info dialog because current route is not stream view: $currentRoute');
+    }
+    return isOnStreamView;
+  }
+
   /// Show dialog when stream has ended
   void _showStreamEndedDialog() {
     try {
@@ -635,9 +688,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         IsmLiveLog.info('Stream is not active, skipping stream ended dialog');
         return;
       }
+      if (!_canShowInfoDialogOnCurrentScreen()) {
+        return;
+      }
 
       // Close any open dialog before showing the stream ended dialog
       IsmLiveUtility.popUntilStreamView();
+      _stopStreamTimerForInfoDialog();
 
       final message = _isHost.value
           ? 'Stream has been stopped. Please start a new stream'
@@ -696,9 +753,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
             'Stream is not active, skipping connection failed dialog');
         return;
       }
+      if (!_canShowInfoDialogOnCurrentScreen()) {
+        return;
+      }
 
       // Close any open dialog before showing the stream ended dialog
       IsmLiveUtility.popUntilStreamView();
+      _stopStreamTimerForInfoDialog();
 
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'
