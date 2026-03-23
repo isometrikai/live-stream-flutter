@@ -23,7 +23,7 @@ class IsmLiveRecordingAutoVideoPlayer extends StatefulWidget {
   final bool isMuted;
   final void Function(Duration total, Duration position)? onProgress;
   final VoidCallback? onCompleted;
-   // Notifies when a controller is first attached (for overlays).
+  // Notifies when a controller is first attached (for overlays).
   final void Function(VideoPlayerController controller)? onControllerReady;
 
   /// Access the state from a [GlobalKey].
@@ -226,7 +226,6 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _isDisposed = true;
     _stopStuckDetection();
     _controller?.removeListener(_handleProgress);
-    _controller?.dispose();
     super.dispose();
   }
 
