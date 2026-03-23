@@ -226,6 +226,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _isDisposed = true;
     _stopStuckDetection();
     _controller?.removeListener(_handleProgress);
+    _controller?.dispose();
     super.dispose();
   }
 

@@ -529,6 +529,7 @@ mixin StreamJoinMixin {
 
     _controller.userRole =
         isHost ? IsmLiveUserRole.host() : IsmLiveUserRole.viewer();
+    _controller.isViewerJoiningStream = !isHost;
 
     if (isCopublisher) {
       _controller.userRole?.makeCopublisher();
@@ -709,11 +710,15 @@ mixin StreamJoinMixin {
       // Try to connect to the room with better error handling
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
+        if (!isHost) {
+          _controller.isViewerJoiningStream = false;
+        }
 
         // Store the token for background lifecycle reconnection
         _controller.storeToken(token);
       } catch (e, st) {
         IsmLiveLog.error('Room connection error: $e', st);
+        _controller.isViewerJoiningStream = false;
         IsmLiveUtility.closeLoader();
         return;
       }
@@ -838,6 +843,7 @@ mixin StreamJoinMixin {
             'initializeAndJoinStream: Skipping goToStreamView (performNavigation=false)');
       }
     } catch (e, st) {
+      _controller.isViewerJoiningStream = false;
       try {
         unawaited(
           _controller._mqttController?.unsubscribeStream(
@@ -903,7 +909,7 @@ mixin StreamJoinMixin {
       isScheduledStream: details?.isScheduledStream ?? isSchedule,
       products: details?.products,
       performNavigation: false,
-      showLoader: !isHost,
+      showLoader: false,
     );
 
     _controller.pendingConnection = false;

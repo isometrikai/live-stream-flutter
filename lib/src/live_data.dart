@@ -47,6 +47,7 @@ const _kTranslationsData = IsmLiveTranslationsData(
   streamTranslations: IsmLiveStreamTranslations(
     youreLive: IsmLiveStrings.youreLive,
     moderationWarning: IsmLiveStrings.moderationWarning,
+    connectingToLiveStream: IsmLiveStrings.connectingToLiveStream,
   ),
 );
 

@@ -6,9 +6,13 @@ class NoVideoWidget extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.name = 'U',
+    this.showConnectingState = false,
+    this.connectingText,
   }) : assert(name.length > 0, 'Length of the name should be atleast 1');
   final String name;
   final String imageUrl;
+  final bool showConnectingState;
+  final String? connectingText;
 
   @override
   Widget build(BuildContext context) => Center(
@@ -29,7 +33,34 @@ class NoVideoWidget extends StatelessWidget {
               style: IsmLiveStyles.blackBold16.copyWith(
                 color: IsmLiveColors.white,
               ),
-            )
+            ),
+            if (showConnectingState) ...[
+              IsmLiveDimens.boxHeight8,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        IsmLiveColors.white,
+                      ),
+                    ),
+                  ),
+                  IsmLiveDimens.boxWidth8,
+                  Text(
+                    connectingText ?? IsmLiveStrings.joiningLiveStream,
+                    style: IsmLiveStyles.blackBold16.copyWith(
+                      fontSize: 14,
+                      color: IsmLiveColors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       );
