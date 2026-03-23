@@ -225,6 +225,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
   void dispose() {
     _isDisposed = true;
     _stopStuckDetection();
+    _cache.markNotVisible(widget.url);
     _controller?.removeListener(_handleProgress);
     super.dispose();
   }

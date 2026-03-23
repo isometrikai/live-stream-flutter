@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:appscrip_live_stream_component/src/views/stream_recording/recording_video_cache_manager.dart';
@@ -131,12 +133,33 @@ class _IsmLiveStreamRecordingPlayerViewState
     setState(() {});
   }
 
+  Future<void> _closeAndPop() async {
+    // Stop all known players first so host app never hears background audio.
+    for (final key in _pageKeys.values) {
+      IsmLiveRecordingAutoVideoPlayer.of(key)?.pause();
+    }
+    for (final controller in _controllers.values) {
+      if (controller == null) continue;
+      await controller.pause();
+      await controller.setVolume(0.0);
+    }
+    if (!mounted) return;
+    await Navigator.of(context).maybePop();
+  }
+
   void _onClose() {
-    Navigator.of(context).maybePop();
+    unawaited(_closeAndPop());
   }
 
   @override
   void dispose() {
+    for (final key in _pageKeys.values) {
+      IsmLiveRecordingAutoVideoPlayer.of(key)?.pause();
+    }
+    for (final controller in _controllers.values) {
+      controller?.pause();
+      controller?.setVolume(0.0);
+    }
     _cacheManager.clearAll();
     _pageController.dispose();
     super.dispose();
