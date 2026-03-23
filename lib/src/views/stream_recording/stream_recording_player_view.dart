@@ -133,12 +133,20 @@ class _IsmLiveStreamRecordingPlayerViewState
     setState(() {});
   }
 
+  VideoPlayerController? _getCachedControllerForIndex(int index) {
+    if (index < 0 || index >= widget.recordings.length) return null;
+    final recorded = widget.recordings[index].recordedUrls;
+    if (recorded.isEmpty) return null;
+    return _cacheManager.getCachedController(recorded.first);
+  }
+
   Future<void> _closeAndPop() async {
     // Stop all known players first so host app never hears background audio.
     for (final key in _pageKeys.values) {
       IsmLiveRecordingAutoVideoPlayer.of(key)?.pause();
     }
-    for (final controller in _controllers.values) {
+    for (var i = 0; i < widget.recordings.length; i++) {
+      final controller = _getCachedControllerForIndex(i);
       if (controller == null) continue;
       await controller.pause();
       await controller.setVolume(0.0);
@@ -156,9 +164,11 @@ class _IsmLiveStreamRecordingPlayerViewState
     for (final key in _pageKeys.values) {
       IsmLiveRecordingAutoVideoPlayer.of(key)?.pause();
     }
-    for (final controller in _controllers.values) {
-      controller?.pause();
-      controller?.setVolume(0.0);
+    for (var i = 0; i < widget.recordings.length; i++) {
+      final controller = _getCachedControllerForIndex(i);
+      if (controller == null) continue;
+      unawaited(controller.pause());
+      unawaited(controller.setVolume(0.0));
     }
     _cacheManager.clearAll();
     _pageController.dispose();
@@ -214,6 +224,10 @@ class _IsmLiveStreamRecordingPlayerViewState
             final isActive = index == _currentIndex;
             _pageKeys[index] ??= GlobalKey();
             final playerKey = _pageKeys[index]!;
+            final playerState = IsmLiveRecordingAutoVideoPlayer.of(playerKey);
+            final overlayController = isActive
+                ? (playerState?.controller ?? _getCachedControllerForIndex(index))
+                : null;
             return RepaintBoundary(
               child: Stack(
                 fit: StackFit.expand,
@@ -245,7 +259,7 @@ class _IsmLiveStreamRecordingPlayerViewState
                     _RecordingOverlay(
                       recording: recording,
                       playerKey: playerKey,
-                      videoController: _controllers[index],
+                      videoController: overlayController,
                       config: config,
                       onClose: _onClose,
                       onPlayPause: () => _togglePlayPauseFor(playerKey),
@@ -332,8 +346,8 @@ class _RecordingOverlay extends StatelessWidget {
                   ),
             ),
           ),
-          // Center play icon should only be visible when video is NOT playing.
-          // Use the VideoPlayerController as animation source so this stays in sync.
+          // Center play icon: hide only while actively playing (not while buffering).
+          // During buffering, show play icon instead of a loading-style UX.
           if (videoController == null)
             Center(
               child: GestureDetector(
@@ -347,8 +361,9 @@ class _RecordingOverlay extends StatelessWidget {
             AnimatedBuilder(
               animation: videoController!,
               builder: (context, _) {
-                final isPlaying = videoController!.value.isPlaying;
-                if (isPlaying) {
+                final v = videoController!.value;
+                final showPlaying = v.isPlaying && !v.isBuffering;
+                if (showPlaying) {
                   return const SizedBox.shrink();
                 }
                 return Center(
