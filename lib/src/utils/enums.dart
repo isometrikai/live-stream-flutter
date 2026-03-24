@@ -387,7 +387,8 @@ enum IsmLiveMessageType {
   changeStream(21),
   pk(20),
   pkStop(22),
-  presence(4);
+  presence(4),
+  probe(99);
 
   factory IsmLiveMessageType.fromValue(int data) =>
       <int, IsmLiveMessageType>{
@@ -401,6 +402,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.changeStream.value: IsmLiveMessageType.changeStream,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
         IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
+        IsmLiveMessageType.probe.value: IsmLiveMessageType.probe,
       }[data] ??
       IsmLiveMessageType.normal;
 

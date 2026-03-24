@@ -100,6 +100,9 @@ mixin StreamMessageMixin {
         break;
       case IsmLiveMessageType.gift3D:
         break;
+      case IsmLiveMessageType.probe:
+        IsmLiveLog.success('Probe Message');
+        break;
     }
   }
 
