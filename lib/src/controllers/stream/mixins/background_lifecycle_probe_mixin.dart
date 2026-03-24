@@ -35,8 +35,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   int _streamViewSessionId = 0;
   bool _hasShownInfoDialogInSession = false;
 
-  /// Server accepts this as a non-chat capability check. Presence messages are handled
-  /// without adding them to the visible chat list.
+  /// Internal probe payload used for foreground capability checks.
+  /// UI layer filters this body so it never appears in chat.
   static const String _foregroundCapabilityProbeBody = '__ism_live_foreground_probe__';
 
   /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
@@ -196,7 +196,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
-  /// After background: send a silent `IsmLiveMessageType.presence` message first.
+  /// After background: send a silent probe message first.
   /// If the server accepts it, the stream is still valid for this user — then reconnect
   /// LiveKit and resume UI. If the probe fails, fall back to API + dialogs (host/viewer).
   Future<void> _runForegroundResumeFlow() async {
@@ -269,7 +269,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           searchableTags: [_foregroundCapabilityProbeBody],
           metaData: const IsmLiveMetaData(),
           deviceId: deviceId,
-          messageType: IsmLiveMessageType.presence,
+          messageType: IsmLiveMessageType.probe,
         ),
       );
       IsmLiveLog.info('Foreground capability probe send result: $sent');

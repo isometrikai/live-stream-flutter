@@ -543,11 +543,17 @@ mixin StreamOngoingMixin {
     List<IsmLiveMessageModel> messages, [
     bool isMqtt = true,
   ]) async {
-    // Messages are already processed by the host app's callback at an earlier stage
-    // No additional filtering needed here
+    // Keep internal lifecycle probe messages out of chat UI.
+    const foregroundCapabilityProbeBody = '__ism_live_foreground_probe__';
+    final visibleMessages = messages
+        .where((message) => message.body != foregroundCapabilityProbeBody)
+        .toList();
+    if (visibleMessages.isEmpty) {
+      return;
+    }
 
     final chats =
-        messages.map((e) => _controller.convertMessageToChat(e)).toList();
+        visibleMessages.map((e) => _controller.convertMessageToChat(e)).toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
