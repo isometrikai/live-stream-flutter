@@ -138,6 +138,48 @@ class HomeController extends GetxController {
       // },
       bottomSheetBorderRadius:
           const BorderRadius.vertical(top: Radius.circular(12)),
+      streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+        onControlOption: (context, option, recording) async {
+          await showModalBottomSheet<void>(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            builder: (sheetContext) => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Dummy bottom sheet text',
+                    style: Theme.of(sheetContext).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Clicked option: ${option.name}',
+                    style: Theme.of(sheetContext).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Recording id: ${recording.streamId}',
+                    style: Theme.of(sheetContext).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
 
       // moderatorsListCallback: (context, streamId, isHost, isModerator,
       //     moderatorsList, hostDetails) async {

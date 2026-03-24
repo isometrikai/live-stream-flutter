@@ -343,6 +343,12 @@ class _RecordingOverlay extends StatelessWidget {
                   IsmLiveStreamRecordingRightControls(
                     config: config,
                     recording: recording,
+                    onPausePlayback: () {
+                      IsmLiveRecordingAutoVideoPlayer.of(playerKey)?.pause();
+                    },
+                    onResumePlayback: () {
+                      IsmLiveRecordingAutoVideoPlayer.of(playerKey)?.play();
+                    },
                   ),
             ),
           ),
