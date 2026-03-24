@@ -35,6 +35,20 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   int _streamViewSessionId = 0;
   bool _hasShownInfoDialogInSession = false;
 
+  /// Server accepts this as a non-chat capability check. Presence messages are handled
+  /// without adding them to the visible chat list.
+  static const String _foregroundCapabilityProbeBody = '__ism_live_foreground_probe__';
+
+  /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
+  static const Duration _foregroundProbeTimeout = Duration(milliseconds: 1200);
+  static const Duration _preResumeConnectedVerifyDelay =
+      Duration(milliseconds: 100);
+  static const Duration _afterConnectStabilizeDelay =
+      Duration(milliseconds: 180);
+  static const Duration _postResumeRoomStabilityDelay =
+      Duration(milliseconds: 320);
+  static const Duration _roomConnectTimeout = Duration(milliseconds: 1900);
+
   // Getters
   bool get isInBackground => _isInBackground.value;
   bool get isStreamActive => _isStreamActive.value;
@@ -178,8 +192,91 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     _reconnectTimer?.cancel();
 
     if (_isStreamActive.value) {
-      // Check room connection state and handle accordingly
-      _checkRoomStateAndResume();
+      unawaited(_runForegroundResumeFlow());
+    }
+  }
+
+  /// After background: send a silent `IsmLiveMessageType.presence` message first.
+  /// If the server accepts it, the stream is still valid for this user — then reconnect
+  /// LiveKit and resume UI. If the probe fails, fall back to API + dialogs (host/viewer).
+  Future<void> _runForegroundResumeFlow() async {
+    final sessionId = _streamViewSessionId;
+    final expectedStreamId = _controller.streamId;
+
+    IsmLiveLog.info(
+        'Foreground resume: checking stream capability via silent presence message...');
+
+    if (!_isStreamActive.value) {
+      IsmLiveLog.info('Stream not active, aborting foreground resume');
+      return;
+    }
+
+    if (expectedStreamId == null || expectedStreamId.isEmpty) {
+      IsmLiveLog.info('streamId missing, aborting foreground resume');
+      return;
+    }
+
+    if (_isReconnecting) {
+      IsmLiveLog.info('Reconnection already in progress, skipping foreground resume');
+      return;
+    }
+
+    final probeOk = await _sendStreamCapabilityProbeMessage().timeout(
+      _foregroundProbeTimeout,
+      onTimeout: () {
+        IsmLiveLog.info(
+            'Foreground capability probe timed out ($_foregroundProbeTimeout)');
+        return false;
+      },
+    );
+
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      IsmLiveLog.info('Stream/session changed during probe, aborting');
+      return;
+    }
+
+    if (!probeOk) {
+      IsmLiveLog.info(
+          'Foreground capability probe failed — resolving via API and dialogs');
+      await _callApiAndShowDialog(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
+      return;
+    }
+
+    IsmLiveLog.info('Foreground probe succeeded — checking room and resuming');
+    _checkRoomStateAndResumeAfterProbe(
+      sessionId: sessionId,
+      expectedStreamId: expectedStreamId,
+    );
+  }
+
+  Future<bool> _sendStreamCapabilityProbeMessage() async {
+    final streamId = _controller.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      return false;
+    }
+    try {
+      final deviceId = _controller.configuration?.projectConfig.deviceId ?? '';
+      final sent = await _controller.sendMessage(
+        showLoading: false,
+        sendMessageModel: IsmLiveSendMessageModel(
+          streamId: streamId,
+          body: _foregroundCapabilityProbeBody,
+          searchableTags: [_foregroundCapabilityProbeBody],
+          metaData: const IsmLiveMetaData(),
+          deviceId: deviceId,
+          messageType: IsmLiveMessageType.presence,
+        ),
+      );
+      IsmLiveLog.info('Foreground capability probe send result: $sent');
+      return sent;
+    } catch (e, st) {
+      IsmLiveLog.error('Foreground capability probe error: $e', st);
+      return false;
     }
   }
 
@@ -412,19 +509,18 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     IsmLiveLog.info('Background lifecycle disabled');
   }
 
-  /// Check room state and handle resume logic
-  void _checkRoomStateAndResume() {
-    IsmLiveLog.info('Checking room state and handling resume...');
-    final sessionId = _streamViewSessionId;
-    final expectedStreamId = _controller.streamId;
+  /// After a successful capability probe, align LiveKit and resume local media.
+  void _checkRoomStateAndResumeAfterProbe({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) {
+    IsmLiveLog.info('Checking room state after probe...');
 
-    // Check if stream is still active before proceeding
     if (!_isStreamActive.value) {
       IsmLiveLog.info('Stream is not active, skipping room state check');
       return;
     }
 
-    // Prevent multiple simultaneous reconnection attempts
     if (_isReconnecting) {
       IsmLiveLog.info('Reconnection already in progress, skipping');
       return;
@@ -434,11 +530,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     final connectionState = room?.connectionState;
     IsmLiveLog.info('Room connection state: $connectionState');
 
-    // Simple robust approach for both streamer and viewer
     if (room != null && connectionState == lk.ConnectionState.connected) {
-      IsmLiveLog.info('Room is already connected, resuming stream');
-      _resumeStreamAfterApiConfirmation(
-          sessionId: sessionId, expectedStreamId: expectedStreamId);
+      IsmLiveLog.info(
+          'Room reports connected — verifying then resuming (or reconnecting)');
+      unawaited(_verifyConnectedRoomThenResumeOrReconnect(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      ));
     } else if (room != null &&
         connectionState == lk.ConnectionState.disconnected) {
       IsmLiveLog.info('Room is disconnected, attempting single reconnection');
@@ -449,6 +547,68 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           'Room connection state unclear, attempting single reconnection');
       _attemptSingleReconnection(
           sessionId: sessionId, expectedStreamId: expectedStreamId);
+    }
+  }
+
+  /// LiveKit can briefly report `ConnectionState.connected` while the session is bad.
+  /// After a short delay, reconnect if needed; otherwise resume and verify stability.
+  Future<void> _verifyConnectedRoomThenResumeOrReconnect({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) async {
+    await Future.delayed(_preResumeConnectedVerifyDelay);
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      return;
+    }
+    final room = _controller.room;
+    final state = room?.connectionState;
+    if (room == null || state != lk.ConnectionState.connected) {
+      IsmLiveLog.info(
+          'Room not connected after verification delay — attempting reconnect');
+      _attemptSingleReconnection(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
+      return;
+    }
+    _resumeStreamWithPostConnectVerify(
+      sessionId: sessionId,
+      expectedStreamId: expectedStreamId,
+    );
+  }
+
+  void _resumeStreamWithPostConnectVerify({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) {
+    _resumeStream();
+    unawaited(_ensureRoomStableOrShowDialog(
+      sessionId: sessionId,
+      expectedStreamId: expectedStreamId,
+    ));
+  }
+
+  /// If the room drops shortly after resume/reconnect, show the same host/viewer dialogs.
+  Future<void> _ensureRoomStableOrShowDialog({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) async {
+    await Future.delayed(_postResumeRoomStabilityDelay);
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      return;
+    }
+    final room = _controller.room;
+    if (room == null || room.connectionState != lk.ConnectionState.connected) {
+      IsmLiveLog.info(
+          'Post-resume room check: not connected — showing status dialog');
+      unawaited(_callApiAndShowDialog(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      ));
     }
   }
 
@@ -465,8 +625,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       if (room == null) {
         IsmLiveLog.error('Room is null, cannot reconnect');
         _isReconnecting = false;
-        _callApiAndShowDialog(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
+        unawaited(_callApiAndShowDialog(
+            sessionId: sessionId, expectedStreamId: expectedStreamId));
         return;
       }
 
@@ -476,8 +636,10 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
             'Using stored token for single reconnection attempt...');
 
         try {
-          // Try to reconnect
-          await room.connect(IsmLiveApis.wsUrl, _storedToken!);
+          // Try to reconnect (bounded wait so we always surface failure via dialog)
+          await room
+              .connect(IsmLiveApis.wsUrl, _storedToken!)
+              .timeout(_roomConnectTimeout);
 
           // Check if stream is still active after connect
           if (!_isStreamActive.value ||
@@ -489,8 +651,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
             return;
           }
 
-          // Wait a moment for connection to stabilize
-          await Future.delayed(const Duration(milliseconds: 1000));
+          // Brief settle before reading connection state (kept short for ~4s budget)
+          await Future.delayed(_afterConnectStabilizeDelay);
 
           // Check again after delay
           if (!_isStreamActive.value ||
@@ -506,18 +668,16 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           if (room.connectionState == lk.ConnectionState.connected) {
             IsmLiveLog.info('Single reconnection successful');
             _isReconnecting = false;
-            _resumeStreamAfterApiConfirmation(
-                sessionId: sessionId, expectedStreamId: expectedStreamId);
-
-            // Call API with 1 second delay after successful reconnection
-            _callApiWithDelay(
-                sessionId: sessionId, expectedStreamId: expectedStreamId);
+            _resumeStreamWithPostConnectVerify(
+              sessionId: sessionId,
+              expectedStreamId: expectedStreamId,
+            );
           } else {
             IsmLiveLog.info(
                 'Single reconnection failed, connection state: ${room.connectionState}');
             _isReconnecting = false;
-            _callApiAndShowDialog(
-                sessionId: sessionId, expectedStreamId: expectedStreamId);
+            unawaited(_callApiAndShowDialog(
+                sessionId: sessionId, expectedStreamId: expectedStreamId));
           }
         } catch (e) {
           IsmLiveLog.error('Single reconnection attempt failed with error: $e');
@@ -526,15 +686,15 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           if (_isStreamActive.value &&
               _isSessionValid(sessionId) &&
               _isExpectedStream(expectedStreamId)) {
-            _callApiAndShowDialog(
-                sessionId: sessionId, expectedStreamId: expectedStreamId);
+            unawaited(_callApiAndShowDialog(
+                sessionId: sessionId, expectedStreamId: expectedStreamId));
           }
         }
       } else {
         IsmLiveLog.info('No stored token available, calling API immediately');
         _isReconnecting = false;
-        _callApiAndShowDialog(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
+        unawaited(_callApiAndShowDialog(
+            sessionId: sessionId, expectedStreamId: expectedStreamId));
       }
     } catch (e) {
       IsmLiveLog.error('Error in single reconnection: $e');
@@ -543,60 +703,14 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       if (_isStreamActive.value &&
           _isSessionValid(sessionId) &&
           _isExpectedStream(expectedStreamId)) {
-        _callApiAndShowDialog(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
+        unawaited(_callApiAndShowDialog(
+            sessionId: sessionId, expectedStreamId: expectedStreamId));
       }
     }
   }
 
-  /// Resume stream only after API confirms it can continue.
-  /// This specifically gates camera re-enable for hosts when video was paused by background.
-  void _resumeStreamAfterApiConfirmation({
-    required int sessionId,
-    required String? expectedStreamId,
-  }) async {
-    // Camera resume is only relevant for host when background paused local video.
-    final shouldGateCameraResume = _isHost.value && _videoPausedByBackground;
-    if (!shouldGateCameraResume) {
-      _resumeStream();
-      return;
-    }
-
-    if (!_isStreamActive.value ||
-        _controller.streamId == null ||
-        !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info(
-          'Skipping camera resume confirmation: stream/session invalid or streamId mismatch');
-      return;
-    }
-
-    IsmLiveLog.info(
-        'Confirming stream continuation via fetchModerators before camera resume');
-    final isStreamActive =
-        await _checkStreamActiveStatus(_controller.streamId!);
-
-    // Stream may close while awaiting API response.
-    if (!_isStreamActive.value ||
-        !_isSessionValid(sessionId) ||
-        !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info(
-          'Stream/session became invalid during camera resume confirmation, aborting');
-      return;
-    }
-
-    if (isStreamActive) {
-      IsmLiveLog.info('Stream confirmed active, proceeding with resume');
-      _resumeStream();
-    } else {
-      IsmLiveLog.info(
-          'Stream continuation not confirmed, keeping camera off and showing status dialog');
-      _callApiAndShowDialog(
-          sessionId: sessionId, expectedStreamId: expectedStreamId);
-    }
-  }
-
   /// Call API immediately and show dialog based on result
-  void _callApiAndShowDialog({
+  Future<void> _callApiAndShowDialog({
     int? sessionId,
     String? expectedStreamId,
   }) async {
@@ -642,61 +756,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       // Check if stream is still active before showing error dialog
       if (_isStreamActive.value) {
         _showConnectionFailedDialog(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
-      }
-    }
-  }
-
-  /// Call API with 1 second delay after successful reconnection
-  void _callApiWithDelay({
-    required int sessionId,
-    required String? expectedStreamId,
-  }) async {
-    try {
-      IsmLiveLog.info(
-          'Calling API with 1 second delay after successful reconnection...');
-
-      // Wait 1 second before API check
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Check if stream is still active after delay
-      if (!_isStreamActive.value ||
-          _controller.streamId == null ||
-          !_isSessionValid(sessionId) ||
-          !_isExpectedStream(expectedStreamId)) {
-        IsmLiveLog.info(
-            'Stream/session not valid, streamId mismatch, or streamId is null after delay, skipping API check');
-        return;
-      }
-
-      final isStreamActive =
-          await _checkStreamActiveStatus(_controller.streamId!);
-
-      // Check again after async operation - stream might have been closed
-      if (!_isStreamActive.value ||
-          !_isSessionValid(sessionId) ||
-          !_isExpectedStream(expectedStreamId)) {
-        IsmLiveLog.info(
-            'Stream/session became invalid during delayed API call, skipping dialog');
-        return;
-      }
-
-      if (isStreamActive) {
-        IsmLiveLog.info('API check after reconnection: Stream is still active');
-        // Stream is active and reconnection successful, everything is good
-      } else {
-        IsmLiveLog.info(
-            'API check after reconnection: Stream is no longer active, showing dialog');
-        _showStreamEndedDialog(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
-      }
-    } catch (e) {
-      IsmLiveLog.error('Error in delayed API call: $e');
-      // Check if stream is still active before showing error dialog
-      if (_isStreamActive.value &&
-          _isSessionValid(sessionId) &&
-          _isExpectedStream(expectedStreamId)) {
-        _showStreamEndedDialog(
             sessionId: sessionId, expectedStreamId: expectedStreamId);
       }
     }
@@ -772,6 +831,73 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     return isOnStreamView;
   }
 
+  void _onlyCloseStreamLifecycleInfoDialog() {
+    _hasShownInfoDialogInSession = false;
+    IsmLiveUtility.closeDialog();
+  }
+
+  void _exitStreamFromLifecycleInfoDialog() {
+    IsmLiveUtility.closeDialog();
+    IsmLiveRoute.pop();
+  }
+
+  Widget _streamLifecycleInfoDialogLayout({
+    required String message,
+    required TextAlign textAlign,
+    required Widget gapBeforeExitButton,
+  }) =>
+      Material(
+        color: IsmLiveColors.transparent,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: _onlyCloseStreamLifecycleInfoDialog,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 40,
+                    minHeight: 40,
+                  ),
+                  icon: const Icon(
+                    Icons.close,
+                    size: 22,
+                    color: IsmLiveColors.black,
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: Text(
+                  message,
+                  style: IsmLiveStyles.black16,
+                  textAlign: textAlign,
+                  maxLines: 8,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              gapBeforeExitButton,
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: IsmLiveButton(
+                  onTap: _exitStreamFromLifecycleInfoDialog,
+                  label: 'Exit',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
   /// Show dialog when stream has ended
   void _showStreamEndedDialog({int? sessionId, String? expectedStreamId}) {
     try {
@@ -794,44 +920,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           ? 'Stream has been stopped. Please start a new stream'
           : 'The stream you were watching has ended. Please browse other streams';
 
-      // Use custom dialog with single action button
       IsmLiveUtility.showCustomDialog(
-        Material(
-            color: IsmLiveColors.transparent,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 320),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0, vertical: 16.0),
-                    child: Text(
-                      message,
-                      style: IsmLiveStyles.black16,
-                      textAlign: TextAlign.center,
-                      maxLines: 8,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IsmLiveDimens.boxHeight16,
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: IsmLiveButton(
-                      onTap: () {
-                        IsmLiveUtility.closeDialog();
-                        // Close the current stream screen
-                        IsmLiveRoute.pop();
-                      },
-                      label: 'Exit',
-                    ),
-                  ),
-                ],
-              ),
-            )),
-        isDismissible: true,
+        _streamLifecycleInfoDialogLayout(
+          message: message,
+          textAlign: TextAlign.center,
+          gapBeforeExitButton: IsmLiveDimens.boxHeight16,
+        ),
+        isDismissible: false,
       );
     } catch (e) {
       IsmLiveLog.error('Error showing stream ended dialog: $e');
@@ -862,42 +957,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           : 'Unable to reconnect to the stream. Please try again or browse other streams';
 
       IsmLiveUtility.showCustomDialog(
-        Material(
-          color: IsmLiveColors.transparent,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 320),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 16.0),
-                  child: Text(
-                    message,
-                    style: IsmLiveStyles.black16,
-                    textAlign: TextAlign.left,
-                    maxLines: 8,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                IsmLiveDimens.boxHeight50,
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: IsmLiveButton(
-                    onTap: () {
-                      IsmLiveUtility.closeDialog();
-                      IsmLiveRoute.pop();
-                    },
-                    label: 'Exit',
-                  ),
-                ),
-              ],
-            ),
-          ),
+        _streamLifecycleInfoDialogLayout(
+          message: message,
+          textAlign: TextAlign.left,
+          gapBeforeExitButton: IsmLiveDimens.boxHeight50,
         ),
-        isDismissible: true,
+        isDismissible: false,
       );
     } catch (e) {
       IsmLiveLog.error('Error showing connection failed dialog: $e');
