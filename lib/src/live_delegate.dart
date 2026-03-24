@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
@@ -781,7 +783,7 @@ enum IsmLiveStreamRecordingControlWidgetSlot {
 
 /// Called when the user triggers a control action in the recording player.
 /// [option] identifies the action (product, share, delete, etc.).
-typedef IsmLiveStreamRecordingControlOptionCallback = void Function(
+typedef IsmLiveStreamRecordingControlOptionCallback = FutureOr<void> Function(
   BuildContext context,
   IsmLiveStreamRecordingControlOption option,
   IsmLiveStreamRecordingItem recording,

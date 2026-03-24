@@ -9,16 +9,27 @@ class IsmLiveStreamRecordingRightControls extends StatelessWidget {
     super.key,
     required this.config,
     required this.recording,
+    this.onPausePlayback,
+    this.onResumePlayback,
   });
 
   final IsmLiveStreamRecordingPlayerConfig config;
   final IsmLiveStreamRecordingItem recording;
+  final VoidCallback? onPausePlayback;
+  final VoidCallback? onResumePlayback;
 
   Future<void> _handleOptionTap(
     BuildContext context,
     IsmLiveStreamRecordingControlOption option,
   ) async {
-    config.onControlOption?.call(context, option, recording);
+    final onControlOption = config.onControlOption;
+    if (onControlOption == null) return;
+    onPausePlayback?.call();
+    try {
+      await onControlOption.call(context, option, recording);
+    } finally {
+      onResumePlayback?.call();
+    }
   }
 
   @override
