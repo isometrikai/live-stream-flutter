@@ -293,9 +293,11 @@ class _RecordingOverlay extends StatelessWidget {
   final VoidCallback onPlayPause;
 
   @override
-  Widget build(BuildContext context) => Stack(
-        fit: StackFit.expand,
-        children: [
+  Widget build(BuildContext context) {
+    final isVideoReady = videoController?.value.isInitialized ?? false;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
           Positioned(
             top: 0,
             left: 0,
@@ -316,19 +318,21 @@ class _RecordingOverlay extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: config.bottomControlsBuilder?.call(
-                  context,
-                  recording,
-                  config,
-                  videoController,
-                  onPlayPause,
-                ) ??
-                IsmLiveStreamRecordingBottomControls(
-                  recording: recording,
-                  config: config,
-                  videoController: videoController,
-                  onPlayPause: onPlayPause,
-                ),
+            child: isVideoReady
+                ? config.bottomControlsBuilder?.call(
+                      context,
+                      recording,
+                      config,
+                      videoController,
+                      onPlayPause,
+                    ) ??
+                    IsmLiveStreamRecordingBottomControls(
+                      recording: recording,
+                      config: config,
+                      videoController: videoController,
+                      onPlayPause: onPlayPause,
+                    )
+                : const SizedBox.shrink(),
           ),
           Positioned(
             right: 8,
@@ -354,15 +358,8 @@ class _RecordingOverlay extends StatelessWidget {
           ),
           // Center play icon: hide only while actively playing (not while buffering).
           // During buffering, show play icon instead of a loading-style UX.
-          if (videoController == null)
-            Center(
-              child: GestureDetector(
-                onTap: onPlayPause,
-                child: const IsmLiveStreamRecordingCenterPlayButton(
-                  isPlaying: false,
-                ),
-              ),
-            )
+          if (!isVideoReady)
+            const SizedBox.shrink()
           else
             AnimatedBuilder(
               animation: videoController!,
@@ -382,8 +379,9 @@ class _RecordingOverlay extends StatelessWidget {
                 );
               },
             ),
-        ],
-      );
+      ],
+    );
+  }
 }
 
 class _RecordingPage extends StatelessWidget {
