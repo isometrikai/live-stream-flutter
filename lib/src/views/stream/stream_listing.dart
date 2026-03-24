@@ -19,6 +19,31 @@ class IsmLiveStreamListing extends StatefulWidget {
 }
 
 class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
+  // static const List<String> _debugRecordingUrls = [
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1ffc2477a660001ce6385.mp4',
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1ff7e477a660001d08b55.mp4',
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1ff38477a660001df09b9.mp4',
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1fec4477a6600013718db.mp4',
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1fe4d477a660001a2b833.mp4',
+  //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/69c1fd46477a660001cf386e.mp4',
+  // ];
+
+  // List<IsmLiveStreamRecordingItem> get _debugRecordings => _debugRecordingUrls
+  //     .asMap()
+  //     .entries
+  //     .map(
+  //       (entry) => _DebugRecordingItem(
+  //         streamId: 'debug-recording-${entry.key + 1}',
+  //         recordedUrls: [entry.value],
+  //         recordViewCount: 0,
+  //         userName: 'Test User',
+  //         userId: 'debug-user',
+  //         userImageUrl: null,
+  //         storeId: null,
+  //       ),
+  //     )
+  //     .toList();
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +69,15 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
             const IsmLiveStreamingScrolling(),
             // IsmLiveDimens.boxWidth10,
             // IsmLiveTapHandler(
-            //   onTap: () => Get.to<void>(() => const IsmLiveRecordingListView()),
+            //   onTap: () {
+            //     final items = _debugRecordings;
+            //     if (items.isEmpty) return;
+            //     IsmLiveRouteManagement.goToStreamRecordingPlayer(
+            //       recordings: items,
+            //       initialIndex: 0,
+            //       config: IsmLiveDelegate.streamRecordingPlayerConfig,
+            //     );
+            //   },
             //   child: Container(
             //     padding: IsmLiveDimens.edgeInsets16,
             //     decoration: BoxDecoration(
@@ -108,6 +141,39 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
           ),
         ),
       );
+}
+
+class _DebugRecordingItem implements IsmLiveStreamRecordingItem {
+  const _DebugRecordingItem({
+    required this.streamId,
+    required this.recordedUrls,
+    required this.recordViewCount,
+    required this.storeId,
+    required this.userId,
+    required this.userName,
+    required this.userImageUrl,
+  });
+
+  @override
+  final String streamId;
+
+  @override
+  final List<String> recordedUrls;
+
+  @override
+  final int recordViewCount;
+
+  @override
+  final String? storeId;
+
+  @override
+  final String? userId;
+
+  @override
+  final String? userName;
+
+  @override
+  final String? userImageUrl;
 }
 
 class _StreamListing extends StatefulWidget {

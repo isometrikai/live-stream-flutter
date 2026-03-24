@@ -25,6 +25,13 @@ class IsmLiveStreamRecordingBottomControls extends StatefulWidget {
 
 class _IsmLiveStreamRecordingBottomControlsState
     extends State<IsmLiveStreamRecordingBottomControls> {
+  static const Duration _seekThrottleDuration = Duration(milliseconds: 140);
+
+  bool _isDragging = false;
+  double _dragPositionMs = 0;
+  bool _wasPlayingBeforeDrag = false;
+  DateTime _lastPreviewSeekAt = DateTime.fromMillisecondsSinceEpoch(0);
+
   @override
   void initState() {
     super.initState();
@@ -64,10 +71,17 @@ class _IsmLiveStreamRecordingBottomControlsState
     const iconColor = Colors.white;
     final controller = widget.videoController;
     final value = controller?.value;
-    final position = value?.position ?? Duration.zero;
+    final actualPosition = value?.position ?? Duration.zero;
     final duration = value?.duration ?? Duration.zero;
-    final showPause =
-        value != null && (value.isPlaying || value.isBuffering);
+    final showPause = value != null && value.isPlaying && !value.isBuffering;
+    final maxMs = duration.inMilliseconds > 0 ? duration.inMilliseconds : 1;
+    final currentSliderMs = (_isDragging
+            ? _dragPositionMs.clamp(0, maxMs.toDouble())
+            : actualPosition.inMilliseconds
+                .toDouble()
+                .clamp(0, maxMs.toDouble()))
+        .toDouble();
+    final displayPosition = Duration(milliseconds: currentSliderMs.round());
 
     Widget buildControl(
       IsmLiveStreamRecordingControlWidgetSlot slot,
@@ -109,9 +123,7 @@ class _IsmLiveStreamRecordingBottomControlsState
                 IsmLiveStreamRecordingControlWidgetSlot.bottomPlayPause,
                 IconButton(
                   icon: Icon(
-                    showPause
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
+                    showPause ? Icons.pause_rounded : Icons.play_arrow_rounded,
                     color: iconColor,
                   ),
                   onPressed: widget.onPlayPause,
@@ -128,14 +140,47 @@ class _IsmLiveStreamRecordingBottomControlsState
                       thumbColor: Colors.white,
                     ),
                     child: Slider(
-                      value: position.inMilliseconds.toDouble(),
-                      max: duration.inMilliseconds > 0
-                          ? duration.inMilliseconds.toDouble()
-                          : 1,
+                      value: currentSliderMs,
+                      max: maxMs.toDouble(),
+                      onChangeStart: (v) {
+                        final c = controller;
+                        if (c == null) return;
+                        _isDragging = true;
+                        _dragPositionMs = v;
+                        _wasPlayingBeforeDrag =
+                            c.value.isPlaying && !c.value.isBuffering;
+                        if (_wasPlayingBeforeDrag) {
+                          c.pause();
+                        }
+                        setState(() {});
+                      },
                       onChanged: (v) {
-                        controller?.seekTo(
-                          Duration(milliseconds: v.round()),
-                        );
+                        final c = controller;
+                        if (c == null) return;
+                        _dragPositionMs = v;
+                        _isDragging = true;
+                        final now = DateTime.now();
+                        if (now.difference(_lastPreviewSeekAt) >=
+                            _seekThrottleDuration) {
+                          _lastPreviewSeekAt = now;
+                          c.seekTo(Duration(milliseconds: v.round()));
+                        }
+                        setState(() {});
+                      },
+                      onChangeEnd: (v) async {
+                        final c = controller;
+                        if (c == null) return;
+                        _dragPositionMs = v;
+                        _lastPreviewSeekAt =
+                            DateTime.fromMillisecondsSinceEpoch(0);
+                        await c.seekTo(Duration(milliseconds: v.round()));
+                        if (_wasPlayingBeforeDrag) {
+                          await c.play();
+                        }
+                        if (!mounted) return;
+                        setState(() {
+                          _isDragging = false;
+                        });
                       },
                     ),
                   ),
@@ -144,7 +189,7 @@ class _IsmLiveStreamRecordingBottomControlsState
               buildControl(
                 IsmLiveStreamRecordingControlWidgetSlot.bottomDuration,
                 Text(
-                  '${_formatDuration(position)} / ${_formatDuration(duration)}',
+                  '${_formatDuration(displayPosition)} / ${_formatDuration(duration)}',
                   style: theme.textTheme.bodySmall?.copyWith(color: iconColor),
                 ),
               ),
