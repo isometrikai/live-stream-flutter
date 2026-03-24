@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_mixin.dart';
+import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_probe_mixin.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
