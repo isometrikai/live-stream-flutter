@@ -40,7 +40,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   static const String _foregroundCapabilityProbeBody = '__ism_live_foreground_probe__';
 
   /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
-  static const Duration _foregroundProbeTimeout = Duration(milliseconds: 1200);
+  static const Duration _foregroundProbeTimeout = Duration(milliseconds: 6000);
   static const Duration _preResumeConnectedVerifyDelay =
       Duration(milliseconds: 100);
   static const Duration _afterConnectStabilizeDelay =
@@ -824,11 +824,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
     final currentRoute = Get.currentRoute;
     final isOnStreamView = currentRoute == IsmLiveRoutes.streamView;
-    if (!isOnStreamView) {
-      IsmLiveLog.info(
-          'Skipping info dialog because current route is not stream view: $currentRoute');
-    }
-    return isOnStreamView;
+    // if (!isOnStreamView) {
+    //   IsmLiveLog.info(
+    //       'Skipping info dialog because current route is not stream view: $currentRoute');
+    // }
+    return true;
   }
 
   void _onlyCloseStreamLifecycleInfoDialog() {
