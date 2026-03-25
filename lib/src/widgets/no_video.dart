@@ -5,10 +5,10 @@ class NoVideoWidget extends StatelessWidget {
   const NoVideoWidget({
     super.key,
     required this.imageUrl,
-    this.name = 'U',
+    this.name = '',
     this.showConnectingState = false,
     this.connectingText,
-  }) : assert(name.length > 0, 'Length of the name should be atleast 1');
+  });
   final String name;
   final String imageUrl;
   final bool showConnectingState;

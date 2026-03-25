@@ -948,6 +948,13 @@ class IsmLiveDelegate {
   /// [IsmLiveApp.configureInterface].
   static Duration mqttChatFallbackInterval = const Duration(seconds: 6);
 
+  /// When `false`, [IsmLiveStreamController.getStreams] returns immediately
+  /// without calling the listing API (init, disconnect, MQTT presence, UI
+  /// refresh, etc.).
+  ///
+  /// Default is `true`. Set via [IsmLiveApp.configureInterface].
+  static bool enableInternalStreamListingRefresh = true;
+
   static IsmLiveButtonConfig? ismLiveButtonConfig;
 
   static LinearGradient? streamOptionsBgGradient;

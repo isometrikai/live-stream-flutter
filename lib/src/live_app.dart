@@ -344,6 +344,9 @@ class IsmLiveApp extends StatefulWidget {
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
+    /// When `false`, [IsmLiveStreamController.getStreams] does not call the
+    /// listing API. Default `true`.
+    bool enableInternalStreamListingRefresh = true,
     // New control customization options
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
@@ -436,6 +439,8 @@ class IsmLiveApp extends StatefulWidget {
     // Chat polling fallback while MQTT disconnected (host can override).
     IsmLiveDelegate.mqttChatFallbackInterval =
         mqttChatFallbackInterval ?? const Duration(seconds: 6);
+    IsmLiveDelegate.enableInternalStreamListingRefresh =
+        enableInternalStreamListingRefresh;
   }
 
   static Future<void> endStream(
