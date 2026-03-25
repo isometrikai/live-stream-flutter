@@ -624,7 +624,9 @@ mixin StreamJoinMixin {
   ///   can also produce SDP order errors.
   /// - This method uses the existing `getRTCToken()` + `_connectRoomAndInitialize()`
   ///   flow to obtain a fresh token and rejoin without navigating.
-  Future<bool> rejoinCurrentViewerStreamAfterForeground() async {
+  Future<bool> rejoinCurrentViewerStreamAfterForeground({
+    bool showProgress = true,
+  }) async {
     final context = IsmLiveUtility.navigatorKey.currentContext;
     if (context == null) {
       IsmLiveLog.error(
@@ -643,10 +645,18 @@ mixin StreamJoinMixin {
     IsmLiveLog.info(
         'rejoinCurrentViewerStreamAfterForeground: requesting fresh RTC token for $streamId');
 
+    var loaderShown = false;
     try {
       _controller.isViewerJoiningStream = true;
       // Prevent cleanup while we attempt to rejoin in-place.
       _controller.preventDispose = true;
+
+      if (showProgress && !(Get.isDialogOpen ?? false)) {
+        // Use the existing blocking loader to keep UX consistent.
+        // Only close it if we opened it, so we don't close other dialogs.
+        IsmLiveUtility.showLoader();
+        loaderShown = true;
+      }
 
       final rtc = await _controller.getRTCToken(streamId);
       if (rtc == null || rtc.rtcToken.trim().isEmpty) {
@@ -700,7 +710,93 @@ mixin StreamJoinMixin {
           'rejoinCurrentViewerStreamAfterForeground: unexpected error: $e', st);
       return false;
     } finally {
+      if (loaderShown) {
+        IsmLiveUtility.closeLoader();
+      }
       _controller.isViewerJoiningStream = false;
+      _controller.preventDispose = false;
+    }
+  }
+
+  /// Host-only: rejoin the currently open stream after app resumes.
+  ///
+  /// Implementation notes:
+  /// - Hosts don't have an API "get fresh token" flow in this SDK, so we reuse
+  ///   the host RTC token stored in secure storage (keyed by streamId).
+  /// - We rebuild the LiveKit `Room` using `_connectRoomAndInitialize()` to avoid
+  ///   reconnecting on a potentially stale/disposed Room instance.
+  Future<bool> rejoinCurrentHostStreamAfterForeground() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext;
+    if (context == null) {
+      IsmLiveLog.error(
+          'rejoinCurrentHostStreamAfterForeground: navigator context is null');
+      return false;
+    }
+
+    final streamId = _controller.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      IsmLiveLog.error('rejoinCurrentHostStreamAfterForeground: streamId missing');
+      return false;
+    }
+
+    final details = _controller.streamDetails;
+    IsmLiveLog.info(
+        'rejoinCurrentHostStreamAfterForeground: loading stored RTC token for $streamId');
+
+    try {
+      // Prevent cleanup while we attempt to rejoin in-place.
+      _controller.preventDispose = true;
+
+      final token = await _dbWrapper.getSecuredValue(streamId);
+      if (token.trim().isEmpty) {
+        IsmLiveLog.error(
+            'rejoinCurrentHostStreamAfterForeground: stored host token missing');
+        return false;
+      }
+
+      // Keep token available for background lifecycle reconnection.
+      _controller.rtcToken = token;
+      _controller.storeToken(token);
+
+      await _connectRoomAndInitialize(
+        stream: details,
+        token: token,
+        streamId: streamId,
+        streamImage: details?.streamImage,
+        streamDiscription:
+            details?.streamDescription ?? _controller.descriptionController.text,
+        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+        restream: details?.restream ?? _controller.isRestreamBroadcast,
+        isHost: true,
+        isCopublisher: false,
+        isPk: details?.isPkChallenge ?? false,
+        isPkGust: false,
+        isNewStream: false,
+        joinByScrolling: false,
+        isScrolling: false,
+        isInteractive: false,
+        startTime: details?.startDateTime,
+        context: context,
+        eventId: details?.eventId,
+        reJoin: true,
+        isScheduledStream: details?.isScheduledStream,
+        products: details?.products,
+        performNavigation: false,
+        showLoader: false,
+      );
+
+      // Give LiveKit a brief moment to update connection state.
+      await Future.delayed(const Duration(milliseconds: 150));
+      final connected =
+          _controller.room?.connectionState == lk.ConnectionState.connected;
+      IsmLiveLog.info(
+          'rejoinCurrentHostStreamAfterForeground: connected=$connected state=${_controller.room?.connectionState}');
+      return connected;
+    } catch (e, st) {
+      IsmLiveLog.error(
+          'rejoinCurrentHostStreamAfterForeground: unexpected error: $e', st);
+      return false;
+    } finally {
       _controller.preventDispose = false;
     }
   }
