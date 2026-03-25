@@ -27,10 +27,10 @@ class IsmLivePublisherGrid extends StatelessWidget {
                   ? const _RtmlView()
                   : NoVideoWidget(
                       imageUrl: controller.hostDetails?.image ?? streamImage,
-                      name: controller.hostDetails?.name ?? 'U',
+                      name: controller.hostDetails?.name ?? '',
                       showConnectingState: controller.isViewerJoiningStream,
-                      connectingText: context.liveTranslations?.streamTranslations
-                              ?.connectingToLiveStream ??
+                      connectingText: context.liveTranslations
+                              ?.streamTranslations?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
                     );
             }
@@ -102,12 +102,10 @@ class IsmLivePublisherGrid extends StatelessWidget {
                 : !isSchedule
                     ? NoVideoWidget(
                         imageUrl: controller.hostDetails?.image ?? streamImage,
-                        name: controller.hostDetails?.name ?? 'U',
+                        name: controller.hostDetails?.name ?? '',
                         showConnectingState: controller.isViewerJoiningStream,
-                        connectingText: context
-                                .liveTranslations
-                                ?.streamTranslations
-                                ?.connectingToLiveStream ??
+                        connectingText: context.liveTranslations
+                                ?.streamTranslations?.connectingToLiveStream ??
                             IsmLiveStrings.connectingToLiveStream,
                       )
                     : const SizedBox.shrink();
@@ -142,10 +140,12 @@ class _RtmlView extends StatelessWidget {
                   child: hostScreen == null
                       ? NoVideoWidget(
                           imageUrl: controller.hostDetails?.image ?? '',
-                          name: controller.hostDetails?.name ?? 'U',
+                          name: controller.hostDetails?.name ?? '',
                           showConnectingState: controller.isViewerJoiningStream,
-                          connectingText: context.liveTranslations
-                                  ?.streamTranslations?.connectingToLiveStream ??
+                          connectingText: context
+                                  .liveTranslations
+                                  ?.streamTranslations
+                                  ?.connectingToLiveStream ??
                               IsmLiveStrings.connectingToLiveStream,
                         )
                       : ParticipantWidget.widgetFor(

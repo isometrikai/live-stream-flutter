@@ -552,8 +552,9 @@ mixin StreamOngoingMixin {
       return;
     }
 
-    final chats =
-        visibleMessages.map((e) => _controller.convertMessageToChat(e)).toList();
+    final chats = visibleMessages
+        .map((e) => _controller.convertMessageToChat(e))
+        .toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
@@ -868,7 +869,9 @@ mixin StreamOngoingMixin {
     onChangeCall = true;
     if (_controller.streams.length - 1 == index + 1) {
       unawaited(_controller.getStreams(
-          skip: _controller.streams.length, type: _controller.streamType));
+        skip: _controller.streams.length,
+        type: _controller.streamType,
+      ));
     }
 
     final didLeft = await disconnectStream(

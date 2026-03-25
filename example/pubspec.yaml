@@ -30,6 +30,9 @@ dependencies:
 
 dependency_overrides:
   device_info_plus: ^12.1.0
+  # Flutter SDK's flutter_test pins `meta` to 1.16.0 in this SDK version.
+  # livekit_client (>=2.6.5) requires meta ^1.17.0, so we override to make pub resolve.
+  meta: ^1.17.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0

@@ -60,10 +60,17 @@ mixin StreamAPIMixin {
       );
 
   /// Get streams based on the specified type (e.g., featured, trending, etc.).
-  Future<void> getStreams({IsmLiveStreamType? type, int skip = 0}) async =>
-      _controller.getStreamDebouncer.run(
-        () => _getStreams(type: type, skip: skip),
-      );
+  ///
+  /// No-ops when [IsmLiveDelegate.enableInternalStreamListingRefresh] is
+  /// `false` (see [IsmLiveApp.configureInterface]).
+  Future<void> getStreams({IsmLiveStreamType? type, int skip = 0}) async {
+    if (!IsmLiveDelegate.enableInternalStreamListingRefresh) {
+      return;
+    }
+    _controller.getStreamDebouncer.run(
+      () => _getStreams(type: type, skip: skip),
+    );
+  }
 
   /// Internal method for getting streams based on the specified type.
   Future<void> _getStreams({
@@ -424,10 +431,12 @@ mixin StreamAPIMixin {
   Future<bool> sendMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
+    bool showDialog = true,
   }) async =>
       await _controller.viewModel.sendMessage(
         showLoading: showLoading,
         getMessageModel: sendMessageModel,
+        showDialog: showDialog,
       );
 
 //Replies to a message related to a live stream.

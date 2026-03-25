@@ -696,6 +696,7 @@ mixin StreamJoinMixin {
       );
 
       _controller.room = room;
+      IsmLiveLog.info('Joining streamId(roomId): $streamId');
 
       /// Dispose listener if it was active on `scroll` streams
       try {
