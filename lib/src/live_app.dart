@@ -274,10 +274,10 @@ class IsmLiveApp extends StatefulWidget {
     unawaited(
       Get.find<IsmLiveMqttController>()
           .setup(
-            topics: topics,
-            topicChannels: topicChannels,
-            shouldInitializeMqtt: shouldInitializeMqtt,
-          )
+        topics: topics,
+        topicChannels: topicChannels,
+        shouldInitializeMqtt: shouldInitializeMqtt,
+      )
           .catchError((Object e, StackTrace st) {
         IsmLiveLog.error('MQTT setup failed: $e', st);
       }),
@@ -344,6 +344,7 @@ class IsmLiveApp extends StatefulWidget {
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
+
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
     bool enableInternalStreamListingRefresh = true,
@@ -500,17 +501,15 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveStreamBinding().dependencies();
     }
 
-    IsmLiveUtility.updateLater(() async {
-      try {
-        await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
-            stream, isHost,
-            context: context,
-            isScrolling: isScrolling,
-            onStreamEnd: onStreamEnd);
-      } catch (e) {
-        IsmLiveLog.error('Error in initializeAndJoinStream: $e');
-      }
-    });
+    // IsmLiveUtility.updateLater(() async {
+    try {
+      await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
+          stream, isHost,
+          context: context, isScrolling: isScrolling, onStreamEnd: onStreamEnd);
+    } catch (e) {
+      IsmLiveLog.error('Error in initializeAndJoinStream: $e');
+    }
+    // });
   }
 
   static Future<void> connectStream({
