@@ -219,6 +219,7 @@ class IsmGoLiveView extends StatelessWidget {
                                     .transparent, // Remove fill since Container has it
                                 controller: controller.descriptionController,
                                 hintText: 'Enter description',
+                                maxLength: 250,
                                 onchange: (_) {
                                   controller.update([buttonUpdateId]);
                                 },
