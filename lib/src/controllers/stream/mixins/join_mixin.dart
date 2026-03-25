@@ -616,6 +616,95 @@ mixin StreamJoinMixin {
     );
   }
 
+  /// Viewer-only: rejoin the currently open stream after app resumes.
+  ///
+  /// Why this exists:
+  /// - When coming back from background, message/probe APIs may fail with 400
+  ///   (viewer not considered a member). Reconnecting LiveKit with an old token
+  ///   can also produce SDP order errors.
+  /// - This method uses the existing `getRTCToken()` + `_connectRoomAndInitialize()`
+  ///   flow to obtain a fresh token and rejoin without navigating.
+  Future<bool> rejoinCurrentViewerStreamAfterForeground() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext;
+    if (context == null) {
+      IsmLiveLog.error(
+          'rejoinCurrentViewerStreamAfterForeground: navigator context is null');
+      return false;
+    }
+
+    final streamId = _controller.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      IsmLiveLog.error(
+          'rejoinCurrentViewerStreamAfterForeground: streamId missing');
+      return false;
+    }
+
+    final details = _controller.streamDetails;
+    IsmLiveLog.info(
+        'rejoinCurrentViewerStreamAfterForeground: requesting fresh RTC token for $streamId');
+
+    try {
+      _controller.isViewerJoiningStream = true;
+      // Prevent cleanup while we attempt to rejoin in-place.
+      _controller.preventDispose = true;
+
+      final rtc = await _controller.getRTCToken(streamId);
+      if (rtc == null || rtc.rtcToken.trim().isEmpty) {
+        IsmLiveLog.error(
+            'rejoinCurrentViewerStreamAfterForeground: RTC token fetch failed');
+        return false;
+      }
+
+      final token = rtc.rtcToken;
+
+      // Keep token available for background lifecycle reconnection.
+      _controller.rtcToken = token;
+      _controller.storeToken(token);
+
+      await _connectRoomAndInitialize(
+        stream: details,
+        token: token,
+        streamId: streamId,
+        streamImage: details?.streamImage,
+        streamDiscription:
+            details?.streamDescription ?? _controller.descriptionController.text,
+        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+        restream: details?.restream ?? _controller.isRestreamBroadcast,
+        isHost: false,
+        isCopublisher: false,
+        isPk: details?.isPkChallenge ?? false,
+        isPkGust: false,
+        isNewStream: false,
+        joinByScrolling: false,
+        isScrolling: false,
+        isInteractive: false,
+        startTime: rtc.startTime ?? details?.startDateTime,
+        context: context,
+        eventId: details?.eventId,
+        reJoin: true,
+        isScheduledStream: details?.isScheduledStream,
+        products: details?.products,
+        performNavigation: false,
+        showLoader: false,
+      );
+
+      // Give LiveKit a brief moment to update connection state.
+      await Future.delayed(const Duration(milliseconds: 150));
+      final connected =
+          _controller.room?.connectionState == lk.ConnectionState.connected;
+      IsmLiveLog.info(
+          'rejoinCurrentViewerStreamAfterForeground: connected=$connected state=${_controller.room?.connectionState}');
+      return connected;
+    } catch (e, st) {
+      IsmLiveLog.error(
+          'rejoinCurrentViewerStreamAfterForeground: unexpected error: $e', st);
+      return false;
+    } finally {
+      _controller.isViewerJoiningStream = false;
+      _controller.preventDispose = false;
+    }
+  }
+
   Future<void> _connectRoomAndInitialize({
     IsmLiveStreamDataModel? stream,
     required String token,

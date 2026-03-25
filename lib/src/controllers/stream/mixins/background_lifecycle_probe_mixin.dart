@@ -47,7 +47,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       Duration(milliseconds: 180);
   static const Duration _postResumeRoomStabilityDelay =
       Duration(milliseconds: 320);
-  static const Duration _roomConnectTimeout = Duration(milliseconds: 1900);
+  static const Duration _roomConnectTimeout = Duration(milliseconds: 2500);
 
   // Getters
   bool get isInBackground => _isInBackground.value;
@@ -239,12 +239,37 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
 
     if (!probeOk) {
-      IsmLiveLog.info(
-          'Foreground capability probe failed — showing lifecycle info dialog (no API check)');
-      _showConnectionFailedDialog(
-        sessionId: sessionId,
-        expectedStreamId: expectedStreamId,
-      );
+      if (!_isHost.value) {
+        IsmLiveLog.info(
+            'Foreground capability probe failed — viewer will rejoin via API (fresh token)');
+        final ok = await _controller.rejoinCurrentViewerStreamAfterForeground();
+        if (!_isStreamActive.value ||
+            !_isSessionValid(sessionId) ||
+            !_isExpectedStream(expectedStreamId)) {
+          IsmLiveLog.info('Stream/session changed during API rejoin, aborting');
+          return;
+        }
+        if (ok) {
+          IsmLiveLog.info('Viewer API rejoin succeeded — resuming stream');
+          _resumeStreamWithPostConnectVerify(
+            sessionId: sessionId,
+            expectedStreamId: expectedStreamId,
+          );
+        } else {
+          IsmLiveLog.info('Viewer API rejoin failed — showing info dialog');
+          _showConnectionFailedDialog(
+            sessionId: sessionId,
+            expectedStreamId: expectedStreamId,
+          );
+        }
+      } else {
+        IsmLiveLog.info(
+            'Foreground capability probe failed — host showing lifecycle info dialog (no API check)');
+        _showConnectionFailedDialog(
+          sessionId: sessionId,
+          expectedStreamId: expectedStreamId,
+        );
+      }
       return;
     }
 
@@ -547,14 +572,51 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       ));
     } else if (room != null &&
         connectionState == lk.ConnectionState.disconnected) {
-      IsmLiveLog.info('Room is disconnected, attempting single reconnection');
-      _attemptSingleReconnection(
-          sessionId: sessionId, expectedStreamId: expectedStreamId);
+      // Viewer recovery: a disconnected room after a successful probe can still
+      // fail reconnection due to `duplicateIdentity`. Prefer API rejoin which
+      // rebuilds the Room cleanly with a fresh token.
+      if (!_isHost.value) {
+        IsmLiveLog.info(
+            'Room is disconnected after probe — viewer will rejoin via API (fresh token)');
+        unawaited(_viewerRejoinViaApiOrShowDialog(
+          sessionId: sessionId,
+          expectedStreamId: expectedStreamId,
+        ));
+      } else {
+        IsmLiveLog.info(
+            'Room is disconnected after probe — host attempting single reconnection');
+        _attemptSingleReconnection(
+            sessionId: sessionId, expectedStreamId: expectedStreamId);
+      }
     } else {
       IsmLiveLog.info(
           'Room connection state unclear, attempting single reconnection');
       _attemptSingleReconnection(
           sessionId: sessionId, expectedStreamId: expectedStreamId);
+    }
+  }
+
+  Future<void> _viewerRejoinViaApiOrShowDialog({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) async {
+    final ok = await _controller.rejoinCurrentViewerStreamAfterForeground();
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      IsmLiveLog.info('Stream/session changed during viewer API rejoin, aborting');
+      return;
+    }
+    if (ok) {
+      _resumeStreamWithPostConnectVerify(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
+    } else {
+      _showConnectionFailedDialog(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
     }
   }
 
