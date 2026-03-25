@@ -5,6 +5,20 @@ mixin StreamOngoingMixin {
   IsmLivePkController get _pkController => Get.find();
 // Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
+
+  /// Stop MQTT-disconnected chat fallback polling (used on app background).
+  void pauseMqttDisconnectedChatFallback() {
+    _stopMqttDisconnectedChatFallback();
+  }
+
+  /// Resume MQTT-disconnected chat fallback polling if needed (used on resume).
+  void resumeMqttDisconnectedChatFallbackIfNeeded() {
+    final streamId = _controller.streamId;
+    if (streamId == null || streamId.isEmpty) return;
+    if (_controller.isInBackground) return;
+    if (IsmLiveApp.isMqttConnected) return;
+    unawaited(_startMqttDisconnectedChatFallback(streamId));
+  }
   // Function to initialize the stream
   void initializeStream({
     required String streamId,

@@ -21,10 +21,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   bool _enableBackgroundLifecycle = true;
   bool _enableBackgroundAudio = true;
   bool _enableBackgroundVideo = false;
-  Duration _backgroundTimeoutDuration = const Duration(minutes: 5);
 
   // Timers for background handling
-  Timer? _backgroundTimer;
   Timer? _reconnectTimer;
   bool _videoPausedByBackground = false;
 
@@ -68,9 +66,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     _enableBackgroundLifecycle = enableBackgroundLifecycle;
     _enableBackgroundAudio = enableBackgroundAudio;
     _enableBackgroundVideo = enableBackgroundVideo;
-    if (backgroundTimeout != null) {
-      _backgroundTimeoutDuration = backgroundTimeout;
-    }
+    // backgroundTimeout is intentionally ignored: backend enforces viewer timeout.
   }
 
   // Initialize background lifecycle management
@@ -90,7 +86,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   // Dispose background lifecycle management
   void disposeBackgroundLifecycle() {
     WidgetsBinding.instance.removeObserver(_controller);
-    _backgroundTimer?.cancel();
     _reconnectTimer?.cancel();
     IsmLiveLog.info('Background lifecycle management disposed');
   }
@@ -143,9 +138,32 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void handleBackgroundLifecycleState(AppLifecycleState state) {
     IsmLiveLog.info('Background lifecycle state received: $state');
 
-    // Ignore inactive events for background handling; they are transient (e.g., system overlays)
+    // Chat fallback polling control should be lifecycle-driven even when
+    // background lifecycle features are disabled, so API polling doesn't run
+    // in background and also resumes correctly in foreground.
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (_isStreamActive.value) {
+          _controller.resumeMqttDisconnectedChatFallbackIfNeeded();
+        }
+        break;
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
+        _controller.pauseMqttDisconnectedChatFallback();
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+
+    // `inactive` can be emitted when the app is transitioning to background or
+    // when system UI overlays appear. We avoid doing heavy background handling
+    // here, but we still mark the controller as "not active" so background-only
+    // guards (e.g., MQTT fallback polling) do not run.
     if (state == AppLifecycleState.inactive) {
-      IsmLiveLog.info('Ignoring inactive state');
+      IsmLiveLog.info('Marking inactive as background-like (lightweight)');
+      _isInBackground.value = true;
+      _controller._isInBackground.value = true; // Sync with controller
       return;
     }
 
@@ -188,10 +206,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     IsmLiveLog.info('App resumed from background');
     _isInBackground.value = false;
     _controller._isInBackground.value = false; // Sync with controller
-    _backgroundTimer?.cancel();
     _reconnectTimer?.cancel();
 
     if (_isStreamActive.value) {
+      // Resume MQTT fallback polling if it was paused in background.
+      _controller.resumeMqttDisconnectedChatFallbackIfNeeded();
       unawaited(_runForegroundResumeFlow());
     }
   }
@@ -242,7 +261,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       if (!_isHost.value) {
         IsmLiveLog.info(
             'Foreground capability probe failed — viewer will rejoin via API (fresh token)');
-        final ok = await _controller.rejoinCurrentViewerStreamAfterForeground();
+        final ok = await _controller.rejoinCurrentViewerStreamAfterForeground(
+          showProgress: true,
+        );
         if (!_isStreamActive.value ||
             !_isSessionValid(sessionId) ||
             !_isExpectedStream(expectedStreamId)) {
@@ -264,11 +285,28 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         }
       } else {
         IsmLiveLog.info(
-            'Foreground capability probe failed — host showing lifecycle info dialog (no API check)');
-        _showConnectionFailedDialog(
-          sessionId: sessionId,
-          expectedStreamId: expectedStreamId,
-        );
+            'Foreground capability probe failed — host will attempt in-place room rebuild rejoin');
+        final ok = await _controller.rejoinCurrentHostStreamAfterForeground();
+        if (!_isStreamActive.value ||
+            !_isSessionValid(sessionId) ||
+            !_isExpectedStream(expectedStreamId)) {
+          IsmLiveLog.info(
+              'Stream/session changed during host rejoin, aborting');
+          return;
+        }
+        if (ok) {
+          IsmLiveLog.info('Host rejoin succeeded — resuming stream');
+          _resumeStreamWithPostConnectVerify(
+            sessionId: sessionId,
+            expectedStreamId: expectedStreamId,
+          );
+        } else {
+          IsmLiveLog.info('Host rejoin failed — showing info dialog');
+          _showConnectionFailedDialog(
+            sessionId: sessionId,
+            expectedStreamId: expectedStreamId,
+          );
+        }
       }
       return;
     }
@@ -311,6 +349,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     IsmLiveLog.info('App paused - going to background');
     _isInBackground.value = true;
     _controller._isInBackground.value = true; // Sync with controller
+    // Stop chat polling immediately while backgrounded.
+    _controller.pauseMqttDisconnectedChatFallback();
 
     if (_isStreamActive.value) {
       _handleStreamBackground();
@@ -326,6 +366,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     IsmLiveLog.info('App hidden');
     _isInBackground.value = true;
     _controller._isInBackground.value = true; // Sync with controller
+    // Stop chat polling immediately while backgrounded.
+    _controller.pauseMqttDisconnectedChatFallback();
     _handleAppPaused();
   }
 
@@ -358,15 +400,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     if (!_enableBackgroundVideo) {
       _pauseVideoForBackground();
     }
-
-    // Set timer to disconnect viewer after timeout
-    _backgroundTimer = Timer(_backgroundTimeoutDuration * 2, () {
-      if (_isInBackground.value && _isStreamActive.value) {
-        IsmLiveLog.info('Viewer background timeout - disconnecting');
-        _controller.disconnectStream(
-            isHost: _isHost.value, streamId: _controller.room?.name ?? '');
-      }
-    });
 
     // Enable background audio if configured
     if (_enableBackgroundAudio) {
@@ -520,7 +553,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
   void _cleanupStream() {
     IsmLiveLog.info('Cleaning up stream resources');
-    _backgroundTimer?.cancel();
     _reconnectTimer?.cancel();
     _videoPausedByBackground = false;
     _cameraErrorCount = 0;
@@ -537,7 +569,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void disableBackgroundLifecycle() {
     _enableBackgroundLifecycle = false;
     WidgetsBinding.instance.removeObserver(_controller);
-    _backgroundTimer?.cancel();
     _reconnectTimer?.cancel();
     IsmLiveLog.info('Background lifecycle disabled');
   }
@@ -584,9 +615,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         ));
       } else {
         IsmLiveLog.info(
-            'Room is disconnected after probe — host attempting single reconnection');
-        _attemptSingleReconnection(
-            sessionId: sessionId, expectedStreamId: expectedStreamId);
+            'Room is disconnected after probe — host will rejoin by rebuilding room');
+        unawaited(_hostRejoinViaRoomRebuildOrShowDialog(
+          sessionId: sessionId,
+          expectedStreamId: expectedStreamId,
+        ));
       }
     } else {
       IsmLiveLog.info(
@@ -596,15 +629,42 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
+  Future<void> _hostRejoinViaRoomRebuildOrShowDialog({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) async {
+    final ok = await _controller.rejoinCurrentHostStreamAfterForeground();
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      IsmLiveLog.info('Stream/session changed during host rejoin, aborting');
+      return;
+    }
+    if (ok) {
+      _resumeStreamWithPostConnectVerify(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
+    } else {
+      _showConnectionFailedDialog(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
+    }
+  }
+
   Future<void> _viewerRejoinViaApiOrShowDialog({
     required int sessionId,
     required String? expectedStreamId,
   }) async {
-    final ok = await _controller.rejoinCurrentViewerStreamAfterForeground();
+    final ok = await _controller.rejoinCurrentViewerStreamAfterForeground(
+      showProgress: true,
+    );
     if (!_isStreamActive.value ||
         !_isSessionValid(sessionId) ||
         !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info('Stream/session changed during viewer API rejoin, aborting');
+      IsmLiveLog.info(
+          'Stream/session changed during viewer API rejoin, aborting');
       return;
     }
     if (ok) {

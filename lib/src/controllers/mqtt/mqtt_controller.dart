@@ -145,6 +145,7 @@ class IsmLiveMqttController extends GetxController {
                 userIdentifier: userId,
               ),
               enableLogging: true,
+              maxAutoReconnectRetry: 100,
               webSocketConfig: _config!.socketConfig != null
                   ? WebSocketConfig.fromMap(
                       _config!.socketConfig!.toMap(),
