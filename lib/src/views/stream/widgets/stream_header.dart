@@ -2,6 +2,29 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+String _formatCompactCount(int value) {
+  if (value < 0) return value.toString();
+  if (value < 1000) return value.toString();
+
+  String formatUnit(num n, String suffix) {
+    // Show 1 decimal only for small numbers (e.g. 1.2k, 9.8k, 1.2m).
+    final bool useOneDecimal = n < 10 && n != n.roundToDouble();
+    final s = useOneDecimal ? n.toStringAsFixed(1) : n.round().toString();
+    return '$s$suffix';
+  }
+
+  if (value < 1000000) {
+    final n = value / 1000;
+    return formatUnit(n, 'k');
+  }
+  if (value < 1000000000) {
+    final n = value / 1000000;
+    return formatUnit(n, 'm');
+  }
+  final n = value / 1000000000;
+  return formatUnit(n, 'b');
+}
+
 class IsmLiveStreamHeader extends StatelessWidget {
   const IsmLiveStreamHeader({
     super.key,
@@ -171,7 +194,7 @@ class IsmLiveViewerCount extends StatelessWidget {
                 IsmLiveDimens.boxWidth4,
                 GetX<IsmLiveStreamController>(
                   builder: (controller) => Text(
-                    controller.streamViewersList.length.toString(),
+                    _formatCompactCount(controller.streamViewersList.length),
                     style: IsmLiveStyles.white12,
                   ),
                 ),
