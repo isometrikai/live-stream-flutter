@@ -431,7 +431,7 @@ mixin StreamAPIMixin {
   Future<bool> sendMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel sendMessageModel,
-    bool showDialog = true,
+    bool showDialog = false,
   }) async =>
       await _controller.viewModel.sendMessage(
         showLoading: showLoading,

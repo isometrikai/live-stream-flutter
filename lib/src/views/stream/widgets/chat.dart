@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,6 +48,11 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   final _controller = Get.find<IsmLiveStreamController>();
   bool _isScrolling = false;
   int _previousMessageCount = 0;
+  bool _isAtBottom = true;
+  bool _isPaginatingOlder = false;
+  DateTime? _paginationMarkAt;
+  Timer? _autoScrollTimer;
+  int _lastAutoScrollScheduledForCount = 0;
 
   @override
   void initState() {
@@ -56,6 +63,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   void _scrollListener() {
     if (!_isScrolling) {
       _isScrolling = true;
+      _updateScrollAnchorsAndMaybeMarkPagination();
       _controller.messagePagination(messagesListController);
       Future.delayed(const Duration(milliseconds: 100), () {
         _isScrolling = false;
@@ -63,9 +71,38 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
     }
   }
 
+  void _updateScrollAnchorsAndMaybeMarkPagination() {
+    if (!messagesListController.hasClients) return;
+    final position = messagesListController.position;
+
+    // If user is close to bottom, allow auto-scroll on new messages.
+    const bottomThresholdPx = 80.0;
+    final distanceFromBottom = position.maxScrollExtent - position.pixels;
+    _isAtBottom = distanceFromBottom <= bottomThresholdPx;
+
+    // If user is at (or very near) the top, they're likely paging older messages.
+    // Mark this briefly so incoming messages (or prepend) don't snap them to bottom.
+    const topThresholdPx = 4.0;
+    final atTop = (position.pixels - position.minScrollExtent).abs() <=
+        topThresholdPx;
+    if (atTop) {
+      _isPaginatingOlder = true;
+      _paginationMarkAt = DateTime.now();
+    } else {
+      // Release the paginate mark after a short grace window.
+      final markedAt = _paginationMarkAt;
+      if (markedAt != null &&
+          DateTime.now().difference(markedAt) > const Duration(seconds: 2)) {
+        _isPaginatingOlder = false;
+        _paginationMarkAt = null;
+      }
+    }
+  }
+
   @override
   void dispose() {
     try {
+      _autoScrollTimer?.cancel();
       messagesListController.removeListener(_scrollListener);
       messagesListController.dispose();
     } catch (e) {
@@ -74,14 +111,40 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
     super.dispose();
   }
 
-  void _scrollToBottom() {
+  void _scrollToBottom({required bool useJump}) {
     if (messagesListController.hasClients) {
-      messagesListController.animateTo(
-        messagesListController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      final target = messagesListController.position.maxScrollExtent;
+      if (useJump) {
+        messagesListController.jumpTo(target);
+      } else {
+        messagesListController.animateTo(
+          target,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
     }
+  }
+
+  void _scheduleAutoScrollToBottom({
+    required int currentMessageCount,
+    required int delta,
+  }) {
+    // Avoid spamming scrolls during message bursts; keep the latest intent only.
+    if (_lastAutoScrollScheduledForCount == currentMessageCount) return;
+    _lastAutoScrollScheduledForCount = currentMessageCount;
+
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer(const Duration(milliseconds: 60), () {
+      if (!mounted) return;
+      // Re-check anchors on the actual execution moment.
+      _updateScrollAnchorsAndMaybeMarkPagination();
+      if (!_isAtBottom || _isPaginatingOlder) return;
+
+      // If lots of messages arrived in a burst, jump (cheaper) instead of animating.
+      final useJump = delta >= 4;
+      _scrollToBottom(useJump: useJump);
+    });
   }
 
   @override
@@ -96,8 +159,14 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
               return;
             }
             // Only scroll if message count increased (new message added)
-            if (currentMessageCount > _previousMessageCount) {
-              _scrollToBottom();
+            // Never auto-scroll while user is paging/reading older messages.
+            // Auto-scroll only if user is already near the bottom.
+            final delta = currentMessageCount - _previousMessageCount;
+            if (delta > 0 && _isAtBottom && !_isPaginatingOlder) {
+              _scheduleAutoScrollToBottom(
+                currentMessageCount: currentMessageCount,
+                delta: delta,
+              );
             }
             _previousMessageCount = currentMessageCount;
           });

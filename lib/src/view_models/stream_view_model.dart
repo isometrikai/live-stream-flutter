@@ -279,7 +279,7 @@ class IsmLiveStreamViewModel {
   Future<bool> sendMessage({
     required bool showLoading,
     required IsmLiveSendMessageModel getMessageModel,
-    bool showDialog = true,
+    bool showDialog = false,
   }) async {
     try {
       var res = await _repository.sendMessage(
