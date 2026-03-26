@@ -172,7 +172,6 @@ class IsmLiveMqttController extends GetxController {
         _mqttHelper
             .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
         _mqttHelper.onEvent(_onEvent);
-
       } catch (e) {
         IsmLiveLog.error('mqtt issue mqttcontroller 145 line');
       }
@@ -897,6 +896,7 @@ class IsmLiveMqttController extends GetxController {
             }
             _updateStream();
             if (viewerId == userId) {
+              IsmLiveUtility.popUntilStreamView();
               IsmLiveRoute.pop();
               IsmLiveUtility.showCustomDialog(const IsmLiveKickoutDialog());
             }
