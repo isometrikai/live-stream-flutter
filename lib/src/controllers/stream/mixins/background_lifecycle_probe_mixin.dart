@@ -33,6 +33,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   static const int _maxCameraErrors = 3;
   int _streamViewSessionId = 0;
   bool _hasShownInfoDialogInSession = false;
+  bool _blockAutoReconnectAfterLifecycleDialog = false;
 
   /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
   static const Duration _foregroundProbeTimeout = Duration(milliseconds: 6000);
@@ -97,6 +98,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     if (active) {
       _streamViewSessionId++;
       _hasShownInfoDialogInSession = false;
+      _blockAutoReconnectAfterLifecycleDialog = false;
       IsmLiveLog.info('Started stream view session: $_streamViewSessionId');
       IsmLiveLog.info('Stream is active, initializing background lifecycle');
       _storeConnectionDetails();
@@ -104,6 +106,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     } else {
       _streamViewSessionId++;
       _hasShownInfoDialogInSession = false;
+      _blockAutoReconnectAfterLifecycleDialog = false;
       IsmLiveLog.info('Invalidated stream view session: $_streamViewSessionId');
       IsmLiveLog.info('Stream is inactive, disposing background lifecycle');
       disposeBackgroundLifecycle();
@@ -214,6 +217,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     _controller._isInBackground.value = false; // Sync with controller
     _reconnectTimer?.cancel();
 
+    if (_blockAutoReconnectAfterLifecycleDialog) {
+      IsmLiveLog.info(
+          'Auto reconnect is blocked after lifecycle info dialog; skipping foreground resume flow');
+      return;
+    }
+
     if (_isStreamActive.value) {
       // Resume MQTT fallback polling if it was paused in background.
       _controller.resumeMqttDisconnectedChatFallbackIfNeeded();
@@ -247,6 +256,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       return;
     }
 
+    if (_blockAutoReconnectAfterLifecycleDialog) {
+      IsmLiveLog.info(
+          'Auto reconnect is blocked after lifecycle info dialog; aborting live-status gate');
+      return;
+    }
+
     final liveGate = await _checkStreamLiveStatusGate(expectedStreamId).timeout(
       _foregroundProbeTimeout,
       onTimeout: () {
@@ -268,6 +283,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       IsmLiveLog.info(liveGate == _IsmStreamLiveGateResult.notLive
           ? 'Foreground live-status gate: stream is not live — skipping reconnect and showing info dialog'
           : 'Foreground live-status gate: unknown (API error) — skipping reconnect and showing info dialog');
+      await _disconnectLiveKitRoomForLifecycleInfoDialog();
       _showConnectionFailedDialog(
         sessionId: sessionId,
         expectedStreamId: expectedStreamId,
@@ -549,6 +565,12 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       return;
     }
 
+    if (_blockAutoReconnectAfterLifecycleDialog) {
+      IsmLiveLog.info(
+          'Auto reconnect is blocked after lifecycle info dialog; skipping room state check');
+      return;
+    }
+
     final room = _controller.room;
     final connectionState = room?.connectionState;
     IsmLiveLog.info('Room connection state: $connectionState');
@@ -596,6 +618,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       return;
     }
     if (_isReconnecting) return;
+    if (_blockAutoReconnectAfterLifecycleDialog) return;
 
     _isReconnecting = true;
     try {
@@ -657,6 +680,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         !_isExpectedStream(expectedStreamId)) {
       return;
     }
+    if (_blockAutoReconnectAfterLifecycleDialog) return;
     final room = _controller.room;
     final state = room?.connectionState;
     if (room == null || state != lk.ConnectionState.connected) {
@@ -696,6 +720,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         !_isExpectedStream(expectedStreamId)) {
       return;
     }
+    if (_blockAutoReconnectAfterLifecycleDialog) return;
     final room = _controller.room;
     if (room == null || room.connectionState != lk.ConnectionState.connected) {
       IsmLiveLog.info(
@@ -713,6 +738,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     required String? expectedStreamId,
   }) async {
     try {
+      if (_blockAutoReconnectAfterLifecycleDialog) {
+        IsmLiveLog.info(
+            'Auto reconnect is blocked after lifecycle info dialog; skipping single reconnection attempt');
+        return;
+      }
       IsmLiveLog.info('Attempting single reconnection with stored token...');
       _isReconnecting = true;
 
@@ -942,6 +972,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       IsmLiveUtility.popUntilStreamView();
       _stopStreamTimerForInfoDialog();
       _hasShownInfoDialogInSession = true;
+      _blockAutoReconnectAfterLifecycleDialog = true;
+      unawaited(_disconnectLiveKitRoomForLifecycleInfoDialog());
 
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'
@@ -957,6 +989,39 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       );
     } catch (e) {
       IsmLiveLog.error('Error showing connection failed dialog: $e');
+    }
+  }
+
+  Future<void> _disconnectLiveKitRoomForLifecycleInfoDialog() async {
+    final room = _controller.room;
+    if (room == null) {
+      IsmLiveLog.info(
+        'Lifecycle info dialog flow: room already null, no LiveKit disconnect needed',
+      );
+      return;
+    }
+
+    try {
+      IsmLiveLog.info(
+        'Lifecycle info dialog flow: room state before teardown = ${room.connectionState}',
+      );
+      // Always call disconnect even if room already reports `disconnected`.
+      // LiveKit/WebRTC internals can still hold resources and may reconnect
+      // after network recovers unless we force a final teardown call.
+      IsmLiveLog.info(
+        'Disconnecting LiveKit room because lifecycle info dialog is shown',
+      );
+      await room.disconnect();
+      _controller.listener = null;
+      _controller.room = null;
+      _controller.pendingConnection = false;
+      _controller.participantTracks.clear();
+      IsmLiveLog.info(
+        'Lifecycle info dialog flow: LiveKit room teardown completed',
+      );
+    } catch (e) {
+      // Best-effort: do not block the dialog, but ensure room teardown is attempted.
+      IsmLiveLog.error('Failed to disconnect LiveKit room for info dialog: $e');
     }
   }
 
