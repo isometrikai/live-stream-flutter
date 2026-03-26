@@ -65,6 +65,17 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
+  Future<IsmLiveResponseModel> getStreamLiveStatus({
+    required String streamId,
+  }) =>
+      _apiWrapper.makeRequest(
+        '${IsmLiveApis.streamLiveStatus}?streamId=$streamId',
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
+        showLoader: false,
+      );
+
   Future<IsmLiveResponseModel> getRTCToken(String streamId, bool showLoader) =>
       _apiWrapper.makeRequest(
         IsmLiveApis.viewer,
@@ -686,6 +697,7 @@ class IsmLiveStreamRepository {
       type: IsmLiveRequestType.post,
       payload: payload,
       headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false
     );
   }
 

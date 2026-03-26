@@ -133,6 +133,22 @@ mixin StreamAPIMixin {
           {bool showLoader = true}) =>
       _controller.viewModel.getRTCToken(streamId, showLoader);
 
+  /// Fetch current "is stream live" status from backend.
+  ///
+  /// Returns:
+  /// - `true` only when backend confirms `success == true` AND `isLive == true`
+  /// - `false` when backend responds but does not confirm live
+  /// - `null` when request fails / response can't be parsed (unknown)
+  Future<bool?> isStreamLiveVerified({
+    required String streamId,
+  }) async {
+    final res = await _controller.viewModel.getStreamLiveStatus(
+      streamId: streamId,
+    );
+    if (res == null) return null;
+    return res.success == true && res.isLive == true;
+  }
+
 //Leaves a live stream.
 
   Future<bool> leaveStream(

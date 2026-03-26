@@ -545,9 +545,8 @@ class IsmLiveStreamController extends GetxController
       isMessagesApiCall = true;
       if (messagesCount != 0) {
         final computedSkip = messagesCount < 10 ? 0 : (messagesCount - 10);
-        final computedLimit = _controller.messagesCount < 10
-            ? _controller.messagesCount
-            : 10;
+        final computedLimit =
+            _controller.messagesCount < 10 ? _controller.messagesCount : 10;
         await fetchMessages(
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
