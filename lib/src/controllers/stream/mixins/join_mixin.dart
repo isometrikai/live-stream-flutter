@@ -255,6 +255,10 @@ mixin StreamJoinMixin {
         _controller.room!.localParticipant!.publishVideoTrack(localVideo),
         _controller.room!.localParticipant!.publishAudioTrack(localAudio),
       ]);
+      // Keep UI flag in sync so settings / sync helpers don’t think video is off
+      // while tracks are live (e.g. after foreground room rebuild).
+      _controller.videoOn = true;
+      _controller.audioOn = true;
     } catch (e) {
       IsmLiveLog.error('enableMyVideo error: $e');
       // Don't rethrow - let the stream continue without video/audio if needed
@@ -283,6 +287,54 @@ mixin StreamJoinMixin {
       await _controller.room!.localParticipant!.unpublishAllTracks();
     } catch (e) {
       IsmLiveLog.error('unpublishTracks error: $e');
+    }
+  }
+
+  /// Removes only the camera publication (keeps microphone).
+  ///
+  /// Used when the host backgrounds with video “off”: `setCameraEnabled(false)`
+  /// mutes with default `stopCameraCaptureOnMute`, which can leave a publication
+  /// whose native track is gone. After a long sleep / full reconnect, LiveKit
+  /// calls [LocalParticipant.rePublishAllTracks] and crashes with
+  /// `addTransceiver(): track is null`. Unpublishing avoids that stale entry.
+  Future<void> unpublishLocalCameraTrackOnly() async {
+    if (_controller.isRtmp) return;
+    final lp = _controller.room?.localParticipant;
+    if (lp == null) return;
+    try {
+      final pub = lp.getTrackPublicationBySource(lk.TrackSource.camera);
+      if (pub != null) {
+        await lp.removePublishedTrack(pub.sid);
+      }
+    } catch (e) {
+      IsmLiveLog.error('unpublishLocalCameraTrackOnly error: $e');
+    }
+  }
+
+  /// Awaitable camera on for hosts resuming from background (after unpublish).
+  Future<void> resumeHostCameraAfterBackground() async {
+    if (_controller.isRtmp) return;
+    final participant = _controller.room?.localParticipant;
+    if (participant == null) return;
+    _controller.videoOn = true;
+    try {
+      await participant.setCameraEnabled(true);
+      _controller.update();
+    } catch (error) {
+      // After a full rejoin, `enableMyVideo()` may already publish camera; a second
+      // `setCameraEnabled(true)` can throw. Don’t force UI/video off if track exists.
+      final pub = participant.getTrackPublicationBySource(lk.TrackSource.camera);
+      final trackAlive = pub?.track != null;
+      if (trackAlive) {
+        IsmLiveLog.info(
+            'resumeHostCameraAfterBackground: setCameraEnabled failed but camera track still present: $error');
+        _controller.videoOn = true;
+        _controller.update();
+        return;
+      }
+      _controller.videoOn = false;
+      IsmLiveLog.error('resumeHostCameraAfterBackground error: $error');
+      rethrow;
     }
   }
 
@@ -791,6 +843,11 @@ mixin StreamJoinMixin {
           _controller.room?.connectionState == lk.ConnectionState.connected;
       IsmLiveLog.info(
           'rejoinCurrentHostStreamAfterForeground: connected=$connected state=${_controller.room?.connectionState}');
+      if (connected) {
+        // `_connectRoomAndInitialize` already ran `enableMyVideo()` — avoid a second
+        // foreground resume pass that calls `setCameraEnabled` again (races/errors).
+        _controller.acknowledgeForegroundHostRejoinRestoredCamera();
+      }
       return connected;
     } catch (e, st) {
       IsmLiveLog.error(
@@ -851,11 +908,32 @@ mixin StreamJoinMixin {
       // Sync the position variable with the actual camera position
       _controller.position = resolvedCameraPosition;
 
-      if (_controller.room != null &&
-          _controller.room!.connectionState !=
-              lk.ConnectionState.disconnected) {
-        await _controller.room!.disconnect();
-        await Future.delayed(const Duration(milliseconds: 300));
+      final previousRoom = _controller.room;
+      // Listener is always bound to the previous room; drop it before disconnect.
+      try {
+        await _controller.listener?.dispose();
+      } catch (e) {
+        IsmLiveLog.error('Listener dispose error: $e');
+      }
+      _controller.listener = null;
+
+      if (previousRoom != null) {
+        try {
+          // Always await disconnect — not only when connectionState != disconnected.
+          // If we skip this when the client already shows `disconnected`, the server
+          // can still hold the participant and the next `connect` with the same
+          // host token hits `DisconnectReason.duplicateIdentity` (camera drops
+          // ~1s later when the server kicks the duplicate session).
+          await previousRoom.disconnect();
+        } catch (e) {
+          IsmLiveLog.error('Previous room disconnect error: $e');
+        }
+        // Same-token rejoins (host) need a beat for the SFU to release identity.
+        await Future.delayed(
+          reJoin
+              ? const Duration(milliseconds: 900)
+              : const Duration(milliseconds: 400),
+        );
       }
 
       var room = lk.Room(
@@ -882,13 +960,6 @@ mixin StreamJoinMixin {
 
       _controller.room = room;
       IsmLiveLog.info('Joining streamId(roomId): $streamId');
-
-      /// Dispose listener if it was active on `scroll` streams
-      try {
-        await _controller.listener?.dispose();
-      } catch (e) {
-        IsmLiveLog.error('Listener dispose error: $e');
-      }
 
       // Create a Listener before connecting
       _controller.listener = room.createListener();

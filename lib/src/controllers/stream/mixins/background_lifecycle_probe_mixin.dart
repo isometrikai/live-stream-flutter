@@ -135,6 +135,15 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
+  /// After host `rejoinCurrentHostStreamAfterForeground`, `_connectRoomAndInitialize`
+  /// already publishes camera via `enableMyVideo()`. Clear this flag so
+  /// [_resumeStream] does not run host camera resume again
+  /// (duplicate `setCameraEnabled` can error and make video look disabled).
+  void acknowledgeForegroundHostRejoinRestoredCamera() {
+    if (!_isStreamActive.value || !_isHost.value) return;
+    _videoPausedByBackground = false;
+  }
+
   void handleBackgroundLifecycleState(AppLifecycleState state) {
     IsmLiveLog.info('Background lifecycle state received: $state');
 
@@ -386,7 +395,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
     // Pause video immediately if not enabled for background
     if (!_enableBackgroundVideo) {
-      _pauseVideoForBackground();
+      unawaited(_pauseVideoForBackground());
     }
 
     // Host audio continues indefinitely in background
@@ -398,7 +407,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
     // Pause video immediately if not enabled for background
     if (!_enableBackgroundVideo) {
-      _pauseVideoForBackground();
+      unawaited(_pauseVideoForBackground());
     }
 
     // Enable background audio if configured
@@ -407,7 +416,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
-  void _pauseVideoForBackground() {
+  Future<void> _pauseVideoForBackground() async {
     if (_videoPausedByBackground) return;
 
     try {
@@ -420,11 +429,14 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
           return; // Don't set _videoPausedByBackground flag, so video won't auto-resume
         }
 
-        // Video was enabled, so pause it for background and set flag
+        // Video was enabled: unpublish camera so LiveKit full-reconnect won't
+        // call rePublishAllTracks on a muted track whose native track is null.
         IsmLiveLog.info(
-            'Pausing host video for background using existing toggleVideo method');
+            'Pausing host video for background via camera unpublish (safe for long reconnects)');
         _videoPausedByBackground = true;
-        _controller.toggleVideo(value: false);
+        _controller.videoOn = false;
+        await _controller.unpublishLocalCameraTrackOnly();
+        _controller.update();
       } else {
         IsmLiveLog.info('Viewer going to background - no local video to pause');
       }
@@ -499,8 +511,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         // Only resume camera if user is a host (has local video track)
         if (_isHost.value) {
           IsmLiveLog.info(
-              'Resuming host camera using existing toggleVideo method');
-          _controller.toggleVideo(value: true);
+              'Resuming host camera via setCameraEnabled (fresh publish after unpublish)');
+          await _controller.resumeHostCameraAfterBackground();
           _videoPausedByBackground = false;
           _cameraErrorCount = 0; // Reset error count on success
           IsmLiveLog.info('Host camera resumed successfully');
