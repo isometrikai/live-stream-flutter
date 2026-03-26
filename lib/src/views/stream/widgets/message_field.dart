@@ -165,18 +165,18 @@ class IsmLiveMessageField extends StatelessWidget {
                                   ),
                                 )
                               : null,
-                          prefixIcon: Container(
-                            child: InkWell(
-                                onTap: disabled
-                                    ? null
-                                    : () {
-                                        controller.toggleEmojiBoard(context);
-                                      },
-                                child: const Icon(
-                                  Icons.mood,
-                                  color: Colors.white,
-                                )),
-                          ),
+                          // prefixIcon: Container(
+                            // child: InkWell(
+                            //     onTap: disabled
+                            //         ? null
+                            //         : () {
+                            //             controller.toggleEmojiBoard(context);
+                            //           },
+                            //     child: const Icon(
+                            //       Icons.mood,
+                            //       color: Colors.white,
+                            //     )),
+                          // ),
                         ),
                       ),
                       if (IsmLiveDelegate.productStream != true &&
