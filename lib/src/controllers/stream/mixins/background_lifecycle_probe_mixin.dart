@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
 
+enum _IsmStreamLiveGateResult { live, notLive, unknown }
+
 mixin StreamBackgroundLifecycleMixin on GetxController {
   // Background state management
   final RxBool _isInBackground = false.obs;
@@ -31,11 +33,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   static const int _maxCameraErrors = 3;
   int _streamViewSessionId = 0;
   bool _hasShownInfoDialogInSession = false;
-
-  /// Internal probe payload used for foreground capability checks.
-  /// UI layer filters this body so it never appears in chat.
-  static const String _foregroundCapabilityProbeBody =
-      '__ism_live_foreground_probe__';
 
   /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
   static const Duration _foregroundProbeTimeout = Duration(milliseconds: 6000);
@@ -224,15 +221,15 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
-  /// After background: send a silent probe message first.
-  /// If the server accepts it, the stream is still valid for this user — then reconnect
-  /// LiveKit and resume UI. If the probe fails, fall back to API + dialogs (host/viewer).
+  /// After background: verify stream live status via API first.
+  /// If backend confirms `success=true` and `isLive=true`, proceed to room checks/reconnect.
+  /// If backend confirms not live, do not attempt reconnect; show reconnect info dialog.
   Future<void> _runForegroundResumeFlow() async {
     final sessionId = _streamViewSessionId;
     final expectedStreamId = _controller.streamId;
 
     IsmLiveLog.info(
-        'Foreground resume: checking stream capability via silent presence message...');
+        'Foreground resume: checking stream live status via API...');
 
     if (!_isStreamActive.value) {
       IsmLiveLog.info('Stream not active, aborting foreground resume');
@@ -250,107 +247,57 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       return;
     }
 
-    final probeOk = await _sendStreamCapabilityProbeMessage().timeout(
+    final liveGate = await _checkStreamLiveStatusGate(expectedStreamId).timeout(
       _foregroundProbeTimeout,
       onTimeout: () {
         IsmLiveLog.info(
-            'Foreground capability probe timed out ($_foregroundProbeTimeout)');
-        return false;
+            'Foreground live-status gate timed out ($_foregroundProbeTimeout)');
+        return _IsmStreamLiveGateResult.unknown;
       },
     );
 
     if (!_isStreamActive.value ||
         !_isSessionValid(sessionId) ||
         !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info('Stream/session changed during probe, aborting');
+      IsmLiveLog.info(
+          'Stream/session changed during live-status gate, aborting');
       return;
     }
 
-    if (!probeOk) {
-      if (!_isHost.value) {
-        IsmLiveLog.info(
-            'Foreground capability probe failed — viewer will rejoin via API (fresh token)');
-        final ok = await _controller.rejoinCurrentViewerStreamAfterForeground(
-          showProgress: true,
-        );
-        if (!_isStreamActive.value ||
-            !_isSessionValid(sessionId) ||
-            !_isExpectedStream(expectedStreamId)) {
-          IsmLiveLog.info('Stream/session changed during API rejoin, aborting');
-          return;
-        }
-        if (ok) {
-          IsmLiveLog.info('Viewer API rejoin succeeded — resuming stream');
-          _resumeStreamWithPostConnectVerify(
-            sessionId: sessionId,
-            expectedStreamId: expectedStreamId,
-          );
-        } else {
-          IsmLiveLog.info('Viewer API rejoin failed — showing info dialog');
-          _showConnectionFailedDialog(
-            sessionId: sessionId,
-            expectedStreamId: expectedStreamId,
-          );
-        }
-      } else {
-        IsmLiveLog.info(
-            'Foreground capability probe failed — host will attempt in-place room rebuild rejoin');
-        final ok = await _controller.rejoinCurrentHostStreamAfterForeground();
-        if (!_isStreamActive.value ||
-            !_isSessionValid(sessionId) ||
-            !_isExpectedStream(expectedStreamId)) {
-          IsmLiveLog.info(
-              'Stream/session changed during host rejoin, aborting');
-          return;
-        }
-        if (ok) {
-          IsmLiveLog.info('Host rejoin succeeded — resuming stream');
-          _resumeStreamWithPostConnectVerify(
-            sessionId: sessionId,
-            expectedStreamId: expectedStreamId,
-          );
-        } else {
-          IsmLiveLog.info('Host rejoin failed — showing info dialog');
-          _showConnectionFailedDialog(
-            sessionId: sessionId,
-            expectedStreamId: expectedStreamId,
-          );
-        }
-      }
+    if (liveGate != _IsmStreamLiveGateResult.live) {
+      IsmLiveLog.info(liveGate == _IsmStreamLiveGateResult.notLive
+          ? 'Foreground live-status gate: stream is not live — skipping reconnect and showing info dialog'
+          : 'Foreground live-status gate: unknown (API error) — skipping reconnect and showing info dialog');
+      _showConnectionFailedDialog(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
       return;
     }
 
-    IsmLiveLog.info('Foreground probe succeeded — checking room and resuming');
+    IsmLiveLog.info(
+        'Foreground live-status gate: confirmed live — checking room and resuming');
+
     _checkRoomStateAndResumeAfterProbe(
       sessionId: sessionId,
       expectedStreamId: expectedStreamId,
     );
   }
 
-  Future<bool> _sendStreamCapabilityProbeMessage() async {
-    final streamId = _controller.streamId;
-    if (streamId == null || streamId.isEmpty) {
-      return false;
-    }
+  Future<_IsmStreamLiveGateResult> _checkStreamLiveStatusGate(
+      String? streamId) async {
+    if (streamId == null || streamId.isEmpty)
+      return _IsmStreamLiveGateResult.unknown;
     try {
-      final deviceId = _controller.configuration?.projectConfig.deviceId ?? '';
-      final sent = await _controller.sendMessage(
-        showLoading: false,
-        showDialog: false,
-        sendMessageModel: IsmLiveSendMessageModel(
-          streamId: streamId,
-          body: _foregroundCapabilityProbeBody,
-          searchableTags: [_foregroundCapabilityProbeBody],
-          metaData: const IsmLiveMetaData(),
-          deviceId: deviceId,
-          messageType: IsmLiveMessageType.probe,
-        ),
-      );
-      IsmLiveLog.info('Foreground capability probe send result: $sent');
-      return sent;
+      final verified =
+          await _controller.isStreamLiveVerified(streamId: streamId);
+      if (verified == null) return _IsmStreamLiveGateResult.unknown;
+      return verified
+          ? _IsmStreamLiveGateResult.live
+          : _IsmStreamLiveGateResult.notLive;
     } catch (e, st) {
-      IsmLiveLog.error('Foreground capability probe error: $e', st);
-      return false;
+      IsmLiveLog.error('Foreground live-status gate error: $e', st);
+      return _IsmStreamLiveGateResult.unknown;
     }
   }
 
@@ -585,7 +532,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     IsmLiveLog.info('Background lifecycle disabled');
   }
 
-  /// After a successful capability probe, align LiveKit and resume local media.
+  /// After a successful live-status gate (or unknown fallback), align LiveKit and resume local media.
   void _checkRoomStateAndResumeAfterProbe({
     required int sessionId,
     required String? expectedStreamId,
@@ -613,82 +560,88 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         sessionId: sessionId,
         expectedStreamId: expectedStreamId,
       ));
+      return;
     } else if (room != null &&
         connectionState == lk.ConnectionState.disconnected) {
-      // Viewer recovery: a disconnected room after a successful probe can still
-      // fail reconnection due to `duplicateIdentity`. Prefer API rejoin which
-      // rebuilds the Room cleanly with a fresh token.
-      if (!_isHost.value) {
-        IsmLiveLog.info(
-            'Room is disconnected after probe — viewer will rejoin via API (fresh token)');
-        unawaited(_viewerRejoinViaApiOrShowDialog(
-          sessionId: sessionId,
-          expectedStreamId: expectedStreamId,
-        ));
-      } else {
-        IsmLiveLog.info(
-            'Room is disconnected after probe — host will rejoin by rebuilding room');
-        unawaited(_hostRejoinViaRoomRebuildOrShowDialog(
-          sessionId: sessionId,
-          expectedStreamId: expectedStreamId,
-        ));
+      // Live was confirmed by API; prefer a full room rebuild rejoin which is
+      // the most reliable way to recover.
+      IsmLiveLog.info(
+          'Room is disconnected after live confirmation — forcing room rebuild rejoin');
+      unawaited(_forceRejoinAfterLiveConfirmed(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      ));
+      return;
+    } else {
+      IsmLiveLog.info(
+          'Room connection state unclear/null after live confirmation — forcing room rebuild rejoin');
+      unawaited(_forceRejoinAfterLiveConfirmed(
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      ));
+      return;
+    }
+  }
+
+  /// When backend confirms the stream is live, we must reconnect reliably.
+  /// Prefer the in-place rejoin flows that rebuild the room (viewer: fresh token;
+  /// host: stored token). Only show the dialog if those fail.
+  Future<void> _forceRejoinAfterLiveConfirmed({
+    required int sessionId,
+    required String? expectedStreamId,
+  }) async {
+    if (!_isStreamActive.value ||
+        !_isSessionValid(sessionId) ||
+        !_isExpectedStream(expectedStreamId)) {
+      return;
+    }
+    if (_isReconnecting) return;
+
+    _isReconnecting = true;
+    try {
+      final ok = !_isHost.value
+          ? await _controller.rejoinCurrentViewerStreamAfterForeground(
+              showProgress: true,
+            )
+          : await _controller.rejoinCurrentHostStreamAfterForeground();
+
+      if (!_isStreamActive.value ||
+          !_isSessionValid(sessionId) ||
+          !_isExpectedStream(expectedStreamId)) {
+        return;
       }
-    } else {
+
+      if (ok) {
+        IsmLiveLog.info(
+            'Live-confirmed rejoin succeeded — resuming stream (post-verify)');
+        _resumeStreamWithPostConnectVerify(
+          sessionId: sessionId,
+          expectedStreamId: expectedStreamId,
+        );
+        return;
+      }
+
       IsmLiveLog.info(
-          'Room connection state unclear, attempting single reconnection');
+          'Live-confirmed rejoin failed — attempting single reconnection fallback');
+      // Hand over to the single reconnect flow which manages `_isReconnecting`.
+      _isReconnecting = false;
       _attemptSingleReconnection(
-          sessionId: sessionId, expectedStreamId: expectedStreamId);
-    }
-  }
-
-  Future<void> _hostRejoinViaRoomRebuildOrShowDialog({
-    required int sessionId,
-    required String? expectedStreamId,
-  }) async {
-    final ok = await _controller.rejoinCurrentHostStreamAfterForeground();
-    if (!_isStreamActive.value ||
-        !_isSessionValid(sessionId) ||
-        !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info('Stream/session changed during host rejoin, aborting');
+        sessionId: sessionId,
+        expectedStreamId: expectedStreamId,
+      );
       return;
-    }
-    if (ok) {
-      _resumeStreamWithPostConnectVerify(
-        sessionId: sessionId,
-        expectedStreamId: expectedStreamId,
-      );
-    } else {
-      _showConnectionFailedDialog(
-        sessionId: sessionId,
-        expectedStreamId: expectedStreamId,
-      );
-    }
-  }
-
-  Future<void> _viewerRejoinViaApiOrShowDialog({
-    required int sessionId,
-    required String? expectedStreamId,
-  }) async {
-    final ok = await _controller.rejoinCurrentViewerStreamAfterForeground(
-      showProgress: true,
-    );
-    if (!_isStreamActive.value ||
-        !_isSessionValid(sessionId) ||
-        !_isExpectedStream(expectedStreamId)) {
-      IsmLiveLog.info(
-          'Stream/session changed during viewer API rejoin, aborting');
-      return;
-    }
-    if (ok) {
-      _resumeStreamWithPostConnectVerify(
-        sessionId: sessionId,
-        expectedStreamId: expectedStreamId,
-      );
-    } else {
-      _showConnectionFailedDialog(
-        sessionId: sessionId,
-        expectedStreamId: expectedStreamId,
-      );
+    } catch (e, st) {
+      IsmLiveLog.error('Live-confirmed rejoin error: $e', st);
+      if (_isStreamActive.value &&
+          _isSessionValid(sessionId) &&
+          _isExpectedStream(expectedStreamId)) {
+        _showConnectionFailedDialog(
+          sessionId: sessionId,
+          expectedStreamId: expectedStreamId,
+        );
+      }
+    } finally {
+      _isReconnecting = false;
     }
   }
 

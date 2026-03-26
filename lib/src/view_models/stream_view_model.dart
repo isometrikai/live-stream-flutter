@@ -87,6 +87,30 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  /// Returns `success` and `isLive` for a stream.
+  ///
+  /// Notes:
+  /// - Some backends return an explicit `success` boolean; if absent, we treat
+  ///   HTTP 200/2xx with no wrapper error as success.
+  Future<({bool success, bool isLive})?> getStreamLiveStatus({
+    required String streamId,
+  }) async {
+    try {
+      final res = await _repository.getStreamLiveStatus(streamId: streamId);
+      if (res.hasError) return null;
+
+      final decoded = jsonDecode(res.data);
+      if (decoded is! Map<String, dynamic>) return null;
+
+      final success = (decoded['success'] as bool?) ?? true;
+      final isLive = (decoded['isLive'] as bool?) ?? false;
+      return (success: success, isLive: isLive);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
   Future<IsmLiveRTCModel?> getRTCToken(String streamId, bool showLoader) async {
     try {
       var res = await _repository.getRTCToken(streamId, showLoader);
