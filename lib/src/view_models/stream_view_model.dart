@@ -339,7 +339,7 @@ class IsmLiveStreamViewModel {
   Future<List<IsmLiveMessageModel>> fetchMessages({
     required bool showLoading,
     required IsmLiveGetMessageModel getMessageModel,
-    showDialog = true,
+    showDialog = false,
   }) async {
     var messageType = getMessageModel.messageType ?? [0];
 
