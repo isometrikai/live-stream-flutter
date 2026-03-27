@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,94 +23,114 @@ class IsmLivePublisherGrid extends StatelessWidget {
         id: updateId,
         builder: (controller) => Obx(
           () {
-            print('participantTracks ${controller.participantTracks.length}');
+            late final Widget child;
             if (controller.isRtmp) {
-              return controller.participantTracks.isNotEmpty
+              child = controller.participantTracks.isNotEmpty
                   ? const _RtmlView()
                   : NoVideoWidget(
                       imageUrl: controller.hostDetails?.image ?? streamImage,
                       name: controller.hostDetails?.name ?? '',
                       showConnectingState: controller.isViewerJoiningStream,
-                      connectingText: context.liveTranslations
-                              ?.streamTranslations?.connectingToLiveStream ??
+                      connectingText: context
+                              .liveTranslations
+                              ?.streamTranslations
+                              ?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
                     );
+            } else if (controller.participantTracks.isEmpty) {
+              child = !isSchedule
+                  ? NoVideoWidget(
+                      imageUrl: controller.hostDetails?.image ?? streamImage,
+                      name: controller.hostDetails?.name ?? '',
+                      showConnectingState: controller.isViewerJoiningStream,
+                      connectingText: context
+                              .liveTranslations
+                              ?.streamTranslations
+                              ?.connectingToLiveStream ??
+                          IsmLiveStrings.connectingToLiveStream,
+                    )
+                  : const SizedBox.shrink();
+            } else if (controller.participantTracks.length == 1) {
+              child = InteractiveViewer(
+                maxScale: isInteractive ? 3 : 1,
+                panEnabled: isInteractive,
+                scaleEnabled: isInteractive,
+                child: SizedBox.expand(
+                  child: ParticipantWidget.widgetFor(
+                    controller.participantTracks.first,
+                    imageUrl: controller.hostDetails?.userProfileImageUrl,
+                    showStatsLayer: false,
+                    showFullVideo: isInteractive,
+                  ),
+                ),
+              );
+            } else {
+              child = LayoutBuilder(
+                builder: (context, constraints) {
+                  final topPad = IsmLiveDimens.hundred;
+                  final gridHeight = max(1.0, constraints.maxHeight - topPad);
+                  final crossCount =
+                      controller.participantTracks.length < 3 ? 2 : 3;
+                  final rowCount = (controller.participantTracks.length +
+                          crossCount -
+                          1) ~/
+                      crossCount;
+                  const crossSpacing = 0.0;
+                  const mainSpacing = 0.0;
+                  final crossExtent = (constraints.maxWidth -
+                          (crossCount - 1) * crossSpacing) /
+                      crossCount;
+                  final mainExtent =
+                      (gridHeight - (rowCount - 1) * mainSpacing) / rowCount;
+                  final aspectRatio =
+                      (crossExtent / mainExtent).clamp(0.25, 4.0);
+
+                  return Padding(
+                    padding: EdgeInsets.only(top: topPad),
+                    child: GridView.builder(
+                      restorationId: '',
+                      itemCount: controller.participantTracks.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossCount,
+                        mainAxisSpacing: mainSpacing,
+                        crossAxisSpacing: crossSpacing,
+                        childAspectRatio: aspectRatio,
+                      ),
+                      itemBuilder: (_, index) {
+                        var url = '';
+
+                        for (var element in controller.streamMembersList) {
+                          if (element.userId ==
+                              controller.participantList[index].participant
+                                  .identity) {
+                            url = element.userProfileImageUrl;
+                          }
+                        }
+
+                        return ParticipantWidget.widgetFor(
+                          controller.participantList[index],
+                          imageUrl: url,
+                          isFirstIndex: index == 0,
+                          isViewer: !(controller.userRole?.isHost ?? false) &&
+                              !(controller.userRole?.isPkGuest ?? false) &&
+                              (controller.pkStages?.isPkStart ?? false),
+                          isHost: index == 0,
+                          showStatsLayer: controller.isPk,
+                          isWinner: controller.pkWinnerId ==
+                              controller.participantList[index].participant
+                                  .identity,
+                          isbattleFinish:
+                              (controller.pkStages?.isPkStop ?? false) &&
+                                  controller.pkWinnerId != null,
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
             }
-            return controller.participantTracks.isNotEmpty
-                ? controller.participantTracks.length == 1
-                    ? InteractiveViewer(
-                        maxScale: isInteractive ? 3 : 1,
-                        panEnabled: isInteractive,
-                        scaleEnabled: isInteractive,
-                        child: ParticipantWidget.widgetFor(
-                          controller.participantTracks.first,
-                          imageUrl: controller.hostDetails?.userProfileImageUrl,
-                          showStatsLayer: false,
-                          showFullVideo: isInteractive,
-                        ),
-                      )
-                    : Padding(
-                        padding: IsmLiveDimens.edgeInsetsT100,
-                        child: GridView.builder(
-                          restorationId: '',
-                          itemCount: controller.participantTracks.length,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                controller.participantTracks.length < 3 ? 2 : 3,
-                            childAspectRatio: controller
-                                        .participantTracks.length <
-                                    3
-                                ? (MediaQuery.of(context).size.width / 2) /
-                                    (MediaQuery.of(context).size.height * 0.4)
-                                : controller.participantTracks.length < 7
-                                    ? (MediaQuery.of(context).size.width / 3) /
-                                        (MediaQuery.of(context).size.height *
-                                            0.3)
-                                    : 1,
-                          ),
-                          itemBuilder: (_, index) {
-                            var url = '';
-
-                            for (var element in controller.streamMembersList) {
-                              if (element.userId ==
-                                  controller.participantList[index].participant
-                                      .identity) {
-                                url = element.userProfileImageUrl;
-                              }
-                            }
-
-                            return ParticipantWidget.widgetFor(
-                              controller.participantList[index],
-                              imageUrl: url,
-                              isFirstIndex: index == 0,
-                              isViewer: !(controller.userRole?.isHost ??
-                                      false) &&
-                                  !(controller.userRole?.isPkGuest ?? false) &&
-                                  (controller.pkStages?.isPkStart ?? false),
-                              isHost: index == 0,
-                              showStatsLayer: controller.isPk,
-                              isWinner: controller.pkWinnerId ==
-                                  controller.participantList[index].participant
-                                      .identity,
-                              isbattleFinish:
-                                  (controller.pkStages?.isPkStop ?? false) &&
-                                      controller.pkWinnerId != null,
-                            );
-                          },
-                        ),
-                      )
-                : !isSchedule
-                    ? NoVideoWidget(
-                        imageUrl: controller.hostDetails?.image ?? streamImage,
-                        name: controller.hostDetails?.name ?? '',
-                        showConnectingState: controller.isViewerJoiningStream,
-                        connectingText: context.liveTranslations
-                                ?.streamTranslations?.connectingToLiveStream ??
-                            IsmLiveStrings.connectingToLiveStream,
-                      )
-                    : const SizedBox.shrink();
+            return SizedBox.expand(child: child);
           },
         ),
       );

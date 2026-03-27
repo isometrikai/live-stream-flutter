@@ -166,6 +166,10 @@ class IsmLiveUtility {
         isDismissible: isDismissible,
         isScrollControlled: isScrollController,
         enableDrag: enableDrag,
+        // `showModalBottomSheet` already applies SafeArea when true; wrapping
+        // `child` in SafeArea again doubled the bottom inset (noticeable e.g.
+        // on YourLiveSheet). Respect `ignoreSafeArea` for full-bleed sheets.
+        useSafeArea: ignoreSafeArea != true,
         backgroundColor: backgroundColor ?? IsmLiveColors.white,
         shape: RoundedRectangleBorder(
           borderRadius: IsmLiveDelegate.bottomSheetBorderRadius ??
@@ -173,7 +177,7 @@ class IsmLiveUtility {
                 top: Radius.circular(IsmLiveDimens.thirty),
               ),
         ),
-        builder: (context) => SafeArea(child: child),
+        builder: (context) => child,
       );
 
       _bottomSheetCount--;
