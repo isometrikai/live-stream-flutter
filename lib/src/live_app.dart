@@ -332,6 +332,7 @@ class IsmLiveApp extends StatefulWidget {
     StreamAnalyticsApiHandler? streamAnalyticsApiHandler,
     StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
+    MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
     IsmLiveCartBuilder? cartBuilder,
     TopViewersListCallback? topViewersListCallback,
@@ -405,6 +406,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.streamAnalyticsViewersApiHandler =
         streamAnalyticsViewersApiHandler;
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
+    IsmLiveDelegate.missingHostTokenStopStreamCallback =
+        missingHostTokenStopStreamCallback;
 
     // Handle GoLive screen configuration
     if (goLiveScreenConfigure != null) {
@@ -621,6 +624,10 @@ class IsmLiveApp extends StatefulWidget {
   static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
       IsmLiveDelegate.hostTopProfileClickCallback;
 
+  static MissingHostTokenStopStreamCallback?
+      get missingHostTokenStopStreamCallback =>
+          IsmLiveDelegate.missingHostTokenStopStreamCallback;
+
   static GoLiveHeaderBuilder? get goLiveHeaderBuilder =>
       IsmLiveDelegate.goLiveScreenConfigure?.goLiveHeaderBuilder;
 
@@ -694,6 +701,14 @@ class IsmLiveApp extends StatefulWidget {
   static void updateHostTopProfileClickCallback(
       HostTopProfileClickCallback? hostTopProfileClickCallback) {
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
+  }
+
+  /// Update missing host token stop stream callback dynamically at runtime
+  static void updateMissingHostTokenStopStreamCallback(
+      MissingHostTokenStopStreamCallback?
+          missingHostTokenStopStreamCallback) {
+    IsmLiveDelegate.missingHostTokenStopStreamCallback =
+        missingHostTokenStopStreamCallback;
   }
 
   /// Update go live click callback dynamically at runtime

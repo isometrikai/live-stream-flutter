@@ -279,6 +279,16 @@ typedef HostTopProfileClickCallback = Future<bool> Function(
   String description,
 );
 
+/// Callback used when host token is missing while joining as host.
+///
+/// Return `true` to allow the SDK to call `stopStream` API.
+/// Return `false` to skip the API call (host app handled it externally).
+typedef MissingHostTokenStopStreamCallback = Future<bool> Function(
+  BuildContext context,
+  String streamId,
+  String userId,
+);
+
 /// Builder for Go Live header.
 ///
 /// This builder allows host applications to provide a custom header widget for the Go Live screen.
@@ -997,6 +1007,8 @@ class IsmLiveDelegate {
   static StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? hostTopProfileClickCallback;
+
+  static MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback;
 
   static GoLiveHeaderBuilder? goLiveHeaderBuilder;
 

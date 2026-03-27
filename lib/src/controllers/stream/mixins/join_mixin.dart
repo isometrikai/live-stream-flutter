@@ -370,8 +370,28 @@ mixin StreamJoinMixin {
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
 
       if (token.trim().isEmpty) {
-        await _controller.stopStream(
-            stream.streamId ?? '', _controller.user?.userId ?? '');
+        final streamId = stream.streamId ?? '';
+        final userId = _controller.user?.userId ?? '';
+        final stopCallback = IsmLiveDelegate.missingHostTokenStopStreamCallback;
+        var shouldCallStopStreamApi = true;
+
+        if (stopCallback != null) {
+          try {
+            shouldCallStopStreamApi =
+                await stopCallback(context, streamId, userId);
+          } catch (error, stackTrace) {
+            IsmLiveLog.error(
+              'missingHostTokenStopStreamCallback failed: $error',
+              stackTrace,
+            );
+            // Preserve legacy behavior if host callback fails unexpectedly.
+            shouldCallStopStreamApi = true;
+          }
+        }
+
+        if (shouldCallStopStreamApi) {
+          await _controller.stopStream(streamId, userId);
+        }
         return;
       }
     } else {
