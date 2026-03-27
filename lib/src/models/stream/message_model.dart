@@ -76,8 +76,11 @@ class IsmLiveMessageModel {
   final bool isCopublisherRequest;
 
   String get name {
-    if (metaData?.firstName?.isNotEmpty ?? false) {
-      return metaData!.firstName!;
+    final firstName = metaData?.firstName?.trim() ?? '';
+    final lastName = metaData?.lastName?.trim() ?? '';
+    final fullNameFromMeta = '$firstName $lastName'.trim();
+    if (fullNameFromMeta.isNotEmpty) {
+      return fullNameFromMeta;
     }
     return senderName;
   }

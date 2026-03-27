@@ -8,6 +8,7 @@ class IsmLiveChatModel {
     required this.userId,
     required this.userIdentifier,
     required this.userName,
+    this.fullName,
     required this.imageUrl,
     required this.timeStamp,
     this.isDeleted = false,
@@ -28,6 +29,7 @@ class IsmLiveChatModel {
         userId: map['userId'] as String,
         userIdentifier: map['userIdentifier'] as String,
         userName: map['userName'] as String,
+        fullName: map['fullName'] as String?,
         imageUrl: map['imageUrl'] as String,
         timeStamp: DateTime.fromMillisecondsSinceEpoch(map['timeStamp'] as int),
         isDeleted: map['isDeleted'] as bool,
@@ -48,6 +50,7 @@ class IsmLiveChatModel {
   final String userId;
   final String userIdentifier;
   final String userName;
+  final String? fullName;
   final String imageUrl;
   final DateTime timeStamp;
   final bool isDeleted;
@@ -58,6 +61,13 @@ class IsmLiveChatModel {
   final String? parentBody;
   final bool isEvent;
   final bool isCopublisherRequest;
+  String get displayName {
+    final normalizedFullName = fullName?.trim() ?? '';
+    if (normalizedFullName.isNotEmpty) {
+      return normalizedFullName;
+    }
+    return userName;
+  }
 
   IsmLiveChatModel copyWith({
     String? streamId,
@@ -66,6 +76,7 @@ class IsmLiveChatModel {
     String? userId,
     String? userIdentifier,
     String? userName,
+    String? fullName,
     String? imageUrl,
     DateTime? timeStamp,
     bool? isDeleted,
@@ -84,6 +95,7 @@ class IsmLiveChatModel {
         userId: userId ?? this.userId,
         userIdentifier: userIdentifier ?? this.userIdentifier,
         userName: userName ?? this.userName,
+        fullName: fullName ?? this.fullName,
         imageUrl: imageUrl ?? this.imageUrl,
         timeStamp: timeStamp ?? this.timeStamp,
         isDeleted: isDeleted ?? this.isDeleted,
@@ -103,6 +115,7 @@ class IsmLiveChatModel {
         'userId': userId,
         'userIdentifier': userIdentifier,
         'userName': userName,
+        'fullName': fullName,
         'imageUrl': imageUrl,
         'timeStamp': timeStamp.millisecondsSinceEpoch,
         'isDeleted': isDeleted,
@@ -118,7 +131,7 @@ class IsmLiveChatModel {
 
   @override
   String toString() =>
-      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost, parentBody: $parentBody, isEvent: $isEvent)';
+      'IsmLiveChatModel(streamId: $streamId, messageId: $messageId, parentId: $parentId, userId: $userId, userIdentifier: $userIdentifier, userName: $userName, fullName: $fullName, imageUrl: $imageUrl, timeStamp: $timeStamp, isDeleted: $isDeleted, body: $body, isReply: $isReply, sentByMe: $sentByMe, sentByHost: $sentByHost, parentBody: $parentBody, isEvent: $isEvent)';
 
   @override
   bool operator ==(covariant IsmLiveChatModel other) {
