@@ -635,32 +635,29 @@ mixin StreamOngoingMixin {
   Future<void> toggleSpeaker({
     bool? value,
   }) async {
+    // Update UI state immediately (even if there are no remote audio tracks yet).
+    final nextValue = value ?? !_controller.speakerOn;
+    _controller.speakerOn = nextValue;
+    _controller.update([
+      IsmLiveStreamView.updateId,
+      IsmLiveControlsWidget.updateId,
+    ]);
+
     final room = _controller.room;
     if (room == null) {
       return;
     }
-    if (room.remoteParticipants.values.isEmpty ||
-        room.remoteParticipants.values.first.audioTrackPublications.isEmpty) {
-      return;
-    }
 
-    _controller.speakerOn = value ?? !_controller.speakerOn;
+    final participants = room.remoteParticipants.values.toList(growable: false);
     try {
-      if (_controller.speakerOn) {
-        for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values
-              .elementAt(i)
-              .audioTrackPublications
-              .first
-              .enable());
-        }
-      } else {
-        for (var i = 0; i < room.remoteParticipants.values.length; i++) {
-          unawaited(room.remoteParticipants.values
-              .elementAt(i)
-              .audioTrackPublications
-              .first
-              .disable());
+      for (final participant in participants) {
+        final pubs = participant.audioTrackPublications;
+        for (final pub in pubs) {
+          try {
+            unawaited(nextValue ? pub.enable() : pub.disable());
+          } catch (e) {
+            IsmLiveLog('speaker publication error $e');
+          }
         }
       }
     } catch (e) {

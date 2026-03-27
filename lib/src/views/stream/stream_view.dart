@@ -385,7 +385,7 @@ class _IsmLiveStreamView extends StatelessWidget {
   double _calculateProductBuilderBottomPosition(
       IsmLiveStreamController controller) {
     // Base bottom position when neither reply nor emoji board is visible
-    var bottom = IsmLiveDimens.eighty;
+    var bottom = IsmLiveDimens.sixty;
 
     // If reply feature is active (parentMessage is not null), adjust position
     if (controller.parentMessage != null) {
