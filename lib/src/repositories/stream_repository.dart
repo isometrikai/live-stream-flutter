@@ -94,7 +94,7 @@ class IsmLiveStreamRepository {
         '${IsmLiveApis.leaveStream}?streamId=$streamId',
         type: IsmLiveRequestType.delete,
         headers: IsmLiveUtility.tokenHeader(),
-        showLoader: true,
+        showLoader: false,
         showDialog: false,
       );
 
