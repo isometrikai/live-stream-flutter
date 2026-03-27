@@ -468,6 +468,7 @@ class _IsmLiveStreamView extends StatelessWidget {
         builder: (controller) {
           final mediaQuery = MediaQuery.of(context);
           final isKeyboardOpen = mediaQuery.viewInsets.bottom > 0;
+          final systemBottomInset = mediaQuery.viewPadding.bottom;
           return PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
@@ -483,18 +484,24 @@ class _IsmLiveStreamView extends StatelessWidget {
                   IsmLiveColors.black,
               body: SafeArea(
                 top: false,
+                bottom: false,
                 child: Container(
                   color: Colors.black, // Ensures status bar area is always dark
                   child: Stack(
                     children: [
-                      const ColoredBox(
-                          color:
-                              Colors.black), // Bottom-most layer for status bar
-                      IsmLiveStreamBanner(streamImage, isSchedule: isSchedule),
-                      IsmLivePublisherGrid(
-                        streamImage: streamImage ?? '',
-                        isInteractive: isInteractive,
-                        isSchedule: isSchedule,
+                      const Positioned.fill(
+                        child: ColoredBox(color: Colors.black),
+                      ),
+                      Positioned.fill(
+                        child: IsmLiveStreamBanner(streamImage,
+                            isSchedule: isSchedule),
+                      ),
+                      Positioned.fill(
+                        child: IsmLivePublisherGrid(
+                          streamImage: streamImage ?? '',
+                          isInteractive: isInteractive,
+                          isSchedule: isSchedule,
+                        ),
                       ),
                       // Gradients positioned right after publisher grid to only overlay video content
                       const _TopDarkGradient(),
@@ -523,6 +530,7 @@ class _IsmLiveStreamView extends StatelessWidget {
                       Obx(
                         () => (controller.room?.localParticipant != null)
                             ? SafeArea(
+                                top: false,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -673,7 +681,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                           builder: (controller) => Positioned(
                             right: IsmLiveDimens.sixteen,
                             bottom: _calculateProductBuilderBottomPosition(
-                                controller),
+                                    controller) +
+                                systemBottomInset,
                             child: IsmLiveDelegate
                                     .ecomConfigure!.pinnedProductBuilder!(
                                   context,
@@ -684,15 +693,20 @@ class _IsmLiveStreamView extends StatelessWidget {
                         ),
                       Align(
                         alignment: IsmLiveApp.endStreamPosition,
-                        child: IsmLiveApp.endButton ??
-                            IsmLiveEndStreamButton(
-                              onTapExit: () => IsmLiveApp.endStream(
-                                  context: context, isSchedule: isSchedule),
-                            ),
+                        child: Padding(
+                          padding: IsmLiveApp.endStreamPosition.isBottomAligned
+                              ? EdgeInsets.only(bottom: systemBottomInset)
+                              : EdgeInsets.zero,
+                          child: IsmLiveApp.endButton ??
+                              IsmLiveEndStreamButton(
+                                onTapExit: () => IsmLiveApp.endStream(
+                                    context: context, isSchedule: isSchedule),
+                              ),
+                        ),
                       ),
                       if (controller.isHost) ...[
                         Positioned(
-                          bottom: IsmLiveDimens.eighty,
+                          bottom: IsmLiveDimens.eighty + systemBottomInset,
                           left: IsmLiveDimens.sixteen,
                           child: const IsmLiveModerationWarning(),
                         ),
