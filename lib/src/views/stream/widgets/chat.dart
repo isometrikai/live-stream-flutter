@@ -83,8 +83,8 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
     // If user is at (or very near) the top, they're likely paging older messages.
     // Mark this briefly so incoming messages (or prepend) don't snap them to bottom.
     const topThresholdPx = 4.0;
-    final atTop = (position.pixels - position.minScrollExtent).abs() <=
-        topThresholdPx;
+    final atTop =
+        (position.pixels - position.minScrollExtent).abs() <= topThresholdPx;
     if (atTop) {
       _isPaginatingOlder = true;
       _paginationMarkAt = DateTime.now();
@@ -331,7 +331,7 @@ class _ChatMessageItem extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${message.userName}${message.sentByMe ? " (You)" : ""}',
+                                    '${message.displayName}${message.sentByMe ? " (You)" : ""}',
                                     style:
                                         context.textTheme.labelSmall!.copyWith(
                                       color: IsmLiveColors.white,

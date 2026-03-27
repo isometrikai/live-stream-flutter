@@ -17,6 +17,26 @@ import 'package:video_player/video_player.dart';
 /// - [PageView.builder] with [AlwaysScrollableScrollPhysics] + [ClampingScrollPhysics].
 /// - Optional [onLoadMore] when user reaches ~65% of the list or last item.
 /// - When [autoMoveToNextOnCompletion] is true, video completion animates to the next page.
+///
+/// Host usage example with pagination:
+/// ```dart
+/// await IsmLiveApp.openStreamRecordingPlayer(
+///   recordings: recordings,
+///   initialIndex: 0,
+///   onLoadMore: () async {
+///     if (isLoadingMore || !hasMore) return;
+///     isLoadingMore = true;
+///     try {
+///       final nextPage = await repository.getStreamRecordings(page: page + 1);
+///       recordings.addAll(nextPage.items);
+///       page++;
+///       hasMore = nextPage.hasMore;
+///     } finally {
+///       isLoadingMore = false;
+///     }
+///   },
+/// );
+/// ```
 class IsmLiveStreamRecordingPlayerView extends StatefulWidget {
   const IsmLiveStreamRecordingPlayerView({
     super.key,

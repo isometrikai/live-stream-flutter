@@ -842,17 +842,23 @@ class IsmLiveApp extends StatefulWidget {
   /// await IsmLiveApp.openStreamRecordingPlayer(
   ///   recordings: listOfIsmLiveStreamRecordingItem,
   ///   initialIndex: 0,
+  ///   onLoadMore: () async {
+  ///     // Fetch next page in host app and append into the same list.
+  ///     await recordingsController.fetchNextRecordingsPage();
+  ///   },
   /// );
   /// ```
   static Future<void> openStreamRecordingPlayer({
     required List<IsmLiveStreamRecordingItem> recordings,
     int initialIndex = 0,
     IsmLiveStreamRecordingPlayerConfig? config,
+    Future<void> Function()? onLoadMore,
   }) async {
     await IsmLiveRouteManagement.goToStreamRecordingPlayer(
       recordings: recordings,
       initialIndex: initialIndex,
       config: config,
+      onLoadMore: onLoadMore,
     );
   }
 

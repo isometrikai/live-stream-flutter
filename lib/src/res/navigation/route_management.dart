@@ -208,6 +208,7 @@ abstract class IsmLiveRouteManagement {
     required List<IsmLiveStreamRecordingItem> recordings,
     int initialIndex = 0,
     IsmLiveStreamRecordingPlayerConfig? config,
+    Future<void> Function()? onLoadMore,
   }) async {
     if (recordings.isEmpty) return;
     await IsmLiveUtility.navigatorKey.currentState?.push<void>(
@@ -216,6 +217,7 @@ abstract class IsmLiveRouteManagement {
           recordings: recordings,
           initialIndex: initialIndex.clamp(0, recordings.length - 1),
           config: config,
+          onLoadMore: onLoadMore,
         ),
         fullscreenDialog: true,
       ),
