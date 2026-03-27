@@ -552,13 +552,28 @@ mixin StreamAPIMixin {
     required String messageId,
     required bool isReply,
     String? parentMessageId,
-  }) =>
-      _controller.viewModel.deleteMessage(
-        streamId: streamId,
-        messageId: messageId,
-        isReply: isReply,
-        parentMessageId: parentMessageId,
-      );
+  }) async {
+    final res = await _controller.viewModel.deleteMessage(
+      streamId: streamId,
+      messageId: messageId,
+      isReply: isReply,
+      parentMessageId: parentMessageId,
+    );
+
+    if (!res) {
+      return false;
+    }
+
+    // UI must update immediately after delete succeeds.
+    // For replies, backend may not emit a "message removed" event, so we update locally.
+    if (isReply) {
+      _controller._streamMessagesList
+          .removeWhere((element) => element.messageId == messageId);
+      _controller._streamMessagesList.refresh();
+    }
+
+    return true;
+  }
 
 //Uploads an image for a live stream.
   Future<String?> uploadImage(
