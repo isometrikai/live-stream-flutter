@@ -129,7 +129,10 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   void _scheduleAutoScrollToBottom({
     required int currentMessageCount,
     required int delta,
+    required bool shouldAutoScroll,
   }) {
+    if (!shouldAutoScroll) return;
+
     // Avoid spamming scrolls during message bursts; keep the latest intent only.
     if (_lastAutoScrollScheduledForCount == currentMessageCount) return;
     _lastAutoScrollScheduledForCount = currentMessageCount;
@@ -137,9 +140,6 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
     _autoScrollTimer?.cancel();
     _autoScrollTimer = Timer(const Duration(milliseconds: 60), () {
       if (!mounted) return;
-      // Re-check anchors on the actual execution moment.
-      _updateScrollAnchorsAndMaybeMarkPagination();
-      if (!_isAtBottom || _isPaginatingOlder) return;
 
       // If lots of messages arrived in a burst, jump (cheaper) instead of animating.
       final useJump = delta >= 4;
@@ -166,6 +166,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
               _scheduleAutoScrollToBottom(
                 currentMessageCount: currentMessageCount,
                 delta: delta,
+                shouldAutoScroll: _isAtBottom && !_isPaginatingOlder,
               );
             }
             _previousMessageCount = currentMessageCount;
