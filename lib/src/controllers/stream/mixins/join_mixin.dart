@@ -323,7 +323,8 @@ mixin StreamJoinMixin {
     } catch (error) {
       // After a full rejoin, `enableMyVideo()` may already publish camera; a second
       // `setCameraEnabled(true)` can throw. Don’t force UI/video off if track exists.
-      final pub = participant.getTrackPublicationBySource(lk.TrackSource.camera);
+      final pub =
+          participant.getTrackPublicationBySource(lk.TrackSource.camera);
       final trackAlive = pub?.track != null;
       if (trackAlive) {
         IsmLiveLog.info(
@@ -550,7 +551,9 @@ mixin StreamJoinMixin {
   }) async {
     // Store token for background lifecycle / deferred connect flows
     _controller.rtcToken = token;
-
+    if (isHost) {
+      unawaited(_dbWrapper.saveValueSecurely(streamId, token));
+    }
     // Subscribe to the stream
     _controller.streamId = streamId;
     print('initializeAndJoinStream initialized with streamId: $streamId');
@@ -728,8 +731,8 @@ mixin StreamJoinMixin {
         token: token,
         streamId: streamId,
         streamImage: details?.streamImage,
-        streamDiscription:
-            details?.streamDescription ?? _controller.descriptionController.text,
+        streamDiscription: details?.streamDescription ??
+            _controller.descriptionController.text,
         hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
         restream: details?.restream ?? _controller.isRestreamBroadcast,
         isHost: false,
@@ -787,7 +790,8 @@ mixin StreamJoinMixin {
 
     final streamId = _controller.streamId;
     if (streamId == null || streamId.isEmpty) {
-      IsmLiveLog.error('rejoinCurrentHostStreamAfterForeground: streamId missing');
+      IsmLiveLog.error(
+          'rejoinCurrentHostStreamAfterForeground: streamId missing');
       return false;
     }
 
@@ -815,8 +819,8 @@ mixin StreamJoinMixin {
         token: token,
         streamId: streamId,
         streamImage: details?.streamImage,
-        streamDiscription:
-            details?.streamDescription ?? _controller.descriptionController.text,
+        streamDiscription: details?.streamDescription ??
+            _controller.descriptionController.text,
         hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
         restream: details?.restream ?? _controller.isRestreamBroadcast,
         isHost: true,
