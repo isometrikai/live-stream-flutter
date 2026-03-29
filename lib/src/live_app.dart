@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
+import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mqtt_helper/mqtt_helper.dart';
 
 part 'live_data.dart';
 
@@ -705,8 +705,7 @@ class IsmLiveApp extends StatefulWidget {
 
   /// Update missing host token stop stream callback dynamically at runtime
   static void updateMissingHostTokenStopStreamCallback(
-      MissingHostTokenStopStreamCallback?
-          missingHostTokenStopStreamCallback) {
+      MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback) {
     IsmLiveDelegate.missingHostTokenStopStreamCallback =
         missingHostTokenStopStreamCallback;
   }
