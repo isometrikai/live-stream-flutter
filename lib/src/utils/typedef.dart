@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:mqtt_helper/mqtt_helper.dart';
 
 typedef DynamicMap = Map<String, dynamic>;
 

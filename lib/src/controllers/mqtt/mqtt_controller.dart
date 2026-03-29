@@ -4,19 +4,19 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:mqtt_helper/mqtt_helper.dart';
+import 'mqtt_helper.dart';
 
 class IsmLiveMqttController extends GetxController {
   final _mqttHelper = MqttHelper();
 
-  bool _isInitialized = false;
-  bool _isReconnecting = false;
-  Timer? _reconnectTimer;
-  int _reconnectAttempts = 0;
-  static const int _maxReconnectAttempts =
-      0; // (3)  auto connect already manage in MQTT helper
-  static const Duration _initialReconnectDelay = Duration(seconds: 2);
-  static const Duration _maxReconnectDelay = Duration(seconds: 30);
+  /// Prefix, user ids, and [_topics] are prepared once.
+  bool _layoutReady = false;
+
+  /// True after a successful [MqttHelper.initialize] for this session.
+  bool _mqttInitialized = false;
+
+  /// Full manual re-init (second [initialize]) in progress.
+  bool _manualReconnectInFlight = false;
 
   late String userTopic;
   late String userId;
@@ -29,15 +29,17 @@ class IsmLiveMqttController extends GetxController {
   String _topicPrefix = '';
   IsmLiveConfigData? _config;
 
-  // Reconnection configuration
-  bool _autoReconnect = true;
-  Duration _reconnectDelay = _initialReconnectDelay;
+  StreamSubscription<bool>? _mqttConnectionSub;
+  StreamSubscription<EventModel>? _mqttEventSub;
 
-  // Getters for external access
-  bool get isReconnecting => _isReconnecting;
-  bool get autoReconnect => _autoReconnect;
-  int get reconnectAttempts => _reconnectAttempts;
-  int get maxReconnectAttempts => _maxReconnectAttempts;
+  /// Broker handshake retries per connect (maps to mqtt_client maxConnectionAttempts).
+  static const int _maxHandshakeAttempts = 100;
+
+  /// Keeps [IsmLiveApp.isMqttConnected] aligned with the broker. Pass [connected]
+  /// when known from callbacks/stream; otherwise reads [MqttHelper.isConnected].
+  void _publishMqttConnectivityToApp([bool? connected]) {
+    IsmLiveApp.isMqttConnected = connected ?? _mqttHelper.isConnected;
+  }
 
   IsmLiveStreamController get _streamController {
     if (!Get.isRegistered<IsmLiveStreamController>()) {
@@ -94,103 +96,135 @@ class IsmLiveMqttController extends GetxController {
           .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
           ?.userProfileImageUrl;
 
-  // ----------------- Functions -----------------------
+  // --- MQTT -----------------------------------------------------------------
+
+  MqttConfig _buildMqttConfig() {
+    final c = _config!;
+    return MqttConfig(
+      serverConfig: ServerConfig.fromMap(c.mqttConfig.toMap()),
+      projectConfig: ProjectConfig(
+        deviceId: deviceId,
+        username: c.username ?? '',
+        password: c.password ?? '',
+        userIdentifier: userId,
+      ),
+      enableLogging: true,
+      autoReconnect: true,
+      maxAutoReconnectRetry: _maxHandshakeAttempts,
+      webSocketConfig: c.socketConfig != null
+          ? WebSocketConfig.fromMap(c.socketConfig!.toMap())
+          : null,
+      secure: c.secure,
+    );
+  }
+
+  /// Cancels previous listeners; required after each [MqttHelper.initialize]
+  /// because the helper replaces its internal stream controllers.
+  void _attachMqttStreamListeners() {
+    _mqttConnectionSub?.cancel();
+    _mqttEventSub?.cancel();
+    _mqttConnectionSub = _mqttHelper.onConnectionChange((connected) {
+      _publishMqttConnectivityToApp(connected);
+    });
+    _mqttEventSub = _mqttHelper.onEvent(_onEvent);
+    // Broadcast stream does not replay; first connect may have emitted before subscribe.
+    _publishMqttConnectivityToApp();
+  }
+
+  Future<void> _runMqttInitialize() async {
+    await _mqttHelper.initialize(
+      _buildMqttConfig(),
+      callbacks: MqttCallbacks(
+        onConnected: _onConnected,
+        onDisconnected: _onDisconnected,
+        onSubscribeFail: _onSubscribeFailed,
+        onSubscribed: _onSubscribed,
+        onUnsubscribed: _onUnSubscribed,
+        pongCallback: _pong,
+      ),
+      autoSubscribe: true,
+      topics: List<String>.from(_topics),
+    );
+    _attachMqttStreamListeners();
+    _mqttInitialized = true;
+  }
 
   Future<void> setup({
     List<String>? topics,
     List<String>? topicChannels,
     required bool shouldInitializeMqtt,
   }) async {
-    IsmLiveLog.info('mqtt setup 1');
-    if (_isInitialized) {
+    if (_layoutReady) {
+      if (shouldInitializeMqtt && !_mqttInitialized) {
+        try {
+          await _runMqttInitialize();
+        } catch (e, st) {
+          IsmLiveLog.error('MQTT initialize failed: $e', st);
+          _publishMqttConnectivityToApp(false);
+        }
+      }
       return;
     }
 
-    IsmLiveLog.info('mqtt setup 2');
-    _isInitialized = true;
     _config = IsmLiveUtility.config;
     _topicPrefix =
-        '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
+    '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
 
     deviceId = _config!.projectConfig.deviceId;
-
     userId = _config!.userConfig.userId;
-
     userTopic = '$_topicPrefix/User/$userId';
 
-    var channelTopics =
-        topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
+    final channelTopics =
+    topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
 
-    _topics.addAll([
-      ...?topics,
-      ...?channelTopics,
-      userTopic,
-    ]);
+    _topics
+      ..clear()
+      ..addAll([
+        ...?topics,
+        ...?channelTopics,
+        userTopic,
+      ]);
 
-    if (shouldInitializeMqtt) {
-      try {
-        debugPrint(
-            'IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}');
-        debugPrint(
-            'IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId');
-        unawaited(
-          _mqttHelper
-              .initialize(
-            MqttConfig(
-              serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-              projectConfig: ProjectConfig(
-                deviceId: deviceId,
-                username: _config?.username ?? '',
-                password: _config?.password ?? '',
-                userIdentifier: userId,
-              ),
-              enableLogging: true,
-              maxAutoReconnectRetry: 100,
-              webSocketConfig: _config!.socketConfig != null
-                  ? WebSocketConfig.fromMap(
-                      _config!.socketConfig!.toMap(),
-                    )
-                  : null,
-              secure: _config!.secure,
-            ),
-            callbacks: MqttCallbacks(
-              onConnected: _onConnected,
-              onDisconnected: _onDisconnected,
-              onSubscribeFail: _onSubscribeFailed,
-              onSubscribed: _onSubscribed,
-              onUnsubscribed: _onUnSubscribed,
-              pongCallback: _pong,
-            ),
-            autoSubscribe: true,
-            topics: _topics,
-          )
-              .catchError((Object e, StackTrace st) {
-            IsmLiveLog.error('MQTT initialize failed: $e', st);
-          }),
-        );
+    _layoutReady = true;
 
-        _mqttHelper
-            .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
-        _mqttHelper.onEvent(_onEvent);
-      } catch (e) {
-        IsmLiveLog.error('mqtt issue mqttcontroller 145 line');
-      }
+    if (!shouldInitializeMqtt) {
+      return;
+    }
+
+    try {
+      debugPrint(
+        'IsmLiveApp: ServerConfig: ${ServerConfig.fromMap(_config!.mqttConfig.toMap())}',
+      );
+      debugPrint(
+        'IsmLiveApp: userId: $userId username: ${_config?.username} password: ${_config?.password} deviceId: $deviceId',
+      );
+      await _runMqttInitialize();
+    } catch (e, st) {
+      IsmLiveLog.error('MQTT initialize failed: $e', st);
+      _mqttInitialized = false;
+      _publishMqttConnectivityToApp(false);
     }
   }
 
   Future<void> subscribeStream(String streamId) async {
     try {
-      if (!IsmLiveApp.isMqttConnected) {
-        // Don't block host/viewer join on MQTT reconnect.
-        IsmLiveLog.info('MQTT is not connected; reconnecting in background');
+      if (!_layoutReady) {
+        IsmLiveLog.error('subscribeStream called before setup()');
+        return;
+      }
+      if (!IsmLiveApp.isMqttConnected && !_manualReconnectInFlight) {
+        IsmLiveLog.info(
+          'MQTT not connected; starting full re-init in background',
+        );
         unawaited(reconnect());
       }
-      var topic = '$_topicPrefix/$streamId';
-      // Ensure this topic is tracked for auto-resubscribe on reconnects
+      final topic = '$_topicPrefix/$streamId';
       if (!_topics.contains(topic)) {
         _topics.add(topic);
       }
-      _mqttHelper.subscribeTopic(topic);
+      if (_mqttInitialized) {
+        _mqttHelper.subscribeTopic(topic);
+      }
     } catch (e) {
       IsmLiveLog.error('Subscribe Error - $e');
     }
@@ -198,8 +232,10 @@ class IsmLiveMqttController extends GetxController {
 
   Future<void> unsubscribeTopics() async {
     try {
-      IsmLiveLog('Unsubscribing Topics $_topics');
-      _mqttHelper.unsubscribeTopics(_topics);
+      IsmLiveLog.info('Unsubscribing topics: $_topics');
+      if (_mqttInitialized) {
+        _mqttHelper.unsubscribeTopics(List<String>.from(_topics));
+      }
     } catch (e) {
       IsmLiveLog.error('Unsubscribe Error - $e');
     }
@@ -207,204 +243,132 @@ class IsmLiveMqttController extends GetxController {
 
   Future<void> unsubscribeStream(String streamId) async {
     try {
-      var topic = '$_topicPrefix/$streamId';
-      _mqttHelper.unsubscribeTopic(topic);
-      // Remove from tracked topics so it is not auto-resubscribed
+      final topic = '$_topicPrefix/$streamId';
+      if (_mqttInitialized) {
+        _mqttHelper.unsubscribeTopic(topic);
+      }
       _topics.remove(topic);
     } catch (e) {
-      IsmLiveLog.error('Subscribe Error - $e');
+      IsmLiveLog.error('Unsubscribe stream error - $e');
     }
   }
 
   Future<void> disconnect() async {
-    // Cancel any pending reconnection attempts
-    _reconnectTimer?.cancel();
-    _isReconnecting = false;
-    _reconnectAttempts = 0;
-
+    _mqttConnectionSub?.cancel();
+    _mqttEventSub?.cancel();
+    _mqttConnectionSub = null;
+    _mqttEventSub = null;
     _mqttHelper.disconnect();
-    await actionStreamController.stream.drain();
+    _mqttInitialized = false;
+    _publishMqttConnectivityToApp(false);
   }
 
   void _pong() {
     IsmLiveLog.info('MQTT pong');
   }
 
-  /// onDisconnected callback, it will be called when connection is breaked
   void _onDisconnected() {
-    IsmLiveApp.isMqttConnected = false;
-    IsmLiveLog.success('MQTT Disconnected');
-
-    // Trigger automatic reconnection if enabled
-    if (_autoReconnect && !_isReconnecting) {
-      _scheduleReconnection();
-    }
+    _publishMqttConnectivityToApp(false);
+    IsmLiveLog.info('MQTT disconnected (helper handles auto-reconnect)');
   }
 
-  /// onSubscribed callback, it will be called when connection successfully subscribes to certain topic
   void _onSubscribed(String topic) {
     IsmLiveLog.success('MQTT Subscribed - $topic');
   }
 
-  /// onUnsubscribed callback, it will be called when connection successfully unsubscribes to certain topic
   void _onUnSubscribed(String? topic) {
     IsmLiveLog.success('MQTT Unsubscribed - $topic');
   }
 
-  /// onSubscribeFailed callback, it will be called when connection fails to subscribe to certain topic
   void _onSubscribeFailed(String topic) {
     IsmLiveLog.error('MQTT Subscription failed - $topic');
   }
 
-  /// onConnected callback, it will be called when connection is established
   void _onConnected() {
-    IsmLiveApp.isMqttConnected = true;
-    IsmLiveLog.success('MQTT Connected');
-
-    // Reset reconnection state on successful connection
-    _resetReconnectionState();
+    _publishMqttConnectivityToApp(true);
+    IsmLiveLog.success('MQTT connected');
   }
 
-  // ----------------- Reconnection Methods -----------------------
-
-  /// Schedules automatic reconnection with exponential backoff
-  void _scheduleReconnection() {
-    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) {
-      IsmLiveLog.error(
-          'MQTT: Max reconnection attempts reached or already reconnecting');
-      return;
-    }
-
-    _isReconnecting = true;
-    _reconnectAttempts++;
-
-    IsmLiveLog.info(
-        'MQTT: Scheduling reconnection attempt $_reconnectAttempts/$_maxReconnectAttempts in ${_reconnectDelay.inSeconds} seconds');
-
-    _reconnectTimer?.cancel();
-    _reconnectTimer = Timer(_reconnectDelay, _attemptReconnection);
-
-    // Exponential backoff for next attempt
-    _reconnectDelay = Duration(
-      seconds: (_reconnectDelay.inSeconds * 2).clamp(
-        _initialReconnectDelay.inSeconds,
-        _maxReconnectDelay.inSeconds,
-      ),
-    );
-  }
-
-  /// Attempts to reconnect to MQTT
-  Future<void> _attemptReconnection() async {
-    if (!_isReconnecting) return;
-
-    IsmLiveLog.info('MQTT: Attempting reconnection...');
-
-    try {
-      await _mqttHelper.initialize(
-        MqttConfig(
-          serverConfig: ServerConfig.fromMap(_config!.mqttConfig.toMap()),
-          projectConfig: ProjectConfig(
-            deviceId: deviceId,
-            username: _config?.username ?? '',
-            password: _config?.password ?? '',
-            userIdentifier: userId,
-          ),
-          enableLogging: true,
-          webSocketConfig: _config!.socketConfig != null
-              ? WebSocketConfig.fromMap(
-                  _config!.socketConfig!.toMap(),
-                )
-              : null,
-          secure: _config!.secure,
-        ),
-        callbacks: MqttCallbacks(
-          onConnected: _onConnected,
-          onDisconnected: _onDisconnected,
-          onSubscribeFail: _onSubscribeFailed,
-          onSubscribed: _onSubscribed,
-          onUnsubscribed: _onUnSubscribed,
-          pongCallback: _pong,
-        ),
-        autoSubscribe: true,
-        topics: _topics,
-      );
-
-      _mqttHelper
-          .onConnectionChange((value) => IsmLiveApp.isMqttConnected = value);
-      _mqttHelper.onEvent(_onEvent);
-
-      IsmLiveLog.success('MQTT: Reconnection successful');
-    } catch (e) {
-      IsmLiveLog.error('MQTT: Reconnection failed - $e');
-
-      // Schedule next reconnection attempt if we haven't reached max attempts
-      if (_reconnectAttempts < _maxReconnectAttempts) {
-        _scheduleReconnection();
-      } else {
-        _isReconnecting = false;
-        IsmLiveLog.error(
-            'MQTT: Max reconnection attempts reached. Manual reconnection required.');
-      }
-    }
-  }
-
-  /// Resets reconnection state after successful connection
-  void _resetReconnectionState() {
-    _isReconnecting = false;
-    _reconnectAttempts = 0;
-    _reconnectDelay = _initialReconnectDelay;
-    _reconnectTimer?.cancel();
-    _reconnectTimer = null;
-  }
-
-  /// Manual reconnection method for host app
+  /// Full client re-init. Use after [disconnect], or when the socket is dead
+  /// and you need a fresh [initialize] (helper replaces stream controllers).
   Future<bool> reconnect() async {
-    if (_isReconnecting) {
-      IsmLiveLog.error('MQTT: Already attempting to reconnect');
+    if (!_layoutReady || _config == null) {
+      IsmLiveLog.error('MQTT reconnect: setup() not completed');
+      return false;
+    }
+    if (_manualReconnectInFlight) {
+      IsmLiveLog.info('MQTT reconnect already in progress');
       return false;
     }
 
-    IsmLiveLog.info('MQTT: Manual reconnection requested');
-    _resetReconnectionState();
-    _isReconnecting = true;
-
-    await _attemptReconnection();
-    return IsmLiveApp.isMqttConnected;
+    _manualReconnectInFlight = true;
+    try {
+      IsmLiveLog.info('MQTT manual re-init requested');
+      await _runMqttInitialize();
+      return IsmLiveApp.isMqttConnected;
+    } catch (e, st) {
+      IsmLiveLog.error('MQTT re-init failed: $e', st);
+      _mqttInitialized = false;
+      _publishMqttConnectivityToApp(false);
+      return false;
+    } finally {
+      _manualReconnectInFlight = false;
+    }
   }
 
-  /// Enables or disables automatic reconnection
+  /// Kept for API compatibility. Handshake retries use [_maxHandshakeAttempts]
+  /// on [MqttConfig]; there is no app-level reconnect timer.
   void setAutoReconnect(bool enabled) {
-    _autoReconnect = enabled;
-    IsmLiveLog.info('MQTT: Auto-reconnect ${enabled ? 'enabled' : 'disabled'}');
+    IsmLiveLog.info(
+      'MQTT: setAutoReconnect($enabled) — broker reconnect is controlled by '
+          'MqttConfig.autoReconnect (currently always true in _buildMqttConfig).',
+    );
   }
 
-  /// Sets custom reconnection configuration
   void setReconnectionConfig({
     int? maxAttempts,
     Duration? initialDelay,
     Duration? maxDelay,
   }) {
-    if (maxAttempts != null && maxAttempts > 0) {
-      // Note: _maxReconnectAttempts is const, so we'll use a different approach
+    if (maxAttempts != null) {
       IsmLiveLog.info(
-          'MQTT: Max reconnection attempts cannot be changed at runtime');
+        'MQTT: use MqttConfig.maxAutoReconnectRetry / code constant '
+            '_maxHandshakeAttempts instead of app-level timers',
+      );
     }
-    if (initialDelay != null) {
-      _reconnectDelay = initialDelay;
+    if (initialDelay != null || maxDelay != null) {
+      IsmLiveLog.info(
+        'MQTT: reconnect spacing is handled by mqtt_client connectTimeoutPeriod',
+      );
     }
-    IsmLiveLog.info('MQTT: Reconnection configuration updated');
   }
 
-  /// Gets current reconnection status
+  bool get isReconnecting => _manualReconnectInFlight;
+
+  int get reconnectAttempts => 0;
+
+  int get maxReconnectAttempts => 0;
+
   Map<String, dynamic> getReconnectionStatus() => {
-        'isReconnecting': _isReconnecting,
-        'reconnectAttempts': _reconnectAttempts,
-        'maxReconnectAttempts': _maxReconnectAttempts,
-        'autoReconnect': _autoReconnect,
-        'isConnected': IsmLiveApp.isMqttConnected,
-      };
+    'isReconnecting': _manualReconnectInFlight,
+    'reconnectAttempts': reconnectAttempts,
+    'maxReconnectAttempts': maxReconnectAttempts,
+    'mqttInitialized': _mqttInitialized,
+    'isConnected': IsmLiveApp.isMqttConnected,
+  };
 
   void handleEventsExternally(EventModel payload) => _onEvent(payload);
+
+  @override
+  void onClose() {
+    _mqttConnectionSub?.cancel();
+    _mqttEventSub?.cancel();
+    unawaited(disconnect());
+    if (!actionStreamController.isClosed) {
+      actionStreamController.close();
+    }
+    super.onClose();
+  }
 
   void _onEvent(EventModel event) async {
     final payload = event.payload;
@@ -448,9 +412,10 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
             LocalNotificationService.showBasicNotification(
-                body: message.body,
-                title: 'Co-publishing request',
-                payload: '');
+              body: message.body,
+              title: 'Co-publishing request',
+              payload: '',
+            );
 
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
@@ -473,9 +438,10 @@ class IsmLiveMqttController extends GetxController {
             );
 
             LocalNotificationService.showBasicNotification(
-                body: message.body,
-                title: 'Co-publishing requested',
-                payload: '');
+              body: message.body,
+              title: 'Co-publishing requested',
+              payload: '',
+            );
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
@@ -501,9 +467,10 @@ class IsmLiveMqttController extends GetxController {
               isEvent: true,
             );
             LocalNotificationService.showBasicNotification(
-                body: message.body,
-                title: 'Co-publishing request',
-                payload: '');
+              body: message.body,
+              title: 'Co-publishing request',
+              payload: '',
+            );
             unawaited(_streamController.handleMessage(message: message));
             _updateStream([IsmLiveControlsWidget.updateId]);
           }
@@ -538,7 +505,10 @@ class IsmLiveMqttController extends GetxController {
             isEvent: true,
           );
           LocalNotificationService.showBasicNotification(
-              body: message.body, title: 'Co-publishing added', payload: '');
+            body: message.body,
+            title: 'Co-publishing added',
+            payload: '',
+          );
 
           unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);
@@ -592,10 +562,6 @@ class IsmLiveMqttController extends GetxController {
             }
             await Future.delayed(const Duration(milliseconds: 300));
             _updateStream();
-
-            // if (memberId == userId) {
-            //   unawaited(_streamController.unpublishTracks());
-            // }
           }
           break;
         case IsmLiveActions.profileSwitched:
@@ -662,7 +628,9 @@ class IsmLiveMqttController extends GetxController {
             final message = IsmLiveMessageModel.fromMap(payload);
 
             await _streamController.handleMessage(
-                message: message, payload: payload);
+              message: message,
+              payload: payload,
+            );
 
             _updateStream();
           }
@@ -677,7 +645,6 @@ class IsmLiveMqttController extends GetxController {
                 payload['moderatorProfilePic'] as String? ?? '';
             final initiatorName = payload['initiatorName'] as String? ?? '';
 
-            // Add moderator to moderatorsList
             final moderatorExists = _streamController.moderatorsList
                 .any((e) => e.userId == moderatorId);
             if (!moderatorExists) {
@@ -704,7 +671,6 @@ class IsmLiveMqttController extends GetxController {
             );
             unawaited(_streamController.handleMessage(message: message));
             if (userId == moderatorId) {
-              // Show bottom sheet instead of dialog
               IsmLiveUtility.openBottomSheet(
                 IsmLiveModeratorBottomSheet(
                   type: IsmLiveModeratorBottomSheetType.addedToModerator,
@@ -736,8 +702,6 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
-            // _streamController.streamViewersList
-            //     .removeWhere((e) => e.userId == moderatorId);
 
             _updateStream();
           }
@@ -764,18 +728,10 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.handleMessage(message: message));
             _streamController.moderatorsList
                 .removeWhere((e) => e.userId == moderatorId);
-            // _streamController.streamViewersList
-            //     .removeWhere((e) => e.userId == moderatorId);
             if (moderatorId == userId) {
               _streamController.userRole?.leaveModeration();
             }
             _updateStream();
-
-            // if (moderatorId == userId) {
-            //    _disconnectRoom();
-            //   Get.back();
-            //   IsmLiveUtility.showDialog(const IsmLiveKickoutDialog());
-            // }
           }
           break;
 
@@ -788,7 +744,6 @@ class IsmLiveMqttController extends GetxController {
           _pkController.pkTimer = null;
           break;
         case IsmLiveActions.streamStartPresence:
-          // Use delegate if provided, otherwise use internal refresh
           if (IsmLiveDelegate.streamListingRefreshCallback != null) {
             IsmLiveDelegate.streamListingRefreshCallback!(
               'streamStartPresence',
@@ -812,7 +767,6 @@ class IsmLiveMqttController extends GetxController {
             _streamController.closeStreamView(false, fromMqtt: true);
           }
 
-          // Use delegate if provided, otherwise use internal refresh
           if (IsmLiveDelegate.streamListingRefreshCallback != null) {
             IsmLiveDelegate.streamListingRefreshCallback!(
               'streamStopped',
