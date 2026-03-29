@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
@@ -6,6 +8,7 @@ import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:appscrip_live_stream_component/src/controllers/mqtt/wrapper/models/event_model.dart';
 
 class HomeController extends GetxController {
   DBWrapper get dbWrapper => Get.find<DBWrapper>();
@@ -377,6 +380,18 @@ class HomeController extends GetxController {
       //   );
       // },
     );
+
+    StreamSubscription<EventModel>? _streamSubscription;
+
+    _streamSubscription = IsmLiveApp.addListener((event) {
+      IsmLiveLog.info('Event: ${event.toString()}');
+    });
+
+    // Set up listener for MQTT events from IsmLiveApp
+    // _streamSubscription = IsmLiveApp.addListener((event) {
+    //   // Forward MQTT events to chat SDK for processing
+    //   IsmChat.i.listenMqttEvent(event);
+    // });
   }
 
   @override

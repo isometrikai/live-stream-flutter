@@ -96,6 +96,27 @@ class IsmLiveMqttController extends GetxController {
           .firstWhere((e) => e!.userId == moderatorId, orElse: () => null)
           ?.userProfileImageUrl;
 
+  int? _viewersCountFromPayload(Map<String, dynamic> payload) {
+    final v = payload['viewersCount'];
+    if (v == null) {
+      return null;
+    }
+    if (v is int) {
+      return v;
+    }
+    if (v is num) {
+      return v.toInt();
+    }
+    return null;
+  }
+
+  void _syncLiveViewersCountFromPayload(Map<String, dynamic> payload) {
+    final c = _viewersCountFromPayload(payload);
+    if (c != null) {
+      _streamController.liveStreamViewersCount.value = c;
+    }
+  }
+
   // --- MQTT -----------------------------------------------------------------
 
   MqttConfig _buildMqttConfig() {
@@ -779,6 +800,7 @@ class IsmLiveMqttController extends GetxController {
           break;
         case IsmLiveActions.viewerJoined:
           if (streamId == _streamController.streamId) {
+            _syncLiveViewersCountFromPayload(payload);
             var viewer = IsmLiveViewerModel.fromMap(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
@@ -795,17 +817,19 @@ class IsmLiveMqttController extends GetxController {
             if (viewer.userId != _streamController.user?.userId) {
               unawaited(_streamController.handleMessage(message: message));
               await _streamController.addViewers([viewer], false);
-              _updateStream();
             }
+            _updateStream();
           }
           break;
         case IsmLiveActions.viewerLeft:
           if (streamId == _streamController.streamId) {
+            _syncLiveViewersCountFromPayload(payload);
             var viewer = IsmLiveViewerModel.fromMap(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: viewer.userName,
-              senderProfileImageUrl: _viewerImageUrl(viewer.userId),
+              senderProfileImageUrl: _viewerImageUrl(viewer.userId) ??
+                  viewer.imageUrl,
               senderIdentifier: viewer.identifier,
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
@@ -818,8 +842,8 @@ class IsmLiveMqttController extends GetxController {
               unawaited(_streamController.handleMessage(message: message));
               _streamController.streamViewersList
                   .removeWhere((e) => e.userId == viewer.userId);
-              _updateStream();
             }
+            _updateStream();
           }
           break;
         case IsmLiveActions.viewerRemoved:
@@ -828,6 +852,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorName = payload['initiatorName'] as String? ?? '';
           final initiatorId = payload['initiatorId'] as String? ?? '';
           if (streamId == _streamController.streamId) {
+            _syncLiveViewersCountFromPayload(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: initiatorName,

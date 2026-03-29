@@ -163,6 +163,12 @@ class IsmLiveStreamController extends GetxController
   set streamViewersList(List<IsmLiveViewerModel> value) =>
       _streamViewersList.value = value;
 
+  /// Server/MQTT viewer count; when set (e.g. viewerJoined/viewerLeft), drives header count.
+  final Rxn<int> liveStreamViewersCount = Rxn<int>();
+
+  int get streamViewersDisplayCount =>
+      liveStreamViewersCount.value ?? _streamViewersList.length;
+
   final RxList<IsmLiveChatModel> _streamMessagesList = <IsmLiveChatModel>[].obs;
   List<IsmLiveChatModel> get streamMessagesList => _streamMessagesList;
   set streamMessagesList(List<IsmLiveChatModel> value) =>
@@ -797,6 +803,7 @@ class IsmLiveStreamController extends GetxController
     // Clear lists
     streamMessagesList.clear();
     streamViewersList.clear();
+    liveStreamViewersCount.value = null;
     streamMembersList.clear();
     analyticsViewers.clear();
     participantTracks.clear();

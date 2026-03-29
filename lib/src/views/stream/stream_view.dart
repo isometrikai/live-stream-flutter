@@ -83,6 +83,7 @@ class IsmLiveStreamView extends StatelessWidget {
       // Clear messages and viewers
       controller.streamMessagesList.clear();
       controller.streamViewersList.clear();
+      controller.liveStreamViewersCount.value = null;
       controller.streamMembersList.clear();
 
       // Clear gift data
