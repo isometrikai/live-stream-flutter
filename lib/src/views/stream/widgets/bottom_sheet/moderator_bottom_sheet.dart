@@ -146,6 +146,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                   ),
                 ],
               ),
+              IsmLiveDimens.boxHeight10,
             ],
           ),
           Positioned(
@@ -157,7 +158,15 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                 color: iconColor,
               ),
               color: Colors.transparent,
-              onTap: IsmLiveRoute.pop,
+              onTap: () {
+                if (type == IsmLiveModeratorBottomSheetType.addedToModerator) {
+                  // Update userRole to moderator without disconnect/rejoin
+                  controller.userRole?.makeModerator();
+                  // Update UI
+                  controller.update([IsmLiveStreamView.updateId]);
+                }
+                IsmLiveRoute.pop();
+              },
             ),
           ),
         ],
