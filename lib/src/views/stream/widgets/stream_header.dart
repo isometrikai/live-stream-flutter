@@ -78,12 +78,20 @@ class IsmLiveStreamHeader extends StatelessWidget {
               ),
               IsmLiveDimens.boxWidth10,
               IsmLiveModeratorCount(onTap: onTapModerators),
-              if (Get.find<IsmLiveStreamController>()
-                  .streamViewersList
-                  .isNotEmpty) ...[
-                IsmLiveDimens.boxWidth10,
-                IsmLiveViewerCount(onTap: onTapViewers),
-              ],
+              GetX<IsmLiveStreamController>(
+                builder: (c) {
+                  if (c.streamViewersDisplayCount <= 0) {
+                    return IsmLiveDimens.box0;
+                  }
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IsmLiveDimens.boxWidth10,
+                      IsmLiveViewerCount(onTap: onTapViewers),
+                    ],
+                  );
+                },
+              ),
               IsmLiveDimens.boxWidth10,
               // Cart icon - use custom builder if provided, otherwise use default
               IsmLiveDelegate.cartBuilder?.call(
@@ -194,7 +202,7 @@ class IsmLiveViewerCount extends StatelessWidget {
                 IsmLiveDimens.boxWidth4,
                 GetX<IsmLiveStreamController>(
                   builder: (controller) => Text(
-                    _formatCompactCount(controller.streamViewersList.length),
+                    _formatCompactCount(controller.streamViewersDisplayCount),
                     style: IsmLiveStyles.white12,
                   ),
                 ),

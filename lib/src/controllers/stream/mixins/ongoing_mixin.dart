@@ -337,6 +337,27 @@ mixin StreamOngoingMixin {
           if (!_controller.room!.canPlaybackAudio) {
             IsmLiveLog.error('Audio playback failed for iOS Safari ..........');
           }
+        })
+        ..on<lk.TrackSubscribedEvent>((event) {
+          if (event.track.kind != lk.TrackType.AUDIO) {
+            return;
+          }
+          if (_controller.speakerOn) {
+            return;
+          }
+          final room = _controller.room;
+          if (room == null) {
+            return;
+          }
+          // LiveKit starts the remote track after this event (which re-enables
+          // the WebRTC audio track). Defer so our mute wins over that enable.
+          unawaited(Future<void>(() async {
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (_controller.room != room) {
+              return;
+            }
+            await _syncRemoteAudioPlaybackWithSpeakerFlag(room);
+          }));
         });
 
   Future<void> sortParticipants() async {
@@ -547,9 +568,22 @@ mixin StreamOngoingMixin {
     if (isFirstCall) {
       _controller.streamViewersList.clear();
     }
-    _controller.streamViewersList.addAll(viewers);
-    _controller.streamViewersList =
-        _controller.streamViewersList.toSet().toList();
+    if (viewers.isEmpty) {
+      return;
+    }
+    final list = List<IsmLiveViewerModel>.from(_controller.streamViewersList);
+    for (final v in viewers) {
+      if (v.userId.isEmpty) {
+        continue;
+      }
+      final i = list.indexWhere((e) => e.userId == v.userId);
+      if (i >= 0) {
+        list[i] = v;
+      } else {
+        list.add(v);
+      }
+    }
+    _controller.streamViewersList = list;
   }
 
 // Function to add messages to the stream
@@ -632,6 +666,34 @@ mixin StreamOngoingMixin {
     );
   }
 
+  /// Remote publication enable/disable controls server/adaptive settings, not
+  /// what you hear. Toggle each remote audio track's enable/disable so the
+  /// underlying WebRTC track matches the speaker UI.
+  Future<void> _syncRemoteAudioPlaybackWithSpeakerFlag(lk.Room room) async {
+    final speakerOn = _controller.speakerOn;
+    final futures = <Future<void>>[];
+    for (final participant in room.remoteParticipants.values) {
+      for (final pub in participant.audioTrackPublications) {
+        final track = pub.track;
+        if (track == null) {
+          continue;
+        }
+        futures.add(() async {
+          try {
+            if (speakerOn) {
+              await track.enable();
+            } else {
+              await track.disable();
+            }
+          } catch (e) {
+            IsmLiveLog('speaker remote audio track error $e');
+          }
+        }());
+      }
+    }
+    await Future.wait(futures);
+  }
+
   Future<void> toggleSpeaker({
     bool? value,
   }) async {
@@ -648,18 +710,8 @@ mixin StreamOngoingMixin {
       return;
     }
 
-    final participants = room.remoteParticipants.values.toList(growable: false);
     try {
-      for (final participant in participants) {
-        final pubs = participant.audioTrackPublications;
-        for (final pub in pubs) {
-          try {
-            unawaited(nextValue ? pub.enable() : pub.disable());
-          } catch (e) {
-            IsmLiveLog('speaker publication error $e');
-          }
-        }
-      }
+      await _syncRemoteAudioPlaybackWithSpeakerFlag(room);
     } catch (e) {
       IsmLiveLog('speaker error $e');
     }
