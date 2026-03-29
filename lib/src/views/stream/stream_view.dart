@@ -980,7 +980,7 @@ class _TopDarkGradient extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black54,
+                  Colors.black38,
                   Colors.transparent,
                 ],
               ),
@@ -1007,7 +1007,7 @@ class _BottomDarkGradient extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black54,
+                  Colors.black38,
                 ],
               ),
             ),
