@@ -114,6 +114,42 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches a paginated list of stream viewers.
+  ///
+  /// This is a convenience wrapper around the internal
+  /// `StreamViewModel.getStreamViewer` implementation so host apps can render
+  /// their own viewer list UI.
+  ///
+  /// Returns an empty list if the request fails.
+  static Future<List<IsmLiveViewerModel>> getStreamViewer({
+    required String streamId,
+    int limit = 10,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.getStreamViewer(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+        searchTag: searchTag,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.getStreamViewer failed: $e\n$stack');
+      return <IsmLiveViewerModel>[];
+    }
+  }
+
   /// Adds or updates a restream channel configuration for the current user.
   ///
   /// This delegates to the internal `StreamViewModel.addRestreamChannel`
