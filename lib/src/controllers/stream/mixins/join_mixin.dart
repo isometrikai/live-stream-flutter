@@ -1241,6 +1241,9 @@ mixin StreamJoinMixin {
 
     _controller.streamDetails = stream;
 
+    _controller.descriptionController.text =
+        stream.streamDescription ?? _controller.descriptionController.text;
+
     _controller.hostDetails = IsmLiveMemberDetailsModel(
         isAdmin: false,
         isPublishing: false,
