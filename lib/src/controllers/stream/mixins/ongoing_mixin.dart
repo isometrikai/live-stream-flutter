@@ -6,6 +6,63 @@ mixin StreamOngoingMixin {
 // Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
 
+  List<IsmLiveChatModel> _dedupeChatMessages(List<IsmLiveChatModel> input) {
+    // We can receive the same logical message multiple times when:
+    // - MQTT reconnects (QoS duplicates / redelivery)
+    // - API polling "since timestamp" is inclusive
+    // - Backend enriches a message and re-sends it with a different messageId
+    //
+    // Prefer stable message identity when available (`messageId`), but fall back
+    // to a fingerprint to prevent "last sent message" duplication on resume.
+    final byMessageIdIndex = <String, int>{};
+    final byFingerprintIndex = <String, int>{};
+    final out = <IsmLiveChatModel>[];
+
+    String fingerprint(IsmLiveChatModel m) =>
+        '${m.streamId}|${m.userId}|${m.timeStamp.millisecondsSinceEpoch}|${m.body}|${m.parentId ?? ''}|${m.isReply}';
+
+    for (final m in input) {
+      final id = m.messageId.trim();
+      final fp = fingerprint(m);
+
+      if (id.isNotEmpty) {
+        final existingById = byMessageIdIndex[id];
+        if (existingById != null) {
+          // Keep the first occurrence to preserve ordering.
+          continue;
+        }
+
+        final existingByFp = byFingerprintIndex[fp];
+        if (existingByFp != null) {
+          final existing = out[existingByFp];
+          // Upgrade placeholder/empty-id message to real id message.
+          if (existing.messageId.trim().isEmpty) {
+            out[existingByFp] = m;
+            byMessageIdIndex[id] = existingByFp;
+          }
+          continue;
+        }
+
+        final index = out.length;
+        out.add(m);
+        byMessageIdIndex[id] = index;
+        byFingerprintIndex[fp] = index;
+        continue;
+      }
+
+      // No messageId: de-dupe by fingerprint only.
+      if (byFingerprintIndex.containsKey(fp)) {
+        continue;
+      }
+
+      final index = out.length;
+      out.add(m);
+      byFingerprintIndex[fp] = index;
+    }
+
+    return out;
+  }
+
   /// Stop MQTT-disconnected chat fallback polling (used on app background).
   void pauseMqttDisconnectedChatFallback() {
     _stopMqttDisconnectedChatFallback();
@@ -218,7 +275,10 @@ mixin StreamOngoingMixin {
 
       await _controller.fetchNewMessagesSinceTimestamp(
         streamId: streamId,
-        lastMessageTimestamp: lastTimestampMs,
+        // Some backends treat `lastMessageTimestamp` as inclusive (>=).
+        // Bump by 1ms so we truly fetch "newer than" and avoid duplicating the
+        // most recent message on foreground resume / reconnect polls.
+        lastMessageTimestamp: lastTimestampMs + 1,
         limit: 10,
         showDialog: false,
       );
@@ -610,7 +670,7 @@ mixin StreamOngoingMixin {
       _controller.streamMessagesList.insertAll(0, chats);
     }
     _controller.streamMessagesList =
-        _controller.streamMessagesList.toSet().toList();
+        _dedupeChatMessages(_controller.streamMessagesList);
   }
 
 // Function to add heart message to the stream
