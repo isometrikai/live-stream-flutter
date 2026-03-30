@@ -43,7 +43,8 @@ class IsmLiveChatView extends StatefulWidget {
   State<IsmLiveChatView> createState() => _IsmLiveChatViewState();
 }
 
-class _IsmLiveChatViewState extends State<IsmLiveChatView> {
+class _IsmLiveChatViewState extends State<IsmLiveChatView>
+    with WidgetsBindingObserver {
   final messagesListController = ScrollController();
   final _controller = Get.find<IsmLiveStreamController>();
   bool _isScrolling = false;
@@ -53,11 +54,46 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   DateTime? _paginationMarkAt;
   Timer? _autoScrollTimer;
   int _lastAutoScrollScheduledForCount = 0;
+  double _keyboardInset = 0;
+  bool _isKeyboardOpen = false;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     messagesListController.addListener(_scrollListener);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncKeyboardMetrics(triggerRebuild: false);
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _syncKeyboardMetrics(triggerRebuild: true);
+  }
+
+  void _syncKeyboardMetrics({required bool triggerRebuild}) {
+    final view = WidgetsBinding.instance.platformDispatcher.views.isNotEmpty
+        ? WidgetsBinding.instance.platformDispatcher.views.first
+        : null;
+    final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
+    final inset = (view?.viewInsets.bottom ?? 0) / devicePixelRatio;
+    final isOpen = inset > 0;
+
+    if (inset == _keyboardInset && isOpen == _isKeyboardOpen) return;
+
+    _keyboardInset = inset;
+    _isKeyboardOpen = isOpen;
+
+    // Ensure the chat re-evaluates constraints even when the parent GetX builder
+    // doesn't rebuild on keyboard metric changes.
+    if (triggerRebuild && mounted) {
+      setState(() {});
+    }
   }
 
   void _scrollListener() {
@@ -102,6 +138,7 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   @override
   void dispose() {
     try {
+      WidgetsBinding.instance.removeObserver(this);
       _autoScrollTimer?.cancel();
       messagesListController.removeListener(_scrollListener);
       messagesListController.dispose();
@@ -150,6 +187,9 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
+          final mediaQuery = MediaQuery.of(context);
+          final isKeyboardOpen = _isKeyboardOpen;
+
           // Scroll to bottom only when new message arrives (not on updates)
           WidgetsBinding.instance.addPostFrameCallback((_) {
             final currentMessageCount = controller.streamMessagesList.length;
@@ -172,6 +212,18 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
             _previousMessageCount = currentMessageCount;
           });
 
+          final baseMaxHeight = controller.participantTracks.length < 2
+              ? IsmLiveDimens.percentHeight(0.35)
+              : controller.participantTracks.length < 4
+                  ? IsmLiveDimens.percentHeight(0.3)
+                  : IsmLiveDimens.percentHeight(0.15);
+
+          // When keyboard opens, shrink the chat overlay so it never pushes/overlaps
+          // the stream header/top UI. Keep a sensible minimum so chat remains usable.
+          final effectiveMaxHeight = isKeyboardOpen
+              ? (baseMaxHeight * 0.7).clamp(96.0, baseMaxHeight)
+              : baseMaxHeight;
+
           return ShaderMask(
             shaderCallback: (rect) => const LinearGradient(
               begin: Alignment.topCenter,
@@ -184,14 +236,12 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView> {
               stops: [0.0, 0.1, 1.0],
             ).createShader(rect),
             blendMode: BlendMode.dstIn,
-            child: ConstrainedBox(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
               constraints: BoxConstraints(
-                maxHeight: controller.participantTracks.length < 2
-                    ? IsmLiveDimens.percentHeight(0.35)
-                    : controller.participantTracks.length < 4
-                        ? IsmLiveDimens.percentHeight(0.3)
-                        : IsmLiveDimens.percentHeight(0.15),
-                maxWidth: MediaQuery.of(context).size.width * 0.75,
+                maxHeight: effectiveMaxHeight,
+                maxWidth: mediaQuery.size.width * 0.75,
               ),
               child: ListView.builder(
                 controller: messagesListController,
