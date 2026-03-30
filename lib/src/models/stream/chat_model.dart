@@ -137,20 +137,14 @@ class IsmLiveChatModel {
   bool operator ==(covariant IsmLiveChatModel other) {
     if (identical(this, other)) return true;
 
-    return other.streamId == streamId &&
-        other.messageId == messageId &&
-        other.parentId == parentId &&
-        other.userId == userId &&
-        other.body == body &&
-        other.parentBody == parentBody;
+    // De-duplication should be stable across reconnects/resume.
+    // The backend/message bus is expected to provide a stable `messageId`
+    // per stream. Other fields (body, parentBody, userId, etc.) may vary
+    // due to server-side enrichment, client-side processing, or deletion
+    // updates, and should not make the same message appear twice.
+    return other.streamId == streamId && other.messageId == messageId;
   }
 
   @override
-  int get hashCode =>
-      streamId.hashCode ^
-      messageId.hashCode ^
-      parentId.hashCode ^
-      userId.hashCode ^
-      body.hashCode ^
-      parentBody.hashCode;
+  int get hashCode => streamId.hashCode ^ messageId.hashCode;
 }
