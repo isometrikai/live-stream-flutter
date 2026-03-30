@@ -215,7 +215,12 @@ class IsmLiveStreamView extends StatelessWidget {
                     itemBuilder: (_, index) {
                       final stream = controller.streams[index];
                       return _IsmLiveStreamView(
-                        key: key,
+                        // Important: each page must have a unique key.
+                        // Reusing the same key across PageView pages can cause element reuse
+                        // during partial scroll, showing stale (previous) stream UI.
+                        key: ValueKey<String>(
+                          'ism-live-stream-view-${stream.streamId ?? index}',
+                        ),
                         streamImage: stream.streamImage,
                         streamId: stream.streamId ?? '',
                         isHost: false,
@@ -498,11 +503,22 @@ class _IsmLiveStreamView extends StatelessWidget {
                             isSchedule: isSchedule),
                       ),
                       Positioned.fill(
-                        child: IsmLivePublisherGrid(
-                          streamImage: streamImage ?? '',
-                          isInteractive: isInteractive,
-                          isSchedule: isSchedule,
-                        ),
+                        // IMPORTANT (multi-stream scroll):
+                        // All pages share the same controller + LiveKit room.
+                        // While user is mid-swipe, the next page builds before `onPageChanged`
+                        // joins the next stream, so rendering the grid there can show the
+                        // *current* stream's video feed on the upcoming page.
+                        //
+                        // To prevent that production bug, only render the LiveKit grid for
+                        // the currently-active stream; inactive pages will show the banner
+                        // (cover) until the join completes and controller.streamId updates.
+                        child: (controller.streamId == streamId)
+                            ? IsmLivePublisherGrid(
+                                streamImage: streamImage ?? '',
+                                isInteractive: isInteractive,
+                                isSchedule: isSchedule,
+                              )
+                            : const SizedBox.shrink(),
                       ),
                       // Gradients positioned right after publisher grid to only overlay video content
                       const _TopDarkGradient(),
