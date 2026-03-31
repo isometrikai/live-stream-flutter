@@ -1092,18 +1092,53 @@ mixin StreamOngoingMixin {
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
     _controller.isViewerJoiningStream = false;
-    if (IsmLiveDelegate.unsubscribStreamById != null) {
-      IsmLiveDelegate.unsubscribStreamById!(_controller.streamId!);
-    } else {
-      await _controller._mqttController
-          ?.unsubscribeStream(_controller.streamId!);
+    final currentStreamId = _controller.streamId;
+    if (currentStreamId != null && currentStreamId.isNotEmpty) {
+      if (IsmLiveDelegate.unsubscribStreamById != null) {
+        IsmLiveDelegate.unsubscribStreamById!(currentStreamId);
+      } else {
+        await _controller._mqttController
+            ?.unsubscribeStream(currentStreamId);
+      }
     }
 
     try {
-      if (_controller.room != null &&
-          _controller.room?.connectionState !=
-              lk.ConnectionState.disconnected) {
-        await _controller.room?.disconnect();
+      final room = _controller.room;
+      if (room != null) {
+        // Explicitly stop local media tracks to release camera/mic hardware on
+        // iOS. room.disconnect() alone does not guarantee native hardware
+        // release, especially when the room already reports disconnected
+        // (e.g. after internet fluctuation).
+        final lp = room.localParticipant;
+        if (lp != null) {
+          // Snapshot track references before unpublishing (avoids concurrent
+          // modification and captures tracks that unpublish may clear).
+          final videoTracks = lp.videoTrackPublications
+              .map((pub) => pub.track)
+              .whereType<lk.LocalVideoTrack>()
+              .toList();
+          final audioTracks = lp.audioTrackPublications
+              .map((pub) => pub.track)
+              .whereType<lk.LocalAudioTrack>()
+              .toList();
+          try {
+            await lp.unpublishAllTracks();
+          } catch (_) {}
+          for (final t in videoTracks) {
+            try {
+              await t.stop();
+            } catch (_) {}
+          }
+          for (final t in audioTracks) {
+            try {
+              await t.stop();
+            } catch (_) {}
+          }
+        }
+
+        if (room.connectionState != lk.ConnectionState.disconnected) {
+          await room.disconnect();
+        }
       }
 
       _controller.userRole = null;
