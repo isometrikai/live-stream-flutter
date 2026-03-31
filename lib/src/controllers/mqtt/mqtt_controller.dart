@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'mqtt_helper.dart';
 
 class IsmLiveMqttController extends GetxController {
   final _mqttHelper = MqttHelper();
@@ -144,9 +144,8 @@ class IsmLiveMqttController extends GetxController {
   void _attachMqttStreamListeners() {
     _mqttConnectionSub?.cancel();
     _mqttEventSub?.cancel();
-    _mqttConnectionSub = _mqttHelper.onConnectionChange((connected) {
-      _publishMqttConnectivityToApp(connected);
-    });
+    _mqttConnectionSub =
+        _mqttHelper.onConnectionChange(_publishMqttConnectivityToApp);
     _mqttEventSub = _mqttHelper.onEvent(_onEvent);
     // Broadcast stream does not replay; first connect may have emitted before subscribe.
     _publishMqttConnectivityToApp();
@@ -189,14 +188,14 @@ class IsmLiveMqttController extends GetxController {
 
     _config = IsmLiveUtility.config;
     _topicPrefix =
-    '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
+        '/${_config!.projectConfig.accountId}/${_config!.projectConfig.projectId}';
 
     deviceId = _config!.projectConfig.deviceId;
     userId = _config!.userConfig.userId;
     userTopic = '$_topicPrefix/User/$userId';
 
     final channelTopics =
-    topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
+        topicChannels?.map((e) => '$_topicPrefix/$e/$userId').toList();
 
     _topics
       ..clear()
@@ -342,7 +341,7 @@ class IsmLiveMqttController extends GetxController {
   void setAutoReconnect(bool enabled) {
     IsmLiveLog.info(
       'MQTT: setAutoReconnect($enabled) — broker reconnect is controlled by '
-          'MqttConfig.autoReconnect (currently always true in _buildMqttConfig).',
+      'MqttConfig.autoReconnect (currently always true in _buildMqttConfig).',
     );
   }
 
@@ -354,7 +353,7 @@ class IsmLiveMqttController extends GetxController {
     if (maxAttempts != null) {
       IsmLiveLog.info(
         'MQTT: use MqttConfig.maxAutoReconnectRetry / code constant '
-            '_maxHandshakeAttempts instead of app-level timers',
+        '_maxHandshakeAttempts instead of app-level timers',
       );
     }
     if (initialDelay != null || maxDelay != null) {
@@ -371,12 +370,12 @@ class IsmLiveMqttController extends GetxController {
   int get maxReconnectAttempts => 0;
 
   Map<String, dynamic> getReconnectionStatus() => {
-    'isReconnecting': _manualReconnectInFlight,
-    'reconnectAttempts': reconnectAttempts,
-    'maxReconnectAttempts': maxReconnectAttempts,
-    'mqttInitialized': _mqttInitialized,
-    'isConnected': IsmLiveApp.isMqttConnected,
-  };
+        'isReconnecting': _manualReconnectInFlight,
+        'reconnectAttempts': reconnectAttempts,
+        'maxReconnectAttempts': maxReconnectAttempts,
+        'mqttInitialized': _mqttInitialized,
+        'isConnected': IsmLiveApp.isMqttConnected,
+      };
 
   void handleEventsExternally(EventModel payload) => _onEvent(payload);
 
@@ -786,10 +785,11 @@ class IsmLiveMqttController extends GetxController {
           if (initiatorId != userId) {
             _disconnectRoom();
             _streamController.closeStreamView(false, fromMqtt: true);
-          }else{
-            if(streamId == _streamController.streamId){
+          } else {
+            if (streamId == _streamController.streamId) {
               _disconnectRoom();
-              _streamController.closeStreamView(true, streamId: streamId, fromMqtt: true);
+              _streamController.closeStreamView(true,
+                  streamId: streamId, fromMqtt: true);
             }
           }
 
@@ -833,8 +833,8 @@ class IsmLiveMqttController extends GetxController {
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: viewer.userName,
-              senderProfileImageUrl: _viewerImageUrl(viewer.userId) ??
-                  viewer.imageUrl,
+              senderProfileImageUrl:
+                  _viewerImageUrl(viewer.userId) ?? viewer.imageUrl,
               senderIdentifier: viewer.identifier,
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
