@@ -160,6 +160,7 @@ class IsmLiveApp extends StatefulWidget {
     int limit = 10,
     int skip = 0,
     String? searchTag,
+    Map<String, dynamic>? queryParams,
   }) async {
     assert(
       _initialized,
@@ -176,6 +177,7 @@ class IsmLiveApp extends StatefulWidget {
             skip: skip,
             limit: limit,
             searchTag: searchTag,
+            queryParams: queryParams,
           ) ??
           <UserDetails>[];
     } catch (e, stack) {

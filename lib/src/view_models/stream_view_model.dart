@@ -432,6 +432,7 @@ class IsmLiveStreamViewModel {
     required int skip,
     required int limit,
     String? searchTag,
+    Map<String, dynamic>? queryParams,
   }) async {
     try {
       var res = await _repository.fetchUsers(
@@ -439,6 +440,7 @@ class IsmLiveStreamViewModel {
         skip: skip,
         limit: limit,
         searchTag: searchTag,
+        queryParams: queryParams,
       );
       if (res.hasError) {
         return null;

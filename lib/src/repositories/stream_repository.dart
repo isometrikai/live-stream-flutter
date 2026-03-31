@@ -337,12 +337,21 @@ class IsmLiveStreamRepository {
     required int skip,
     required int limit,
     String? searchTag,
+    Map<String, dynamic>? queryParams,
   }) async {
     var payload = {
       'skip': skip,
       'limit': limit,
       'searchTag': searchTag,
     };
+    if (queryParams != null && queryParams.isNotEmpty) {
+      for (final entry in queryParams.entries) {
+        // Protect core pagination/search params from accidental override.
+        if (!payload.containsKey(entry.key)) {
+          payload[entry.key] = entry.value;
+        }
+      }
+    }
 
     var res = await _apiWrapper.makeRequest(
       '${IsmLiveApis.getUsers}?${payload.makeQuery()}',

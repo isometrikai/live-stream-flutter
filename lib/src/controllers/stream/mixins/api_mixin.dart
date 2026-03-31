@@ -480,6 +480,7 @@ mixin StreamAPIMixin {
     int limit = 15,
     int skip = 0,
     String? searchTag,
+    Map<String, dynamic>? queryParams,
   }) async =>
       _usersDebouncer.run(
         () => _fetchUsers(
@@ -487,6 +488,7 @@ mixin StreamAPIMixin {
           limit,
           skip,
           searchTag,
+          queryParams,
         ),
       );
   Future<void> _fetchUsers(
@@ -494,12 +496,14 @@ mixin StreamAPIMixin {
     int limit,
     int skip,
     String? searchTag,
+    Map<String, dynamic>? queryParams,
   ) async {
     if (forceFetch || _controller.usersList.isEmpty) {
       var list = await _controller.viewModel.fetchUsers(
         limit: limit,
         skip: skip,
         searchTag: searchTag,
+        queryParams: queryParams,
       );
       _controller.usersList.addAll(list ?? []);
     }
