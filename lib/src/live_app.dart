@@ -186,6 +186,82 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches gift categories (gift groups) for gifting/PK UI.
+  ///
+  /// Host apps can use this helper to build their own gift catalog UI.
+  /// Returns an empty list if the request fails.
+  static Future<List<IsmLiveGiftGroupModel>> getGiftCategories({
+    int limit = 10,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    try {
+      if (!Get.isRegistered<IsmLiveApiWrapper>()) {
+        // Should already be registered during SDK initialization.
+        await IsmLiveHandler.initialize();
+      }
+      final viewModel = IsmLivePkViewModel(
+        IsmLivePkRepository(
+          IsmLivePkApis(
+            Get.find<IsmLiveApiWrapper>(),
+          ),
+        ),
+      );
+      return await viewModel.getGiftCategories(
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.getGiftCategories failed: $e\n$stack');
+      return <IsmLiveGiftGroupModel>[];
+    }
+  }
+
+  /// Fetches gifts for a given gift category (gift group).
+  ///
+  /// Host apps can use this helper to build their own gift catalog UI.
+  /// Returns an empty list if the request fails.
+  static Future<List<IsmLiveGiftsCategoryModel>> getGiftsForACategory({
+    required String giftGroupId,
+    int limit = 10,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    try {
+      if (!Get.isRegistered<IsmLiveApiWrapper>()) {
+        // Should already be registered during SDK initialization.
+        await IsmLiveHandler.initialize();
+      }
+      final viewModel = IsmLivePkViewModel(
+        IsmLivePkRepository(
+          IsmLivePkApis(
+            Get.find<IsmLiveApiWrapper>(),
+          ),
+        ),
+      );
+      return await viewModel.getGiftsForACategory(
+        giftGroupId: giftGroupId,
+        skip: skip,
+        limit: limit,
+        searchTag: searchTag,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.getGiftsForACategory failed: $e\n$stack');
+      return <IsmLiveGiftsCategoryModel>[];
+    }
+  }
+
   /// Adds or updates a restream channel configuration for the current user.
   ///
   /// This delegates to the internal `StreamViewModel.addRestreamChannel`
