@@ -107,6 +107,18 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       _streamViewSessionId++;
       _hasShownInfoDialogInSession = false;
       _blockAutoReconnectAfterLifecycleDialog = false;
+
+      // Reset all reconnection-related state so nothing from this session
+      // leaks into a future stream (e.g. stuck _isReconnecting flag, stale
+      // token that could be used by _attemptSingleReconnection, or pending
+      // camera-resume retries).
+      _isReconnecting = false;
+      _storedToken = null;
+      _lastStreamId = null;
+      _videoPausedByBackground = false;
+      _cameraErrorCount = 0;
+      _reconnectTimer?.cancel();
+
       IsmLiveLog.info('Invalidated stream view session: $_streamViewSessionId');
       IsmLiveLog.info('Stream is inactive, disposing background lifecycle');
       disposeBackgroundLifecycle();
@@ -447,6 +459,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
     // Add small delay to prevent rapid UI state changes
     Future.delayed(const Duration(milliseconds: 100), () {
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream became inactive during resume delay, aborting');
+        return;
+      }
       if (_isHost.value && _videoPausedByBackground) {
         IsmLiveLog.info('Host video was paused by background, resuming camera');
         _resumeCameraWithRetry();
@@ -466,6 +483,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     var attempts = 0;
 
     Future<void> attemptResume() async {
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream no longer active, aborting camera resume retry');
+        return;
+      }
       attempts++;
       IsmLiveLog.info(
           'Attempting to resume camera (attempt $attempts/$maxAttempts)');
@@ -889,11 +911,38 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
   void _onlyCloseStreamLifecycleInfoDialog() {
     _hasShownInfoDialogInSession = false;
+
+    // The room was already torn down by _disconnectLiveKitRoomForLifecycleInfoDialog
+    // before this dialog was shown. This guard is a safety net in case the
+    // earlier disconnect was incomplete (e.g. exception during teardown).
+    final room = _controller.room;
+    if (room != null) {
+      unawaited(_safeForceStopAndDisconnect(room));
+    }
+
     IsmLiveUtility.closeDialog();
   }
 
   void _exitStreamFromLifecycleInfoDialog() {
+    final wasHost = _isHost.value;
+
+    // Mark stream inactive BEFORE popping so disposal flows don't race with
+    // lifecycle observer callbacks (which check _isStreamActive).
+    _controller.setStreamActive(false, wasHost);
+
+    // Safety net: if the earlier `_disconnectLiveKitRoomForLifecycleInfoDialog`
+    // call didn't complete (e.g. exception path), force-stop remaining tracks.
+    final room = _controller.room;
+    if (room != null) {
+      unawaited(_safeForceStopAndDisconnect(room));
+    }
+
     IsmLiveUtility.closeDialog();
+
+    // Pop the stream view.  The route's PopScope.onPopInvoked handler
+    // triggers `cleanupStreamData → streamDispose` which resets all UI state,
+    // timers, and polling.  We do NOT call streamDispose here to avoid
+    // double-dispose (FocusNode, animation controller, etc.).
     IsmLiveRoute.pop();
   }
 
@@ -955,7 +1004,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       );
 
   /// Show dialog when connection failed but stream is still active
-  void _showConnectionFailedDialog({int? sessionId, String? expectedStreamId}) {
+  Future<void> _showConnectionFailedDialog({int? sessionId, String? expectedStreamId}) async {
     try {
       // Final check before showing dialog
       if (!_isStreamActive.value) {
@@ -973,7 +1022,18 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       _stopStreamTimerForInfoDialog();
       _hasShownInfoDialogInSession = true;
       _blockAutoReconnectAfterLifecycleDialog = true;
-      unawaited(_disconnectLiveKitRoomForLifecycleInfoDialog());
+      // Await the disconnect so camera/mic hardware is fully released before
+      // presenting the dialog. Previously this was fire-and-forget which could
+      // leave native tracks active on iOS if the disconnect was slow.
+      await _disconnectLiveKitRoomForLifecycleInfoDialog();
+
+      // Re-check after async gap: stream may have become inactive while
+      // awaiting disconnect (e.g. user exited via another path).
+      if (!_isStreamActive.value) {
+        IsmLiveLog.info(
+            'Stream became inactive during lifecycle disconnect, skipping dialog');
+        return;
+      }
 
       final message = _isHost.value
           ? 'Unable to reconnect to your stream. Please try again or start a new stream'
@@ -1005,9 +1065,14 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       IsmLiveLog.info(
         'Lifecycle info dialog flow: room state before teardown = ${room.connectionState}',
       );
-      // Always call disconnect even if room already reports `disconnected`.
-      // LiveKit/WebRTC internals can still hold resources and may reconnect
-      // after network recovers unless we force a final teardown call.
+
+      // Explicitly stop local media tracks BEFORE disconnecting the room.
+      // On iOS, room.disconnect() alone does not guarantee the native
+      // camera/microphone hardware is released. WebRTC tracks can keep
+      // the hardware occupied until explicitly stopped, causing a critical
+      // privacy leak where the camera indicator stays on after leaving.
+      await _forceStopLocalMediaTracks(room);
+
       IsmLiveLog.info(
         'Disconnecting LiveKit room because lifecycle info dialog is shown',
       );
@@ -1016,12 +1081,100 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       _controller.room = null;
       _controller.pendingConnection = false;
       _controller.participantTracks.clear();
+      _controller.participantList.clear();
       IsmLiveLog.info(
         'Lifecycle info dialog flow: LiveKit room teardown completed',
       );
     } catch (e) {
       // Best-effort: do not block the dialog, but ensure room teardown is attempted.
       IsmLiveLog.error('Failed to disconnect LiveKit room for info dialog: $e');
+      // Even if disconnect throws, null out references to prevent reconnect
+      // and try to release hardware.
+      _controller.listener = null;
+      _controller.room = null;
+      _controller.pendingConnection = false;
+      _controller.participantTracks.clear();
+      _controller.participantList.clear();
+    }
+  }
+
+  /// Fire-and-forget helper: stops tracks, disconnects room, nulls references.
+  /// Used by dialog close/exit handlers where the caller is synchronous.
+  Future<void> _safeForceStopAndDisconnect(lk.Room room) async {
+    try {
+      await _forceStopLocalMediaTracks(room);
+    } catch (_) {}
+    try {
+      await room.disconnect();
+    } catch (_) {}
+    _controller.room = null;
+    _controller.listener = null;
+  }
+
+  /// Forcefully unpublishes and stops all local media tracks (camera + mic).
+  ///
+  /// On iOS, calling only `room.disconnect()` does NOT reliably release the
+  /// native camera/microphone hardware. The underlying WebRTC tracks can keep
+  /// the hardware occupied, causing the iOS camera/mic indicator to stay active.
+  /// This method explicitly unpublishes all tracks and stops each one to
+  /// guarantee hardware release.
+  Future<void> _forceStopLocalMediaTracks(lk.Room room) async {
+    final localParticipant = room.localParticipant;
+    if (localParticipant == null) {
+      IsmLiveLog.info('No local participant — skipping track stop');
+      return;
+    }
+
+    try {
+      // Collect track references before unpublishing (unpublish may clear them).
+      // .toList() creates a snapshot so concurrent modification is safe.
+      final videoTracks = localParticipant.videoTrackPublications
+          .map((pub) => pub.track)
+          .whereType<lk.LocalVideoTrack>()
+          .toList();
+      final audioTracks = localParticipant.audioTrackPublications
+          .map((pub) => pub.track)
+          .whereType<lk.LocalAudioTrack>()
+          .toList();
+
+      // Unpublish all tracks first (removes from server-side)
+      try {
+        await localParticipant.unpublishAllTracks();
+      } catch (e) {
+        IsmLiveLog.error('Error unpublishing tracks: $e');
+      }
+
+      // Explicitly stop each video track to release camera hardware.
+      // Each call is independent — one failure must not prevent others.
+      for (final track in videoTracks) {
+        try {
+          await track.stop();
+          IsmLiveLog.info('Stopped local video track: ${track.sid}');
+        } catch (e) {
+          IsmLiveLog.error('Error stopping video track: $e');
+        }
+      }
+
+      // Explicitly stop each audio track to release microphone hardware.
+      for (final track in audioTracks) {
+        try {
+          await track.stop();
+          IsmLiveLog.info('Stopped local audio track: ${track.sid}');
+        } catch (e) {
+          IsmLiveLog.error('Error stopping audio track: $e');
+        }
+      }
+
+      IsmLiveLog.info(
+        'Force-stopped ${videoTracks.length} video and ${audioTracks.length} audio local tracks',
+      );
+    } catch (e) {
+      IsmLiveLog.error('Error in _forceStopLocalMediaTracks: $e');
+    } finally {
+      // Always mark media as off, even on partial failure, so UI does not
+      // show stale "camera on" / "mic on" state.
+      _controller.videoOn = false;
+      _controller.audioOn = false;
     }
   }
 
