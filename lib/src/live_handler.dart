@@ -76,7 +76,7 @@ class IsmLiveHandler {
     VoidCallback? logoutCallback,
     bool isLoading = true,
   }) async {
-    try{
+    try {
       if (isLoading) {
         IsmLiveUtility.showLoader();
       }
@@ -110,7 +110,7 @@ class IsmLiveHandler {
       if (isLoading) {
         IsmLiveUtility.closeLoader();
       }
-    }catch (e) {
+    } catch (e) {
       debugPrint('LiveStream: Error in dispose: $e');
     }
   }
