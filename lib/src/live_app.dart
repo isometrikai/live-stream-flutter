@@ -150,6 +150,40 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches a paginated list of users.
+  ///
+  /// Host apps can use this helper to build custom user-pickers (e.g. add
+  /// moderator sheets) without relying on SDK UI.
+  ///
+  /// Returns an empty list if the request fails.
+  static Future<List<UserDetails>> fetchUsers({
+    int limit = 10,
+    int skip = 0,
+    String? searchTag,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.fetchUsers(
+            skip: skip,
+            limit: limit,
+            searchTag: searchTag,
+          ) ??
+          <UserDetails>[];
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.fetchUsers failed: $e\n$stack');
+      return <UserDetails>[];
+    }
+  }
+
   /// Adds or updates a restream channel configuration for the current user.
   ///
   /// This delegates to the internal `StreamViewModel.addRestreamChannel`
