@@ -714,6 +714,131 @@ typedef GiftClickCallback = void Function(
   IsmLiveGiftsCategoryModel gift,
 );
 
+/// Host app analytics integration.
+///
+/// Provide a single delegate to receive important SDK events in a consistent
+/// format, compatible with common analytics services.
+abstract class IsmLiveAnalyticsDelegate {
+  const IsmLiveAnalyticsDelegate();
+
+  void trackEvent(
+    String eventName, {
+    List<Map<String, dynamic>>? properties,
+  });
+}
+
+/// Canonical event names emitted by the SDK via [IsmLiveAnalyticsDelegate].
+///
+/// Host apps should treat these as stable identifiers.
+class IsmLiveAnalyticsEvent {
+  const IsmLiveAnalyticsEvent._();
+
+  // Initialization
+  static const String sdkInitialize = 'ism_live_sdk_initialize';
+
+  // Stream lifecycle
+  static const String streamConnectAttempt = 'ism_live_stream_connect_attempt';
+  static const String streamInitializeAndJoinAttempt =
+      'ism_live_stream_initialize_and_join_attempt';
+  static const String streamInitializeAndJoinSuccess =
+      'ism_live_stream_initialize_and_join_success';
+  static const String streamInitializeAndJoinFailure =
+      'ism_live_stream_initialize_and_join_failure';
+
+  // Stream controller flow (internal, more granular)
+  static const String controllerInitializeAndJoinAttempt =
+      'ism_live_controller_initialize_and_join_attempt';
+  static const String controllerInitializeAndJoinSuccess =
+      'ism_live_controller_initialize_and_join_success';
+  static const String controllerInitializeAndJoinFailure =
+      'ism_live_controller_initialize_and_join_failure';
+  static const String controllerRejoinAutoDetected =
+      'ism_live_controller_rejoin_auto_detected';
+  static const String controllerPreventDisposeEnabled =
+      'ism_live_controller_prevent_dispose_enabled';
+  static const String controllerInitializeIndex =
+      'ism_live_controller_initialize_index';
+  static const String controllerJoinStreamAttempt =
+      'ism_live_controller_join_stream_attempt';
+  static const String controllerJoinStreamSuccess =
+      'ism_live_controller_join_stream_success';
+  static const String controllerJoinStreamFailure =
+      'ism_live_controller_join_stream_failure';
+  static const String streamScroll = 'ism_live_stream_scroll';
+  static const String streamEndRequested = 'ism_live_stream_end_requested';
+
+  // Commerce / engagement
+  static const String addCoinsClick = 'ism_live_add_coins_click';
+  static const String giftClick = 'ism_live_gift_click';
+
+  // Join/connect detailed flow
+  static const String joinStreamAttempt = 'ism_live_join_stream_attempt';
+  static const String joinStreamEarlyReturnScheduledNotStarted =
+      'ism_live_join_stream_early_return_scheduled_not_started';
+  static const String joinStreamTokenFetchHost = 'ism_live_join_stream_token_host';
+  static const String joinStreamTokenFetchViewer =
+      'ism_live_join_stream_token_viewer';
+  static const String joinStreamMissingHostToken =
+      'ism_live_join_stream_missing_host_token';
+  static const String joinStreamStopStreamCalled =
+      'ism_live_join_stream_stop_stream_called';
+  static const String joinStreamConnectStreamAttempt =
+      'ism_live_join_stream_connect_stream_attempt';
+  static const String joinStreamConnectStreamSuccess =
+      'ism_live_join_stream_connect_stream_success';
+  static const String joinStreamConnectStreamFailure =
+      'ism_live_join_stream_connect_stream_failure';
+
+  static const String connectStreamAttemptDetailed =
+      'ism_live_connect_stream_attempt_detailed';
+  static const String connectStreamMqttSubscribeAttempt =
+      'ism_live_connect_stream_mqtt_subscribe_attempt';
+  static const String connectStreamMqttSubscribeFailure =
+      'ism_live_connect_stream_mqtt_subscribe_failure';
+  static const String connectStreamDeferredNavigationAttempt =
+      'ism_live_connect_stream_deferred_navigation_attempt';
+  static const String connectStreamDeferredNavigationSuccess =
+      'ism_live_connect_stream_deferred_navigation_success';
+  static const String connectStreamDeferredNavigationFailure =
+      'ism_live_connect_stream_deferred_navigation_failure';
+  static const String connectRoomAndInitializeAttempt =
+      'ism_live_connect_room_and_initialize_attempt';
+  static const String connectRoomAndInitializeSuccess =
+      'ism_live_connect_room_and_initialize_success';
+  static const String connectRoomAndInitializeFailure =
+      'ism_live_connect_room_and_initialize_failure';
+
+  // Deep connect flow (very granular but low-overhead)
+  static const String roomInitStart = 'ism_live_room_init_start';
+  static const String previousRoomDisconnectAttempt =
+      'ism_live_previous_room_disconnect_attempt';
+  static const String previousRoomDisconnectDone =
+      'ism_live_previous_room_disconnect_done';
+  static const String preconnectAbortedStreamDisposed =
+      'ism_live_preconnect_aborted_stream_disposed';
+  static const String roomConnectAttempt = 'ism_live_room_connect_attempt';
+  static const String roomConnectSuccess = 'ism_live_room_connect_success';
+  static const String roomConnectFailure = 'ism_live_room_connect_failure';
+  static const String roomConnectDiscardedStale =
+      'ism_live_room_connect_discarded_stale';
+  static const String postConnectApiKickoff =
+      'ism_live_post_connect_api_kickoff';
+  static const String goToStreamViewAttempt =
+      'ism_live_go_to_stream_view_attempt';
+  static const String goToStreamViewSuccess =
+      'ism_live_go_to_stream_view_success';
+  static const String goToStreamViewFailure =
+      'ism_live_go_to_stream_view_failure';
+  static const String connectFlowOuterFailure =
+      'ism_live_connect_flow_outer_failure';
+
+  // API result logging (sanitized)
+  static const String apiResult = 'ism_live_api_result';
+
+  // Navigation / screen transitions
+  static const String screenView = 'ism_live_screen_view';
+}
+
 /// Callback for stream listing refresh events.
 ///
 /// This callback is triggered when stream listing data needs to be refreshed
@@ -1036,6 +1161,34 @@ class IsmLiveDelegate {
 
   static GiftClickCallback? giftClickCallback;
 
+  /// Optional analytics delegate to capture SDK events.
+  static IsmLiveAnalyticsDelegate? analyticsDelegate;
+
+  /// Optional allow-list of analytics event names.
+  ///
+  /// - When `null` or empty: all events are emitted.
+  /// - When non-empty: only events present in this set are emitted.
+  static Set<String>? enabledAnalyticsEvents;
+
+  /// Safely emits an analytics event (never throws, never blocks).
+  static void trackEvent(
+    String eventName, {
+    List<Map<String, dynamic>>? properties,
+  }) {
+    final delegate = analyticsDelegate;
+    if (delegate == null) return;
+
+    final enabled = enabledAnalyticsEvents;
+    if (enabled != null && enabled.isNotEmpty && !enabled.contains(eventName)) {
+      return;
+    }
+    try {
+      delegate.trackEvent(eventName, properties: properties);
+    } catch (e, st) {
+      IsmLiveLog.error('IsmLive analytics delegate threw: $e', st);
+    }
+  }
+
   static BorderRadius? bottomSheetBorderRadius;
 
   /// Configuration for the Stream Recording Player. Set via [IsmLiveApp.configureInterface].
@@ -1074,6 +1227,16 @@ class IsmLiveDelegate {
           IsmLiveLocalKeys.configDetails, config.toJson()),
       IsmLiveUtility.initialize(config),
     ]);
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.sdkInitialize,
+      properties: [
+        {
+          'project_id': config.projectConfig.projectId,
+          'account_id': config.projectConfig.accountId,
+          'user_id': config.userConfig.userId,
+        }
+      ],
+    );
     IsmLiveLog.info('IsmLiveApp : configDetails data set Successfully');
   }
 
@@ -1092,6 +1255,19 @@ class IsmLiveDelegate {
       // }
       return;
     }
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.streamEndRequested,
+      properties: [
+        {
+          'stream_id': controller.streamId ?? '',
+          'is_host': controller.isHost,
+          'is_schedule': isSchedule,
+          'show_viewer_leave_dialog': showViewerLeaveDialog,
+        }
+      ],
+    );
+
     await controller.onExit(
       isHost: controller.isHost,
       streamId: controller.streamId!,

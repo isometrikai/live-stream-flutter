@@ -490,6 +490,8 @@ class IsmLiveApp extends StatefulWidget {
     OnStreamScrollCallback? onStreamScrollCallback,
     AddCoinsClickCallback? addCoinsClickCallback,
     GiftClickCallback? giftClickCallback,
+    IsmLiveAnalyticsDelegate? analyticsDelegate,
+    Set<String>? enabledAnalyticsEvents,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
@@ -581,6 +583,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
     IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
     IsmLiveDelegate.giftClickCallback = giftClickCallback;
+    IsmLiveDelegate.analyticsDelegate = analyticsDelegate;
+    IsmLiveDelegate.enabledAnalyticsEvents = enabledAnalyticsEvents;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
     // Camera position preference for streams (suffix to avoid other camera screens)
     if (initialCameraPositionStream != null) {
@@ -658,12 +662,58 @@ class IsmLiveApp extends StatefulWidget {
     }
 
     // IsmLiveUtility.updateLater(() async {
+    final startedAt = DateTime.now();
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.streamInitializeAndJoinAttempt,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'is_host': isHost,
+          'is_scrolling': isScrolling,
+          'is_paid': stream.isPaid ?? false,
+          'is_buy': stream.isBuy ?? false,
+          'is_scheduled_stream': stream.isScheduledStream ?? false,
+          'is_pk': stream.isPkChallenge ?? false,
+          'audio_only': stream.audioOnly ?? false,
+          'hd_broadcast': stream.hdBroadcast ?? false,
+          'restream': stream.restream ?? false,
+          'stream_type': stream.type ?? '',
+          'viewers_count': stream.viewersCount ?? 0,
+        }
+      ],
+    );
     try {
       await Get.find<IsmLiveStreamController>().initializeAndJoinStream(
           stream, isHost,
           context: context, isScrolling: isScrolling, onStreamEnd: onStreamEnd);
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.streamInitializeAndJoinSuccess,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'is_host': isHost,
+            'is_scrolling': isScrolling,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
+          }
+        ],
+      );
     } catch (e) {
       IsmLiveLog.error('Error in initializeAndJoinStream: $e');
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.streamInitializeAndJoinFailure,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'is_host': isHost,
+            'is_scrolling': isScrolling,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
     }
     // });
   }

@@ -162,6 +162,24 @@ mixin StreamJoinMixin {
     bool reJoin = false,
     VoidCallback? onStreamEnd,
   }) async {
+    final startedAt = DateTime.now();
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.controllerInitializeAndJoinAttempt,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'is_host': isHost,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          're_join': reJoin,
+          'has_existing_room': _controller.room != null,
+          'existing_stream_id': _controller.streamId ?? '',
+        }
+      ],
+    );
+
     // Auto-detect rejoin scenario: if controller already has data for this stream
     // and we're not explicitly setting reJoin to false, treat it as rejoin
     // Note: Don't check listener as it might be cleared during disposal
@@ -172,6 +190,17 @@ mixin StreamJoinMixin {
       print(
           'initializeAndJoinStream: Auto-detected rejoin scenario for stream ${stream.streamId}');
       reJoin = true;
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerRejoinAutoDetected,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'reason': 'same_stream_id_and_room_present',
+          }
+        ],
+      );
     }
 
     // Set preventDispose flag immediately for rejoin scenarios to prevent data clearing
@@ -179,16 +208,108 @@ mixin StreamJoinMixin {
       _controller.preventDispose = true;
       print(
           'initializeAndJoinStream: Set preventDispose=true for rejoin scenario');
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerPreventDisposeEnabled,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+          }
+        ],
+      );
     }
 
-    initialize(_controller.streams.indexOf(stream));
+    final streamIndex = _controller.streams.indexOf(stream);
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.controllerInitializeIndex,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'index': streamIndex,
+        }
+      ],
+    );
+
+    initialize(streamIndex);
     print('initializeAndJoinStream called ${stream.streamId}, reJoin=$reJoin');
-    await joinStream(stream, isHost,
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.controllerJoinStreamAttempt,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'is_host': isHost,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          're_join': reJoin,
+        }
+      ],
+    );
+
+    try {
+      await joinStream(
+        stream,
+        isHost,
         joinByScrolling: joinByScrolling,
         isScrolling: isScrolling,
         context: context,
         reJoin: reJoin,
-        onStreamEnd: onStreamEnd);
+        onStreamEnd: onStreamEnd,
+      );
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerJoinStreamSuccess,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+          }
+        ],
+      );
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerInitializeAndJoinSuccess,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+          }
+        ],
+      );
+    } catch (e) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerJoinStreamFailure,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.controllerInitializeAndJoinFailure,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
+      rethrow;
+    }
   }
 
   bool isScheduleStreamNotStartedYet(IsmLiveStreamDataModel stream) {
@@ -360,8 +481,42 @@ mixin StreamJoinMixin {
     required BuildContext context,
     bool reJoin = false,
   }) async {
+    final startedAt = DateTime.now();
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.joinStreamAttempt,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'is_host': isHost,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          're_join': reJoin,
+          'is_scheduled_stream': stream.isScheduledStream ?? false,
+          'is_pk': stream.isPkChallenge ?? false,
+          'hd_broadcast': stream.hdBroadcast ?? false,
+          'restream': stream.restream ?? false,
+          'audio_only': stream.audioOnly ?? false,
+        }
+      ],
+    );
+
     // Handle scheduled stream not started yet here to avoid duplicate navigation during scrolling
     if (isScheduleStreamNotStartedYet(stream)) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.joinStreamEarlyReturnScheduledNotStarted,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'is_host': isHost,
+            'join_by_scrolling': joinByScrolling,
+            'is_scrolling': isScrolling,
+            're_join': reJoin,
+          }
+        ],
+      );
       startSeduleStream(
         stream,
         isHost: isHost,
@@ -377,6 +532,15 @@ mixin StreamJoinMixin {
 
     var token = '';
     if (isHost) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.joinStreamTokenFetchHost,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+          }
+        ],
+      );
       token = await _dbWrapper.getSecuredValue(stream.streamId ?? '');
 
       if (token.trim().isEmpty) {
@@ -384,6 +548,18 @@ mixin StreamJoinMixin {
         final userId = _controller.user?.userId ?? '';
         final stopCallback = IsmLiveDelegate.missingHostTokenStopStreamCallback;
         var shouldCallStopStreamApi = true;
+
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.joinStreamMissingHostToken,
+          properties: [
+            {
+              'stream_id': streamId,
+              'event_id': stream.eventId ?? '',
+              'user_id': userId,
+              'has_stop_callback': stopCallback != null,
+            }
+          ],
+        );
 
         if (stopCallback != null) {
           try {
@@ -400,11 +576,30 @@ mixin StreamJoinMixin {
         }
 
         if (shouldCallStopStreamApi) {
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.joinStreamStopStreamCalled,
+            properties: [
+              {
+                'stream_id': streamId,
+                'event_id': stream.eventId ?? '',
+                'user_id': userId,
+              }
+            ],
+          );
           await _controller.stopStream(streamId, userId);
         }
         return;
       }
     } else {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.joinStreamTokenFetchViewer,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+          }
+        ],
+      );
       var data = await _controller.getRTCToken(stream.streamId ?? '');
       if (data == null) {
         return;
@@ -437,22 +632,66 @@ mixin StreamJoinMixin {
     _controller.streamDuration = Duration.zero;
 
     // Connect to the stream
-    await connectStream(
-        stream: stream,
-        token: token,
-        streamId: stream.streamId!,
-        streamImage: stream.streamImage,
-        streamDiscription: stream.streamDescription,
-        isHost: isHost,
-        isNewStream: false,
-        isPk: stream.isPkChallenge ?? false,
-        joinByScrolling: joinByScrolling,
-        isScrolling: isScrolling,
-        hdBroadcast: stream.hdBroadcast ?? false,
-        isInteractive: isInteractive,
-        context: context,
-        reJoin: reJoin,
-        deferConnection: true);
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.joinStreamConnectStreamAttempt,
+      properties: [
+        {
+          'stream_id': stream.streamId ?? '',
+          'event_id': stream.eventId ?? '',
+          'is_host': isHost,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          're_join': reJoin,
+          'defer_connection': true,
+        }
+      ],
+    );
+
+    try {
+      await connectStream(
+          stream: stream,
+          token: token,
+          streamId: stream.streamId!,
+          streamImage: stream.streamImage,
+          streamDiscription: stream.streamDescription,
+          isHost: isHost,
+          isNewStream: false,
+          isPk: stream.isPkChallenge ?? false,
+          joinByScrolling: joinByScrolling,
+          isScrolling: isScrolling,
+          hdBroadcast: stream.hdBroadcast ?? false,
+          isInteractive: isInteractive,
+          context: context,
+          reJoin: reJoin,
+          deferConnection: true);
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.joinStreamConnectStreamSuccess,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+          }
+        ],
+      );
+    } catch (e) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.joinStreamConnectStreamFailure,
+        properties: [
+          {
+            'stream_id': stream.streamId ?? '',
+            'event_id': stream.eventId ?? '',
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
+      rethrow;
+    }
   }
 
 // Start streaming
@@ -579,6 +818,31 @@ mixin StreamJoinMixin {
     // from `stream_view` after navigation for a smoother transition.
     bool deferConnection = false,
   }) async {
+    final startedAt = DateTime.now();
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.connectStreamAttemptDetailed,
+      properties: [
+        {
+          'stream_id': streamId,
+          'is_host': isHost,
+          'is_new_stream': isNewStream,
+          're_join': reJoin,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          'is_copublisher': isCopublisher,
+          'is_pk': isPk,
+          'is_pk_guest': isPkGust,
+          'hd_broadcast': hdBroadcast,
+          'restream': restream,
+          'defer_connection': deferConnection,
+          'event_id': eventId,
+          'is_scheduled_stream': isScheduledStream,
+        }
+      ],
+    );
+
     // Store token for background lifecycle / deferred connect flows
     _controller.rtcToken = token;
     if (isHost) {
@@ -587,6 +851,30 @@ mixin StreamJoinMixin {
     // Subscribe to the stream
     _controller.streamId = streamId;
     print('initializeAndJoinStream initialized with streamId: $streamId');
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.streamConnectAttempt,
+      properties: [
+        {
+          'stream_id': streamId,
+          'is_host': isHost,
+          'is_new_stream': isNewStream,
+          're_join': reJoin,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          'is_copublisher': isCopublisher,
+          'is_pk': isPk,
+          'is_pk_guest': isPkGust,
+          'hd_broadcast': hdBroadcast,
+          'restream': restream,
+          'defer_connection': deferConnection,
+          'event_id': eventId,
+          'is_scheduled_stream': isScheduledStream,
+        }
+      ],
+    );
+
     _controller.streamDetails ??= stream ??
         IsmLiveStreamDataModel(
           streamDescription: streamDiscription,
@@ -631,6 +919,19 @@ mixin StreamJoinMixin {
 
     // Add null safety check for MQTT controller
     try {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.connectStreamMqttSubscribeAttempt,
+        properties: [
+          {
+            'stream_id': streamId,
+            'is_host': isHost,
+            'uses_custom_subscribe_callback':
+                IsmLiveDelegate.subscribStreamById != null,
+            'is_copublisher': isCopublisher,
+            'has_mqtt_controller': _controller._mqttController != null,
+          }
+        ],
+      );
       if (IsmLiveDelegate.subscribStreamById != null) {
         IsmLiveDelegate.subscribStreamById!(streamId);
       } else {
@@ -641,6 +942,15 @@ mixin StreamJoinMixin {
       }
     } catch (e) {
       IsmLiveLog.error('MQTT subscription error: $e');
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.connectStreamMqttSubscribeFailure,
+        properties: [
+          {
+            'stream_id': streamId,
+            'error': e.toString(),
+          }
+        ],
+      );
     }
 
     // If we want a snappier transition for host-initiated streams,
@@ -653,6 +963,21 @@ mixin StreamJoinMixin {
 
         print(
             'initializeAndJoinStream (deferred): About to call goToStreamView with reJoin=$reJoin');
+
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.connectStreamDeferredNavigationAttempt,
+          properties: [
+            {
+              'stream_id': streamId,
+              'is_host': isHost,
+              'is_new_stream': isNewStream,
+              're_join': reJoin,
+              'is_scrolling': isScrolling,
+              'duration_ms':
+                  DateTime.now().difference(startedAt).inMilliseconds,
+            }
+          ],
+        );
 
         await IsmLiveRouteManagement.goToStreamView(
           isHost: isHost,
@@ -667,38 +992,100 @@ mixin StreamJoinMixin {
         );
         print(
             'initializeAndJoinStream (deferred): goToStreamView completed, connection will be finished from stream_view');
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.connectStreamDeferredNavigationSuccess,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms':
+                  DateTime.now().difference(startedAt).inMilliseconds,
+            }
+          ],
+        );
       } catch (e, st) {
         IsmLiveLog.error('Navigation error (deferred connect): $e', st);
         print('initializeAndJoinStream (deferred): Navigation error: $e');
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.connectStreamDeferredNavigationFailure,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms':
+                  DateTime.now().difference(startedAt).inMilliseconds,
+              'error': e.toString(),
+            }
+          ],
+        );
       }
       return;
     }
 
-    await _connectRoomAndInitialize(
-      stream: stream,
-      token: token,
-      streamId: streamId,
-      streamImage: streamImage,
-      streamDiscription: streamDiscription,
-      hdBroadcast: hdBroadcast,
-      restream: restream,
-      isHost: isHost,
-      isCopublisher: isCopublisher,
-      isPk: isPk,
-      isPkGust: isPkGust,
-      isNewStream: isNewStream,
-      joinByScrolling: joinByScrolling,
-      isScrolling: isScrolling,
-      isInteractive: isInteractive,
-      startTime: startTime,
-      context: context,
-      eventId: eventId,
-      reJoin: reJoin,
-      isScheduledStream: isScheduledStream,
-      products: products,
-      performNavigation: !joinByScrolling,
-      showLoader: true,
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.connectRoomAndInitializeAttempt,
+      properties: [
+        {
+          'stream_id': streamId,
+          'is_host': isHost,
+          'is_new_stream': isNewStream,
+          're_join': reJoin,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          'duration_ms': 0,
+        }
+      ],
     );
+
+    try {
+      await _connectRoomAndInitialize(
+        stream: stream,
+        token: token,
+        streamId: streamId,
+        streamImage: streamImage,
+        streamDiscription: streamDiscription,
+        hdBroadcast: hdBroadcast,
+        restream: restream,
+        isHost: isHost,
+        isCopublisher: isCopublisher,
+        isPk: isPk,
+        isPkGust: isPkGust,
+        isNewStream: isNewStream,
+        joinByScrolling: joinByScrolling,
+        isScrolling: isScrolling,
+        isInteractive: isInteractive,
+        startTime: startTime,
+        context: context,
+        eventId: eventId,
+        reJoin: reJoin,
+        isScheduledStream: isScheduledStream,
+        products: products,
+        performNavigation: !joinByScrolling,
+        showLoader: true,
+      );
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.connectRoomAndInitializeSuccess,
+        properties: [
+          {
+            'stream_id': streamId,
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+          }
+        ],
+      );
+    } catch (e) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.connectRoomAndInitializeFailure,
+        properties: [
+          {
+            'stream_id': streamId,
+            'duration_ms':
+                DateTime.now().difference(startedAt).inMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
+      rethrow;
+    }
   }
 
   /// Viewer-only: rejoin the currently open stream after app resumes.
@@ -917,6 +1304,7 @@ mixin StreamJoinMixin {
     required bool performNavigation,
     bool showLoader = true,
   }) async {
+    final sw = Stopwatch()..start();
     var loaderShown = false;
     if (!joinByScrolling && showLoader) {
       // Show a generic loader; detailed user-facing message was already
@@ -924,6 +1312,24 @@ mixin StreamJoinMixin {
       IsmLiveUtility.showLoader();
       loaderShown = true;
     }
+
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.roomInitStart,
+      properties: [
+        {
+          'stream_id': streamId,
+          'event_id': eventId,
+          'is_host': isHost,
+          'is_new_stream': isNewStream,
+          're_join': reJoin,
+          'join_by_scrolling': joinByScrolling,
+          'is_scrolling': isScrolling,
+          'is_interactive': isInteractive,
+          'perform_navigation': performNavigation,
+          'defer_loader': !showLoader,
+        }
+      ],
+    );
 
     try {
       // Setting video presets based on the hdBroadcast param
@@ -959,6 +1365,15 @@ mixin StreamJoinMixin {
 
       if (previousRoom != null) {
         try {
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.previousRoomDisconnectAttempt,
+            properties: [
+              {
+                'stream_id': streamId,
+                're_join': reJoin,
+              }
+            ],
+          );
           // Always await disconnect — not only when connectionState != disconnected.
           // If we skip this when the client already shows `disconnected`, the server
           // can still hold the participant and the next `connect` with the same
@@ -968,6 +1383,15 @@ mixin StreamJoinMixin {
         } catch (e) {
           IsmLiveLog.error('Previous room disconnect error: $e');
         }
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.previousRoomDisconnectDone,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms': sw.elapsedMilliseconds,
+            }
+          ],
+        );
         // Same-token rejoins (host) need a beat for the SFU to release identity.
         await Future.delayed(
           reJoin
@@ -1012,6 +1436,16 @@ mixin StreamJoinMixin {
       if (_controller.streamId == null || _controller.streamId != streamId) {
         IsmLiveLog.info(
             'Stream disposed during room setup for $streamId, aborting connection');
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.preconnectAbortedStreamDisposed,
+          properties: [
+            {
+              'stream_id': streamId,
+              'current_stream_id': _controller.streamId ?? '',
+              'duration_ms': sw.elapsedMilliseconds,
+            }
+          ],
+        );
         try {
           _controller.listener?.dispose();
         } catch (_) {}
@@ -1026,6 +1460,15 @@ mixin StreamJoinMixin {
 
       // Try to connect to the room with better error handling
       try {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.roomConnectAttempt,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms': sw.elapsedMilliseconds,
+            }
+          ],
+        );
         await room.connect(IsmLiveApis.wsUrl, token);
 
         // Stale connection guard: if the user scrolled to a different stream
@@ -1034,6 +1477,16 @@ mixin StreamJoinMixin {
         if (_controller.streamId != streamId) {
           IsmLiveLog.info(
               'Discarding stale connection for $streamId (current: ${_controller.streamId})');
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.roomConnectDiscardedStale,
+            properties: [
+              {
+                'stream_id': streamId,
+                'current_stream_id': _controller.streamId ?? '',
+                'duration_ms': sw.elapsedMilliseconds,
+              }
+            ],
+          );
           try {
             await room.disconnect();
           } catch (_) {}
@@ -1048,6 +1501,16 @@ mixin StreamJoinMixin {
           _controller.isViewerJoiningStream = false;
         }
 
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.roomConnectSuccess,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms': sw.elapsedMilliseconds,
+            }
+          ],
+        );
+
         // Route audio to the loudspeaker. Mobile WebRTC defaults to the
         // earpiece; live-stream participants expect loudspeaker output.
         // The helper respects external devices (Bluetooth/wired) on Android.
@@ -1058,6 +1521,17 @@ mixin StreamJoinMixin {
       } catch (e, st) {
         IsmLiveLog.error('Room connection error: $e', st);
         _controller.isViewerJoiningStream = false;
+
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.roomConnectFailure,
+          properties: [
+            {
+              'stream_id': streamId,
+              'duration_ms': sw.elapsedMilliseconds,
+              'error': e.toString(),
+            }
+          ],
+        );
 
         // Release the failed room's resources (WebSocket, ICE agents, etc.)
         try {
@@ -1128,6 +1602,17 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('Stream members/viewer fetch error: $e');
       }
 
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.postConnectApiKickoff,
+        properties: [
+          {
+            'stream_id': streamId,
+            'is_host': isHost,
+            'duration_ms': sw.elapsedMilliseconds,
+          }
+        ],
+      );
+
       try {
         _controller.initializeStream(
           streamId: streamId,
@@ -1170,6 +1655,18 @@ mixin StreamJoinMixin {
             return;
           }
 
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.goToStreamViewAttempt,
+            properties: [
+              {
+                'stream_id': streamId,
+                'is_host': isHost,
+                're_join': reJoin,
+                'duration_ms': sw.elapsedMilliseconds,
+              }
+            ],
+          );
+
           await IsmLiveRouteManagement.goToStreamView(
               isHost: isHost,
               isNewStream: isNewStream,
@@ -1182,9 +1679,28 @@ mixin StreamJoinMixin {
               reJoin: reJoin);
 
           print('initializeAndJoinStream: goToStreamView completed');
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.goToStreamViewSuccess,
+            properties: [
+              {
+                'stream_id': streamId,
+                'duration_ms': sw.elapsedMilliseconds,
+              }
+            ],
+          );
         } catch (e) {
           IsmLiveLog.error('Navigation error: $e');
           print('initializeAndJoinStream: Navigation error details: $e');
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.goToStreamViewFailure,
+            properties: [
+              {
+                'stream_id': streamId,
+                'duration_ms': sw.elapsedMilliseconds,
+                'error': e.toString(),
+              }
+            ],
+          );
         }
       } else {
         print(
@@ -1203,7 +1719,18 @@ mixin StreamJoinMixin {
       }
       _controller.userRole = null;
       IsmLiveLog.error('ConnectStream error: $e', st);
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.connectFlowOuterFailure,
+        properties: [
+          {
+            'stream_id': streamId,
+            'duration_ms': sw.elapsedMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
     } finally {
+      sw.stop();
       if (loaderShown) {
         IsmLiveUtility.closeLoader();
       }

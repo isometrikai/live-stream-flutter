@@ -19,8 +19,6 @@ class IsmLiveGiftsSheet extends StatelessWidget {
         (isDarkMode ? const Color(0xFF121212) : Colors.white);
     final textColor = context.liveTheme?.primaryColor ??
         (isDarkMode ? Colors.white : Colors.black);
-    final iconColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.black);
 
     return Container(
       decoration: BoxDecoration(
@@ -62,6 +60,17 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                     child: IsmLiveButton(
                       label: IsmLiveStrings.addCoins,
                       onTap: () {
+                        IsmLiveDelegate.trackEvent(
+                          IsmLiveAnalyticsEvent.addCoinsClick,
+                          properties: [
+                            {
+                              'source': 'gifts_sheet',
+                              'stream_id': Get.isRegistered<IsmLiveStreamController>()
+                                  ? (Get.find<IsmLiveStreamController>().streamId ?? '')
+                                  : '',
+                            }
+                          ],
+                        );
                         if (IsmLiveDelegate.addCoinsClickCallback != null) {
                           IsmLiveDelegate.addCoinsClickCallback!(context);
                         } else {
@@ -174,6 +183,30 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                               }
 
                               IsmLiveRoute.pop();
+
+                              IsmLiveDelegate.trackEvent(
+                                IsmLiveAnalyticsEvent.giftClick,
+                                properties: [
+                                  {
+                                    'source': 'gifts_sheet',
+                                    'gift_id': gift.id ?? '',
+                                    'gift_title': gift.giftTitle ?? '',
+                                    'gift_amount': gift.virtualCurrency ?? 0,
+                                    'gift_image': gift.giftImage ?? '',
+                                    'gift_animation_image':
+                                        gift.giftAnimationImage ?? '',
+                                    'gift_group_id': giftCategory.id ?? '',
+                                    'gift_group_title':
+                                        giftCategory.giftTitle ?? '',
+                                    'stream_id': Get.isRegistered<
+                                            IsmLiveStreamController>()
+                                        ? (Get.find<IsmLiveStreamController>()
+                                                .streamId ??
+                                            '')
+                                        : '',
+                                  }
+                                ],
+                              );
 
                               if (IsmLiveDelegate.giftClickCallback != null) {
                                 IsmLiveDelegate.giftClickCallback!(

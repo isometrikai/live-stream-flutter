@@ -1033,6 +1033,18 @@ mixin StreamOngoingMixin {
       _controller.isHost,
     );
 
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.streamScroll,
+      properties: [
+        {
+          'current_stream_id': _controller.streamId ?? '',
+          'next_stream_index': index,
+          'next_stream_id': _controller.streams[index].streamId ?? '',
+          'is_host': _controller.isHost,
+        }
+      ],
+    );
+
     IsmLiveUtility.showLoader();
     onChangeCall = true;
     _pendingScrollIndex = null;
