@@ -229,15 +229,9 @@ mixin StreamJoinMixin {
         restream: _controller.isRestreamBroadcast,
       );
 
-      // Resolve initial camera position for manual track creation as well
-      final resolvedCameraPosition =
-          (IsmLiveDelegate.initialCameraPositionStream ==
-                  IsmLiveCameraPosition.front)
-              ? lk.CameraPosition.front
-              : lk.CameraPosition.back;
-
-      // Sync the position variable with the actual camera position
-      _controller.position = resolvedCameraPosition;
+      // Match room / UI: `_connectRoomAndInitialize` sets `_controller.position`
+      // from the delegate on first join and preserves it on rejoin.
+      final resolvedCameraPosition = _controller.position;
 
       final tracks = await Future.wait([
         lk.LocalVideoTrack.createCameraTrack(
@@ -319,6 +313,7 @@ mixin StreamJoinMixin {
     _controller.videoOn = true;
     try {
       await participant.setCameraEnabled(true);
+      await _syncPublishedCameraToControllerPosition(participant);
       _controller.update();
     } catch (error) {
       // After a full rejoin, `enableMyVideo()` may already publish camera; a second
@@ -330,12 +325,27 @@ mixin StreamJoinMixin {
         IsmLiveLog.info(
             'resumeHostCameraAfterBackground: setCameraEnabled failed but camera track still present: $error');
         _controller.videoOn = true;
+        await _syncPublishedCameraToControllerPosition(participant);
         _controller.update();
         return;
       }
       _controller.videoOn = false;
       IsmLiveLog.error('resumeHostCameraAfterBackground error: $error');
       rethrow;
+    }
+  }
+
+  /// After unpublish + republish or SDK default capture, align hardware with [IsmLiveStreamController.position].
+  Future<void> _syncPublishedCameraToControllerPosition(
+    lk.LocalParticipant participant,
+  ) async {
+    final pub = participant.getTrackPublicationBySource(lk.TrackSource.camera);
+    final track = pub?.track;
+    if (track is! lk.LocalVideoTrack) return;
+    try {
+      await track.setCameraPosition(_controller.position);
+    } catch (e) {
+      IsmLiveLog.error('_syncPublishedCameraToControllerPosition: $e');
     }
   }
 
@@ -922,15 +932,21 @@ mixin StreamJoinMixin {
         restream: restream,
       );
 
-      // Resolve initial camera position from global UI configuration
-      final resolvedCameraPosition =
-          (IsmLiveDelegate.initialCameraPositionStream ==
-                  IsmLiveCameraPosition.front)
-              ? lk.CameraPosition.front
-              : lk.CameraPosition.back;
-
-      // Sync the position variable with the actual camera position
-      _controller.position = resolvedCameraPosition;
+      // First join: use app delegate default. Host/co-publisher rejoin (e.g. after
+      // background): keep last camera facing so back camera isn’t reset to front.
+      final lk.CameraPosition resolvedCameraPosition;
+      final preserveCameraOnReconnect = reJoin &&
+          (isHost || isCopublisher || isPkGust);
+      if (preserveCameraOnReconnect) {
+        resolvedCameraPosition = _controller.position;
+      } else {
+        resolvedCameraPosition =
+            (IsmLiveDelegate.initialCameraPositionStream ==
+                    IsmLiveCameraPosition.front)
+                ? lk.CameraPosition.front
+                : lk.CameraPosition.back;
+        _controller.position = resolvedCameraPosition;
+      }
 
       final previousRoom = _controller.room;
       // Listener is always bound to the previous room; drop it before disconnect.
@@ -994,6 +1010,11 @@ mixin StreamJoinMixin {
         if (!isHost) {
           _controller.isViewerJoiningStream = false;
         }
+
+        // Route audio to the loudspeaker. Mobile WebRTC defaults to the
+        // earpiece; live-stream participants expect loudspeaker output.
+        // The helper respects external devices (Bluetooth/wired) on Android.
+        await _ensureLoudspeakerRouting();
 
         // Store the token for background lifecycle reconnection
         _controller.storeToken(token);
