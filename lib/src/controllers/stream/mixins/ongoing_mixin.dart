@@ -1,5 +1,63 @@
 part of '../stream_controller.dart';
 
+/// Ensures audio routes to the loudspeaker when no external audio device
+/// (Bluetooth, wired headset) is connected. Safe to call repeatedly.
+///
+/// On iOS [setSpeakerphoneOn] already respects connected accessories
+/// (Bluetooth / wired headsets take priority by default).
+/// On Android [setSpeakerphoneOn(true)] forces the built-in speaker and
+/// overrides any connected device, so we guard the call behind a device check.
+Future<void> _ensureLoudspeakerRouting() async {
+  try {
+    if (Platform.isIOS) {
+      await lk.Hardware.instance.setSpeakerphoneOn(true);
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      final hasExternal = await _hasExternalAudioOutputOnAndroid();
+      if (!hasExternal) {
+        await lk.Hardware.instance.setSpeakerphoneOn(true);
+      }
+      return;
+    }
+
+    await lk.Hardware.instance.setSpeakerphoneOn(true);
+  } catch (e) {
+    IsmLiveLog('_ensureLoudspeakerRouting error: $e');
+  }
+}
+
+/// Returns `true` when an external audio output (Bluetooth, wired headset,
+/// USB audio) is currently connected on Android.
+///
+/// Built-in outputs are identified by their standardised labels ("Earpiece",
+/// "Speaker"). Any output with a different label is considered external.
+Future<bool> _hasExternalAudioOutputOnAndroid() async {
+  try {
+    final devices = await lk.Hardware.instance.enumerateDevices();
+    final outputs = devices.where((d) => d.kind == 'audiooutput').toList();
+
+    // On Android, built-in outputs are typically "Earpiece" + "Speaker"
+    // (at most 2 entries). Any additional entry indicates external hardware.
+    if (outputs.length > 2) return true;
+
+    // Even with ≤ 2 outputs, one might be external when it replaces a
+    // built-in device in the active list (e.g. Bluetooth + Speaker).
+    const builtInLabels = {'earpiece', 'speaker', 'speakerphone'};
+    for (final device in outputs) {
+      final label = device.label.toLowerCase().trim();
+      if (label.isNotEmpty && !builtInLabels.contains(label)) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch (_) {
+    return false;
+  }
+}
+
 mixin StreamOngoingMixin {
   IsmLiveStreamController get _controller => Get.find();
   IsmLivePkController get _pkController => Get.find();
@@ -362,6 +420,27 @@ mixin StreamOngoingMixin {
             }
             await _syncRemoteAudioPlaybackWithSpeakerFlag(room);
           }));
+        })
+        ..on<lk.TrackUnmutedEvent>((event) {
+          if (event.publication.kind != lk.TrackType.AUDIO) {
+            return;
+          }
+          if (_controller.speakerOn) {
+            return;
+          }
+          final room = _controller.room;
+          if (room == null) {
+            return;
+          }
+          // A remote audio track was unmuted by the server/host. Re-apply local
+          // mute so the viewer's mute choice is honoured.
+          unawaited(Future<void>(() async {
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (_controller.room != room) {
+              return;
+            }
+            await _syncRemoteAudioPlaybackWithSpeakerFlag(room);
+          }));
         });
 
   Future<void> sortParticipants() async {
@@ -676,6 +755,15 @@ mixin StreamOngoingMixin {
   /// underlying WebRTC track matches the speaker UI.
   Future<void> _syncRemoteAudioPlaybackWithSpeakerFlag(lk.Room room) async {
     final speakerOn = _controller.speakerOn;
+
+    // Route audio to the loudspeaker when enabling. Mobile WebRTC defaults to
+    // the earpiece/receiver; without this call viewers hear audio from the
+    // wrong speaker (or faintly through the receiver when muted).
+    // The helper respects external devices (Bluetooth/wired) on Android.
+    if (speakerOn) {
+      await _ensureLoudspeakerRouting();
+    }
+
     final futures = <Future<void>>[];
     for (final participant in room.remoteParticipants.values) {
       for (final pub in participant.audioTrackPublications) {
@@ -690,6 +778,12 @@ mixin StreamOngoingMixin {
             } else {
               await track.disable();
             }
+            // Belt-and-suspenders: directly flip the underlying WebRTC
+            // MediaStreamTrack. On some mobile platforms the higher-level
+            // enable/disable alone does not silence the audio renderer.
+            try {
+              track.mediaStreamTrack.enabled = speakerOn;
+            } catch (_) {}
           } catch (e) {
             IsmLiveLog('speaker remote audio track error $e');
           }
@@ -1092,6 +1186,14 @@ mixin StreamOngoingMixin {
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
     _controller.isViewerJoiningStream = false;
+
+    // Capture room reference synchronously BEFORE any await. When this method
+    // is called fire-and-forget (e.g. from MQTT viewerRemoved / streamStopped),
+    // a concurrent streamDispose triggered by route-pop can null _controller.room
+    // during the MQTT-unsubscribe await, causing room.disconnect() to be skipped
+    // entirely and leaving remote audio playing.
+    final room = _controller.room;
+
     final currentStreamId = _controller.streamId;
     if (currentStreamId != null && currentStreamId.isNotEmpty) {
       if (IsmLiveDelegate.unsubscribStreamById != null) {
@@ -1103,7 +1205,6 @@ mixin StreamOngoingMixin {
     }
 
     try {
-      final room = _controller.room;
       if (room != null) {
         // Explicitly stop local media tracks to release camera/mic hardware on
         // iOS. room.disconnect() alone does not guarantee native hardware
