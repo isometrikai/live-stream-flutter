@@ -1003,11 +1003,14 @@ mixin StreamOngoingMixin {
 
   bool onChangeCall = false;
 
+  int? _pendingScrollIndex;
+
   void onStreamScroll({
     required int index,
     required BuildContext context,
   }) async {
     if (onChangeCall) {
+      _pendingScrollIndex = index;
       return;
     }
 
@@ -1029,6 +1032,13 @@ mixin StreamOngoingMixin {
 
     IsmLiveUtility.showLoader();
     onChangeCall = true;
+    _pendingScrollIndex = null;
+
+    // Cancel any in-flight deferred connection from the initial stream load.
+    // Without this, completeDeferredConnection can race with the scroll-based
+    // disconnect+join, causing ICE timeout and a broken state.
+    _controller.pendingConnection = false;
+
     if (_controller.streams.length - 1 == index + 1) {
       unawaited(_controller.getStreams(
         skip: _controller.streams.length,
@@ -1036,56 +1046,70 @@ mixin StreamOngoingMixin {
       ));
     }
 
-    final didLeft = await disconnectStream(
-      isHost: false,
-      streamId: _controller.streamId ?? '',
-      goBack: false,
-      isScrolling: true,
-    );
-    if (!didLeft) {
-      IsmLiveLog.error('Cannot leave stream');
-
-      // IsmLiveUtility.closeLoader();
-      // await _controller.animateToPage(_controller.previousStreamIndex);
-      // unawaited(_controller.getStreams());
-      // closeStreamView(
-      //   false,
-      // );
-    }
-
-    if ((_controller.streams[index].isPaid ?? false) &&
-        !(_controller.streams[index].isBuy ?? false)) {
-      IsmLiveUtility.closeLoader();
-      _controller.paidStreamSheet(
-          coins: _controller.streams[index].amount ?? 0,
-          onTap: () async {
-            IsmLiveRoute.pop();
-            var res = await _controller
-                .buyStream(_controller.streams[index].streamId ?? '');
-            if (res) {
-              _controller.streams[index].copyWith(isBuy: true);
-              await _controller.joinStream(
-                _controller.streams[index],
-                false,
-                joinByScrolling: true,
-                isScrolling: true,
-                context: context,
-              );
-            }
-          });
-    } else {
-      await _controller.joinStream(
-        _controller.streams[index],
-        false,
-        joinByScrolling: true,
+    try {
+      final didLeft = await disconnectStream(
+        isHost: false,
+        streamId: _controller.streamId ?? '',
+        goBack: false,
         isScrolling: true,
-        context: context,
       );
-    }
+      if (!didLeft) {
+        IsmLiveLog.error('Cannot leave stream');
+      }
 
-    _controller.previousStreamIndex = index;
-    onChangeCall = false;
-    IsmLiveUtility.closeLoader();
+      // If user scrolled further while we were disconnecting, skip joining
+      // the intermediate stream and jump straight to the latest target.
+      if (_pendingScrollIndex != null && _pendingScrollIndex != index) {
+        return;
+      }
+
+      if ((_controller.streams[index].isPaid ?? false) &&
+          !(_controller.streams[index].isBuy ?? false)) {
+        IsmLiveUtility.closeLoader();
+        _controller.paidStreamSheet(
+            coins: _controller.streams[index].amount ?? 0,
+            onTap: () async {
+              IsmLiveRoute.pop();
+              var res = await _controller
+                  .buyStream(_controller.streams[index].streamId ?? '');
+              if (res) {
+                _controller.streams[index].copyWith(isBuy: true);
+                await _controller.joinStream(
+                  _controller.streams[index],
+                  false,
+                  joinByScrolling: true,
+                  isScrolling: true,
+                  context: context,
+                );
+              }
+            });
+      } else {
+        await _controller.joinStream(
+          _controller.streams[index],
+          false,
+          joinByScrolling: true,
+          isScrolling: true,
+          context: context,
+        );
+      }
+
+      _controller.previousStreamIndex = index;
+    } catch (e, st) {
+      IsmLiveLog.error('onStreamScroll error: $e', st);
+    } finally {
+      onChangeCall = false;
+      IsmLiveUtility.closeLoader();
+
+      // Process the latest pending scroll after this operation completes.
+      // This runs inside finally so onChangeCall is already false, and the
+      // recursive call will set it back to true synchronously (before its
+      // first await), preventing concurrent entry.
+      final pending = _pendingScrollIndex;
+      if (pending != null) {
+        _pendingScrollIndex = null;
+        onStreamScroll(index: pending, context: context);
+      }
+    }
   }
 
   bool isStopStreamCall = false;
