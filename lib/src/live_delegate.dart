@@ -1078,7 +1078,9 @@ class IsmLiveDelegate {
   }
 
   static Future<void> endStream(
-      {required BuildContext context, bool isSchedule = false}) async {
+      {required BuildContext context,
+      bool isSchedule = false,
+      bool showViewerLeaveDialog = false}) async {
     assert(Get.isRegistered<IsmLiveStreamController>(),
         'StreamController is not initialized');
     IsmLiveLog.error('Calling Leave API from Outside');
@@ -1094,6 +1096,7 @@ class IsmLiveDelegate {
       isHost: controller.isHost,
       streamId: controller.streamId!,
       context: context,
+      showViewerLeaveDialog: showViewerLeaveDialog,
     );
   }
 }

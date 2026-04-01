@@ -717,7 +717,9 @@ class _IsmLiveStreamView extends StatelessWidget {
                           child: IsmLiveApp.endButton ??
                               IsmLiveEndStreamButton(
                                 onTapExit: () => IsmLiveApp.endStream(
-                                    context: context, isSchedule: isSchedule),
+                                    context: context,
+                                    isSchedule: isSchedule,
+                                    showViewerLeaveDialog: true),
                               ),
                         ),
                       ),
