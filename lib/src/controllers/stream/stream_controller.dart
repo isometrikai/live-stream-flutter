@@ -835,8 +835,18 @@ class IsmLiveStreamController extends GetxController
 
     // Clear room and listener (but preserve them during rejoin)
     if (!preventDispose) {
+      // Capture and null references first so concurrent code sees them as gone,
+      // then disconnect the room to release WebRTC resources (audio/video).
+      // Without the disconnect, closing the view while the room is connected
+      // leaves the Room object alive in memory still receiving remote audio.
+      final currentRoom = room;
       room = null;
       listener = null;
+      if (currentRoom != null) {
+        try {
+          unawaited(currentRoom.disconnect());
+        } catch (_) {}
+      }
     }
     userRole = null;
 

@@ -1004,9 +1004,46 @@ mixin StreamJoinMixin {
       // Create a Listener before connecting
       _controller.listener = room.createListener();
 
+      // Pre-connect guard: if the stream was disposed while we were setting
+      // up (e.g. viewer closed the view during the previous-room disconnect
+      // delay), abort before the expensive room.connect() call. Without this,
+      // the room would connect, start receiving remote audio, and the viewer
+      // would hear the streamer even after leaving the view.
+      if (_controller.streamId == null || _controller.streamId != streamId) {
+        IsmLiveLog.info(
+            'Stream disposed during room setup for $streamId, aborting connection');
+        try {
+          _controller.listener?.dispose();
+        } catch (_) {}
+        _controller.listener = null;
+        _controller.room = null;
+        _controller.isViewerJoiningStream = false;
+        if (loaderShown) {
+          IsmLiveUtility.closeLoader();
+        }
+        return;
+      }
+
       // Try to connect to the room with better error handling
       try {
         await room.connect(IsmLiveApis.wsUrl, token);
+
+        // Stale connection guard: if the user scrolled to a different stream
+        // while ICE negotiation was in progress, discard this connection so
+        // we don't overwrite state belonging to the newer stream.
+        if (_controller.streamId != streamId) {
+          IsmLiveLog.info(
+              'Discarding stale connection for $streamId (current: ${_controller.streamId})');
+          try {
+            await room.disconnect();
+          } catch (_) {}
+          _controller.isViewerJoiningStream = false;
+          if (loaderShown) {
+            IsmLiveUtility.closeLoader();
+          }
+          return;
+        }
+
         if (!isHost) {
           _controller.isViewerJoiningStream = false;
         }
@@ -1021,7 +1058,16 @@ mixin StreamJoinMixin {
       } catch (e, st) {
         IsmLiveLog.error('Room connection error: $e', st);
         _controller.isViewerJoiningStream = false;
-        IsmLiveUtility.closeLoader();
+
+        // Release the failed room's resources (WebSocket, ICE agents, etc.)
+        try {
+          await room.disconnect();
+        } catch (_) {}
+
+        if (loaderShown) {
+          IsmLiveUtility.closeLoader();
+          loaderShown = false;
+        }
         return;
       }
       print('initializeAndJoinStream 444444');
@@ -1188,6 +1234,12 @@ mixin StreamJoinMixin {
     final hdBroadcast = details?.hdBroadcast ?? _controller.isHdBroadcast;
     final restream = details?.restream ?? _controller.isRestreamBroadcast;
 
+    // Capture the flag early. If onStreamScroll clears pendingConnection
+    // while _connectRoomAndInitialize is awaiting room.connect(), the stale
+    // connection guard inside _connectRoomAndInitialize will detect the
+    // streamId mismatch and discard the connection automatically.
+    _controller.pendingConnection = false;
+
     await _connectRoomAndInitialize(
       stream: details,
       token: token,
@@ -1213,8 +1265,6 @@ mixin StreamJoinMixin {
       performNavigation: false,
       showLoader: false,
     );
-
-    _controller.pendingConnection = false;
   }
 
   Future<IsmLiveScheduleRTCModule?> goLiveSchedule() async {
