@@ -28,6 +28,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   Timer? _reconnectTimer;
   bool _videoPausedByBackground = false;
 
+  // Preserve user's last camera/audio state so foreground resume (especially
+  // the rejoin path where enableMyVideo() unconditionally publishes both tracks)
+  // can restore the state the user actually chose.
+  bool _userVideoOnBeforeBackground = true;
+  bool _userAudioOnBeforeBackground = true;
+  bool _mediaStateSavedForBackground = false;
+
   // Camera error tracking
   int _cameraErrorCount = 0;
   static const int _maxCameraErrors = 3;
@@ -116,6 +123,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       _storedToken = null;
       _lastStreamId = null;
       _videoPausedByBackground = false;
+      _userVideoOnBeforeBackground = true;
+      _userAudioOnBeforeBackground = true;
+      _mediaStateSavedForBackground = false;
       _cameraErrorCount = 0;
       _reconnectTimer?.cancel();
 
@@ -225,6 +235,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _handleAppResumed() {
     IsmLiveLog.info('App resumed from background');
     _isInBackground.value = false;
+    _mediaStateSavedForBackground = false;
     _reconnectTimer?.cancel();
 
     if (_blockAutoReconnectAfterLifecycleDialog) {
@@ -354,6 +365,18 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _handleStreamBackground() {
     if (!_isStreamActive.value) return;
 
+    // Guard: _handleAppHidden calls _handleAppPaused, so this method can fire
+    // twice (hidden → paused). Only capture on the first call — after
+    // _pauseVideoForBackground sets videoOn = false, a second save would
+    // record the wrong (already-paused) state.
+    if (!_mediaStateSavedForBackground) {
+      _userVideoOnBeforeBackground = _controller.videoOn;
+      _userAudioOnBeforeBackground = _controller.audioOn;
+      _mediaStateSavedForBackground = true;
+      IsmLiveLog.info(
+          'Saved user media state before background — video: $_userVideoOnBeforeBackground, audio: $_userAudioOnBeforeBackground');
+    }
+
     if (_isHost.value) {
       _handleHostBackground();
     } else {
@@ -463,8 +486,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       if (_isHost.value && _videoPausedByBackground) {
         IsmLiveLog.info('Host video was paused by background, resuming camera');
         _resumeCameraWithRetry();
+        _restoreUserAudioStateAfterResume();
       } else if (_isHost.value) {
-        IsmLiveLog.info('Host resumed from background - video was not paused');
+        IsmLiveLog.info(
+            'Host resumed from background - restoring user media state');
+        _restoreUserMediaStateAfterRejoin();
       } else {
         IsmLiveLog.info('Viewer resumed from background');
       }
@@ -472,6 +498,34 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       _notifyHostBack();
       // Background notification hiding removed as per requirement
     });
+  }
+
+  /// After a rejoin, [enableMyVideo] unconditionally publishes camera + mic and
+  /// sets [videoOn]/[audioOn] to true. This method reverts those flags and the
+  /// underlying tracks back to whatever the user chose before backgrounding.
+  void _restoreUserMediaStateAfterRejoin() {
+    if (!_isHost.value) return;
+
+    if (!_userVideoOnBeforeBackground && _controller.videoOn) {
+      IsmLiveLog.info(
+          'Restoring user video state: was OFF before background, disabling camera');
+      _controller.toggleVideo(value: false);
+    }
+
+    _restoreUserAudioStateAfterResume();
+  }
+
+  /// Shared audio-state restore used by both the rejoin and non-rejoin resume
+  /// paths. After a rejoin [enableMyVideo] + [toggleAudio(value:true)] always
+  /// turn the mic on; this reverts that if the user had it muted.
+  void _restoreUserAudioStateAfterResume() {
+    if (!_isHost.value) return;
+
+    if (!_userAudioOnBeforeBackground && _controller.audioOn) {
+      IsmLiveLog.info(
+          'Restoring user audio state: was OFF before background, muting mic');
+      _controller.toggleAudio(value: false);
+    }
   }
 
   void _resumeCameraWithRetry() {
