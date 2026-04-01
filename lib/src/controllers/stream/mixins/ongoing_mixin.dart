@@ -163,7 +163,9 @@ mixin StreamOngoingMixin {
       }
 
       // MQTT disconnected: start interval mechanism (if not already running).
-      unawaited(_startMqttDisconnectedChatFallback(streamId));
+      if (!_controller.isInBackground) {
+        unawaited(_startMqttDisconnectedChatFallback(streamId));
+      }
     });
 
     // Start immediately if MQTT is already disconnected at join time.
@@ -179,6 +181,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> _startMqttDisconnectedChatFallback(String streamId) async {
+    if (_controller.isInBackground) return;
     if (IsmLiveApp.isMqttConnected) return;
     if (_controller._mqttChatFallbackTimer != null) return;
 

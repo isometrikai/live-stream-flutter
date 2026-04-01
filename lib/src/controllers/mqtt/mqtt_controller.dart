@@ -35,10 +35,38 @@ class IsmLiveMqttController extends GetxController {
   /// Broker handshake retries per connect (maps to mqtt_client maxConnectionAttempts).
   static const int _maxHandshakeAttempts = 100;
 
+  /// Grace period before surfacing a disconnected state, preventing UI flicker
+  /// from brief network hiccups where auto-reconnect recovers quickly.
+  static const Duration _disconnectDebounce = Duration(seconds: 3);
+
+  Timer? _disconnectDebounceTimer;
+
   /// Keeps [IsmLiveApp.isMqttConnected] aligned with the broker. Pass [connected]
   /// when known from callbacks/stream; otherwise reads [MqttHelper.isConnected].
+  ///
+  /// Disconnected (`false`) transitions are debounced by [_disconnectDebounce] so
+  /// that transient auto-reconnect cycles do not flicker the UI indicator.
+  /// Connected (`true`) transitions are applied immediately.
   void _publishMqttConnectivityToApp([bool? connected]) {
-    IsmLiveApp.isMqttConnected = connected ?? _mqttHelper.isConnected;
+    final isConnected = connected ?? _mqttHelper.isConnected;
+    _disconnectDebounceTimer?.cancel();
+    _disconnectDebounceTimer = null;
+    if (isConnected) {
+      IsmLiveApp.isMqttConnected = true;
+    } else {
+      _disconnectDebounceTimer = Timer(
+        _disconnectDebounce,
+        () => IsmLiveApp.isMqttConnected = false,
+      );
+    }
+  }
+
+  /// Sets disconnected state immediately, bypassing the debounce. Use for
+  /// intentional disconnects or unrecoverable failures.
+  void _setDisconnectedImmediate() {
+    _disconnectDebounceTimer?.cancel();
+    _disconnectDebounceTimer = null;
+    IsmLiveApp.isMqttConnected = false;
   }
 
   IsmLiveStreamController get _streamController {
@@ -180,7 +208,7 @@ class IsmLiveMqttController extends GetxController {
           await _runMqttInitialize();
         } catch (e, st) {
           IsmLiveLog.error('MQTT initialize failed: $e', st);
-          _publishMqttConnectivityToApp(false);
+          _setDisconnectedImmediate();
         }
       }
       return;
@@ -222,7 +250,7 @@ class IsmLiveMqttController extends GetxController {
     } catch (e, st) {
       IsmLiveLog.error('MQTT initialize failed: $e', st);
       _mqttInitialized = false;
-      _publishMqttConnectivityToApp(false);
+      _setDisconnectedImmediate();
     }
   }
 
@@ -280,7 +308,7 @@ class IsmLiveMqttController extends GetxController {
     _mqttEventSub = null;
     _mqttHelper.disconnect();
     _mqttInitialized = false;
-    _publishMqttConnectivityToApp(false);
+    _setDisconnectedImmediate();
   }
 
   void _pong() {
@@ -329,7 +357,7 @@ class IsmLiveMqttController extends GetxController {
     } catch (e, st) {
       IsmLiveLog.error('MQTT re-init failed: $e', st);
       _mqttInitialized = false;
-      _publishMqttConnectivityToApp(false);
+      _setDisconnectedImmediate();
       return false;
     } finally {
       _manualReconnectInFlight = false;
@@ -381,6 +409,7 @@ class IsmLiveMqttController extends GetxController {
 
   @override
   void onClose() {
+    _disconnectDebounceTimer?.cancel();
     _mqttConnectionSub?.cancel();
     _mqttEventSub?.cancel();
     unawaited(disconnect());
