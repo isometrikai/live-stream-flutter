@@ -203,14 +203,20 @@ class IsmLiveStreamRepository {
     required int limit,
     required int skip,
     String? searchTag,
-  }) =>
-      _apiWrapper.makeRequest(
-        '${IsmLiveApis.getStreamViewer}?streamId=$streamId&limit=$limit&skip=$skip&searchTag=$searchTag',
-        type: IsmLiveRequestType.get,
-        headers: IsmLiveUtility.tokenHeader(),
-        showLoader: false,
-        showDialog: false,
-      );
+  }) {
+    var url =
+        '${IsmLiveApis.getStreamViewer}?streamId=$streamId&limit=$limit&skip=$skip';
+    if (searchTag != null && searchTag.isNotEmpty) {
+      url += '&searchTag=$searchTag';
+    }
+    return _apiWrapper.makeRequest(
+      url,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
 
   Future<IsmLiveResponseModel> updatePresignedUrl({
     required bool showLoading,
