@@ -58,11 +58,6 @@ class IsmLiveStreamController extends GetxController
   RoomListener? get listener => _listener.value;
   set listener(RoomListener? value) => _listener.value = value;
 
-  // Background state for external access
-  final RxBool _isInBackground = false.obs;
-  @override
-  bool get isInBackground => _isInBackground.value;
-
   final RxList<Widget> _heartList = <Widget>[].obs;
   List<Widget> get heartList => _heartList;
   set heartList(List<Widget> value) => _heartList.value = value;

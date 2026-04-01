@@ -184,7 +184,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     if (state == AppLifecycleState.inactive) {
       IsmLiveLog.info('Marking inactive as background-like (lightweight)');
       _isInBackground.value = true;
-      _controller._isInBackground.value = true; // Sync with controller
       return;
     }
 
@@ -226,7 +225,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _handleAppResumed() {
     IsmLiveLog.info('App resumed from background');
     _isInBackground.value = false;
-    _controller._isInBackground.value = false; // Sync with controller
     _reconnectTimer?.cancel();
 
     if (_blockAutoReconnectAfterLifecycleDialog) {
@@ -332,7 +330,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _handleAppPaused() {
     IsmLiveLog.info('App paused - going to background');
     _isInBackground.value = true;
-    _controller._isInBackground.value = true; // Sync with controller
     // Stop chat polling immediately while backgrounded.
     _controller.pauseMqttDisconnectedChatFallback();
 
@@ -349,7 +346,6 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   void _handleAppHidden() {
     IsmLiveLog.info('App hidden');
     _isInBackground.value = true;
-    _controller._isInBackground.value = true; // Sync with controller
     // Stop chat polling immediately while backgrounded.
     _controller.pauseMqttDisconnectedChatFallback();
     _handleAppPaused();
