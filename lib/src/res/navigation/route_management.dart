@@ -7,6 +7,21 @@ import 'package:image_picker/image_picker.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 abstract class IsmLiveRouteManagement {
+  static void _trackScreen(
+    String screenName, {
+    Map<String, dynamic>? props,
+  }) {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.screenView,
+      properties: [
+        <String, dynamic>{
+          'screen': screenName,
+          if (props != null) ...props,
+        }
+      ],
+    );
+  }
+
   // static void goToMyMeetingsView(IsmLiveStreamConfig configuration) {
   //   Get.toNamed<void>(IsLiveRoutes.myMeetingsView, arguments: configuration);
   // }
@@ -23,6 +38,18 @@ abstract class IsmLiveRouteManagement {
     String? streamImage,
     bool reJoin = false,
   }) async {
+    _trackScreen(
+      'IsmLiveStreamView',
+      props: {
+        'stream_id': streamId,
+        'is_host': isHost,
+        'is_new_stream': isNewStream,
+        'is_scrolling': isScrolling,
+        'is_schedule': isSchedule,
+        'is_interactive': isInteractive,
+        're_join': reJoin,
+      },
+    );
     print('initializeAndJoinStream reJoin checkinggg -------');
     print(
         'initializeAndJoinStream goToStreamView called with reJoin=$reJoin, isHost=$isHost, isNewStream=$isNewStream');
@@ -79,6 +106,12 @@ abstract class IsmLiveRouteManagement {
     if (Get.currentRoute == IsmLiveRoutes.endStream) {
       return;
     }
+    _trackScreen(
+      'IsmLiveEndStream',
+      props: {
+        'stream_id': streamId,
+      },
+    );
     IsmLiveStreamBinding().dependencies();
     IsmLiveRoute.pushReplacement(IsmLiveEndStream(streamId: streamId));
   }
@@ -87,6 +120,15 @@ abstract class IsmLiveRouteManagement {
     bool popPrevious = false,
     IsmLiveStreamDataModel? editStreamData,
   }) {
+    _trackScreen(
+      'IsmGoLiveView',
+      props: {
+        'pop_previous': popPrevious,
+        'is_edit': editStreamData != null,
+        'stream_id': editStreamData?.streamId ?? '',
+        'event_id': editStreamData?.eventId ?? '',
+      },
+    );
     // Only initialize binding if controller is not already registered
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
@@ -123,21 +165,30 @@ abstract class IsmLiveRouteManagement {
   }
 
   static void goToAddProduct() {
+    _trackScreen('IsmLiveAddProduct');
     IsmLiveStreamBinding().dependencies();
     IsmLiveRoute.push(const IsmLiveAddProduct());
   }
 
   static void goToTagProduct() {
+    _trackScreen('IsmLiveTagProducts');
     IsmLiveStreamBinding().dependencies();
     IsmLiveRoute.push(const IsmLiveTagProducts());
   }
 
   static Future<void> goToRestreamSettingsView(IsmLiveRestreamType type) async {
+    _trackScreen(
+      'IsmLiveRestreamSettingsView',
+      props: {
+        'type': type.name,
+      },
+    );
     IsmLiveStreamBinding().dependencies();
     await IsmLiveRoute.push(IsmLiveRestreamSettingsView(type: type));
   }
 
   static void goToRestreamView() {
+    _trackScreen('IsmLiveRestreamView');
     IsmLiveStreamBinding().dependencies();
     IsmLiveRoute.push(const IsmLiveRestreamView());
   }
@@ -146,6 +197,13 @@ abstract class IsmLiveRouteManagement {
     bool isPhotoRequired,
     bool isOnlyImage,
   ) async {
+    _trackScreen(
+      'CameraScreenView',
+      props: {
+        'is_photo_required': isPhotoRequired,
+        'is_only_image': isOnlyImage,
+      },
+    );
     if (IsmLiveUtility.cameras.isNotEmpty) {
       IsmLiveStreamBinding().dependencies();
       return await IsmLiveRoute.push(
@@ -163,6 +221,13 @@ abstract class IsmLiveRouteManagement {
   }
 
   static void goToCoinsPlanWallet({bool fromStream = false}) {
+    _trackScreen(
+      'CoinsPlansWalletView',
+      props: {
+        'from_stream': fromStream,
+        'presentation': fromStream ? 'bottom_sheet' : 'push',
+      },
+    );
     CoinsPlansWalletBinding().dependencies();
     if (fromStream) {
       IsmLiveUtility.openBottomSheet(
@@ -183,6 +248,13 @@ abstract class IsmLiveRouteManagement {
   }
 
   static void goToCoinTransaction({bool fromStream = false}) {
+    _trackScreen(
+      'IsmLiveCoinTransactions',
+      props: {
+        'from_stream': fromStream,
+        'presentation': fromStream ? 'bottom_sheet' : 'push',
+      },
+    );
     CoinsPlansWalletBinding().dependencies();
     if (fromStream) {
       IsmLiveUtility.openBottomSheet(
@@ -211,6 +283,13 @@ abstract class IsmLiveRouteManagement {
     Future<void> Function()? onLoadMore,
   }) async {
     if (recordings.isEmpty) return;
+    _trackScreen(
+      'IsmLiveStreamRecordingPlayerView',
+      props: {
+        'initial_index': initialIndex,
+        'recordings_count': recordings.length,
+      },
+    );
     await IsmLiveUtility.navigatorKey.currentState?.push<void>(
       MaterialPageRoute<void>(
         builder: (_) => IsmLiveStreamRecordingPlayerView(
@@ -228,6 +307,15 @@ abstract class IsmLiveRouteManagement {
 class LiveStreamRoute {
   /// Opens the Go Live view, handling all bindings and navigation internally.
   static Future<void> goLiveView() async {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.screenView,
+      properties: [
+        {
+          'screen': 'IsmGoLiveView',
+          'presentation': 'navigator_push',
+        }
+      ],
+    );
     // Ensure bindings are set up
     IsmLiveStreamBinding().dependencies();
     // Push the Go Live view using the global navigator key
@@ -239,6 +327,15 @@ class LiveStreamRoute {
   }
 
   static Future<void> coinsPlansWalletView() async {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.screenView,
+      properties: [
+        {
+          'screen': 'CoinsPlansWalletView',
+          'presentation': 'navigator_push',
+        }
+      ],
+    );
     // Ensure bindings are set up
     CoinsPlansWalletBinding().dependencies();
     // Push the Coins Plans Wallet view using the global navigator key

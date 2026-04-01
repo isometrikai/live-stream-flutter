@@ -77,7 +77,7 @@ class IsmLiveApiWrapper {
     if (await IsmLiveUtility.isNetworkAvailable) {
       try {
         // Handles API call
-        var start = DateTime.now();
+        final start = DateTime.now();
         var response = await _handleRequest(
           uri,
           type: type,
@@ -93,6 +93,49 @@ class IsmLiveApiWrapper {
           showDialog: showDialog,
           startTime: start,
         );
+
+        // Sanitized API result analytics (no response body, no payload).
+        // Must never break API flows.
+        try {
+          final durationMs = DateTime.now().difference(start).inMilliseconds;
+          String? errorSummary;
+          if (res.hasError) {
+            try {
+              final decoded = res.decode();
+              final candidate = (decoded['error'] ??
+                      decoded['message'] ??
+                      decoded['msg'] ??
+                      decoded['reason'])
+                  ?.toString();
+              if (candidate != null && candidate.trim().isNotEmpty) {
+                errorSummary = candidate.trim();
+                if (errorSummary.length > 160) {
+                  errorSummary = errorSummary.substring(0, 160);
+                }
+              }
+            } catch (_) {
+              // ignore: best-effort only
+            }
+          }
+
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.apiResult,
+            properties: [
+              {
+                'path': api,
+                'base_url': baseUrl ?? IsmLiveApis.baseUrl,
+                'method': type.name.toUpperCase(),
+                'status_code': res.statusCode,
+                'has_error': res.hasError,
+                'duration_ms': durationMs,
+                if (errorSummary != null) 'error': errorSummary,
+              }
+            ],
+          );
+        } catch (_) {
+          // ignore: analytics must never impact API calls
+        }
+
         if (showLoader) {
           IsmLiveUtility.closeLoader();
         }
@@ -321,8 +364,11 @@ class IsmLiveApiWrapper {
     required DateTime startTime,
   }) async {
     var diff = DateTime.now().difference(startTime).inMilliseconds / 1000;
+    // Production-safe logging: do not print full response bodies.
+    // (Bodies may contain PII, tokens, and can be very large.)
     IsmLiveLog(
-        '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}\n${response.body}');
+      '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}',
+    );
 
     switch (response.statusCode) {
       case 200:
@@ -399,8 +445,8 @@ class IsmLiveApiWrapper {
   }) {
     String escapeSingleQuotes(String s) => s.replaceAll("'", r"'\''");
 
-    final buffer = StringBuffer("curl");
-    buffer.write(" -X ${_curlMethod(type)}");
+    final buffer = StringBuffer('curl');
+    buffer.write(' -X ${_curlMethod(type)}');
     buffer.write(" '${escapeSingleQuotes(uri.toString())}'");
 
     for (final entry in headers.entries) {

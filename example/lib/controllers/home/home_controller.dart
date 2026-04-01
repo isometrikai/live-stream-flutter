@@ -10,6 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/wrapper/models/event_model.dart';
 
+class _ExampleAnalyticsDelegate extends IsmLiveAnalyticsDelegate {
+  const _ExampleAnalyticsDelegate();
+
+  @override
+  void trackEvent(String eventName, {List<Map<String, dynamic>>? properties}) {
+    IsmLiveLog.info('SDK analytics: $eventName props=$properties');
+  }
+}
+
 class HomeController extends GetxController {
   DBWrapper get dbWrapper => Get.find<DBWrapper>();
 
@@ -20,6 +29,7 @@ class HomeController extends GetxController {
 
   late IsmLiveConfigData configData;
   bool _isLoggingOut = false;
+  StreamSubscription<EventModel>? _streamSubscription;
 
   @override
   Future<void> onInit() async {
@@ -60,332 +70,338 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      productionMode: true,
-      productStream: false,
-      enableFreeGift: false,
-      hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
-              imageUrl, description) async =>
-          true,
-      // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
-      //   defaultMessageField: defaultMessageField,
-      // ),
-
-      restrictProfileSheetOnProfileClick: true,
-      // goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
-      // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-      //   goLiveButtonBuilder: _buildCustomGoLiveButton,
-      //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-      // ),
-      // chatMessageBuilder: (context, message, defaultChild) {
-      //   // Change background color for host messages
-
-      //   return defaultChild; // Use default for others
-      // },
-      // chatItemBgColorCallback: (message) {
-      //   // ✅ New name
-      //   if (message.sentByHost) {
-      //     return Colors.red.withOpacity(0.4);
-      //   }
-      //   return null;
-      // },
-
-      // messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
-      // cartBuilder: (context, controller) => Container(
-      //   padding: const EdgeInsets.all(8),
-      //   decoration: const BoxDecoration(
-      //     shape: BoxShape.circle,
-      //     color: Colors.white24,
-      //   ),
-      //   child: const Icon(
-      //     Icons.shopping_cart_outlined,
-      //     color: Colors.white,
-      //     size: 16,
-      //   ),
-      // ),
-      // customBottomSheetBuilder:
-      //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
-      //   return Container(
-      //     padding: EdgeInsets.all(20),
-      //     decoration: BoxDecoration(
-      //       color: Colors.white,
-      //       borderRadius: BorderRadius.circular(20),
-      //     ),
-      //     child: Column(
-      //       mainAxisSize: MainAxisSize.min,
-      //       children: [
-      //         Text(
-      //           title,
-      //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      //         ),
-      //         SizedBox(height: 20),
-      //         Row(
-      //           children: [
-      //             Expanded(
-      //               child: ElevatedButton(
-      //                 onPressed: onLeft,
-      //                 child: Text(leftLabel),
-      //               ),
-      //             ),
-      //             SizedBox(width: 10),
-      //             Expanded(
-      //               child: ElevatedButton(
-      //                 onPressed: onRight,
-      //                 child: Text(rightLabel),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   );
-      // },
-      bottomSheetBorderRadius:
-          const BorderRadius.vertical(top: Radius.circular(12)),
-      streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
-        onControlOption: (context, option, recording) async {
-          await showModalBottomSheet<void>(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            builder: (sheetContext) => Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Dummy bottom sheet text',
-                    style: Theme.of(sheetContext).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Clicked option: ${option.name}',
-                    style: Theme.of(sheetContext).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Recording id: ${recording.streamId}',
-                    style: Theme.of(sheetContext).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-          );
+        productionMode: true,
+        productStream: false,
+        enableFreeGift: false,
+        analyticsDelegate: const _ExampleAnalyticsDelegate(),
+        enabledAnalyticsEvents: <String>{
+          IsmLiveAnalyticsEvent.sdkInitialize,
+          IsmLiveAnalyticsEvent.streamConnectAttempt,
+          IsmLiveAnalyticsEvent.streamInitializeAndJoinAttempt,
+          IsmLiveAnalyticsEvent.streamInitializeAndJoinSuccess,
+          IsmLiveAnalyticsEvent.streamInitializeAndJoinFailure,
+          IsmLiveAnalyticsEvent.streamScroll,
+          IsmLiveAnalyticsEvent.streamEndRequested,
+          IsmLiveAnalyticsEvent.addCoinsClick,
+          IsmLiveAnalyticsEvent.giftClick,
         },
-      ),
+        hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
+                imageUrl, description) async =>
+            true,
+        // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+        //   defaultMessageField: defaultMessageField,
+        // ),
 
-      // moderatorsListCallback: (context, streamId, isHost, isModerator,
-      //     moderatorsList, hostDetails) async {
-      //   // Custom moderators list implementation
-      //   return true;
-      // },
+        restrictProfileSheetOnProfileClick: true,
+        // goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
+        // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+        //   goLiveButtonBuilder: _buildCustomGoLiveButton,
+        //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+        // ),
+        // chatMessageBuilder: (context, message, defaultChild) {
+        //   // Change background color for host messages
 
-      // topViewersListCallback: (context, viewerList, streamId, isHost,
-      //     isModerator, streamViewersList) async {
-      //   // Simple temporary viewers list implementation
-      //   showModalBottomSheet(
-      //     context: context,
-      //     shape: const RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      //     ),
-      //     builder: (context) => Container(
-      //       padding: const EdgeInsets.all(16),
-      //       child: Column(
-      //         mainAxisSize: MainAxisSize.min,
-      //         children: [
-      //           // Header
-      //           Container(
-      //             width: 40,
-      //             height: 4,
-      //             decoration: BoxDecoration(
-      //               color: Colors.grey[300],
-      //               borderRadius: BorderRadius.circular(2),
-      //             ),
-      //           ),
-      //           const SizedBox(height: 16),
-      //           Text(
-      //             'Viewers (${streamViewersList.length})',
-      //             style: const TextStyle(
-      //               fontSize: 18,
-      //               fontWeight: FontWeight.bold,
-      //             ),
-      //           ),
-      //           const SizedBox(height: 16),
-      //           // Viewers list
-      //           Flexible(
-      //             child: ListView.builder(
-      //               shrinkWrap: true,
-      //               itemCount: streamViewersList.length,
-      //               itemBuilder: (context, index) {
-      //                 final viewer = streamViewersList[index];
-      //                 return ListTile(
-      //                   leading: CircleAvatar(
-      //                     child: viewer.imageUrl?.isEmpty != false
-      //                         ? Text(viewer.userName
-      //                                 .substring(0, 1)
-      //                                 .toUpperCase() ??
-      //                             'U')
-      //                         : null,
-      //                   ),
-      //                   title: Text(viewer.userName ?? 'Unknown User'),
-      //                   subtitle: Text(viewer.name ?? ''),
-      //                   trailing: ElevatedButton(
-      //                     onPressed: () {
-      //                       // Simple action - you can customize this
-      //                       if (isHost || isModerator) {
-      //                         Get.find<IsmLiveStreamController>().kickoutViewer(
-      //                           streamId: streamId,
-      //                           viewerId: viewer?.userId ?? '',
-      //                         );
-      //                         Navigator.pop(context);
-      //                       }
-      //                     },
-      //                     style: ElevatedButton.styleFrom(
-      //                       backgroundColor: Colors.red,
-      //                       foregroundColor: Colors.white,
-      //                       minimumSize: const Size(60, 30),
-      //                     ),
-      //                     child: Text(
-      //                       (isHost || isModerator) ? 'Kick' : 'View',
-      //                       style: const TextStyle(fontSize: 12),
-      //                     ),
-      //                   ),
-      //                 );
-      //               },
-      //             ),
-      //           ),
-      //           const SizedBox(height: 16),
-      //         ],
-      //       ),
-      //     ),
-      //   );
-
-      //   return true; // Prevent default viewers sheet
-      // },
-
-      // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
-      //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
-      // },
-      // Custom Go Live header with host app branding
-      // Custom Go Live button with host app branding
-      // Configure dynamic font family - host app can provide their font name
-      // fontFamily: 'Satoshi', // Example: Use Poppins font family
-      // Enable free gifts - amount will be sent as 0
-      ecomConfigure: IsmLiveEcomConfigure(
-        // onGoLiveClick:
-        //     (context, isScheduledStream, streamDetails, goLiveData) async {
-        //   // Example: Handle image scenario
-        //   if (goLiveData.pickedImage != null) {
-        //     IsmLiveLog.info(
-        //         'User picked image: ${goLiveData.pickedImage!.path}');
-        //   }
+        //   return defaultChild; // Use default for others
         // },
-        buyNowButtonBuilder:
-            (context, streamId, hasPinnedProduct, isHost, onTap) => SizedBox(
-          width: IsmLiveDimens.oneHundredTwenty,
-          height: IsmLiveDimens.fifty,
-          child: IsmLiveButton.secondary(
-            label: 'Buy it',
-            onTap: onTap,
-          ),
-        ),
-        hostArrowButtonsSize: 56,
-        pinItemCallback: (direction, context) {},
-        hasPinnedProductGetter: () {
-          // Return true if a product is currently pinned, false otherwise
-          // This will be called every time the UI needs to check the pinned status
-          return true; // Replace with your actual logic to check if product is pinned
-        },
-        // pinnedProductBuilder: (context, controller) => SizedBox(
-        //   width: 150,
-        //   height: 200,
-        //   child: Container(
-        //     color: Colors.red,
+        // chatItemBgColorCallback: (message) {
+        //   // ✅ New name
+        //   if (message.sentByHost) {
+        //     return Colors.red.withOpacity(0.4);
+        //   }
+        //   return null;
+        // },
+
+        // messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
+        // cartBuilder: (context, controller) => Container(
+        //   padding: const EdgeInsets.all(8),
+        //   decoration: const BoxDecoration(
+        //     shape: BoxShape.circle,
+        //     color: Colors.white24,
+        //   ),
+        //   child: const Icon(
+        //     Icons.shopping_cart_outlined,
+        //     color: Colors.white,
+        //     size: 16,
         //   ),
         // ),
-      ),
-      // Custom GoLive button click handler with comprehensive data
+        // customBottomSheetBuilder:
+        //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
+        //   return Container(
+        //     padding: EdgeInsets.all(20),
+        //     decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       borderRadius: BorderRadius.circular(20),
+        //     ),
+        //     child: Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: [
+        //         Text(
+        //           title,
+        //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        //         ),
+        //         SizedBox(height: 20),
+        //         Row(
+        //           children: [
+        //             Expanded(
+        //               child: ElevatedButton(
+        //                 onPressed: onLeft,
+        //                 child: Text(leftLabel),
+        //               ),
+        //             ),
+        //             SizedBox(width: 10),
+        //             Expanded(
+        //               child: ElevatedButton(
+        //                 onPressed: onRight,
+        //                 child: Text(rightLabel),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // },
+        bottomSheetBorderRadius:
+            const BorderRadius.vertical(top: Radius.circular(12)),
+        streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+          onControlOption: (context, option, recording) async {
+            await showModalBottomSheet<void>(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (sheetContext) => Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Dummy bottom sheet text',
+                      style: Theme.of(sheetContext).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Clicked option: ${option.name}',
+                      style: Theme.of(sheetContext).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Recording id: ${recording.streamId}',
+                      style: Theme.of(sheetContext).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
 
-      // paidStream: false
-      // hostOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.product,
-      //   IsmLiveStreamOption.rotateCamera,
-      //   IsmLiveStreamOption.settings,
-      // ],
-      // rtmpOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.product,
-      // ],
-      // viewersOptions: [
-      //   IsmLiveStreamOption.gift,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.speaker,
-      //   IsmLiveStreamOption.heart,
-      // ],
-      // ismLiveButtonConfig: IsmLiveButtonConfig(
-      //   primaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(
-      //     title: label,
-      //     onPress: onTap,
-      //   ),
-      //   secondaryBuilder: (context,
-      //           {required label,
-      //           onTap,
-      //           required small,
-      //           required showBorder,
-      //           icon,
-      //           required secondary}) =>
-      //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
-      // ),
-      //   streamOptionsBgGradient : const LinearGradient(
-      //     begin: Alignment.bottomCenter,
-      //     end: Alignment.topCenter,
-      //     colors: [
-      //       ColorsValue.gradientStart,
-      //       ColorsValue.gradientEnd,
-      //     ],
-      //   ),
-      // liveAnalyticsOptions: [
-      //   IsmLiveAnalyticsOptions.hearts,
-      //   IsmLiveAnalyticsOptions.viewers,
-      //   IsmLiveAnalyticsOptions.followers,
-      //   IsmLiveAnalyticsOptions.earnings,
-      //   IsmLiveAnalyticsOptions.duration,
-      // ]
-      // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
-      // addProductViewBuilder: (
-      //   BuildContext context
-      // ) {
-      //   return MyCustomAddProductView(
+        // moderatorsListCallback: (context, streamId, isHost, isModerator,
+        //     moderatorsList, hostDetails) async {
+        //   // Custom moderators list implementation
+        //   return true;
+        // },
 
-      //   );
-      // },
-    );
+        // topViewersListCallback: (context, viewerList, streamId, isHost,
+        //     isModerator, streamViewersList) async {
+        //   // Simple temporary viewers list implementation
+        //   showModalBottomSheet(
+        //     context: context,
+        //     shape: const RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        //     ),
+        //     builder: (context) => Container(
+        //       padding: const EdgeInsets.all(16),
+        //       child: Column(
+        //         mainAxisSize: MainAxisSize.min,
+        //         children: [
+        //           // Header
+        //           Container(
+        //             width: 40,
+        //             height: 4,
+        //             decoration: BoxDecoration(
+        //               color: Colors.grey[300],
+        //               borderRadius: BorderRadius.circular(2),
+        //             ),
+        //           ),
+        //           const SizedBox(height: 16),
+        //           Text(
+        //             'Viewers (${streamViewersList.length})',
+        //             style: const TextStyle(
+        //               fontSize: 18,
+        //               fontWeight: FontWeight.bold,
+        //             ),
+        //           ),
+        //           const SizedBox(height: 16),
+        //           // Viewers list
+        //           Flexible(
+        //             child: ListView.builder(
+        //               shrinkWrap: true,
+        //               itemCount: streamViewersList.length,
+        //               itemBuilder: (context, index) {
+        //                 final viewer = streamViewersList[index];
+        //                 return ListTile(
+        //                   leading: CircleAvatar(
+        //                     child: viewer.imageUrl?.isEmpty != false
+        //                         ? Text(viewer.userName
+        //                                 .substring(0, 1)
+        //                                 .toUpperCase() ??
+        //                             'U')
+        //                         : null,
+        //                   ),
+        //                   title: Text(viewer.userName ?? 'Unknown User'),
+        //                   subtitle: Text(viewer.name ?? ''),
+        //                   trailing: ElevatedButton(
+        //                     onPressed: () {
+        //                       // Simple action - you can customize this
+        //                       if (isHost || isModerator) {
+        //                         Get.find<IsmLiveStreamController>().kickoutViewer(
+        //                           streamId: streamId,
+        //                           viewerId: viewer?.userId ?? '',
+        //                         );
+        //                         Navigator.pop(context);
+        //                       }
+        //                     },
+        //                     style: ElevatedButton.styleFrom(
+        //                       backgroundColor: Colors.red,
+        //                       foregroundColor: Colors.white,
+        //                       minimumSize: const Size(60, 30),
+        //                     ),
+        //                     child: Text(
+        //                       (isHost || isModerator) ? 'Kick' : 'View',
+        //                       style: const TextStyle(fontSize: 12),
+        //                     ),
+        //                   ),
+        //                 );
+        //               },
+        //             ),
+        //           ),
+        //           const SizedBox(height: 16),
+        //         ],
+        //       ),
+        //     ),
+        //   );
 
-    StreamSubscription<EventModel>? _streamSubscription;
+        //   return true; // Prevent default viewers sheet
+        // },
 
-    _streamSubscription = IsmLiveApp.addListener((event) {
-      IsmLiveLog.info('Event: ${event.toString()}');
-    });
+        // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
+        //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
+        // },
+        // Custom Go Live header with host app branding
+        // Custom Go Live button with host app branding
+        // Configure dynamic font family - host app can provide their font name
+        // fontFamily: 'Satoshi', // Example: Use Poppins font family
+        // Enable free gifts - amount will be sent as 0
+        ecomConfigure: IsmLiveEcomConfigure(
+          // onGoLiveClick:
+          //     (context, isScheduledStream, streamDetails, goLiveData) async {
+          //   // Example: Handle image scenario
+          //   if (goLiveData.pickedImage != null) {
+          //     IsmLiveLog.info(
+          //         'User picked image: ${goLiveData.pickedImage!.path}');
+          //   }
+          // },
+          buyNowButtonBuilder:
+              (context, streamId, hasPinnedProduct, isHost, onTap) => SizedBox(
+            width: IsmLiveDimens.oneHundredTwenty,
+            height: IsmLiveDimens.fifty,
+            child: IsmLiveButton.secondary(
+              label: 'Buy it',
+              onTap: onTap,
+            ),
+          ),
+          hostArrowButtonsSize: 56,
+          pinItemCallback: (direction, context) {},
+          hasPinnedProductGetter: () {
+            // Return true if a product is currently pinned, false otherwise
+            // This will be called every time the UI needs to check the pinned status
+            return true; // Replace with your actual logic to check if product is pinned
+          },
+          // pinnedProductBuilder: (context, controller) => SizedBox(
+          //   width: 150,
+          //   height: 200,
+          //   child: Container(
+          //     color: Colors.red,
+          //   ),
+          // ),
+        ),
+        // Custom GoLive button click handler with comprehensive data
+
+        // paidStream: false
+        // hostOptions: [
+        //   IsmLiveStreamOption.bars,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.product,
+        //   IsmLiveStreamOption.rotateCamera,
+        //   IsmLiveStreamOption.settings,
+        // ],
+        // rtmpOptions: [
+        //   IsmLiveStreamOption.bars,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.product,
+        // ],
+        // viewersOptions: [
+        //   IsmLiveStreamOption.gift,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.speaker,
+        //   IsmLiveStreamOption.heart,
+        // ],
+        // ismLiveButtonConfig: IsmLiveButtonConfig(
+        //   primaryBuilder: (context,
+        //           {required label,
+        //           onTap,
+        //           required small,
+        //           required showBorder,
+        //           icon,
+        //           required secondary}) =>
+        //       CustomButton(
+        //     title: label,
+        //     onPress: onTap,
+        //   ),
+        //   secondaryBuilder: (context,
+        //           {required label,
+        //           onTap,
+        //           required small,
+        //           required showBorder,
+        //           icon,
+        //           required secondary}) =>
+        //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
+        // ),
+        //   streamOptionsBgGradient : const LinearGradient(
+        //     begin: Alignment.bottomCenter,
+        //     end: Alignment.topCenter,
+        //     colors: [
+        //       ColorsValue.gradientStart,
+        //       ColorsValue.gradientEnd,
+        //     ],
+        //   ),
+        // liveAnalyticsOptions: [
+        //   IsmLiveAnalyticsOptions.hearts,
+        //   IsmLiveAnalyticsOptions.viewers,
+        //   IsmLiveAnalyticsOptions.followers,
+        //   IsmLiveAnalyticsOptions.earnings,
+        //   IsmLiveAnalyticsOptions.duration,
+        // ]
+        // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
+        // addProductViewBuilder: (
+        //   BuildContext context
+        // ) {
+        //   return MyCustomAddProductView(
+
+        //   );
+        // },
+        );
 
     // Set up listener for MQTT events from IsmLiveApp
     // _streamSubscription = IsmLiveApp.addListener((event) {
@@ -400,6 +416,13 @@ class HomeController extends GetxController {
     IsmLiveUtility.updateLater(() {
       kConfigData.value = configData;
     });
+  }
+
+  @override
+  void onClose() {
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+    super.onClose();
   }
 
   void logout(BuildContext context) async {

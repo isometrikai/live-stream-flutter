@@ -205,7 +205,7 @@ class IsmLiveStreamRepository {
     String? searchTag,
   }) =>
       _apiWrapper.makeRequest(
-        '${IsmLiveApis.getStreamViewer}?streamId=$streamId&limit=$limit&skip=$skip',
+        '${IsmLiveApis.getStreamViewer}?streamId=$streamId&limit=$limit&skip=$skip&searchTag=$searchTag',
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: false,
@@ -701,13 +701,11 @@ class IsmLiveStreamRepository {
       'customType': customType,
       'senderId': senderId,
     };
-    return _apiWrapper.makeRequest(
-      IsmLiveApis.sendHearts,
-      type: IsmLiveRequestType.post,
-      payload: payload,
-      headers: IsmLiveUtility.tokenHeader(),
-      showLoader: false
-    );
+    return _apiWrapper.makeRequest(IsmLiveApis.sendHearts,
+        type: IsmLiveRequestType.post,
+        payload: payload,
+        headers: IsmLiveUtility.tokenHeader(),
+        showLoader: false);
   }
 
   Future<IsmLiveResponseModel> streamAnalytics({
