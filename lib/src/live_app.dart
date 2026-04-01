@@ -596,8 +596,13 @@ class IsmLiveApp extends StatefulWidget {
   }
 
   static Future<void> endStream(
-          {required BuildContext context, bool isSchedule = false}) async =>
-      await IsmLiveDelegate.endStream(context: context, isSchedule: isSchedule);
+          {required BuildContext context,
+          bool isSchedule = false,
+          bool showViewerLeaveDialog = false}) async =>
+      await IsmLiveDelegate.endStream(
+          context: context,
+          isSchedule: isSchedule,
+          showViewerLeaveDialog: showViewerLeaveDialog);
 
   static void handleMqttEvent(EventModel payload) {
     assert(

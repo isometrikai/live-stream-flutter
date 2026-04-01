@@ -14,6 +14,7 @@ mixin StreamSheetMixin {
     required bool isHost,
     required String streamId,
     required BuildContext context,
+    bool showViewerLeaveDialog = false,
   }) async {
     FocusScope.of(context).unfocus();
 
@@ -47,10 +48,28 @@ mixin StreamSheetMixin {
         backgroundColor: _sheetBackgroundColor(context),
       );
     } else {
-      await _controller.disconnectStream(
-        isHost: isHost,
-        streamId: streamId,
-      );
+      if (showViewerLeaveDialog) {
+        await IsmLiveUtility.openCustomBottomSheet(
+          title: IsmLiveStrings.areYouSureLeaveStream,
+          leftLabel: IsmLiveStrings.cancel,
+          rightLabel: IsmLiveStrings.leaveStream,
+          onLeft: IsmLiveRoute.pop,
+          onRight: () async {
+            IsmLiveRoute.pop();
+            await _controller.disconnectStream(
+              isHost: isHost,
+              streamId: streamId,
+            );
+          },
+          isDismissible: false,
+          backgroundColor: _sheetBackgroundColor(context),
+        );
+      } else {
+        await _controller.disconnectStream(
+          isHost: isHost,
+          streamId: streamId,
+        );
+      }
     }
   }
 
