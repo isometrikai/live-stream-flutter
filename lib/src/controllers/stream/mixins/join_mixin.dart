@@ -1514,7 +1514,9 @@ mixin StreamJoinMixin {
         // Route audio to the loudspeaker. Mobile WebRTC defaults to the
         // earpiece; live-stream participants expect loudspeaker output.
         // The helper respects external devices (Bluetooth/wired) on Android.
-        await _ensureLoudspeakerRouting();
+        // withRetry: true schedules a second attempt ~800ms later to guard
+        // against WebRTC resetting the audio route when remote tracks arrive.
+        await _ensureLoudspeakerRouting(withRetry: true);
 
         // Store the token for background lifecycle reconnection
         _controller.storeToken(token);

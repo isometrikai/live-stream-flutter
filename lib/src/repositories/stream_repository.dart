@@ -711,6 +711,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.post,
         payload: payload,
         headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
         showLoader: false);
   }
 
