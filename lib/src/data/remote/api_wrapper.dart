@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:http/http.dart'
     show Client, Response, MultipartRequest, MultipartFile;
 
@@ -366,9 +367,19 @@ class IsmLiveApiWrapper {
     var diff = DateTime.now().difference(startTime).inMilliseconds / 1000;
     // Production-safe logging: do not print full response bodies.
     // (Bodies may contain PII, tokens, and can be very large.)
-    IsmLiveLog(
-      '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}',
-    );
+
+    if (kDebugMode) {
+      final body = utf8.decode(response.bodyBytes);
+      IsmLiveLog(
+        '[Response Debug] - ${response.statusCode} ${response.request?.url}\n'
+        'Headers: ${response.headers}\n'
+        'Body:\n$body',
+      );
+    } else {
+      IsmLiveLog(
+        '[Response] - ${diff}s ${response.statusCode} ${response.request?.url}',
+      );
+    }
 
     switch (response.statusCode) {
       case 200:
@@ -450,7 +461,8 @@ class IsmLiveApiWrapper {
     buffer.write(" '${escapeSingleQuotes(uri.toString())}'");
 
     for (final entry in headers.entries) {
-      buffer.write(" -H '${escapeSingleQuotes(entry.key)}: ${escapeSingleQuotes(entry.value)}'");
+      buffer.write(
+          " -H '${escapeSingleQuotes(entry.key)}: ${escapeSingleQuotes(entry.value)}'");
     }
 
     if (type == IsmLiveRequestType.upload) {
