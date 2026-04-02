@@ -29,7 +29,8 @@ class IsmLiveApp extends StatefulWidget {
   final bool enableLog;
   final VoidCallback? onLogout;
 
-  static bool get isInitialized => _initialized;
+  static bool get isInitialized =>
+      _initialized && IsmLiveUtility.hasValidUserToken;
 
   static bool get isMqttConnected => IsmLiveHandler.isMqttConnected;
   static set isMqttConnected(bool value) =>

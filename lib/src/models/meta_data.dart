@@ -12,6 +12,7 @@ class IsmLiveMetaData {
     this.profilePic,
     this.firstName,
     this.lastName,
+    this.userName,
     this.parentMessageBody,
     this.rawJson,
   });
@@ -22,6 +23,7 @@ class IsmLiveMetaData {
         profilePic: map['profilePic'] as String?,
         firstName: map['firstName'] as String?,
         lastName: map['lastName'] as String?,
+        userName: map['userName'] as String?,
         openStream: map['open stream'] as bool? ?? false,
         secretMessage: map['secretMessage'] as bool? ?? false,
         isPk: map['isPk'] as bool? ?? false,
@@ -37,6 +39,7 @@ class IsmLiveMetaData {
   final String? profilePic;
   final String? firstName;
   final String? lastName;
+  final String? userName;
   final bool openStream;
   final bool secretMessage;
   final bool isPk;
@@ -49,6 +52,7 @@ class IsmLiveMetaData {
     String? profilePic,
     String? firstName,
     String? lastName,
+    String? userName,
     bool? openStream,
     bool? secretMessage,
     bool? isPk,
@@ -61,6 +65,7 @@ class IsmLiveMetaData {
         profilePic: profilePic ?? this.profilePic,
         firstName: firstName ?? this.firstName,
         lastName: lastName ?? this.lastName,
+        userName: userName ?? this.userName,
         openStream: openStream ?? this.openStream,
         secretMessage: secretMessage ?? this.secretMessage,
         isPk: isPk ?? this.isPk,
@@ -74,6 +79,7 @@ class IsmLiveMetaData {
         'profilePic': profilePic,
         'firstName': firstName,
         'lastName': lastName,
+        'userName': userName,
         'openStream': openStream,
         'secretMessage': secretMessage,
         'isPk': isPk,
@@ -85,7 +91,7 @@ class IsmLiveMetaData {
 
   @override
   String toString() =>
-      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody, rawJson: $rawJson)';
+      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, userName: $userName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody, rawJson: $rawJson)';
 
   @override
   bool operator ==(covariant IsmLiveMetaData other) {
@@ -96,6 +102,7 @@ class IsmLiveMetaData {
         other.profilePic == profilePic &&
         other.firstName == firstName &&
         other.lastName == lastName &&
+        other.userName == userName &&
         other.openStream == openStream &&
         other.secretMessage == secretMessage &&
         other.isPk == isPk &&
@@ -110,6 +117,7 @@ class IsmLiveMetaData {
       profilePic.hashCode ^
       firstName.hashCode ^
       lastName.hashCode ^
+      userName.hashCode ^
       openStream.hashCode ^
       secretMessage.hashCode ^
       isPk.hashCode ^
