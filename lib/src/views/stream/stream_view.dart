@@ -581,13 +581,15 @@ class _IsmLiveStreamView extends StatelessWidget {
                                                     ],
                                                   ),
                                             ),
-                                            IsmLiveControlsWidget(
-                                                isHost: isHost,
-                                                isCopublishing:
-                                                    controller.isCopublisher,
-                                                streamId:
-                                                    controller.streamId ?? '',
-                                                isKeyboardOpen: isKeyboardOpen),
+                                            if (!isKeyboardOpen)
+                                              IsmLiveControlsWidget(
+                                                  isHost: isHost,
+                                                  isCopublishing:
+                                                      controller.isCopublisher,
+                                                  streamId:
+                                                      controller.streamId ?? '',
+                                                  isKeyboardOpen:
+                                                      isKeyboardOpen),
                                           ],
                                         ),
                                       ),
@@ -692,7 +694,8 @@ class _IsmLiveStreamView extends StatelessWidget {
                       ),
                       if (IsmLiveDelegate.productStream == true &&
                           IsmLiveDelegate.ecomConfigure?.pinnedProductBuilder !=
-                              null)
+                              null &&
+                          !isKeyboardOpen)
                         GetBuilder<IsmLiveStreamController>(
                           id: IsmLiveMessageField.updateId,
                           builder: (controller) => Positioned(
