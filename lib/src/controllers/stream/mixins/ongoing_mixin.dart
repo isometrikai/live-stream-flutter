@@ -370,6 +370,7 @@ mixin StreamOngoingMixin {
       _controller.listener
         ?..on<lk.RoomDisconnectedEvent>((event) async {
           IsmLiveLog.info('RoomDisconnectedEvent: $event');
+          if (!Get.isRegistered<IsmLiveStreamController>()) return;
 
           // Check if this is a background disconnection
           if (_controller.isInBackground) {
@@ -384,6 +385,7 @@ mixin StreamOngoingMixin {
                 'Client-initiated disconnection - checking if in background');
             // Give a small delay to check if we're actually in background
             Future.delayed(const Duration(milliseconds: 500), () {
+              if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.isInBackground) {
                 IsmLiveLog.info(
                     'Confirmed background disconnection - not ending stream');
@@ -439,6 +441,7 @@ mixin StreamOngoingMixin {
         })
         ..on<lk.AudioPlaybackStatusChanged>((event) async {
           IsmLiveLog.info('DataReceivedEvent: ${event.isPlaying} $event');
+          if (!Get.isRegistered<IsmLiveStreamController>()) return;
           if (_controller.room == null) {
             return;
           }
@@ -450,6 +453,7 @@ mixin StreamOngoingMixin {
           if (event.track.kind != lk.TrackType.AUDIO) {
             return;
           }
+          if (!Get.isRegistered<IsmLiveStreamController>()) return;
           final room = _controller.room;
           if (room == null) {
             return;
@@ -461,6 +465,7 @@ mixin StreamOngoingMixin {
             // Re-apply loudspeaker routing after the track is fully started.
             unawaited(Future<void>(() async {
               await Future<void>.delayed(const Duration(milliseconds: 150));
+              if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
               await _ensureLoudspeakerRouting();
             }));
@@ -470,6 +475,7 @@ mixin StreamOngoingMixin {
           // the WebRTC audio track). Defer so our mute wins over that enable.
           unawaited(Future<void>(() async {
             await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (!Get.isRegistered<IsmLiveStreamController>()) return;
             if (_controller.room != room) {
               return;
             }
@@ -480,6 +486,7 @@ mixin StreamOngoingMixin {
           if (event.publication.kind != lk.TrackType.AUDIO) {
             return;
           }
+          if (!Get.isRegistered<IsmLiveStreamController>()) return;
           final room = _controller.room;
           if (room == null) {
             return;
@@ -489,6 +496,7 @@ mixin StreamOngoingMixin {
             // reconfigured. Re-apply loudspeaker routing to prevent earpiece.
             unawaited(Future<void>(() async {
               await Future<void>.delayed(const Duration(milliseconds: 150));
+              if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
               await _ensureLoudspeakerRouting();
             }));
@@ -498,6 +506,7 @@ mixin StreamOngoingMixin {
           // mute so the viewer's mute choice is honoured.
           unawaited(Future<void>(() async {
             await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (!Get.isRegistered<IsmLiveStreamController>()) return;
             if (_controller.room != room) {
               return;
             }
@@ -514,6 +523,7 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> _sortParticipants() async {
+    if (!Get.isRegistered<IsmLiveStreamController>()) return;
     final room = _controller.room;
     if (room == null) {
       return;
@@ -1283,6 +1293,9 @@ mixin StreamOngoingMixin {
   }
 
   Future<void> disconnectRoom([bool callDispose = true]) async {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      return;
+    }
     _controller.isViewerJoiningStream = false;
 
     // Capture room reference synchronously BEFORE any await. When this method
@@ -1353,7 +1366,9 @@ mixin StreamOngoingMixin {
       _controller.streamTimer = null;
 
       IsmLiveUtility.updateLater(() {
-        _controller.streamDispose(callDispose);
+        if (Get.isRegistered<IsmLiveStreamController>()) {
+          _controller.streamDispose(callDispose);
+        }
       });
       if (!_controller.isHost) {
         await Future.delayed(const Duration(
