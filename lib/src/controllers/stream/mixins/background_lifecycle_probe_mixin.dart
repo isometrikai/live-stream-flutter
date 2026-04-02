@@ -43,7 +43,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   bool _blockAutoReconnectAfterLifecycleDialog = false;
 
   /// Target: probe + reconnect + checks complete within ~4s or we show the info dialog.
-  static const Duration _foregroundProbeTimeout = Duration(milliseconds: 6000);
+  static const Duration _foregroundProbeTimeout = Duration(milliseconds: 15000);
   static const Duration _preResumeConnectedVerifyDelay =
       Duration(milliseconds: 100);
   static const Duration _afterConnectStabilizeDelay =
@@ -323,19 +323,40 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
   Future<_IsmStreamLiveGateResult> _checkStreamLiveStatusGate(
       String? streamId) async {
-    if (streamId == null || streamId.isEmpty)
-      return _IsmStreamLiveGateResult.unknown;
-    try {
-      final verified =
-          await _controller.isStreamLiveVerified(streamId: streamId);
-      if (verified == null) return _IsmStreamLiveGateResult.unknown;
-      return verified
-          ? _IsmStreamLiveGateResult.live
-          : _IsmStreamLiveGateResult.notLive;
-    } catch (e, st) {
-      IsmLiveLog.error('Foreground live-status gate error: $e', st);
+    if (streamId == null || streamId.isEmpty) {
       return _IsmStreamLiveGateResult.unknown;
     }
+
+    const maxAttempts = 4;
+    const retryDelay = Duration(seconds: 3);
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        final verified =
+            await _controller.isStreamLiveVerified(streamId: streamId);
+
+        if (verified != null) {
+          return verified
+              ? _IsmStreamLiveGateResult.live
+              : _IsmStreamLiveGateResult.notLive;
+        }
+
+        // null means the request failed (e.g. no internet) — retry
+        IsmLiveLog.info(
+            'Foreground live-status gate: attempt $attempt/$maxAttempts returned null, '
+            '${attempt < maxAttempts ? "retrying in ${retryDelay.inSeconds}s..." : "no more retries"}');
+      } catch (e, st) {
+        IsmLiveLog.error(
+            'Foreground live-status gate error (attempt $attempt/$maxAttempts): $e',
+            st);
+      }
+
+      if (attempt < maxAttempts) {
+        await Future.delayed(retryDelay);
+      }
+    }
+
+    return _IsmStreamLiveGateResult.unknown;
   }
 
   void _handleAppPaused() {
@@ -479,8 +500,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     // Add small delay to prevent rapid UI state changes
     Future.delayed(const Duration(milliseconds: 100), () {
       if (!_isStreamActive.value) {
-        IsmLiveLog.info(
-            'Stream became inactive during resume delay, aborting');
+        IsmLiveLog.info('Stream became inactive during resume delay, aborting');
         return;
       }
       if (_isHost.value && _videoPausedByBackground) {
@@ -1054,7 +1074,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
       );
 
   /// Show dialog when connection failed but stream is still active
-  Future<void> _showConnectionFailedDialog({int? sessionId, String? expectedStreamId}) async {
+  Future<void> _showConnectionFailedDialog(
+      {int? sessionId, String? expectedStreamId}) async {
     try {
       // Final check before showing dialog
       if (!_isStreamActive.value) {

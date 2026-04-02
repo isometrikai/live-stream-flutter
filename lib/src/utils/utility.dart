@@ -38,6 +38,11 @@ class IsmLiveUtility {
     _navigatorKey = key;
   }
 
+  static bool get hasValidUserToken =>
+      _initialized &&
+      _config != null &&
+      _config!.userConfig.userToken.isNotEmpty;
+
   static IsmLiveConfigData get config {
     assert(
       _initialized,
