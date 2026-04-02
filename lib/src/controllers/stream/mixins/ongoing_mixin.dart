@@ -7,53 +7,96 @@ part of '../stream_controller.dart';
 /// (Bluetooth / wired headsets take priority by default).
 /// On Android [setSpeakerphoneOn(true)] forces the built-in speaker and
 /// overrides any connected device, so we guard the call behind a device check.
-Future<void> _ensureLoudspeakerRouting() async {
+///
+/// When [withRetry] is true (default for the initial connection), a delayed
+/// second attempt is scheduled. This guards against the common race where
+/// WebRTC's remote-track subscription reconfigures the audio session and
+/// resets the output back to the earpiece (Android) or where the
+/// AVAudioSession hasn't fully activated yet (iOS).
+Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
   try {
-    if (Platform.isIOS) {
-      await lk.Hardware.instance.setSpeakerphoneOn(true);
-      return;
-    }
-
-    if (Platform.isAndroid) {
-      final hasExternal = await _hasExternalAudioOutputOnAndroid();
-      if (!hasExternal) {
-        await lk.Hardware.instance.setSpeakerphoneOn(true);
-      }
-      return;
-    }
-
-    await lk.Hardware.instance.setSpeakerphoneOn(true);
+    await _applySpeakerRoute();
   } catch (e) {
     IsmLiveLog('_ensureLoudspeakerRouting error: $e');
   }
+
+  if (withRetry) {
+    unawaited(Future<void>.delayed(
+      const Duration(milliseconds: 800),
+      () async {
+        try {
+          await _applySpeakerRoute();
+        } catch (e) {
+          IsmLiveLog('_ensureLoudspeakerRouting retry error: $e');
+        }
+      },
+    ));
+  }
+}
+
+Future<void> _applySpeakerRoute() async {
+  if (Platform.isIOS) {
+    await lk.Hardware.instance.setSpeakerphoneOn(true);
+    return;
+  }
+
+  if (Platform.isAndroid) {
+    final hasExternal = await _hasExternalAudioOutputOnAndroid();
+    if (!hasExternal) {
+      await lk.Hardware.instance.setSpeakerphoneOn(true);
+    }
+    return;
+  }
+
+  await lk.Hardware.instance.setSpeakerphoneOn(true);
 }
 
 /// Returns `true` when an external audio output (Bluetooth, wired headset,
 /// USB audio) is currently connected on Android.
 ///
-/// Built-in outputs are identified by their standardised labels ("Earpiece",
-/// "Speaker"). Any output with a different label is considered external.
+/// Built-in outputs are identified by substring matching against known
+/// built-in keywords. This handles OEM-specific labels (e.g. Xiaomi/Redmi
+/// reporting "Built-In Speaker", localized names like "手机听筒", etc.).
 Future<bool> _hasExternalAudioOutputOnAndroid() async {
   try {
     final devices = await lk.Hardware.instance.enumerateDevices();
     final outputs = devices.where((d) => d.kind == 'audiooutput').toList();
 
+    IsmLiveLog.info(
+        '_hasExternalAudioOutputOnAndroid: ${outputs.length} outputs: '
+        '${outputs.map((d) => '"${d.label}"').join(', ')}');
+
     // On Android, built-in outputs are typically "Earpiece" + "Speaker"
     // (at most 2 entries). Any additional entry indicates external hardware.
     if (outputs.length > 2) return true;
 
-    // Even with ≤ 2 outputs, one might be external when it replaces a
-    // built-in device in the active list (e.g. Bluetooth + Speaker).
-    const builtInLabels = {'earpiece', 'speaker', 'speakerphone'};
+    // Substring-based matching so OEM-specific labels (e.g. "Built-In Speaker",
+    // "phone speaker", localized names) are still recognized as built-in.
+    const builtInKeywords = [
+      'earpiece',
+      'speaker',
+      'speakerphone',
+      'built-in',
+      'builtin',
+      'phone',
+      'handset',
+      'receiver',
+    ];
     for (final device in outputs) {
       final label = device.label.toLowerCase().trim();
-      if (label.isNotEmpty && !builtInLabels.contains(label)) {
+      if (label.isEmpty) continue;
+      final isBuiltIn =
+          builtInKeywords.any((keyword) => label.contains(keyword));
+      if (!isBuiltIn) {
+        IsmLiveLog.info(
+            '_hasExternalAudioOutputOnAndroid: detected external device: "$label"');
         return true;
       }
     }
 
     return false;
-  } catch (_) {
+  } catch (e) {
+    IsmLiveLog.info('_hasExternalAudioOutputOnAndroid error: $e');
     return false;
   }
 }
@@ -407,11 +450,20 @@ mixin StreamOngoingMixin {
           if (event.track.kind != lk.TrackType.AUDIO) {
             return;
           }
-          if (_controller.speakerOn) {
-            return;
-          }
           final room = _controller.room;
           if (room == null) {
+            return;
+          }
+          if (_controller.speakerOn) {
+            // Remote audio track just arrived — WebRTC's track subscription
+            // can reconfigure the audio session and reset routing back to the
+            // earpiece on some devices (Redmi/Xiaomi, certain iOS versions).
+            // Re-apply loudspeaker routing after the track is fully started.
+            unawaited(Future<void>(() async {
+              await Future<void>.delayed(const Duration(milliseconds: 150));
+              if (_controller.room != room || !_controller.speakerOn) return;
+              await _ensureLoudspeakerRouting();
+            }));
             return;
           }
           // LiveKit starts the remote track after this event (which re-enables
@@ -428,11 +480,18 @@ mixin StreamOngoingMixin {
           if (event.publication.kind != lk.TrackType.AUDIO) {
             return;
           }
-          if (_controller.speakerOn) {
-            return;
-          }
           final room = _controller.room;
           if (room == null) {
+            return;
+          }
+          if (_controller.speakerOn) {
+            // Host unmuted their mic — the audio session may have been
+            // reconfigured. Re-apply loudspeaker routing to prevent earpiece.
+            unawaited(Future<void>(() async {
+              await Future<void>.delayed(const Duration(milliseconds: 150));
+              if (_controller.room != room || !_controller.speakerOn) return;
+              await _ensureLoudspeakerRouting();
+            }));
             return;
           }
           // A remote audio track was unmuted by the server/host. Re-apply local
