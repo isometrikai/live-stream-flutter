@@ -333,7 +333,11 @@ class IsmLiveStreamController extends GetxController
     print(
         'initializeAndJoinStream: Controller dispose() called, preventDispose=$preventDispose');
     IsmLiveUtility.updateLater(
-      () => Get.find<IsmLiveStreamController>().streamDispose(),
+      () {
+        if (Get.isRegistered<IsmLiveStreamController>()) {
+          Get.find<IsmLiveStreamController>().streamDispose();
+        }
+      },
     );
 
     super.dispose();
