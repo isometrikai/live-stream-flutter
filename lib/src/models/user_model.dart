@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/models/meta_data.dart';
 
 class UserDetails {
   factory UserDetails.fromJson(String source) =>
@@ -64,12 +63,33 @@ class UserDetails {
   final bool? accepted;
 
   String get profileUrl => metaData?.profilePic ?? userProfileImageUrl;
-  String get name {
-    if (metaData?.firstName?.isNotEmpty ?? false) {
-      return '${metaData?.firstName} ${metaData?.lastName ?? ''}';
+
+  /// Display full name: metadata first/last name when either is non-empty,
+  /// otherwise root `userName` (legacy API shape).
+  String get fullName {
+    final first = metaData?.firstName?.trim() ?? '';
+    final last = metaData?.lastName?.trim() ?? '';
+    if (first.isNotEmpty || last.isNotEmpty) {
+      return [first, last].where((s) => s.isNotEmpty).join(' ');
     }
     return userName;
   }
+
+  /// Login / handle for UI: metadata `userName` when set, otherwise root `userName`.
+  String get displayUserName {
+    final meta = metaData?.userName?.trim() ?? '';
+    if (meta.isNotEmpty) return meta;
+    return userName;
+  }
+
+  /// Same as [fullName]. Kept for call sites that use a single display name.
+  String get name => fullName;
+
+  /// Two-letter uppercase initials: [fullName] then [displayUserName].
+  String get profileInitials => IsmLiveInitials.fromNames(
+        primary: fullName,
+        secondary: displayUserName,
+      );
 
   UserDetails copyWith({
     String? userProfileImageUrl,

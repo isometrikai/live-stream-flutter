@@ -366,6 +366,7 @@ class _ChatMessageItem extends StatelessWidget {
                                 ?.call(message.imageUrl) ??
                             message.imageUrl,
                         name: message.userName,
+                        initials: message.profileInitials,
                         dimensions: IsmLiveDimens.twentyFour,
                         isProfileImage: true,
                       ),

@@ -61,11 +61,12 @@ class IsmLiveUsersSheet extends StatelessWidget {
                           widget: IsmLiveImage.network(
                             imageUrl,
                             isProfileImage: true,
-                            name: user.userName,
+                            name: user.name,
+                            initials: user.profileInitials,
                             height: IsmLiveDimens.hundred,
                             width: IsmLiveDimens.hundred,
                           ),
-                          title: user.userName,
+                          title: user.name,
                           subTitle: null,
                           buttonLable: IsmLiveStrings.viewProfile,
                           onTap: () {
@@ -79,15 +80,18 @@ class IsmLiveUsersSheet extends StatelessWidget {
               child: ListTile(
                 leading: IsmLiveImage.network(
                   imageUrl,
-                  name: user.userName,
+                  name: user.name,
+                  initials: user.profileInitials,
                   dimensions: IsmLiveDimens.forty,
                   isProfileImage: true,
                 ),
-                title: Text(user.userName, style: TextStyle(color: textColor)),
-                subtitle: Text(
-                  user.userName,
-                  style: TextStyle(color: subtitleColor),
-                ),
+                title: Text(user.name, style: TextStyle(color: textColor)),
+                subtitle: user.displayUserName != user.fullName
+                    ? Text(
+                        user.displayUserName,
+                        style: TextStyle(color: subtitleColor),
+                      )
+                    : null,
                 trailing: notShowbotton
                     ? null
                     : IsmLiveButton.icon(

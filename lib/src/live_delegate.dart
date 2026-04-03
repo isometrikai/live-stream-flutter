@@ -837,6 +837,91 @@ class IsmLiveAnalyticsEvent {
 
   // Navigation / screen transitions
   static const String screenView = 'ism_live_screen_view';
+
+  /// All analytics events in a single set.
+  ///
+  /// Pass this to [IsmLiveApp.configureInterface]'s `enabledAnalyticsEvents`
+  /// to track every SDK event without listing them individually:
+  /// ```dart
+  /// IsmLiveApp.configureInterface(
+  ///   analyticsDelegate: myDelegate,
+  ///   enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
+  /// );
+  /// ```
+  ///
+  /// Or omit `enabledAnalyticsEvents` entirely for the same effect (null = all).
+  static const Set<String> all = <String>{
+    // Initialization
+    sdkInitialize,
+
+    // Stream lifecycle (entry-point level)
+    streamConnectAttempt,
+    streamInitializeAndJoinAttempt,
+    streamInitializeAndJoinSuccess,
+    streamInitializeAndJoinFailure,
+
+    // Controller flow
+    controllerInitializeAndJoinAttempt,
+    controllerInitializeAndJoinSuccess,
+    controllerInitializeAndJoinFailure,
+    controllerRejoinAutoDetected,
+    controllerPreventDisposeEnabled,
+    controllerInitializeIndex,
+    controllerJoinStreamAttempt,
+    controllerJoinStreamSuccess,
+    controllerJoinStreamFailure,
+
+    // Stream events
+    streamScroll,
+    streamEndRequested,
+
+    // Commerce / engagement
+    addCoinsClick,
+    giftClick,
+
+    // Join / connect detailed flow
+    joinStreamAttempt,
+    joinStreamEarlyReturnScheduledNotStarted,
+    joinStreamTokenFetchHost,
+    joinStreamTokenFetchViewer,
+    joinStreamMissingHostToken,
+    joinStreamStopStreamCalled,
+    joinStreamConnectStreamAttempt,
+    joinStreamConnectStreamSuccess,
+    joinStreamConnectStreamFailure,
+
+    // Connect stream internals
+    connectStreamAttemptDetailed,
+    connectStreamMqttSubscribeAttempt,
+    connectStreamMqttSubscribeFailure,
+    connectStreamDeferredNavigationAttempt,
+    connectStreamDeferredNavigationSuccess,
+    connectStreamDeferredNavigationFailure,
+    connectRoomAndInitializeAttempt,
+    connectRoomAndInitializeSuccess,
+    connectRoomAndInitializeFailure,
+
+    // Deep connect flow
+    roomInitStart,
+    previousRoomDisconnectAttempt,
+    previousRoomDisconnectDone,
+    preconnectAbortedStreamDisposed,
+    roomConnectAttempt,
+    roomConnectSuccess,
+    roomConnectFailure,
+    roomConnectDiscardedStale,
+    postConnectApiKickoff,
+    goToStreamViewAttempt,
+    goToStreamViewSuccess,
+    goToStreamViewFailure,
+    connectFlowOuterFailure,
+
+    // API
+    apiResult,
+
+    // Navigation
+    screenView,
+  };
 }
 
 /// Callback for stream listing refresh events.

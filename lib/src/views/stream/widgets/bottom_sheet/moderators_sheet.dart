@@ -92,11 +92,12 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                                   widget: IsmLiveImage.network(
                                     imageUrl,
                                     isProfileImage: true,
-                                    name: moderator.userName,
+                                    name: moderator.name,
+                                    initials: moderator.profileInitials,
                                     height: IsmLiveDimens.hundred,
                                     width: IsmLiveDimens.hundred,
                                   ),
-                                  title: moderator.userName,
+                                  title: moderator.name,
                                   subTitle: null,
                                   buttonLable: IsmLiveStrings.viewProfile,
                                   onTap: () {
@@ -110,24 +111,28 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                             child: ListTile(
                               leading: IsmLiveImage.network(
                                 imageUrl,
-                                name: moderator.userName,
+                                name: moderator.name,
+                                initials: moderator.profileInitials,
                                 dimensions: IsmLiveDimens.forty,
                                 isProfileImage: true,
                               ),
                               title: Text(
-                                moderator.userName,
+                                moderator.name,
                                 style: TextStyle(color: textColor),
                               ),
-                              subtitle: Text(
-                                moderator.userName,
-                                style: TextStyle(
-                                  color:
-                                      context.liveTheme?.unselectedTextColor ??
-                                          (isDarkMode
-                                              ? const Color(0xFFB0B0B0)
-                                              : Colors.grey),
-                                ),
-                              ),
+                              subtitle: moderator.displayUserName !=
+                                      moderator.fullName
+                                  ? Text(
+                                      moderator.displayUserName,
+                                      style: TextStyle(
+                                        color: context.liveTheme
+                                                ?.unselectedTextColor ??
+                                            (isDarkMode
+                                                ? const Color(0xFFB0B0B0)
+                                                : Colors.grey),
+                                      ),
+                                    )
+                                  : null,
                               trailing: (moderator.userId !=
                                           controller.user?.userId &&
                                       controller.isHost == true)
@@ -140,7 +145,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                                       ),
                                       onPressed: () {
                                         // Show confirmation bottom sheet
-                                        final name = moderator.userName;
+                                        final name = moderator.name;
                                         IsmLiveUtility.openBottomSheet(
                                           _RemoveModeratorConfirmSheet(
                                             moderatorName: name,

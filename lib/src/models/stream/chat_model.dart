@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:appscrip_live_stream_component/src/utils/initials.dart';
+
 class IsmLiveChatModel {
   const IsmLiveChatModel({
     required this.streamId,
@@ -68,6 +70,14 @@ class IsmLiveChatModel {
     }
     return userName;
   }
+
+  /// Derives up to two uppercase initials for profile avatar fallback.
+  ///
+  /// Priority: [fullName] (firstName + lastName from metadata) → [userName].
+  String get profileInitials => IsmLiveInitials.fromNames(
+        primary: fullName,
+        secondary: userName,
+      );
 
   IsmLiveChatModel copyWith({
     String? streamId,

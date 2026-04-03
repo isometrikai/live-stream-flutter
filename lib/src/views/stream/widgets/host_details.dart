@@ -5,15 +5,20 @@ class IsmLiveHostDetail extends StatelessWidget {
   const IsmLiveHostDetail({
     super.key,
     required this.name,
+    required this.handle,
     required this.imageUrl,
     required this.description,
     required this.isHost,
     required this.userIdentifier,
+    required this.initials,
   });
 
   final String name;
+  /// Shown in the header pill as @handle (metadata or root login name).
+  final String handle;
   final String imageUrl;
   final String description;
+  final String initials;
   final String userIdentifier;
   final bool isHost;
 
@@ -27,10 +32,6 @@ class IsmLiveHostDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final pillColor = _pillColor(context);
-    // Text contrast with pill border/background
-    final textColor = pillColor.computeLuminance() > 0.5
-        ? Colors.black
-        : Colors.white;
     final pillFillColor = isDarkMode
         ? Colors.white.withValues(alpha: 0.2)
         : Colors.black.withValues(alpha: 0.2);
@@ -65,6 +66,7 @@ class IsmLiveHostDetail extends StatelessWidget {
               imageUrl,
               isProfileImage: true,
               name: name,
+              initials: initials,
               height: IsmLiveDimens.hundred,
               width: IsmLiveDimens.hundred,
             ),
@@ -95,6 +97,7 @@ class IsmLiveHostDetail extends StatelessWidget {
             IsmLiveImage.network(
               imageUrl,
               name: name,
+              initials: initials,
               isProfileImage: true,
               height: IsmLiveDimens.forty,
               width: IsmLiveDimens.forty,
@@ -104,7 +107,7 @@ class IsmLiveHostDetail extends StatelessWidget {
             SizedBox(
               width: IsmLiveDimens.seventy,
               child: Text(
-                '@$name',
+                handle.isEmpty ? name : '@$handle',
                 style: IsmLiveStyles.white12,
                 maxLines: 1,
               ),

@@ -17,7 +17,8 @@ class AddModeratorsListBottomSheet extends StatefulWidget {
       _AddModeratorsListBottomSheetState();
 }
 
-class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSheet> {
+class _AddModeratorsListBottomSheetState
+    extends State<AddModeratorsListBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
   final Set<String> _selectedUserIds = <String>{};
   bool _isSearching = false;
@@ -138,6 +139,8 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                 .where(
                   (u) =>
                       u.userName.toLowerCase().contains(query) ||
+                      u.name.toLowerCase().contains(query) ||
+                      u.displayUserName.toLowerCase().contains(query) ||
                       u.userIdentifier.toLowerCase().contains(query),
                 )
                 .toList();
@@ -192,25 +195,29 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                                   contentPadding: EdgeInsets.zero,
                                   leading: IsmLiveImage.network(
                                     imageUrl,
-                                    name: user.userName,
+                                    name: user.name,
+                                    initials: user.profileInitials,
                                     dimensions: IsmLiveDimens.forty,
                                     isProfileImage: true,
                                   ),
                                   title: Text(
-                                    user.userName,
+                                    user.name,
                                     style: TextStyle(color: textColor),
                                   ),
-                                  subtitle: Text(
-                                    user.userIdentifier,
-                                    style: TextStyle(
-                                      color: context
-                                              .liveTheme?.unselectedTextColor ??
-                                          (isDarkMode
-                                              ? const Color(0xFFB0B0B0)
-                                              : Colors.grey),
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                                  subtitle: user.displayUserName != user.fullName
+                                      ? Text(
+                                          user.displayUserName,
+                                          style: TextStyle(
+                                            color: context
+                                                    .liveTheme
+                                                    ?.unselectedTextColor ??
+                                                (isDarkMode
+                                                    ? const Color(0xFFB0B0B0)
+                                                    : Colors.grey),
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
                                   trailing: canAdd
                                       ? SizedBox(
                                           width: 84,
@@ -262,6 +269,7 @@ class _AddModeratorsListBottomSheetState extends State<AddModeratorsListBottomSh
                           ),
               ),
               if (allUsers.isNotEmpty) _buildConfirmButton(context),
+              const SizedBox(height: 12),
             ],
           ),
         );
