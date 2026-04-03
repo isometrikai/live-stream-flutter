@@ -735,6 +735,9 @@ class IsmLiveAnalyticsEvent {
 
   // Initialization
   static const String sdkInitialize = 'ism_live_sdk_initialize';
+  static const String sdkInitializeAttempt = 'ism_live_sdk_initialize_attempt';
+  static const String sdkInitializeSuccess = 'ism_live_sdk_initialize_success';
+  static const String sdkInitializeFailure = 'ism_live_sdk_initialize_failure';
 
   // Stream lifecycle
   static const String streamConnectAttempt = 'ism_live_stream_connect_attempt';
@@ -853,6 +856,9 @@ class IsmLiveAnalyticsEvent {
   static const Set<String> all = <String>{
     // Initialization
     sdkInitialize,
+    sdkInitializeAttempt,
+    sdkInitializeSuccess,
+    sdkInitializeFailure,
 
     // Stream lifecycle (entry-point level)
     streamConnectAttempt,
