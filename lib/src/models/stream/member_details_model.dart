@@ -23,12 +23,31 @@ class IsmLiveMemberDetailsModel {
     required this.isAdmin,
   });
 
-  String get name {
-    if (metaData.firstName?.isNotEmpty ?? false) {
-      return '${metaData.firstName} ${metaData.lastName ?? ''}';
+  /// Display full name: metadata first/last when either is non-empty, else root [userName].
+  String get fullName {
+    final first = metaData.firstName?.trim() ?? '';
+    final last = metaData.lastName?.trim() ?? '';
+    if (first.isNotEmpty || last.isNotEmpty) {
+      return [first, last].where((s) => s.isNotEmpty).join(' ');
     }
     return userName;
   }
+
+  /// Login / handle: metadata [userName] when set, else root [userName].
+  String get displayUserName {
+    final meta = metaData.userName?.trim() ?? '';
+    if (meta.isNotEmpty) return meta;
+    return userName;
+  }
+
+  /// Same as [fullName].
+  String get name => fullName;
+
+  /// Two-letter uppercase initials: [fullName] then [displayUserName].
+  String get profileInitials => IsmLiveInitials.fromNames(
+        primary: fullName,
+        secondary: displayUserName,
+      );
 
   String get image => metaData.profilePic ?? userProfileImageUrl;
 

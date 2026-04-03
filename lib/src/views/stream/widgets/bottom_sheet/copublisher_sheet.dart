@@ -125,12 +125,12 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                         return ListTile(
                           leading: IsmLiveImage.network(
                             copublisher.profileUrl,
-                            name: copublisher.userName,
+                            name: copublisher.name,
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
                           title: Text(
-                            copublisher.userName,
+                            copublisher.name,
                             style: TextStyle(color: textColor),
                           ),
                           subtitle: Text(
@@ -202,12 +202,12 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                         return ListTile(
                           leading: IsmLiveImage.network(
                             members.profileUrl,
-                            name: members.userName,
+                            name: members.name,
                             dimensions: IsmLiveDimens.forty,
                             isProfileImage: true,
                           ),
                           title: Text(
-                            members.userName,
+                            members.name,
                             style: TextStyle(color: textColor),
                           ),
                           subtitle: Text(

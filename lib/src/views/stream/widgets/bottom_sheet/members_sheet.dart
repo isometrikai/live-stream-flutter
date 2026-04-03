@@ -47,11 +47,12 @@ class IsmLiveMembersSheet extends StatelessWidget {
             return ListTile(
               leading: IsmLiveImage.network(
                 existingMember.userProfileImageUrl,
-                name: existingMember.userName,
+                name: existingMember.name,
+                initials: existingMember.profileInitials,
                 dimensions: IsmLiveDimens.forty,
                 isProfileImage: true,
               ),
-              title: Text(existingMember.userName),
+              title: Text(existingMember.name),
               subtitle: Text(existingMember.userIdentifier),
               trailing: (controller.isHost) &&
                       controller.user?.userId != existingMember.userId

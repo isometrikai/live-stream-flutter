@@ -74,17 +74,7 @@ class HomeController extends GetxController {
       productStream: true,
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
-      enabledAnalyticsEvents: <String>{
-        IsmLiveAnalyticsEvent.sdkInitialize,
-        IsmLiveAnalyticsEvent.streamConnectAttempt,
-        IsmLiveAnalyticsEvent.streamInitializeAndJoinAttempt,
-        IsmLiveAnalyticsEvent.streamInitializeAndJoinSuccess,
-        IsmLiveAnalyticsEvent.streamInitializeAndJoinFailure,
-        IsmLiveAnalyticsEvent.streamScroll,
-        IsmLiveAnalyticsEvent.streamEndRequested,
-        IsmLiveAnalyticsEvent.addCoinsClick,
-        IsmLiveAnalyticsEvent.giftClick,
-      },
+      enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,

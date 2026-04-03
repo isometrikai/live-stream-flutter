@@ -21,7 +21,8 @@ class IsmLiveImage extends StatelessWidget {
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.asset,
         showError = false,
-        color = null;
+        color = null,
+        initials = null;
 
   const IsmLiveImage.svg(
     this.path, {
@@ -37,12 +38,14 @@ class IsmLiveImage extends StatelessWidget {
     this.border,
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.svg,
-        showError = false;
+        showError = false,
+        initials = null;
 
   const IsmLiveImage.network(
     this.path, {
     super.key,
     required this.name,
+    this.initials,
     this.isProfileImage = false,
     this.dimensions,
     this.height,
@@ -69,10 +72,12 @@ class IsmLiveImage extends StatelessWidget {
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.file,
         showError = false,
-        color = null;
+        color = null,
+        initials = null;
 
   final String path;
   final String name;
+  final String? initials;
   final bool isProfileImage;
   final double? dimensions;
   final double? height;
@@ -106,6 +111,7 @@ class IsmLiveImage extends StatelessWidget {
               path,
               isProfileImage: isProfileImage,
               name: name,
+              initials: initials,
               showError: showError,
             ),
         },
@@ -141,12 +147,14 @@ class _Network extends StatelessWidget {
   const _Network(
     this.imageUrl, {
     required this.name,
+    this.initials,
     required this.isProfileImage,
     required this.showError,
   });
 
   final String imageUrl;
   final String name;
+  final String? initials;
   final bool isProfileImage;
   final bool showError;
 
@@ -164,6 +172,7 @@ class _Network extends StatelessWidget {
               return _ErrorImage(
                 isProfileImage: isProfileImage,
                 name: name,
+                initials: initials,
                 showError: showError,
               );
             }
@@ -178,6 +187,7 @@ class _Network extends StatelessWidget {
             return _ErrorImage(
               isProfileImage: isProfileImage,
               name: name,
+              initials: initials,
               showError: showError,
             );
           }
@@ -190,7 +200,7 @@ class _Network extends StatelessWidget {
           ),
           child: isProfileImage && name.trim().isNotEmpty
               ? Text(
-                  name[0],
+                  initials ?? name[0],
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
@@ -204,6 +214,7 @@ class _Network extends StatelessWidget {
         errorWidget: (context, url, error) => _ErrorImage(
           isProfileImage: isProfileImage,
           name: name,
+          initials: initials,
           showError: showError,
         ),
       );
@@ -212,6 +223,7 @@ class _Network extends StatelessWidget {
       return _ErrorImage(
         isProfileImage: isProfileImage,
         name: name,
+        initials: initials,
         showError: showError,
       );
     }
@@ -247,11 +259,13 @@ class _ErrorImage extends StatelessWidget {
   const _ErrorImage({
     required this.isProfileImage,
     required this.name,
+    this.initials,
     required this.showError,
   });
 
   final bool isProfileImage;
   final String name;
+  final String? initials;
   final bool showError;
 
   @override
@@ -266,7 +280,7 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: !showError || isProfileImage
             ? Text(
-                name[0],
+                initials ?? name[0],
                 style: !isProfileImage
                     ? context.textTheme.displayMedium?.copyWith(
                         color: IsmLiveColors.black,
