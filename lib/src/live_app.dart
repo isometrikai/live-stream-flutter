@@ -358,6 +358,26 @@ class IsmLiveApp extends StatefulWidget {
     _initializing = true;
     IsmLiveLog.info('IsmLiveApp.initialize: START');
 
+    final sw = Stopwatch()..start();
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.sdkInitializeAttempt,
+      properties: [
+        {
+          'project_id': config.projectConfig.projectId,
+          'account_id': config.projectConfig.accountId,
+          'user_id': config.userConfig.userId,
+          'should_initialize_mqtt': shouldInitializeMqtt,
+          'enable_background_lifecycle': enableBackgroundLifecycle,
+          'enable_background_audio': enableBackgroundAudio,
+          'enable_background_video': enableBackgroundVideo,
+          'has_background_timeout': backgroundTimeout != null,
+          'has_mqtt_topics': mqttTopics != null && mqttTopics.isNotEmpty,
+          'has_mqtt_topic_channels':
+              mqttTopicChannels != null && mqttTopicChannels.isNotEmpty,
+        }
+      ],
+    );
+
     try {
       IsmLiveUtility.navigatorKey = navigatorKey;
 
@@ -397,9 +417,37 @@ class IsmLiveApp extends StatefulWidget {
 
       _initialized = true;
       IsmLiveLog.info('IsmLiveApp.initialize: SUCCESS');
+
+      sw.stop();
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.sdkInitializeSuccess,
+        properties: [
+          {
+            'project_id': config.projectConfig.projectId,
+            'account_id': config.projectConfig.accountId,
+            'user_id': config.userConfig.userId,
+            'duration_ms': sw.elapsedMilliseconds,
+          }
+        ],
+      );
     } catch (e, stack) {
       _initialized = false;
       IsmLiveLog.error('IsmLiveApp.initialize: FAILED: $e\n$stack');
+
+      sw.stop();
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.sdkInitializeFailure,
+        properties: [
+          {
+            'project_id': config.projectConfig.projectId,
+            'account_id': config.projectConfig.accountId,
+            'user_id': config.userConfig.userId,
+            'duration_ms': sw.elapsedMilliseconds,
+            'error': e.toString(),
+          }
+        ],
+      );
+
       rethrow;
     } finally {
       _initializing = false;
