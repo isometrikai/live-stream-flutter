@@ -1283,11 +1283,6 @@ mixin StreamOngoingMixin {
 
       if (goBack) {
         unawaited(_controller.getStreams());
-        if (!isHost) {
-          await Future.delayed(const Duration(
-              seconds:
-                  1)); // host app getting random black screen issue for viewer while stress testing (join-left-join)
-        }
         closeStreamView(isHost, streamId: streamId);
       }
     }
@@ -1376,10 +1371,11 @@ mixin StreamOngoingMixin {
           _controller.streamDispose(callDispose);
         }
       });
-      if (!_controller.isHost) {
-        await Future.delayed(const Duration(
-            seconds:
-                1)); // host app getting random black screen issue for viewer while stress testing (join-left-join)
+      // Let LiveKit/native teardown settle before the next navigation. A single
+      // short deferral avoids the old 2s stacked delays (here + disconnectStream).
+      // Skipped when callDispose is false (e.g. PK rejoin) so reconnect stays fast.
+      if (!_controller.isHost && callDispose) {
+        await Future.delayed(const Duration(milliseconds: 350));
       }
     } catch (e, st) {
       IsmLiveLog.error(' end stream  $e , $st');
