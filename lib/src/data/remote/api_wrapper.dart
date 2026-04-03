@@ -103,17 +103,7 @@ class IsmLiveApiWrapper {
           if (res.hasError) {
             try {
               final decoded = res.decode();
-              final candidate = (decoded['error'] ??
-                      decoded['message'] ??
-                      decoded['msg'] ??
-                      decoded['reason'])
-                  ?.toString();
-              if (candidate != null && candidate.trim().isNotEmpty) {
-                errorSummary = candidate.trim();
-                if (errorSummary.length > 160) {
-                  errorSummary = errorSummary.substring(0, 160);
-                }
-              }
+              errorSummary = _apiErrorSummaryForAnalytics(decoded);
             } catch (_) {
               // ignore: best-effort only
             }
@@ -459,6 +449,63 @@ class IsmLiveApiWrapper {
           statusCode: response.statusCode,
         );
     }
+  }
+
+  /// Best-effort text for analytics only; capped length, no PII beyond API messages.
+  static String? _apiErrorSummaryForAnalytics(Map<String, dynamic> decoded) {
+    const maxLen = 160;
+    String? truncate(String s) {
+      final t = s.trim();
+      if (t.isEmpty) return null;
+      return t.length > maxLen ? t.substring(0, maxLen) : t;
+    }
+
+    final candidate = (decoded['error'] ??
+            decoded['message'] ??
+            decoded['msg'] ??
+            decoded['reason'])
+        ?.toString();
+    final fromFlat = truncate(candidate ?? '');
+    if (fromFlat != null) return fromFlat;
+
+    final fromErrors = _messagesFromErrorsObject(decoded['errors']);
+    return truncate(fromErrors ?? '');
+  }
+
+  /// Parses `errors` shapes like `{"field":["msg"]}` or a string/list at `errors`.
+  static String? _messagesFromErrorsObject(dynamic errors) {
+    if (errors == null) return null;
+    if (errors is String) {
+      final s = errors.trim();
+      return s.isEmpty ? null : s;
+    }
+    if (errors is List) {
+      final parts = <String>[];
+      for (final e in errors) {
+        if (e is String) {
+          final t = e.trim();
+          if (t.isNotEmpty) parts.add(t);
+        } else if (e != null) {
+          final t = e.toString().trim();
+          if (t.isNotEmpty) parts.add(t);
+        }
+      }
+      if (parts.isEmpty) return null;
+      return parts.join(', ');
+    }
+    if (errors is Map) {
+      final parts = <String>[];
+      for (final entry in errors.entries) {
+        final key = entry.key.toString();
+        final nested = _messagesFromErrorsObject(entry.value);
+        if (nested != null && nested.isNotEmpty) {
+          parts.add('$key: $nested');
+        }
+      }
+      if (parts.isEmpty) return null;
+      return parts.join('; ');
+    }
+    return null;
   }
 
   /// Builds a copy-pasteable cURL command for the request (for developer debugging).
