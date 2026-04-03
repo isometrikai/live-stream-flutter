@@ -89,6 +89,7 @@ class IsmLiveStreamView extends StatelessWidget {
       // Clear gift data
       controller.giftMessages.clear();
       controller.giftList.clear();
+      controller.cancelHeartDebounce();
       controller.heartList.clear();
 
       // Clear search controllers

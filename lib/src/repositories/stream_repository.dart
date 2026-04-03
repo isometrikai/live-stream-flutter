@@ -698,6 +698,7 @@ class IsmLiveStreamRepository {
     required String senderName,
     required String deviceId,
     required String customType,
+    int likesCount = 1,
   }) {
     final payload = {
       'streamId': streamId,
@@ -706,6 +707,7 @@ class IsmLiveStreamRepository {
       'deviceId': deviceId,
       'customType': customType,
       'senderId': senderId,
+      'likesCount': likesCount,
     };
     return _apiWrapper.makeRequest(IsmLiveApis.sendHearts,
         type: IsmLiveRequestType.post,

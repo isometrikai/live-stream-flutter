@@ -848,6 +848,7 @@ class IsmLiveStreamController extends GetxController
     participantList.clear();
     giftMessages.clear();
     giftList.clear();
+    cancelHeartDebounce();
     heartList.clear();
     copublisherRequestsList.clear();
     selectedProductsList.clear();

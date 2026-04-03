@@ -988,6 +988,7 @@ mixin StreamAPIMixin {
     required String senderName,
     required String deviceId,
     required String customType,
+    int likesCount = 1,
   }) =>
       _controller.viewModel.sendHearts(
         streamId: streamId,
@@ -996,6 +997,7 @@ mixin StreamAPIMixin {
         senderImage: senderImage,
         senderId: senderId,
         senderName: senderName,
+        likesCount: likesCount,
       );
 
   Future<void> totalWalletCoins() async {

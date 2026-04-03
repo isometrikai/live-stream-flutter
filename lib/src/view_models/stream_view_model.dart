@@ -793,6 +793,7 @@ class IsmLiveStreamViewModel {
     required String senderName,
     required String deviceId,
     required String customType,
+    int likesCount = 1,
   }) async {
     try {
       var res = await _repository.sendHearts(
@@ -802,6 +803,7 @@ class IsmLiveStreamViewModel {
         senderImage: senderImage,
         senderId: senderId,
         senderName: senderName,
+        likesCount: likesCount,
       );
 
       return !res.hasError;
