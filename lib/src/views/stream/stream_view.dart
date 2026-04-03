@@ -819,7 +819,7 @@ class _StreamHeader extends StatelessWidget {
             winnerName: controller.findWinner(controller.pkWinnerId),
             description: controller.descriptionController.text,
             name: controller.hostDetails?.name ?? 'U',
-            handle: controller.hostDetails?.displayUserName ?? 'U',
+            handle: '',
             initials: controller.hostDetails?.profileInitials ?? '',
             imageUrl: controller.hostDetails?.image ?? '',
             userIdentifier: controller.hostDetails?.userIdentifier ?? '',

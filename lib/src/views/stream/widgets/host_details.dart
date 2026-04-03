@@ -107,7 +107,7 @@ class IsmLiveHostDetail extends StatelessWidget {
             SizedBox(
               width: IsmLiveDimens.seventy,
               child: Text(
-                handle.isEmpty ? name : '@$handle',
+                handle.isEmpty ? '@$name' : '@$handle',
                 style: IsmLiveStyles.white12,
                 maxLines: 1,
               ),
