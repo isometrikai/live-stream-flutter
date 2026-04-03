@@ -126,11 +126,17 @@ mixin StreamOngoingMixin {
     required String streamId,
     required bool isHost,
   }) async {
-    _controller.messageFocusNode.addListener(() {
+    if (_controller._messageFocusListener != null) {
+      _controller.messageFocusNode
+          .removeListener(_controller._messageFocusListener!);
+    }
+    _controller._messageFocusListener = () {
       if (_controller.messageFocusNode.hasFocus) {
         _controller.showEmojiBoard = false;
       }
-    });
+    };
+    _controller.messageFocusNode
+        .addListener(_controller._messageFocusListener!);
 
     if (_controller.isPk) {
       _pkController.pkStatus(streamId);
