@@ -101,7 +101,9 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
           child: Obx(
             () => Offstage(
               offstage: isCompleted,
-              child: widget.child,
+              // Below AnimatedPositioned so Stack parent data stays valid; still
+              // blocks hearts from stealing taps on the message row.
+              child: IgnorePointer(child: widget.child),
             ),
           ),
         ),
