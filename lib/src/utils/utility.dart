@@ -187,6 +187,22 @@ class IsmLiveUtility {
 
       _bottomSheetCount--;
 
+      // On Android, dismissing a modal bottom sheet restores focus to the
+      // previously-focused widget (e.g. the message text field) because the
+      // underlying FocusScopeNode remembers its last focused child. This
+      // causes the soft keyboard to reopen unexpectedly. A post-frame
+      // callback catches the restored focus after the route pop completes.
+      if (_bottomSheetCount == 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (Get.isRegistered<IsmLiveStreamController>()) {
+            final controller = Get.find<IsmLiveStreamController>();
+            if (controller.messageFocusNode.hasFocus) {
+              controller.messageFocusNode.unfocus();
+            }
+          }
+        });
+      }
+
       return result;
     } catch (e) {
       _bottomSheetCount--;

@@ -306,6 +306,7 @@ class IsmLiveStreamController extends GetxController
   bool isModerationWarningVisible = true;
 
   FocusNode messageFocusNode = FocusNode();
+  VoidCallback? _messageFocusListener;
 
   Timer? streamTimer;
 
@@ -817,7 +818,11 @@ class IsmLiveStreamController extends GetxController
     searchUserFieldController.clear();
     descriptionController.clear();
     messageFieldController.clear();
-    // Reset focus to avoid stale attachment after re-opening the view
+    // Remove the stored listener before disposing, then create a fresh node.
+    if (_messageFocusListener != null) {
+      messageFocusNode.removeListener(_messageFocusListener!);
+      _messageFocusListener = null;
+    }
     try {
       messageFocusNode.dispose();
     } catch (_) {}

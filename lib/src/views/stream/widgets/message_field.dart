@@ -101,10 +101,8 @@ class IsmLiveMessageField extends StatelessWidget {
                           onTap: disabled
                               ? null
                               : () {
-                                  // Ensure emoji board is hidden and explicitly request focus
                                   controller.showEmojiBoard = false;
-                                  FocusScope.of(context).requestFocus(
-                                      controller.messageFocusNode);
+                                  controller.messageFocusNode.requestFocus();
                                   controller
                                       .update([IsmLiveStreamView.updateId]);
                                 },
