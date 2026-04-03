@@ -64,7 +64,21 @@ mixin StreamMessageMixin {
         await _controller.addMessages([processedMessage], isMqtt);
         break;
       case IsmLiveMessageType.heart:
-        _controller.addHeart(processedMessage);
+        if (processedMessage.senderId != _controller.user?.userId) {
+          final meta = payload?['metaData'];
+          final heartCount =
+              (meta is Map
+                  ? (meta['likeCount'] as int?) ??
+                      (meta['likesCount'] as int?)
+                  : null) ??
+              (payload?['likeCount'] as int?) ??
+              (payload?['likesCount'] as int?) ??
+              1;
+          IsmLiveLog.info(
+              'Heart MQTT – from: ${processedMessage.senderName}, '
+              'count: $heartCount, payload keys: ${payload?.keys}');
+          _controller.addHeart(processedMessage, count: heartCount);
+        }
         break;
       case IsmLiveMessageType.gift:
         if (_controller.pkStages?.isPk ?? false) {
@@ -247,14 +261,14 @@ mixin StreamMessageMixin {
     }
   }
 
-// Send a heart message to the stream
-  Future<void> sendHeartMessage(String streamId) async {
+  Future<void> sendHeartMessage(String streamId, {int count = 1}) async {
     final deviceId = _controller.configuration?.projectConfig.deviceId ?? '';
     final userId = _controller.user?.userId ?? '';
     final userName = _controller.user?.userName ?? '';
     final userImage = _controller.user?.userProfileImageUrl ?? '';
-    final customType = 'like';
-    // Default implementation - send heart through SDK's internal API
+    const customType = 'like';
+
+    IsmLiveLog.info('sendHeartMessage – streamId: $streamId, count: $count');
     await _controller.sendHearts(
       customType: customType,
       deviceId: deviceId,
@@ -262,6 +276,7 @@ mixin StreamMessageMixin {
       senderImage: userImage,
       senderName: userName,
       streamId: streamId,
+      likesCount: count,
     );
   }
 

@@ -107,6 +107,10 @@ mixin StreamOngoingMixin {
 // Debouncer to handle sorting of participants
   final _participantDebouncer = IsmLiveDebouncer();
 
+  Timer? _heartDebounceTimer;
+  int _pendingHeartCount = 0;
+  int _heartIdCounter = 0;
+
   /// Stop MQTT-disconnected chat fallback polling (used on app background).
   void pauseMqttDisconnectedChatFallback() {
     _stopMqttDisconnectedChatFallback();
@@ -776,10 +780,32 @@ mixin StreamOngoingMixin {
         _controller.streamMessagesList.toSet().toList();
   }
 
-// Function to add heart message to the stream
-  void addHeart(IsmLiveMessageModel message) {
-    final key = ValueKey(message.messageId);
+  static const int _heartFlushThreshold = 15;
 
+  void addHeart(IsmLiveMessageModel message, {int count = 1}) {
+    IsmLiveLog.info('addHeart from MQTT – count: $count, '
+        'senderId: ${message.senderId}');
+    for (var i = 0; i < count; i++) {
+      final id = '${message.messageId}_$i';
+      if (i == 0) {
+        _insertHeartAnimation(id);
+      } else {
+        Future.delayed(Duration(milliseconds: i * 120), () {
+          _insertHeartAnimation(id);
+        });
+      }
+    }
+  }
+
+  void _addLocalHeart() {
+    final id = 'local_${_heartIdCounter++}';
+    IsmLiveLog.info('_addLocalHeart – id: $id, '
+        'heartListLen: ${_controller.heartList.length}');
+    _insertHeartAnimation(id);
+  }
+
+  void _insertHeartAnimation(String id) {
+    final key = ValueKey(id);
     _controller.heartList.insert(
       0,
       IsmLiveAnimationView(
@@ -793,6 +819,45 @@ mixin StreamOngoingMixin {
         },
       ),
     );
+    _controller.update([IsmLiveStreamView.updateId]);
+  }
+
+  void _scheduleHeartFlush() {
+    _pendingHeartCount++;
+    IsmLiveLog.info('_scheduleHeartFlush – pending: $_pendingHeartCount');
+    if (_pendingHeartCount >= _heartFlushThreshold) {
+      _heartDebounceTimer?.cancel();
+      _heartDebounceTimer = null;
+      _flushPendingHearts();
+      return;
+    }
+    _heartDebounceTimer?.cancel();
+    _heartDebounceTimer = Timer(
+      const Duration(milliseconds: 500),
+      _flushPendingHearts,
+    );
+  }
+
+  void _flushPendingHearts() {
+    final count = _pendingHeartCount;
+    _pendingHeartCount = 0;
+    _heartDebounceTimer?.cancel();
+    _heartDebounceTimer = null;
+    if (count <= 0) return;
+    final streamId = _controller.streamId ?? '';
+    if (streamId.isEmpty) return;
+    IsmLiveLog.info('_flushPendingHearts – publishing count: $count via MQTT');
+    _controller._mqttController?.publishHeartMessage(
+      streamId: streamId,
+      likeCount: count,
+    );
+  }
+
+  void cancelHeartDebounce() {
+    _heartDebounceTimer?.cancel();
+    _heartDebounceTimer = null;
+    _pendingHeartCount = 0;
+    _heartIdCounter = 0;
   }
 
   // Function to add gift message to the stream
@@ -950,7 +1015,10 @@ mixin StreamOngoingMixin {
         _controller.pkSheet();
         break;
       case IsmLiveStreamOption.heart:
-        unawaited(_controller.sendHeartMessage(_controller.streamId ?? ''));
+        IsmLiveLog.info('Heart tapped – pending: $_pendingHeartCount');
+        unawaited(HapticFeedback.lightImpact());
+        _addLocalHeart();
+        _scheduleHeartFlush();
         break;
       case IsmLiveStreamOption.pk:
         _pkController.stopPkBattleSheet();

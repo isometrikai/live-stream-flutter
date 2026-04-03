@@ -178,9 +178,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
                           IsmLiveDelegate.controlWidgetBuilder?.call(
                         context,
                         option,
-                        () async {
-                          await _handleOptionTap(controller, option, context);
-                        },
+                        option == IsmLiveStreamOption.heart
+                            ? () => controller.onOptionTap(option, context)
+                            : () async {
+                                await _handleOptionTap(
+                                    controller, option, context);
+                              },
                         isHost,
                         isCopublishing,
                         streamId,
@@ -205,9 +208,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
                               : null,
                           controller.controlIcon(option),
                         ),
-                        onTap: () async {
-                          await _handleOptionTap(controller, option, context);
-                        },
+                        onTap: option == IsmLiveStreamOption.heart
+                            ? () => controller.onOptionTap(option, context)
+                            : () async {
+                                await _handleOptionTap(
+                                    controller, option, context);
+                              },
                         color: option == IsmLiveStreamOption.heart
                             ? IsmLiveColors.red
                             : option == IsmLiveStreamOption.multiLive
