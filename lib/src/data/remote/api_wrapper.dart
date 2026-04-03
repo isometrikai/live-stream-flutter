@@ -119,6 +119,22 @@ class IsmLiveApiWrapper {
             }
           }
 
+          Map<String, dynamic>? userInfo;
+          try {
+            if (IsmLiveUtility.hasValidUserToken) {
+              final uc = IsmLiveUtility.config.userConfig;
+              userInfo = {
+                'user_id': uc.userId,
+                'first_name': uc.firstName,
+                'last_name': uc.lastName,
+                'user_email': uc.userEmail,
+                'user_profile': uc.userProfile,
+              };
+            }
+          } catch (_) {
+            // SDK may not be initialized yet; safe to skip.
+          }
+
           IsmLiveDelegate.trackEvent(
             IsmLiveAnalyticsEvent.apiResult,
             properties: [
@@ -130,6 +146,7 @@ class IsmLiveApiWrapper {
                 'has_error': res.hasError,
                 'duration_ms': durationMs,
                 if (errorSummary != null) 'error': errorSummary,
+                if (userInfo != null) 'user': userInfo,
               }
             ],
           );
