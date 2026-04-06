@@ -72,9 +72,34 @@ class IsmLiveControlsWidget extends StatelessWidget {
       }
     }
 
-    // Default behavior: call the original onOptionTap
+      // Default behavior: call the original onOptionTap
     await controller.onOptionTap(option, context);
     controller.update([IsmLiveControlsWidget.updateId]);
+  }
+
+  /// Ensures [IsmLiveStreamOption.multiLive] appears for viewers in a co-publish
+  /// flow when the host app omits it from [IsmLiveDelegate.viewersOption].
+  ///
+  /// Uses a mutable copy of the options list so the delegate list is never mutated.
+  static void _ensureMultiLiveForViewerCopublishFlow(
+    List<IsmLiveStreamOption> options,
+    IsmLiveMemberStatus memberStatus,
+  ) {
+    if (options.contains(IsmLiveStreamOption.multiLive)) {
+      return;
+    }
+    final needsMultiLive = memberStatus.canEnableVideo ||
+        memberStatus.didRequested ||
+        memberStatus.isRejected;
+    if (!needsMultiLive) {
+      return;
+    }
+    final heartIndex = options.indexOf(IsmLiveStreamOption.heart);
+    if (heartIndex >= 0) {
+      options.insert(heartIndex, IsmLiveStreamOption.multiLive);
+    } else {
+      options.add(IsmLiveStreamOption.multiLive);
+    }
   }
 
   @override
@@ -108,11 +133,19 @@ class IsmLiveControlsWidget extends StatelessWidget {
                             .toList()
                         : IsmLiveStreamOption.hostOptions;
           } else {
-            options = controller.userRole?.isPkGuest ?? false
-                ? IsmLiveStreamOption.pkOptions
-                : isCopublishing
-                    ? IsmLiveStreamOption.copublisherOptions
-                    : IsmLiveStreamOption.viewersOptions;
+            if (controller.userRole?.isPkGuest ?? false) {
+              options = IsmLiveStreamOption.pkOptions;
+            } else if (isCopublishing) {
+              options = IsmLiveStreamOption.copublisherOptions;
+            } else {
+              options = List<IsmLiveStreamOption>.from(
+                IsmLiveStreamOption.viewersOptions,
+              );
+              _ensureMultiLiveForViewerCopublishFlow(
+                options,
+                controller.memberStatus,
+              );
+            }
           }
 
           if (isSchedule) {
