@@ -1,5 +1,20 @@
 part of '../stream_controller.dart';
 
+int? _heartLikeCountFromPayload(dynamic meta, Map<String, dynamic>? payload) {
+  int? fromMap(dynamic map, String k1, String k2) {
+    if (map is! Map) return null;
+    for (final key in [k1, k2]) {
+      final v = map[key];
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+    }
+    return null;
+  }
+
+  return fromMap(meta, 'likeCount', 'likesCount') ??
+      fromMap(payload, 'likeCount', 'likesCount');
+}
+
 // This mixin provides utility functions related to handling chat messages in a stream.
 mixin StreamMessageMixin {
   IsmLiveStreamController get _controller =>
@@ -65,15 +80,9 @@ mixin StreamMessageMixin {
         break;
       case IsmLiveMessageType.heart:
         if (processedMessage.senderId != _controller.user?.userId) {
-          final meta = payload?['metaData'];
-          final heartCount =
-              (meta is Map
-                  ? (meta['likeCount'] as int?) ??
-                      (meta['likesCount'] as int?)
-                  : null) ??
-              (payload?['likeCount'] as int?) ??
-              (payload?['likesCount'] as int?) ??
-              1;
+          final meta = payload?['metaData'] ??
+              processedMessage.metaData?.rawJson;
+          final heartCount = _heartLikeCountFromPayload(meta, payload) ?? 1;
           IsmLiveLog.info(
               'Heart MQTT – from: ${processedMessage.senderName}, '
               'count: $heartCount, payload keys: ${payload?.keys}');
@@ -268,7 +277,9 @@ mixin StreamMessageMixin {
     final userImage = _controller.user?.userProfileImageUrl ?? '';
     const customType = 'like';
 
-    IsmLiveLog.info('sendHeartMessage – streamId: $streamId, count: $count');
+    IsmLiveLog.info(
+        'sendHeartMessage – streamId: $streamId, count: $count '
+        '(metaData.likeCount / likesCount via API)');
     await _controller.sendHearts(
       customType: customType,
       deviceId: deviceId,

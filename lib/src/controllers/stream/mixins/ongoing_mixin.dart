@@ -846,11 +846,8 @@ mixin StreamOngoingMixin {
     if (count <= 0) return;
     final streamId = _controller.streamId ?? '';
     if (streamId.isEmpty) return;
-    IsmLiveLog.info('_flushPendingHearts – publishing count: $count via MQTT');
-    _controller._mqttController?.publishHeartMessage(
-      streamId: streamId,
-      likeCount: count,
-    );
+    IsmLiveLog.info('_flushPendingHearts – API sendHeartMessage count: $count');
+    unawaited(_controller.sendHeartMessage(streamId, count: count));
   }
 
   void cancelHeartDebounce() {

@@ -708,6 +708,10 @@ class IsmLiveStreamRepository {
       'customType': customType,
       'senderId': senderId,
       'likesCount': likesCount,
+      'metaData': {
+        'likeCount': likesCount,
+        'likesCount': likesCount,
+      },
     };
     return _apiWrapper.makeRequest(IsmLiveApis.sendHearts,
         type: IsmLiveRequestType.post,
