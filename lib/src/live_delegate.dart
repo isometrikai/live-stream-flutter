@@ -159,7 +159,8 @@ typedef StreamRecordingPlayerLoadedCallback = void Function(
   IsmLiveStreamRecordingItem recording,
 );
 
-// Heart message customization is now managed through `controlOptionCallback`.
+// Heart control UI can use `controlOptionCallback`. Batched like API flush uses
+// `heartBatchFlushCallback` (see [HeartBatchFlushCallback]).
 
 /// API handler for stream analytics data.
 ///
@@ -714,6 +715,24 @@ typedef GiftClickCallback = void Function(
   IsmLiveGiftsCategoryModel gift,
 );
 
+/// Callback when the SDK flushes accumulated heart (like) taps to the backend.
+///
+/// **The SDK always awaits `sendHeartMessage` first** (same API as without this
+/// callback). This hook runs **after** that call succeeds, in the background, so
+/// the like API is never skipped or delayed by host-app work.
+///
+/// Notification-style only (like [GiftClickCallback]): use for analytics, logging,
+/// or auxiliary UI. Errors in the callback are logged and do not affect sending.
+///
+/// [streamId] - The active stream ID.
+/// [likesCount] - Number of likes in this batch (same value sent in `sendHeartMessage`).
+///
+/// **If this callback is not set**, behavior is unchanged (only `sendHeartMessage`).
+typedef HeartBatchFlushCallback = Future<void> Function(
+  String streamId,
+  int likesCount,
+);
+
 /// Host app analytics integration.
 ///
 /// Provide a single delegate to receive important SDK events in a consistent
@@ -1258,6 +1277,11 @@ class IsmLiveDelegate {
   static AddCoinsClickCallback? addCoinsClickCallback;
 
   static GiftClickCallback? giftClickCallback;
+
+  /// Optional hook when batched heart (like) taps are flushed to the backend.
+  ///
+  /// See [HeartBatchFlushCallback].
+  static HeartBatchFlushCallback? heartBatchFlushCallback;
 
   /// Optional analytics delegate to capture SDK events.
   static IsmLiveAnalyticsDelegate? analyticsDelegate;

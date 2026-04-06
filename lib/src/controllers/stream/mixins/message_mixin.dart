@@ -83,9 +83,6 @@ mixin StreamMessageMixin {
           final meta = payload?['metaData'] ??
               processedMessage.metaData?.rawJson;
           final heartCount = _heartLikeCountFromPayload(meta, payload) ?? 1;
-          IsmLiveLog.info(
-              'Heart MQTT – from: ${processedMessage.senderName}, '
-              'count: $heartCount, payload keys: ${payload?.keys}');
           _controller.addHeart(processedMessage, count: heartCount);
         }
         break;
@@ -277,9 +274,6 @@ mixin StreamMessageMixin {
     final userImage = _controller.user?.userProfileImageUrl ?? '';
     const customType = 'like';
 
-    IsmLiveLog.info(
-        'sendHeartMessage – streamId: $streamId, count: $count '
-        '(metaData.likeCount / likesCount via API)');
     await _controller.sendHearts(
       customType: customType,
       deviceId: deviceId,

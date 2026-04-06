@@ -541,6 +541,7 @@ class IsmLiveApp extends StatefulWidget {
     OnStreamScrollCallback? onStreamScrollCallback,
     AddCoinsClickCallback? addCoinsClickCallback,
     GiftClickCallback? giftClickCallback,
+    HeartBatchFlushCallback? heartBatchFlushCallback,
     IsmLiveAnalyticsDelegate? analyticsDelegate,
     Set<String>? enabledAnalyticsEvents,
     BorderRadius? bottomSheetBorderRadius,
@@ -638,6 +639,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
     IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
     IsmLiveDelegate.giftClickCallback = giftClickCallback;
+    IsmLiveDelegate.heartBatchFlushCallback = heartBatchFlushCallback;
     IsmLiveDelegate.analyticsDelegate = analyticsDelegate;
     IsmLiveDelegate.enabledAnalyticsEvents = enabledAnalyticsEvents;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
