@@ -266,8 +266,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
           }
         ],
       );
@@ -278,8 +277,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
           }
         ],
       );
@@ -290,8 +288,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
             'error': e.toString(),
           }
         ],
@@ -302,8 +299,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
             'error': e.toString(),
           }
         ],
@@ -672,8 +668,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
           }
         ],
       );
@@ -684,8 +679,7 @@ mixin StreamJoinMixin {
           {
             'stream_id': stream.streamId ?? '',
             'event_id': stream.eventId ?? '',
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
             'error': e.toString(),
           }
         ],
@@ -1067,8 +1061,7 @@ mixin StreamJoinMixin {
         properties: [
           {
             'stream_id': streamId,
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
           }
         ],
       );
@@ -1078,8 +1071,7 @@ mixin StreamJoinMixin {
         properties: [
           {
             'stream_id': streamId,
-            'duration_ms':
-                DateTime.now().difference(startedAt).inMilliseconds,
+            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
             'error': e.toString(),
           }
         ],
@@ -1341,16 +1333,15 @@ mixin StreamJoinMixin {
       // First join: use app delegate default. Host/co-publisher rejoin (e.g. after
       // background): keep last camera facing so back camera isn’t reset to front.
       final lk.CameraPosition resolvedCameraPosition;
-      final preserveCameraOnReconnect = reJoin &&
-          (isHost || isCopublisher || isPkGust);
+      final preserveCameraOnReconnect =
+          reJoin && (isHost || isCopublisher || isPkGust);
       if (preserveCameraOnReconnect) {
         resolvedCameraPosition = _controller.position;
       } else {
-        resolvedCameraPosition =
-            (IsmLiveDelegate.initialCameraPositionStream ==
-                    IsmLiveCameraPosition.front)
-                ? lk.CameraPosition.front
-                : lk.CameraPosition.back;
+        resolvedCameraPosition = (IsmLiveDelegate.initialCameraPositionStream ==
+                IsmLiveCameraPosition.front)
+            ? lk.CameraPosition.front
+            : lk.CameraPosition.back;
         _controller.position = resolvedCameraPosition;
       }
 
