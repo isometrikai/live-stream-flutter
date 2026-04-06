@@ -117,6 +117,7 @@ mixin StreamOngoingMixin {
     final streamId = _controller.streamId;
     if (streamId == null || streamId.isEmpty) return;
     if (_controller.isInBackground) return;
+    _controller.nudgeMqttReconnectAfterAppResume();
     if (IsmLiveApp.isMqttConnected) return;
     unawaited(_startMqttDisconnectedChatFallback(streamId));
   }

@@ -450,56 +450,60 @@ class _ChatMessageItem extends StatelessWidget {
                                   ),
                                   if (message.isCopublisherRequest)
                                     Row(
-                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        SizedBox(
-                                          width: IsmLiveDimens.hundred,
-                                          height: IsmLiveDimens.thirtyTwo +
-                                              IsmLiveDimens.two,
-                                          child: IsmLiveButton(
-                                            label: 'accept',
-                                            onTap: () {
-                                              final controller = Get.find<
-                                                  IsmLiveStreamController>();
-                                              controller
-                                                  .acceptCopublisherRequest(
-                                                requestById: message.userId,
-                                                streamId:
-                                                    controller.streamId ?? '',
-                                              );
-                                              controller.streamMessagesList[
-                                                      controller
-                                                          .streamMessagesList
-                                                          .indexOf(message)] =
-                                                  message.copyWith(
-                                                      isCopublisherRequest:
-                                                          false);
-                                            },
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: IsmLiveDimens.thirtyTwo +
+                                                IsmLiveDimens.two,
+                                            child: IsmLiveButton(
+                                              label: 'accept',
+                                              onTap: () {
+                                                final controller = Get.find<
+                                                    IsmLiveStreamController>();
+                                                controller
+                                                    .acceptCopublisherRequest(
+                                                  requestById: message.userId,
+                                                  streamId: controller
+                                                          .streamId ??
+                                                      '',
+                                                );
+                                                controller.streamMessagesList[
+                                                        controller
+                                                            .streamMessagesList
+                                                            .indexOf(message)] =
+                                                    message.copyWith(
+                                                        isCopublisherRequest:
+                                                            false);
+                                              },
+                                            ),
                                           ),
                                         ),
                                         IsmLiveDimens.boxWidth2,
-                                        SizedBox(
-                                          width: IsmLiveDimens.hundred,
-                                          height: IsmLiveDimens.thirtyTwo +
-                                              IsmLiveDimens.two,
-                                          child: IsmLiveButton(
-                                            label: 'deny',
-                                            onTap: () {
-                                              final controller = Get.find<
-                                                  IsmLiveStreamController>();
-                                              controller.denyCopublisherRequest(
-                                                requestById: message.userId,
-                                                streamId:
-                                                    controller.streamId ?? '',
-                                              );
-                                              controller.streamMessagesList[
-                                                      controller
-                                                          .streamMessagesList
-                                                          .indexOf(message)] =
-                                                  message.copyWith(
-                                                      isCopublisherRequest:
-                                                          false);
-                                            },
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: IsmLiveDimens.thirtyTwo +
+                                                IsmLiveDimens.two,
+                                            child: IsmLiveButton(
+                                              label: 'deny',
+                                              onTap: () {
+                                                final controller = Get.find<
+                                                    IsmLiveStreamController>();
+                                                controller
+                                                    .denyCopublisherRequest(
+                                                  requestById: message.userId,
+                                                  streamId: controller
+                                                          .streamId ??
+                                                      '',
+                                                );
+                                                controller.streamMessagesList[
+                                                        controller
+                                                            .streamMessagesList
+                                                            .indexOf(message)] =
+                                                    message.copyWith(
+                                                        isCopublisherRequest:
+                                                            false);
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ],
