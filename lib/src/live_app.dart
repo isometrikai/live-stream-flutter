@@ -380,6 +380,8 @@ class IsmLiveApp extends StatefulWidget {
 
     try {
       IsmLiveUtility.navigatorKey = navigatorKey;
+      // Before delegate work: parallel [Future.wait] previously raced with stream binding.
+      await IsmLiveUtility.initialize(config);
 
       IsmLiveLog.info('Calling IsmLiveDelegate.instance.initialize');
       await IsmLiveDelegate.instance.initialize(

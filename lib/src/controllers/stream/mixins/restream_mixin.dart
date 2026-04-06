@@ -1,7 +1,10 @@
 part of '../stream_controller.dart';
 
 mixin RestreamMixin {
-  IsmLiveStreamController get _controller => Get.find();
+  /// Use the mixed instance, not [Get.find], so lifecycle callbacks still work
+  /// if this object was removed from Get while [WidgetsBindingObserver] is
+  /// active. [RestreamMixin] is only applied on [IsmLiveStreamController].
+  IsmLiveStreamController get _controller => this as IsmLiveStreamController;
 
   void onTapRestreamType(IsmLiveRestreamType type, bool value) async {
     // if (type != IsmLiveRestreamType.youtube) {

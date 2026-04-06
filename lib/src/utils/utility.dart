@@ -53,6 +53,9 @@ class IsmLiveUtility {
 
   static set config(IsmLiveConfigData? configData) {
     _config = configData;
+    if (configData == null) {
+      _initialized = false;
+    }
   }
 
   static void updateLater(VoidCallback callback, [bool addDelay = true]) {
