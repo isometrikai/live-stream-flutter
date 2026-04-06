@@ -26,4 +26,26 @@ abstract class AppscripLiveStreamComponentPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  Future<bool> isPictureInPictureSupported() {
+    throw UnimplementedError(
+        'isPictureInPictureSupported() has not been implemented.');
+  }
+
+  Future<bool> startPictureInPicture({String? trackId}) {
+    throw UnimplementedError(
+        'startPictureInPicture() has not been implemented.');
+  }
+
+  Future<bool> stopPictureInPicture() {
+    throw UnimplementedError(
+        'stopPictureInPicture() has not been implemented.');
+  }
+
+  /// Deactivate + reactivate AVAudioSession on iOS to force WebRTC
+  /// to reinitialize its audio unit (fixes silent mic after role change).
+  Future<bool> reactivateAudioSession() {
+    throw UnimplementedError(
+        'reactivateAudioSession() has not been implemented.');
+  }
 }

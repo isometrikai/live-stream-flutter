@@ -15,4 +15,34 @@ class MethodChannelAppscripLiveStreamComponent
         await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
+
+  @override
+  Future<bool> isPictureInPictureSupported() async {
+    final value =
+        await methodChannel.invokeMethod<bool>('isPictureInPictureSupported');
+    return value ?? false;
+  }
+
+  @override
+  Future<bool> startPictureInPicture({String? trackId}) async {
+    final value = await methodChannel.invokeMethod<bool>(
+      'startPictureInPicture',
+      <String, dynamic>{'trackId': trackId},
+    );
+    return value ?? false;
+  }
+
+  @override
+  Future<bool> stopPictureInPicture() async {
+    final value =
+        await methodChannel.invokeMethod<bool>('stopPictureInPicture');
+    return value ?? false;
+  }
+
+  @override
+  Future<bool> reactivateAudioSession() async {
+    final value =
+        await methodChannel.invokeMethod<bool>('reactivateAudioSession');
+    return value ?? false;
+  }
 }

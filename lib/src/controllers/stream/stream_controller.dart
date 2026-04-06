@@ -208,6 +208,8 @@ class IsmLiveStreamController extends GetxController
   CameraController? cameraController;
 
   final getStreamDebouncer = IsmLiveDebouncer();
+  final AppscripLiveStreamComponent _liveStreamBridge =
+      AppscripLiveStreamComponent();
 
   /// RTC token used for deferred room connection from `stream_view`.
   String? rtcToken;
