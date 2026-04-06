@@ -783,8 +783,6 @@ mixin StreamOngoingMixin {
   static const int _heartFlushThreshold = 15;
 
   void addHeart(IsmLiveMessageModel message, {int count = 1}) {
-    IsmLiveLog.info('addHeart from MQTT – count: $count, '
-        'senderId: ${message.senderId}');
     for (var i = 0; i < count; i++) {
       final id = '${message.messageId}_$i';
       if (i == 0) {
@@ -799,8 +797,6 @@ mixin StreamOngoingMixin {
 
   void _addLocalHeart() {
     final id = 'local_${_heartIdCounter++}';
-    IsmLiveLog.info('_addLocalHeart – id: $id, '
-        'heartListLen: ${_controller.heartList.length}');
     _insertHeartAnimation(id);
   }
 
@@ -824,7 +820,6 @@ mixin StreamOngoingMixin {
 
   void _scheduleHeartFlush() {
     _pendingHeartCount++;
-    IsmLiveLog.info('_scheduleHeartFlush – pending: $_pendingHeartCount');
     if (_pendingHeartCount >= _heartFlushThreshold) {
       _heartDebounceTimer?.cancel();
       _heartDebounceTimer = null;
@@ -846,8 +841,27 @@ mixin StreamOngoingMixin {
     if (count <= 0) return;
     final streamId = _controller.streamId ?? '';
     if (streamId.isEmpty) return;
-    IsmLiveLog.info('_flushPendingHearts – API sendHeartMessage count: $count');
-    unawaited(_controller.sendHeartMessage(streamId, count: count));
+    unawaited(_flushHeartsWithDelegate(streamId, count));
+  }
+
+  Future<void> _flushHeartsWithDelegate(String streamId, int count) async {
+    await _controller.sendHeartMessage(streamId, count: count);
+    final delegate = IsmLiveDelegate.heartBatchFlushCallback;
+    if (delegate != null) {
+      unawaited(_invokeHeartBatchFlushDelegate(delegate, streamId, count));
+    }
+  }
+
+  Future<void> _invokeHeartBatchFlushDelegate(
+    HeartBatchFlushCallback delegate,
+    String streamId,
+    int count,
+  ) async {
+    try {
+      await delegate(streamId, count);
+    } catch (e, st) {
+      IsmLiveLog.error('heartBatchFlushCallback error: $e', st);
+    }
   }
 
   void cancelHeartDebounce() {
@@ -1012,8 +1026,7 @@ mixin StreamOngoingMixin {
         _controller.pkSheet();
         break;
       case IsmLiveStreamOption.heart:
-        IsmLiveLog.info('Heart tapped – pending: $_pendingHeartCount');
-        unawaited(HapticFeedback.lightImpact());
+        unawaited(HapticFeedback.selectionClick());
         _addLocalHeart();
         _scheduleHeartFlush();
         break;
@@ -1377,8 +1390,7 @@ mixin StreamOngoingMixin {
       if (IsmLiveDelegate.unsubscribStreamById != null) {
         IsmLiveDelegate.unsubscribStreamById!(currentStreamId);
       } else {
-        await _controller._mqttController
-            ?.unsubscribeStream(currentStreamId);
+        await _controller._mqttController?.unsubscribeStream(currentStreamId);
       }
     }
 
