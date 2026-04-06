@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
@@ -414,60 +413,6 @@ class IsmLiveMqttController extends GetxController {
         'mqttInitialized': _mqttInitialized,
         'isConnected': IsmLiveApp.isMqttConnected,
       };
-
-  void publishHeartMessage({
-    required String streamId,
-    required int likeCount,
-  }) {
-    try {
-      if (!_mqttInitialized || !IsmLiveApp.isMqttConnected) {
-        IsmLiveLog.error(
-            'publishHeartMessage: MQTT not connected, skipping publish');
-        return;
-      }
-
-      final user = _streamController.user;
-      final config = _streamController.configuration;
-      if (user == null || config == null) {
-        IsmLiveLog.error('publishHeartMessage: user or config is null');
-        return;
-      }
-
-      final now = DateTime.now().millisecondsSinceEpoch;
-      final payload = <String, dynamic>{
-        'action': 'messageSent',
-        'streamId': streamId,
-        'sentAt': now,
-        'senderProfileImageUrl': user.userProfileImageUrl,
-        'senderName': user.userName,
-        'senderIdentifier': user.userIdentifier,
-        'senderId': user.userId,
-        'searchableTags': <String>[],
-        'replyMessage': false,
-        'repliesCount': 0,
-        'metaData': <String, dynamic>{
-          'likeCount': likeCount,
-        },
-        'messageType': IsmLiveMessageType.heart.value,
-        'messageId': '${user.userId}_heart_$now',
-        'membersCount': _streamController.streamMembersList.length,
-        'viewersCount':
-            _streamController.liveStreamViewersCount.value ?? 0,
-        'deviceId': config.projectConfig.deviceId,
-        'customType': 'like',
-        'body': '',
-      };
-
-      final topic = '$_topicPrefix/$streamId';
-      final jsonStr = jsonEncode(payload);
-      _mqttHelper.publishMessage(message: jsonStr, pubTopic: topic);
-
-      IsmLiveLog.info(
-          'publishHeartMessage: published $likeCount hearts on $topic');
-    } catch (e, st) {
-      IsmLiveLog.error('publishHeartMessage failed: $e', st);
-    }
-  }
 
   void handleEventsExternally(EventModel payload) => _onEvent(payload);
 
