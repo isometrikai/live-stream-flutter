@@ -105,6 +105,66 @@ mixin StreamSheetMixin {
     );
   }
 
+  /// Same path as tapping Multi Live in stream controls: delegate callback first,
+  /// then default `onOptionTap`.
+  Future<void> presentViewerMultiLiveAsIfTapped(BuildContext context) async {
+    final controlCallback = IsmLiveDelegate.controlOptionCallback;
+    if (controlCallback != null) {
+      final handled = await controlCallback(
+        context,
+        IsmLiveStreamOption.multiLive,
+        _controller.streamId ?? '',
+        _controller.isHost,
+        _controller.isCopublisher,
+      );
+      if (handled) {
+        _controller.update([IsmLiveControlsWidget.updateId]);
+        return;
+      }
+    }
+    await _controller.onOptionTap(IsmLiveStreamOption.multiLive, context);
+    _controller.update([IsmLiveControlsWidget.updateId]);
+  }
+
+  /// After the host adds this viewer as co-publisher ([IsmLiveMemberStatus.gotRequest]),
+  /// opens the same Multi Live flow as a manual tap once the frame is ready.
+  void scheduleAutoOpenCopublishInviteSheetForViewer() {
+    if (_controller.isHost) {
+      return;
+    }
+    if (_controller.isCopublisher) {
+      return;
+    }
+    if (!_controller.memberStatus.receivedRequest) {
+      return;
+    }
+    if (_controller._autoOpenedCopublishHostInviteSheet) {
+      return;
+    }
+    _controller._autoOpenedCopublishHostInviteSheet = true;
+
+    IsmLiveUtility.updateLater(() {
+      Future.delayed(const Duration(milliseconds: 120), () {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final ctx = IsmLiveUtility.navigatorKey.currentContext;
+          if (ctx == null || !ctx.mounted) {
+            _controller._autoOpenedCopublishHostInviteSheet = false;
+            return;
+          }
+          if (_controller.isHost || _controller.isCopublisher) {
+            _controller._autoOpenedCopublishHostInviteSheet = false;
+            return;
+          }
+          if (!_controller.memberStatus.receivedRequest) {
+            _controller._autoOpenedCopublishHostInviteSheet = false;
+            return;
+          }
+          await _controller.presentViewerMultiLiveAsIfTapped(ctx);
+        });
+      });
+    });
+  }
+
   // Function to handle showing copublishing viewer bottom sheet
   void copublishingViewerSheet(BuildContext context) async {
     await IsmLiveUtility.openBottomSheet(

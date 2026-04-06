@@ -18,6 +18,19 @@ class IsmLivePublisherGrid extends StatelessWidget {
 
   static const String updateId = 'publisher-grid';
 
+  /// Lower bound on grid height as a fraction of available viewport below the top inset.
+  /// Pairs with 16:9 intrinsic sizing: common live apps use large tiles for few hosts
+  /// (side-by-side ~half screen for 2) and scale up as the grid grows (2×2, 3×3, …).
+  static double _minHeightFractionForParticipantCount(int count) {
+    assert(count >= 2);
+    if (count == 2) return 0.5;
+    if (count == 3) return 1.0 / 3.0;
+    if (count == 4) return 0.48;
+    if (count <= 6) return 0.52;
+    if (count <= 9) return 0.58;
+    return 0.68;
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -31,10 +44,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       imageUrl: controller.hostDetails?.image ?? streamImage,
                       name: controller.hostDetails?.name ?? '',
                       showConnectingState: controller.isViewerJoiningStream,
-                      connectingText: context
-                              .liveTranslations
-                              ?.streamTranslations
-                              ?.connectingToLiveStream ??
+                      connectingText: context.liveTranslations
+                              ?.streamTranslations?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
                     );
             } else if (controller.participantTracks.isEmpty) {
@@ -43,10 +54,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       imageUrl: controller.hostDetails?.image ?? streamImage,
                       name: controller.hostDetails?.name ?? '',
                       showConnectingState: controller.isViewerJoiningStream,
-                      connectingText: context
-                              .liveTranslations
-                              ?.streamTranslations
-                              ?.connectingToLiveStream ??
+                      connectingText: context.liveTranslations
+                              ?.streamTranslations?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
                     )
                   : const SizedBox.shrink();
@@ -68,63 +77,85 @@ class IsmLivePublisherGrid extends StatelessWidget {
               child = LayoutBuilder(
                 builder: (context, constraints) {
                   final topPad = IsmLiveDimens.hundred;
-                  final gridHeight = max(1.0, constraints.maxHeight - topPad);
+                  final maxGridHeight =
+                      max(1.0, constraints.maxHeight - topPad);
                   final crossCount =
                       controller.participantTracks.length < 3 ? 2 : 3;
-                  final rowCount = (controller.participantTracks.length +
-                          crossCount -
-                          1) ~/
-                      crossCount;
+                  final rowCount =
+                      (controller.participantTracks.length + crossCount - 1) ~/
+                          crossCount;
                   const crossSpacing = 0.0;
                   const mainSpacing = 0.0;
-                  final crossExtent = (constraints.maxWidth -
-                          (crossCount - 1) * crossSpacing) /
-                      crossCount;
+                  final crossExtent =
+                      (constraints.maxWidth - (crossCount - 1) * crossSpacing) /
+                          crossCount;
+                  // Prefer 16:9 tiles, but enforce a minimum grid height by participant
+                  // count so 1×2 / 2×2 / 3×3 style layouts stay readable on phones.
+                  const videoTileAspectRatio = 16.0 / 9.0;
+                  final idealMainExtent = crossExtent / videoTileAspectRatio;
+                  final intrinsicGridHeight =
+                      rowCount * idealMainExtent + (rowCount - 1) * mainSpacing;
+                  final participantCount = controller.participantTracks.length;
+                  final minDesiredHeight = maxGridHeight *
+                      _minHeightFractionForParticipantCount(participantCount);
+                  final gridHeight = min(
+                    max(intrinsicGridHeight, minDesiredHeight),
+                    maxGridHeight,
+                  );
                   final mainExtent =
                       (gridHeight - (rowCount - 1) * mainSpacing) / rowCount;
                   final aspectRatio =
                       (crossExtent / mainExtent).clamp(0.25, 4.0);
 
-                  return Padding(
-                    padding: EdgeInsets.only(top: topPad),
-                    child: GridView.builder(
-                      restorationId: '',
-                      itemCount: controller.participantTracks.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossCount,
-                        mainAxisSpacing: mainSpacing,
-                        crossAxisSpacing: crossSpacing,
-                        childAspectRatio: aspectRatio,
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: topPad),
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        height: gridHeight,
+                        child: GridView.builder(
+                          restorationId: '',
+                          itemCount: controller.participantTracks.length,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossCount,
+                            mainAxisSpacing: mainSpacing,
+                            crossAxisSpacing: crossSpacing,
+                            childAspectRatio: aspectRatio,
+                          ),
+                          itemBuilder: (_, index) {
+                            var url = '';
+
+                            for (var element in controller.streamMembersList) {
+                              if (element.userId ==
+                                  controller.participantList[index].participant
+                                      .identity) {
+                                url = element.userProfileImageUrl;
+                              }
+                            }
+
+                            return ParticipantWidget.widgetFor(
+                              controller.participantList[index],
+                              imageUrl: url,
+                              isFirstIndex: index == 0,
+                              isViewer: !(controller.userRole?.isHost ??
+                                      false) &&
+                                  !(controller.userRole?.isPkGuest ?? false) &&
+                                  (controller.pkStages?.isPkStart ?? false),
+                              isHost: index == 0,
+                              showStatsLayer: controller.isPk,
+                              isWinner: controller.pkWinnerId ==
+                                  controller.participantList[index].participant
+                                      .identity,
+                              isbattleFinish:
+                                  (controller.pkStages?.isPkStop ?? false) &&
+                                      controller.pkWinnerId != null,
+                            );
+                          },
+                        ),
                       ),
-                      itemBuilder: (_, index) {
-                        var url = '';
-
-                        for (var element in controller.streamMembersList) {
-                          if (element.userId ==
-                              controller.participantList[index].participant
-                                  .identity) {
-                            url = element.userProfileImageUrl;
-                          }
-                        }
-
-                        return ParticipantWidget.widgetFor(
-                          controller.participantList[index],
-                          imageUrl: url,
-                          isFirstIndex: index == 0,
-                          isViewer: !(controller.userRole?.isHost ?? false) &&
-                              !(controller.userRole?.isPkGuest ?? false) &&
-                              (controller.pkStages?.isPkStart ?? false),
-                          isHost: index == 0,
-                          showStatsLayer: controller.isPk,
-                          isWinner: controller.pkWinnerId ==
-                              controller.participantList[index].participant
-                                  .identity,
-                          isbattleFinish:
-                              (controller.pkStages?.isPkStop ?? false) &&
-                                  controller.pkWinnerId != null,
-                        );
-                      },
                     ),
                   );
                 },

@@ -71,7 +71,7 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: false,
+      productStream: true,
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
       enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
@@ -329,24 +329,25 @@ class HomeController extends GetxController {
       // Custom GoLive button click handler with comprehensive data
 
       // paidStream: false
-      // hostOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.product,
-      //   IsmLiveStreamOption.rotateCamera,
-      //   IsmLiveStreamOption.settings,
-      // ],
+      hostOptions: [
+        IsmLiveStreamOption.bars,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.product,
+        IsmLiveStreamOption.rotateCamera,
+        IsmLiveStreamOption.settings,
+        IsmLiveStreamOption.multiLive,
+      ],
       // rtmpOptions: [
       //   IsmLiveStreamOption.bars,
       //   IsmLiveStreamOption.share,
       //   IsmLiveStreamOption.product,
       // ],
-      // viewersOptions: [
-      //   IsmLiveStreamOption.gift,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.speaker,
-      //   IsmLiveStreamOption.heart,
-      // ],
+      viewersOptions: [
+        IsmLiveStreamOption.gift,
+        IsmLiveStreamOption.share,
+        IsmLiveStreamOption.speaker,
+        IsmLiveStreamOption.heart,
+      ],
       // ismLiveButtonConfig: IsmLiveButtonConfig(
       //   primaryBuilder: (context,
       //           {required label,

@@ -1,10 +1,121 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class IsmLiveCopublishingHostSheet extends StatelessWidget {
+class IsmLiveCopublishingHostSheet extends StatefulWidget {
   const IsmLiveCopublishingHostSheet({super.key});
   static const String updateId = 'stream-copublisher-sheet';
+
+  @override
+  State<IsmLiveCopublishingHostSheet> createState() =>
+      _IsmLiveCopublishingHostSheetState();
+}
+
+class _IsmLiveCopublishingHostSheetState
+    extends State<IsmLiveCopublishingHostSheet> {
+  Timer? _copublisherSearchDebounce;
+  Timer? _membersSearchDebounce;
+  static const _debounceDuration = Duration(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    final controller = Get.find<IsmLiveStreamController>();
+    // Clear before the TextField is built so onChanged does not fire an extra
+    // search while GetX also runs the initial fetch for this sheet.
+    controller.searchCopublisherFieldController.clear();
+    controller.searchMembersFieldController.clear();
+  }
+
+  @override
+  void dispose() {
+    _copublisherSearchDebounce?.cancel();
+    _membersSearchDebounce?.cancel();
+    super.dispose();
+  }
+
+  Widget _buildSearchBar({
+    required BuildContext context,
+    required Color textColor,
+    required TextEditingController textController,
+    required String hintText,
+    required ValueChanged<String> onDebouncedQuery,
+    required VoidCallback onClear,
+  }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.06)
+        : const Color(0xFFF5F5F5);
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      decoration: BoxDecoration(
+        color: fillColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.search,
+            color: context.liveTheme?.unselectedTextColor ?? Colors.grey,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: textController,
+              style: TextStyle(color: textColor, fontSize: 14),
+              onChanged: (value) {
+                setState(() {});
+                onDebouncedQuery(value);
+              },
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color:
+                      context.liveTheme?.unselectedTextColor ?? Colors.grey,
+                  fontSize: 14,
+                ),
+                border: InputBorder.none,
+                isDense: false,
+                contentPadding: const EdgeInsets.symmetric(vertical: 4),
+              ),
+            ),
+          ),
+          if (textController.text.isNotEmpty)
+            InkWell(
+              onTap: onClear,
+              child: Icon(
+                Icons.clear,
+                color: context.liveTheme?.unselectedTextColor ?? Colors.grey,
+                size: 18,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyPlaceholder({
+    required String? placeHolder,
+    required String? placeHolderText,
+  }) =>
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (placeHolder != null)
+            Container(
+              padding: IsmLiveDimens.edgeInsetsL20,
+              child: IsmLiveImage.svg(placeHolder),
+            ),
+          IsmLiveDimens.boxHeight2,
+          Text(placeHolderText ?? ''),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +124,6 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
     final subtitleColor = context.liveTheme?.unselectedTextColor ??
         (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
     final selectedTabBg = isDarkMode ? Colors.white : Colors.black;
-    // Contrast with selected tab background so text is always readable
     final selectedTabTextColor = selectedTabBg.computeLuminance() > 0.5
         ? Colors.black
         : Colors.white;
@@ -23,6 +133,10 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
         (isDarkMode ? const Color(0xFF2C2C2C) : Colors.grey.shade100);
 
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+        minHeight: 360,
+      ),
       decoration: BoxDecoration(
         color: context.liveTheme?.backgroundColor ??
             (isDarkMode ? const Color(0xFF121212) : Colors.white),
@@ -36,7 +150,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
       child: Padding(
         padding: IsmLiveDimens.edgeInsetsT16,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             GetX<IsmLiveStreamController>(
               initState: (state) {
@@ -48,6 +162,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 );
                 controller.fetchEligibleMembers(
                   streamId: controller.streamId ?? '',
+                  forceFetch: true,
                 );
                 controller.cobublisTabController.index = 0;
                 controller.copublisher = IsmLiveCopublisher.values[0];
@@ -67,9 +182,7 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
 
                     return DecoratedBox(
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? selectedTabBg
-                            : unselectedTabBg,
+                        color: isSelected ? selectedTabBg : unselectedTabBg,
                         borderRadius:
                             BorderRadius.circular(IsmLiveDimens.eighty),
                       ),
@@ -89,144 +202,210 @@ class IsmLiveCopublishingHostSheet extends StatelessWidget {
                 ).toList(),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
+            Expanded(
               child: GetBuilder<IsmLiveStreamController>(
-                id: updateId,
-                initState: (state) {
-                  Get.find<IsmLiveStreamController>()
-                    ..searchCopublisherFieldController.clear()
-                    ..searchMembersFieldController.clear();
-                },
+                id: IsmLiveCopublishingHostSheet.updateId,
                 builder: (controller) => TabBarView(
                   controller: controller.cobublisTabController,
                   children: [
-                    IsmLiveScrollSheet(
-                      showSearchBar: true,
-                      onPressClearIcon: () {
-                        controller.searchCopublisherFieldController.clear();
-                        controller.searchRequest(
-                            controller.searchCopublisherFieldController.text);
-                      },
-                      showHeader: false,
-                      textEditingController:
-                          controller.searchCopublisherFieldController,
-                      hintText: IsmLiveStrings.searchRequest,
-                      onchange: controller.searchRequest,
-                      title: '',
-                      placeHolder:
-                          IsmLiveAssetConstants.user_request_placeholder,
-                      placeHolderText: IsmLiveStrings.noRequestUsers,
-                      controller: controller.copublisherListController,
-                      itemCount: controller.copublisherRequestsList.length,
-                      itemBuilder: (context, index) {
-                        final copublisher =
-                            controller.copublisherRequestsList[index];
-                        return ListTile(
-                          leading: IsmLiveImage.network(
-                            copublisher.profileUrl,
-                            name: copublisher.name,
-                            dimensions: IsmLiveDimens.forty,
-                            isProfileImage: true,
+                    Padding(
+                      padding: IsmLiveDimens.edgeInsetsT8,
+                      child: Column(
+                        children: [
+                          _buildSearchBar(
+                            context: context,
+                            textColor: textColor,
+                            textController:
+                                controller.searchCopublisherFieldController,
+                            hintText: IsmLiveStrings.searchRequest,
+                            onDebouncedQuery: (value) {
+                              _copublisherSearchDebounce?.cancel();
+                              _copublisherSearchDebounce = Timer(
+                                _debounceDuration,
+                                () => controller.searchRequest(value),
+                              );
+                            },
+                            onClear: () {
+                              _copublisherSearchDebounce?.cancel();
+                              controller.searchCopublisherFieldController
+                                  .clear();
+                              setState(() {});
+                              controller.searchRequest('');
+                            },
                           ),
-                          title: Text(
-                            copublisher.name,
-                            style: TextStyle(color: textColor),
-                          ),
-                          subtitle: Text(
-                            copublisher.userIdentifier,
-                            style: TextStyle(color: subtitleColor),
-                          ),
-                          trailing: copublisher.pending ?? false
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IsmLiveButton.icon(
-                                      icon: Icons.check_rounded,
-                                      onTap: () {
-                                        IsmLiveRoute.pop();
-                                        controller.acceptCopublisherRequest(
-                                          requestById: copublisher.userId,
-                                          streamId: controller.streamId ?? '',
-                                        );
-                                      },
+                          IsmLiveDimens.boxHeight10,
+                          Expanded(
+                            child: controller.copublisherRequestsList.isEmpty
+                                ? Center(
+                                    child: _buildEmptyPlaceholder(
+                                      placeHolder: IsmLiveAssetConstants
+                                          .user_request_placeholder,
+                                      placeHolderText:
+                                          IsmLiveStrings.noRequestUsers,
                                     ),
-                                    IsmLiveDimens.boxWidth4,
-                                    IsmLiveButton.icon(
-                                      icon: Icons.close_rounded,
-                                      secondary: true,
-                                      onTap: () {
-                                        IsmLiveRoute.pop();
-                                        controller.denyCopublisherRequest(
-                                          requestById: copublisher.userId,
-                                          streamId: controller.streamId ?? '',
-                                        );
-                                      },
-                                    )
-                                  ],
-                                )
-                              : copublisher.accepted ?? false
-                                  ? Text(
-                                      IsmLiveStrings.accepted,
-                                      style: const TextStyle(
-                                          color: Colors.green),
-                                    )
-                                  : Text(
-                                      IsmLiveStrings.deny,
-                                      style: const TextStyle(
-                                          color: Colors.red),
-                                    ),
-                        );
-                      },
+                                  )
+                                : ListView.separated(
+                                    controller:
+                                        controller.copublisherListController,
+                                    itemCount: controller
+                                        .copublisherRequestsList.length,
+                                    itemBuilder: (context, index) {
+                                      final copublisher = controller
+                                          .copublisherRequestsList[index];
+                                      return ListTile(
+                                        leading: IsmLiveImage.network(
+                                          copublisher.profileUrl,
+                                          name: copublisher.name,
+                                          dimensions: IsmLiveDimens.forty,
+                                          initials:
+                                              copublisher.profileInitials,
+                                          isProfileImage: true,
+                                        ),
+                                        title: Text(
+                                          copublisher.name,
+                                          style: TextStyle(color: textColor),
+                                        ),
+                                        subtitle: Text(
+                                          copublisher.userName,
+                                          style:
+                                              TextStyle(color: subtitleColor),
+                                        ),
+                                        trailing: copublisher.pending ?? false
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  IsmLiveButton.icon(
+                                                    icon: Icons.check_rounded,
+                                                    onTap: () {
+                                                      IsmLiveRoute.pop();
+                                                      controller
+                                                          .acceptCopublisherRequest(
+                                                        requestById:
+                                                            copublisher.userId,
+                                                        streamId: controller
+                                                                .streamId ??
+                                                            '',
+                                                      );
+                                                    },
+                                                  ),
+                                                  IsmLiveDimens.boxWidth4,
+                                                  IsmLiveButton.icon(
+                                                    icon: Icons.close_rounded,
+                                                    secondary: true,
+                                                    onTap: () {
+                                                      IsmLiveRoute.pop();
+                                                      controller
+                                                          .denyCopublisherRequest(
+                                                        requestById:
+                                                            copublisher.userId,
+                                                        streamId: controller
+                                                                .streamId ??
+                                                            '',
+                                                      );
+                                                    },
+                                                  )
+                                                ],
+                                              )
+                                            : copublisher.accepted ?? false
+                                                ? const Text(
+                                                    IsmLiveStrings.accepted,
+                                                    style: TextStyle(
+                                                        color: Colors.green),
+                                                  )
+                                                : const Text(
+                                                    IsmLiveStrings.deny,
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        IsmLiveDimens.box0,
+                                  ),
+                          ),
+                        ],
+                      ),
                     ),
-                    IsmLiveScrollSheet(
-                      showSearchBar: true,
-                      placeHolder: IsmLiveAssetConstants.user_placeholder,
-                      placeHolderText: IsmLiveStrings.noUsers,
-                      onPressClearIcon: () {
-                        controller.searchMembersFieldController.clear();
-                        controller.searchMembers(
-                            controller.searchMembersFieldController.text);
-                      },
-                      showHeader: false,
-                      textEditingController:
-                          controller.searchMembersFieldController,
-                      hintText: IsmLiveStrings.searchUser,
-                      onchange: controller.searchMembers,
-                      title: '',
-                      controller: controller.membersListController,
-                      itemCount: controller.eligibleMembersList.length,
-                      itemBuilder: (context, index) {
-                        final members =
-                            controller.eligibleMembersList[index];
-                        return ListTile(
-                          leading: IsmLiveImage.network(
-                            members.profileUrl,
-                            name: members.name,
-                            dimensions: IsmLiveDimens.forty,
-                            isProfileImage: true,
+                    Padding(
+                      padding: IsmLiveDimens.edgeInsetsT8,
+                      child: Column(
+                        children: [
+                          _buildSearchBar(
+                            context: context,
+                            textColor: textColor,
+                            textController:
+                                controller.searchMembersFieldController,
+                            hintText: IsmLiveStrings.searchByUsername,
+                            onDebouncedQuery: (value) {
+                              _membersSearchDebounce?.cancel();
+                              _membersSearchDebounce = Timer(
+                                _debounceDuration,
+                                () => controller.searchMembers(value),
+                              );
+                            },
+                            onClear: () {
+                              _membersSearchDebounce?.cancel();
+                              controller.searchMembersFieldController.clear();
+                              setState(() {});
+                              controller.searchMembers('');
+                            },
                           ),
-                          title: Text(
-                            members.name,
-                            style: TextStyle(color: textColor),
+                          IsmLiveDimens.boxHeight10,
+                          Expanded(
+                            child: controller.eligibleMembersList.isEmpty
+                                ? Center(
+                                    child: _buildEmptyPlaceholder(
+                                      placeHolder:
+                                          IsmLiveAssetConstants.user_placeholder,
+                                      placeHolderText: IsmLiveStrings.noUsers,
+                                    ),
+                                  )
+                                : ListView.separated(
+                                    controller:
+                                        controller.membersListController,
+                                    itemCount:
+                                        controller.eligibleMembersList.length,
+                                    itemBuilder: (context, index) {
+                                      final members = controller
+                                          .eligibleMembersList[index];
+                                      return ListTile(
+                                        leading: IsmLiveImage.network(
+                                          members.profileUrl,
+                                          name: members.name,
+                                          dimensions: IsmLiveDimens.forty,
+                                          initials: members.profileInitials,
+                                          isProfileImage: true,
+                                        ),
+                                        title: Text(
+                                          members.name,
+                                          style: TextStyle(color: textColor),
+                                        ),
+                                        subtitle: Text(
+                                          members.userName,
+                                          style:
+                                              TextStyle(color: subtitleColor),
+                                        ),
+                                        trailing: controller.isHost == true
+                                            ? IsmLiveButton.icon(
+                                                icon: Icons.person_add_rounded,
+                                                onTap: () {
+                                                  controller.addMember(
+                                                    streamId:
+                                                        controller.streamId ??
+                                                            '',
+                                                    memberId: members.userId,
+                                                  );
+                                                },
+                                              )
+                                            : null,
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        IsmLiveDimens.box0,
+                                  ),
                           ),
-                          subtitle: Text(
-                            members.userIdentifier,
-                            style: TextStyle(color: subtitleColor),
-                          ),
-                          trailing: controller.isHost == true
-                              ? IsmLiveButton.icon(
-                                  icon: Icons.person_add_rounded,
-                                  onTap: () {
-                                    controller.addMember(
-                                      streamId: controller.streamId ?? '',
-                                      memberId: members.userId,
-                                    );
-                                  },
-                                )
-                              : null,
-                        );
-                      },
+                        ],
+                      ),
                     ),
                   ],
                 ),

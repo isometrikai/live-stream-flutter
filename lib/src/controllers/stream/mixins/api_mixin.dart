@@ -689,6 +689,9 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.copublisherRequestsList.isEmpty) {
+      if (forceFetch && skip == 0) {
+        _controller.copublisherRequestsList.clear();
+      }
       var list = await _controller.viewModel.fetchCopublisherRequests(
         streamId: streamId,
         limit: limit,
@@ -729,6 +732,9 @@ mixin StreamAPIMixin {
     String? searchTag,
   }) async {
     if (forceFetch || _controller.eligibleMembersList.isEmpty) {
+      if (forceFetch && skip == 0) {
+        _controller.eligibleMembersList.clear();
+      }
       var list = await _controller.viewModel.fetchEligibleMembers(
         streamId: streamId,
         limit: limit,

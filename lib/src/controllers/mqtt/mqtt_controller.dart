@@ -546,6 +546,10 @@ class IsmLiveMqttController extends GetxController {
           if (memberId == userId) {
             _streamController.memberStatus = IsmLiveMemberStatus.gotRequest;
             body = '$hostName has added you as a Co-publisher';
+            _streamController.update([
+              IsmLiveStreamView.updateId,
+              IsmLiveControlsWidget.updateId,
+            ]);
           } else if (hostId == userId) {
             body = 'You\'ve added $memberName as a Co-publisher';
           } else {
@@ -570,6 +574,9 @@ class IsmLiveMqttController extends GetxController {
 
           unawaited(_streamController.handleMessage(message: message));
           _updateStream([IsmLiveControlsWidget.updateId]);
+          if (memberId == userId) {
+            _streamController.scheduleAutoOpenCopublishInviteSheetForViewer();
+          }
           break;
         case IsmLiveActions.memberLeft:
           var member = IsmLiveViewerModel.fromMap(payload);

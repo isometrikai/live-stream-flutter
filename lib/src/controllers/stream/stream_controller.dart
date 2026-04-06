@@ -128,7 +128,20 @@ class IsmLiveStreamController extends GetxController
   final Rx<IsmLiveMemberStatus> _memberStatus =
       IsmLiveMemberStatus.notMember.obs;
   IsmLiveMemberStatus get memberStatus => _memberStatus.value;
-  set memberStatus(IsmLiveMemberStatus value) => _memberStatus.value = value;
+  set memberStatus(IsmLiveMemberStatus value) {
+    if (_memberStatus.value == value) {
+      return;
+    }
+    _memberStatus.value = value;
+    if (value != IsmLiveMemberStatus.gotRequest) {
+      _autoOpenedCopublishHostInviteSheet = false;
+    }
+  }
+
+  /// Prevents auto-presenting the co-publish invite sheet more than once per
+  /// [IsmLiveMemberStatus.gotRequest] stint; cleared when [memberStatus] leaves
+  /// [IsmLiveMemberStatus.gotRequest] or presentation fails (no context).
+  bool _autoOpenedCopublishHostInviteSheet = false;
 
   bool get isMember => memberStatus.isMember;
 

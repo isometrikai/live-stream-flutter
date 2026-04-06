@@ -95,6 +95,7 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                   onTap?.call();
                 },
               ),
+            IsmLiveDimens.boxHeight10,
           ],
         ),
       );
