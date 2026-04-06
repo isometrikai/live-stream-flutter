@@ -1316,7 +1316,6 @@ class IsmLiveDelegate {
       IsmLiveHandler.initialize(),
       _dbWrapper.saveValueSecurely(
           IsmLiveLocalKeys.configDetails, config.toJson()),
-      IsmLiveUtility.initialize(config),
     ]);
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.sdkInitialize,
