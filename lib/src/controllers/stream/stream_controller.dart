@@ -498,8 +498,14 @@ class IsmLiveStreamController extends GetxController
     });
 
     copublisherListController.addListener(() async {
-      if (copublisherListController.position.maxScrollExtent * 0.8 <=
-          copublisherListController.position.pixels) {
+      if (!copublisherListController.hasClients) {
+        return;
+      }
+      final copublisherPos = copublisherListController.position;
+      if (!copublisherPos.hasContentDimensions) {
+        return;
+      }
+      if (copublisherPos.maxScrollExtent * 0.8 <= copublisherPos.pixels) {
         if (isCopublisherApiCall) {
           return;
         }
@@ -535,8 +541,14 @@ class IsmLiveStreamController extends GetxController
     });
 
     membersListController.addListener(() async {
-      if (membersListController.position.maxScrollExtent * 0.8 <=
-          membersListController.position.pixels) {
+      if (!membersListController.hasClients) {
+        return;
+      }
+      final membersPos = membersListController.position;
+      if (!membersPos.hasContentDimensions) {
+        return;
+      }
+      if (membersPos.maxScrollExtent * 0.8 <= membersPos.pixels) {
         if (isMembersApiCall) {
           return;
         }
@@ -601,7 +613,12 @@ class IsmLiveStreamController extends GetxController
     //       _pkController.giftCategoriesList[giftsTabController.index].id ?? '';
     // });
     cobublisTabController.addListener(() {
-      copublisher = IsmLiveCopublisher.values[cobublisTabController.index];
+      final tabs = IsmLiveCopublisher.values;
+      final i = cobublisTabController.index;
+      if (tabs.isEmpty || i < 0 || i >= tabs.length) {
+        return;
+      }
+      copublisher = tabs[i];
     });
   }
 
