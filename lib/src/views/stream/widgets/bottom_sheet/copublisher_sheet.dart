@@ -164,8 +164,11 @@ class _IsmLiveCopublishingHostSheetState
                   streamId: controller.streamId ?? '',
                   forceFetch: true,
                 );
-                controller.cobublisTabController.index = 0;
-                controller.copublisher = IsmLiveCopublisher.values[0];
+                final copublisherTabs = IsmLiveCopublisher.values;
+                if (copublisherTabs.isNotEmpty) {
+                  controller.cobublisTabController.index = 0;
+                  controller.copublisher = copublisherTabs.first;
+                }
               },
               builder: (controller) => TabBar(
                 dividerHeight: 0,
@@ -174,7 +177,10 @@ class _IsmLiveCopublishingHostSheetState
                 overlayColor: WidgetStateProperty.all(Colors.transparent),
                 controller: controller.cobublisTabController,
                 onTap: (index) {
-                  controller.copublisher = IsmLiveCopublisher.values[index];
+                  final tabs = IsmLiveCopublisher.values;
+                  if (index >= 0 && index < tabs.length) {
+                    controller.copublisher = tabs[index];
+                  }
                 },
                 tabs: IsmLiveCopublisher.values.map(
                   (type) {
@@ -205,9 +211,15 @@ class _IsmLiveCopublishingHostSheetState
             Expanded(
               child: GetBuilder<IsmLiveStreamController>(
                 id: IsmLiveCopublishingHostSheet.updateId,
-                builder: (controller) => TabBarView(
-                  controller: controller.cobublisTabController,
-                  children: [
+                builder: (controller) {
+                  final copublisherRequests =
+                      List.from(controller.copublisherRequestsList);
+                  final eligibleMembers =
+                      List.from(controller.eligibleMembersList);
+
+                  return TabBarView(
+                    controller: controller.cobublisTabController,
+                    children: [
                     Padding(
                       padding: IsmLiveDimens.edgeInsetsT8,
                       child: Column(
@@ -235,7 +247,7 @@ class _IsmLiveCopublishingHostSheetState
                           ),
                           IsmLiveDimens.boxHeight10,
                           Expanded(
-                            child: controller.copublisherRequestsList.isEmpty
+                            child: copublisherRequests.isEmpty
                                 ? Center(
                                     child: _buildEmptyPlaceholder(
                                       placeHolder: IsmLiveAssetConstants
@@ -247,11 +259,14 @@ class _IsmLiveCopublishingHostSheetState
                                 : ListView.separated(
                                     controller:
                                         controller.copublisherListController,
-                                    itemCount: controller
-                                        .copublisherRequestsList.length,
+                                    itemCount: copublisherRequests.length,
                                     itemBuilder: (context, index) {
-                                      final copublisher = controller
-                                          .copublisherRequestsList[index];
+                                      if (index < 0 ||
+                                          index >= copublisherRequests.length) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      final copublisher =
+                                          copublisherRequests[index];
                                       return ListTile(
                                         leading: IsmLiveImage.network(
                                           copublisher.profileUrl,
@@ -352,7 +367,7 @@ class _IsmLiveCopublishingHostSheetState
                           ),
                           IsmLiveDimens.boxHeight10,
                           Expanded(
-                            child: controller.eligibleMembersList.isEmpty
+                            child: eligibleMembers.isEmpty
                                 ? Center(
                                     child: _buildEmptyPlaceholder(
                                       placeHolder:
@@ -363,11 +378,13 @@ class _IsmLiveCopublishingHostSheetState
                                 : ListView.separated(
                                     controller:
                                         controller.membersListController,
-                                    itemCount:
-                                        controller.eligibleMembersList.length,
+                                    itemCount: eligibleMembers.length,
                                     itemBuilder: (context, index) {
-                                      final members = controller
-                                          .eligibleMembersList[index];
+                                      if (index < 0 ||
+                                          index >= eligibleMembers.length) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      final members = eligibleMembers[index];
                                       return ListTile(
                                         leading: IsmLiveImage.network(
                                           IsmLiveDelegate.getUserProfileUrl
@@ -410,7 +427,8 @@ class _IsmLiveCopublishingHostSheetState
                       ),
                     ),
                   ],
-                ),
+                  );
+                },
               ),
             ),
           ],
