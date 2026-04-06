@@ -71,7 +71,7 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: true,
+      productStream: false,
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
       enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,

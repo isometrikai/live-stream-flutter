@@ -44,6 +44,12 @@ class IsmLiveStreamController extends GetxController
     return null;
   }
 
+  /// Called when returning to foreground so MQTT can retry sooner after OS
+  /// socket suspension; forwards to `IsmLiveMqttController.nudgeReconnectAfterAppResume`.
+  void nudgeMqttReconnectAfterAppResume() {
+    _mqttController?.nudgeReconnectAfterAppResume();
+  }
+
   IsmLiveConfigData? configuration;
 
   UserDetails? user;

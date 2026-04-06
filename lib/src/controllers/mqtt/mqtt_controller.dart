@@ -337,6 +337,15 @@ class IsmLiveMqttController extends GetxController {
     IsmLiveLog.success('MQTT connected');
   }
 
+  /// After app resume, nudge broker auto-reconnect when the client is already
+  /// disconnected or faulted. Does not replace full `reconnect()` re-init.
+  void nudgeReconnectAfterAppResume() {
+    if (!_layoutReady || !_mqttInitialized || _manualReconnectInFlight) {
+      return;
+    }
+    _mqttHelper.requestAutoReconnectIfDisconnected();
+  }
+
   /// Full client re-init. Use after [disconnect], or when the socket is dead
   /// and you need a fresh [initialize] (helper replaces stream controllers).
   Future<bool> reconnect() async {

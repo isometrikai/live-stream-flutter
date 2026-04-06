@@ -9,6 +9,12 @@ import 'package:mqtt_client/mqtt_client.dart';
 ///
 /// This class provides a convenient way to manage MQTT connections, subscriptions, and events. It also provides streams for listening to connection changes, raw events, and parsed events.
 class MqttHelper {
+  /// Passed to `MqttClient.connectTimeoutPeriod`. The synchronous server handler
+  /// uses this as the CONNACK wait per attempt (`reconnectTimePeriod` in
+  /// mqtt_client). At 30s a single slow/failed handshake matches user-visible
+  /// ~25–30s reconnect delays; 10s keeps recovery responsive on mobile after
+  /// backgrounding without being as tight as the library default (5s).
+  static const int kDefaultConnectTimeoutMs = 10000;
   /// The underlying MQTT configuration.
   ///
   /// This configuration object holds the necessary settings for connecting to an MQTT broker, such as the server URL, port, and credentials.
@@ -170,7 +176,7 @@ class MqttHelper {
     // After a ping, drop the session if no PONG within this window (detects dead network faster).
     _client?.disconnectOnNoResponsePeriod =
         _config.disconnectOnNoPingResponseSeconds;
-    _client?.connectTimeoutPeriod = 30000;
+    _client?.connectTimeoutPeriod = kDefaultConnectTimeoutMs;
     _client?.onDisconnected = _onDisconnected;
     _client?.onUnsubscribed = _onUnSubscribed;
     _client?.onSubscribeFail = _onSubscribeFailed;
@@ -320,6 +326,21 @@ class MqttHelper {
       unsubscribeTopic(topic);
     }
     _unSubscribedTopicsCallback?.call(subscribedTopics);
+  }
+
+  /// If the client is down but `MqttClient.autoReconnect` is still enabled,
+  /// requests a reconnect cycle. Safe to call on app resume; no-op when
+  /// already connected, not initialized, or auto-reconnect was disabled.
+  void requestAutoReconnectIfDisconnected() {
+    final client = _client;
+    if (!_initialized || client == null || !client.autoReconnect) return;
+    final state = client.connectionStatus?.state;
+    if (state == MqttConnectionState.connected) return;
+    if (state != MqttConnectionState.disconnected &&
+        state != MqttConnectionState.faulted) {
+      return;
+    }
+    client.doAutoReconnect(force: false);
   }
 
   /// Disconnects from the broker and stops auto-reconnect until the next
