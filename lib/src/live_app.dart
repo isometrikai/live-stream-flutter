@@ -547,6 +547,10 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
 
+    /// When `false` (default), 2+ participants use horizontal full-width rows.
+    /// When `true`, uses the multi-column grid layout.
+    bool useGridLayoutForMultipleParticipants = false,
+
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
     bool enableInternalStreamListingRefresh = true,
@@ -648,6 +652,8 @@ class IsmLiveApp extends StatefulWidget {
         mqttChatFallbackInterval ?? const Duration(seconds: 6);
     IsmLiveDelegate.enableInternalStreamListingRefresh =
         enableInternalStreamListingRefresh;
+    IsmLiveDelegate.useGridLayoutForMultipleParticipants =
+        useGridLayoutForMultipleParticipants;
   }
 
   static Future<void> endStream(
@@ -843,6 +849,10 @@ class IsmLiveApp extends StatefulWidget {
   static Widget? get endButton => IsmLiveDelegate.endButton;
 
   static bool get showHeader => IsmLiveDelegate.showHeader;
+
+  /// See [IsmLiveDelegate.useGridLayoutForMultipleParticipants].
+  static bool get useGridLayoutForMultipleParticipants =>
+      IsmLiveDelegate.useGridLayoutForMultipleParticipants;
 
   static Alignment get headerPosition => IsmLiveDelegate.headerPosition;
 

@@ -778,7 +778,8 @@ class IsmLiveAnalyticsEvent {
   static const String joinStreamAttempt = 'ism_live_join_stream_attempt';
   static const String joinStreamEarlyReturnScheduledNotStarted =
       'ism_live_join_stream_early_return_scheduled_not_started';
-  static const String joinStreamTokenFetchHost = 'ism_live_join_stream_token_host';
+  static const String joinStreamTokenFetchHost =
+      'ism_live_join_stream_token_host';
   static const String joinStreamTokenFetchViewer =
       'ism_live_join_stream_token_viewer';
   static const String joinStreamMissingHostToken =
@@ -1130,6 +1131,12 @@ class IsmLiveDelegate {
   static Alignment headerPosition = Alignment.topLeft;
 
   static Alignment endStreamPosition = Alignment.topRight;
+
+  /// When `false` (default), two or more live participants use full-width
+  /// horizontal strips stacked vertically (entire viewport split by row).
+  /// When `true`, uses the legacy 2–3 column grid. Set via
+  /// `IsmLiveApp.configureInterface`.
+  static bool useGridLayoutForMultipleParticipants = false;
 
   static List<IsmLiveStreamOption> viewersOption = [];
 
