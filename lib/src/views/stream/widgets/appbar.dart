@@ -66,7 +66,10 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                     child: Stack(
                       children: [
                         IsmLiveImage.network(
-                          controller.user?.profileUrl ?? '',
+                          IsmLiveDelegate.getUserProfileUrl
+                                  ?.call(controller.user?.profileUrl ?? '') ??
+                              controller.user?.profileUrl ??
+                              '',
                           name: controller.user?.userName ?? 'U',
                           isProfileImage: true,
                           dimensions: IsmLiveDimens.forty,

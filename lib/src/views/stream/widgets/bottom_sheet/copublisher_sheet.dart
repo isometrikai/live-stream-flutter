@@ -370,7 +370,9 @@ class _IsmLiveCopublishingHostSheetState
                                           .eligibleMembersList[index];
                                       return ListTile(
                                         leading: IsmLiveImage.network(
-                                          members.profileUrl,
+                                          IsmLiveDelegate.getUserProfileUrl
+                                              ?.call(members.profileUrl ?? '') ??
+                                              members.profileUrl ?? '',
                                           name: members.name,
                                           dimensions: IsmLiveDimens.forty,
                                           initials: members.profileInitials,
