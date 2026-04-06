@@ -17,4 +17,20 @@ export 'src/widgets/widgets.dart';
 class AppscripLiveStreamComponent {
   Future<String?> getPlatformVersion() =>
       AppscripLiveStreamComponentPlatform.instance.getPlatformVersion();
+
+  Future<bool> isPictureInPictureSupported() =>
+      AppscripLiveStreamComponentPlatform.instance
+          .isPictureInPictureSupported();
+
+  Future<bool> startPictureInPicture({String? trackId}) =>
+      AppscripLiveStreamComponentPlatform.instance
+          .startPictureInPicture(trackId: trackId);
+
+  Future<bool> stopPictureInPicture() =>
+      AppscripLiveStreamComponentPlatform.instance.stopPictureInPicture();
+
+  /// iOS only: deactivate + reactivate AVAudioSession so WebRTC
+  /// reinitializes its audio unit (fixes silent mic after role promotion).
+  Future<bool> reactivateAudioSession() =>
+      AppscripLiveStreamComponentPlatform.instance.reactivateAudioSession();
 }

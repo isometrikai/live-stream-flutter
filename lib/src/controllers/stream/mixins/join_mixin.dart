@@ -1572,6 +1572,36 @@ mixin StreamJoinMixin {
         }
       }
 
+      // iOS audio-session fix for viewer → copublisher promotion:
+      // After disconnect→reconnect the AVAudioSession can remain in
+      // playback-only mode. We post synthetic AVAudioSession interruption
+      // notifications (began → ended/shouldResume) which is exactly what
+      // iOS does on background→foreground — forcing WebRTC's RTCAudioSession
+      // to tear down and rebuild its audio unit with playAndRecord.
+      if (Platform.isIOS && isCopublisher) {
+        unawaited(Future.delayed(
+          const Duration(milliseconds: 1200),
+          () async {
+            if (_controller.room?.connectionState !=
+                lk.ConnectionState.connected) {
+              return;
+            }
+            try {
+              await _controller._liveStreamBridge.reactivateAudioSession();
+              // Re-apply speaker routing after the interruption cycle
+              // completes (~300ms internal delay in native side).
+              await Future.delayed(const Duration(milliseconds: 500));
+              if (_controller.room?.connectionState ==
+                  lk.ConnectionState.connected) {
+                lk.Hardware.instance.setSpeakerphoneOn(true);
+              }
+            } catch (e) {
+              IsmLiveLog.error('iOS audio session reactivation error: $e');
+            }
+          },
+        ));
+      }
+
       if (loaderShown) {
         IsmLiveUtility.closeLoader();
         loaderShown = false;
