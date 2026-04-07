@@ -14,6 +14,10 @@ class IsmLiveMetaData {
     this.lastName,
     this.userName,
     this.parentMessageBody,
+    /// When `true`, [toMap] returns only a copy of [rawJson] (e.g. batched
+    /// likes with a single `likeCounts` key). Default `false` preserves
+    /// existing message metadata shape.
+    this.emitSparseMeta = false,
     this.rawJson,
   });
 
@@ -28,6 +32,7 @@ class IsmLiveMetaData {
         secretMessage: map['secretMessage'] as bool? ?? false,
         isPk: map['isPk'] as bool? ?? false,
         parentMessageBody: map['parentMessageBody'] as String?,
+        emitSparseMeta: false,
         rawJson: map,
       );
 
@@ -44,6 +49,7 @@ class IsmLiveMetaData {
   final bool secretMessage;
   final bool isPk;
   final String? parentMessageBody;
+  final bool emitSparseMeta;
   final Map<String, dynamic>? rawJson;
 
   IsmLiveMetaData copyWith({
@@ -57,6 +63,7 @@ class IsmLiveMetaData {
     bool? secretMessage,
     bool? isPk,
     String? parentMessageBody,
+    bool? emitSparseMeta,
     Map<String, dynamic>? rawJson,
   }) =>
       IsmLiveMetaData(
@@ -70,28 +77,37 @@ class IsmLiveMetaData {
         secretMessage: secretMessage ?? this.secretMessage,
         isPk: isPk ?? this.isPk,
         parentMessageBody: parentMessageBody ?? this.parentMessageBody,
+        emitSparseMeta: emitSparseMeta ?? this.emitSparseMeta,
         rawJson: rawJson ?? this.rawJson,
       );
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
-        'country': country,
-        'openMeeting': openMeeting,
-        'profilePic': profilePic,
-        'firstName': firstName,
-        'lastName': lastName,
-        'userName': userName,
-        'openStream': openStream,
-        'secretMessage': secretMessage,
-        'isPk': isPk,
-        'parentMessageBody': parentMessageBody,
-        ...?rawJson,
-      };
+  Map<String, dynamic> toMap() {
+    if (emitSparseMeta) {
+      if (rawJson == null || rawJson!.isEmpty) {
+        return <String, dynamic>{};
+      }
+      return Map<String, dynamic>.from(rawJson!);
+    }
+    return <String, dynamic>{
+      'country': country,
+      'openMeeting': openMeeting,
+      'profilePic': profilePic,
+      'firstName': firstName,
+      'lastName': lastName,
+      'userName': userName,
+      'openStream': openStream,
+      'secretMessage': secretMessage,
+      'isPk': isPk,
+      'parentMessageBody': parentMessageBody,
+      ...?rawJson,
+    };
+  }
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, userName: $userName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody, rawJson: $rawJson)';
+      'IsmLiveMetaData(country: $country, openMeeting: $openMeeting, profilePic: $profilePic, firstName: $firstName, lastName: $lastName, userName: $userName, openStream: $openStream, secretMessage: $secretMessage, isPk: $isPk, parentMessageBody: $parentMessageBody, emitSparseMeta: $emitSparseMeta, rawJson: $rawJson)';
 
   @override
   bool operator ==(covariant IsmLiveMetaData other) {
@@ -107,6 +123,7 @@ class IsmLiveMetaData {
         other.secretMessage == secretMessage &&
         other.isPk == isPk &&
         parentMessageBody == other.parentMessageBody &&
+        other.emitSparseMeta == emitSparseMeta &&
         mapEquals(other.rawJson, rawJson);
   }
 
@@ -122,5 +139,6 @@ class IsmLiveMetaData {
       secretMessage.hashCode ^
       isPk.hashCode ^
       parentMessageBody.hashCode ^
+      emitSparseMeta.hashCode ^
       rawJson.hashCode;
 }

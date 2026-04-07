@@ -1,9 +1,9 @@
 part of '../stream_controller.dart';
 
 int? _heartLikeCountFromPayload(dynamic meta, Map<String, dynamic>? payload) {
-  int? fromMap(dynamic map, String k1, String k2) {
+  int? fromKeys(dynamic map, List<String> keys) {
     if (map is! Map) return null;
-    for (final key in [k1, k2]) {
+    for (final key in keys) {
       final v = map[key];
       if (v is int) return v;
       if (v is num) return v.toInt();
@@ -11,8 +11,8 @@ int? _heartLikeCountFromPayload(dynamic meta, Map<String, dynamic>? payload) {
     return null;
   }
 
-  return fromMap(meta, 'likeCount', 'likesCount') ??
-      fromMap(payload, 'likeCount', 'likesCount');
+  const keys = ['likeCounts', 'likeCount', 'likesCount'];
+  return fromKeys(meta, keys) ?? fromKeys(payload, keys);
 }
 
 // This mixin provides utility functions related to handling chat messages in a stream.
@@ -80,8 +80,8 @@ mixin StreamMessageMixin {
         break;
       case IsmLiveMessageType.heart:
         if (processedMessage.senderId != _controller.user?.userId) {
-          final meta = payload?['metaData'] ??
-              processedMessage.metaData?.rawJson;
+          final meta =
+              payload?['metaData'] ?? processedMessage.metaData?.rawJson;
           final heartCount = _heartLikeCountFromPayload(meta, payload) ?? 1;
           _controller.addHeart(processedMessage, count: heartCount);
         }
@@ -269,19 +269,22 @@ mixin StreamMessageMixin {
 
   Future<void> sendHeartMessage(String streamId, {int count = 1}) async {
     final deviceId = _controller.configuration?.projectConfig.deviceId ?? '';
-    final userId = _controller.user?.userId ?? '';
-    final userName = _controller.user?.userName ?? '';
-    final userImage = _controller.user?.userProfileImageUrl ?? '';
-    const customType = 'like';
 
-    await _controller.sendHearts(
-      customType: customType,
-      deviceId: deviceId,
-      senderId: userId,
-      senderImage: userImage,
-      senderName: userName,
-      streamId: streamId,
-      likesCount: count,
+    await _controller.sendMessage(
+      showLoading: false,
+      showDialog: false,
+      sendMessageModel: IsmLiveSendMessageModel(
+        streamId: streamId,
+        body: _controller.user?.userProfileImageUrl ?? '',
+        searchableTags: const <String>['like'],
+        metaData: IsmLiveMetaData(
+          emitSparseMeta: true,
+          rawJson: <String, dynamic>{'likeCounts': count},
+        ),
+        customType: 'like',
+        deviceId: deviceId,
+        messageType: IsmLiveMessageType.heart,
+      ),
     );
   }
 
