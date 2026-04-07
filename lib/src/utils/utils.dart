@@ -2,6 +2,7 @@ export 'debouncer.dart';
 export 'enums.dart';
 export 'extensions.dart';
 export 'file_manager.dart';
+export 'heart_tap_feedback.dart';
 export 'initials.dart';
 export 'log.dart';
 export 'notification_service.dart';

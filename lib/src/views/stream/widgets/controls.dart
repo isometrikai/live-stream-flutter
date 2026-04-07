@@ -2,6 +2,14 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+void _heartControlTap(
+  IsmLiveStreamController controller,
+  BuildContext context,
+) {
+  IsmLiveHeartTapFeedback.trigger();
+  controller.onOptionTap(IsmLiveStreamOption.heart, context);
+}
+
 /// Live stream controls widget with support for custom widgets and unified callbacks.
 ///
 /// This widget supports:
@@ -179,7 +187,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                         context,
                         option,
                         option == IsmLiveStreamOption.heart
-                            ? () => controller.onOptionTap(option, context)
+                            ? () => _heartControlTap(controller, context)
                             : () async {
                                 await _handleOptionTap(
                                     controller, option, context);
@@ -209,7 +217,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                           controller.controlIcon(option),
                         ),
                         onTap: option == IsmLiveStreamOption.heart
-                            ? () => controller.onOptionTap(option, context)
+                            ? () => _heartControlTap(controller, context)
                             : () async {
                                 await _handleOptionTap(
                                     controller, option, context);
