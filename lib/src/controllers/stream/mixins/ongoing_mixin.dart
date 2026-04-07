@@ -85,8 +85,7 @@ Future<bool> _hasExternalAudioOutputOnAndroid() async {
     for (final device in outputs) {
       final label = device.label.toLowerCase().trim();
       if (label.isEmpty) continue;
-      final isBuiltIn =
-          builtInKeywords.any((keyword) => label.contains(keyword));
+      final isBuiltIn = builtInKeywords.any(label.contains);
       if (!isBuiltIn) {
         IsmLiveLog.info(
             '_hasExternalAudioOutputOnAndroid: detected external device: "$label"');
@@ -1026,7 +1025,7 @@ mixin StreamOngoingMixin {
         _controller.pkSheet();
         break;
       case IsmLiveStreamOption.heart:
-        unawaited(HapticFeedback.selectionClick());
+        // Tap feedback runs from the stream controls widget via native Android/iOS.
         _addLocalHeart();
         _scheduleHeartFlush();
         break;

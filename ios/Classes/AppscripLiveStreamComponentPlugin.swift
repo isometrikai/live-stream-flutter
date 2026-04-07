@@ -1,6 +1,7 @@
 import Flutter
 import AVKit
 import UIKit
+import AudioToolbox
 
 public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
 
@@ -16,12 +17,29 @@ public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
       result("iOS " + UIDevice.current.systemVersion)
     case "reactivateAudioSession":
       result(reactivateAudioSession())
+    case "heartTapFeedback":
+      if Thread.isMainThread {
+        playHeartTapFeedback()
+      } else {
+        DispatchQueue.main.async { self.playHeartTapFeedback() }
+      }
+      result(nil)
     default:
       result(FlutterMethodNotImplemented)
     }
   }
 
   
+
+  // MARK: - Heart / like tap feedback
+
+  /// Native haptic + short system sound so feedback works alongside WebRTC / LiveKit.
+  private func playHeartTapFeedback() {
+    let gen = UIImpactFeedbackGenerator(style: .heavy)
+    gen.prepare()
+    gen.impactOccurred(intensity: 1.0)
+    AudioServicesPlaySystemSound(1104)
+  }
 
   // MARK: - Audio session reactivation
 
