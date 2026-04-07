@@ -725,7 +725,8 @@ typedef GiftClickCallback = void Function(
 /// or auxiliary UI. Errors in the callback are logged and do not affect sending.
 ///
 /// [streamId] - The active stream ID.
-/// [likesCount] - Number of likes in this batch (same value sent in `sendHeartMessage`).
+/// [likesCount] - Batch size (same value the SDK sends as `metaData.likeCounts` via
+/// the standard `sendMessage` / post-message API in `sendHeartMessage`).
 ///
 /// **If this callback is not set**, behavior is unchanged (only `sendHeartMessage`).
 typedef HeartBatchFlushCallback = Future<void> Function(
