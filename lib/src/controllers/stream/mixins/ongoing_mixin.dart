@@ -814,7 +814,6 @@ mixin StreamOngoingMixin {
         },
       ),
     );
-    _controller.update([IsmLiveStreamView.updateId]);
   }
 
   void _scheduleHeartFlush() {
@@ -898,7 +897,6 @@ mixin StreamOngoingMixin {
           if (_controller.giftMessages.isNotEmpty) {
             _handleGift(_controller.giftMessages.first, payload);
           }
-          _controller.update([IsmLiveStreamView.updateId]);
         },
       ),
     );
