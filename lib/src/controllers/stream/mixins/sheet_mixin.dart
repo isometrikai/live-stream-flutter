@@ -183,6 +183,14 @@ mixin StreamSheetMixin {
             _controller.user?.profileUrl ?? '',
             _controller.hostDetails?.userProfileImageUrl ?? '',
           ],
+          imageNames: [
+            _controller.user?.name ?? '',
+            _controller.hostDetails?.name ?? '',
+          ],
+          imageInitials: [
+            _controller.user?.profileInitials,
+            _controller.hostDetails?.profileInitials,
+          ],
           onTap: _controller.memberStatus.didRequested ||
                   _controller.memberStatus.isRejected
               ? null
@@ -202,17 +210,26 @@ mixin StreamSheetMixin {
   void copublishingStartVideoSheet(BuildContext context) async {
     await IsmLiveUtility.openBottomSheet(
       IsmLiveCopublishingViewerSheet(
-        title: (context.liveTranslations?.hostAcceptedCopublishRequestTitle ??
-                IsmLiveStrings.hostAcceptedCopublishRequestTitle)
-            .trParams({
-          'name': _controller.hostDetails?.userName ?? 'Host',
-        }),
-        description:
-            context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
-                IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        title: IsmLiveStrings.youAreNowACopublisher,
+        // (context.liveTranslations?.hostAcceptedCopublishRequestTitle ??
+        //         IsmLiveStrings.hostAcceptedCopublishRequestTitle)
+        //     .trParams({
+        //   'name': _controller.hostDetails?.userName ?? 'Host',
+        // }),
+        description: IsmLiveStrings.youCanJoinTheLiveStreamAndStartPublishingYourVideo,
+            // context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
+            //     IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: IsmLiveStrings.startVideo,
         images: [
-          _controller.user?.profileUrl ?? '',
+          IsmLiveDelegate.getUserProfileUrl
+              ?.call(_controller.user?.profileUrl ?? '') ??
+              _controller.user?.profileUrl ?? '',
+        ],
+        imageNames: [
+          _controller.user?.name ?? '',
+        ],
+        imageInitials: [
+          _controller.user?.profileInitials,
         ],
         onTap: () async {
           if (_controller.room != null) {

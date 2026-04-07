@@ -50,7 +50,8 @@ class IsmLiveStrings {
   static const String preparingYourStream = 'Preparing your stream';
   static const String reconnecting = 'Reconnecting... Please wait';
   static const String joiningLiveStream = 'Joining the live stream';
-  static const String connectingToLiveStream = 'Connecting to the live stream...';
+  static const String connectingToLiveStream =
+      'Connecting to the live stream...';
   static const String enablingYourVideo = 'Enabling your video';
   static const String pkMessage = 'pk is starting';
 
@@ -93,6 +94,9 @@ class IsmLiveStrings {
 
   static const String hostAcceptedCopublishRequestTitle =
       '@name has accepted your request to join as a co-publisher';
+  static const String youAreNowACopublisher = 'You\'re now a co-publisher';
+  static const String youCanJoinTheLiveStreamAndStartPublishingYourVideo =
+      'You can join the live stream and start publishing your video.';
   static const String hostAcceptedCopublishRequestDescription =
       'You can now join the live video as a co-publisher and start publishing';
 

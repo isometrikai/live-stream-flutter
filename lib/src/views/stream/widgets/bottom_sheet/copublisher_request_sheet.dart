@@ -9,13 +9,36 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
     required this.label,
     required this.title,
     required this.description,
+    this.imageNames,
+    this.imageInitials,
     this.onTap,
   });
   final List<String> images;
+  final List<String>? imageNames;
+  final List<String?>? imageInitials;
   final String label;
   final VoidCallback? onTap;
   final String title;
   final String description;
+
+  String _fallbackNameForIndex(int index) {
+    if (imageNames != null && index >= 0 && index < imageNames!.length) {
+      final value = imageNames![index].trim();
+      if (value.isNotEmpty) return value;
+    }
+    // Backwards compatible behavior (previously we used label/title).
+    return images.length == 1 ? label : title;
+  }
+
+  String? _fallbackInitialsForIndex(int index, String name) {
+    if (imageInitials != null &&
+        index >= 0 &&
+        index < imageInitials!.length) {
+      final value = imageInitials![index]?.trim();
+      if (value != null && value.isNotEmpty) return value;
+    }
+    return IsmLiveInitials.extract(name);
+  }
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -29,12 +52,18 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
             if (images.isEmpty)
               IsmLiveDimens.box0
             else if (images.length == 1)
-              IsmLiveImage.network(
-                images.first,
-                name: label,
-                height: IsmLiveDimens.hundred,
-                width: IsmLiveDimens.hundred,
-                isProfileImage: true,
+              Builder(
+                builder: (context) {
+                  final name = _fallbackNameForIndex(0);
+                  return IsmLiveImage.network(
+                    images.first,
+                    name: name,
+                    initials: _fallbackInitialsForIndex(0, name),
+                    height: IsmLiveDimens.hundred,
+                    width: IsmLiveDimens.hundred,
+                    isProfileImage: true,
+                  );
+                },
               )
             else
               SizedBox(
@@ -47,11 +76,13 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                       (e) {
                         final right = e.$1 *
                             (IsmLiveDimens.twoHundred / (images.length + 1));
+                        final name = _fallbackNameForIndex(e.$1);
                         return Positioned(
                           right: e.$1 == 0 ? 0 : right,
                           child: IsmLiveImage.network(
                             e.$2,
-                            name: title,
+                            name: name,
+                            initials: _fallbackInitialsForIndex(e.$1, name),
                             height: IsmLiveDimens.hundred,
                             width: IsmLiveDimens.hundred,
                             isProfileImage: true,
