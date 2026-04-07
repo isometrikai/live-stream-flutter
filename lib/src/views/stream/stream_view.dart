@@ -791,8 +791,17 @@ class _IsmLiveStreamView extends StatelessWidget {
                           alignment: Alignment.center,
                           child: IsmLiveImage.svg(IsmLiveAssetConstants.draw),
                         ),
-                      ...controller.heartList,
-                      ...controller.giftList,
+                      Positioned.fill(
+                        child: Obx(
+                          () => Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              ...controller.heartList,
+                              ...controller.giftList,
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
