@@ -35,7 +35,7 @@ public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
 
   /// Native haptic + short system sound so feedback works alongside WebRTC / LiveKit.
   private func playHeartTapFeedback() {
-    let gen = UIImpactFeedbackGenerator(style: .heavy)
+    let gen = UIImpactFeedbackGenerator(style: .medium)
     gen.prepare()
     gen.impactOccurred(intensity: 1.0)
     AudioServicesPlaySystemSound(1104)

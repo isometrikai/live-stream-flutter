@@ -79,28 +79,27 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
   }
 
   /**
-   * [VibrationEffect.EFFECT_CLICK] is very subtle; many users only notice sound. Prefer
-   * [EFFECT_HEAVY_CLICK] on API 30+, strong one-shots below that, and [USAGE_TOUCH] on API 31+
-   * so OEMs route this as UI feedback rather than dampening it.
+   * Medium-strength UI tap: [EFFECT_DOUBLE_CLICK] on API 30+ (between click and heavy),
+   * moderate one-shots on older APIs, [USAGE_TOUCH] on API 31+.
    */
   private fun vibrateHeartTap(vibrator: Vibrator) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
       @Suppress("DEPRECATION")
-      vibrator.vibrate(65)
+      vibrator.vibrate(45)
       return
     }
 
     val effect: VibrationEffect =
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
+        VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
       } else {
         val amplitude =
           if (vibrator.hasAmplitudeControl()) {
-            255
+            160
           } else {
             VibrationEffect.DEFAULT_AMPLITUDE
           }
-        VibrationEffect.createOneShot(65, amplitude)
+        VibrationEffect.createOneShot(50, amplitude)
       }
 
     try {
@@ -116,10 +115,10 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
     } catch (_: Exception) {
       try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          vibrator.vibrate(VibrationEffect.createOneShot(80, 255))
+          vibrator.vibrate(VibrationEffect.createOneShot(55, 160))
         } else {
           @Suppress("DEPRECATION")
-          vibrator.vibrate(80)
+          vibrator.vibrate(50)
         }
       } catch (_: Exception) {
       }
