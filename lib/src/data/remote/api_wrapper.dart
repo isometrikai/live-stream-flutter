@@ -231,18 +231,18 @@ class IsmLiveApiWrapper {
         await IsmLiveUtility.showInfoDialog(
           res,
           title: 'Internet Error',
-          onRetry: () => makeRequest(
-            api,
-            baseUrl: baseUrl,
-            type: type,
-            headers: headers,
-            payload: payload,
-            field: field,
-            filePath: filePath,
-            showDialog: showDialog,
-            showLoader: showLoader,
-            shouldEncodePayload: shouldEncodePayload,
-          ),
+          // onRetry: () => makeRequest(
+          //   api,
+          //   baseUrl: baseUrl,
+          //   type: type,
+          //   headers: headers,
+          //   payload: payload,
+          //   field: field,
+          //   filePath: filePath,
+          //   showDialog: showDialog,
+          //   showLoader: showLoader,
+          //   shouldEncodePayload: shouldEncodePayload,
+          // ),
         );
       }
       return res;
