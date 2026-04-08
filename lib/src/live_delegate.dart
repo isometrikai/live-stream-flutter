@@ -1194,6 +1194,32 @@ class IsmLiveDelegate {
 
   static bool productionMode = false;
 
+  // ---------------------------------------------------------------------------
+  // Stream view / host camera preview diagnostics (black screen investigations)
+  //
+  // In your app `main()` (debug only), enable one at a time to narrow cause:
+  // 1) [logStreamSurfaceDiagnostics] — throttled layout/state logs (`IsmLiveSurface`).
+  // 2) [debugDisableAllImmersiveGestures] — if preview returns, suspect
+  //    immersive [GestureDetector] layers around the grid.
+  // 3) [debugDisableLocalCameraAbsorbPointer] — if preview returns, suspect
+  //    [AbsorbPointer] on local [VideoTrackRenderer].
+  // 4) [debugHideStreamBanner] — if preview returns, you were likely seeing the
+  //    blurred banner (no grid / grid transparent) rather than a dead camera.
+  // ---------------------------------------------------------------------------
+
+  /// Throttled logs (name `IsmLiveSurface`) from stream view in debug builds.
+  static bool logStreamSurfaceDiagnostics = true;
+
+  /// Omits immersive tap: grid wrapper (non-interactive) and full-screen restore
+  /// layer (interactive + chrome hidden).
+  static bool debugDisableAllImmersiveGestures = true;
+
+  /// Skips AbsorbPointer around local VideoTrackRenderer in ParticipantWidget.
+  static bool debugDisableLocalCameraAbsorbPointer = true;
+
+  /// Skips building IsmLiveStreamBanner under the publisher grid.
+  static bool debugHideStreamBanner = false;
+
   /// How often the SDK polls chat messages from the API while MQTT is
   /// disconnected.
   ///
