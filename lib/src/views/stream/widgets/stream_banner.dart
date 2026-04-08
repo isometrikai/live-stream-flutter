@@ -35,8 +35,9 @@ class IsmLiveStreamBanner extends StatelessWidget {
                       )
                     : ColoredBox(
                         color: context.liveTheme?.secondaryColor
-                                ?.withValues(alpha: 125 / 255) ??
-                            IsmLiveColors.secondary.withValues(alpha: 125 / 255),
+                                ?.withValues(alpha: 125) ??
+                            IsmLiveColors.secondary
+                          ..withValues(alpha: 125),
                       ),
           ),
         ),

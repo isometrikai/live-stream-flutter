@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class YourLiveSheet extends StatelessWidget {
   const YourLiveSheet({
@@ -27,8 +26,7 @@ class YourLiveSheet extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.liveTheme?.backgroundColor ??
                 (isDarkMode ? const Color(0xFF121212) : Colors.white),
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -54,9 +52,6 @@ class YourLiveSheet extends StatelessWidget {
                 child: IsmLiveButton(
                   onTap: () {
                     IsmLiveRoute.pop();
-                    if (Get.isRegistered<IsmLiveStreamController>()) {
-                      Get.find<IsmLiveStreamController>().restoreStreamUiChrome();
-                    }
                     onTap?.call();
                   },
                   label: IsmLiveStrings.tvContinue,

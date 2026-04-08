@@ -185,24 +185,6 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
 
   List<Widget> extraWidgets(bool isScreenShare) => [];
 
-  /// LiveKit wraps [LocalVideoTrack] on mobile with tap-to-focus (calls WebRTC
-  /// setFocusPoint). A translucent immersive overlay can still deliver that tap
-  /// and crash on Android; a full-screen opaque overlay can blank the texture.
-  /// Absorbing pointers here (non-interactive only) blocks those gestures without
-  /// stacking anything over the video surface.
-  Widget _videoTrackRenderer(VideoTrack track) {
-    Widget renderer = VideoTrackRenderer(
-      track,
-      fit: widget.showFullVideo ? VideoViewFit.contain : VideoViewFit.cover,
-    );
-    if (!widget.showFullVideo &&
-        track is LocalVideoTrack &&
-        !IsmLiveDelegate.debugDisableLocalCameraAbsorbPointer) {
-      renderer = AbsorbPointer(absorbing: true, child: renderer);
-    }
-    return renderer;
-  }
-
   @override
   Widget build(BuildContext ctx) => Container(
         // Blue border removed - was causing unwanted border around stream view
@@ -214,7 +196,12 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         child: Stack(
           children: [
             activeVideoTrack != null && !activeVideoTrack!.muted
-                ? _videoTrackRenderer(activeVideoTrack!)
+                ? VideoTrackRenderer(
+                    activeVideoTrack!,
+                    fit: widget.showFullVideo
+                        ? VideoViewFit.contain
+                        : VideoViewFit.cover,
+                  )
                 : NoVideoWidget(
                     name: widget.participant.name,
                     imageUrl: widget.imageUrl ?? '',
