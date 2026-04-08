@@ -1182,6 +1182,111 @@ mixin StreamJoinMixin {
     }
   }
 
+  /// Co-publisher "Stop stream" (stop publishing only): leave the member role on
+  /// the backend, then reconnect to LiveKit as a viewer with a fresh RTC token.
+  Future<void> leaveCopublisherAndRejoinAsViewer({
+    required String streamId,
+    required BuildContext context,
+  }) async {
+    if (!_controller.isCopublisher || _controller.isHost) {
+      return;
+    }
+
+    final usedCustomDisconnect =
+        IsmLiveDelegate.streamDisconnectApiHandler != null;
+    var leftServerOk = false;
+
+    if (usedCustomDisconnect) {
+      leftServerOk = await IsmLiveDelegate.streamDisconnectApiHandler!(
+        streamId,
+        IsmLiveStreamDisconnectType.copublisher,
+      );
+    } else {
+      leftServerOk = await _controller.leaveMember(streamId: streamId);
+    }
+
+    if (!leftServerOk) {
+      return;
+    }
+
+    // Custom disconnect bypasses [leaveMember]; mirror its local role/UI updates.
+    if (usedCustomDisconnect) {
+      _controller.streamMembersList.removeWhere(
+        (e) => e.userId == _controller.user?.userId,
+      );
+      try {
+        await _controller.room?.localParticipant?.unpublishAllTracks();
+      } catch (_) {}
+      try {
+        _controller.userRole?.leaveCopublishing();
+        _controller.memberStatus = IsmLiveMemberStatus.notMember;
+      } catch (_) {}
+      try {
+        await _controller.sortParticipants();
+      } catch (_) {}
+      _controller.update([IsmLiveMembersSheet.updateId]);
+    }
+
+    var loaderShown = false;
+    try {
+      _controller.isViewerJoiningStream = true;
+      _controller.preventDispose = true;
+
+      if (!(Get.isDialogOpen ?? false)) {
+        IsmLiveUtility.showLoader();
+        loaderShown = true;
+      }
+
+      final rtc = await _controller.getRTCToken(streamId);
+      if (rtc == null || rtc.rtcToken.trim().isEmpty) {
+        IsmLiveLog.error(
+            'leaveCopublisherAndRejoinAsViewer: RTC token fetch failed');
+        return;
+      }
+
+      final token = rtc.rtcToken;
+      _controller.rtcToken = token;
+      _controller.storeToken(token);
+
+      final details = _controller.streamDetails;
+      await _connectRoomAndInitialize(
+        stream: details,
+        token: token,
+        streamId: streamId,
+        streamImage: details?.streamImage,
+        streamDiscription: details?.streamDescription ??
+            _controller.descriptionController.text,
+        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+        restream: details?.restream ?? _controller.isRestreamBroadcast,
+        isHost: false,
+        isCopublisher: false,
+        isPk: details?.isPkChallenge ?? false,
+        isPkGust: false,
+        isNewStream: false,
+        joinByScrolling: false,
+        isScrolling: false,
+        isInteractive: false,
+        startTime: rtc.startTime ?? details?.startDateTime,
+        context: context,
+        eventId: details?.eventId,
+        reJoin: true,
+        isScheduledStream: details?.isScheduledStream,
+        products: details?.products,
+        performNavigation: false,
+        showLoader: false,
+      );
+    } catch (e, st) {
+      IsmLiveLog.error(
+          'leaveCopublisherAndRejoinAsViewer: unexpected error: $e', st);
+    } finally {
+      if (loaderShown) {
+        IsmLiveUtility.closeLoader();
+      }
+      _controller.isViewerJoiningStream = false;
+      _controller.preventDispose = false;
+    }
+  }
+
   /// Host-only: rejoin the currently open stream after app resumes.
   ///
   /// Implementation notes:
