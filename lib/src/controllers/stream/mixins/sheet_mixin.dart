@@ -30,10 +30,9 @@ mixin StreamSheetMixin {
             ? IsmLiveRoute.pop
             : () async {
                 IsmLiveRoute.pop();
-                await _controller.disconnectStream(
-                  isHost: isHost,
+                await _controller.leaveCopublisherAndRejoinAsViewer(
                   streamId: streamId,
-                  endStream: false,
+                  context: context,
                 );
               },
         onRight: () async {
