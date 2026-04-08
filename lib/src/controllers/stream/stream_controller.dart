@@ -161,6 +161,18 @@ class IsmLiveStreamController extends GetxController
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
 
+  /// When false, stream view shows only the video grid (immersive). Tapping the
+  /// feed toggles; system back also restores chrome when hidden.
+  bool streamUiChromeVisible = true;
+
+  void toggleStreamUiChromeVisibility() {
+    streamUiChromeVisible = !streamUiChromeVisible;
+    if (!streamUiChromeVisible) {
+      showEmojiBoard = false;
+    }
+    update([IsmLiveStreamView.updateId]);
+  }
+
   final RxInt _giftcoinBalance = 0.obs;
   int get giftcoinBalance => _giftcoinBalance.value;
   set giftcoinBalance(int value) => _giftcoinBalance.value = value;
