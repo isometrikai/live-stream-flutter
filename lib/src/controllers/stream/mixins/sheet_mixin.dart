@@ -107,20 +107,20 @@ mixin StreamSheetMixin {
   /// Same path as tapping Multi Live in stream controls: delegate callback first,
   /// then default `onOptionTap`.
   Future<void> presentViewerMultiLiveAsIfTapped(BuildContext context) async {
-    final controlCallback = IsmLiveDelegate.controlOptionCallback;
-    if (controlCallback != null) {
-      final handled = await controlCallback(
-        context,
-        IsmLiveStreamOption.multiLive,
-        _controller.streamId ?? '',
-        _controller.isHost,
-        _controller.isCopublisher,
-      );
-      if (handled) {
-        _controller.update([IsmLiveControlsWidget.updateId]);
-        return;
-      }
-    }
+    // final controlCallback = IsmLiveDelegate.controlOptionCallback;
+    // if (controlCallback != null) {
+    //   final handled = await controlCallback(
+    //     context,
+    //     IsmLiveStreamOption.multiLive,
+    //     _controller.streamId ?? '',
+    //     _controller.isHost,
+    //     _controller.isCopublisher,
+    //   );
+    //   if (handled) {
+    //     _controller.update([IsmLiveControlsWidget.updateId]);
+    //     return;
+    //   }
+    // }
     await _controller.onOptionTap(IsmLiveStreamOption.multiLive, context);
     _controller.update([IsmLiveControlsWidget.updateId]);
   }
@@ -215,14 +215,16 @@ mixin StreamSheetMixin {
         //     .trParams({
         //   'name': _controller.hostDetails?.userName ?? 'Host',
         // }),
-        description: IsmLiveStrings.youCanJoinTheLiveStreamAndStartPublishingYourVideo,
-            // context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
-            //     IsmLiveStrings.hostAcceptedCopublishRequestDescription,
+        description:
+            IsmLiveStrings.youCanJoinTheLiveStreamAndStartPublishingYourVideo,
+        // context.liveTranslations?.hostAcceptedCopublishRequestDescription ??
+        //     IsmLiveStrings.hostAcceptedCopublishRequestDescription,
         label: IsmLiveStrings.startVideo,
         images: [
           IsmLiveDelegate.getUserProfileUrl
-              ?.call(_controller.user?.profileUrl ?? '') ??
-              _controller.user?.profileUrl ?? '',
+                  ?.call(_controller.user?.profileUrl ?? '') ??
+              _controller.user?.profileUrl ??
+              '',
         ],
         imageNames: [
           _controller.user?.name ?? '',
