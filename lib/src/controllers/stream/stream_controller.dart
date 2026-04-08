@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_probe_mixin.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background/flutter_background.dart';
@@ -162,55 +160,6 @@ class IsmLiveStreamController extends GetxController
   final RxBool _showEmojiBoard = false.obs;
   bool get showEmojiBoard => _showEmojiBoard.value;
   set showEmojiBoard(bool value) => _showEmojiBoard.value = value;
-
-  /// When false, stream view shows only the video grid (immersive). Tapping the
-  /// feed toggles; system back also restores chrome when hidden.
-  bool streamUiChromeVisible = true;
-
-  /// Forces header, controls, chat, and overlays visible again (e.g. after go-live
-  /// sheet or if immersive was toggled accidentally). No-op if already visible
-  /// unless [forceUpdate] is true.
-  void restoreStreamUiChrome({bool forceUpdate = false}) {
-    if (!forceUpdate && streamUiChromeVisible) {
-      return;
-    }
-    streamUiChromeVisible = true;
-    update([IsmLiveStreamView.updateId]);
-  }
-
-  void toggleStreamUiChromeVisibility() {
-    if (IsmLiveUtility.isAnyBottomSheetOpen) {
-      return;
-    }
-    if (kDebugMode) {
-      developer.log(
-        'toggle ENTER streamUiChromeVisible=$streamUiChromeVisible streamId=$streamId '
-        'participantTracks=${participantTracks.length} '
-        'localParticipant=${room?.localParticipant != null} '
-        'videoOn=$videoOn',
-        name: 'IsmLiveImmersive',
-      );
-    }
-    streamUiChromeVisible = !streamUiChromeVisible;
-    if (!streamUiChromeVisible) {
-      showEmojiBoard = false;
-    }
-    if (kDebugMode) {
-      developer.log(
-        'toggle EXIT streamUiChromeVisible=$streamUiChromeVisible '
-        '(GetBuilder id=${IsmLiveStreamView.updateId} will rebuild)',
-        name: 'IsmLiveImmersive',
-      );
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        developer.log(
-          'PostFrame after chrome toggle: streamUiChromeVisible=$streamUiChromeVisible '
-          'streamId=$streamId participantTracks=${participantTracks.length}',
-          name: 'IsmLiveImmersive',
-        );
-      });
-    }
-    update([IsmLiveStreamView.updateId]);
-  }
 
   final RxInt _giftcoinBalance = 0.obs;
   int get giftcoinBalance => _giftcoinBalance.value;

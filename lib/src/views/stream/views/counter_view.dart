@@ -87,12 +87,6 @@ class _IsmLiveCounterViewState extends State<IsmLiveCounterView>
         t.cancel();
         isCompleted = true;
         widget.onComplete?.call();
-        // Immersive mode hides the entire chrome stack in Offstage; a tap on the
-        // publisher grid before this moment can leave chrome hidden so only the
-        // go-live sheet (outside Offstage) looks "visible". Restore before sheet.
-        if (Get.isRegistered<IsmLiveStreamController>()) {
-          Get.find<IsmLiveStreamController>().restoreStreamUiChrome();
-        }
         if ((streamProperties?.showYoureLiveSheet ?? true) &&
             widget.onCompleteSheet != null) {
           IsmLiveUtility.openBottomSheet(widget.onCompleteSheet!,
