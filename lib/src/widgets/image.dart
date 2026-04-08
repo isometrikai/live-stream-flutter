@@ -218,7 +218,7 @@ class _Network extends StatelessWidget {
                   _networkImagePlaceholderLabel(name, initials),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 24,
                     color: IsmLiveColors.black,
                   ),
                 )

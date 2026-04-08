@@ -205,6 +205,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 : NoVideoWidget(
                     name: widget.participant.name,
                     imageUrl: widget.imageUrl ?? '',
+                    initials: IsmLiveInitials.extract(widget.participant.name),
                   ),
             if (widget.isbattleFinish)
               widget.isWinner

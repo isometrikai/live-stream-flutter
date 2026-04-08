@@ -4,7 +4,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-String _participantProfileImageUrl(IsmLiveStreamController controller, int index) {
+String _participantProfileImageUrl(
+    IsmLiveStreamController controller, int index) {
   for (final element in controller.streamMembersList) {
     if (element.userId ==
         controller.participantList[index].participant.identity) {
@@ -73,6 +74,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       connectingText: context.liveTranslations
                               ?.streamTranslations?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
+                      initials: controller.hostDetails?.profileInitials,
                     );
             } else if (controller.participantTracks.isEmpty) {
               child = !isSchedule
@@ -83,6 +85,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       connectingText: context.liveTranslations
                               ?.streamTranslations?.connectingToLiveStream ??
                           IsmLiveStrings.connectingToLiveStream,
+                      initials: controller.hostDetails?.profileInitials,
                     )
                   : const SizedBox.shrink();
             } else if (controller.participantTracks.length == 1) {
@@ -102,8 +105,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
             } else {
               child = LayoutBuilder(
                 builder: (context, constraints) {
-                  final participantCount =
-                      controller.participantTracks.length;
+                  final participantCount = controller.participantTracks.length;
 
                   if (!IsmLiveDelegate.useGridLayoutForMultipleParticipants) {
                     return Column(
@@ -215,6 +217,7 @@ class _RtmlView extends StatelessWidget {
                                   ?.streamTranslations
                                   ?.connectingToLiveStream ??
                               IsmLiveStrings.connectingToLiveStream,
+                          initials: controller.hostDetails?.profileInitials,
                         )
                       : ParticipantWidget.widgetFor(
                           hostScreen,
