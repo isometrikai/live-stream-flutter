@@ -8,12 +8,13 @@ class NoVideoWidget extends StatelessWidget {
     this.name = '',
     this.showConnectingState = false,
     this.connectingText,
+    this.initials,
   });
   final String name;
   final String imageUrl;
   final bool showConnectingState;
   final String? connectingText;
-
+  final String? initials;
   @override
   Widget build(BuildContext context) => Center(
         child: Column(
@@ -23,6 +24,7 @@ class NoVideoWidget extends StatelessWidget {
               IsmLiveDelegate.getUserProfileUrl?.call(imageUrl) ?? imageUrl,
               name: name,
               isProfileImage: true,
+              initials: initials,
               height: IsmLiveDimens.hundred,
               width: IsmLiveDimens.hundred,
               showError: false,
