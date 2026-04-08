@@ -6,6 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+/// Safe label for network image placeholders when URL fails or [name] is empty.
+String _networkImagePlaceholderLabel(String name, String? initials) {
+  final trimmedInitials = initials?.trim();
+  if (trimmedInitials != null && trimmedInitials.isNotEmpty) {
+    return trimmedInitials;
+  }
+  final trimmedName = name.trim();
+  if (trimmedName.isNotEmpty) {
+    return trimmedName[0];
+  }
+  return 'U';
+}
+
 class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
     this.path, {
@@ -198,9 +211,11 @@ class _Network extends StatelessWidget {
             color: IsmLiveColors.black.withOpacity(0.2),
             shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
-          child: isProfileImage && name.trim().isNotEmpty
+          child: isProfileImage &&
+                  (name.trim().isNotEmpty ||
+                      (initials?.trim().isNotEmpty ?? false))
               ? Text(
-                  initials ?? name[0],
+                  _networkImagePlaceholderLabel(name, initials),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
@@ -280,7 +295,7 @@ class _ErrorImage extends StatelessWidget {
         ),
         child: !showError || isProfileImage
             ? Text(
-                initials ?? name[0],
+                _networkImagePlaceholderLabel(name, initials),
                 style: !isProfileImage
                     ? context.textTheme.displayMedium?.copyWith(
                         color: IsmLiveColors.black,
