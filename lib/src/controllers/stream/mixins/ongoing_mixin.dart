@@ -104,7 +104,10 @@ mixin StreamOngoingMixin {
   IsmLiveStreamController get _controller => Get.find();
   IsmLivePkController get _pkController => Get.find();
 // Debouncer to handle sorting of participants
-  final _participantDebouncer = IsmLiveDebouncer();
+  /// Short debounce: a long delay left [participantTracks] empty while the
+  /// camera was already producing frames, so the host saw a black/placeholder
+  /// grid until the timer finally fired (750ms was too aggressive).
+  final _participantDebouncer = IsmLiveDebouncer(durationtime: 120);
 
   Timer? _heartDebounceTimer;
   int _pendingHeartCount = 0;
@@ -437,7 +440,12 @@ mixin StreamOngoingMixin {
           IsmLiveLog.info('ParticipantDisconnectedEvent: $event');
         })
         ..on<lk.RoomRecordingStatusChanged>((event) {})
-        ..on<lk.LocalTrackPublishedEvent>((_) => sortParticipants())
+        ..on<lk.LocalTrackPublishedEvent>((_) {
+          // Apply track list immediately so the publisher grid can attach to the
+          // LocalVideoTrack without waiting for the debounced pass.
+          unawaited(_sortParticipants());
+          sortParticipants();
+        })
         ..on<lk.LocalTrackUnpublishedEvent>((_) => sortParticipants())
         ..on<lk.TrackE2EEStateEvent>((event) {
           IsmLiveLog.info('TrackE2EEStateEvent: $event');
@@ -567,7 +575,9 @@ mixin StreamOngoingMixin {
     }
 
     _controller.participantTracks = [...userMediaTracks];
-    _controller.update([IsmLiveStreamView.updateId]);
+    _controller.update(
+      [IsmLiveStreamView.updateId, IsmLivePublisherGrid.updateId],
+    );
 
     if (_controller.isPk &&
         _controller.participantTracks.length == 2 &&
