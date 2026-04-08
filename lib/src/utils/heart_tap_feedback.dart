@@ -23,7 +23,7 @@ class IsmLiveHeartTapFeedback {
       await _channel.invokeMethod<void>('heartTapFeedback');
     } catch (_) {
       await HapticFeedback.mediumImpact();
-      await SystemSound.play(SystemSoundType.click);
+      // await SystemSound.play(SystemSoundType.click);
     }
   }
 }

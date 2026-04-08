@@ -333,6 +333,66 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Adds a member (co-publisher) to a live stream.
+  ///
+  /// Delegates to [IsmLiveStreamController.addMember] so local lists and UI
+  /// stay in sync when the stream experience is active. Returns `false` if
+  /// the request fails.
+  static Future<bool> addMember({
+    required String streamId,
+    required String memberId,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.addMember(
+        streamId: streamId,
+        memberId: memberId,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.addMember failed: $e\n$stack');
+      return false;
+    }
+  }
+
+  /// Removes a member (co-publisher) from a live stream.
+  ///
+  /// Delegates to [IsmLiveStreamController.removeMember] so local lists and
+  /// UI stay in sync when the stream experience is active. Returns `false` if
+  /// the request fails.
+  static Future<bool> removeMember({
+    required String streamId,
+    required String memberId,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.removeMember(
+        streamId: streamId,
+        memberId: memberId,
+      );
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.removeMember failed: $e\n$stack');
+      return false;
+    }
+  }
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;

@@ -2,14 +2,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-void _heartControlTap(
-  IsmLiveStreamController controller,
-  BuildContext context,
-) {
-  IsmLiveHeartTapFeedback.trigger();
-  controller.onOptionTap(IsmLiveStreamOption.heart, context);
-}
-
 /// Live stream controls widget with support for custom widgets and unified callbacks.
 ///
 /// This widget supports:
@@ -80,7 +72,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
       }
     }
 
-      // Default behavior: call the original onOptionTap
+    // Native tap feedback only when SDK default runs (not when host handled the tap).
+    if (option == IsmLiveStreamOption.heart) {
+      IsmLiveHeartTapFeedback.trigger();
+    }
+
     await controller.onOptionTap(option, context);
     controller.update([IsmLiveControlsWidget.updateId]);
   }
@@ -186,12 +182,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
                           IsmLiveDelegate.controlWidgetBuilder?.call(
                         context,
                         option,
-                        option == IsmLiveStreamOption.heart
-                            ? () => _heartControlTap(controller, context)
-                            : () async {
-                                await _handleOptionTap(
-                                    controller, option, context);
-                              },
+                        () async {
+                          await _handleOptionTap(controller, option, context);
+                        },
                         isHost,
                         isCopublishing,
                         streamId,
@@ -216,12 +209,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
                               : null,
                           controller.controlIcon(option),
                         ),
-                        onTap: option == IsmLiveStreamOption.heart
-                            ? () => _heartControlTap(controller, context)
-                            : () async {
-                                await _handleOptionTap(
-                                    controller, option, context);
-                              },
+                        onTap: () async {
+                          await _handleOptionTap(controller, option, context);
+                        },
                         color: option == IsmLiveStreamOption.heart
                             ? IsmLiveColors.red
                             : option == IsmLiveStreamOption.multiLive

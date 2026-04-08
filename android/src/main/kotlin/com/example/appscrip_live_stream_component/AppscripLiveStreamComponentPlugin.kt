@@ -57,7 +57,8 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
       if (vibrator != null && vibrator.hasVibrator()) {
         vibrateHeartTap(vibrator)
       }
-    } catch (_: Exception) {
+    } catch (_: Throwable) {
+      // Never crash on vibration: NoSuchMethodError on some API 31+ OEM images, etc.
     }
 
     try {
@@ -79,8 +80,10 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
   }
 
   /**
-   * Medium-strength UI tap: [EFFECT_DOUBLE_CLICK] on API 30+ (between click and heavy),
-   * moderate one-shots on older APIs, [USAGE_TOUCH] on API 31+.
+   * Medium-strength UI tap: [EFFECT_DOUBLE_CLICK] on API 30+, moderate one-shots below.
+   *
+   * Uses [Vibrator.vibrate] single-arg overload when the API 31+ two-arg overload is missing
+   * (some devices report SDK 31+ but throw [NoSuchMethodError] for vibrate+attributes).
    */
   private fun vibrateHeartTap(vibrator: Vibrator) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -104,15 +107,19 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
 
     try {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val attrs =
-          VibrationAttributes.Builder()
-            .setUsage(VibrationAttributes.USAGE_TOUCH)
-            .build()
-        vibrator.vibrate(effect, attrs)
+        try {
+          val attrs =
+            VibrationAttributes.Builder()
+              .setUsage(VibrationAttributes.USAGE_TOUCH)
+              .build()
+          vibrator.vibrate(effect, attrs)
+        } catch (_: Throwable) {
+          vibrator.vibrate(effect)
+        }
       } else {
         vibrator.vibrate(effect)
       }
-    } catch (_: Exception) {
+    } catch (_: Throwable) {
       try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
           vibrator.vibrate(VibrationEffect.createOneShot(55, 160))
@@ -120,7 +127,7 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
           @Suppress("DEPRECATION")
           vibrator.vibrate(50)
         }
-      } catch (_: Exception) {
+      } catch (_: Throwable) {
       }
     }
   }
