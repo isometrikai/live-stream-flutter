@@ -168,8 +168,11 @@ extension IsmLiveIntExtensions on num {
 }
 
 extension IsmLiveDoubleExtensions on double {
+  /// Base inset so floating hearts start above the bottom chrome (e.g. chat).
+  static double get _heartFloatBottomInset => IsmLiveDimens.seventy;
+
   double verticalPosition(BuildContext context) =>
-      MediaQuery.of(context).size.height * 1.1 * this;
+      _heartFloatBottomInset + MediaQuery.of(context).size.height * 1.1 * this;
 
   double horizontalPosition(BuildContext context) {
     final random1 = Random().nextBool();
