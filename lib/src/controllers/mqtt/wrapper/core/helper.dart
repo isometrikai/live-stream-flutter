@@ -60,6 +60,13 @@ class MqttHelper {
   /// This list keeps track of the topics that the MQTT helper is currently subscribed to.
   List<String> subscribedTopics = [];
 
+  /// Topics requested while the client is not yet fully connected.
+  ///
+  /// `mqtt_client` throws if `subscribe()` is called while the client is in
+  /// `connecting`. This can happen during initial handshake, auto-reconnect,
+  /// or when `initialize()` is invoked while a connect cycle is still in-flight.
+  final Set<String> _pendingSubscriptions = <String>{};
+
   /// Whether to auto-subscribe to topics.
   ///
   /// If set to true, the MQTT helper will automatically subscribe to the specified topics during initialization.
@@ -148,11 +155,32 @@ class MqttHelper {
     _callbacks = callbacks;
     _topics = topics ?? [];
     _autoSubscribe = autoSubscribe;
+    _pendingSubscriptions.clear();
 
     _subscribedTopicsCallback = subscribedTopicsCallback;
     _unSubscribedTopicsCallback = unSubscribedTopicsCallback;
     await _initializeClient();
     await _connectClient();
+  }
+
+  bool _isClientConnected() =>
+      _client?.connectionStatus?.state == MqttConnectionState.connected;
+
+  void _enqueueSubscription(String topic) {
+    if (topic.isEmpty) return;
+    _pendingSubscriptions.add(topic);
+  }
+
+  void _flushPendingSubscriptions() {
+    if (!_initialized || !_isClientConnected()) return;
+    if (_pendingSubscriptions.isEmpty) return;
+
+    final pending = List<String>.from(_pendingSubscriptions);
+    _pendingSubscriptions.clear();
+    for (final topic in pending) {
+      // Use public method so subscription-status checks remain centralized.
+      subscribeTopic(topic);
+    }
   }
 
   /// Initializes the underlying MQTT client.
@@ -277,6 +305,12 @@ class MqttHelper {
         'MqttConfig is not initialized. Initialize it by calling initialize(config)',
       );
     }
+    // `mqtt_client` requires the connection to be fully established before
+    // subscribing; defer until `_onConnected` / `_onAutoReconnected`.
+    if (!_isClientConnected()) {
+      _enqueueSubscription(topic);
+      return;
+    }
     if (_client?.getSubscriptionsStatus(topic) ==
         MqttSubscriptionStatus.doesNotExist) {
       _client?.subscribe(topic, MqttQos.atMostOnce);
@@ -349,6 +383,7 @@ class MqttHelper {
     _debugLog('disconnect() called — auto-reconnect disabled, closing client');
     _updatesSub?.cancel();
     _updatesSub = null;
+    _pendingSubscriptions.clear();
     _client?.autoReconnect = false;
     _client?.disconnect();
   }
@@ -399,6 +434,9 @@ class MqttHelper {
     );
     _connectionStream.add(true);
     _callbacks?.onConnected?.call();
+    // Subscriptions may have been requested while the client was still
+    // connecting (or while auto-reconnect was in progress).
+    _flushPendingSubscriptions();
     _updatesSub?.cancel();
     final updates = _client?.updates;
     if (updates == null) return;
@@ -470,5 +508,7 @@ class MqttHelper {
     _debugLog(
       'MQTT auto-reconnect completed — broker up, resubscribe handled by client',
     );
+    // In case app requested new topics while reconnecting, flush them now.
+    _flushPendingSubscriptions();
   }
 }
