@@ -41,6 +41,9 @@ class IsmLiveMqttController extends GetxController {
 
   Timer? _disconnectDebounceTimer;
 
+  /// True while [disconnect] is tearing down the client; used to label analytics.
+  bool _sdkDisconnectPending = false;
+
   /// Keeps [IsmLiveApp.isMqttConnected] aligned with the broker. Pass [connected]
   /// when known from callbacks/stream; otherwise reads [MqttHelper.isConnected].
   ///
@@ -101,6 +104,57 @@ class IsmLiveMqttController extends GetxController {
 
   void _disconnectRoom() {
     _streamController.disconnectRoom();
+  }
+
+  Map<String, dynamic> _mqttAnalyticsContext() {
+    try {
+      final c = _config;
+      if (c == null) {
+        return <String, dynamic>{
+          'topic_count': _topics.length,
+          'mqtt_initialized': _mqttInitialized,
+        };
+      }
+      return <String, dynamic>{
+        'user_id': c.userConfig.userId,
+        'project_id': c.projectConfig.projectId,
+        'account_id': c.projectConfig.accountId,
+        'device_id': c.projectConfig.deviceId,
+        'topic_count': _topics.length,
+        'mqtt_initialized': _mqttInitialized,
+        'secure': c.secure,
+      };
+    } catch (_) {
+      return <String, dynamic>{
+        'topic_count': _topics.length,
+        'mqtt_initialized': _mqttInitialized,
+      };
+    }
+  }
+
+  void _trackMqttDisconnected(String reason) {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttDisconnected,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'reason': reason,
+          'helper_connected': _mqttHelper.isConnected,
+        }
+      ],
+    );
+  }
+
+  void _trackMqttConnected() {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttConnected,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'helper_connected': _mqttHelper.isConnected,
+        }
+      ],
+    );
   }
 
   String? get _hostImageUrl =>
@@ -302,6 +356,7 @@ class IsmLiveMqttController extends GetxController {
   }
 
   Future<void> disconnect() async {
+    _sdkDisconnectPending = true;
     _mqttConnectionSub?.cancel();
     _mqttEventSub?.cancel();
     _mqttConnectionSub = null;
@@ -309,6 +364,11 @@ class IsmLiveMqttController extends GetxController {
     _mqttHelper.disconnect();
     _mqttInitialized = false;
     _setDisconnectedImmediate();
+    // If the helper never invoked onDisconnected, clear the flag so a later
+    // broker disconnect is not mislabeled as sdk_disconnect.
+    if (_sdkDisconnectPending) {
+      _sdkDisconnectPending = false;
+    }
   }
 
   void _pong() {
@@ -318,6 +378,12 @@ class IsmLiveMqttController extends GetxController {
   void _onDisconnected() {
     _publishMqttConnectivityToApp(false);
     IsmLiveLog.info('MQTT disconnected (helper handles auto-reconnect)');
+    if (_sdkDisconnectPending) {
+      _sdkDisconnectPending = false;
+      _trackMqttDisconnected('sdk_disconnect');
+    } else {
+      _trackMqttDisconnected('broker_or_network');
+    }
   }
 
   void _onSubscribed(String topic) {
@@ -335,6 +401,7 @@ class IsmLiveMqttController extends GetxController {
   void _onConnected() {
     _publishMqttConnectivityToApp(true);
     IsmLiveLog.success('MQTT connected');
+    _trackMqttConnected();
   }
 
   /// After app resume, nudge broker auto-reconnect when the client is already

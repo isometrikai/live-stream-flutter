@@ -31,6 +31,20 @@ Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
         }
       },
     ));
+    // Some devices (notably certain Xiaomi/Redmi builds and some iOS versions)
+    // can re-route audio *again* after the first remote track starts rendering.
+    // A second delayed re-apply reduces intermittent "earpiece instead of speaker"
+    // reports without changing steady-state behavior.
+    unawaited(Future<void>.delayed(
+      const Duration(milliseconds: 1600),
+      () async {
+        try {
+          await _applySpeakerRoute();
+        } catch (e) {
+          IsmLiveLog('_ensureLoudspeakerRouting 2nd retry error: $e');
+        }
+      },
+    ));
   }
 }
 
@@ -477,12 +491,13 @@ mixin StreamOngoingMixin {
               await Future<void>.delayed(const Duration(milliseconds: 150));
               if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
-              await _ensureLoudspeakerRouting();
+              await _ensureLoudspeakerRouting(withRetry: true);
             }));
-            return;
           }
           // LiveKit starts the remote track after this event (which re-enables
-          // the WebRTC audio track). Defer so our mute wins over that enable.
+          // the WebRTC audio track). Defer so our desired state (speakerOn/mute)
+          // wins over that enable. This also fixes rare cases where a track
+          // remains disabled after fast join/leave cycles.
           unawaited(Future<void>(() async {
             await Future<void>.delayed(const Duration(milliseconds: 50));
             if (!Get.isRegistered<IsmLiveStreamController>()) return;
@@ -508,9 +523,8 @@ mixin StreamOngoingMixin {
               await Future<void>.delayed(const Duration(milliseconds: 150));
               if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
-              await _ensureLoudspeakerRouting();
+              await _ensureLoudspeakerRouting(withRetry: true);
             }));
-            return;
           }
           // A remote audio track was unmuted by the server/host. Re-apply local
           // mute so the viewer's mute choice is honoured.

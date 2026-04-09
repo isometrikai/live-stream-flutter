@@ -1,7 +1,6 @@
 import Flutter
 import AVKit
 import UIKit
-import AudioToolbox
 
 public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
 
@@ -33,12 +32,11 @@ public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
 
   // MARK: - Heart / like tap feedback
 
-  /// Native haptic + short system sound so feedback works alongside WebRTC / LiveKit.
+  /// Native haptic only (no system sound) so feedback works alongside WebRTC / LiveKit.
   private func playHeartTapFeedback() {
     let gen = UIImpactFeedbackGenerator(style: .medium)
     gen.prepare()
     gen.impactOccurred(intensity: 1.0)
-    AudioServicesPlaySystemSound(1104)
   }
 
   // MARK: - Audio session reactivation

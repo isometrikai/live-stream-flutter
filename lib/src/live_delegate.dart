@@ -859,6 +859,10 @@ class IsmLiveAnalyticsEvent {
   // API result logging (sanitized)
   static const String apiResult = 'ism_live_api_result';
 
+  // MQTT connectivity
+  static const String mqttConnected = 'ism_live_mqtt_connected';
+  static const String mqttDisconnected = 'ism_live_mqtt_disconnected';
+
   // Navigation / screen transitions
   static const String screenView = 'ism_live_screen_view';
 
@@ -945,6 +949,10 @@ class IsmLiveAnalyticsEvent {
 
     // API
     apiResult,
+
+    // MQTT
+    mqttConnected,
+    mqttDisconnected,
 
     // Navigation
     screenView,
