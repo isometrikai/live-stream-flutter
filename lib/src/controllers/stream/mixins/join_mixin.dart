@@ -1515,6 +1515,12 @@ mixin StreamJoinMixin {
           defaultAudioPublishOptions: const lk.AudioPublishOptions(
             dtx: true,
           ),
+          // SFU still fans out to many viewers; these client flags help per-device
+          // CPU/bandwidth. Without adaptiveStream, remote video defaults to HIGH for
+          // every subscriber (see livekit_client RemoteTrackPublication defaults).
+          adaptiveStream: true,
+          // Reduces publisher encode work for simulcast layers no subscriber needs.
+          dynacast: true,
         ),
       );
 
