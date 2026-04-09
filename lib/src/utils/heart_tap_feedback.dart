@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-/// Like/heart control feedback: prefers native vibrator + system tone on mobile.
-/// Flutter's `SystemSound.play` is often silent on Android; WebRTC can make the
-/// Flutter haptic channel feel unreliable.
+/// Like/heart control feedback: native vibrator / haptic only (no click sound).
+/// On channel failure, falls back to Flutter `HapticFeedback` (WebRTC can make the
+/// engine haptic channel less reliable than native).
 class IsmLiveHeartTapFeedback {
   IsmLiveHeartTapFeedback._();
 
@@ -23,7 +23,6 @@ class IsmLiveHeartTapFeedback {
       await _channel.invokeMethod<void>('heartTapFeedback');
     } catch (_) {
       await HapticFeedback.mediumImpact();
-      // await SystemSound.play(SystemSoundType.click);
     }
   }
 }
