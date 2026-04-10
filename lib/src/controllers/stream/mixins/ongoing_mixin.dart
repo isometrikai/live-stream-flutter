@@ -580,7 +580,22 @@ mixin StreamOngoingMixin {
       }
     }
 
-    _controller.participantTracks = [...userMediaTracks];
+    // Ensure a stable ordering across clients.
+    //
+    // LiveKit's `remoteParticipants` is a Map; `.values` iteration order can vary
+    // between clients causing a "random" grid ordering for viewers.
+    //
+    // Additionally, some UI (e.g. publisher grid) relies on `participantList`
+    // as the display-order list (PK can reverse it when swapping host), while
+    // this method previously only updated `participantTracks`, causing mismatch.
+    final orderedTracks = _orderParticipantTracksForDisplay(
+      tracks: userMediaTracks,
+      previousDisplayOrder: _controller.participantList,
+      hostUserId: _controller.hostDetails?.userId,
+    );
+
+    _controller.participantTracks = orderedTracks;
+    _controller.participantList = orderedTracks;
     _controller.update([IsmLiveStreamView.updateId]);
 
     if (_controller.isPk &&
@@ -598,6 +613,53 @@ mixin StreamOngoingMixin {
         }
       });
     }
+  }
+
+  List<IsmLiveParticipantTrack> _orderParticipantTracksForDisplay({
+    required List<IsmLiveParticipantTrack> tracks,
+    required List<IsmLiveParticipantTrack> previousDisplayOrder,
+    required String? hostUserId,
+  }) {
+    String keyOf(IsmLiveParticipantTrack t) =>
+        '${t.participant.identity}|${t.isScreenShare ? 1 : 0}';
+
+    int deterministicCompare(IsmLiveParticipantTrack a, IsmLiveParticipantTrack b) {
+      final aIsHost = hostUserId != null && a.participant.identity == hostUserId;
+      final bIsHost = hostUserId != null && b.participant.identity == hostUserId;
+      if (aIsHost != bIsHost) return aIsHost ? -1 : 1;
+
+      // Prefer camera feed before screen share for the same participant.
+      if (a.isScreenShare != b.isScreenShare) {
+        return a.isScreenShare ? 1 : -1;
+      }
+
+      // Stable tie-breaker by identity (string compare is consistent across clients).
+      return a.participant.identity.compareTo(b.participant.identity);
+    }
+
+    // Build a lookup from (identity + screenshare flag) => latest track instance.
+    // If duplicates exist, keep the last one (they are equivalent for ordering).
+    final byKey = <String, IsmLiveParticipantTrack>{};
+    for (final t in tracks) {
+      byKey[keyOf(t)] = t;
+    }
+
+    // 1) Preserve prior display order when possible (important for PK host swap),
+    // 2) Append any newly-seen tracks in deterministic order.
+    final ordered = <IsmLiveParticipantTrack>[];
+    if (previousDisplayOrder.isNotEmpty) {
+      for (final prev in previousDisplayOrder) {
+        final k = keyOf(prev);
+        final current = byKey.remove(k);
+        if (current != null) {
+          ordered.add(current);
+        }
+      }
+    }
+
+    final remaining = byKey.values.toList()..sort(deterministicCompare);
+    ordered.addAll(remaining);
+    return ordered;
   }
 
   String controlIcon(IsmLiveStreamOption option) {
