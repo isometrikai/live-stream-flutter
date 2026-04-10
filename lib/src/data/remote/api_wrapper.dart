@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
@@ -95,7 +96,8 @@ class IsmLiveApiWrapper {
           startTime: start,
         );
 
-        // Sanitized API result analytics (no response body, no payload).
+        // API result analytics (no raw response body). Includes full [headers]
+        // and [request_payload] as provided (JSON-safe body; binary → placeholder).
         // Must never break API flows.
         try {
           final durationMs = DateTime.now().difference(start).inMilliseconds;
@@ -125,6 +127,13 @@ class IsmLiveApiWrapper {
             // SDK may not be initialized yet; safe to skip.
           }
 
+          final requestPayload = _requestPayloadForAnalytics(
+            type: type,
+            payload: payload,
+            field: field,
+            filePath: filePath,
+          );
+
           IsmLiveDelegate.trackEvent(
             IsmLiveAnalyticsEvent.apiResult,
             properties: [
@@ -132,11 +141,13 @@ class IsmLiveApiWrapper {
                 'path': api,
                 'base_url': baseUrl ?? IsmLiveApis.baseUrl,
                 'method': type.name.toUpperCase(),
+                'headers': Map<String, String>.from(headers),
                 'status_code': res.statusCode,
                 'has_error': res.hasError,
                 'duration_ms': durationMs,
                 if (errorSummary != null) 'error': errorSummary,
                 if (userInfo != null) 'user': userInfo,
+                if (requestPayload != null) 'request_payload': requestPayload,
               }
             ],
           );
@@ -506,6 +517,98 @@ class IsmLiveApiWrapper {
       return parts.join('; ');
     }
     return null;
+  }
+
+  static const int _maxAnalyticsPayloadDepth = 32;
+
+  /// JSON-serializable snapshot of [value] for analytics (no key redaction).
+  static dynamic _payloadTreeForAnalytics(dynamic value, int depth) {
+    if (depth > _maxAnalyticsPayloadDepth) {
+      return '[max_depth]';
+    }
+    if (value == null || value is bool || value is num) {
+      return value;
+    }
+    if (value is String) {
+      return value;
+    }
+    if (value is Uint8List) {
+      return 'binary(${value.length} bytes)';
+    }
+    if (value is List<int>) {
+      return 'bytes(${value.length})';
+    }
+    if (value is Map) {
+      final out = <String, dynamic>{};
+      for (final e in value.entries) {
+        out[e.key.toString()] = _payloadTreeForAnalytics(e.value, depth + 1);
+      }
+      return out;
+    }
+    if (value is List) {
+      return value
+          .map((e) => _payloadTreeForAnalytics(e, depth + 1))
+          .toList();
+    }
+    if (value is DateTime) {
+      return value.toIso8601String();
+    }
+    return value.toString();
+  }
+
+  static Map<String, dynamic>? _requestPayloadForAnalytics({
+    required IsmLiveRequestType type,
+    required dynamic payload,
+    required String field,
+    required String filePath,
+  }) {
+    try {
+      if (type == IsmLiveRequestType.get) {
+        return null;
+      }
+
+      if (type == IsmLiveRequestType.upload) {
+        final m = <String, dynamic>{
+          'kind': 'multipart',
+          if (field.isNotEmpty) 'file_field': field,
+          'has_file': filePath.isNotEmpty,
+        };
+        if (payload is Map<String, String>) {
+          m['fields'] = Map<String, dynamic>.from(payload);
+        }
+        return _ensureJsonEncodablePayloadMap(m);
+      }
+
+      if (payload == null) {
+        return null;
+      }
+
+      dynamic body;
+      if (payload is String) {
+        try {
+          final decoded = jsonDecode(payload);
+          body = _payloadTreeForAnalytics(decoded, 0);
+        } catch (_) {
+          body = payload;
+        }
+      } else {
+        body = _payloadTreeForAnalytics(payload, 0);
+      }
+
+      return _ensureJsonEncodablePayloadMap(<String, dynamic>{'body': body});
+    } catch (_) {
+      return <String, dynamic>{'body': '[unavailable]'};
+    }
+  }
+
+  static Map<String, dynamic> _ensureJsonEncodablePayloadMap(
+      Map<String, dynamic> m) {
+    try {
+      jsonEncode(m);
+      return m;
+    } catch (_) {
+      return <String, dynamic>{'body': '[unavailable]'};
+    }
   }
 
   /// Builds a copy-pasteable cURL command for the request (for developer debugging).
