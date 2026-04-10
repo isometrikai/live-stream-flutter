@@ -392,6 +392,11 @@ class HomeController extends GetxController {
 
       //   );
       // },
+      // productStreamSideOptionsBottomMargin: (context) {
+      //   final h = MediaQuery.of(context).size.height;
+      //   return h * 0.45; // example: custom fraction
+      //   // or return null to use SDK default (0.28 * h) even when the callback is set
+      // },
     );
 
     // Set up listener for MQTT events from IsmLiveApp

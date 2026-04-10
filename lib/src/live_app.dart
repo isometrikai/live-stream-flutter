@@ -618,6 +618,8 @@ class IsmLiveApp extends StatefulWidget {
     // New control customization options
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
+    ProductStreamSideOptionsBottomMarginBuilder?
+        productStreamSideOptionsBottomMargin,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
   }) {
     // assert(_initialized,
@@ -690,6 +692,8 @@ class IsmLiveApp extends StatefulWidget {
 
     IsmLiveDelegate.controlOptionCallback = controlOptionCallback;
     IsmLiveDelegate.controlWidgetBuilder = controlWidgetBuilder;
+    IsmLiveDelegate.productStreamSideOptionsBottomMargin =
+        productStreamSideOptionsBottomMargin;
     IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;

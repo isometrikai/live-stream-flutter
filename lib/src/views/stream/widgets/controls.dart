@@ -85,6 +85,14 @@ class IsmLiveControlsWidget extends StatelessWidget {
   /// flow when the host app omits it from [IsmLiveDelegate.viewersOption].
   ///
   /// Uses a mutable copy of the options list so the delegate list is never mutated.
+  static EdgeInsets _productStreamSideOptionsBottomMargin(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final custom = IsmLiveDelegate.productStreamSideOptionsBottomMargin
+        ?.call(context);
+    final bottom = custom ?? screenHeight * 0.28;
+    return EdgeInsets.only(bottom: bottom);
+  }
+
   static void _ensureMultiLiveForViewerCopublishFlow(
     List<IsmLiveStreamOption> options,
     IsmLiveMemberStatus memberStatus,
@@ -167,8 +175,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
                   margin: IsmLiveDelegate.productStream == true &&
                           !isKeyboardOpen &&
                           !isSchedule
-                      ? EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.28)
+                      ? _productStreamSideOptionsBottomMargin(context)
                       : null,
                   child: ListView.separated(
                     shrinkWrap: true,

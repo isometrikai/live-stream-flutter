@@ -418,6 +418,19 @@ typedef ControlWidgetBuilder = Widget? Function(
   String streamId,
 );
 
+/// Bottom inset in logical pixels for the product-stream side options column
+/// (vertical control strip). Used only when [IsmLiveDelegate.productStream] is
+/// true, the keyboard is closed, and the stream is not in schedule mode.
+///
+/// Return a non-negative value to set the bottom [EdgeInsets] margin. Return
+/// `null` to use the SDK default (28% of [MediaQuery] screen height).
+///
+/// Set via `IsmLiveApp.configureInterface(productStreamSideOptionsBottomMargin: …)`.
+/// When the delegate field is `null`, the default fraction is applied without calling this.
+typedef ProductStreamSideOptionsBottomMarginBuilder = double? Function(
+  BuildContext context,
+);
+
 /// Builder for custom "Buy now" button in product streams.
 ///
 /// This builder is called when rendering the "Buy now" button for viewers in product streams.
@@ -1270,6 +1283,10 @@ class IsmLiveDelegate {
   static ControlOptionCallback? controlOptionCallback;
 
   static ControlWidgetBuilder? controlWidgetBuilder;
+
+  /// See [ProductStreamSideOptionsBottomMarginBuilder].
+  static ProductStreamSideOptionsBottomMarginBuilder?
+      productStreamSideOptionsBottomMargin;
 
   static IsmLiveCartBuilder? cartBuilder;
 
