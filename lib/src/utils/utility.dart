@@ -326,29 +326,46 @@ class IsmLiveUtility {
     Widget dialog, {
     bool isDismissible = true,
     double? horizontalPadding,
-  }) async {
+  }) {
     hideKeyboard();
-    await showDialog(
-      context: IsmLiveUtility.navigatorKey.currentContext!,
-      barrierDismissible: isDismissible,
-      builder: (context) => UnconstrainedBox(
-        child: SizedBox(
-          width: IsmLiveDimens.percentWidth(1) -
-              (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.liveTheme?.backgroundColor ??
-                  Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
-            ),
-            child: Padding(
-              padding: IsmLiveDimens.edgeInsets16,
-              child: dialog,
+
+    Future<void> run() async {
+      var ctx = IsmLiveUtility.navigatorKey.currentContext;
+      if (ctx == null) {
+        await WidgetsBinding.instance.endOfFrame;
+        ctx = IsmLiveUtility.navigatorKey.currentContext;
+      }
+      if (ctx == null || !ctx.mounted) {
+        IsmLiveLog.error(
+          'IsmLiveUtility.showCustomDialog: navigator context unavailable; dialog not shown.',
+        );
+        return;
+      }
+
+      await showDialog<void>(
+        context: ctx,
+        barrierDismissible: isDismissible,
+        builder: (context) => UnconstrainedBox(
+          child: SizedBox(
+            width: IsmLiveDimens.percentWidth(1) -
+                (horizontalPadding ?? IsmLiveDimens.sixteen) * 2,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.liveTheme?.backgroundColor ??
+                    Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFour),
+              ),
+              child: Padding(
+                padding: IsmLiveDimens.edgeInsets16,
+                child: dialog,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }
+
+    run();
   }
 
   /// Show alert dialog
