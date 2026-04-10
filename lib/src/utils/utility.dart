@@ -85,6 +85,38 @@ class IsmLiveUtility {
         'Content-Type': 'application/json',
       };
 
+  /// Updates the in-memory `userToken` used by the SDK for subsequent API calls.
+  ///
+  /// This is intentionally a shallow config rebuild because [IsmLiveUserConfig]
+  /// is immutable.
+  static void updateUserToken(String token) {
+    final t = token.trim();
+    if (t.isEmpty) return;
+    if (!_initialized || _config == null) return;
+
+    final current = _config!;
+    final uc = current.userConfig;
+
+    if (uc.userToken == t) return;
+
+    _config = IsmLiveConfigData(
+      userConfig: IsmLiveUserConfig(
+        userToken: t,
+        userId: uc.userId,
+        firstName: uc.firstName,
+        lastName: uc.lastName,
+        userEmail: uc.userEmail,
+        userProfile: uc.userProfile,
+      ),
+      projectConfig: current.projectConfig,
+      mqttConfig: current.mqttConfig,
+      socketConfig: current.socketConfig,
+      secure: current.secure,
+      username: current.username,
+      password: current.password,
+    );
+  }
+
   static Map<String, String> secretHeader() => {
         'Content-Type': 'application/json',
         'userSecret': config.projectConfig.userSecret,
@@ -491,9 +523,6 @@ class IsmLiveUtility {
         break;
       case IsmLiveSnackbarType.success:
         backgroundColor = Colors.green;
-        break;
-      default:
-        backgroundColor = Colors.black;
         break;
     }
     Future.delayed(

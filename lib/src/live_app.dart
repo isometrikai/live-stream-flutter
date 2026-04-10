@@ -607,6 +607,7 @@ class IsmLiveApp extends StatefulWidget {
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
+    TokenExpiredCallback? tokenExpiredCallback,
 
     /// When `false` (default), 2+ participants use horizontal full-width rows.
     /// When `true`, uses the multi-column grid layout.
@@ -704,6 +705,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
     IsmLiveDelegate.giftClickCallback = giftClickCallback;
     IsmLiveDelegate.heartBatchFlushCallback = heartBatchFlushCallback;
+    IsmLiveDelegate.tokenExpiredCallback = tokenExpiredCallback;
     IsmLiveDelegate.analyticsDelegate = analyticsDelegate;
     IsmLiveDelegate.enabledAnalyticsEvents = enabledAnalyticsEvents;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;

@@ -1015,6 +1015,12 @@ typedef OnStreamScrollCallback = void Function(
   bool isHost,
 );
 
+/// Called when the backend indicates the `userToken` has expired (401/406 cases).
+///
+/// Host app should return a fresh token string. Returning `null`/empty means
+/// "could not refresh" and the SDK will not retry.
+typedef TokenExpiredCallback = FutureOr<String?> Function();
+
 /// Control option types for the Stream Recording Player.
 /// Used by [IsmLiveStreamRecordingPlayerConfig.onControlOption].
 enum IsmLiveStreamRecordingControlOption {
@@ -1303,6 +1309,10 @@ class IsmLiveDelegate {
   static AddCoinsClickCallback? addCoinsClickCallback;
 
   static GiftClickCallback? giftClickCallback;
+
+  /// Optional callback invoked when `userToken` is expired.
+  /// If it returns a new token, the SDK retries the failed request once.
+  static TokenExpiredCallback? tokenExpiredCallback;
 
   /// Optional hook when batched heart (like) taps are flushed to the backend.
   ///

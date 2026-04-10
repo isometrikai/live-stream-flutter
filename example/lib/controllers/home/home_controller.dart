@@ -397,6 +397,10 @@ class HomeController extends GetxController {
       //   return h * 0.45; // example: custom fraction
       //   // or return null to use SDK default (0.28 * h) even when the callback is set
       // },
+      // tokenExpiredCallback: () async {
+      //   IsmLiveLog.info('Token expired');
+      //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';
+      // },
     );
 
     // Set up listener for MQTT events from IsmLiveApp

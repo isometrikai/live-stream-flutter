@@ -13,6 +13,55 @@ class IsmLiveApiWrapper {
 
   final Client client;
 
+  // Ensures only one refresh flow is in-flight at a time.
+  static Future<String?>? _refreshingToken;
+
+  static bool _isTokenExpiredResponse(Response response) {
+    // Backend contract (production): token-expired returns ONLY 401.
+    return response.statusCode == 401;
+  }
+
+  static Map<String, String> _withUpdatedUserTokenHeader(
+    Map<String, String> headers,
+    String newToken,
+  ) {
+    final t = newToken.trim();
+    if (t.isEmpty) return headers;
+    if (!headers.containsKey('userToken')) return headers;
+
+    final next = Map<String, String>.from(headers);
+    next['userToken'] = t;
+    return next;
+  }
+
+  Future<String?> _refreshTokenFromHostApp() async {
+    final cb = IsmLiveDelegate.tokenExpiredCallback;
+    if (cb == null) return null;
+
+    // Coalesce concurrent 401/406 refresh attempts into one callback call.
+    final existing = _refreshingToken;
+    if (existing != null) return await existing;
+
+    final completer = Completer<String?>();
+    _refreshingToken = completer.future;
+
+    try {
+      final token = await cb();
+      final t = token?.trim();
+      if (t != null && t.isNotEmpty) {
+        IsmLiveUtility.updateUserToken(t);
+      }
+      completer.complete(t);
+      return t;
+    } catch (e, st) {
+      IsmLiveLog.error('Token refresh callback failed: $e', st);
+      completer.complete(null);
+      return null;
+    } finally {
+      _refreshingToken = null;
+    }
+  }
+
   /// Method to make all the requests inside the app like GET, POST, PUT, Delete
   Future<IsmLiveResponseModel> makeRequest(
     String api, {
@@ -26,6 +75,7 @@ class IsmLiveApiWrapper {
     bool showDialog = true,
     bool shouldEncodePayload = true,
     String? message,
+    int tokenRefreshAttempts = 0,
   }) async {
     assert(
       type != IsmLiveRequestType.upload ||
@@ -88,6 +138,29 @@ class IsmLiveApiWrapper {
           field: field,
           filePath: filePath,
         );
+
+        // Handle token expired: request new token from host app and retry once.
+        if (tokenRefreshAttempts == 0 && _isTokenExpiredResponse(response)) {
+          final newToken = await _refreshTokenFromHostApp();
+          if (newToken != null && newToken.trim().isNotEmpty) {
+            final updatedHeaders =
+                _withUpdatedUserTokenHeader(headers, newToken);
+            return makeRequest(
+              api,
+              baseUrl: baseUrl,
+              type: type,
+              headers: updatedHeaders,
+              payload: payload,
+              field: field,
+              filePath: filePath,
+              showDialog: showDialog,
+              showLoader: showLoader,
+              shouldEncodePayload: shouldEncodePayload,
+              message: message,
+              tokenRefreshAttempts: 1,
+            );
+          }
+        }
 
         // Handles response based on status code
         var res = await _processResponse(
@@ -158,21 +231,7 @@ class IsmLiveApiWrapper {
         if (showLoader) {
           IsmLiveUtility.closeLoader();
         }
-        if (res.statusCode != 406) {
-          return res;
-        }
-        return makeRequest(
-          api,
-          baseUrl: baseUrl,
-          type: type,
-          headers: headers,
-          payload: payload,
-          field: field,
-          filePath: filePath,
-          showDialog: showDialog,
-          showLoader: showLoader,
-          shouldEncodePayload: shouldEncodePayload,
-        );
+        return res;
       } on TimeoutException catch (e, st) {
         IsmLiveLog.error('TimeOutException - $e', st);
         if (showLoader) {
