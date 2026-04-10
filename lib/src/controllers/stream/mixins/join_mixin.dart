@@ -885,7 +885,8 @@ mixin StreamJoinMixin {
     _controller._streamViewLoadedCallbackTriggered = false;
 
     // Set up background lifecycle management
-    _controller.setStreamActive(true, isHost);
+    _controller.setStreamActive(true, isHost,
+        isCopublisher: isCopublisher);
 
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
@@ -1287,6 +1288,89 @@ mixin StreamJoinMixin {
     }
   }
 
+  /// Copublisher: rejoin the currently open stream after app resumes.
+  ///
+  /// Reuses the stored RTC token (saved via `storeToken` when the copublisher
+  /// originally connected). The server still considers the member as publishing,
+  /// so `/switchprofile` returns "member already publishing" and `/viewer`
+  /// returns a viewer-level token without publish rights.
+  Future<bool> rejoinCurrentCopublisherStreamAfterForeground() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext;
+    if (context == null) {
+      IsmLiveLog.error(
+          'rejoinCurrentCopublisherStreamAfterForeground: navigator context is null');
+      return false;
+    }
+
+    final streamId = _controller.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      IsmLiveLog.error(
+          'rejoinCurrentCopublisherStreamAfterForeground: streamId missing');
+      return false;
+    }
+
+    final details = _controller.streamDetails;
+    IsmLiveLog.info(
+        'rejoinCurrentCopublisherStreamAfterForeground: using stored token for $streamId');
+
+    try {
+      _controller.preventDispose = true;
+
+      final token = _controller.storedToken;
+      if (token == null || token.trim().isEmpty) {
+        IsmLiveLog.error(
+            'rejoinCurrentCopublisherStreamAfterForeground: stored copublisher token missing');
+        return false;
+      }
+
+      _controller.rtcToken = token;
+
+      await _connectRoomAndInitialize(
+        stream: details,
+        token: token,
+        streamId: streamId,
+        streamImage: details?.streamImage,
+        streamDiscription: details?.streamDescription ??
+            _controller.descriptionController.text,
+        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+        restream: details?.restream ?? _controller.isRestreamBroadcast,
+        isHost: false,
+        isCopublisher: true,
+        isPk: details?.isPkChallenge ?? false,
+        isPkGust: false,
+        isNewStream: false,
+        joinByScrolling: false,
+        isScrolling: false,
+        isInteractive: false,
+        startTime: details?.startDateTime,
+        context: context,
+        eventId: details?.eventId,
+        reJoin: true,
+        isScheduledStream: details?.isScheduledStream,
+        products: details?.products,
+        performNavigation: false,
+        showLoader: false,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 150));
+      final connected =
+          _controller.room?.connectionState == lk.ConnectionState.connected;
+      IsmLiveLog.info(
+          'rejoinCurrentCopublisherStreamAfterForeground: connected=$connected state=${_controller.room?.connectionState}');
+      if (connected) {
+        _controller.acknowledgeForegroundPublisherRejoinRestoredCamera();
+      }
+      return connected;
+    } catch (e, st) {
+      IsmLiveLog.error(
+          'rejoinCurrentCopublisherStreamAfterForeground: unexpected error: $e',
+          st);
+      return false;
+    } finally {
+      _controller.preventDispose = false;
+    }
+  }
+
   /// Host-only: rejoin the currently open stream after app resumes.
   ///
   /// Implementation notes:
@@ -1364,7 +1448,7 @@ mixin StreamJoinMixin {
       if (connected) {
         // `_connectRoomAndInitialize` already ran `enableMyVideo()` — avoid a second
         // foreground resume pass that calls `setCameraEnabled` again (races/errors).
-        _controller.acknowledgeForegroundHostRejoinRestoredCamera();
+        _controller.acknowledgeForegroundPublisherRejoinRestoredCamera();
       }
       return connected;
     } catch (e, st) {
