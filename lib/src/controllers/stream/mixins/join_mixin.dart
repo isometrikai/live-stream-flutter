@@ -1288,6 +1288,106 @@ mixin StreamJoinMixin {
     }
   }
 
+  /// Host removed this device user from co-publishers (MQTT `memberRemoved`).
+  /// The backend already cleared the member role; mirror successful `leaveMember` local
+  /// cleanup then reconnect as a viewer (same RTC path as `leaveCopublisherAndRejoinAsViewer`).
+  ///
+  /// Returns whether LiveKit reports connected after reconnect. On `false`, callers
+  /// may fall back to leaving the stream UI (e.g. disconnect room + pop).
+  Future<bool> rejoinAsViewerAfterHostRemovedCopublisher({
+    required String streamId,
+  }) async {
+    if (_controller.isHost || !_controller.isCopublisher) {
+      return false;
+    }
+
+    final context = IsmLiveUtility.navigatorKey.currentContext;
+    if (context == null) {
+      IsmLiveLog.error(
+          'rejoinAsViewerAfterHostRemovedCopublisher: navigator context is null');
+      return false;
+    }
+
+    try {
+      await _controller.room?.localParticipant?.unpublishAllTracks();
+    } catch (_) {}
+    try {
+      _controller.userRole?.leaveCopublishing();
+      _controller.memberStatus = IsmLiveMemberStatus.notMember;
+    } catch (_) {}
+    try {
+      await _controller.sortParticipants();
+    } catch (_) {}
+    _controller.update([IsmLiveMembersSheet.updateId]);
+
+    var loaderShown = false;
+    try {
+      _controller.isViewerJoiningStream = true;
+      _controller.preventDispose = true;
+
+      if (!(Get.isDialogOpen ?? false)) {
+        IsmLiveUtility.showLoader();
+        loaderShown = true;
+      }
+
+      final rtc = await _controller.getRTCToken(streamId);
+      if (rtc == null || rtc.rtcToken.trim().isEmpty) {
+        IsmLiveLog.error(
+            'rejoinAsViewerAfterHostRemovedCopublisher: RTC token fetch failed');
+        return false;
+      }
+
+      final token = rtc.rtcToken;
+      _controller.rtcToken = token;
+      _controller.storeToken(token);
+
+      final details = _controller.streamDetails;
+      await _connectRoomAndInitialize(
+        stream: details,
+        token: token,
+        streamId: streamId,
+        streamImage: details?.streamImage,
+        streamDiscription: details?.streamDescription ??
+            _controller.descriptionController.text,
+        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+        restream: details?.restream ?? _controller.isRestreamBroadcast,
+        isHost: false,
+        isCopublisher: false,
+        isPk: details?.isPkChallenge ?? false,
+        isPkGust: false,
+        isNewStream: false,
+        joinByScrolling: false,
+        isScrolling: false,
+        isInteractive: false,
+        startTime: rtc.startTime ?? details?.startDateTime,
+        context: context,
+        eventId: details?.eventId,
+        reJoin: true,
+        isScheduledStream: details?.isScheduledStream,
+        products: details?.products,
+        performNavigation: false,
+        showLoader: false,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 150));
+      final connected =
+          _controller.room?.connectionState == lk.ConnectionState.connected;
+      IsmLiveLog.info(
+          'rejoinAsViewerAfterHostRemovedCopublisher: connected=$connected state=${_controller.room?.connectionState}');
+      return connected;
+    } catch (e, st) {
+      IsmLiveLog.error(
+          'rejoinAsViewerAfterHostRemovedCopublisher: unexpected error: $e', st);
+      return false;
+    } finally {
+      if (loaderShown) {
+        IsmLiveUtility.closeLoader();
+      }
+      _controller.isViewerJoiningStream = false;
+      _controller.preventDispose = false;
+    }
+  }
+
   /// Copublisher: rejoin the currently open stream after app resumes.
   ///
   /// Reuses the stored RTC token (saved via `storeToken` when the copublisher
