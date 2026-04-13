@@ -4,6 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
+  @override
+  (int, int)? get data => (9, 16);
+
+  @override
+  String get name => '9x16 (customized)';
+}
+
 class FileManager {
   const FileManager._();
 
@@ -103,7 +111,12 @@ class FileManager {
           lockAspectRatio: true,
           cropStyle: CropStyle.rectangle,
         ),
-        IOSUiSettings(title: 'Cropper', cropStyle: CropStyle.rectangle)
+        IOSUiSettings(title: 'Cropper', // cropStyle: CropStyle.rectangle,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.square,
+            CropAspectRatioPresetCustom(),
+          ],)
       ],
     );
 
