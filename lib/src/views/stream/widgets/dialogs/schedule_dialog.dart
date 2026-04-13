@@ -26,11 +26,11 @@ class IsmLiveScheduleDialog extends StatelessWidget {
         ),
         IsmLiveDimens.boxHeight8,
         Text(
-          'at ${message.formattedDate}',
+          'At ${message.formattedDate}',
           style: context.textTheme.bodyMedium?.copyWith(color: textColor),
         ),
         IsmLiveDimens.boxHeight20,
-        IsmLiveButton(
+        const IsmLiveButton(
           label: IsmLiveStrings.tvContinue,
           onTap: IsmLiveUtility.closeDialog,
         ),
