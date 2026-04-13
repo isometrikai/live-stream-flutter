@@ -200,6 +200,21 @@ class IsmLiveStreamController extends GetxController
   IsmLiveStreamDataModel? streamDetails;
 
   bool _streamViewLoadedCallbackTriggered = false;
+  bool _hasTriggeredOnStreamEnd = false;
+
+  /// Ensures `onStreamEnd` callback is emitted only once per stream lifecycle.
+  void triggerOnStreamEndOnce() {
+    if (_hasTriggeredOnStreamEnd) {
+      return;
+    }
+    _hasTriggeredOnStreamEnd = true;
+    IsmLiveDelegate.onStreamEnd?.call();
+  }
+
+  /// Resets single-fire guard for new join lifecycle.
+  void resetOnStreamEndTrigger() {
+    _hasTriggeredOnStreamEnd = false;
+  }
 
   Uint8List? bytes;
 
@@ -797,6 +812,7 @@ class IsmLiveStreamController extends GetxController
       IsmLiveLog('Skipping streamDispose due to preventDispose flag');
       return;
     }
+    resetOnStreamEndTrigger();
     isViewerJoiningStream = false;
     print('initializeAndJoinStream: streamDisposeddd');
     // Clear PK controller data

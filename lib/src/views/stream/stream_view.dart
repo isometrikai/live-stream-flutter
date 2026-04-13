@@ -154,8 +154,8 @@ class IsmLiveStreamView extends StatelessWidget {
       // Disable wakelock
       await WakelockPlus.disable();
 
-      // Call the dispose callback if provided
-      IsmLiveDelegate.onStreamEnd?.call();
+      // Callback can also be reached from stop/disconnect flow; guard duplicate.
+      controller.triggerOnStreamEndOnce();
     } catch (e) {
       IsmLiveLog.error('Error cleaning up stream data: $e');
     }

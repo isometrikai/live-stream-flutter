@@ -163,6 +163,7 @@ mixin StreamJoinMixin {
     VoidCallback? onStreamEnd,
   }) async {
     final startedAt = DateTime.now();
+    _controller.resetOnStreamEndTrigger();
 
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.controllerInitializeAndJoinAttempt,
