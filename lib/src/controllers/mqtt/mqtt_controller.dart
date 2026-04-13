@@ -672,6 +672,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorName = payload['initiatorName'] as String? ?? '';
           final initiatorId = payload['initiatorId'] as String? ?? '';
           if (streamId == _streamController.streamId) {
+            _syncLiveViewersCountFromPayload(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: initiatorName,
@@ -689,14 +690,30 @@ class IsmLiveMqttController extends GetxController {
             _streamController.streamMembersList
                 .removeWhere((e) => e.userId == memberId);
             if (userId != initiatorId && userId == memberId) {
-              await _streamController.disconnectRoom();
-              IsmLiveRoute.pop();
+              final rejoinAsViewer = _streamController.isCopublisher &&
+                  !_streamController.isHost;
+              if (rejoinAsViewer) {
+                final ok = await _streamController
+                    .rejoinAsViewerAfterHostRemovedCopublisher(
+                  streamId: streamId,
+                );
+                if (!ok) {
+                  await _streamController.disconnectRoom();
+                  IsmLiveRoute.pop();
+                }
+              } else {
+                await _streamController.disconnectRoom();
+                IsmLiveRoute.pop();
+              }
             }
             await Future.delayed(const Duration(milliseconds: 300));
             _updateStream();
           }
           break;
         case IsmLiveActions.profileSwitched:
+          if (streamId == _streamController.streamId) {
+            _syncLiveViewersCountFromPayload(payload);
+          }
           final memberId = payload['userId'] as String? ?? '';
           final memberName = payload['userName'] as String? ?? '';
           var body = '';
