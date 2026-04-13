@@ -885,6 +885,7 @@ class _StreamHeader extends StatelessWidget {
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: IsmLiveStreamView.updateId,
         builder: (controller) => SafeArea(
+          bottom: false,
           child: IsmLiveStreamHeader(
             streamCoins: controller.premiumStreamCoinsController.text,
             isBattleTie: controller.pkWinnerId != null,
