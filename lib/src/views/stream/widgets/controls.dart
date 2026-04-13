@@ -123,9 +123,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
           streamController.room?.localParticipant
               ?.addListener(streamController.update);
         },
-        dispose: (state) async {
+        dispose: (state) {
+          if (!Get.isRegistered<IsmLiveStreamController>()) {
+            return;
+          }
           final streamController = Get.find<IsmLiveStreamController>();
-
           streamController.room?.localParticipant
               ?.removeListener(streamController.update);
         },
