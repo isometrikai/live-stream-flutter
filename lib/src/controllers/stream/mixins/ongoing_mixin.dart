@@ -1439,7 +1439,7 @@ mixin StreamOngoingMixin {
       }
     }
 
-    IsmLiveApp.onStreamEnd?.call();
+    _controller.triggerOnStreamEndOnce();
     isStopStreamCall = false;
 
     return isEnded;
