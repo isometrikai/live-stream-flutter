@@ -188,8 +188,6 @@ mixin StreamJoinMixin {
         (_controller.streamId == stream.streamId && _controller.room != null);
 
     if (isRejoinScenario && !reJoin) {
-      print(
-          'initializeAndJoinStream: Auto-detected rejoin scenario for stream ${stream.streamId}');
       reJoin = true;
 
       IsmLiveDelegate.trackEvent(
@@ -207,8 +205,6 @@ mixin StreamJoinMixin {
     // Set preventDispose flag immediately for rejoin scenarios to prevent data clearing
     if (reJoin) {
       _controller.preventDispose = true;
-      print(
-          'initializeAndJoinStream: Set preventDispose=true for rejoin scenario');
 
       IsmLiveDelegate.trackEvent(
         IsmLiveAnalyticsEvent.controllerPreventDisposeEnabled,
@@ -234,7 +230,6 @@ mixin StreamJoinMixin {
     );
 
     initialize(streamIndex);
-    print('initializeAndJoinStream called ${stream.streamId}, reJoin=$reJoin');
 
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.controllerJoinStreamAttempt,
@@ -604,9 +599,6 @@ mixin StreamJoinMixin {
 
       token = data.rtcToken;
 
-      // Log the complete RTC response for debugging
-      print('  startTime: ${data.startTime}');
-
       // Store the start time for later calculation instead of calculating duration immediately
       _controller._streamStartTime = data.startTime;
     }
@@ -621,8 +613,6 @@ mixin StreamJoinMixin {
     // Store fallback start time for later calculation
     if (_controller._streamStartTime == null && stream.startDateTime != null) {
       _controller._streamStartTime = stream.startDateTime;
-      print(
-          'StreamTimer JOIN stored fallback startDateTime: ${stream.startDateTime} (UTC: ${stream.startDateTime!.toUtc()})');
     }
 
     // Initialize stream duration to zero - will be calculated just before timer starts
@@ -752,19 +742,8 @@ mixin StreamJoinMixin {
       image = data.image;
     }
 
-    // Log the complete create stream response for debugging
-    print('StreamTimer Create Stream Response Debug:');
-    print('  startTime: ${stream.startTime}');
-    print('  startTime UTC: ${stream.startTime?.toUtc()}');
-
     // Store the start time for later calculation instead of calculating duration immediately
     _controller._streamStartTime = stream.startTime;
-    if (stream.startTime != null) {
-      print(
-          'StreamTimer CREATE stored server startTime: ${stream.startTime} (UTC: ${stream.startTime!.toUtc()})');
-    } else {
-      print('StreamTimer CREATE no start time available');
-    }
 
     // Initialize stream duration to zero - will be calculated just before timer starts
     _controller.streamDuration = Duration.zero;
@@ -845,7 +824,6 @@ mixin StreamJoinMixin {
     }
     // Subscribe to the stream
     _controller.streamId = streamId;
-    print('initializeAndJoinStream initialized with streamId: $streamId');
 
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.streamConnectAttempt,
@@ -957,9 +935,6 @@ mixin StreamJoinMixin {
         final dummyRoom = lk.Room();
         final dummyListener = dummyRoom.createListener();
 
-        print(
-            'initializeAndJoinStream (deferred): About to call goToStreamView with reJoin=$reJoin');
-
         IsmLiveDelegate.trackEvent(
           IsmLiveAnalyticsEvent.connectStreamDeferredNavigationAttempt,
           properties: [
@@ -986,8 +961,6 @@ mixin StreamJoinMixin {
           isInteractive: isInteractive,
           reJoin: reJoin,
         );
-        print(
-            'initializeAndJoinStream (deferred): goToStreamView completed, connection will be finished from stream_view');
         IsmLiveDelegate.trackEvent(
           IsmLiveAnalyticsEvent.connectStreamDeferredNavigationSuccess,
           properties: [
@@ -1000,7 +973,6 @@ mixin StreamJoinMixin {
         );
       } catch (e, st) {
         IsmLiveLog.error('Navigation error (deferred connect): $e', st);
-        print('initializeAndJoinStream (deferred): Navigation error: $e');
         IsmLiveDelegate.trackEvent(
           IsmLiveAnalyticsEvent.connectStreamDeferredNavigationFailure,
           properties: [
@@ -1803,7 +1775,7 @@ mixin StreamJoinMixin {
         // The helper respects external devices (Bluetooth/wired) on Android.
         // withRetry: true schedules retries to guard against WebRTC resetting
         // the audio route when remote tracks arrive.
-        await _ensureLoudspeakerRouting(withRetry: true);
+        await _ensureLoudspeakerRouting(withRetry: true, forRoom: room);
 
         // Store the token for background lifecycle reconnection
         _controller.storeToken(token);
@@ -1833,7 +1805,6 @@ mixin StreamJoinMixin {
         }
         return;
       }
-      print('initializeAndJoinStream 444444');
 
       // Set track subscription permissions
       try {
@@ -1944,14 +1915,9 @@ mixin StreamJoinMixin {
       // Initialize timer if not already set (for direct connectStream calls)
       if (startTime != null) {
         _controller._streamStartTime = startTime;
-        print(
-            'StreamTimer CONNECT stored direct startTime: $startTime (UTC: ${startTime.toUtc()})');
       }
 
       startStreamTimer();
-
-      print(
-          'initializeAndJoinStream: joinByScrolling=$joinByScrolling, performNavigation=$performNavigation');
 
       if (performNavigation) {
         try {
@@ -1961,15 +1927,9 @@ mixin StreamJoinMixin {
         } catch (e) {
           IsmLiveLog.error('Gift pre-cache error: $e');
         }
-        print('initializeAndJoinStream 555555');
         try {
-          print(
-              'initializeAndJoinStream: About to call goToStreamView with reJoin=$reJoin');
-
           // Check if listener is null before calling goToStreamView
           if (_controller.listener == null) {
-            print(
-                'initializeAndJoinStream: ERROR - listener is null, cannot proceed with goToStreamView');
             IsmLiveLog.error('Cannot join stream: listener is null');
             return;
           }
@@ -1997,7 +1957,6 @@ mixin StreamJoinMixin {
               isInteractive: isInteractive,
               reJoin: reJoin);
 
-          print('initializeAndJoinStream: goToStreamView completed');
           IsmLiveDelegate.trackEvent(
             IsmLiveAnalyticsEvent.goToStreamViewSuccess,
             properties: [
@@ -2009,7 +1968,6 @@ mixin StreamJoinMixin {
           );
         } catch (e) {
           IsmLiveLog.error('Navigation error: $e');
-          print('initializeAndJoinStream: Navigation error details: $e');
           IsmLiveDelegate.trackEvent(
             IsmLiveAnalyticsEvent.goToStreamViewFailure,
             properties: [
@@ -2021,9 +1979,6 @@ mixin StreamJoinMixin {
             ],
           );
         }
-      } else {
-        print(
-            'initializeAndJoinStream: Skipping goToStreamView (performNavigation=false)');
       }
     } catch (e, st) {
       _controller.isViewerJoiningStream = false;
@@ -2247,23 +2202,9 @@ mixin StreamJoinMixin {
       var now = DateTime.now();
       _controller.streamDuration =
           now.difference(_controller._streamStartTime!);
-      print(
-          'StreamTimer CALCULATED duration at timer start: ${_controller.streamDuration}');
-      print(
-          'StreamTimer CALCULATED using startTime: ${_controller._streamStartTime} (UTC: ${_controller._streamStartTime!.toUtc()})');
-      print('StreamTimer CALCULATED current time: $now (UTC: ${now.toUtc()})');
-      print(
-          'StreamTimer CALCULATED user: ${_controller.user?.userId} streamId: ${_controller.streamId}');
     } else {
       _controller.streamDuration = Duration.zero;
-      print(
-          'StreamTimer CALCULATED no start time available, initializing to zero');
     }
-
-    print(
-        'StreamTimer startStreamTimer duration: ${_controller.streamDuration}');
-    print(
-        'StreamTimer startStreamTimer user: ${_controller.user?.userId} streamId: ${_controller.streamId}');
 
     _controller.streamTimer = Timer.periodic(
       const Duration(seconds: 1),
@@ -2273,7 +2214,7 @@ mixin StreamJoinMixin {
             seconds: 1,
           );
         } catch (e) {
-          debugPrint('timer is disposed....${e.toString()}');
+          IsmLiveLog.error('Stream timer tick error: $e');
           timer.cancel(); // Stops the timer permanently
           return;
         }

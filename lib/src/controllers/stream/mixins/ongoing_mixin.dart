@@ -8,12 +8,20 @@ part of '../stream_controller.dart';
 /// On Android [setSpeakerphoneOn(true)] forces the built-in speaker and
 /// overrides any connected device, so we guard the call behind a device check.
 ///
-/// When [withRetry] is true (default for the initial connection), a delayed
-/// second attempt is scheduled. This guards against the common race where
+/// When [withRetry] is true (default for the initial connection), delayed
+/// re-applies are scheduled. This guards against the common race where
 /// WebRTC's remote-track subscription reconfigures the audio session and
 /// resets the output back to the earpiece (Android) or where the
 /// AVAudioSession hasn't fully activated yet (iOS).
-Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
+///
+/// [forRoom] pins retries to a specific LiveKit room instance. If the
+/// controller's room changes before a retry fires (e.g. the user left and
+/// re-joined), the stale retry is skipped so it cannot interfere with the
+/// new room's audio session.
+Future<void> _ensureLoudspeakerRouting({
+  bool withRetry = false,
+  lk.Room? forRoom,
+}) async {
   try {
     await _applySpeakerRoute();
   } catch (e) {
@@ -21,9 +29,22 @@ Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
   }
 
   if (withRetry) {
+    final roomAtCallTime = forRoom;
+
+    bool isRoomStillActive() {
+      if (roomAtCallTime == null) return true;
+      try {
+        if (!Get.isRegistered<IsmLiveStreamController>()) return false;
+        return Get.find<IsmLiveStreamController>().room == roomAtCallTime;
+      } catch (_) {
+        return false;
+      }
+    }
+
     unawaited(Future<void>.delayed(
       const Duration(milliseconds: 800),
       () async {
+        if (!isRoomStillActive()) return;
         try {
           await _applySpeakerRoute();
         } catch (e) {
@@ -38,6 +59,7 @@ Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
     unawaited(Future<void>.delayed(
       const Duration(milliseconds: 1600),
       () async {
+        if (!isRoomStillActive()) return;
         try {
           await _applySpeakerRoute();
         } catch (e) {
@@ -45,6 +67,23 @@ Future<void> _ensureLoudspeakerRouting({bool withRetry = false}) async {
         }
       },
     ));
+    // On iOS (especially older devices like iPhone 11), rapid
+    // join-leave-join cycles can cause the AVAudioSession to finalise its
+    // reconfiguration well after 1.6 s. A third, later retry catches this
+    // without affecting steady-state behavior on faster devices.
+    if (Platform.isIOS) {
+      unawaited(Future<void>.delayed(
+        const Duration(milliseconds: 3000),
+        () async {
+          if (!isRoomStillActive()) return;
+          try {
+            await _applySpeakerRoute();
+          } catch (e) {
+            IsmLiveLog('_ensureLoudspeakerRouting iOS late retry error: $e');
+          }
+        },
+      ));
+    }
   }
 }
 
@@ -498,7 +537,7 @@ mixin StreamOngoingMixin {
               await Future<void>.delayed(const Duration(milliseconds: 150));
               if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
-              await _ensureLoudspeakerRouting(withRetry: true);
+              await _ensureLoudspeakerRouting(withRetry: true, forRoom: room);
             }));
           }
           // LiveKit starts the remote track after this event (which re-enables
@@ -530,7 +569,7 @@ mixin StreamOngoingMixin {
               await Future<void>.delayed(const Duration(milliseconds: 150));
               if (!Get.isRegistered<IsmLiveStreamController>()) return;
               if (_controller.room != room || !_controller.speakerOn) return;
-              await _ensureLoudspeakerRouting(withRetry: true);
+              await _ensureLoudspeakerRouting(withRetry: true, forRoom: room);
             }));
           }
           // A remote audio track was unmuted by the server/host. Re-apply local
@@ -1021,7 +1060,7 @@ mixin StreamOngoingMixin {
     // wrong speaker (or faintly through the receiver when muted).
     // The helper respects external devices (Bluetooth/wired) on Android.
     if (speakerOn) {
-      await _ensureLoudspeakerRouting();
+      await _ensureLoudspeakerRouting(forRoom: room);
     }
 
     final futures = <Future<void>>[];
