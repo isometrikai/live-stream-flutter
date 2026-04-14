@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/utils/extensions.dart';
 import 'package:flutter/foundation.dart';
 
 class IsmLiveStreamDataModel {
@@ -63,14 +64,9 @@ class IsmLiveStreamDataModel {
             map['streamTitle'] != null ? map['streamTitle'] as String : null,
         streamImage:
             map['streamImage'] != null ? map['streamImage'] as String : null,
-        startDateTime: map['startDateTime'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(map['startDateTime'].toString()))
-            : null,
-        scheduleStartTime: map['scheduleStartTime'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(
-                int.parse(map['scheduleStartTime'].toString()) * 1000)
-            : null,
+        startDateTime: (map['startDateTime'] as Object?).asEpochDateTime,
+        scheduleStartTime:
+            (map['scheduleStartTime'] as Object?).asEpochDateTime,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
         streamDescription: map['streamDescription'] != null
             ? map['streamDescription'] as String
@@ -187,10 +183,7 @@ class IsmLiveStreamDataModel {
       streamTitle: initiatorName ?? map['streamDescription'] as String?,
       streamImage:
           map['streamImage'] != null ? map['streamImage'] as String : null,
-      startDateTime: startTime != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              startTime is int ? startTime : int.parse(startTime.toString()))
-          : null,
+      startDateTime: (startTime as Object?).asEpochDateTime,
       recordUrl:
           map['recordingUrl'] != null ? map['recordingUrl'] as String : null,
       streamDescription: map['streamDescription'] != null
@@ -378,8 +371,10 @@ class IsmLiveStreamDataModel {
         'streamId': streamId,
         'streamTitle': streamTitle,
         'streamImage': streamImage,
-        'startDateTime': startDateTime,
-        'scheduleStartTime': scheduleStartTime,
+        'startDateTime': startDateTime.epochMilliseconds,
+        'startDateTimeInSeconds': startDateTime.epochSeconds,
+        'scheduleStartTime': scheduleStartTime.epochMilliseconds,
+        'scheduleStartTimeInSeconds': scheduleStartTime.epochSeconds,
         'recordUrl': recordUrl,
         'streamDescription': streamDescription,
         'isRecorded': isRecorded,
@@ -429,7 +424,7 @@ class IsmLiveStreamDataModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream,      status: $status, isStreamActive: $isStreamActive , eventId: $eventId , userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
+      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, scheduleStartTimeInMilliseconds: ${scheduleStartTime.epochMilliseconds}, scheduleStartTimeInSeconds: ${scheduleStartTime.epochSeconds}, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, startDateTimeInMilliseconds: ${startDateTime.epochMilliseconds}, startDateTimeInSeconds: ${startDateTime.epochSeconds}, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream,      status: $status, isStreamActive: $isStreamActive , eventId: $eventId , userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
 
   @override
   bool operator ==(covariant IsmLiveStreamDataModel other) {

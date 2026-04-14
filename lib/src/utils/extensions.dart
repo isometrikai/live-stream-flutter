@@ -220,6 +220,36 @@ extension IsmLiveDateExtensions on DateTime {
   }
 }
 
+extension IsmLiveEpochDateParsingExtension on Object? {
+  /// Parses epoch values in either seconds or milliseconds.
+  ///
+  /// Returns null when value is absent or not a valid numeric epoch.
+  DateTime? get asEpochDateTime {
+    final value = this;
+    if (value == null) return null;
+
+    final num? epoch = switch (value) {
+      num numValue => numValue,
+      String stringValue => num.tryParse(stringValue.trim()),
+      _ => null,
+    };
+
+    if (epoch == null) return null;
+
+    final int normalized = epoch.round();
+    // 10-digit values are usually seconds; 13-digit values are milliseconds.
+    final int milliseconds =
+        normalized.abs() < 100000000000 ? normalized * 1000 : normalized;
+    return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+  }
+}
+
+extension IsmLiveNullableDateTimeEpochExtension on DateTime? {
+  int? get epochMilliseconds => this?.millisecondsSinceEpoch;
+
+  int? get epochSeconds => this == null ? null : this!.millisecondsSinceEpoch ~/ 1000;
+}
+
 extension IsmLiveUserConfigExtensions on IsmLiveUserConfig {
   UserDetails getDetails() => UserDetails(
         userProfileImageUrl: userProfile ?? '',

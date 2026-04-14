@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/src/models/models.dart';
+import 'package:appscrip_live_stream_component/src/utils/extensions.dart';
 import 'package:flutter/foundation.dart';
 
 class IsmLiveStreamModel {
@@ -41,13 +42,15 @@ class IsmLiveStreamModel {
 
   factory IsmLiveStreamModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveStreamModel(
+        // API can send epoch in seconds or milliseconds.
+        // Normalize through extension to keep parsing behavior consistent.
+        startTime: ((map['startTime'] ?? map['timestamp']) as Object?)
+                .asEpochDateTime ??
+            DateTime.fromMillisecondsSinceEpoch(0),
         viewersCount: map['viewersCount'] as int? ?? 0,
         streamImage: map['streamImage'] as String? ?? '',
         streamId: map['streamId'] as String? ?? '',
         streamDescription: map['streamDescription'] as String? ?? '',
-        startTime: DateTime.fromMillisecondsSinceEpoch(
-          map['startTime'] as int? ?? map['timestamp'] as int? ?? 0,
-        ),
         members: (map['members'] as List? ?? [])
             .map(
               (e) => IsmLiveMemberModel.fromMap(e as Map<String, dynamic>),
@@ -196,7 +199,8 @@ class IsmLiveStreamModel {
         'streamImage': streamImage,
         'streamId': streamId,
         'streamDescription': streamDescription,
-        'startTime': startTime?.millisecondsSinceEpoch,
+        'startTime': startTime.epochMilliseconds,
+        'timestamp': startTime.epochSeconds,
         'selfHosted': selfHosted,
         'searchableTags': searchableTags,
         'rtmpIngest': rtmpIngest,
@@ -229,7 +233,7 @@ class IsmLiveStreamModel {
 
   @override
   String toString() =>
-      'StreamModel(viewersCount: $viewersCount, streamImage: $streamImage, streamId: $streamId, streamDescription: $streamDescription, startTime: $startTime, selfHosted: $selfHosted, searchableTags: $searchableTags, rtmpIngest: $rtmpIngest, restreamChannelsCount: $restreamChannelsCount, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, multiLive: $multiLive, moderatorsCount: $moderatorsCount, metaData: $metaData, membersPublishingCount: $membersPublishingCount, membersCount: $membersCount, lowLatencyMode: $lowLatencyMode, isPublic: $isPublic, initiatorName: $initiatorName, initiatorImage: $initiatorImage, initiatorIdentifier: $initiatorIdentifier, hdBroadcast: $hdBroadcast, featuringProduct: $featuringProduct, enableRecording: $enableRecording, customType: $customType, createdBy: $createdBy, copublishRequestsCount: $copublishRequestsCount, canPublish: $canPublish, audioOnly: $audioOnly)';
+      'StreamModel(viewersCount: $viewersCount, streamImage: $streamImage, streamId: $streamId, streamDescription: $streamDescription, startTime: $startTime, startTimeInMilliseconds: ${startTime.epochMilliseconds}, startTimeInSeconds: ${startTime.epochSeconds}, selfHosted: $selfHosted, searchableTags: $searchableTags, rtmpIngest: $rtmpIngest, restreamChannelsCount: $restreamChannelsCount, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, multiLive: $multiLive, moderatorsCount: $moderatorsCount, metaData: $metaData, membersPublishingCount: $membersPublishingCount, membersCount: $membersCount, lowLatencyMode: $lowLatencyMode, isPublic: $isPublic, initiatorName: $initiatorName, initiatorImage: $initiatorImage, initiatorIdentifier: $initiatorIdentifier, hdBroadcast: $hdBroadcast, featuringProduct: $featuringProduct, enableRecording: $enableRecording, customType: $customType, createdBy: $createdBy, copublishRequestsCount: $copublishRequestsCount, canPublish: $canPublish, audioOnly: $audioOnly)';
 
   @override
   bool operator ==(covariant IsmLiveStreamModel other) {
