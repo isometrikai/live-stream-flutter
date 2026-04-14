@@ -95,6 +95,11 @@ typedef GoLiveClickCallback = Future<void> Function(
 /// Useful for cleanup operations like disposing controllers, clearing data, etc.
 typedef GoLiveDisposeCallback = void Function();
 
+/// Callback for schedule live toggle state changes in GoLive view.
+///
+/// [isScheduled] - Current toggle value for "Schedule Live".
+typedef ScheduleLiveToggleCallback = void Function(bool isScheduled);
+
 /// Callback for message processing and filtering.
 ///
 /// [message] - The incoming message that can be modified or filtered.
@@ -1207,6 +1212,15 @@ class IsmLiveDelegate {
 
   static bool? scheduleStream;
 
+  /// Optional default value for HD Broadcast toggle in Go Live.
+  static bool? defaultHdBroadcast;
+
+  /// Optional default value for Record Broadcast toggle in Go Live.
+  static bool? defaultRecordBroadcast;
+
+  /// Optional default value for Restream Broadcast toggle in Go Live.
+  static bool? defaultRestreamBroadcast;
+
   static bool? productStream;
 
   static bool? rtmpStream;
@@ -1250,6 +1264,8 @@ class IsmLiveDelegate {
 
   static GoLiveDisposeCallback? onGoLiveDispose;
 
+  static ScheduleLiveToggleCallback? onScheduleLiveToggle;
+
   static IsmLiveEcomConfigure? ecomConfigure;
 
   static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
@@ -1279,10 +1295,6 @@ class IsmLiveDelegate {
   static HostTopProfileClickCallback? hostTopProfileClickCallback;
 
   static MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback;
-
-  static GoLiveHeaderBuilder? goLiveHeaderBuilder;
-
-  static GoLiveButtonBuilder? goLiveButtonBuilder;
 
   static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
 
@@ -1469,6 +1481,10 @@ class IsmLiveGoLiveScreenConfigure {
   IsmLiveGoLiveScreenConfigure({
     this.goLiveHeaderBuilder,
     this.goLiveButtonBuilder,
+    this.onScheduleLiveToggle,
+    this.defaultHdBroadcast,
+    this.defaultRecordBroadcast,
+    this.defaultRestreamBroadcast,
     this.radioTileTextStyle,
     this.addCoverTextStyle,
     this.addIcon,
@@ -1489,6 +1505,24 @@ class IsmLiveGoLiveScreenConfigure {
   /// The builder receives context, stream controller, onGoLivePressed callback,
   /// and isEnabled state for proper customization.
   final GoLiveButtonBuilder? goLiveButtonBuilder;
+
+  /// Optional callback invoked when `Schedule Live` toggle value changes.
+  final ScheduleLiveToggleCallback? onScheduleLiveToggle;
+
+  /// Optional default value for `HD Broadcast` toggle on fresh GoLive flow.
+  ///
+  /// This is ignored while editing an existing/scheduled stream.
+  final bool? defaultHdBroadcast;
+
+  /// Optional default value for `Record Broadcast` toggle on fresh GoLive flow.
+  ///
+  /// This is ignored while editing an existing/scheduled stream.
+  final bool? defaultRecordBroadcast;
+
+  /// Optional default value for `Restream Broadcast` toggle on fresh GoLive flow.
+  ///
+  /// This is ignored while editing an existing/scheduled stream.
+  final bool? defaultRestreamBroadcast;
 
   /// Custom text style for radio tile components (switches, toggles).
   ///
@@ -1531,4 +1565,37 @@ class IsmLiveGoLiveScreenConfigure {
   /// GoLive screen such as main titles, section headers, and other prominent text.
   /// If not provided, the default text style will be used.
   final TextStyle? titleTextStyle;
+
+  IsmLiveGoLiveScreenConfigure copyWith({
+    GoLiveHeaderBuilder? goLiveHeaderBuilder,
+    GoLiveButtonBuilder? goLiveButtonBuilder,
+    ScheduleLiveToggleCallback? onScheduleLiveToggle,
+    bool? defaultHdBroadcast,
+    bool? defaultRecordBroadcast,
+    bool? defaultRestreamBroadcast,
+    TextStyle Function(BuildContext context, bool isDark)? radioTileTextStyle,
+    TextStyle? addCoverTextStyle,
+    IconData? addIcon,
+    TextStyle? tabSelectedTextStyle,
+    TextStyle? tabUnselectedTextStyle,
+    TextStyle? titleTextStyle,
+  }) =>
+      IsmLiveGoLiveScreenConfigure(
+        goLiveHeaderBuilder: goLiveHeaderBuilder ?? this.goLiveHeaderBuilder,
+        goLiveButtonBuilder: goLiveButtonBuilder ?? this.goLiveButtonBuilder,
+        onScheduleLiveToggle:
+            onScheduleLiveToggle ?? this.onScheduleLiveToggle,
+        defaultHdBroadcast: defaultHdBroadcast ?? this.defaultHdBroadcast,
+        defaultRecordBroadcast:
+            defaultRecordBroadcast ?? this.defaultRecordBroadcast,
+        defaultRestreamBroadcast:
+            defaultRestreamBroadcast ?? this.defaultRestreamBroadcast,
+        radioTileTextStyle: radioTileTextStyle ?? this.radioTileTextStyle,
+        addCoverTextStyle: addCoverTextStyle ?? this.addCoverTextStyle,
+        addIcon: addIcon ?? this.addIcon,
+        tabSelectedTextStyle: tabSelectedTextStyle ?? this.tabSelectedTextStyle,
+        tabUnselectedTextStyle:
+            tabUnselectedTextStyle ?? this.tabUnselectedTextStyle,
+        titleTextStyle: titleTextStyle ?? this.titleTextStyle,
+      );
 }

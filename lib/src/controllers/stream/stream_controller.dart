@@ -770,6 +770,18 @@ class IsmLiveStreamController extends GetxController
       );
     }
     isSchedulingBroadcast = value;
+    try {
+      final goLiveScreenToggleCallback =
+          IsmLiveDelegate.goLiveScreenConfigure?.onScheduleLiveToggle;
+      if (goLiveScreenToggleCallback != null) {
+        goLiveScreenToggleCallback(value);
+      } else {
+        // Backward compatibility with legacy interface-level callback.
+        IsmLiveDelegate.onScheduleLiveToggle?.call(value);
+      }
+    } catch (e, stack) {
+      IsmLiveLog.error('onScheduleLiveToggle callback failed: $e', stack);
+    }
 
     update([IsmGoLiveView.updateId]);
   }

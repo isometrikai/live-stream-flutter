@@ -132,7 +132,7 @@ class IsmGoLiveNavBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Use custom Go Live button builder if provided, otherwise use default
-                IsmLiveDelegate.goLiveButtonBuilder?.call(
+                IsmLiveDelegate.goLiveScreenConfigure?.goLiveButtonBuilder?.call(
                       context,
                       controller,
                       () => controller.handleGoLivePress(context),
