@@ -605,9 +605,7 @@ class IsmLiveApiWrapper {
       return out;
     }
     if (value is List) {
-      return value
-          .map((e) => _payloadTreeForAnalytics(e, depth + 1))
-          .toList();
+      return value.map((e) => _payloadTreeForAnalytics(e, depth + 1)).toList();
     }
     if (value is DateTime) {
       return value.toIso8601String();
