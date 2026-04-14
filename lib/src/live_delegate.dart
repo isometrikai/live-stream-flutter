@@ -896,6 +896,45 @@ class IsmLiveAnalyticsEvent {
   /// ```
   ///
   /// Or omit `enabledAnalyticsEvents` entirely for the same effect (null = all).
+  ///
+  /// **Failure-only preset:** [allFailed] tracks only error/failure paths. For
+  /// [apiResult], events are emitted only when `has_error` is true in properties.
+  /// Include [allFailedPresetMarker] so the SDK applies this rule.
+  static const String allFailedPresetMarker = '__ism_live_analytics_all_failed__';
+
+  /// Event names that represent failures (excluding [apiResult], which is gated
+  /// by `has_error` when using [allFailed]).
+  static const Set<String> _failureOnlyEventNames = <String>{
+    sdkInitializeFailure,
+    streamInitializeAndJoinFailure,
+    controllerInitializeAndJoinFailure,
+    controllerJoinStreamFailure,
+    joinStreamConnectStreamFailure,
+    connectStreamMqttSubscribeFailure,
+    connectStreamDeferredNavigationFailure,
+    connectRoomAndInitializeFailure,
+    connectFlowOuterFailure,
+    goToStreamViewFailure,
+    roomConnectFailure,
+    joinStreamMissingHostToken,
+    preconnectAbortedStreamDisposed,
+    roomConnectDiscardedStale,
+  };
+
+  /// Track only failure/error analytics (plus failed API calls via [apiResult]).
+  ///
+  /// ```dart
+  /// IsmLiveApp.configureInterface(
+  ///   analyticsDelegate: myDelegate,
+  ///   enabledAnalyticsEvents: IsmLiveAnalyticsEvent.allFailed,
+  /// );
+  /// ```
+  static const Set<String> allFailed = <String>{
+    allFailedPresetMarker,
+    ..._failureOnlyEventNames,
+    apiResult,
+  };
+
   static const Set<String> all = <String>{
     // Initialization
     sdkInitialize,
@@ -1338,7 +1377,31 @@ class IsmLiveDelegate {
   ///
   /// - When `null` or empty: all events are emitted.
   /// - When non-empty: only events present in this set are emitted.
+  ///
+  /// If the set contains [IsmLiveAnalyticsEvent.allFailedPresetMarker] (as with
+  /// [IsmLiveAnalyticsEvent.allFailed]), only failure events are emitted; for
+  /// [IsmLiveAnalyticsEvent.apiResult], only calls where `has_error` is true.
   static Set<String>? enabledAnalyticsEvents;
+
+  /// Whether [enabledAnalyticsEvents] is using the failure-only preset.
+  static bool get _isAllFailedAnalyticsPreset =>
+      enabledAnalyticsEvents?.contains(IsmLiveAnalyticsEvent.allFailedPresetMarker) ??
+      false;
+
+  /// True if this event should be forwarded when failure-only preset is active.
+  static bool _shouldEmitInAllFailedPreset(
+    String eventName,
+    List<Map<String, dynamic>>? properties,
+  ) {
+    if (eventName == IsmLiveAnalyticsEvent.apiResult) {
+      if (properties == null || properties.isEmpty) {
+        return false;
+      }
+      final hasError = properties.first['has_error'];
+      return hasError == true;
+    }
+    return IsmLiveAnalyticsEvent._failureOnlyEventNames.contains(eventName);
+  }
 
   /// Safely emits an analytics event (never throws, never blocks).
   static void trackEvent(
@@ -1349,8 +1412,14 @@ class IsmLiveDelegate {
     if (delegate == null) return;
 
     final enabled = enabledAnalyticsEvents;
-    if (enabled != null && enabled.isNotEmpty && !enabled.contains(eventName)) {
-      return;
+    if (enabled != null && enabled.isNotEmpty) {
+      if (_isAllFailedAnalyticsPreset) {
+        if (!_shouldEmitInAllFailedPreset(eventName, properties)) {
+          return;
+        }
+      } else if (!enabled.contains(eventName)) {
+        return;
+      }
     }
     try {
       delegate.trackEvent(eventName, properties: properties);
@@ -1583,8 +1652,7 @@ class IsmLiveGoLiveScreenConfigure {
       IsmLiveGoLiveScreenConfigure(
         goLiveHeaderBuilder: goLiveHeaderBuilder ?? this.goLiveHeaderBuilder,
         goLiveButtonBuilder: goLiveButtonBuilder ?? this.goLiveButtonBuilder,
-        onScheduleLiveToggle:
-            onScheduleLiveToggle ?? this.onScheduleLiveToggle,
+        onScheduleLiveToggle: onScheduleLiveToggle ?? this.onScheduleLiveToggle,
         defaultHdBroadcast: defaultHdBroadcast ?? this.defaultHdBroadcast,
         defaultRecordBroadcast:
             defaultRecordBroadcast ?? this.defaultRecordBroadcast,

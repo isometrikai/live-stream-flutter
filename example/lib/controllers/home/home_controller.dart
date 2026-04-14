@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/controllers/mqtt/wrapper/models/event_model.dart';
 import 'package:appscrip_live_stream_component_example/data/data.dart';
 import 'package:appscrip_live_stream_component_example/main.dart';
 import 'package:appscrip_live_stream_component_example/models/models.dart';
@@ -8,7 +9,6 @@ import 'package:appscrip_live_stream_component_example/res/res.dart';
 import 'package:appscrip_live_stream_component_example/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:appscrip_live_stream_component/src/controllers/mqtt/wrapper/models/event_model.dart';
 
 class _ExampleAnalyticsDelegate extends IsmLiveAnalyticsDelegate {
   const _ExampleAnalyticsDelegate();
@@ -74,7 +74,7 @@ class HomeController extends GetxController {
       productStream: true,
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
-      enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
+      enabledAnalyticsEvents: IsmLiveAnalyticsEvent.allFailed,
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,
