@@ -124,6 +124,13 @@ mixin StreamOngoingMixin {
   int _pendingHeartCount = 0;
   int _heartIdCounter = 0;
 
+  /// Single queue that all incoming heart IDs feed into. A self-scheduling
+  /// drain timer pulls one heart at a time, so batch boundaries from MQTT
+  /// flushes (e.g. 15 + 15) become invisible — hearts just stream out of one
+  /// pipe at an adaptive rate.
+  final List<String> _heartSpawnQueue = [];
+  Timer? _heartDrainTimer;
+
   /// Stop MQTT-disconnected chat fallback polling (used on app background).
   void pauseMqttDisconnectedChatFallback() {
     _stopMqttDisconnectedChatFallback();
@@ -623,9 +630,12 @@ mixin StreamOngoingMixin {
     String keyOf(IsmLiveParticipantTrack t) =>
         '${t.participant.identity}|${t.isScreenShare ? 1 : 0}';
 
-    int deterministicCompare(IsmLiveParticipantTrack a, IsmLiveParticipantTrack b) {
-      final aIsHost = hostUserId != null && a.participant.identity == hostUserId;
-      final bIsHost = hostUserId != null && b.participant.identity == hostUserId;
+    int deterministicCompare(
+        IsmLiveParticipantTrack a, IsmLiveParticipantTrack b) {
+      final aIsHost =
+          hostUserId != null && a.participant.identity == hostUserId;
+      final bIsHost =
+          hostUserId != null && b.participant.identity == hostUserId;
       if (aIsHost != bIsHost) return aIsHost ? -1 : 1;
 
       // Prefer camera feed before screen share for the same participant.
@@ -855,18 +865,34 @@ mixin StreamOngoingMixin {
         _controller.streamMessagesList.toSet().toList();
   }
 
-  static const int _heartFlushThreshold = 15;
+  static const int _heartFlushThreshold = 8;
 
   void addHeart(IsmLiveMessageModel message, {int count = 1}) {
+    if (count <= 0) return;
     for (var i = 0; i < count; i++) {
-      final id = '${message.messageId}_$i';
-      if (i == 0) {
-        _insertHeartAnimation(id);
-      } else {
-        Future.delayed(Duration(milliseconds: i * 120), () {
-          _insertHeartAnimation(id);
-        });
-      }
+      _heartSpawnQueue.add('${message.messageId}_$i');
+    }
+    if (_heartDrainTimer == null) {
+      _drainNextHeart();
+    }
+  }
+
+  /// Constant drain interval so that 8 hearts (one flush) drain in ~1050ms,
+  /// closely matching the sender's inter-flush cadence at fast tap rates.
+  /// This keeps the queue from emptying before the next MQTT batch arrives.
+  static const int _heartDrainIntervalMs = 150;
+
+  void _drainNextHeart() {
+    _heartDrainTimer?.cancel();
+    _heartDrainTimer = null;
+    if (_heartSpawnQueue.isEmpty) return;
+    final id = _heartSpawnQueue.removeAt(0);
+    _insertHeartAnimation(id);
+    if (_heartSpawnQueue.isNotEmpty) {
+      _heartDrainTimer = Timer(
+        const Duration(milliseconds: _heartDrainIntervalMs),
+        _drainNextHeart,
+      );
     }
   }
 
@@ -881,6 +907,9 @@ mixin StreamOngoingMixin {
       0,
       IsmLiveAnimationView(
         key: key,
+        duration: 5,
+        verticalHeightFactor: 0.80,
+        fadeOutAtEnd: true,
         child: Transform.scale(
           scale: 0.6,
           child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
@@ -943,6 +972,9 @@ mixin StreamOngoingMixin {
     _heartDebounceTimer = null;
     _pendingHeartCount = 0;
     _heartIdCounter = 0;
+    _heartDrainTimer?.cancel();
+    _heartDrainTimer = null;
+    _heartSpawnQueue.clear();
   }
 
   // Function to add gift message to the stream
