@@ -616,7 +616,9 @@ class IsmLiveApp extends StatefulWidget {
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
     bool enableInternalStreamListingRefresh = true,
-    // New control customization options
+
+    /// Return true if the host app handled the click and wants to prevent the default behavior,
+    /// false if the host app wants the SDK to handle it with the default behavior.
     ControlOptionCallback? controlOptionCallback,
     ControlWidgetBuilder? controlWidgetBuilder,
     ProductStreamSideOptionsBottomMarginBuilder?
@@ -677,14 +679,6 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
     IsmLiveDelegate.missingHostTokenStopStreamCallback =
         missingHostTokenStopStreamCallback;
-
-    // Handle GoLive screen configuration
-    if (goLiveScreenConfigure != null) {
-      IsmLiveDelegate.goLiveHeaderBuilder =
-          goLiveScreenConfigure.goLiveHeaderBuilder;
-      IsmLiveDelegate.goLiveButtonBuilder =
-          goLiveScreenConfigure.goLiveButtonBuilder;
-    }
 
     // Set standalone goLiveSmallButtonBuilder if provided
     if (goLiveSmallButtonBuilder != null) {
@@ -932,6 +926,9 @@ class IsmLiveApp extends StatefulWidget {
   static GoLiveDisposeCallback? get onGoLiveDispose =>
       IsmLiveDelegate.onGoLiveDispose;
 
+  static ScheduleLiveToggleCallback? get onScheduleLiveToggle =>
+      IsmLiveDelegate.onScheduleLiveToggle;
+
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
 
@@ -1053,20 +1050,16 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.onGoLiveDispose = onGoLiveDispose;
   }
 
+  /// Update schedule live toggle callback dynamically at runtime
+  static void updateScheduleLiveToggleCallback(
+      ScheduleLiveToggleCallback? onScheduleLiveToggle) {
+    IsmLiveDelegate.onScheduleLiveToggle = onScheduleLiveToggle;
+  }
+
   /// Update go live screen configuration dynamically at runtime
   static void updateGoLiveScreenConfigure(
       IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure) {
     IsmLiveDelegate.goLiveScreenConfigure = goLiveScreenConfigure;
-    if (goLiveScreenConfigure != null) {
-      IsmLiveDelegate.goLiveHeaderBuilder =
-          goLiveScreenConfigure.goLiveHeaderBuilder;
-      IsmLiveDelegate.goLiveButtonBuilder =
-          goLiveScreenConfigure.goLiveButtonBuilder;
-    } else {
-      // Clear the builders when configuration is null
-      IsmLiveDelegate.goLiveHeaderBuilder = null;
-      IsmLiveDelegate.goLiveButtonBuilder = null;
-    }
     // Trigger rebuild of go live view to apply new configuration
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
@@ -1077,7 +1070,11 @@ class IsmLiveApp extends StatefulWidget {
   /// Note: This method updates the header builder in the current goLiveScreenConfigure
   static void updateGoLiveHeaderBuilder(
       GoLiveHeaderBuilder? goLiveHeaderBuilder) {
-    IsmLiveDelegate.goLiveHeaderBuilder = goLiveHeaderBuilder;
+    final existing = IsmLiveDelegate.goLiveScreenConfigure;
+    IsmLiveDelegate.goLiveScreenConfigure =
+        (existing ?? IsmLiveGoLiveScreenConfigure()).copyWith(
+      goLiveHeaderBuilder: goLiveHeaderBuilder,
+    );
     // Trigger rebuild of go live view to apply new header
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);
@@ -1088,7 +1085,11 @@ class IsmLiveApp extends StatefulWidget {
   /// Note: This method updates the button builder in the current goLiveScreenConfigure
   static void updateGoLiveButtonBuilder(
       GoLiveButtonBuilder? goLiveButtonBuilder) {
-    IsmLiveDelegate.goLiveButtonBuilder = goLiveButtonBuilder;
+    final existing = IsmLiveDelegate.goLiveScreenConfigure;
+    IsmLiveDelegate.goLiveScreenConfigure =
+        (existing ?? IsmLiveGoLiveScreenConfigure()).copyWith(
+      goLiveButtonBuilder: goLiveButtonBuilder,
+    );
     // Trigger rebuild of go live view to apply new button
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmGoLiveView.updateId]);

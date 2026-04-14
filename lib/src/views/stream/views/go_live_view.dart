@@ -80,11 +80,22 @@ class IsmGoLiveView extends StatelessWidget {
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
             controller.descriptionController.clear();
-            controller.isHdBroadcast = false;
-            controller.isRecordingBroadcast = false;
+            controller.isHdBroadcast =
+                IsmLiveDelegate.goLiveScreenConfigure?.defaultHdBroadcast ??
+                    IsmLiveDelegate.defaultHdBroadcast ??
+                    false;
+            controller.isRecordingBroadcast =
+                IsmLiveDelegate.goLiveScreenConfigure
+                    ?.defaultRecordBroadcast ??
+                    IsmLiveDelegate.defaultRecordBroadcast ??
+                    false;
             controller.isSchedulingBroadcast = false;
             controller.isPremium = false;
-            controller.isRestreamBroadcast = false;
+            controller.isRestreamBroadcast =
+                IsmLiveDelegate.goLiveScreenConfigure
+                    ?.defaultRestreamBroadcast ??
+                    IsmLiveDelegate.defaultRestreamBroadcast ??
+                    false;
           } else if (controller.streamDetails?.isScheduledStream ?? false) {
             controller.premiumStreamCoinsController.clear();
             controller.cameraFuture = null;
@@ -183,7 +194,7 @@ class IsmGoLiveView extends StatelessWidget {
                     children: [
                       IsmLiveDimens.boxHeight32,
                       // Use custom header builder if provided, otherwise use default header
-                      IsmLiveDelegate.goLiveHeaderBuilder
+                      IsmLiveDelegate.goLiveScreenConfigure?.goLiveHeaderBuilder
                               ?.call(context, controller) ??
                           const _DefaultGoLiveHeader(),
                       if (!(controller.streamDetails?.isScheduledStream ??
