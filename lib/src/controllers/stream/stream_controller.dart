@@ -201,6 +201,7 @@ class IsmLiveStreamController extends GetxController
 
   bool _streamViewLoadedCallbackTriggered = false;
   bool _hasTriggeredOnStreamEnd = false;
+  bool _hasClosedStreamView = false;
 
   /// Ensures `onStreamEnd` callback is emitted only once per stream lifecycle.
   void triggerOnStreamEndOnce() {
@@ -214,6 +215,17 @@ class IsmLiveStreamController extends GetxController
   /// Resets single-fire guard for new join lifecycle.
   void resetOnStreamEndTrigger() {
     _hasTriggeredOnStreamEnd = false;
+    _hasClosedStreamView = false;
+  }
+
+  /// Marks stream view as closed once per lifecycle.
+  /// Returns false when close flow has already executed.
+  bool tryMarkStreamViewClosed() {
+    if (_hasClosedStreamView) {
+      return false;
+    }
+    _hasClosedStreamView = true;
+    return true;
   }
 
   Uint8List? bytes;
