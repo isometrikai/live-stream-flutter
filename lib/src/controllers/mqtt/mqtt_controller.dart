@@ -939,12 +939,12 @@ class IsmLiveMqttController extends GetxController {
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderProfileImageUrl: viewer.imageUrl,
-              senderName: viewer.userName,
+              senderName: viewer.name,
               senderIdentifier: viewer.identifier,
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
               messageId: DateTime.now().toString(),
-              body: '${viewer.userName} has joined',
+              body: '${viewer.displayUserName} has joined',
               isEvent: true,
             );
 
@@ -961,14 +961,14 @@ class IsmLiveMqttController extends GetxController {
             var viewer = IsmLiveViewerModel.fromMap(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
-              senderName: viewer.userName,
+              senderName: viewer.name,
               senderProfileImageUrl:
                   _viewerImageUrl(viewer.userId) ?? viewer.imageUrl,
               senderIdentifier: viewer.identifier,
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
               messageId: DateTime.now().toString(),
-              body: '${viewer.userName} has left',
+              body: '${viewer.displayUserName} has left',
               isEvent: true,
             );
 
