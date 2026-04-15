@@ -1653,38 +1653,39 @@ mixin StreamJoinMixin {
         );
       }
 
-      var room = lk.Room(
-        roomOptions: lk.RoomOptions(
-          defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-            cameraPosition: resolvedCameraPosition,
-            params: resolvedVideoParams,
-          ),
-          defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
-            noiseSuppression: true,
-            echoCancellation: true,
-            autoGainControl: true,
-            highPassFilter: true,
-            typingNoiseDetection: true,
-          ),
-          defaultVideoPublishOptions: lk.VideoPublishOptions(
-            videoEncoding: resolvedVideoParams.encoding,
-          ),
-          defaultAudioPublishOptions: const lk.AudioPublishOptions(
-            dtx: true,
-          ),
-          // SFU still fans out to many viewers; these client flags help per-device
-          // CPU/bandwidth. Without adaptiveStream, remote video defaults to HIGH for
-          // every subscriber (see livekit_client RemoteTrackPublication defaults).
-          adaptiveStream: true,
-          // Reduces publisher encode work for simulcast layers no subscriber needs.
-          dynacast: true,
-        ),
-      );
+      lk.Room buildConfiguredRoom() => lk.Room(
+            roomOptions: lk.RoomOptions(
+              defaultCameraCaptureOptions: lk.CameraCaptureOptions(
+                cameraPosition: resolvedCameraPosition,
+                params: resolvedVideoParams,
+              ),
+              defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
+                noiseSuppression: true,
+                echoCancellation: true,
+                autoGainControl: true,
+                highPassFilter: true,
+                typingNoiseDetection: true,
+              ),
+              defaultVideoPublishOptions: lk.VideoPublishOptions(
+                videoEncoding: resolvedVideoParams.encoding,
+              ),
+              defaultAudioPublishOptions: const lk.AudioPublishOptions(
+                dtx: true,
+              ),
+              // SFU still fans out to many viewers; these client flags help per-device
+              // CPU/bandwidth. Without adaptiveStream, remote video defaults to HIGH for
+              // every subscriber (see livekit_client RemoteTrackPublication defaults).
+              adaptiveStream: true,
+              // Reduces publisher encode work for simulcast layers no subscriber needs.
+              dynacast: true,
+            ),
+          );
 
+      var room = buildConfiguredRoom();
       _controller.room = room;
       IsmLiveLog.info('Joining streamId(roomId): $streamId');
 
-      // Create a Listener before connecting
+      // Create a listener before connecting.
       _controller.listener = room.createListener();
 
       // Pre-connect guard: if the stream was disposed while we were setting
@@ -1717,94 +1718,133 @@ mixin StreamJoinMixin {
         return;
       }
 
-      // Try to connect to the room with better error handling
-      try {
-        IsmLiveDelegate.trackEvent(
-          IsmLiveAnalyticsEvent.roomConnectAttempt,
-          properties: [
-            {
-              'stream_id': streamId,
-              'duration_ms': sw.elapsedMilliseconds,
-            }
-          ],
-        );
-        await room.connect(IsmLiveApis.wsUrl, token);
-
-        // Stale connection guard: if the user scrolled to a different stream
-        // while ICE negotiation was in progress, discard this connection so
-        // we don't overwrite state belonging to the newer stream.
-        if (_controller.streamId != streamId) {
-          IsmLiveLog.info(
-              'Discarding stale connection for $streamId (current: ${_controller.streamId})');
+      // Try to connect with one guarded retry for transport timeouts.
+      // Rarely, socket/ICE setup can timeout in production and a fresh room
+      // instance resolves it without requiring the user to manually re-enter.
+      var connectAttempt = 1;
+      while (true) {
+        try {
           IsmLiveDelegate.trackEvent(
-            IsmLiveAnalyticsEvent.roomConnectDiscardedStale,
+            IsmLiveAnalyticsEvent.roomConnectAttempt,
             properties: [
               {
                 'stream_id': streamId,
-                'current_stream_id': _controller.streamId ?? '',
                 'duration_ms': sw.elapsedMilliseconds,
+                'attempt': connectAttempt,
               }
             ],
           );
+          await room.connect(IsmLiveApis.wsUrl, token);
+          break;
+        } catch (e, st) {
+          final isTimeoutError = e is TimeoutException ||
+              e.toString().contains('TimeoutException');
+          final canRetry = isTimeoutError &&
+              connectAttempt == 1 &&
+              _controller.streamId == streamId;
+
+          IsmLiveLog.error(
+              'Room connection error(attempt=$connectAttempt): $e', st);
+          _controller.isViewerJoiningStream = false;
+
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.roomConnectFailure,
+            properties: [
+              {
+                'stream_id': streamId,
+                'duration_ms': sw.elapsedMilliseconds,
+                'error': e.toString(),
+                'attempt': connectAttempt,
+                'will_retry': canRetry,
+              }
+            ],
+          );
+
+          // Release failed room resources (WebSocket, ICE agents, etc.).
           try {
             await room.disconnect();
           } catch (_) {}
-          _controller.isViewerJoiningStream = false;
-          if (loaderShown) {
-            IsmLiveUtility.closeLoader();
+
+          if (!canRetry) {
+            if (loaderShown) {
+              IsmLiveUtility.closeLoader();
+              loaderShown = false;
+            }
+            return;
           }
-          return;
-        }
 
-        if (!isHost) {
-          _controller.isViewerJoiningStream = false;
-        }
+          try {
+            await _controller.listener?.dispose();
+          } catch (_) {}
+          _controller.listener = null;
 
+          // Brief cool-off gives backend/client transport state time to settle.
+          await Future.delayed(const Duration(milliseconds: 1200));
+
+          if (_controller.streamId != streamId) {
+            if (loaderShown) {
+              IsmLiveUtility.closeLoader();
+              loaderShown = false;
+            }
+            return;
+          }
+
+          connectAttempt++;
+          room = buildConfiguredRoom();
+          _controller.room = room;
+          _controller.listener = room.createListener();
+        }
+      }
+
+      // Stale connection guard: if the user scrolled to a different stream
+      // while ICE negotiation was in progress, discard this connection so
+      // we don't overwrite state belonging to the newer stream.
+      if (_controller.streamId != streamId) {
+        IsmLiveLog.info(
+            'Discarding stale connection for $streamId (current: ${_controller.streamId})');
         IsmLiveDelegate.trackEvent(
-          IsmLiveAnalyticsEvent.roomConnectSuccess,
+          IsmLiveAnalyticsEvent.roomConnectDiscardedStale,
           properties: [
             {
               'stream_id': streamId,
+              'current_stream_id': _controller.streamId ?? '',
               'duration_ms': sw.elapsedMilliseconds,
             }
           ],
         );
-
-        // Route audio to the loudspeaker. Mobile WebRTC defaults to the
-        // earpiece; live-stream participants expect loudspeaker output.
-        // The helper respects external devices (Bluetooth/wired) on Android.
-        // withRetry: true schedules retries to guard against WebRTC resetting
-        // the audio route when remote tracks arrive.
-        await _ensureLoudspeakerRouting(withRetry: true, forRoom: room);
-
-        // Store the token for background lifecycle reconnection
-        _controller.storeToken(token);
-      } catch (e, st) {
-        IsmLiveLog.error('Room connection error: $e', st);
-        _controller.isViewerJoiningStream = false;
-
-        IsmLiveDelegate.trackEvent(
-          IsmLiveAnalyticsEvent.roomConnectFailure,
-          properties: [
-            {
-              'stream_id': streamId,
-              'duration_ms': sw.elapsedMilliseconds,
-              'error': e.toString(),
-            }
-          ],
-        );
-
-        // Release the failed room's resources (WebSocket, ICE agents, etc.)
         try {
           await room.disconnect();
         } catch (_) {}
-
+        _controller.isViewerJoiningStream = false;
         if (loaderShown) {
           IsmLiveUtility.closeLoader();
-          loaderShown = false;
         }
         return;
       }
+
+      if (!isHost) {
+        _controller.isViewerJoiningStream = false;
+      }
+
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.roomConnectSuccess,
+        properties: [
+          {
+            'stream_id': streamId,
+            'duration_ms': sw.elapsedMilliseconds,
+          }
+        ],
+      );
+
+      // Route audio to the loudspeaker. Mobile WebRTC defaults to the
+      // earpiece; live-stream participants expect loudspeaker output.
+      // The helper respects external devices (Bluetooth/wired) on Android.
+      // withRetry: true schedules retries to guard against WebRTC resetting
+      // the audio route when remote tracks arrive.
+      await _ensureLoudspeakerRouting(withRetry: true, forRoom: room);
+
+      // Store the token for background lifecycle reconnection
+      _controller.storeToken(token);
 
       // Set track subscription permissions
       try {

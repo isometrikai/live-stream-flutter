@@ -283,39 +283,46 @@ class _ErrorImage extends StatelessWidget {
   final String? initials;
   final bool showError;
 
+  double _profilePlaceholderFontSize(BoxConstraints constraints) {
+    final shortestSide = constraints.biggest.shortestSide;
+    if (!shortestSide.isFinite || shortestSide <= 0) return 14;
+    return (shortestSide * 0.4).clamp(10.0, 28.0);
+  }
+
   @override
-  Widget build(BuildContext context) => Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: IsmLiveColors.lightGray.withOpacity(0.3),
-          // color: isProfileImage
-          //     ? context.liveTheme?.primaryColor
-          //     : IsmLiveColors.secondary,
-          shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
-        ),
-        child: !showError || isProfileImage
-            ? Text(
-                _networkImagePlaceholderLabel(name, initials),
-                style: !isProfileImage
-                    ? context.textTheme.displayMedium?.copyWith(
-                        color: IsmLiveColors.black,
-                        fontWeight: FontWeight.bold,
-                      )
-                    : context.textTheme.titleSmall?.copyWith(
-                        color: IsmLiveColors.white,
-                      ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: IsmLiveColors.secondary,
-                  borderRadius: BorderRadius.circular(
-                    IsmLiveDimens.eight,
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) => Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: IsmLiveColors.lightGray.withOpacity(0.3),
+            shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
+          ),
+          child: !showError || isProfileImage
+              ? Text(
+                  _networkImagePlaceholderLabel(name, initials),
+                  style: !isProfileImage
+                      ? context.textTheme.displayMedium?.copyWith(
+                          color: IsmLiveColors.black,
+                          fontWeight: FontWeight.bold,
+                        )
+                      : context.textTheme.titleSmall?.copyWith(
+                          color: IsmLiveColors.white,
+                          fontSize: _profilePlaceholderFontSize(constraints),
+                          height: 1,
+                        ),
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    color: IsmLiveColors.secondary,
+                    borderRadius: BorderRadius.circular(
+                      IsmLiveDimens.eight,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    IsmLiveStrings.errorLoadingImage,
                   ),
                 ),
-                alignment: Alignment.center,
-                child: const Text(
-                  IsmLiveStrings.errorLoadingImage,
-                ),
-              ),
+        ),
       );
 }

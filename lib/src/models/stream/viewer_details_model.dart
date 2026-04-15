@@ -53,7 +53,32 @@ class IsmLiveViewerModel {
   final bool? emailNotifications;
   final bool? clubEmailNotifications;
 
-  String get name => metaData?.firstName ?? userName;
+  /// Display full name: metadata first/last name when either is non-empty,
+  /// otherwise root `userName` (legacy API shape).
+  String get fullName {
+    final first = metaData?.firstName?.trim() ?? '';
+    final last = metaData?.lastName?.trim() ?? '';
+    if (first.isNotEmpty || last.isNotEmpty) {
+      return [first, last].where((s) => s.isNotEmpty).join(' ');
+    }
+    return userName;
+  }
+
+  /// Login / handle for UI: metadata `userName` when set, otherwise root `userName`.
+  String get displayUserName {
+    final meta = metaData?.userName?.trim() ?? '';
+    if (meta.isNotEmpty) return meta;
+    return userName;
+  }
+
+  /// Same as [fullName]. Kept for call sites that use a single display name.
+  String get name => fullName;
+
+  /// Two-letter uppercase initials: [fullName] then [displayUserName].
+  String get profileInitials => IsmLiveInitials.fromNames(
+        primary: fullName,
+        secondary: displayUserName,
+      );
   String? get profile => metaData?.profilePic ?? imageUrl;
 
   IsmLiveViewerModel copyWith({
