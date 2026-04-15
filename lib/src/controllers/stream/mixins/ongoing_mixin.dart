@@ -1605,6 +1605,12 @@ mixin StreamOngoingMixin {
   }
 
   void closeStreamView(bool isHost, {String? streamId, bool fromMqtt = false}) {
+    if (!_controller.tryMarkStreamViewClosed()) {
+      IsmLiveLog(
+          'closeStreamView skipped: already handled for current stream lifecycle');
+      return;
+    }
+
     _controller.streamTimer?.cancel();
     _controller.streamTimer = null;
     _pkController.pkTimer?.cancel();
