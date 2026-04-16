@@ -133,6 +133,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
         },
         builder: (controller) {
           var options = <IsmLiveStreamOption>[];
+          final hasMultiplePublishers = controller.participantTracks.length > 1;
 
           if (isHost) {
             options = controller.isRtmp
@@ -140,11 +141,24 @@ class IsmLiveControlsWidget extends StatelessWidget {
                 : controller.isPk
                     ? IsmLiveStreamOption.pkOptions
                     : controller.isCopublisher
-                        ? IsmLiveStreamOption.hostOptions
-                            .where(
-                              (element) => element != IsmLiveStreamOption.vs,
-                            )
-                            .toList()
+                        ? (() {
+                            final hostCopublisherOptions =
+                                IsmLiveStreamOption.hostOptions
+                                    .where(
+                                      (element) =>
+                                          element != IsmLiveStreamOption.vs,
+                                    )
+                                    .toList();
+                            if (!hostCopublisherOptions.contains(
+                              IsmLiveStreamOption.speaker,
+                            ) &&
+                                hasMultiplePublishers) {
+                              hostCopublisherOptions.add(
+                                IsmLiveStreamOption.speaker,
+                              );
+                            }
+                            return hostCopublisherOptions;
+                          })()
                         : IsmLiveStreamOption.hostOptions;
           } else {
             if (controller.userRole?.isPkGuest ?? false) {

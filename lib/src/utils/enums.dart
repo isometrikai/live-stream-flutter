@@ -328,6 +328,7 @@ enum IsmLiveStreamOption {
               // IsmLiveStreamOption.members,
               // IsmLiveStreamOption.vs,
               // IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.speaker,
               IsmLiveStreamOption.share,
               IsmLiveStreamOption.rotateCamera,
               IsmLiveStreamOption.settings,
