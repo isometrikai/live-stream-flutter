@@ -489,6 +489,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
           final mediaQuery = MediaQuery.of(context);
           final isKeyboardOpen = mediaQuery.viewInsets.bottom > 0;
           final systemBottomInset = mediaQuery.viewPadding.bottom;
+          final isActiveStreamPage = controller.streamId == widget.streamId;
           return PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
@@ -526,7 +527,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                         // To prevent that production bug, only render the LiveKit grid for
                         // the currently-active stream; inactive pages will show the banner
                         // (cover) until the join completes and controller.streamId updates.
-                        child: (controller.streamId == widget.streamId)
+                        child: isActiveStreamPage
                             ? IsmLivePublisherGrid(
                                 streamImage: widget.streamImage ?? '',
                                 isInteractive: widget.isInteractive,
@@ -534,336 +535,359 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                               )
                             : const SizedBox.shrink(),
                       ),
-                      // Tap-to-toggle overlay layer. This sits ABOVE the video/grid
-                      // but BELOW all overlay UI, so taps on buttons/chat won't toggle.
-                      Positioned.fill(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: _toggleOverlays,
-                          child: const ColoredBox(color: Colors.transparent),
+                      if (isActiveStreamPage)
+                        // Tap-to-toggle overlay layer. This sits ABOVE the video/grid
+                        // but BELOW all overlay UI, so taps on buttons/chat won't toggle.
+                        Positioned.fill(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: _toggleOverlays,
+                            child: const ColoredBox(color: Colors.transparent),
+                          ),
                         ),
-                      ),
-                      Positioned.fill(
-                        child: Offstage(
-                          offstage: !_overlaysVisible,
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: [
-                              // Gradients positioned right after publisher grid to only overlay video content
-                              const _TopDarkGradient(),
-                              const _BottomDarkGradient(),
-                              Align(
-                                alignment: IsmLiveApp.headerPosition,
-                                child: Obx(
-                                  () {
-                                    if (!((controller.room?.localParticipant !=
-                                                null) &&
-                                            IsmLiveApp.showHeader) &&
-                                        !widget.isSchedule) {
-                                      return IsmLiveDimens.box0;
-                                    }
-                                    final defaultHeader = _StreamHeader(
-                                        streamId: controller.streamId ?? '');
-                                    return IsmLiveApp.streamHeader?.call(
-                                          context,
-                                          controller.hostDetails,
-                                          controller.descriptionController.text,
-                                          defaultHeader,
-                                        ) ??
-                                        defaultHeader;
-                                  },
+                      if (isActiveStreamPage)
+                        Positioned.fill(
+                          child: Offstage(
+                            offstage: !_overlaysVisible,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                // Gradients positioned right after publisher grid to only overlay video content
+                                const _TopDarkGradient(),
+                                const _BottomDarkGradient(),
+                                Align(
+                                  alignment: IsmLiveApp.headerPosition,
+                                  child: Obx(
+                                    () {
+                                      final isActiveStreamPage =
+                                          controller.streamId ==
+                                              widget.streamId;
+                                      final hostDetails = isActiveStreamPage
+                                          ? controller.hostDetails
+                                          : null;
+                                      if (!((controller
+                                                      .room?.localParticipant !=
+                                                  null) &&
+                                              IsmLiveApp.showHeader) &&
+                                          !widget.isSchedule) {
+                                        return IsmLiveDimens.box0;
+                                      }
+                                      final defaultHeader = _StreamHeader(
+                                          streamId: widget.streamId);
+                                      return IsmLiveApp.streamHeader?.call(
+                                            context,
+                                            hostDetails,
+                                            controller
+                                                .descriptionController.text,
+                                            defaultHeader,
+                                          ) ??
+                                          defaultHeader;
+                                    },
+                                  ),
                                 ),
-                              ),
-                              Obx(
-                                () => (controller.room?.localParticipant !=
-                                            null)
-                                    ? SafeArea(
-                                        top: false,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              child: Padding(
-                                                padding: IsmLiveDimens
-                                                    .edgeInsets8_0,
+                                Obx(
+                                  () => (controller.room?.localParticipant !=
+                                          null)
+                                      ? SafeArea(
+                                          top: false,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: IsmLiveDimens
+                                                      .edgeInsets8_0,
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Expanded(
+                                                        child: IsmLiveApp
+                                                                .bottomBuilder
+                                                                ?.call(
+                                                              context,
+                                                              controller.streamId ==
+                                                                      widget
+                                                                          .streamId
+                                                                  ? controller
+                                                                      .hostDetails
+                                                                  : null,
+                                                              controller
+                                                                  .descriptionController
+                                                                  .text,
+                                                            ) ??
+                                                            Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                _buildChatView(
+                                                                  context,
+                                                                  isHost:
+                                                                      controller
+                                                                          .isHost,
+                                                                  streamId: widget
+                                                                      .streamId,
+                                                                ),
+                                                                IsmLiveDimens
+                                                                    .boxHeight8,
+                                                              ],
+                                                            ),
+                                                      ),
+                                                      if (!isKeyboardOpen)
+                                                        IsmLiveControlsWidget(
+                                                            isHost:
+                                                                widget.isHost,
+                                                            isCopublishing:
+                                                                controller
+                                                                    .isCopublisher,
+                                                            streamId: controller
+                                                                    .streamId ??
+                                                                '',
+                                                            isKeyboardOpen:
+                                                                isKeyboardOpen),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        IsmLiveDimens.twelve),
                                                 child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
                                                   children: [
                                                     Expanded(
                                                       child: IsmLiveApp
-                                                              .bottomBuilder
+                                                              .inputBuilder
                                                               ?.call(
-                                                                context,
-                                                                controller
-                                                                    .hostDetails,
-                                                                controller
-                                                                    .descriptionController
-                                                                    .text,
-                                                              ) ??
-                                                          Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              _buildChatView(
-                                                                context,
-                                                                isHost: controller
-                                                                    .isHost,
-                                                                streamId: widget
-                                                                    .streamId,
-                                                              ),
-                                                              IsmLiveDimens
-                                                                  .boxHeight8,
-                                                            ],
+                                                            context,
+                                                            IsmLiveMessageField(
+                                                              streamId: controller
+                                                                      .streamId ??
+                                                                  '',
+                                                              isHost: controller
+                                                                  .isPublishing,
+                                                              disabled: !_IsmLiveStreamView
+                                                                  .isValidStreamId(
+                                                                      controller
+                                                                          .streamId),
+                                                            ),
+                                                          ) ??
+                                                          IsmLiveMessageField(
+                                                            streamId: controller
+                                                                    .streamId ??
+                                                                '',
+                                                            isHost: controller
+                                                                .isPublishing,
+                                                            disabled: !_IsmLiveStreamView
+                                                                .isValidStreamId(
+                                                                    controller
+                                                                        .streamId),
                                                           ),
                                                     ),
-                                                    if (!isKeyboardOpen)
-                                                      IsmLiveControlsWidget(
-                                                          isHost:
-                                                              widget.isHost,
-                                                          isCopublishing: controller
-                                                              .isCopublisher,
-                                                          streamId: controller
-                                                                  .streamId ??
-                                                              '',
-                                                          isKeyboardOpen:
-                                                              isKeyboardOpen),
+                                                    if (IsmLiveDelegate
+                                                                .productStream ==
+                                                            true &&
+                                                        !isKeyboardOpen) ...[
+                                                      // Determine button visibility and label based on conditions
+                                                      if (IsmLiveDelegate
+                                                              .ecomConfigure
+                                                              ?.hasPinnedProduct ??
+                                                          false) ...[
+                                                        IsmLiveDimens.boxWidth8,
+                                                        ConstrainedBox(
+                                                          constraints:
+                                                              BoxConstraints(
+                                                            maxWidth: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                          ),
+                                                          child: controller
+                                                                      .isHost &&
+                                                                  (IsmLiveDelegate
+                                                                          .ecomConfigure
+                                                                          ?.hasPinnedProduct ??
+                                                                      false)
+                                                              ? _buildHostArrowButtons(
+                                                                  context)
+                                                              : IsmLiveDelegate
+                                                                      .ecomConfigure
+                                                                      ?.buyNowButtonBuilder
+                                                                      ?.call(
+                                                                    context,
+                                                                    controller
+                                                                            .streamId ??
+                                                                        '',
+                                                                    IsmLiveDelegate
+                                                                            .ecomConfigure
+                                                                            ?.hasPinnedProduct ??
+                                                                        false,
+                                                                    controller
+                                                                        .isHost,
+                                                                    () => _onBuyNowTap(
+                                                                        context,
+                                                                        controller),
+                                                                  ) ??
+                                                                  IsmLiveButton(
+                                                                    label:
+                                                                        'Buy now',
+                                                                    onTap: () =>
+                                                                        _onBuyNowTap(
+                                                                            context,
+                                                                            controller),
+                                                                  ),
+                                                        ),
+                                                      ]
+                                                    ]
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                      IsmLiveDimens.twelve),
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: IsmLiveApp
-                                                            .inputBuilder
-                                                            ?.call(
-                                                              context,
-                                                              IsmLiveMessageField(
-                                                                streamId: controller
-                                                                        .streamId ??
-                                                                    '',
-                                                                isHost: controller
-                                                                    .isPublishing,
-                                                                disabled: !_IsmLiveStreamView
-                                                                    .isValidStreamId(
-                                                                        controller
-                                                                            .streamId),
-                                                              ),
-                                                            ) ??
-                                                        IsmLiveMessageField(
-                                                          streamId: controller
-                                                                  .streamId ??
-                                                              '',
-                                                          isHost: controller
-                                                              .isPublishing,
-                                                          disabled: !_IsmLiveStreamView
-                                                              .isValidStreamId(
-                                                                  controller
-                                                                      .streamId),
-                                                        ),
-                                                  ),
-                                                  if (IsmLiveDelegate
-                                                              .productStream ==
-                                                          true &&
-                                                      !isKeyboardOpen) ...[
-                                                    // Determine button visibility and label based on conditions
-                                                    if (IsmLiveDelegate
-                                                            .ecomConfigure
-                                                            ?.hasPinnedProduct ??
-                                                        false) ...[
-                                                      IsmLiveDimens.boxWidth8,
-                                                      ConstrainedBox(
-                                                        constraints:
-                                                            BoxConstraints(
-                                                          maxWidth:
-                                                              MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.5,
-                                                        ),
-                                                        child: controller
-                                                                    .isHost &&
-                                                                (IsmLiveDelegate
-                                                                        .ecomConfigure
-                                                                        ?.hasPinnedProduct ??
-                                                                    false)
-                                                            ? _buildHostArrowButtons(
-                                                                context)
-                                                            : IsmLiveDelegate
-                                                                    .ecomConfigure
-                                                                    ?.buyNowButtonBuilder
-                                                                    ?.call(
-                                                                  context,
-                                                                  controller
-                                                                          .streamId ??
-                                                                      '',
-                                                                  IsmLiveDelegate
-                                                                          .ecomConfigure
-                                                                          ?.hasPinnedProduct ??
-                                                                      false,
-                                                                  controller
-                                                                      .isHost,
-                                                                  () => _onBuyNowTap(
-                                                                      context,
-                                                                      controller),
-                                                                ) ??
-                                                                IsmLiveButton(
-                                                                  label:
-                                                                      'Buy now',
-                                                                  onTap: () =>
-                                                                      _onBuyNowTap(
-                                                                          context,
-                                                                          controller),
-                                                                ),
-                                                      ),
-                                                    ]
-                                                  ]
-                                                ],
-                                              ),
-                                            ),
-                                            IsmLiveDimens.boxHeight8,
-                                            if (IsmLiveApp.endStreamPosition
-                                                .isBottomAligned)
-                                              ...[],
-                                            if (controller.showEmojiBoard)
-                                              const IsmLiveEmojis(),
-                                          ],
-                                        ),
-                                      )
-                                    : widget.isSchedule
-                                        ? ScheduleStreamView(
-                                            isKeyboardOpen: isKeyboardOpen)
-                                        : const SizedBox.shrink(),
-                              ),
-                              if (IsmLiveDelegate.productStream == true &&
-                                  IsmLiveDelegate.ecomConfigure
-                                          ?.pinnedProductBuilder !=
-                                      null &&
-                                  !isKeyboardOpen)
-                                GetBuilder<IsmLiveStreamController>(
-                                  id: IsmLiveMessageField.updateId,
-                                  builder: (controller) => Positioned(
-                                    right: IsmLiveDimens.sixteen,
-                                    bottom:
-                                        _calculateProductBuilderBottomPosition(
-                                                controller) +
-                                            systemBottomInset,
-                                    child: IsmLiveDelegate.ecomConfigure!
-                                            .pinnedProductBuilder!(
-                                          context,
-                                          controller,
-                                        ) ??
-                                        const SizedBox.shrink(),
-                                  ),
+                                              IsmLiveDimens.boxHeight8,
+                                              if (IsmLiveApp.endStreamPosition
+                                                  .isBottomAligned)
+                                                ...[],
+                                              if (controller.showEmojiBoard)
+                                                const IsmLiveEmojis(),
+                                            ],
+                                          ),
+                                        )
+                                      : widget.isSchedule
+                                          ? ScheduleStreamView(
+                                              isKeyboardOpen: isKeyboardOpen)
+                                          : const SizedBox.shrink(),
                                 ),
-                              Align(
-                                alignment: IsmLiveApp.endStreamPosition,
-                                child: Padding(
-                                  padding: IsmLiveApp
-                                          .endStreamPosition.isBottomAligned
-                                      ? EdgeInsets.only(
-                                          bottom: systemBottomInset)
-                                      : EdgeInsets.zero,
-                                  child: IsmLiveApp.endButton ??
-                                      IsmLiveEndStreamButton(
-                                        onTapExit: () => IsmLiveApp.endStream(
-                                            context: context,
-                                            isSchedule: widget.isSchedule,
-                                            showViewerLeaveDialog: true),
-                                      ),
-                                ),
-                              ),
-                              if (controller.isHost) ...[
-                                Positioned(
-                                  bottom: IsmLiveDimens.eighty +
-                                      systemBottomInset,
-                                  left: IsmLiveDimens.sixteen,
-                                  child: const IsmLiveModerationWarning(),
-                                ),
-                                if (widget.isNewStream)
-                                  const IsmLiveCounterView(
-                                    onCompleteSheet: YourLiveSheet(),
-                                  ),
-                              ],
-                              if (controller.isPk &&
-                                  !(controller.pkStages?.isPkStart ?? false) &&
-                                  ((controller.userRole?.isPkGuest ?? false) ||
-                                      (controller.userRole?.isHost ?? false)) &&
-                                  !controller.animationController.isCompleted &&
-                                  controller.participantTracks.length == 2) ...[
-                                AnimatedBuilder(
-                                  animation: controller.alignmentAnimation,
-                                  builder: (context, child) => AnimatedAlign(
-                                    alignment:
-                                        controller.alignmentAnimation.value,
-                                    duration: const Duration(
-                                      milliseconds: 100,
+                                if (IsmLiveDelegate.productStream == true &&
+                                    IsmLiveDelegate.ecomConfigure
+                                            ?.pinnedProductBuilder !=
+                                        null &&
+                                    !isKeyboardOpen)
+                                  GetBuilder<IsmLiveStreamController>(
+                                    id: IsmLiveMessageField.updateId,
+                                    builder: (controller) => Positioned(
+                                      right: IsmLiveDimens.sixteen,
+                                      bottom:
+                                          _calculateProductBuilderBottomPosition(
+                                                  controller) +
+                                              systemBottomInset,
+                                      child: IsmLiveDelegate.ecomConfigure!
+                                              .pinnedProductBuilder!(
+                                            context,
+                                            controller,
+                                          ) ??
+                                          const SizedBox.shrink(),
                                     ),
-                                    child: const IsmLiveImage.svg(
-                                        IsmLiveAssetConstants.v),
                                   ),
-                                ),
-                                AnimatedBuilder(
-                                  animation: controller.alignmentAnimationRight,
-                                  builder: (context, child) => AnimatedAlign(
-                                    alignment: controller
-                                        .alignmentAnimationRight.value,
-                                    duration: const Duration(
-                                      milliseconds: 100,
-                                    ),
-                                    child: const IsmLiveImage.svg(
-                                        IsmLiveAssetConstants.s),
-                                  ),
-                                ),
-                              ],
-                              if ((controller.pkStages?.isPk ?? false) &&
-                                  controller.animationController.isCompleted &&
-                                  (controller.userRole?.isHost ?? false) &&
-                                  !(controller.pkStages?.isPkStart ?? false) &&
-                                  controller.participantTracks.length == 2 &&
-                                  !(controller.pkStages?.isPkStop ?? false))
                                 Align(
-                                  alignment: Alignment.center,
-                                  child: IsmLiveTapHandler(
-                                    onTap: controller.pkChallengeSheet,
-                                    child: const IsmLiveImage.svg(
-                                      IsmLiveAssetConstants.start,
+                                  alignment: IsmLiveApp.endStreamPosition,
+                                  child: Padding(
+                                    padding: IsmLiveApp
+                                            .endStreamPosition.isBottomAligned
+                                        ? EdgeInsets.only(
+                                            bottom: systemBottomInset)
+                                        : EdgeInsets.zero,
+                                    child: IsmLiveApp.endButton ??
+                                        IsmLiveEndStreamButton(
+                                          onTapExit: () => IsmLiveApp.endStream(
+                                              context: context,
+                                              isSchedule: widget.isSchedule,
+                                              showViewerLeaveDialog: true),
+                                        ),
+                                  ),
+                                ),
+                                if (controller.isHost) ...[
+                                  Positioned(
+                                    bottom: IsmLiveDimens.eighty +
+                                        systemBottomInset,
+                                    left: IsmLiveDimens.sixteen,
+                                    child: const IsmLiveModerationWarning(),
+                                  ),
+                                  if (widget.isNewStream)
+                                    const IsmLiveCounterView(
+                                      onCompleteSheet: YourLiveSheet(),
+                                    ),
+                                ],
+                                if (controller.isPk &&
+                                    !(controller.pkStages?.isPkStart ??
+                                        false) &&
+                                    ((controller.userRole?.isPkGuest ??
+                                            false) ||
+                                        (controller.userRole?.isHost ??
+                                            false)) &&
+                                    !controller
+                                        .animationController.isCompleted &&
+                                    controller.participantTracks.length ==
+                                        2) ...[
+                                  AnimatedBuilder(
+                                    animation: controller.alignmentAnimation,
+                                    builder: (context, child) => AnimatedAlign(
+                                      alignment:
+                                          controller.alignmentAnimation.value,
+                                      duration: const Duration(
+                                        milliseconds: 100,
+                                      ),
+                                      child: const IsmLiveImage.svg(
+                                          IsmLiveAssetConstants.v),
+                                    ),
+                                  ),
+                                  AnimatedBuilder(
+                                    animation:
+                                        controller.alignmentAnimationRight,
+                                    builder: (context, child) => AnimatedAlign(
+                                      alignment: controller
+                                          .alignmentAnimationRight.value,
+                                      duration: const Duration(
+                                        milliseconds: 100,
+                                      ),
+                                      child: const IsmLiveImage.svg(
+                                          IsmLiveAssetConstants.s),
+                                    ),
+                                  ),
+                                ],
+                                if ((controller.pkStages?.isPk ?? false) &&
+                                    controller
+                                        .animationController.isCompleted &&
+                                    (controller.userRole?.isHost ?? false) &&
+                                    !(controller.pkStages?.isPkStart ??
+                                        false) &&
+                                    controller.participantTracks.length == 2 &&
+                                    !(controller.pkStages?.isPkStop ?? false))
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: IsmLiveTapHandler(
+                                      onTap: controller.pkChallengeSheet,
+                                      child: const IsmLiveImage.svg(
+                                        IsmLiveAssetConstants.start,
+                                      ),
+                                    ),
+                                  ),
+                                if ((controller.pkStages?.isPkStart ?? false) &&
+                                    controller.participantTracks.length > 1)
+                                  const IsmLivePkTimerContainer(),
+                                if ((controller.pkStages?.isPkStop ?? false) &&
+                                    controller.pkWinnerId == null)
+                                  const Align(
+                                    alignment: Alignment.center,
+                                    child: IsmLiveImage.svg(
+                                        IsmLiveAssetConstants.draw),
+                                  ),
+                                Positioned.fill(
+                                  child: Obx(
+                                    () => Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        ...controller.heartList,
+                                        ...controller.giftList,
+                                      ],
                                     ),
                                   ),
                                 ),
-                              if ((controller.pkStages?.isPkStart ?? false) &&
-                                  controller.participantTracks.length > 1)
-                                const IsmLivePkTimerContainer(),
-                              if ((controller.pkStages?.isPkStop ?? false) &&
-                                  controller.pkWinnerId == null)
-                                const Align(
-                                  alignment: Alignment.center,
-                                  child: IsmLiveImage.svg(
-                                      IsmLiveAssetConstants.draw),
-                                ),
-                              Positioned.fill(
-                                child: Obx(
-                                  () => Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      ...controller.heartList,
-                                      ...controller.giftList,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

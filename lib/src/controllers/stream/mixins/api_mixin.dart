@@ -252,12 +252,16 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    _controller.streamMembersList =
-        await _controller.viewModel.getStreamMembers(
+    final members = await _controller.viewModel.getStreamMembers(
       streamId: streamId,
       limit: limit,
       skip: skip,
     );
+    // Ignore delayed responses from a previous stream to prevent stale host UI.
+    if (_controller.streamId != streamId) {
+      return;
+    }
+    _controller.streamMembersList = members;
     if (_controller.streamMembersList.isNotEmpty) {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
         (e) => e.isAdmin,
