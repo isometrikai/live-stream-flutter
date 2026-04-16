@@ -243,6 +243,8 @@ class IsmLiveMqttController extends GetxController {
         onSubscribed: _onSubscribed,
         onUnsubscribed: _onUnSubscribed,
         pongCallback: _pong,
+        onAutoReconnect: _onAutoReconnectStarted,
+        onAutoReconnected: _onAutoReconnectCompleted,
       ),
       autoSubscribe: true,
       topics: List<String>.from(_topics),
@@ -262,6 +264,16 @@ class IsmLiveMqttController extends GetxController {
           await _runMqttInitialize();
         } catch (e, st) {
           IsmLiveLog.error('MQTT initialize failed: $e', st);
+          IsmLiveDelegate.trackEvent(
+            IsmLiveAnalyticsEvent.mqttInitializeFailure,
+            properties: [
+              {
+                ..._mqttAnalyticsContext(),
+                'error': e.toString(),
+                'phase': 'setup_re_init',
+              }
+            ],
+          );
           _setDisconnectedImmediate();
         }
       }
@@ -303,6 +315,16 @@ class IsmLiveMqttController extends GetxController {
       await _runMqttInitialize();
     } catch (e, st) {
       IsmLiveLog.error('MQTT initialize failed: $e', st);
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttInitializeFailure,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'error': e.toString(),
+            'phase': 'setup_first_init',
+          }
+        ],
+      );
       _mqttInitialized = false;
       _setDisconnectedImmediate();
     }
@@ -314,9 +336,35 @@ class IsmLiveMqttController extends GetxController {
         IsmLiveLog.error('subscribeStream called before setup()');
         return;
       }
-      if (!IsmLiveApp.isMqttConnected && !_manualReconnectInFlight) {
+      final helperConnected = _mqttHelper.isConnected;
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttSubscribeStream,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'stream_id': streamId,
+            'helper_connected': helperConnected,
+            'ui_connected': IsmLiveApp.isMqttConnected,
+            'manual_reconnect_in_flight': _manualReconnectInFlight,
+          }
+        ],
+      );
+      // Use the actual broker connection state instead of the debounced UI
+      // flag (`IsmLiveApp.isMqttConnected`). The debounce delay can hide a
+      // disconnect that occurred < 3s ago, causing us to skip reconnect while
+      // the broker link is actually down.
+      if (!helperConnected && !_manualReconnectInFlight) {
         IsmLiveLog.info(
           'MQTT not connected; starting full re-init in background',
+        );
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.mqttSubscribeStreamNotConnected,
+          properties: [
+            {
+              ..._mqttAnalyticsContext(),
+              'stream_id': streamId,
+            }
+          ],
         );
         unawaited(reconnect());
       }
@@ -329,6 +377,16 @@ class IsmLiveMqttController extends GetxController {
       }
     } catch (e) {
       IsmLiveLog.error('Subscribe Error - $e');
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttSubscribeStreamFailure,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'stream_id': streamId,
+            'error': e.toString(),
+          }
+        ],
+      );
     }
   }
 
@@ -396,12 +454,96 @@ class IsmLiveMqttController extends GetxController {
 
   void _onSubscribeFailed(String topic) {
     IsmLiveLog.error('MQTT Subscription failed - $topic');
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttSubscriptionFailed,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'topic': topic,
+          'helper_connected': _mqttHelper.isConnected,
+        }
+      ],
+    );
   }
 
   void _onConnected() {
     _publishMqttConnectivityToApp(true);
     IsmLiveLog.success('MQTT connected');
     _trackMqttConnected();
+
+    // After any reconnect (auto or manual), verify stream-specific topics are
+    // still subscribed. The broker-level `resubscribeOnAutoReconnect` handles
+    // topics known to the mqtt_client at disconnect time, but a stream topic
+    // added via `subscribeStream()` during a brief disconnect window may have
+    // been enqueued (pending) and then lost if the client was replaced. This
+    // ensures the current stream always receives events.
+    _ensureStreamTopicsSubscribed();
+  }
+
+  void _ensureStreamTopicsSubscribed() {
+    if (!_mqttInitialized || _topics.isEmpty) return;
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttTopicsResubscribed,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'topic_count': _topics.length,
+        }
+      ],
+    );
+    for (final topic in _topics) {
+      try {
+        _mqttHelper.subscribeTopic(topic);
+      } catch (e) {
+        IsmLiveLog.error('Re-subscribe topic "$topic" failed: $e');
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.mqttSubscriptionFailed,
+          properties: [
+            {
+              ..._mqttAnalyticsContext(),
+              'topic': topic,
+              'error': e.toString(),
+              'phase': 'resubscribe_on_connect',
+            }
+          ],
+        );
+      }
+    }
+  }
+
+  void _onAutoReconnectStarted() {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttAutoReconnectStarted,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+        }
+      ],
+    );
+  }
+
+  void _onAutoReconnectCompleted({required bool updatesReattached}) {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttAutoReconnectSuccess,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'updates_reattached': updatesReattached,
+          'helper_connected': _mqttHelper.isConnected,
+        }
+      ],
+    );
+    if (!updatesReattached) {
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttAutoReconnectUpdatesSub,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'warning': 'updates_sub_not_reattached_after_auto_reconnect',
+          }
+        ],
+      );
+    }
   }
 
   /// After app resume, nudge broker auto-reconnect when the client is already
@@ -426,12 +568,41 @@ class IsmLiveMqttController extends GetxController {
     }
 
     _manualReconnectInFlight = true;
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.mqttManualReconnectAttempt,
+      properties: [
+        {
+          ..._mqttAnalyticsContext(),
+          'helper_connected': _mqttHelper.isConnected,
+        }
+      ],
+    );
     try {
       IsmLiveLog.info('MQTT manual re-init requested');
       await _runMqttInitialize();
-      return IsmLiveApp.isMqttConnected;
+      final connected = IsmLiveApp.isMqttConnected;
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttManualReconnectSuccess,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'helper_connected': _mqttHelper.isConnected,
+            'ui_connected': connected,
+          }
+        ],
+      );
+      return connected;
     } catch (e, st) {
       IsmLiveLog.error('MQTT re-init failed: $e', st);
+      IsmLiveDelegate.trackEvent(
+        IsmLiveAnalyticsEvent.mqttManualReconnectFailure,
+        properties: [
+          {
+            ..._mqttAnalyticsContext(),
+            'error': e.toString(),
+          }
+        ],
+      );
       _mqttInitialized = false;
       _setDisconnectedImmediate();
       return false;

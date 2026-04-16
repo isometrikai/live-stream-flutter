@@ -22,6 +22,14 @@ class MqttCallbacks {
   /// A callback function that is called when a PING response is received from the MQTT broker.
   final PongCallback? pongCallback;
 
+  /// Called when the MQTT client starts auto-reconnect (connection lost).
+  final void Function()? onAutoReconnect;
+
+  /// Called when the MQTT client successfully completes auto-reconnect.
+  /// [updatesReattached] indicates whether the inbound message listener was
+  /// successfully re-created.
+  final void Function({required bool updatesReattached})? onAutoReconnected;
+
   /// Creates a new instance of `MqttCallbacks` with the provided callback functions.
   MqttCallbacks({
     this.onDisconnected,
@@ -30,5 +38,7 @@ class MqttCallbacks {
     this.onSubscribed,
     this.onUnsubscribed,
     this.pongCallback,
+    this.onAutoReconnect,
+    this.onAutoReconnected,
   });
 }

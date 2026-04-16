@@ -880,6 +880,30 @@ class IsmLiveAnalyticsEvent {
   // MQTT connectivity
   static const String mqttConnected = 'ism_live_mqtt_connected';
   static const String mqttDisconnected = 'ism_live_mqtt_disconnected';
+  static const String mqttAutoReconnectStarted =
+      'ism_live_mqtt_auto_reconnect_started';
+  static const String mqttAutoReconnectSuccess =
+      'ism_live_mqtt_auto_reconnect_success';
+  static const String mqttAutoReconnectUpdatesSub =
+      'ism_live_mqtt_auto_reconnect_updates_sub';
+  static const String mqttManualReconnectAttempt =
+      'ism_live_mqtt_manual_reconnect_attempt';
+  static const String mqttManualReconnectSuccess =
+      'ism_live_mqtt_manual_reconnect_success';
+  static const String mqttManualReconnectFailure =
+      'ism_live_mqtt_manual_reconnect_failure';
+  static const String mqttInitializeFailure =
+      'ism_live_mqtt_initialize_failure';
+  static const String mqttSubscribeStream =
+      'ism_live_mqtt_subscribe_stream';
+  static const String mqttSubscribeStreamNotConnected =
+      'ism_live_mqtt_subscribe_stream_not_connected';
+  static const String mqttSubscribeStreamFailure =
+      'ism_live_mqtt_subscribe_stream_failure';
+  static const String mqttSubscriptionFailed =
+      'ism_live_mqtt_subscription_failed';
+  static const String mqttTopicsResubscribed =
+      'ism_live_mqtt_topics_resubscribed';
 
   // Navigation / screen transitions
   static const String screenView = 'ism_live_screen_view';
@@ -919,6 +943,10 @@ class IsmLiveAnalyticsEvent {
     joinStreamMissingHostToken,
     preconnectAbortedStreamDisposed,
     roomConnectDiscardedStale,
+    mqttManualReconnectFailure,
+    mqttInitializeFailure,
+    mqttSubscribeStreamFailure,
+    mqttSubscriptionFailed,
   };
 
   /// Track only failure/error analytics (plus failed API calls via [apiResult]).
@@ -1010,6 +1038,18 @@ class IsmLiveAnalyticsEvent {
     // MQTT
     mqttConnected,
     mqttDisconnected,
+    mqttAutoReconnectStarted,
+    mqttAutoReconnectSuccess,
+    mqttAutoReconnectUpdatesSub,
+    mqttManualReconnectAttempt,
+    mqttManualReconnectSuccess,
+    mqttManualReconnectFailure,
+    mqttInitializeFailure,
+    mqttSubscribeStream,
+    mqttSubscribeStreamNotConnected,
+    mqttSubscribeStreamFailure,
+    mqttSubscriptionFailed,
+    mqttTopicsResubscribed,
 
     // Navigation
     screenView,
