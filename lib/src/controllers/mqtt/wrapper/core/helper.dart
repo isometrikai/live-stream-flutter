@@ -498,16 +498,57 @@ class MqttHelper {
     _notifySessionLost(
       'MQTT connection lost — auto-reconnect started (network/broker unreachable)',
     );
+    _callbacks?.onAutoReconnect?.call();
   }
 
   /// Called after the broker connection is restored by the client's auto-reconnect.
   ///
   /// Subscriptions are re-established by [MqttClient.resubscribeOnAutoReconnect]
   /// when [MqttConfig.autoReconnect] is true; do not call [disconnect] here.
+  ///
+  /// Re-attaches the updates listener and notifies connection-stream subscribers
+  /// so the app resumes processing inbound messages (the listener was cancelled
+  /// in [_onAutoReconnect] → [_notifySessionLost]).
   void _onAutoReconnected() {
     _debugLog(
       'MQTT auto-reconnect completed — broker up, resubscribe handled by client',
     );
+
+    // Re-attach the inbound message listener that was cancelled during
+    // _onAutoReconnect. Without this, the MQTT client receives messages but
+    // the app never processes them (green indicator, no messages).
+    _updatesSub?.cancel();
+    final updates = _client?.updates;
+    if (updates != null) {
+      _updatesSub = updates.listen(
+        (List<MqttReceivedMessage<MqttMessage>> c) async {
+          _rawEventStream.add(c);
+          if (c.isEmpty) return;
+          final recMess = c.first.payload as MqttPublishMessage;
+          final topic = c.first.topic;
+
+          var payload = jsonDecode(
+            MqttPublishPayload.bytesToStringAsString(recMess.payload.message),
+          ) as Map<String, dynamic>;
+
+          _eventStream.add(
+            EventModel(
+              topic: topic,
+              payload: payload,
+            ),
+          );
+        },
+      );
+    }
+
+    final updatesReattached = _updatesSub != null;
+
+    if (!_connectionStream.isClosed) {
+      _connectionStream.add(true);
+    }
+    _callbacks?.onConnected?.call();
+    _callbacks?.onAutoReconnected?.call(updatesReattached: updatesReattached);
+
     // In case app requested new topics while reconnecting, flush them now.
     _flushPendingSubscriptions();
   }
