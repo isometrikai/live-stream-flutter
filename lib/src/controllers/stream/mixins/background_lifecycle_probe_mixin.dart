@@ -864,6 +864,32 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         return;
       }
 
+      // Viewer tokens can become stale across background transitions.
+      // Prefer a fresh-token rejoin before trying raw room.connect with stored token.
+      if (!_isHost.value && !_isCopublisher.value) {
+        try {
+          final viewerRejoined =
+              await _controller.rejoinCurrentViewerStreamAfterForeground(
+            showProgress: false,
+          );
+          if (viewerRejoined) {
+            IsmLiveLog.info(
+                'Single reconnection: viewer fresh-token rejoin succeeded');
+            _isReconnecting = false;
+            _resumeStreamWithPostConnectVerify(
+              sessionId: sessionId,
+              expectedStreamId: expectedStreamId,
+            );
+            return;
+          }
+          IsmLiveLog.info(
+              'Single reconnection: viewer fresh-token rejoin failed, falling back to stored-token room.connect');
+        } catch (e) {
+          IsmLiveLog.error(
+              'Single reconnection: viewer fresh-token rejoin threw: $e');
+        }
+      }
+
       // Try reconnection only once with stored token
       if (_storedToken != null) {
         IsmLiveLog.info(

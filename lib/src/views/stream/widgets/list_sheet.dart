@@ -87,19 +87,20 @@ class IsmLiveListSheet extends StatelessWidget {
                                 ?.call(viewer.imageUrl ?? '') ??
                             viewer.imageUrl ??
                             '',
-                        name: viewer.userName,
+                        name: viewer.fullName,
+                        initials: viewer.profileInitials,
                         dimensions: IsmLiveDimens.forty,
                         isProfileImage: true,
                       ),
                     ),
                     title: Text(
-                      '@${viewer.userName}',
+                      '${viewer.fullName}',
                       style: context.textTheme.titleMedium?.copyWith(
                         color: textColor,
                       ),
                     ),
                     subtitle: Text(
-                      viewer.userName,
+                      viewer.displayUserName,
                       style: context.textTheme.bodySmall?.copyWith(
                         color: subtitleColor,
                       ),
