@@ -299,7 +299,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                     height: double.infinity, // Fill the available height
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
@@ -329,7 +329,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                     height: double.infinity, // Fill the available height
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
@@ -1239,9 +1239,9 @@ class ScheduleStreamView extends StatelessWidget {
       buttonWidget = Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.3),
+          color: Colors.grey.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withOpacity(0.5)),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
         ),
         child: Text(
           formattedTime,

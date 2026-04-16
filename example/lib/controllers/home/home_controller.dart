@@ -96,7 +96,7 @@ class HomeController extends GetxController {
       // chatItemBgColorCallback: (message) {
       //   // ✅ New name
       //   if (message.sentByHost) {
-      //     return Colors.red.withOpacity(0.4);
+      //     return Colors.red.withValues(alpha: 0.4);
       //   }
       //   return null;
       // },
@@ -506,7 +506,7 @@ class HomeController extends GetxController {
               boxShadow: isEnabled
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFCD0000).withOpacity(0.3),
+                        color: const Color(0xFFCD0000).withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -522,8 +522,8 @@ class HomeController extends GetxController {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: isEnabled
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.05),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
                       color: isEnabled ? Colors.white : Colors.white54,
@@ -546,8 +546,8 @@ class HomeController extends GetxController {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: isEnabled
-                                    ? Colors.white.withOpacity(0.2)
-                                    : Colors.white.withOpacity(0.1),
+                                    ? Colors.white.withValues(alpha: 0.2)
+                                    : Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -579,8 +579,8 @@ class HomeController extends GetxController {
                                 decoration: BoxDecoration(
                                   color: controller.selectedGoLiveStream ==
                                           IsmLiveStreamTypes.premium
-                                      ? Colors.amber.withOpacity(0.2)
-                                      : Colors.white.withOpacity(0.1),
+                                      ? Colors.amber.withValues(alpha: 0.2)
+                                      : Colors.white.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(

@@ -308,8 +308,9 @@ class _AddModeratorsListBottomSheetState
 
   Widget _buildSearchBar(BuildContext context, Color textColor) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final fillColor =
-        isDarkMode ? Colors.white.withOpacity(0.06) : const Color(0xFFF5F5F5);
+    final fillColor = isDarkMode
+        ? Colors.white.withValues(alpha: 0.06)
+        : const Color(0xFFF5F5F5);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
@@ -370,7 +371,7 @@ class _AddModeratorsListBottomSheetState
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
+                  color: Colors.white.withValues(alpha: 0.04),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

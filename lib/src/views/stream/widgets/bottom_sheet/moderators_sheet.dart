@@ -287,8 +287,9 @@ Widget _buildModeratorsSearchBar(
   IsmLiveStreamController controller,
   bool isDarkMode,
 ) {
-  final fillColor =
-      isDarkMode ? Colors.white.withOpacity(0.06) : const Color(0xFFF5F5F5);
+  final fillColor = isDarkMode
+      ? Colors.white.withValues(alpha: 0.06)
+      : const Color(0xFFF5F5F5);
 
   return Container(
     margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),

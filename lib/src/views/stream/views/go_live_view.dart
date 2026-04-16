@@ -214,7 +214,7 @@ class IsmGoLiveView extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.circular(IsmLiveDimens.twelve),
                                 border: Border.all(color: IsmLiveColors.white),
-                                color: IsmLiveColors.white.withOpacity(0.3),
+                                color: IsmLiveColors.white.withValues(alpha: 0.3),
                               ),
                               child: IsmLiveInputField(
                                 hintStyle: getTextStyle(context, true),
@@ -349,7 +349,7 @@ class _StreamTypes extends StatelessWidget {
                         ? null
                         : Border.all(color: Colors.white, width: 0.5),
                     color: !isSelected
-                        ? Colors.white.withOpacity(0.2)
+                        ? Colors.white.withValues(alpha: 0.2)
                         : Colors.black,
                   ),
                   child: Row(
@@ -466,7 +466,7 @@ class _StreamImage extends StatelessWidget {
           width: IsmLiveDimens.eighty,
           height: IsmLiveDimens.hundred, // Fixed height to match input field
           decoration: BoxDecoration(
-            color: IsmLiveColors.white.withOpacity(0.3),
+            color: IsmLiveColors.white.withValues(alpha: 0.3),
             border: Border.all(color: IsmLiveColors.white),
             borderRadius: BorderRadius.circular(IsmLiveDimens.twelve),
           ),

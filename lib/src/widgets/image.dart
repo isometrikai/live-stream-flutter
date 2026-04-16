@@ -208,7 +208,7 @@ class _Network extends StatelessWidget {
         placeholder: (context, url) => Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: IsmLiveColors.black.withOpacity(0.2),
+            color: IsmLiveColors.black.withValues(alpha: 0.2),
             shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: isProfileImage &&
@@ -294,7 +294,7 @@ class _ErrorImage extends StatelessWidget {
         builder: (context, constraints) => Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: IsmLiveColors.lightGray.withOpacity(0.3),
+            color: IsmLiveColors.lightGray.withValues(alpha: 0.3),
             shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: !showError || isProfileImage

@@ -397,7 +397,7 @@ class _ChatMessageItem extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: (context.liveTheme?.primaryColor ??
                                               IsmLiveColors.primary)
-                                          .withOpacity(0.2),
+                                          .withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(
                                           IsmLiveDimens.four),
                                     ),
@@ -408,7 +408,7 @@ class _ChatMessageItem extends StatelessWidget {
                                         style: context.textTheme.labelSmall
                                             ?.copyWith(
                                           color: IsmLiveColors.white
-                                              .withOpacity(0.7),
+                                              .withValues(alpha: 0.7),
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
