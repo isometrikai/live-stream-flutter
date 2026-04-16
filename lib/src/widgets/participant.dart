@@ -160,6 +160,20 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
   TrackPublication? get firstAudioPublication;
   var pkController = Get.find<IsmLivePkController>();
 
+  bool get isAudioMuted {
+    final publication = firstAudioPublication;
+    if (publication == null) {
+      return true;
+    }
+
+    final track = publication.track;
+    if (track != null) {
+      return track.muted;
+    }
+
+    return publication.muted;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -264,6 +278,25 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                     child: const Text(
                       'Make Host',
                       style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            if (isAudioMuted)
+              Align(
+                alignment: Alignment.center,
+                child: IgnorePointer(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const IsmLiveImage.svg(
+                      IsmLiveAssetConstants.micro_phone_off,
+                      color: Colors.white,
+                      width: 20,
+                      height: 20,
                     ),
                   ),
                 ),
