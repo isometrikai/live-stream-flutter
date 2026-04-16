@@ -30,10 +30,10 @@ class _LiveCustomInputFieldState extends State<LiveCustomInputField> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.3), // Background color
+        color: Colors.white.withValues(alpha: 0.3), // Background color
         borderRadius: BorderRadius.circular(12), // Rectangular curved design
         border: Border.all(
-          color: Colors.white.withOpacity(0.8), // White border
+          color: Colors.white.withValues(alpha: 0.8), // White border
           width: 1.5,
         ),
       ),
@@ -50,7 +50,7 @@ class _LiveCustomInputFieldState extends State<LiveCustomInputField> {
             fontSize: 14, // Increased font size
           ),
           customHintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 14, // Increased hint font size
           ),
           customContentPadding: const EdgeInsets.symmetric(

@@ -117,7 +117,7 @@ class IsmLiveMessageField extends StatelessWidget {
                               const EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 12.0),
                           fillColor: customFillColor ??
-                              IsmLiveColors.white.withOpacity(0.3),
+                              IsmLiveColors.white.withValues(alpha: 0.3),
                           hintStyle: customHintStyle ??
                               context.textTheme.bodySmall
                                   ?.copyWith(color: Colors.white),

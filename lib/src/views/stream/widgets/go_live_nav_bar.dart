@@ -19,7 +19,7 @@ class _DefaultGoLiveButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isEnabled
                 ? IsmLiveColors.red
-                : IsmLiveColors.red.withOpacity(0.5),
+                : IsmLiveColors.red.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(IsmLiveDimens.twentyFive),
           ),
           child: Column(

@@ -34,7 +34,7 @@ class ParticipantInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         children: [
           Container(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             child: ListTile(
               contentPadding: isFirstIndex
                   ? IsmLiveDimens.edgeInsetsL10
