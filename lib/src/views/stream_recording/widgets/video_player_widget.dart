@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appscrip_live_stream_component/src/live_delegate.dart';
 import 'package:appscrip_live_stream_component/src/views/stream_recording/recording_video_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -48,6 +49,8 @@ class _IsmLiveRecordingAutoVideoPlayerState
   Timer? _stuckTimer;
   int _recoveryAttempts = 0;
   static const int _maxRecoveryAttempts = 5;
+  String? _lastTrackedControllerError;
+  String? _loadFailureMessage;
 
   bool get isPlaying =>
       _controller != null && _controller!.value.isPlaying == true;
@@ -70,6 +73,8 @@ class _IsmLiveRecordingAutoVideoPlayerState
   void didUpdateWidget(IsmLiveRecordingAutoVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url != widget.url) {
+      _loadFailureMessage = null;
+      _lastTrackedControllerError = null;
       _initializeIfNeeded();
     }
     if (oldWidget.isMuted != widget.isMuted &&
@@ -81,12 +86,13 @@ class _IsmLiveRecordingAutoVideoPlayerState
 
   Future<void> _initializeIfNeeded() async {
     if (_isInitializing || widget.url.isEmpty) return;
+    _loadFailureMessage = null;
     _isInitializing = true;
     setState(() {});
     try {
       final controller = await _cache.getOrCreate(widget.url);
       if (_isDisposed) {
-        await controller.dispose();
+        // Controller is shared in [RecordingVideoCacheManager]; never dispose it here.
         return;
       }
       _attachController(controller);
@@ -96,6 +102,13 @@ class _IsmLiveRecordingAutoVideoPlayerState
       if (!_isManuallyPaused) {
         _playInternal();
       }
+    } catch (e, st) {
+      _loadFailureMessage = e.toString();
+      _trackVideoLoadFailure(
+        stage: 'initialize',
+        error: e,
+        stackTrace: st,
+      );
     } finally {
       _isInitializing = false;
       if (mounted) {
@@ -125,6 +138,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
     final value = _controller!.value;
     final position = value.position;
     final total = value.duration;
+    _trackControllerValueErrorIfAny(value);
 
     if (_wasBuffering &&
         !value.isBuffering &&
@@ -145,6 +159,40 @@ class _IsmLiveRecordingAutoVideoPlayerState
         (total.inMilliseconds - position.inMilliseconds).abs() <= 300) {
       widget.onCompleted?.call();
     }
+  }
+
+  void _trackControllerValueErrorIfAny(VideoPlayerValue value) {
+    if (!value.hasError) return;
+    final rawError = value.errorDescription;
+    final normalizedError =
+        (rawError == null || rawError.isEmpty) ? 'unknown' : rawError;
+    _loadFailureMessage = normalizedError;
+    if (_lastTrackedControllerError == normalizedError) return;
+    _lastTrackedControllerError = normalizedError;
+    _trackVideoLoadFailure(
+      stage: 'controller',
+      error: normalizedError,
+    );
+  }
+
+  void _trackVideoLoadFailure({
+    required String stage,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.recordingVideoLoadFailure,
+      properties: [
+        {
+          'video_url': widget.url,
+          'stage': stage,
+          'error': error?.toString() ?? 'unknown',
+          'is_visible': _isVisible,
+          'recovery_attempts': _recoveryAttempts,
+          if (stackTrace != null) 'stack_trace': stackTrace.toString(),
+        },
+      ],
+    );
   }
 
   void _onVisibilityChanged(VisibilityInfo info) {
@@ -233,6 +281,18 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _controller!.play();
   }
 
+  Future<void> _retryLoad() async {
+    if (_isInitializing) return;
+    await _cache.clear(widget.url);
+    _controller?.removeListener(_handleProgress);
+    _controller = null;
+    _loadFailureMessage = null;
+    if (mounted) {
+      setState(() {});
+    }
+    await _initializeIfNeeded();
+  }
+
   void _stopPlayback({bool mute = true}) {
     final controller = _controller;
     if (controller == null || !controller.value.isInitialized) return;
@@ -256,6 +316,11 @@ class _IsmLiveRecordingAutoVideoPlayerState
   Widget build(BuildContext context) {
     final controller = _controller;
     final isReady = controller != null && controller.value.isInitialized;
+    final hasControllerError = controller?.value.hasError == true;
+    final errorMessage = hasControllerError
+        ? (controller?.value.errorDescription ?? 'Failed to load video')
+        : _loadFailureMessage;
+    final hasLoadError = errorMessage != null && errorMessage.isNotEmpty;
 
     return VisibilityDetector(
       key: Key('recording_video_${widget.url}'),
@@ -267,6 +332,8 @@ class _IsmLiveRecordingAutoVideoPlayerState
           children: [
             if (isReady)
               _buildVideoContent(controller)
+            else if (hasLoadError)
+              _buildRetryUi()
             else
               const Center(
                 child: CircularProgressIndicator(color: Colors.white),
@@ -304,4 +371,34 @@ class _IsmLiveRecordingAutoVideoPlayerState
       ),
     );
   }
+
+  Widget _buildRetryUi() => Center(
+      child: GestureDetector(
+        onTap: _retryLoad,
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.refresh,
+                color: Colors.white,
+                size: 32,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Video failed to load',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Tap to retry',
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
 }
