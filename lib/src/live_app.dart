@@ -837,6 +837,21 @@ class IsmLiveApp extends StatefulWidget {
     // });
   }
 
+  /// Connects to a LiveKit stream (as host, co-publisher, PK guest, or viewer).
+  ///
+  /// By default this uses the deferred-connection path ([deferConnection] =
+  /// true) — navigating to the stream view first and completing the heavy
+  /// LiveKit handshake from inside `stream_view` via
+  /// [IsmLiveStreamController.completeDeferredConnection]. This matches the
+  /// internal `startStream` / `initializeAndJoinStream` paths and avoids a
+  /// class of bugs where a host who started the stream successfully (camera
+  /// publishing, viewers receiving frames) could remain stuck on the
+  /// `go_live_view` because navigation runs only after the long
+  /// `_connectRoomAndInitialize` flow and can be swallowed by mid-flow state
+  /// changes (e.g. listener being nulled, transient route exceptions).
+  ///
+  /// Callers that need the legacy "connect first, navigate after" behavior
+  /// can explicitly pass `deferConnection: false`.
   static Future<void> connectStream({
     required String token,
     required String streamId,
@@ -857,6 +872,7 @@ class IsmLiveApp extends StatefulWidget {
     String? eventId,
     required BuildContext context,
     bool reJoin = false,
+    bool deferConnection = true,
   }) async {
     assert(
       _initialized,
@@ -867,6 +883,11 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveStreamBinding().dependencies();
     }
 
+    // Deferred connect is a no-op for `joinByScrolling` — the internal
+    // controller already falls through to the non-deferred path in that case
+    // (see the `if (deferConnection && !joinByScrolling)` guard inside
+    // `IsmLiveStreamController.connectStream`). We still pass the flag
+    // through so non-scrolling callers benefit from the deferred path.
     IsmLiveUtility.updateLater(() async {
       await Get.find<IsmLiveStreamController>().connectStream(
         token: token,
@@ -888,6 +909,7 @@ class IsmLiveApp extends StatefulWidget {
         eventId: eventId,
         context: context,
         reJoin: reJoin,
+        deferConnection: deferConnection,
       );
     });
   }
