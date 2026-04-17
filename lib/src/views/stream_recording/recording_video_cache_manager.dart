@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:video_player/video_player.dart';
 
 /// Lightweight cache manager for recording playback.
@@ -14,6 +16,15 @@ class RecordingVideoCacheManager {
       RecordingVideoCacheManager._internal();
 
   final Map<String, _CachedVideo> _cache = <String, _CachedVideo>{};
+
+  /// Coalesces concurrent [getOrCreate] / preload calls for the same URL.
+  ///
+  /// Without this, a second caller could overwrite the cache while the first
+  /// `initialize()` is still in flight, causing duplicate HTTP sessions. That
+  /// often surfaces on iOS as HTTP 403 (CoreMedia OSStatus -12660) for
+  /// long recordings or single-use / presigned URLs.
+  final Map<String, Future<VideoPlayerController>> _inflight =
+      <String, Future<VideoPlayerController>>{};
 
   /// Returns a cached controller if it exists and is still usable.
   VideoPlayerController? getCachedController(String url) {
@@ -32,6 +43,10 @@ class RecordingVideoCacheManager {
   /// If the controller is already cached and initialized, it is reused.
   /// Otherwise a new controller is created, initialized and cached.
   Future<VideoPlayerController> getOrCreate(String url) async {
+    if (url.isEmpty) {
+      throw ArgumentError.value(url, 'url', 'Video URL must not be empty');
+    }
+
     final existing = _cache[url];
     if (existing != null && !existing.disposed) {
       if (existing.controller.value.isInitialized) {
@@ -40,7 +55,29 @@ class RecordingVideoCacheManager {
       }
     }
 
-    // Create and initialize a new controller.
+    var tracked = _inflight[url];
+    if (tracked == null) {
+      tracked = _createAndInitialize(url);
+      _inflight[url] = tracked;
+    }
+    try {
+      return await tracked;
+    } finally {
+      final current = _inflight[url];
+      if (identical(current, tracked)) {
+        final removed = _inflight.remove(url);
+        if (removed != null) await removed;
+      }
+    }
+  }
+
+  Future<VideoPlayerController> _createAndInitialize(String url) async {
+    final stale = _cache.remove(url);
+    if (stale != null && !stale.disposed) {
+      stale.disposed = true;
+      await stale.controller.dispose();
+    }
+
     final controller = VideoPlayerController.networkUrl(Uri.parse(url));
     final entry = _CachedVideo(controller: controller);
     _cache[url] = entry;
@@ -49,7 +86,6 @@ class RecordingVideoCacheManager {
       entry.lastAccess = DateTime.now();
       return controller;
     } catch (_) {
-      // On failure, dispose and evict the controller so callers can retry later.
       await controller.dispose();
       _cache.remove(url);
       rethrow;
@@ -61,16 +97,33 @@ class RecordingVideoCacheManager {
   /// Errors are swallowed; callers can still attempt playback on demand.
   Future<void> precacheMedia(List<String> urls) async {
     if (urls.isEmpty) return;
-    final futures = <Future<void>>[];
-    for (final url in urls) {
-      if (url.isEmpty) continue;
+
+    Future<void> runOne(String url) async {
       if (_cache[url]?.disposed == true) {
         _cache.remove(url);
       }
       if (_cache[url]?.controller.value.isInitialized == true) {
-        continue;
+        return;
       }
-      futures.add(_preload(url));
+      await _preload(url);
+    }
+
+    // iOS + long assets: parallel AVPlayer HTTP sessions can trigger CDN/WAF
+    // 403 (CoreMedia -12660). Preload neighbors one at a time on iOS only.
+    final serialPrecache =
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+    if (serialPrecache) {
+      for (final url in urls) {
+        if (url.isEmpty) continue;
+        await runOne(url);
+      }
+      return;
+    }
+
+    final futures = <Future<void>>[];
+    for (final url in urls) {
+      if (url.isEmpty) continue;
+      futures.add(runOne(url));
     }
     if (futures.isNotEmpty) {
       await Future.wait(futures);

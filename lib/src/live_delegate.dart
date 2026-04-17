@@ -908,6 +908,10 @@ class IsmLiveAnalyticsEvent {
   // Navigation / screen transitions
   static const String screenView = 'ism_live_screen_view';
 
+  // Stream recording playback
+  static const String recordingVideoLoadFailure =
+      'ism_live_recording_video_load_failure';
+
   /// All analytics events in a single set.
   ///
   /// Pass this to [IsmLiveApp.configureInterface]'s `enabledAnalyticsEvents`
@@ -947,6 +951,7 @@ class IsmLiveAnalyticsEvent {
     mqttInitializeFailure,
     mqttSubscribeStreamFailure,
     mqttSubscriptionFailed,
+    recordingVideoLoadFailure,
   };
 
   /// Track only failure/error analytics (plus failed API calls via [apiResult]).
@@ -1053,6 +1058,9 @@ class IsmLiveAnalyticsEvent {
 
     // Navigation
     screenView,
+
+    // Stream recording playback
+    recordingVideoLoadFailure,
   };
 }
 
@@ -1474,7 +1482,8 @@ class IsmLiveDelegate {
   static IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig;
 
   /// No-op config used when [streamRecordingPlayerConfig] is null so the player
-  /// can open for internal/testing (video plays; initial API is via config [onLoaded]).
+  /// can open for internal/testing (video plays; initial API is via config
+  /// [IsmLiveStreamRecordingPlayerConfig.onLoaded]).
   static IsmLiveStreamRecordingPlayerConfig
       get defaultStreamRecordingPlayerConfig =>
           _defaultStreamRecordingPlayerConfig;
