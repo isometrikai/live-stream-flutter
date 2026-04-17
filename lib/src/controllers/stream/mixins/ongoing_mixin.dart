@@ -942,15 +942,24 @@ mixin StreamOngoingMixin {
 
   void _insertHeartAnimation(String id) {
     final key = ValueKey(id);
+    final seed = id.hashCode & 0x7fffffff;
+    final startX = ((seed % 31) - 15).toDouble();
+    final durationMs = 2500 + (seed % 1500);
+    final pathVariant = seed % 6;
+    final maxHorizontalDrift = 18 + (seed % 24).toDouble();
+    final travelHeightFactor = 0.74 + (((seed >> 3) % 14) / 100);
+    final baseScale = 0.42 + (((seed >> 5) % 42) / 100);
     _controller.heartList.insert(
       0,
-      IsmLiveAnimationView(
+      IsmLiveFloatingHeartView(
         key: key,
-        duration: 5,
-        verticalHeightFactor: 0.80,
-        fadeOutAtEnd: true,
+        durationMs: durationMs,
+        startX: startX,
+        maxHorizontalDrift: maxHorizontalDrift,
+        pathVariant: pathVariant,
+        travelHeightFactor: travelHeightFactor,
         child: Transform.scale(
-          scale: 0.6,
+          scale: baseScale,
           child: IsmLiveHeartButton(size: IsmLiveDimens.fifty),
         ),
         onComplete: () {

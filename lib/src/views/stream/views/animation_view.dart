@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/widgets.dart';
@@ -136,6 +137,91 @@ class _IsmLiveAnimationViewState extends State<IsmLiveAnimationView>
                 // Below AnimatedPositioned so Stack parent data stays valid; still
                 // blocks hearts from stealing taps on the message row.
                 child: IgnorePointer(child: visual),
+              ),
+            ),
+          );
+        },
+      );
+}
+
+/// Lightweight floating-heart animation with deterministic motion parameters.
+class IsmLiveFloatingHeartView extends StatefulWidget {
+  const IsmLiveFloatingHeartView({
+    super.key,
+    required this.child,
+    required this.durationMs,
+    required this.startX,
+    required this.maxHorizontalDrift,
+    required this.pathVariant,
+    required this.travelHeightFactor,
+    this.onComplete,
+  });
+
+  final Widget child;
+  final int durationMs;
+  final double startX;
+  final double maxHorizontalDrift;
+  final int pathVariant;
+  final double travelHeightFactor;
+  final VoidCallback? onComplete;
+
+  @override
+  State<IsmLiveFloatingHeartView> createState() => _IsmLiveFloatingHeartViewState();
+}
+
+class _IsmLiveFloatingHeartViewState extends State<IsmLiveFloatingHeartView>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: Duration(milliseconds: widget.durationMs),
+  )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onComplete?.call();
+      }
+    });
+
+  static final double _bottomInset = IsmLiveDimens.seventy;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_controller.forward());
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: _controller,
+        child: RepaintBoundary(
+          child: IgnorePointer(child: widget.child),
+        ),
+        builder: (context, child) {
+          final t = _controller.value;
+          final curveT = Curves.easeOut.transform(t);
+          final screenHeight = MediaQuery.of(context).size.height;
+          final pathPhase = widget.pathVariant * (math.pi / 3);
+          final lateralWave = math.sin((curveT * math.pi * 1.75) + pathPhase) *
+              widget.maxHorizontalDrift *
+              (1 - (curveT * 0.5));
+          final right = 18 + widget.startX + lateralWave;
+          final bottom =
+              _bottomInset + (screenHeight * widget.travelHeightFactor * curveT);
+          final scale = 0.9 + (0.35 * curveT);
+          final opacity = curveT < 0.75 ? 1.0 : (1 - ((curveT - 0.75) / 0.25));
+
+          return Positioned(
+            bottom: bottom,
+            right: right,
+            child: Opacity(
+              opacity: opacity.clamp(0.0, 1.0),
+              child: Transform.scale(
+                scale: scale,
+                child: child,
               ),
             ),
           );
