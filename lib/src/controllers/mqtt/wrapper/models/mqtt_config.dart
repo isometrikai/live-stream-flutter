@@ -44,8 +44,8 @@ class MqttConfig {
     this.secure = false,
     this.autoReconnect = true,
     this.maxAutoReconnectRetry = 3,
-    this.keepAliveSeconds = 60,
-    this.disconnectOnNoPingResponseSeconds = 30,
+    this.keepAliveSeconds = 30,
+    this.disconnectOnNoPingResponseSeconds = 10,
   });
 
   /// Creates a copy of the current `MqttConfig` instance with optional changes.
@@ -108,9 +108,9 @@ class MqttConfig {
       secure: map['secure'] as bool,
       autoReconnect: map['autoReconnect'] as bool,
       maxAutoReconnectRetry: map['maxAutoReconnectRetry'] as int,
-      keepAliveSeconds: map['keepAliveSeconds'] as int? ?? 60,
+      keepAliveSeconds: map['keepAliveSeconds'] as int? ?? 30,
       disconnectOnNoPingResponseSeconds:
-          map['disconnectOnNoPingResponseSeconds'] as int? ?? 30,
+          map['disconnectOnNoPingResponseSeconds'] as int? ?? 10,
     );
   }
 
