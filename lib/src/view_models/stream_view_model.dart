@@ -267,6 +267,57 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  /// Fetches the latest aggregate viewer count for a stream.
+  ///
+  /// Uses the viewer listing endpoint with minimal payload and supports
+  /// multiple backend key variants to stay backward compatible.
+  Future<int?> getStreamViewerCount({
+    required String streamId,
+  }) async {
+    try {
+      final res = await _repository.getStreamViewer(
+        streamId: streamId,
+        limit: 1,
+        skip: 0,
+      );
+      if (res.hasError) {
+        return null;
+      }
+
+      final decoded = jsonDecode(res.data);
+      if (decoded is! Map<String, dynamic>) {
+        return null;
+      }
+
+      int? toInt(dynamic value) {
+        if (value == null) return null;
+        if (value is int) return value;
+        if (value is num) return value.toInt();
+        if (value is String) return int.tryParse(value);
+        return null;
+      }
+
+      final count = toInt(decoded['viewersCount']) ??
+          toInt(decoded['viewerCount']) ??
+          toInt(decoded['count']) ??
+          toInt(decoded['totalCount']) ??
+          toInt(decoded['totalViewers']);
+
+      if (count != null) {
+        return count;
+      }
+
+      final viewers = decoded['viewers'];
+      if (viewers is List) {
+        return viewers.length;
+      }
+      return null;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return null;
+    }
+  }
+
   // / get Api for Presigned Url.....
   Future<IsmLiveResponseModel> updatePresignedUrl({
     required bool showLoading,
