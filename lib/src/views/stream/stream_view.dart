@@ -535,7 +535,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                               )
                             : const SizedBox.shrink(),
                       ),
-                      if (isActiveStreamPage)
+                      if (isActiveStreamPage || widget.isSchedule)
                         // Tap-to-toggle overlay layer. This sits ABOVE the video/grid
                         // but BELOW all overlay UI, so taps on buttons/chat won't toggle.
                         Positioned.fill(
@@ -545,12 +545,15 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                             child: const ColoredBox(color: Colors.transparent),
                           ),
                         ),
-                      if (isActiveStreamPage)
+                      if (isActiveStreamPage || widget.isSchedule)
                         Positioned.fill(
-                          child: Offstage(
-                            offstage: !_overlaysVisible,
-                            child: Stack(
-                              fit: StackFit.expand,
+                          child: IgnorePointer(
+                            ignoring: !_overlaysVisible,
+                            child: AnimatedOpacity(
+                              opacity: _overlaysVisible ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 200),
+                              child: Stack(
+                                fit: StackFit.expand,
                               children: [
                                 // Gradients positioned right after publisher grid to only overlay video content
                                 const _TopDarkGradient(),
@@ -888,6 +891,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                             ),
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),

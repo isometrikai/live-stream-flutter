@@ -10,8 +10,7 @@ class IsmLiveScheduleSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = context.liveTheme?.primaryColor ??
-        (isDarkMode ? Colors.white : Colors.black);
+    final textIconColor = isDarkMode ? Colors.white : Colors.black;
 
     return GetBuilder<IsmLiveStreamController>(
       builder: (controller) => Container(
@@ -43,13 +42,13 @@ class IsmLiveScheduleSettingsSheet extends StatelessWidget {
                 children: [
                   IsmLiveImage.svg(
                     IsmLiveScheduleSettings.values[index].icon,
-                    color: iconColor,
+                    color: textIconColor,
                   ),
                   IsmLiveDimens.boxWidth10,
                   Text(
                     IsmLiveScheduleSettings.values[index].label,
                     style: context.dynamicTextTheme.bodyMedium?.copyWith(
-                      color: iconColor,
+                      color: textIconColor,
                     ),
                   ),
                 ],
