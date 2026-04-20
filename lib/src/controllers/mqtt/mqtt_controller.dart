@@ -478,6 +478,36 @@ class IsmLiveMqttController extends GetxController {
     // been enqueued (pending) and then lost if the client was replaced. This
     // ensures the current stream always receives events.
     _ensureStreamTopicsSubscribed();
+
+    // Recover any missed viewer-count deltas that happened while MQTT was down.
+    unawaited(_refreshViewerCountAfterReconnect());
+  }
+
+  Future<void> _refreshViewerCountAfterReconnect() async {
+    final streamId = _streamController.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      return;
+    }
+
+    try {
+      final latestCount = await _streamController.viewModel.getStreamViewerCount(
+        streamId: streamId,
+      );
+      if (latestCount == null) {
+        return;
+      }
+
+      // Avoid stale update if user switched stream while request was in-flight.
+      if (_streamController.streamId != streamId) {
+        return;
+      }
+      _streamController.liveStreamViewersCount.value = latestCount;
+    } catch (e, st) {
+      IsmLiveLog.error(
+        'Failed to refresh viewer count after MQTT reconnect: $e',
+        st,
+      );
+    }
   }
 
   void _ensureStreamTopicsSubscribed() {
