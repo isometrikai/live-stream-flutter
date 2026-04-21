@@ -43,7 +43,7 @@ class CoinsPlansWalletRepository {
   }) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.applePurchaseToken,
-        baseUrl: IsmLiveApis.adminBaseUrl,
+        baseUrl: IsmLiveApis.baseUrlAsPerMode,
         type: IsmLiveRequestType.get,
         headers: IsmLiveUtility.tokenHeader(),
         showLoader: showLoader,
