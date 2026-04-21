@@ -128,6 +128,7 @@ class IsmLiveStreamViewModel {
   Future<bool> leaveStream(String streamId) async {
     try {
       var res = await _repository.leaveStream(streamId);
+      unawaited(_dbWrapper.deleteSecuredValue(streamId));
 
       return !res.hasError;
     } catch (e, st) {

@@ -1504,9 +1504,7 @@ mixin StreamOngoingMixin {
 
     if (isEnded && endStream) {
       // unawaited(_controller._mqttController?.unsubscribeStream(streamId));
-      if (isHost) {
-        unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
-      }
+      unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
 
       // Set stream as inactive for background lifecycle
       _controller.setStreamActive(false, isHost);
