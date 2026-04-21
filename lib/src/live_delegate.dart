@@ -436,6 +436,32 @@ typedef ProductStreamSideOptionsBottomMarginBuilder = double? Function(
   BuildContext context,
 );
 
+/// Horizontal alignment for the right-side stream control icons.
+enum IsmLiveSideIconsHorizontalAlignment {
+  start,
+  center,
+  end,
+}
+
+/// Configuration for right-side stream control icons.
+///
+/// Use this object in `IsmLiveApp.configureInterface(sideIconsConfigure: ...)`
+/// to customize width and horizontal alignment of control icons.
+class IsmLiveSideIconsConfigure {
+  const IsmLiveSideIconsConfigure({
+    this.width,
+    this.horizontalAlignment = IsmLiveSideIconsHorizontalAlignment.end,
+  });
+
+  /// Width of side icons container in logical pixels.
+  ///
+  /// If null, SDK fallback width is used.
+  final double? width;
+
+  /// Horizontal alignment of icons inside the side icons container.
+  final IsmLiveSideIconsHorizontalAlignment horizontalAlignment;
+}
+
 /// Builder for custom "Buy now" button in product streams.
 ///
 /// This builder is called when rendering the "Buy now" button for viewers in product streams.
@@ -1392,6 +1418,10 @@ class IsmLiveDelegate {
   /// See [ProductStreamSideOptionsBottomMarginBuilder].
   static ProductStreamSideOptionsBottomMarginBuilder?
       productStreamSideOptionsBottomMargin;
+
+  /// Configuration for right-side stream control icons.
+  static IsmLiveSideIconsConfigure sideIconsConfigure =
+      const IsmLiveSideIconsConfigure();
 
   static IsmLiveCartBuilder? cartBuilder;
 
