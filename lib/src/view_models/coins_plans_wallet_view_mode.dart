@@ -38,6 +38,41 @@ class CoinsPlansWalletViewMode {
     return null;
   }
 
+  /// iOS-only helper: get `appAccountToken` required by your backend.
+  ///
+  /// If the API fails, this shows an error popup and returns null.
+  Future<String?> getAccountPurchaseToken({
+    bool showLoader = true,
+  }) async {
+    try {
+      final res = await _coinsPlansWalletRepository.getAccountPurchaseToken(
+        showLoader: showLoader,
+      );
+      if (res.hasError) {
+        await IsmLiveUtility.showInfoDialog(res);
+        return null;
+      }
+
+      final decoded = jsonDecode(res.data) as Map<String, dynamic>;
+      final data = decoded['data'];
+      if (data is Map<String, dynamic>) {
+        final token = data['appAccountToken']?.toString().trim();
+        if (token != null && token.isNotEmpty) return token;
+      }
+
+      IsmLiveUtility.showAlertDialog(
+        message: 'Unable to fetch Account token. Please try again.',
+      );
+      return null;
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      IsmLiveUtility.showAlertDialog(
+        message: 'Unable to fetch Account token. Please try again.',
+      );
+      return null;
+    }
+  }
+
   Future<IsmLiveCoinBalanceModel?> totalWalletCoins(String currency) async {
     try {
       var res = await _coinsPlansWalletRepository.totalWalletCoins(currency);

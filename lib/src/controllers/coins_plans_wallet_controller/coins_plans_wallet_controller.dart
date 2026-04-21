@@ -148,10 +148,18 @@ class CoinsPlansWalletController extends GetxController
     required ProductDetails storePlan,
     required CoinPlan apiPlan,
   }) async {
-    final userId = Get.find<IsmLiveStreamController>().user?.userId ?? '';
+    // final userId = Get.find<IsmLiveStreamController>().user?.userId ?? '';
+    final accountPurchasetoken =
+        await _coinsPlansWalletViewMode.getAccountPurchaseToken();
+
+    // If token fetch failed (iOS), show error popup and stop the flow.
+    if (accountPurchasetoken == null || accountPurchasetoken.isEmpty) {
+      return;
+    }
+
     final purchaseParam = PurchaseParam(
       productDetails: storePlan,
-      applicationUserName: userId,
+      applicationUserName: accountPurchasetoken,
     );
     InAppManager.i.buyConsumable(
       purchaseParam: purchaseParam,
