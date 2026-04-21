@@ -18,8 +18,9 @@ class CoinsPlansWalletRepository {
       );
 
   ///  for request to purchase the coins plans ...
-  Future<IsmLiveResponseModel> purchaseCoinsPlans(
-          {required Map<String, dynamic> data, required}) async =>
+  Future<IsmLiveResponseModel> purchaseCoinsPlans({
+    required Map<String, dynamic> data,
+  }) async =>
       await _apiWrapper.makeRequest(
         IsmLiveApis.purchaseCoinsPlans,
         baseUrl: IsmLiveApis.baseUrlAsPerMode,
@@ -27,6 +28,26 @@ class CoinsPlansWalletRepository {
         headers: IsmLiveUtility.tokenHeader(),
         payload: data,
         showLoader: true,
+      );
+
+  /// Fetches an iOS `appAccountToken` for StoreKit purchases.
+  ///
+  /// Backend returns:
+  /// {
+  ///   "status": "...",
+  ///   "message": "Success",
+  ///   "data": { "appAccountToken": "<uuid>" }
+  /// }
+  Future<IsmLiveResponseModel> getAccountPurchaseToken({
+    bool showLoader = true,
+  }) async =>
+      await _apiWrapper.makeRequest(
+        IsmLiveApis.applePurchaseToken,
+        baseUrl: IsmLiveApis.adminBaseUrl,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showLoader: showLoader,
+        showDialog: false,
       );
 
   Future<IsmLiveResponseModel> totalWalletCoins(String currency) {

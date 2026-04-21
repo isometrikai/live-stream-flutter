@@ -5,6 +5,7 @@ class IsmLiveApis {
   const IsmLiveApis._();
 
   static const String baseUrl = 'https://apis.isometrik.ai';
+  static const String adminBaseUrl = 'https://admin-apis.isometrik.io';
   static const String _productionBaseUrl = 'https://apinew.isometrik.ai';
   static const String _devBaseUrl = 'https://service-apis.isometrik.io';
 
@@ -57,6 +58,7 @@ class IsmLiveApis {
   static const String sendGiftToStreamer = '/live/v1/giftTransfer';
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
   static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
+  static const String applePurchaseToken = '/v1/appWallet/applePurchaseToken';
 
   // Streams
   static const String _streaming = '/streaming/v2';
