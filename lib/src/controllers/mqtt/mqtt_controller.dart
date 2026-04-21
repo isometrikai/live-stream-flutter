@@ -490,7 +490,8 @@ class IsmLiveMqttController extends GetxController {
     }
 
     try {
-      final latestCount = await _streamController.viewModel.getStreamViewerCount(
+      final latestCount =
+          await _streamController.viewModel.getStreamViewerCount(
         streamId: streamId,
       );
       if (latestCount == null) {
@@ -891,8 +892,8 @@ class IsmLiveMqttController extends GetxController {
             _streamController.streamMembersList
                 .removeWhere((e) => e.userId == memberId);
             if (userId != initiatorId && userId == memberId) {
-              final rejoinAsViewer = _streamController.isCopublisher &&
-                  !_streamController.isHost;
+              final rejoinAsViewer =
+                  _streamController.isCopublisher && !_streamController.isHost;
               if (rejoinAsViewer) {
                 final ok = await _streamController
                     .rejoinAsViewerAfterHostRemovedCopublisher(
@@ -903,8 +904,10 @@ class IsmLiveMqttController extends GetxController {
                   IsmLiveRoute.pop();
                 }
               } else {
-                await _streamController.disconnectRoom();
-                IsmLiveRoute.pop();
+                // Host removed viewer before they started publishing.
+                // Keep them in the stream as a viewer and clear co-publish state.
+                _streamController.memberStatus = IsmLiveMemberStatus.notMember;
+                _updateStream([IsmLiveControlsWidget.updateId]);
               }
             }
             await Future.delayed(const Duration(milliseconds: 300));
