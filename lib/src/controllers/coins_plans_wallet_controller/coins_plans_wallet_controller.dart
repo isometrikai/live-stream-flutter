@@ -163,11 +163,18 @@ class CoinsPlansWalletController extends GetxController
     );
     InAppManager.i.buyConsumable(
       purchaseParam: purchaseParam,
-      onPurchase: (purchaseDetails) => purchasePlan(
-        purchaseDetails: purchaseDetails,
-        apiPlan: apiPlan,
-        storePlan: storePlan,
-      ),
+      onPurchase: (purchaseDetails) async {
+        // No backend `tokenPurchase` call from here (per requirement).
+        // Still complete the platform purchase to avoid leaving it pending.
+        try {
+          await InAppPurchase.instance.completePurchase(purchaseDetails);
+        } catch (_) {
+          debugPrint('Complete Purchase Error :- $_');
+        }
+
+        unawaited(totalWalletCoins('coin'));
+        unawaited(totalWalletCoins('usd'));
+      },
     );
   }
 
