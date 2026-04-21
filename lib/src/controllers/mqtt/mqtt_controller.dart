@@ -1031,7 +1031,7 @@ class IsmLiveMqttController extends GetxController {
                   initiatorName: initiatorName,
                   streamId: streamId,
                 ),
-                isDismissible: true,
+                isDismissible: false,
                 isScrollController: true,
               );
             }
