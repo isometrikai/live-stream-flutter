@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -240,6 +241,54 @@ class MqttHelper {
     }
   }
 
+  /// Runs [body] inside a guarded zone so that *asynchronous, unhandled*
+  /// errors thrown by `mqtt_client`'s internals (e.g. the prior socket's
+  /// `onError` completing after the library already caught the synchronous
+  /// variant) are captured here instead of bubbling up as
+  /// `Unhandled Exception: SocketException` on the Flutter root zone.
+  ///
+  /// This does NOT alter control flow: `mqtt_client`'s own auto-reconnect
+  /// loop runs independently and keeps retrying. We only intercept the
+  /// orphaned Future errors that would otherwise just pollute logs / be
+  /// flagged by crash reporters as uncaught.
+  ///
+  /// Typical triggers: Android tearing down the idle TCP socket while the
+  /// app is paused (errno 103 "Software caused connection abort"), DNS
+  /// resets, brief Wi-Fi/cellular handovers.
+  Future<T?> _runZoneGuarded<T>(
+    String label,
+    FutureOr<T> Function() body,
+  ) async {
+    final completer = Completer<T?>();
+    runZonedGuarded<void>(
+      () async {
+        try {
+          final result = await body();
+          if (!completer.isCompleted) completer.complete(result);
+        } catch (e, st) {
+          // Synchronous / awaited errors still propagate normally so callers
+          // that already have try/catch see them.
+          if (!completer.isCompleted) completer.completeError(e, st);
+        }
+      },
+      (error, stack) {
+        // Orphan async errors from mqtt_client's internals. Swallow the
+        // known-transient network ones; surface the rest so they are not
+        // silently lost.
+        if (error is SocketException ||
+            error is HandshakeException ||
+            error is TimeoutException) {
+          _debugLog(
+            '$label: swallowed transient async network error: $error',
+          );
+        } else {
+          _debugLog('$label: swallowed async error: $error\n$stack');
+        }
+      },
+    );
+    return completer.future;
+  }
+
   /// Notifies listeners the session is down (connection stream + [MqttCallbacks.onDisconnected]).
   ///
   /// With [MqttClient.autoReconnect] enabled, [mqtt_client] does not invoke
@@ -263,13 +312,20 @@ class MqttHelper {
       if (_client?.connectionStatus?.state == MqttConnectionState.connected) {
         _client?.disconnect();
       }
-      var res = await _client?.connect(
-        _config.projectConfig.username.isNotEmpty
-            ? _config.projectConfig.username
-            : null,
-        _config.projectConfig.password.isNotEmpty
-            ? _config.projectConfig.password
-            : null,
+      // Guarded zone isolates orphan async errors (e.g. OS aborting a prior
+      // socket during backgrounding) from the Flutter root zone. The awaited
+      // result still reaches us normally, so the existing try/catch below
+      // keeps working for real connect failures.
+      var res = await _runZoneGuarded<MqttClientConnectionStatus?>(
+        '_connectClient',
+        () => _client?.connect(
+          _config.projectConfig.username.isNotEmpty
+              ? _config.projectConfig.username
+              : null,
+          _config.projectConfig.password.isNotEmpty
+              ? _config.projectConfig.password
+              : null,
+        ),
       );
       if (res?.state == MqttConnectionState.connected) {
         _debugLog(
@@ -374,7 +430,17 @@ class MqttHelper {
         state != MqttConnectionState.faulted) {
       return;
     }
-    client.doAutoReconnect(force: false);
+    // Fire-and-forget; run inside a guarded zone so that any async
+    // `SocketException` emitted by the library's prior-connection cleanup
+    // (common when the OS aborted the socket during background) is captured
+    // instead of surfacing as a root-zone unhandled exception. The library's
+    // own auto-reconnect loop is unaffected.
+    unawaited(
+      _runZoneGuarded<void>(
+        'requestAutoReconnectIfDisconnected',
+        () async => client.doAutoReconnect(force: false),
+      ),
+    );
   }
 
   /// Disconnects from the broker and stops auto-reconnect until the next
