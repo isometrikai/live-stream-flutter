@@ -623,6 +623,7 @@ class IsmLiveApp extends StatefulWidget {
     ControlWidgetBuilder? controlWidgetBuilder,
     ProductStreamSideOptionsBottomMarginBuilder?
         productStreamSideOptionsBottomMargin,
+    IsmLiveSideIconsConfigure? sideIconsConfigure,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
   }) {
     // assert(_initialized,
@@ -689,6 +690,8 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.controlWidgetBuilder = controlWidgetBuilder;
     IsmLiveDelegate.productStreamSideOptionsBottomMargin =
         productStreamSideOptionsBottomMargin;
+    IsmLiveDelegate.sideIconsConfigure =
+        sideIconsConfigure ?? const IsmLiveSideIconsConfigure();
     IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;

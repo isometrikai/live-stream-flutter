@@ -114,6 +114,39 @@ class IsmLiveControlsWidget extends StatelessWidget {
     }
   }
 
+  static CrossAxisAlignment _sideIconsCrossAxisAlignment() {
+    switch (IsmLiveDelegate.sideIconsConfigure.horizontalAlignment) {
+      case IsmLiveSideIconsHorizontalAlignment.start:
+        return CrossAxisAlignment.start;
+      case IsmLiveSideIconsHorizontalAlignment.center:
+        return CrossAxisAlignment.center;
+      case IsmLiveSideIconsHorizontalAlignment.end:
+        return CrossAxisAlignment.end;
+    }
+  }
+
+  static AlignmentGeometry _sideIconsItemAlignment() {
+    switch (IsmLiveDelegate.sideIconsConfigure.horizontalAlignment) {
+      case IsmLiveSideIconsHorizontalAlignment.start:
+        return AlignmentDirectional.centerStart;
+      case IsmLiveSideIconsHorizontalAlignment.center:
+        return Alignment.center;
+      case IsmLiveSideIconsHorizontalAlignment.end:
+        return AlignmentDirectional.centerEnd;
+    }
+  }
+
+  static Alignment _sideIconsContainerAlignment() {
+    switch (IsmLiveDelegate.sideIconsConfigure.horizontalAlignment) {
+      case IsmLiveSideIconsHorizontalAlignment.start:
+        return Alignment.bottomLeft;
+      case IsmLiveSideIconsHorizontalAlignment.center:
+        return Alignment.bottomCenter;
+      case IsmLiveSideIconsHorizontalAlignment.end:
+        return Alignment.bottomRight;
+    }
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -132,6 +165,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
               ?.removeListener(streamController.update);
         },
         builder: (controller) {
+          final sideIconsWidth =
+              IsmLiveDelegate.sideIconsConfigure.width ?? IsmLiveDimens.fifty;
+          final sideIconsCrossAxisAlignment = _sideIconsCrossAxisAlignment();
+          final sideIconsItemAlignment = _sideIconsItemAlignment();
+          final sideIconsContainerAlignment = _sideIconsContainerAlignment();
           var options = <IsmLiveStreamOption>[];
           final hasMultiplePublishers = controller.participantTracks.length > 1;
 
@@ -182,12 +220,12 @@ class IsmLiveControlsWidget extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: sideIconsCrossAxisAlignment,
               children: [
                 Container(
                   padding: EdgeInsets.only(bottom: IsmLiveDimens.eight),
-                  alignment: Alignment.bottomRight,
-                  width: IsmLiveDimens.fifty,
+                  alignment: sideIconsContainerAlignment,
+                  width: sideIconsWidth,
                   margin: IsmLiveDelegate.productStream == true &&
                           !isKeyboardOpen &&
                           !isSchedule
@@ -215,38 +253,44 @@ class IsmLiveControlsWidget extends StatelessWidget {
 
                       // Use custom widget if provided, otherwise use default
                       if (customWidget != null) {
-                        return customWidget;
+                        return Align(
+                          alignment: sideIconsItemAlignment,
+                          child: customWidget,
+                        );
                       }
 
                       // Default widget implementation
-                      return CustomIconButton(
-                        dimension: option == IsmLiveStreamOption.heart
-                            ? IsmLiveDimens.fortyFive
-                            : null,
-                        icon: IsmLiveImage.svg(
-                          height: option != IsmLiveStreamOption.heart
-                              ? IsmLiveDimens.forty
+                      return Align(
+                        alignment: sideIconsItemAlignment,
+                        child: CustomIconButton(
+                          dimension: option == IsmLiveStreamOption.heart
+                              ? IsmLiveDimens.fortyFive
                               : null,
-                          width: option != IsmLiveStreamOption.heart
-                              ? IsmLiveDimens.forty
-                              : null,
-                          controller.controlIcon(option),
-                        ),
-                        onTap: () async {
-                          await _handleOptionTap(controller, option, context);
-                        },
-                        color: option == IsmLiveStreamOption.heart
-                            ? IsmLiveColors.red
-                            : option == IsmLiveStreamOption.multiLive
-                                ? !isHost && controller.isCopublisher != true
-                                    ? controller.memberStatus.canEnableVideo
-                                        ? context.theme.primaryColor
-                                        : controller.memberStatus.didRequested
-                                            ? Colors.blueGrey
-                                            : null
-                                    : null
+                          icon: IsmLiveImage.svg(
+                            height: option != IsmLiveStreamOption.heart
+                                ? IsmLiveDimens.forty
                                 : null,
-                        gradient: IsmLiveDelegate.streamOptionsBgGradient,
+                            width: option != IsmLiveStreamOption.heart
+                                ? IsmLiveDimens.forty
+                                : null,
+                            controller.controlIcon(option),
+                          ),
+                          onTap: () async {
+                            await _handleOptionTap(controller, option, context);
+                          },
+                          color: option == IsmLiveStreamOption.heart
+                              ? IsmLiveColors.red
+                              : option == IsmLiveStreamOption.multiLive
+                                  ? !isHost && controller.isCopublisher != true
+                                      ? controller.memberStatus.canEnableVideo
+                                          ? context.theme.primaryColor
+                                          : controller.memberStatus.didRequested
+                                              ? Colors.blueGrey
+                                              : null
+                                      : null
+                                  : null,
+                          gradient: IsmLiveDelegate.streamOptionsBgGradient,
+                        ),
                       );
                     },
                   ),
