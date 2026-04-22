@@ -241,6 +241,16 @@ class MqttHelper {
     }
   }
 
+  void _handleUpdatesStreamError(Object error, StackTrace stack) {
+    if (error is SocketException ||
+        error is HandshakeException ||
+        error is TimeoutException) {
+      _debugLog('updates stream transient network error: $error');
+      return;
+    }
+    _debugLog('updates stream error: $error\n$stack');
+  }
+
   /// Runs [body] inside a guarded zone so that *asynchronous, unhandled*
   /// errors thrown by `mqtt_client`'s internals (e.g. the prior socket's
   /// `onError` completing after the library already caught the synchronous
@@ -524,6 +534,7 @@ class MqttHelper {
           ),
         );
       },
+      onError: _handleUpdatesStreamError,
     );
   }
 
@@ -604,6 +615,7 @@ class MqttHelper {
             ),
           );
         },
+        onError: _handleUpdatesStreamError,
       );
     }
 
