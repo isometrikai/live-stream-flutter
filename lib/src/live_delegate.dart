@@ -451,6 +451,14 @@ class IsmLiveSideIconsConfigure {
   const IsmLiveSideIconsConfigure({
     this.width,
     this.horizontalAlignment = IsmLiveSideIconsHorizontalAlignment.end,
+    this.viewersOptions = const [],
+    this.hostOptions = const [],
+    this.rtmpOptions = const [],
+    this.copublisherOptions = const [],
+    this.pkOptions = const [],
+    this.controlOptionCallback,
+    this.controlWidgetBuilder,
+    this.productStreamSideOptionsBottomMargin,
   });
 
   /// Width of side icons container in logical pixels.
@@ -460,6 +468,31 @@ class IsmLiveSideIconsConfigure {
 
   /// Horizontal alignment of icons inside the side icons container.
   final IsmLiveSideIconsHorizontalAlignment horizontalAlignment;
+
+  /// Side icons shown to viewers.
+  final List<IsmLiveStreamOption> viewersOptions;
+
+  /// Side icons shown to host users.
+  final List<IsmLiveStreamOption> hostOptions;
+
+  /// Side icons shown in RTMP streams.
+  final List<IsmLiveStreamOption> rtmpOptions;
+
+  /// Side icons shown to copublishers.
+  final List<IsmLiveStreamOption> copublisherOptions;
+
+  /// Side icons shown in PK streams.
+  final List<IsmLiveStreamOption> pkOptions;
+
+  /// Unified side-icon tap callback.
+  final ControlOptionCallback? controlOptionCallback;
+
+  /// Custom side-icon widget builder.
+  final ControlWidgetBuilder? controlWidgetBuilder;
+
+  /// Custom bottom margin for side options in product stream mode.
+  final ProductStreamSideOptionsBottomMarginBuilder?
+      productStreamSideOptionsBottomMargin;
 }
 
 /// Builder for custom "Buy now" button in product streams.
@@ -1627,25 +1660,152 @@ class IsmLiveEcomConfigure {
 /// extensibility of GoLive screen configuration.
 class IsmLiveGoLiveScreenConfigure {
   IsmLiveGoLiveScreenConfigure({
+    bool? isHdStreamFeatureEnabled,
+    bool? isScheduleStreamFeatureEnabled,
+    bool? isProductStreamFeatureEnabled,
+    bool? isRtmpStreamFeatureEnabled,
+    bool? isRestreamStreamFeatureEnabled,
+    bool? isPaidStreamFeatureEnabled,
+    bool? isMultiLiveStreamFeatureEnabled,
+    bool? isRecordedStreamFeatureEnabled,
+    GoLiveClickCallback? onGoLiveButtonTap,
+    GoLiveDisposeCallback? onGoLiveViewDispose,
+    @Deprecated(
+      'Use isHdStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? hdStream,
+    @Deprecated(
+      'Use isScheduleStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? scheduleStream,
+    @Deprecated(
+      'Use isProductStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? productStream,
+    @Deprecated(
+      'Use isRtmpStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? rtmpStream,
+    @Deprecated(
+      'Use isRestreamStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? restreamStream,
+    @Deprecated(
+      'Use isPaidStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? paidStream,
+    @Deprecated(
+      'Use isMultiLiveStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? multiLiveStream,
+    @Deprecated(
+      'Use isRecordedStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? recordeStream,
+    @Deprecated(
+      'Use onGoLiveButtonTap instead. '
+      'This parameter will be removed in a future release.',
+    )
+    GoLiveClickCallback? onGoLiveClick,
+    @Deprecated(
+      'Use onGoLiveViewDispose instead. '
+      'This parameter will be removed in a future release.',
+    )
+    GoLiveDisposeCallback? onGoLiveDispose,
     this.goLiveHeaderBuilder,
     this.goLiveButtonBuilder,
     this.onScheduleLiveToggle,
-    this.defaultHdBroadcast,
-    this.defaultRecordBroadcast,
-    this.defaultRestreamBroadcast,
+    bool? defaultHdBroadcastToggleValue,
+    bool? defaultRecordBroadcastToggleValue,
+    bool? defaultRestreamBroadcastToggleValue,
+    @Deprecated(
+      'Use defaultHdBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? defaultHdBroadcast,
+    @Deprecated(
+      'Use defaultRecordBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? defaultRecordBroadcast,
+    @Deprecated(
+      'Use defaultRestreamBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? defaultRestreamBroadcast,
     this.radioTileTextStyle,
     this.addCoverTextStyle,
     this.addIcon,
     this.tabSelectedTextStyle,
     this.tabUnselectedTextStyle,
     this.titleTextStyle,
-  });
+  })  : isHdStreamFeatureEnabled = isHdStreamFeatureEnabled ?? hdStream,
+        isScheduleStreamFeatureEnabled =
+            isScheduleStreamFeatureEnabled ?? scheduleStream,
+        isProductStreamFeatureEnabled =
+            isProductStreamFeatureEnabled ?? productStream,
+        isRtmpStreamFeatureEnabled =
+            isRtmpStreamFeatureEnabled ?? rtmpStream,
+        isRestreamStreamFeatureEnabled =
+            isRestreamStreamFeatureEnabled ?? restreamStream,
+        isPaidStreamFeatureEnabled =
+            isPaidStreamFeatureEnabled ?? paidStream,
+        isMultiLiveStreamFeatureEnabled =
+            isMultiLiveStreamFeatureEnabled ?? multiLiveStream,
+        isRecordedStreamFeatureEnabled =
+            isRecordedStreamFeatureEnabled ?? recordeStream,
+        onGoLiveButtonTap = onGoLiveButtonTap ?? onGoLiveClick,
+        onGoLiveViewDispose = onGoLiveViewDispose ?? onGoLiveDispose,
+        defaultHdBroadcastToggleValue =
+            defaultHdBroadcastToggleValue ?? defaultHdBroadcast,
+        defaultRecordBroadcastToggleValue =
+            defaultRecordBroadcastToggleValue ?? defaultRecordBroadcast,
+        defaultRestreamBroadcastToggleValue =
+            defaultRestreamBroadcastToggleValue ?? defaultRestreamBroadcast;
 
   /// Custom header builder for the GoLive screen.
   ///
   /// If provided, this will replace the default header in the GoLive view.
   /// The builder receives the context and stream controller for customization.
   final GoLiveHeaderBuilder? goLiveHeaderBuilder;
+
+  /// Feature flag to show/hide HD stream support in UI.
+  final bool? isHdStreamFeatureEnabled;
+
+  /// Feature flag to show/hide schedule stream support in UI.
+  final bool? isScheduleStreamFeatureEnabled;
+
+  /// Feature flag to show/hide product stream support in UI.
+  final bool? isProductStreamFeatureEnabled;
+
+  /// Feature flag to show/hide RTMP stream support in UI.
+  final bool? isRtmpStreamFeatureEnabled;
+
+  /// Feature flag to show/hide restream support in UI.
+  final bool? isRestreamStreamFeatureEnabled;
+
+  /// Feature flag to show/hide paid stream support in UI.
+  final bool? isPaidStreamFeatureEnabled;
+
+  /// Feature flag to show/hide multi-live support in UI.
+  final bool? isMultiLiveStreamFeatureEnabled;
+
+  /// Feature flag to show/hide recorded stream support in UI.
+  final bool? isRecordedStreamFeatureEnabled;
+
+  /// Callback for GoLive button click.
+  final GoLiveClickCallback? onGoLiveButtonTap;
+
+  /// Callback for GoLive screen dispose.
+  final GoLiveDisposeCallback? onGoLiveViewDispose;
 
   /// Custom button builder for the GoLive screen.
   ///
@@ -1660,17 +1820,95 @@ class IsmLiveGoLiveScreenConfigure {
   /// Optional default value for `HD Broadcast` toggle on fresh GoLive flow.
   ///
   /// This is ignored while editing an existing/scheduled stream.
-  final bool? defaultHdBroadcast;
+  final bool? defaultHdBroadcastToggleValue;
 
   /// Optional default value for `Record Broadcast` toggle on fresh GoLive flow.
   ///
   /// This is ignored while editing an existing/scheduled stream.
-  final bool? defaultRecordBroadcast;
+  final bool? defaultRecordBroadcastToggleValue;
 
   /// Optional default value for `Restream Broadcast` toggle on fresh GoLive flow.
   ///
   /// This is ignored while editing an existing/scheduled stream.
-  final bool? defaultRestreamBroadcast;
+  final bool? defaultRestreamBroadcastToggleValue;
+
+  @Deprecated(
+    'Use isHdStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get hdStream => isHdStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isScheduleStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get scheduleStream => isScheduleStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isProductStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get productStream => isProductStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isRtmpStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get rtmpStream => isRtmpStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isRestreamStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get restreamStream => isRestreamStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isPaidStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get paidStream => isPaidStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isMultiLiveStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get multiLiveStream => isMultiLiveStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use isRecordedStreamFeatureEnabled instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get recordeStream => isRecordedStreamFeatureEnabled;
+
+  @Deprecated(
+    'Use onGoLiveButtonTap instead. '
+    'This getter will be removed in a future release.',
+  )
+  GoLiveClickCallback? get onGoLiveClick => onGoLiveButtonTap;
+
+  @Deprecated(
+    'Use onGoLiveViewDispose instead. '
+    'This getter will be removed in a future release.',
+  )
+  GoLiveDisposeCallback? get onGoLiveDispose => onGoLiveViewDispose;
+
+  @Deprecated(
+    'Use defaultHdBroadcastToggleValue instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get defaultHdBroadcast => defaultHdBroadcastToggleValue;
+
+  @Deprecated(
+    'Use defaultRecordBroadcastToggleValue instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get defaultRecordBroadcast => defaultRecordBroadcastToggleValue;
+
+  @Deprecated(
+    'Use defaultRestreamBroadcastToggleValue instead. '
+    'This getter will be removed in a future release.',
+  )
+  bool? get defaultRestreamBroadcast => defaultRestreamBroadcastToggleValue;
 
   /// Custom text style for radio tile components (switches, toggles).
   ///
@@ -1715,11 +1953,86 @@ class IsmLiveGoLiveScreenConfigure {
   final TextStyle? titleTextStyle;
 
   IsmLiveGoLiveScreenConfigure copyWith({
+    bool? isHdStreamFeatureEnabled,
+    bool? isScheduleStreamFeatureEnabled,
+    bool? isProductStreamFeatureEnabled,
+    bool? isRtmpStreamFeatureEnabled,
+    bool? isRestreamStreamFeatureEnabled,
+    bool? isPaidStreamFeatureEnabled,
+    bool? isMultiLiveStreamFeatureEnabled,
+    bool? isRecordedStreamFeatureEnabled,
+    GoLiveClickCallback? onGoLiveButtonTap,
+    GoLiveDisposeCallback? onGoLiveViewDispose,
+    @Deprecated(
+      'Use isHdStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? hdStream,
+    @Deprecated(
+      'Use isScheduleStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? scheduleStream,
+    @Deprecated(
+      'Use isProductStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? productStream,
+    @Deprecated(
+      'Use isRtmpStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? rtmpStream,
+    @Deprecated(
+      'Use isRestreamStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? restreamStream,
+    @Deprecated(
+      'Use isPaidStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? paidStream,
+    @Deprecated(
+      'Use isMultiLiveStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? multiLiveStream,
+    @Deprecated(
+      'Use isRecordedStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
+    bool? recordeStream,
+    @Deprecated(
+      'Use onGoLiveButtonTap instead. '
+      'This parameter will be removed in a future release.',
+    )
+    GoLiveClickCallback? onGoLiveClick,
+    @Deprecated(
+      'Use onGoLiveViewDispose instead. '
+      'This parameter will be removed in a future release.',
+    )
+    GoLiveDisposeCallback? onGoLiveDispose,
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
     ScheduleLiveToggleCallback? onScheduleLiveToggle,
+    bool? defaultHdBroadcastToggleValue,
+    bool? defaultRecordBroadcastToggleValue,
+    bool? defaultRestreamBroadcastToggleValue,
+    @Deprecated(
+      'Use defaultHdBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? defaultHdBroadcast,
+    @Deprecated(
+      'Use defaultRecordBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? defaultRecordBroadcast,
+    @Deprecated(
+      'Use defaultRestreamBroadcastToggleValue instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? defaultRestreamBroadcast,
     TextStyle Function(BuildContext context, bool isDark)? radioTileTextStyle,
     TextStyle? addCoverTextStyle,
@@ -1729,14 +2042,47 @@ class IsmLiveGoLiveScreenConfigure {
     TextStyle? titleTextStyle,
   }) =>
       IsmLiveGoLiveScreenConfigure(
+        isHdStreamFeatureEnabled: isHdStreamFeatureEnabled ??
+            hdStream ??
+            this.isHdStreamFeatureEnabled,
+        isScheduleStreamFeatureEnabled: isScheduleStreamFeatureEnabled ??
+            scheduleStream ??
+            this.isScheduleStreamFeatureEnabled,
+        isProductStreamFeatureEnabled: isProductStreamFeatureEnabled ??
+            productStream ??
+            this.isProductStreamFeatureEnabled,
+        isRtmpStreamFeatureEnabled: isRtmpStreamFeatureEnabled ??
+            rtmpStream ??
+            this.isRtmpStreamFeatureEnabled,
+        isRestreamStreamFeatureEnabled: isRestreamStreamFeatureEnabled ??
+            restreamStream ??
+            this.isRestreamStreamFeatureEnabled,
+        isPaidStreamFeatureEnabled: isPaidStreamFeatureEnabled ??
+            paidStream ??
+            this.isPaidStreamFeatureEnabled,
+        isMultiLiveStreamFeatureEnabled: isMultiLiveStreamFeatureEnabled ??
+            multiLiveStream ??
+            this.isMultiLiveStreamFeatureEnabled,
+        isRecordedStreamFeatureEnabled: isRecordedStreamFeatureEnabled ??
+            recordeStream ??
+            this.isRecordedStreamFeatureEnabled,
+        onGoLiveButtonTap:
+            onGoLiveButtonTap ?? onGoLiveClick ?? this.onGoLiveButtonTap,
+        onGoLiveViewDispose:
+            onGoLiveViewDispose ?? onGoLiveDispose ?? this.onGoLiveViewDispose,
         goLiveHeaderBuilder: goLiveHeaderBuilder ?? this.goLiveHeaderBuilder,
         goLiveButtonBuilder: goLiveButtonBuilder ?? this.goLiveButtonBuilder,
         onScheduleLiveToggle: onScheduleLiveToggle ?? this.onScheduleLiveToggle,
-        defaultHdBroadcast: defaultHdBroadcast ?? this.defaultHdBroadcast,
-        defaultRecordBroadcast:
-            defaultRecordBroadcast ?? this.defaultRecordBroadcast,
-        defaultRestreamBroadcast:
-            defaultRestreamBroadcast ?? this.defaultRestreamBroadcast,
+        defaultHdBroadcastToggleValue: defaultHdBroadcastToggleValue ??
+            defaultHdBroadcast ??
+            this.defaultHdBroadcastToggleValue,
+        defaultRecordBroadcastToggleValue: defaultRecordBroadcastToggleValue ??
+            defaultRecordBroadcast ??
+            this.defaultRecordBroadcastToggleValue,
+        defaultRestreamBroadcastToggleValue:
+            defaultRestreamBroadcastToggleValue ??
+                defaultRestreamBroadcast ??
+                this.defaultRestreamBroadcastToggleValue,
         radioTileTextStyle: radioTileTextStyle ?? this.radioTileTextStyle,
         addCoverTextStyle: addCoverTextStyle ?? this.addCoverTextStyle,
         addIcon: addIcon ?? this.addIcon,
