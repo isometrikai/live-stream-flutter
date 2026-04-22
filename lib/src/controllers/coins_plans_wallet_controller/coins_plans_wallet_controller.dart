@@ -172,8 +172,8 @@ class CoinsPlansWalletController extends GetxController
           debugPrint('Complete Purchase Error :- $_');
         }
 
-        unawaited(totalWalletCoins('coin'));
-        unawaited(totalWalletCoins('usd'));
+        await totalWalletCoins('coin');
+        await totalWalletCoins('usd');
       },
     );
   }

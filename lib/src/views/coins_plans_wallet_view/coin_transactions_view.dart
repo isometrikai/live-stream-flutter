@@ -57,10 +57,12 @@ class IsmLiveCoinTransactions extends StatelessWidget {
               onTap: (index) {
                 controller.coinTransactionType =
                     IsmLiveCoinTransactionType.values[index];
-
-                if (controller.transactions.isEmpty) {
-                  controller.fetchTransactions();
-                }
+                // Always refresh the selected tab so the latest transactions
+                // (e.g. newly purchased credits) appear even if the list already
+                // had older items.
+                controller.fetchTransactions(
+                  type: controller.coinTransactionType,
+                );
               },
               tabs: [
                 ...IsmLiveCoinTransactionType.values.map(
