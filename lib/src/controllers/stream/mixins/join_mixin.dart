@@ -585,10 +585,7 @@ mixin StreamJoinMixin {
       }
     } else {
       final streamId = stream.streamId ?? '';
-      var existingToken = (_controller.rtcToken ?? '').trim();
-      if (existingToken.isEmpty) {
-        existingToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
-      }
+      var existingToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
 
       if (existingToken.isNotEmpty) {
         token = existingToken;
