@@ -1189,11 +1189,22 @@ class IsmLiveMqttController extends GetxController {
           final viewerName = payload['viewerName'] as String? ?? '';
           final initiatorName = payload['initiatorName'] as String? ?? '';
           final initiatorId = payload['initiatorId'] as String? ?? '';
+          final initiatorMetaData =
+              payload['initiatorMetaData'] as Map<String, dynamic>?;
+          final initiatorFirstName =
+              (initiatorMetaData?['firstName'] as String?)?.trim() ?? '';
+          final initiatorLastName =
+              (initiatorMetaData?['lastName'] as String?)?.trim() ?? '';
+          final initiatorFullNameFromMeta =
+              '$initiatorFirstName $initiatorLastName'.trim();
+          final initiatorDisplayName = initiatorFullNameFromMeta.isNotEmpty
+              ? initiatorFullNameFromMeta
+              : initiatorName;
           if (streamId == _streamController.streamId) {
             _syncLiveViewersCountFromPayload(payload);
             final message = IsmLiveMessageModel(
               streamId: streamId!,
-              senderName: initiatorName,
+              senderName: initiatorDisplayName,
               senderProfileImageUrl: _hostImageUrl,
               senderIdentifier: '',
               senderId: initiatorId,
@@ -1201,7 +1212,7 @@ class IsmLiveMqttController extends GetxController {
               messageId: DateTime.now().toString(),
               body: userId == initiatorId
                   ? 'You\'ve remove $viewerName'
-                  : '$initiatorName has removed $viewerName',
+                  : '$initiatorDisplayName has removed $viewerName',
               isEvent: true,
             );
 
