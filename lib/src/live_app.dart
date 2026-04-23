@@ -857,6 +857,15 @@ class IsmLiveApp extends StatefulWidget {
           isSchedule: isSchedule,
           showViewerLeaveDialog: showViewerLeaveDialog);
 
+  /// Pops routes until the active route is stream view.
+  static void popUntilStreamView() {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    IsmLiveUtility.popUntilStreamView();
+  }
+
   static void handleMqttEvent(EventModel payload) {
     assert(
       _initialized,
