@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_probe_mixin.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart' as lk;
@@ -1058,8 +1060,34 @@ class IsmLiveStreamController extends GetxController
     final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 
+    final newPosition = position.switched();
+
+    // Prefer a fast hardware-level camera flip on native platforms. This keeps
+    // the same underlying MediaStreamTrack/renderer alive instead of tearing it
+    // down, which previously caused a visible right-to-left slide artifact on
+    // the preview while `setCameraPosition` fully restarted the track.
+    if (!kIsWeb) {
+      try {
+        await webrtc.Helper.switchCamera(track.mediaStreamTrack);
+        // Keep LiveKit's internal options in sync so reconnect / republish
+        // flows (e.g. `_syncPublishedCameraToControllerPosition`) resolve the
+        // correct facing direction after this fast switch.
+        final options = track.currentOptions;
+        if (options is lk.CameraCaptureOptions) {
+          track.currentOptions =
+              options.copyWith(cameraPosition: newPosition);
+        }
+        position = newPosition;
+        update();
+        return;
+      } catch (error) {
+        IsmLiveLog(
+          'fast camera switch failed, falling back to restart: $error',
+        );
+      }
+    }
+
     try {
-      final newPosition = position.switched();
       await track.setCameraPosition(newPosition);
       position = newPosition;
       update();
