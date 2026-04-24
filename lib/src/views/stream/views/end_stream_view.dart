@@ -51,6 +51,7 @@ class IsmLiveEndStream extends StatelessWidget {
                               controller.user?.userProfileImageUrl ??
                               '',
                           name: controller.user?.userName ?? 'U',
+                          initials: controller.user?.profileInitials,
                           height: IsmLiveDimens.ninty,
                           width: IsmLiveDimens.ninty,
                           isProfileImage: true,

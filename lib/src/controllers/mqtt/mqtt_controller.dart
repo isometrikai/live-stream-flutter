@@ -1120,6 +1120,7 @@ class IsmLiveMqttController extends GetxController {
             _streamController.closeStreamView(false, fromMqtt: true);
           } else {
             if (streamId == _streamController.streamId) {
+              await Future.delayed(const Duration(milliseconds: 300));
               _disconnectRoom();
               _streamController.closeStreamView(true,
                   streamId: streamId, fromMqtt: true);
