@@ -70,7 +70,7 @@ class IsmLiveStreamCard extends StatelessWidget {
                             child: Text(
                               stream.isScheduledStream ?? false
                                   ? stream.scheduleStartTime!.formattedDate
-                                  : 'Continue',
+                                  : IsmLiveStrings.tvContinue,
                               style: context.textTheme.labelSmall?.copyWith(
                                 color: Theme.of(context).brightness == Brightness.dark
                                     ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??

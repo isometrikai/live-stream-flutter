@@ -156,7 +156,7 @@ class IsmLiveAddProduct extends StatelessWidget {
                         ),
                       ],
                       IsmLiveDimens.boxHeight10,
-                      IsmLiveButton(
+                      const IsmLiveButton(
                         label: IsmLiveStrings.tvContinue,
                         onTap: IsmLiveRoute.pop,
                       ),
