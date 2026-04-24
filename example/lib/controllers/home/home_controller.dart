@@ -71,7 +71,24 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
-      productStream: true,
+      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+        isProductStreamFeatureEnabled: true,
+        // isHdStreamFeatureEnabled: true,
+        // isScheduleStreamFeatureEnabled: true,
+        // isRtmpStreamFeatureEnabled: true,
+        // isRestreamStreamFeatureEnabled: true,
+        // isPaidStreamFeatureEnabled: false,
+        // isMultiLiveStreamFeatureEnabled: true,
+        // isRecordedStreamFeatureEnabled: true,
+        // goLiveButtonBuilder: _buildCustomGoLiveButton,
+        // goLiveHeaderBuilder: _buildCustomGoLiveHeader,
+        // onGoLiveButtonTap: (context, isScheduledStream, streamDetails, goLiveData) async {
+        //   if (goLiveData.pickedImage != null) {
+        //     IsmLiveLog.info('User picked image: ${goLiveData.pickedImage!.path}');
+        //   }
+        // },
+        // onGoLiveViewDispose: () {},
+      ),
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
       enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
@@ -83,11 +100,7 @@ class HomeController extends GetxController {
       // ),
 
       restrictProfileSheetOnProfileClick: true,
-      // goLiveSmallButtonBuilder: _buildCustomGoLiveSmallButton,
-      // goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-      //   goLiveButtonBuilder: _buildCustomGoLiveButton,
-      //   goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-      // ),
+
       // chatMessageBuilder: (context, message, defaultChild) {
       //   // Change background color for host messages
 
@@ -294,14 +307,6 @@ class HomeController extends GetxController {
       // fontFamily: 'Satoshi', // Example: Use Poppins font family
       // Enable free gifts - amount will be sent as 0
       ecomConfigure: IsmLiveEcomConfigure(
-        // onGoLiveClick:
-        //     (context, isScheduledStream, streamDetails, goLiveData) async {
-        //   // Example: Handle image scenario
-        //   if (goLiveData.pickedImage != null) {
-        //     IsmLiveLog.info(
-        //         'User picked image: ${goLiveData.pickedImage!.path}');
-        //   }
-        // },
         buyNowButtonBuilder:
             (context, streamId, hasPinnedProduct, isHost, onTap) => SizedBox(
           width: IsmLiveDimens.oneHundredTwenty,
@@ -326,28 +331,46 @@ class HomeController extends GetxController {
         //   ),
         // ),
       ),
-      // Custom GoLive button click handler with comprehensive data
+      // Optional: isPaidStreamFeatureEnabled → [goLiveScreenConfigure] (see comment block there).
+      sideIconsConfigure: const IsmLiveSideIconsConfigure(
+        hostOptions: [
+          IsmLiveStreamOption.bars,
+          IsmLiveStreamOption.share,
+          IsmLiveStreamOption.product,
+          IsmLiveStreamOption.rotateCamera,
+          IsmLiveStreamOption.settings,
+          IsmLiveStreamOption.multiLive,
+        ],
+        // rtmpOptions: [
+        //   IsmLiveStreamOption.bars,
+        //   IsmLiveStreamOption.share,
+        //   IsmLiveStreamOption.product,
+        // ],
+        viewersOptions: [
+          IsmLiveStreamOption.gift,
+          IsmLiveStreamOption.share,
+          IsmLiveStreamOption.speaker,
+          IsmLiveStreamOption.heart,
+        ],
+        //  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+        //     if (option == IsmLiveStreamOption.gift) {
+        //       // await yourCustomGiftFlow(context);
+        //       return true; // handled
+        //     }
+        //     return false; // use SDK default
+        //   },
+        //    controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+        //     if (option == IsmLiveStreamOption.gift) {
+        //       return YourGiftButton(onTap: onTap);
+        //     }
+        //     return null; // use default
+        //   },
+        //    productStreamSideOptionsBottomMargin: (context) {
+        //     final h = MediaQuery.of(context).size.height;
+        //     return h * 0.45; // or null for SDK default (~28% of height)
+        //   },
+      ),
 
-      // paidStream: false
-      hostOptions: [
-        IsmLiveStreamOption.bars,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.product,
-        IsmLiveStreamOption.rotateCamera,
-        IsmLiveStreamOption.settings,
-        IsmLiveStreamOption.multiLive,
-      ],
-      // rtmpOptions: [
-      //   IsmLiveStreamOption.bars,
-      //   IsmLiveStreamOption.share,
-      //   IsmLiveStreamOption.product,
-      // ],
-      viewersOptions: [
-        IsmLiveStreamOption.gift,
-        IsmLiveStreamOption.share,
-        IsmLiveStreamOption.speaker,
-        IsmLiveStreamOption.heart,
-      ],
       // ismLiveButtonConfig: IsmLiveButtonConfig(
       //   primaryBuilder: (context,
       //           {required label,
@@ -391,11 +414,6 @@ class HomeController extends GetxController {
       //   return MyCustomAddProductView(
 
       //   );
-      // },
-      // productStreamSideOptionsBottomMargin: (context) {
-      //   final h = MediaQuery.of(context).size.height;
-      //   return h * 0.45; // example: custom fraction
-      //   // or return null to use SDK default (0.28 * h) even when the callback is set
       // },
       // tokenExpiredCallback: () async {
       //   IsmLiveLog.info('Token expired');

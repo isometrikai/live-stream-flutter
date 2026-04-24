@@ -566,6 +566,17 @@ mixin StreamJoinMixin {
             // Preserve legacy behavior if host callback fails unexpectedly.
             shouldCallStopStreamApi = true;
           }
+        } else {
+          final shouldStopFromSheet =
+              await IsmLiveUtility.openCustomBottomSheet<bool>(
+            title:
+                "It looks like you're already live from another device. Do you want to stop that stream?",
+            leftLabel: 'no'.tr,
+            rightLabel: 'yes'.tr,
+            onLeft: () => IsmLiveRoute.pop(false),
+            onRight: () => IsmLiveRoute.pop(true),
+          );
+          shouldCallStopStreamApi = shouldStopFromSheet ?? false;
         }
 
         if (shouldCallStopStreamApi) {
