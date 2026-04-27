@@ -399,7 +399,7 @@ class IsmLiveApp extends StatefulWidget {
   /// apps can trigger the same scheduled listing flow used internally by SDK
   /// screens.
   static Future<void> fetchScheduledStream({
-    IsmLiveStreamType? type,
+    IsmLiveStreamType type = IsmLiveStreamType.scheduledStreams,
     int skip = 0,
   }) async {
     assert(
