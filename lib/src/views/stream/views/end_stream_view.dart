@@ -112,8 +112,11 @@ class IsmLiveEndStream extends StatelessWidget {
                             title = IsmLiveStrings.followers;
                             break;
                           case IsmLiveAnalyticsOptions.earnings:
-                            points =
-                                '${controller.streamAnalytis?.totalEarning ?? 0}';
+                            final totalEarning = num.tryParse(
+                                  '${controller.streamAnalytis?.totalEarning ?? 0}',
+                                ) ??
+                                0;
+                            points = totalEarning.toStringAsFixed(2);
                             title = IsmLiveStrings.earnings;
                             break;
                           case IsmLiveAnalyticsOptions.duration:
