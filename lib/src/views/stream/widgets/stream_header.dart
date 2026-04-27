@@ -152,8 +152,9 @@ class IsmLiveModeratorCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) => (controller.isMember ||
-                    (controller.isCopublisher) ||
+        builder: (controller) =>
+                    (/*controller.isMember ||
+                    (controller.isCopublisher) ||*/
                     (controller.isHost) ||
                     (controller.isModerator)) &&
                 !controller.isPk

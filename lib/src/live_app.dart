@@ -393,6 +393,32 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches a paginated list of scheduled streams into stream listing state.
+  ///
+  /// This delegates to [IsmLiveStreamController.fetchScheduledStream] so host
+  /// apps can trigger the same scheduled listing flow used internally by SDK
+  /// screens.
+  static Future<void> fetchScheduledStream({
+    IsmLiveStreamType type = IsmLiveStreamType.scheduledStreams,
+    int skip = 0,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      await controller.fetchScheduledStream(type: type, skip: skip);
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.fetchScheduledStream failed: $e\n$stack');
+    }
+  }
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
@@ -555,20 +581,72 @@ class IsmLiveApp extends StatefulWidget {
     bool showHeader = true,
     Alignment? headerPosition,
     Alignment? endStreamPosition,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isHdStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? hdStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isScheduleStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? scheduleStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isProductStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? productStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isRtmpStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? rtmpStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isRestreamStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? restreamStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isPaidStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? paidStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isMultiLiveStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? multiLiveStream,
+    @Deprecated(
+      'Use goLiveScreenConfigure.isRecordedStreamFeatureEnabled instead. '
+      'This parameter will be removed in a future release.',
+    )
     bool? recordeStream,
     Function(String id)? subscribStreamById,
     Function(String id)? unsubscribStreamById,
+    @Deprecated(
+      'Use sideIconsConfigure.viewersOptions instead. '
+      'This parameter will be removed in a future release.',
+    )
     List<IsmLiveStreamOption> viewersOptions = const [],
+    @Deprecated(
+      'Use sideIconsConfigure.hostOptions instead. '
+      'This parameter will be removed in a future release.',
+    )
     List<IsmLiveStreamOption> hostOptions = const [],
+    @Deprecated(
+      'Use sideIconsConfigure.rtmpOptions instead. '
+      'This parameter will be removed in a future release.',
+    )
     List<IsmLiveStreamOption> rtmpOptions = const [],
+    @Deprecated(
+      'Use sideIconsConfigure.copublisherOptions instead. '
+      'This parameter will be removed in a future release.',
+    )
     List<IsmLiveStreamOption> copublisherOptions = const [],
+    @Deprecated(
+      'Use sideIconsConfigure.pkOptions instead. '
+      'This parameter will be removed in a future release.',
+    )
     List<IsmLiveStreamOption> pkOptions = const [],
     List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = const [],
     Widget? homeScreen,
@@ -578,7 +656,15 @@ class IsmLiveApp extends StatefulWidget {
     LinearGradient? streamOptionsBgGradient,
     Widget? logoWidget,
     StreamDisconnectApiHandler? streamDisconnectApiHandler,
+    @Deprecated(
+      'Use goLiveScreenConfigure.onGoLiveButtonTap instead. '
+      'This parameter will be removed in a future release.',
+    )
     GoLiveClickCallback? onGoLiveClick,
+    @Deprecated(
+      'Use goLiveScreenConfigure.onGoLiveViewDispose instead. '
+      'This parameter will be removed in a future release.',
+    )
     GoLiveDisposeCallback? onGoLiveDispose,
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
@@ -619,13 +705,81 @@ class IsmLiveApp extends StatefulWidget {
 
     /// Return true if the host app handled the click and wants to prevent the default behavior,
     /// false if the host app wants the SDK to handle it with the default behavior.
+    @Deprecated(
+      'Use sideIconsConfigure.controlOptionCallback instead. '
+      'This parameter will be removed in a future release.',
+    )
     ControlOptionCallback? controlOptionCallback,
+    @Deprecated(
+      'Use sideIconsConfigure.controlWidgetBuilder instead. '
+      'This parameter will be removed in a future release.',
+    )
     ControlWidgetBuilder? controlWidgetBuilder,
+    @Deprecated(
+      'Use sideIconsConfigure.productStreamSideOptionsBottomMargin instead. '
+      'This parameter will be removed in a future release.',
+    )
     ProductStreamSideOptionsBottomMarginBuilder?
         productStreamSideOptionsBottomMargin,
     IsmLiveSideIconsConfigure? sideIconsConfigure,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
   }) {
+    final resolvedSideIconsConfigure =
+        sideIconsConfigure ?? const IsmLiveSideIconsConfigure();
+    final effectiveViewersOptions = resolvedSideIconsConfigure
+            .viewersOptions.isNotEmpty
+        ? resolvedSideIconsConfigure.viewersOptions
+        : viewersOptions;
+    final effectiveHostOptions = resolvedSideIconsConfigure.hostOptions.isNotEmpty
+        ? resolvedSideIconsConfigure.hostOptions
+        : hostOptions;
+    final effectiveRtmpOptions = resolvedSideIconsConfigure.rtmpOptions.isNotEmpty
+        ? resolvedSideIconsConfigure.rtmpOptions
+        : rtmpOptions;
+    final effectiveCopublisherOptions =
+        resolvedSideIconsConfigure.copublisherOptions.isNotEmpty
+            ? resolvedSideIconsConfigure.copublisherOptions
+            : copublisherOptions;
+    final effectivePkOptions = resolvedSideIconsConfigure.pkOptions.isNotEmpty
+        ? resolvedSideIconsConfigure.pkOptions
+        : pkOptions;
+    final effectiveControlOptionCallback =
+        resolvedSideIconsConfigure.controlOptionCallback ??
+            controlOptionCallback;
+    final effectiveControlWidgetBuilder =
+        resolvedSideIconsConfigure.controlWidgetBuilder ?? controlWidgetBuilder;
+    final effectiveProductStreamSideOptionsBottomMargin =
+        resolvedSideIconsConfigure.productStreamSideOptionsBottomMargin ??
+            productStreamSideOptionsBottomMargin;
+    final resolvedGoLiveScreenConfigure =
+        goLiveScreenConfigure ?? IsmLiveGoLiveScreenConfigure();
+    final effectiveHdStream = resolvedGoLiveScreenConfigure
+            .isHdStreamFeatureEnabled ??
+        hdStream;
+    final effectiveScheduleStream =
+        resolvedGoLiveScreenConfigure.isScheduleStreamFeatureEnabled ??
+            scheduleStream;
+    final effectiveProductStream =
+        resolvedGoLiveScreenConfigure.isProductStreamFeatureEnabled ??
+            productStream;
+    final effectiveRtmpStream =
+        resolvedGoLiveScreenConfigure.isRtmpStreamFeatureEnabled ?? rtmpStream;
+    final effectiveRestreamStream =
+        resolvedGoLiveScreenConfigure.isRestreamStreamFeatureEnabled ??
+            restreamStream;
+    final effectivePaidStream =
+        resolvedGoLiveScreenConfigure.isPaidStreamFeatureEnabled ?? paidStream;
+    final effectiveMultiLiveStream =
+        resolvedGoLiveScreenConfigure.isMultiLiveStreamFeatureEnabled ??
+            multiLiveStream;
+    final effectiveRecordeStream =
+        resolvedGoLiveScreenConfigure.isRecordedStreamFeatureEnabled ??
+            recordeStream;
+    final effectiveOnGoLiveClick =
+        resolvedGoLiveScreenConfigure.onGoLiveButtonTap ?? onGoLiveClick;
+    final effectiveOnGoLiveDispose =
+        resolvedGoLiveScreenConfigure.onGoLiveViewDispose ?? onGoLiveDispose;
+
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.streamHeader = streamHeader;
@@ -638,20 +792,20 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.endButton = endButton;
     IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
     IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
-    IsmLiveDelegate.viewersOption = viewersOptions;
-    IsmLiveDelegate.hostOptions = hostOptions;
-    IsmLiveDelegate.rtmpOptions = rtmpOptions;
-    IsmLiveDelegate.copublisherOptions = copublisherOptions;
-    IsmLiveDelegate.pkOptions = pkOptions;
+    IsmLiveDelegate.viewersOption = effectiveViewersOptions;
+    IsmLiveDelegate.hostOptions = effectiveHostOptions;
+    IsmLiveDelegate.rtmpOptions = effectiveRtmpOptions;
+    IsmLiveDelegate.copublisherOptions = effectiveCopublisherOptions;
+    IsmLiveDelegate.pkOptions = effectivePkOptions;
     IsmLiveDelegate.homeScreen = homeScreen;
-    IsmLiveDelegate.scheduleStream = scheduleStream;
-    IsmLiveDelegate.hdStream = hdStream;
-    IsmLiveDelegate.paidStream = paidStream;
-    IsmLiveDelegate.restreamStream = restreamStream;
-    IsmLiveDelegate.rtmpStream = rtmpStream;
-    IsmLiveDelegate.multiLiveStream = multiLiveStream;
-    IsmLiveDelegate.productStream = productStream;
-    IsmLiveDelegate.recordeStream = recordeStream;
+    IsmLiveDelegate.scheduleStream = effectiveScheduleStream;
+    IsmLiveDelegate.hdStream = effectiveHdStream;
+    IsmLiveDelegate.paidStream = effectivePaidStream;
+    IsmLiveDelegate.restreamStream = effectiveRestreamStream;
+    IsmLiveDelegate.rtmpStream = effectiveRtmpStream;
+    IsmLiveDelegate.multiLiveStream = effectiveMultiLiveStream;
+    IsmLiveDelegate.productStream = effectiveProductStream;
+    IsmLiveDelegate.recordeStream = effectiveRecordeStream;
     IsmLiveDelegate.endStreamScreen = endStreamScreen;
     IsmLiveDelegate.subscribStreamById = subscribStreamById;
     IsmLiveDelegate.unsubscribStreamById = unsubscribStreamById;
@@ -662,11 +816,11 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
     IsmLiveDelegate.logoWidget = logoWidget;
     IsmLiveDelegate.streamDisconnectApiHandler = streamDisconnectApiHandler;
-    IsmLiveDelegate.onGoLiveClick = onGoLiveClick;
-    IsmLiveDelegate.onGoLiveDispose = onGoLiveDispose;
+    IsmLiveDelegate.onGoLiveClick = effectiveOnGoLiveClick;
+    IsmLiveDelegate.onGoLiveDispose = effectiveOnGoLiveDispose;
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
-    IsmLiveDelegate.goLiveScreenConfigure = goLiveScreenConfigure;
+    IsmLiveDelegate.goLiveScreenConfigure = resolvedGoLiveScreenConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
@@ -686,12 +840,11 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
     }
 
-    IsmLiveDelegate.controlOptionCallback = controlOptionCallback;
-    IsmLiveDelegate.controlWidgetBuilder = controlWidgetBuilder;
+    IsmLiveDelegate.controlOptionCallback = effectiveControlOptionCallback;
+    IsmLiveDelegate.controlWidgetBuilder = effectiveControlWidgetBuilder;
     IsmLiveDelegate.productStreamSideOptionsBottomMargin =
-        productStreamSideOptionsBottomMargin;
-    IsmLiveDelegate.sideIconsConfigure =
-        sideIconsConfigure ?? const IsmLiveSideIconsConfigure();
+        effectiveProductStreamSideOptionsBottomMargin;
+    IsmLiveDelegate.sideIconsConfigure = resolvedSideIconsConfigure;
     IsmLiveDelegate.cartBuilder = cartBuilder;
     IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
     IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
@@ -729,6 +882,15 @@ class IsmLiveApp extends StatefulWidget {
           context: context,
           isSchedule: isSchedule,
           showViewerLeaveDialog: showViewerLeaveDialog);
+
+  /// Pops routes until the active route is stream view.
+  static void popUntilStreamView() {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+    IsmLiveUtility.popUntilStreamView();
+  }
 
   static void handleMqttEvent(EventModel payload) {
     assert(

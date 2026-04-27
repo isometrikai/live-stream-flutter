@@ -252,9 +252,19 @@ mixin StreamOngoingMixin {
 
     // Sort participants and update UI
     unawaited(sortParticipants());
-    // Toggle speaker if on mobile platform
+    // Apply the current speaker/mute preference on mobile.
+    //
+    // Previously this forced `speakerOn = true` unconditionally, which undid
+    // a viewer's client-side host mute whenever `initializeStream` re-ran on
+    // a rejoin (e.g. foreground resume after background rebuilt the LiveKit
+    // room via `_connectRoomAndInitialize`). The fresh room's incoming
+    // `TrackSubscribedEvent` would then sync against the now-true flag and
+    // re-enable the host's audio track.
+    //
+    // On initial join `speakerOn` defaults to `true`, so first-join behaviour
+    // is unchanged; on rejoin we honour whatever the viewer last chose.
     if (lk.lkPlatformIsMobile()) {
-      unawaited(_controller.toggleSpeaker(value: true));
+      unawaited(_controller.toggleSpeaker(value: _controller.speakerOn));
     }
     // Update stream view
     IsmLiveUtility.updateLater(() {
@@ -1504,9 +1514,7 @@ mixin StreamOngoingMixin {
 
     if (isEnded && endStream) {
       // unawaited(_controller._mqttController?.unsubscribeStream(streamId));
-      if (isHost) {
-        unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
-      }
+      unawaited(_controller._dbWrapper.deleteSecuredValue(streamId));
 
       // Set stream as inactive for background lifecycle
       _controller.setStreamActive(false, isHost);

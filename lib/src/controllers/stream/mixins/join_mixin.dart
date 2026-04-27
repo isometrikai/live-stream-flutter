@@ -523,6 +523,7 @@ mixin StreamJoinMixin {
     }
 
     var token = '';
+    var viewerUsedCachedToken = false;
     if (isHost) {
       IsmLiveDelegate.trackEvent(
         IsmLiveAnalyticsEvent.joinStreamTokenFetchHost,
@@ -565,6 +566,17 @@ mixin StreamJoinMixin {
             // Preserve legacy behavior if host callback fails unexpectedly.
             shouldCallStopStreamApi = true;
           }
+        } else {
+          final shouldStopFromSheet =
+              await IsmLiveUtility.openCustomBottomSheet<bool>(
+            title:
+                "It looks like you're already live from another device. Do you want to stop that stream?",
+            leftLabel: 'no'.tr,
+            rightLabel: 'yes'.tr,
+            onLeft: () => IsmLiveRoute.pop(false),
+            onRight: () => IsmLiveRoute.pop(true),
+          );
+          shouldCallStopStreamApi = shouldStopFromSheet ?? false;
         }
 
         if (shouldCallStopStreamApi) {
@@ -583,24 +595,32 @@ mixin StreamJoinMixin {
         return;
       }
     } else {
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.joinStreamTokenFetchViewer,
-        properties: [
-          {
-            'stream_id': stream.streamId ?? '',
-            'event_id': stream.eventId ?? '',
-          }
-        ],
-      );
-      var data = await _controller.getRTCToken(stream.streamId ?? '');
-      if (data == null) {
-        return;
+      final streamId = stream.streamId ?? '';
+      var existingToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
+
+      if (existingToken.isNotEmpty) {
+        token = existingToken;
+        viewerUsedCachedToken = true;
+      } else {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.joinStreamTokenFetchViewer,
+          properties: [
+            {
+              'stream_id': stream.streamId ?? '',
+              'event_id': stream.eventId ?? '',
+            }
+          ],
+        );
+        var data = await _controller.getRTCToken(streamId);
+        if (data == null) {
+          return;
+        }
+
+        token = data.rtcToken;
+
+        // Store the start time for later calculation instead of calculating duration immediately
+        _controller._streamStartTime = data.startTime;
       }
-
-      token = data.rtcToken;
-
-      // Store the start time for later calculation instead of calculating duration immediately
-      _controller._streamStartTime = data.startTime;
     }
 
     _controller.isRtmp = stream.rtmpIngest ?? false;
@@ -663,7 +683,58 @@ mixin StreamJoinMixin {
           }
         ],
       );
-    } catch (e) {
+    } catch (e, st) {
+      if (!isHost && viewerUsedCachedToken) {
+        final streamId = stream.streamId ?? '';
+        IsmLiveLog.error(
+          'joinStream: cached viewer RTC token failed, retrying with fresh token: $e',
+          st,
+        );
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.joinStreamTokenFetchViewer,
+          properties: [
+            {
+              'stream_id': stream.streamId ?? '',
+              'event_id': stream.eventId ?? '',
+            }
+          ],
+        );
+        final freshData = await _controller.getRTCToken(streamId);
+        if (freshData != null && freshData.rtcToken.trim().isNotEmpty) {
+          token = freshData.rtcToken;
+          _controller._streamStartTime = freshData.startTime;
+          try {
+            await connectStream(
+                stream: stream,
+                token: token,
+                streamId: stream.streamId!,
+                streamImage: stream.streamImage,
+                streamDiscription: stream.streamDescription,
+                isHost: isHost,
+                isNewStream: false,
+                isPk: stream.isPkChallenge ?? false,
+                joinByScrolling: joinByScrolling,
+                isScrolling: isScrolling,
+                hdBroadcast: stream.hdBroadcast ?? false,
+                isInteractive: isInteractive,
+                context: context,
+                reJoin: reJoin,
+                deferConnection: true);
+            IsmLiveDelegate.trackEvent(
+              IsmLiveAnalyticsEvent.joinStreamConnectStreamSuccess,
+              properties: [
+                {
+                  'stream_id': stream.streamId ?? '',
+                  'event_id': stream.eventId ?? '',
+                  'duration_ms':
+                      DateTime.now().difference(startedAt).inMilliseconds,
+                }
+              ],
+            );
+            return;
+          } catch (_) {}
+        }
+      }
       IsmLiveDelegate.trackEvent(
         IsmLiveAnalyticsEvent.joinStreamConnectStreamFailure,
         properties: [
@@ -817,11 +888,10 @@ mixin StreamJoinMixin {
       ],
     );
 
-    // Store token for background lifecycle / deferred connect flows
+    // Store token for background lifecycle / deferred connect flows.
+    // Persist for both host and viewer to support foreground rejoin with cached token.
     _controller.rtcToken = token;
-    if (isHost) {
-      unawaited(_dbWrapper.saveValueSecurely(streamId, token));
-    }
+    unawaited(_dbWrapper.saveValueSecurely(streamId, token));
     // Subscribe to the stream
     _controller.streamId = streamId;
 
@@ -864,8 +934,7 @@ mixin StreamJoinMixin {
     _controller._streamViewLoadedCallbackTriggered = false;
 
     // Set up background lifecycle management
-    _controller.setStreamActive(true, isHost,
-        isCopublisher: isCopublisher);
+    _controller.setStreamActive(true, isHost, isCopublisher: isCopublisher);
 
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
@@ -1080,8 +1149,6 @@ mixin StreamJoinMixin {
     }
 
     final details = _controller.streamDetails;
-    IsmLiveLog.info(
-        'rejoinCurrentViewerStreamAfterForeground: requesting fresh RTC token for $streamId');
 
     var loaderShown = false;
     try {
@@ -1094,6 +1161,71 @@ mixin StreamJoinMixin {
         // Only close it if we opened it, so we don't close other dialogs.
         IsmLiveUtility.showLoader();
         loaderShown = true;
+      }
+
+      Future<bool> _attemptRejoinWithToken({
+        required String token,
+        required DateTime? startTime,
+        required String source,
+      }) async {
+        await _connectRoomAndInitialize(
+          stream: details,
+          token: token,
+          streamId: streamId,
+          streamImage: details?.streamImage,
+          streamDiscription: details?.streamDescription ??
+              _controller.descriptionController.text,
+          hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
+          restream: details?.restream ?? _controller.isRestreamBroadcast,
+          isHost: false,
+          isCopublisher: false,
+          isPk: details?.isPkChallenge ?? false,
+          isPkGust: false,
+          isNewStream: false,
+          joinByScrolling: false,
+          isScrolling: false,
+          isInteractive: false,
+          startTime: startTime,
+          context: context,
+          eventId: details?.eventId,
+          reJoin: true,
+          isScheduledStream: details?.isScheduledStream,
+          products: details?.products,
+          performNavigation: false,
+          showLoader: false,
+        );
+
+        // Give LiveKit a brief moment to update connection state.
+        await Future.delayed(const Duration(milliseconds: 150));
+        final connected =
+            _controller.room?.connectionState == lk.ConnectionState.connected;
+        IsmLiveLog.info(
+            'rejoinCurrentViewerStreamAfterForeground: source=$source connected=$connected state=${_controller.room?.connectionState}');
+        return connected;
+      }
+
+      var existingToken = (_controller.rtcToken ?? '').trim();
+      if (existingToken.isEmpty) {
+        existingToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
+      }
+      if (existingToken.isNotEmpty) {
+        IsmLiveLog.info(
+            'rejoinCurrentViewerStreamAfterForeground: attempting with existing RTC token for $streamId');
+        try {
+          final connected = await _attemptRejoinWithToken(
+            token: existingToken,
+            startTime: details?.startDateTime,
+            source: 'existing_token',
+          );
+          if (connected) return true;
+        } catch (e, st) {
+          IsmLiveLog.error(
+              'rejoinCurrentViewerStreamAfterForeground: existing RTC token rejoin failed, falling back to fresh token: $e',
+              st);
+        }
+      } else {
+        IsmLiveLog.info(
+            'rejoinCurrentViewerStreamAfterForeground: existing RTC token unavailable, requesting fresh token for $streamId');
       }
 
       final rtc = await _controller.getRTCToken(streamId);
@@ -1109,39 +1241,11 @@ mixin StreamJoinMixin {
       _controller.rtcToken = token;
       _controller.storeToken(token);
 
-      await _connectRoomAndInitialize(
-        stream: details,
+      final connected = await _attemptRejoinWithToken(
         token: token,
-        streamId: streamId,
-        streamImage: details?.streamImage,
-        streamDiscription: details?.streamDescription ??
-            _controller.descriptionController.text,
-        hdBroadcast: details?.hdBroadcast ?? _controller.isHdBroadcast,
-        restream: details?.restream ?? _controller.isRestreamBroadcast,
-        isHost: false,
-        isCopublisher: false,
-        isPk: details?.isPkChallenge ?? false,
-        isPkGust: false,
-        isNewStream: false,
-        joinByScrolling: false,
-        isScrolling: false,
-        isInteractive: false,
         startTime: rtc.startTime ?? details?.startDateTime,
-        context: context,
-        eventId: details?.eventId,
-        reJoin: true,
-        isScheduledStream: details?.isScheduledStream,
-        products: details?.products,
-        performNavigation: false,
-        showLoader: false,
+        source: 'fresh_token',
       );
-
-      // Give LiveKit a brief moment to update connection state.
-      await Future.delayed(const Duration(milliseconds: 150));
-      final connected =
-          _controller.room?.connectionState == lk.ConnectionState.connected;
-      IsmLiveLog.info(
-          'rejoinCurrentViewerStreamAfterForeground: connected=$connected state=${_controller.room?.connectionState}');
       return connected;
     } catch (e, st) {
       IsmLiveLog.error(
@@ -1350,7 +1454,8 @@ mixin StreamJoinMixin {
       return connected;
     } catch (e, st) {
       IsmLiveLog.error(
-          'rejoinAsViewerAfterHostRemovedCopublisher: unexpected error: $e', st);
+          'rejoinAsViewerAfterHostRemovedCopublisher: unexpected error: $e',
+          st);
       return false;
     } finally {
       if (loaderShown) {

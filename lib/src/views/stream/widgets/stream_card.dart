@@ -70,10 +70,12 @@ class IsmLiveStreamCard extends StatelessWidget {
                             child: Text(
                               stream.isScheduledStream ?? false
                                   ? stream.scheduleStartTime!.formattedDate
-                                  : 'Continue',
+                                  : IsmLiveStrings.tvContinue,
                               style: context.textTheme.labelSmall?.copyWith(
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? context.liveTheme?.primaryButtonTheme?.foregroundColor ??
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? context.liveTheme?.primaryButtonTheme
+                                            ?.foregroundColor ??
                                         IsmLiveColors.black
                                     : context.liveTheme?.selectedTextColor ??
                                         IsmLiveColors.white,
@@ -92,7 +94,7 @@ class IsmLiveStreamCard extends StatelessWidget {
                       children: [
                         IsmLiveImage.network(
                           stream.userDetails?.userProfile ?? '',
-                          name: stream.userDetails?.userName ?? 'U',
+                          name: stream.userDetails?.name ?? 'U',
                           dimensions: IsmLiveDimens.thirtyTwo,
                           isProfileImage: true,
                         ),
