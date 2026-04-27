@@ -204,12 +204,12 @@ class _AddModeratorsListBottomSheetState
                                     user.name,
                                     style: TextStyle(color: textColor),
                                   ),
-                                  subtitle: user.displayUserName != user.fullName
+                                  subtitle: user.displayUserName !=
+                                          user.fullName
                                       ? Text(
                                           user.displayUserName,
                                           style: TextStyle(
-                                            color: context
-                                                    .liveTheme
+                                            color: context.liveTheme
                                                     ?.unselectedTextColor ??
                                                 (isDarkMode
                                                     ? const Color(0xFFB0B0B0)
@@ -338,6 +338,10 @@ class _AddModeratorsListBottomSheetState
                   fontSize: 14,
                 ),
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 isDense: false,
                 contentPadding: const EdgeInsets.symmetric(vertical: 4),
               ),
