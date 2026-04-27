@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/analytics/live_analytics.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 // For e-commerce related delegates, see IsmLiveECommerceDelegate.
+
+export 'analytics/live_analytics.dart';
 
 /// Callback for product selection.
 ///
@@ -811,318 +814,6 @@ typedef HeartBatchFlushCallback = Future<void> Function(
   int likesCount,
 );
 
-/// Host app analytics integration.
-///
-/// Provide a single delegate to receive important SDK events in a consistent
-/// format, compatible with common analytics services.
-abstract class IsmLiveAnalyticsDelegate {
-  const IsmLiveAnalyticsDelegate();
-
-  void trackEvent(
-    String eventName, {
-    List<Map<String, dynamic>>? properties,
-  });
-}
-
-/// Canonical event names emitted by the SDK via [IsmLiveAnalyticsDelegate].
-///
-/// Host apps should treat these as stable identifiers.
-class IsmLiveAnalyticsEvent {
-  const IsmLiveAnalyticsEvent._();
-
-  // Initialization
-  static const String sdkInitialize = 'ism_live_sdk_initialize';
-  static const String sdkInitializeAttempt = 'ism_live_sdk_initialize_attempt';
-  static const String sdkInitializeSuccess = 'ism_live_sdk_initialize_success';
-  static const String sdkInitializeFailure = 'ism_live_sdk_initialize_failure';
-
-  // Stream lifecycle
-  static const String streamConnectAttempt = 'ism_live_stream_connect_attempt';
-  static const String streamInitializeAndJoinAttempt =
-      'ism_live_stream_initialize_and_join_attempt';
-  static const String streamInitializeAndJoinSuccess =
-      'ism_live_stream_initialize_and_join_success';
-  static const String streamInitializeAndJoinFailure =
-      'ism_live_stream_initialize_and_join_failure';
-
-  // Stream controller flow (internal, more granular)
-  static const String controllerInitializeAndJoinAttempt =
-      'ism_live_controller_initialize_and_join_attempt';
-  static const String controllerInitializeAndJoinSuccess =
-      'ism_live_controller_initialize_and_join_success';
-  static const String controllerInitializeAndJoinFailure =
-      'ism_live_controller_initialize_and_join_failure';
-  static const String controllerRejoinAutoDetected =
-      'ism_live_controller_rejoin_auto_detected';
-  static const String controllerPreventDisposeEnabled =
-      'ism_live_controller_prevent_dispose_enabled';
-  static const String controllerInitializeIndex =
-      'ism_live_controller_initialize_index';
-  static const String controllerJoinStreamAttempt =
-      'ism_live_controller_join_stream_attempt';
-  static const String controllerJoinStreamSuccess =
-      'ism_live_controller_join_stream_success';
-  static const String controllerJoinStreamFailure =
-      'ism_live_controller_join_stream_failure';
-  static const String streamScroll = 'ism_live_stream_scroll';
-  static const String streamEndRequested = 'ism_live_stream_end_requested';
-
-  // Commerce / engagement
-  static const String addCoinsClick = 'ism_live_add_coins_click';
-  static const String giftClick = 'ism_live_gift_click';
-
-  // Join/connect detailed flow
-  static const String joinStreamAttempt = 'ism_live_join_stream_attempt';
-  static const String joinStreamEarlyReturnScheduledNotStarted =
-      'ism_live_join_stream_early_return_scheduled_not_started';
-  static const String joinStreamTokenFetchHost =
-      'ism_live_join_stream_token_host';
-  static const String joinStreamTokenFetchViewer =
-      'ism_live_join_stream_token_viewer';
-  static const String joinStreamMissingHostToken =
-      'ism_live_join_stream_missing_host_token';
-  static const String joinStreamStopStreamCalled =
-      'ism_live_join_stream_stop_stream_called';
-  static const String joinStreamConnectStreamAttempt =
-      'ism_live_join_stream_connect_stream_attempt';
-  static const String joinStreamConnectStreamSuccess =
-      'ism_live_join_stream_connect_stream_success';
-  static const String joinStreamConnectStreamFailure =
-      'ism_live_join_stream_connect_stream_failure';
-
-  static const String connectStreamAttemptDetailed =
-      'ism_live_connect_stream_attempt_detailed';
-  static const String connectStreamMqttSubscribeAttempt =
-      'ism_live_connect_stream_mqtt_subscribe_attempt';
-  static const String connectStreamMqttSubscribeFailure =
-      'ism_live_connect_stream_mqtt_subscribe_failure';
-  static const String connectStreamDeferredNavigationAttempt =
-      'ism_live_connect_stream_deferred_navigation_attempt';
-  static const String connectStreamDeferredNavigationSuccess =
-      'ism_live_connect_stream_deferred_navigation_success';
-  static const String connectStreamDeferredNavigationFailure =
-      'ism_live_connect_stream_deferred_navigation_failure';
-  static const String connectRoomAndInitializeAttempt =
-      'ism_live_connect_room_and_initialize_attempt';
-  static const String connectRoomAndInitializeSuccess =
-      'ism_live_connect_room_and_initialize_success';
-  static const String connectRoomAndInitializeFailure =
-      'ism_live_connect_room_and_initialize_failure';
-
-  // Deep connect flow (very granular but low-overhead)
-  static const String roomInitStart = 'ism_live_room_init_start';
-  static const String previousRoomDisconnectAttempt =
-      'ism_live_previous_room_disconnect_attempt';
-  static const String previousRoomDisconnectDone =
-      'ism_live_previous_room_disconnect_done';
-  static const String preconnectAbortedStreamDisposed =
-      'ism_live_preconnect_aborted_stream_disposed';
-  static const String roomConnectAttempt = 'ism_live_room_connect_attempt';
-  static const String roomConnectSuccess = 'ism_live_room_connect_success';
-  static const String roomConnectFailure = 'ism_live_room_connect_failure';
-  static const String roomConnectDiscardedStale =
-      'ism_live_room_connect_discarded_stale';
-  static const String postConnectApiKickoff =
-      'ism_live_post_connect_api_kickoff';
-  static const String goToStreamViewAttempt =
-      'ism_live_go_to_stream_view_attempt';
-  static const String goToStreamViewSuccess =
-      'ism_live_go_to_stream_view_success';
-  static const String goToStreamViewFailure =
-      'ism_live_go_to_stream_view_failure';
-  static const String connectFlowOuterFailure =
-      'ism_live_connect_flow_outer_failure';
-
-  // API result logging (sanitized)
-  static const String apiResult = 'ism_live_api_result';
-
-  // MQTT connectivity
-  static const String mqttConnected = 'ism_live_mqtt_connected';
-  static const String mqttDisconnected = 'ism_live_mqtt_disconnected';
-  static const String mqttAutoReconnectStarted =
-      'ism_live_mqtt_auto_reconnect_started';
-  static const String mqttAutoReconnectSuccess =
-      'ism_live_mqtt_auto_reconnect_success';
-  static const String mqttAutoReconnectUpdatesSub =
-      'ism_live_mqtt_auto_reconnect_updates_sub';
-  static const String mqttManualReconnectAttempt =
-      'ism_live_mqtt_manual_reconnect_attempt';
-  static const String mqttManualReconnectSuccess =
-      'ism_live_mqtt_manual_reconnect_success';
-  static const String mqttManualReconnectFailure =
-      'ism_live_mqtt_manual_reconnect_failure';
-  static const String mqttInitializeFailure =
-      'ism_live_mqtt_initialize_failure';
-  static const String mqttSubscribeStream =
-      'ism_live_mqtt_subscribe_stream';
-  static const String mqttSubscribeStreamNotConnected =
-      'ism_live_mqtt_subscribe_stream_not_connected';
-  static const String mqttSubscribeStreamFailure =
-      'ism_live_mqtt_subscribe_stream_failure';
-  static const String mqttSubscriptionFailed =
-      'ism_live_mqtt_subscription_failed';
-  static const String mqttTopicsResubscribed =
-      'ism_live_mqtt_topics_resubscribed';
-
-  // Navigation / screen transitions
-  static const String screenView = 'ism_live_screen_view';
-
-  // Stream recording playback
-  static const String recordingVideoLoadFailure =
-      'ism_live_recording_video_load_failure';
-
-  /// All analytics events in a single set.
-  ///
-  /// Pass this to [IsmLiveApp.configureInterface]'s `enabledAnalyticsEvents`
-  /// to track every SDK event without listing them individually:
-  /// ```dart
-  /// IsmLiveApp.configureInterface(
-  ///   analyticsDelegate: myDelegate,
-  ///   enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
-  /// );
-  /// ```
-  ///
-  /// Or omit `enabledAnalyticsEvents` entirely for the same effect (null = all).
-  ///
-  /// **Failure-only preset:** [allFailed] tracks only error/failure paths. For
-  /// [apiResult], events are emitted only when `has_error` is true in properties.
-  /// Include [allFailedPresetMarker] so the SDK applies this rule.
-  static const String allFailedPresetMarker = '__ism_live_analytics_all_failed__';
-
-  /// Event names that represent failures (excluding [apiResult], which is gated
-  /// by `has_error` when using [allFailed]).
-  static const Set<String> _failureOnlyEventNames = <String>{
-    sdkInitializeFailure,
-    streamInitializeAndJoinFailure,
-    controllerInitializeAndJoinFailure,
-    controllerJoinStreamFailure,
-    joinStreamConnectStreamFailure,
-    connectStreamMqttSubscribeFailure,
-    connectStreamDeferredNavigationFailure,
-    connectRoomAndInitializeFailure,
-    connectFlowOuterFailure,
-    goToStreamViewFailure,
-    roomConnectFailure,
-    joinStreamMissingHostToken,
-    preconnectAbortedStreamDisposed,
-    roomConnectDiscardedStale,
-    mqttManualReconnectFailure,
-    mqttInitializeFailure,
-    mqttSubscribeStreamFailure,
-    mqttSubscriptionFailed,
-    recordingVideoLoadFailure,
-  };
-
-  /// Track only failure/error analytics (plus failed API calls via [apiResult]).
-  ///
-  /// ```dart
-  /// IsmLiveApp.configureInterface(
-  ///   analyticsDelegate: myDelegate,
-  ///   enabledAnalyticsEvents: IsmLiveAnalyticsEvent.allFailed,
-  /// );
-  /// ```
-  static const Set<String> allFailed = <String>{
-    allFailedPresetMarker,
-    ..._failureOnlyEventNames,
-    apiResult,
-  };
-
-  static const Set<String> all = <String>{
-    // Initialization
-    sdkInitialize,
-    sdkInitializeAttempt,
-    sdkInitializeSuccess,
-    sdkInitializeFailure,
-
-    // Stream lifecycle (entry-point level)
-    streamConnectAttempt,
-    streamInitializeAndJoinAttempt,
-    streamInitializeAndJoinSuccess,
-    streamInitializeAndJoinFailure,
-
-    // Controller flow
-    controllerInitializeAndJoinAttempt,
-    controllerInitializeAndJoinSuccess,
-    controllerInitializeAndJoinFailure,
-    controllerRejoinAutoDetected,
-    controllerPreventDisposeEnabled,
-    controllerInitializeIndex,
-    controllerJoinStreamAttempt,
-    controllerJoinStreamSuccess,
-    controllerJoinStreamFailure,
-
-    // Stream events
-    streamScroll,
-    streamEndRequested,
-
-    // Commerce / engagement
-    addCoinsClick,
-    giftClick,
-
-    // Join / connect detailed flow
-    joinStreamAttempt,
-    joinStreamEarlyReturnScheduledNotStarted,
-    joinStreamTokenFetchHost,
-    joinStreamTokenFetchViewer,
-    joinStreamMissingHostToken,
-    joinStreamStopStreamCalled,
-    joinStreamConnectStreamAttempt,
-    joinStreamConnectStreamSuccess,
-    joinStreamConnectStreamFailure,
-
-    // Connect stream internals
-    connectStreamAttemptDetailed,
-    connectStreamMqttSubscribeAttempt,
-    connectStreamMqttSubscribeFailure,
-    connectStreamDeferredNavigationAttempt,
-    connectStreamDeferredNavigationSuccess,
-    connectStreamDeferredNavigationFailure,
-    connectRoomAndInitializeAttempt,
-    connectRoomAndInitializeSuccess,
-    connectRoomAndInitializeFailure,
-
-    // Deep connect flow
-    roomInitStart,
-    previousRoomDisconnectAttempt,
-    previousRoomDisconnectDone,
-    preconnectAbortedStreamDisposed,
-    roomConnectAttempt,
-    roomConnectSuccess,
-    roomConnectFailure,
-    roomConnectDiscardedStale,
-    postConnectApiKickoff,
-    goToStreamViewAttempt,
-    goToStreamViewSuccess,
-    goToStreamViewFailure,
-    connectFlowOuterFailure,
-
-    // API
-    apiResult,
-
-    // MQTT
-    mqttConnected,
-    mqttDisconnected,
-    mqttAutoReconnectStarted,
-    mqttAutoReconnectSuccess,
-    mqttAutoReconnectUpdatesSub,
-    mqttManualReconnectAttempt,
-    mqttManualReconnectSuccess,
-    mqttManualReconnectFailure,
-    mqttInitializeFailure,
-    mqttSubscribeStream,
-    mqttSubscribeStreamNotConnected,
-    mqttSubscribeStreamFailure,
-    mqttSubscriptionFailed,
-    mqttTopicsResubscribed,
-
-    // Navigation
-    screenView,
-
-    // Stream recording playback
-    recordingVideoLoadFailure,
-  };
-}
-
 /// Callback for stream listing refresh events.
 ///
 /// This callback is triggered when stream listing data needs to be refreshed
@@ -1484,56 +1175,59 @@ class IsmLiveDelegate {
   /// Optional analytics delegate to capture SDK events.
   static IsmLiveAnalyticsDelegate? analyticsDelegate;
 
-  /// Optional allow-list of analytics event names.
+  /// Optional enum-based allow-list of analytics event names.
   ///
   /// - When `null` or empty: all events are emitted.
   /// - When non-empty: only events present in this set are emitted.
-  ///
-  /// If the set contains [IsmLiveAnalyticsEvent.allFailedPresetMarker] (as with
-  /// [IsmLiveAnalyticsEvent.allFailed]), only failure events are emitted; for
-  /// [IsmLiveAnalyticsEvent.apiResult], only calls where `has_error` is true.
-  static Set<String>? enabledAnalyticsEvents;
+  static Set<IsmLiveAnalyticsEventType>? enabledAnalyticsEventTypes;
 
-  /// Whether [enabledAnalyticsEvents] is using the failure-only preset.
-  static bool get _isAllFailedAnalyticsPreset =>
-      enabledAnalyticsEvents?.contains(IsmLiveAnalyticsEvent.allFailedPresetMarker) ??
-      false;
-
-  /// True if this event should be forwarded when failure-only preset is active.
-  static bool _shouldEmitInAllFailedPreset(
-    String eventName,
-    List<Map<String, dynamic>>? properties,
-  ) {
-    if (eventName == IsmLiveAnalyticsEvent.apiResult) {
-      if (properties == null || properties.isEmpty) {
-        return false;
-      }
-      final hasError = properties.first['has_error'];
-      return hasError == true;
+  static bool _isFailedApiResult(List<Map<String, dynamic>>? properties) {
+    if (properties == null || properties.isEmpty) {
+      return false;
     }
-    return IsmLiveAnalyticsEvent._failureOnlyEventNames.contains(eventName);
+    return properties.first['has_error'] == true;
+  }
+
+  static bool _usesAllFailedTypesPreset(
+    Set<IsmLiveAnalyticsEventType>? enabledTypes,
+  ) {
+    if (enabledTypes == null || enabledTypes.isEmpty) {
+      return false;
+    }
+    return enabledTypes.containsAll(IsmLiveAnalyticsEvent.allFailedTypes);
   }
 
   /// Safely emits an analytics event (never throws, never blocks).
   static void trackEvent(
     String eventName, {
     List<Map<String, dynamic>>? properties,
+    IsmLiveAnalyticsCategory? category,
   }) {
     final delegate = analyticsDelegate;
     if (delegate == null) return;
 
-    final enabled = enabledAnalyticsEvents;
-    if (enabled != null && enabled.isNotEmpty) {
-      if (_isAllFailedAnalyticsPreset) {
-        if (!_shouldEmitInAllFailedPreset(eventName, properties)) {
-          return;
-        }
-      } else if (!enabled.contains(eventName)) {
-        return;
-      }
+    final eventType = IsmLiveAnalyticsEventType.fromWireName(eventName);
+    final enabledTypes = enabledAnalyticsEventTypes;
+    if (enabledTypes != null &&
+        enabledTypes.isNotEmpty &&
+        !enabledTypes.contains(eventType)) {
+      return;
+    }
+    // Keep failure-only preset semantics for API results.
+    // allFailedTypes includes apiResult, but it should emit only failed calls.
+    if (eventType == IsmLiveAnalyticsEventType.apiResult &&
+        _usesAllFailedTypesPreset(enabledTypes) &&
+        !_isFailedApiResult(properties)) {
+      return;
     }
     try {
-      delegate.trackEvent(eventName, properties: properties);
+      delegate.trackEventModel(
+        IsmLiveAnalyticsEventModel(
+          eventType: eventType,
+          category: category ?? IsmLiveAnalyticsEvent.inferCategory(eventName),
+          properties: properties,
+        ),
+      );
     } catch (e, st) {
       IsmLiveLog.error('IsmLive analytics delegate threw: $e', st);
     }
