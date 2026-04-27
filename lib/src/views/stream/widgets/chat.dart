@@ -273,9 +273,9 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView>
                       // Existing restriction for host messages:
                       // only privileged roles or members can act on host messages.
                       final openSheetByMessageSource = message.sentByHost
-                          ? (controller.isCopublisher ||
+                          ? (/*controller.isCopublisher ||*/
                               controller.isModerator ||
-                              controller.isMember ||
+                             /* controller.isMember ||*/
                               controller.isHost)
                           : true;
 
