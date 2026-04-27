@@ -14,8 +14,10 @@ class _ExampleAnalyticsDelegate extends IsmLiveAnalyticsDelegate {
   const _ExampleAnalyticsDelegate();
 
   @override
-  void trackEvent(String eventName, {List<Map<String, dynamic>>? properties}) {
-    IsmLiveLog.info('SDK analytics: $eventName props=$properties');
+  void trackEventModel(IsmLiveAnalyticsEventModel analyticsEventModel) {
+    IsmLiveLog.info(
+      'SDK analytics: ${analyticsEventModel.eventName} enum=${analyticsEventModel.eventType} category=${analyticsEventModel.category.value} props=${analyticsEventModel.properties}',
+    );
   }
 }
 
@@ -91,7 +93,10 @@ class HomeController extends GetxController {
       ),
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
-      enabledAnalyticsEvents: IsmLiveAnalyticsEvent.all,
+      enabledAnalyticsEventTypes: {
+        ...IsmLiveAnalyticsEvent.allFailedTypes,
+        IsmLiveAnalyticsEventType.streamInitializeAndJoinSuccess,
+      },
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,

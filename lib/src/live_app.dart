@@ -689,7 +689,7 @@ class IsmLiveApp extends StatefulWidget {
     GiftClickCallback? giftClickCallback,
     HeartBatchFlushCallback? heartBatchFlushCallback,
     IsmLiveAnalyticsDelegate? analyticsDelegate,
-    Set<String>? enabledAnalyticsEvents,
+    Set<IsmLiveAnalyticsEventType>? enabledAnalyticsEventTypes,
     BorderRadius? bottomSheetBorderRadius,
     IsmLiveCameraPosition? initialCameraPositionStream,
     Duration? mqttChatFallbackInterval,
@@ -857,7 +857,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.heartBatchFlushCallback = heartBatchFlushCallback;
     IsmLiveDelegate.tokenExpiredCallback = tokenExpiredCallback;
     IsmLiveDelegate.analyticsDelegate = analyticsDelegate;
-    IsmLiveDelegate.enabledAnalyticsEvents = enabledAnalyticsEvents;
+    IsmLiveDelegate.enabledAnalyticsEventTypes = enabledAnalyticsEventTypes;
     IsmLiveDelegate.bottomSheetBorderRadius = bottomSheetBorderRadius;
     // Camera position preference for streams (suffix to avoid other camera screens)
     if (initialCameraPositionStream != null) {
