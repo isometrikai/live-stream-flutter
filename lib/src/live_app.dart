@@ -393,6 +393,32 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches a paginated list of scheduled streams into stream listing state.
+  ///
+  /// This delegates to [IsmLiveStreamController.fetchScheduledStream] so host
+  /// apps can trigger the same scheduled listing flow used internally by SDK
+  /// screens.
+  static Future<void> fetchScheduledStream({
+    IsmLiveStreamType? type,
+    int skip = 0,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      await controller.fetchScheduledStream(type: type, skip: skip);
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.fetchScheduledStream failed: $e\n$stack');
+    }
+  }
+
   static bool _initialized = false;
   static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
