@@ -75,8 +75,8 @@ class HomeController extends GetxController {
       productionMode: true,
       goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
         isProductStreamFeatureEnabled: true,
+        isScheduleStreamFeatureEnabled: true,
         // isHdStreamFeatureEnabled: true,
-        // isScheduleStreamFeatureEnabled: true,
         // isRtmpStreamFeatureEnabled: true,
         // isRestreamStreamFeatureEnabled: true,
         // isPaidStreamFeatureEnabled: false,
@@ -93,6 +93,7 @@ class HomeController extends GetxController {
       ),
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
+      scheduleStreamCenterOverlayBuilder: _buildScheduleCenterOverlay,
       enabledAnalyticsEventTypes: {
         ...IsmLiveAnalyticsEvent.allTypes,
         IsmLiveAnalyticsEventType.streamInitializeAndJoinSuccess,
@@ -100,9 +101,8 @@ class HomeController extends GetxController {
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,
-      // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
-      //   defaultMessageField: defaultMessageField,
-      // ),
+      inputBuilder: (context, defaultMessageField) => Container(
+      ),
 
       restrictProfileSheetOnProfileClick: true,
 
@@ -424,6 +424,12 @@ class HomeController extends GetxController {
       //   IsmLiveLog.info('Token expired');
       //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';
       // },
+      goLiveSmallButtonBuilder: (
+        context,
+        controller,
+        onGoLivePressed,
+        isEnabled,
+      ) => Container(),
     );
 
     // Set up listener for MQTT events from IsmLiveApp
@@ -672,6 +678,56 @@ class HomeController extends GetxController {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildScheduleCenterOverlay(
+    BuildContext context,
+    IsmLiveStreamController controller,
+  ) {
+    final scheduleTime = controller.streamDetails?.scheduleStartTime;
+    final scheduledText = scheduleTime != null
+        ? _formatScheduleTime(scheduleTime)
+        : 'No schedule selected';
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: screenWidth,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.calendar_month, color: Colors.white, size: 24),
+            const SizedBox(height: 8),
+            const Text(
+              'Center Overlay Demo',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              scheduledText,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
       ),
     );
