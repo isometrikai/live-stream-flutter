@@ -94,7 +94,7 @@ class HomeController extends GetxController {
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
       enabledAnalyticsEventTypes: {
-        ...IsmLiveAnalyticsEvent.allFailedTypes,
+        ...IsmLiveAnalyticsEvent.allTypes,
         IsmLiveAnalyticsEventType.streamInitializeAndJoinSuccess,
       },
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
