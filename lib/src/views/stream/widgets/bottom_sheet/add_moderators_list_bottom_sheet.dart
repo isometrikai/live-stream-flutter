@@ -20,11 +20,16 @@ class AddModeratorsListBottomSheet extends StatefulWidget {
 class _AddModeratorsListBottomSheetState
     extends State<AddModeratorsListBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _usersScrollController = ScrollController();
   final Set<String> _selectedUserIds = <String>{};
   bool _isSearching = false;
+  bool _isFetchingMore = false;
+  bool _hasMoreUsers = true;
   Timer? _debounce;
 
   static const _debounceDuration = Duration(milliseconds: 500);
+  static const _usersPageLimit = 15;
+  static const _paginationThreshold = 180.0;
 
   IsmLiveStreamController get _controller => IsmLiveApp.getStreamController();
 
@@ -32,13 +37,16 @@ class _AddModeratorsListBottomSheetState
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _usersScrollController.addListener(_onUsersScroll);
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _searchController.removeListener(_onSearchChanged);
+    _usersScrollController.removeListener(_onUsersScroll);
     _searchController.dispose();
+    _usersScrollController.dispose();
     super.dispose();
   }
 
@@ -46,9 +54,11 @@ class _AddModeratorsListBottomSheetState
     _debounce?.cancel();
 
     final query = _searchController.text.trim();
+    _controller.searchUserFieldController.text = query;
     if (query.isEmpty) {
       setState(() {
         _isSearching = false;
+        _hasMoreUsers = true;
       });
       // Reload full list when search is cleared
       final controller = Get.find<IsmLiveStreamController>();
@@ -59,6 +69,7 @@ class _AddModeratorsListBottomSheetState
     _debounce = Timer(_debounceDuration, () async {
       setState(() {
         _isSearching = true;
+        _hasMoreUsers = true;
       });
 
       // Use existing controller search API (results will rebuild via GetBuilder)
@@ -68,6 +79,49 @@ class _AddModeratorsListBottomSheetState
       setState(() {
         _isSearching = false;
       });
+    });
+  }
+
+  void _onUsersScroll() {
+    if (!_usersScrollController.hasClients) return;
+    if (_isSearching || _isFetchingMore || !_hasMoreUsers) return;
+
+    final position = _usersScrollController.position;
+    final remaining = position.maxScrollExtent - position.pixels;
+    if (remaining > _paginationThreshold) return;
+
+    unawaited(_loadMoreUsers(source: 'scroll'));
+  }
+
+  Future<void> _loadMoreUsers({required String source}) async {
+    if (!mounted) return;
+    if (_isSearching) return;
+    if (_isFetchingMore) return;
+    if (!_hasMoreUsers) return;
+    final controller = Get.find<IsmLiveStreamController>();
+    final query = _searchController.text.trim();
+    final previousLength = controller.usersList.length;
+
+    setState(() {
+      _isFetchingMore = true;
+    });
+
+    final fetchedUsers = await controller.viewModel.fetchUsers(
+      skip: previousLength,
+      limit: _usersPageLimit,
+      searchTag: query.isEmpty ? null : query,
+    );
+    final fetchedCount = fetchedUsers?.length ?? 0;
+    if (fetchedCount > 0) {
+      controller.usersList.addAll(fetchedUsers!);
+      controller.update([IsmLiveUsersSheet.updateId]);
+    }
+    if (!mounted) return;
+    setState(() {
+      _isFetchingMore = false;
+      if (fetchedCount < _usersPageLimit) {
+        _hasMoreUsers = false;
+      }
     });
   }
 
@@ -174,12 +228,28 @@ class _AddModeratorsListBottomSheetState
                     : filteredUsers.isEmpty
                         ? _buildEmptyState(context, textColor)
                         : ListView.builder(
+                            controller: _usersScrollController,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 4,
                             ),
-                            itemCount: filteredUsers.length,
+                            itemCount:
+                                filteredUsers.length + (_isFetchingMore ? 1 : 0),
                             itemBuilder: (context, index) {
+                              if (index >= filteredUsers.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
                               final user = filteredUsers[index];
                               final imageUrl = IsmLiveDelegate.getUserProfileUrl
                                       ?.call(user.profileUrl) ??
@@ -352,6 +422,7 @@ class _AddModeratorsListBottomSheetState
               onTap: () {
                 _searchController.clear();
                 final controller = Get.find<IsmLiveStreamController>();
+                controller.searchUserFieldController.clear();
                 controller.fetchUsers(forceFetch: true);
               },
               child: Icon(
