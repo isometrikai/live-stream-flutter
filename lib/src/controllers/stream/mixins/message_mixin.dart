@@ -242,6 +242,20 @@ mixin StreamMessageMixin {
         _controller.messageFieldController.text = body;
         _controller.parentMessage = parentMessage;
         _controller.update([IsmLiveMessageField.updateId]);
+      } else {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamChatSent,
+          properties: [
+            {
+              'stream_id': streamId,
+              'is_host': _controller.isHost,
+              'is_reply': true,
+              'user_id': _controller.user?.userId ?? '',
+              'user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+            }
+          ],
+        );
       }
     } else {
       // If no parent message, send a normal message
@@ -263,6 +277,20 @@ mixin StreamMessageMixin {
 
       if (!isSent) {
         _controller.messageFieldController.text = body;
+      } else {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamChatSent,
+          properties: [
+            {
+              'stream_id': streamId,
+              'is_host': _controller.isHost,
+              'is_reply': false,
+              'user_id': _controller.user?.userId ?? '',
+              'user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+            }
+          ],
+        );
       }
     }
   }

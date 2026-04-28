@@ -44,6 +44,13 @@ enum IsmLiveAnalyticsEventType {
   controllerJoinStreamFailure,
   streamScroll,
   streamEndRequested,
+  streamStarted,
+  streamEnded,
+  streamJoin,
+  streamLeave,
+  streamHeartbeat,
+  streamChatSent,
+  streamReaction,
   addCoinsClick,
   giftClick,
   joinStreamAttempt,
@@ -137,6 +144,20 @@ enum IsmLiveAnalyticsEventType {
         return IsmLiveAnalyticsEvent.streamScroll;
       case IsmLiveAnalyticsEventType.streamEndRequested:
         return IsmLiveAnalyticsEvent.streamEndRequested;
+      case IsmLiveAnalyticsEventType.streamStarted:
+        return IsmLiveAnalyticsEvent.streamStarted;
+      case IsmLiveAnalyticsEventType.streamEnded:
+        return IsmLiveAnalyticsEvent.streamEnded;
+      case IsmLiveAnalyticsEventType.streamJoin:
+        return IsmLiveAnalyticsEvent.streamJoin;
+      case IsmLiveAnalyticsEventType.streamLeave:
+        return IsmLiveAnalyticsEvent.streamLeave;
+      case IsmLiveAnalyticsEventType.streamHeartbeat:
+        return IsmLiveAnalyticsEvent.streamHeartbeat;
+      case IsmLiveAnalyticsEventType.streamChatSent:
+        return IsmLiveAnalyticsEvent.streamChatSent;
+      case IsmLiveAnalyticsEventType.streamReaction:
+        return IsmLiveAnalyticsEvent.streamReaction;
       case IsmLiveAnalyticsEventType.addCoinsClick:
         return IsmLiveAnalyticsEvent.addCoinsClick;
       case IsmLiveAnalyticsEventType.giftClick:
@@ -320,6 +341,13 @@ class IsmLiveAnalyticsEvent {
       'ism_live_controller_join_stream_failure';
   static const String streamScroll = 'ism_live_stream_scroll';
   static const String streamEndRequested = 'ism_live_stream_end_requested';
+  static const String streamStarted = 'ism_live_stream_started';
+  static const String streamEnded = 'ism_live_stream_ended';
+  static const String streamJoin = 'ism_live_stream_join';
+  static const String streamLeave = 'ism_live_stream_leave';
+  static const String streamHeartbeat = 'ism_live_stream_heartbeat';
+  static const String streamChatSent = 'ism_live_stream_chat_sent';
+  static const String streamReaction = 'ism_live_stream_reaction';
 
   // Commerce / engagement
   static const String addCoinsClick = 'ism_live_add_coins_click';
@@ -452,6 +480,13 @@ class IsmLiveAnalyticsEvent {
     // Stream events
     streamScroll,
     streamEndRequested,
+    streamStarted,
+    streamEnded,
+    streamJoin,
+    streamLeave,
+    streamHeartbeat,
+    streamChatSent,
+    streamReaction,
 
     // Commerce / engagement
     addCoinsClick,
@@ -569,9 +604,18 @@ class IsmLiveAnalyticsEvent {
     }
     if (eventName == addCoinsClick ||
         eventName == giftClick ||
+        eventName == streamStarted ||
+        eventName == streamEnded ||
+        eventName == streamJoin ||
+        eventName == streamLeave ||
+        eventName == streamChatSent ||
+        eventName == streamReaction ||
         eventName == streamScroll ||
         eventName == streamEndRequested) {
       return IsmLiveAnalyticsCategory.userAction;
+    }
+    if (eventName == streamHeartbeat) {
+      return IsmLiveAnalyticsCategory.system;
     }
     return IsmLiveAnalyticsCategory.system;
   }

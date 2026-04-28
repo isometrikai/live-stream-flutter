@@ -162,6 +162,8 @@ mixin StreamOngoingMixin {
   Timer? _heartDebounceTimer;
   int _pendingHeartCount = 0;
   int _heartIdCounter = 0;
+  int _lastHeartbeatSecondEmitted = -1;
+  String? _lastHeartbeatStreamId;
 
   /// Single queue that all incoming heart IDs feed into. A self-scheduling
   /// drain timer pulls one heart at a time, so batch boundaries from MQTT
@@ -1007,6 +1009,19 @@ mixin StreamOngoingMixin {
 
   Future<void> _flushHeartsWithDelegate(String streamId, int count) async {
     await _controller.sendHeartMessage(streamId, count: count);
+    IsmLiveDelegate.trackEvent(
+      IsmLiveAnalyticsEvent.streamReaction,
+      properties: [
+        {
+          'stream_id': streamId,
+          'is_host': _controller.isHost,
+          'reaction_count': count,
+          'user_id': _controller.user?.userId ?? '',
+          'user_name':
+              _controller.user?.userName ?? _controller.user?.name ?? '',
+        }
+      ],
+    );
     final delegate = IsmLiveDelegate.heartBatchFlushCallback;
     if (delegate != null) {
       unawaited(_invokeHeartBatchFlushDelegate(delegate, streamId, count));
@@ -1033,6 +1048,8 @@ mixin StreamOngoingMixin {
     _heartDrainTimer?.cancel();
     _heartDrainTimer = null;
     _heartSpawnQueue.clear();
+    _lastHeartbeatSecondEmitted = -1;
+    _lastHeartbeatStreamId = null;
   }
 
   // Function to add gift message to the stream
@@ -1509,6 +1526,42 @@ mixin StreamOngoingMixin {
           await _controller.leaveStream(streamId);
           isEnded = true;
           break;
+      }
+    }
+
+    if (isEnded) {
+      if (disconnectType == IsmLiveStreamDisconnectType.host) {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamEnded,
+          properties: [
+            {
+              'stream_id': streamId,
+              'disconnect_type': disconnectType.name,
+              'user_id': _controller.user?.userId ?? '',
+              'user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+            }
+          ],
+        );
+      } else if (disconnectType == IsmLiveStreamDisconnectType.viewer) {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamLeave,
+          properties: [
+            {
+              'stream_id': streamId,
+              'disconnect_type': disconnectType.name,
+              'initiator_user_id': _controller.user?.userId ?? '',
+              'initiator_user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+              'user_id': _controller.streamDetails?.userId ??
+                  _controller.streamDetails?.userDetails?.id ??
+                  '',
+              'user_name': _controller.streamDetails?.userDetails?.userName ??
+                  _controller.streamDetails?.userDetails?.name ??
+                  '',
+            }
+          ],
+        );
       }
     }
 

@@ -255,28 +255,6 @@ mixin StreamJoinMixin {
         reJoin: reJoin,
         onStreamEnd: onStreamEnd,
       );
-
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.controllerJoinStreamSuccess,
-        properties: [
-          {
-            'stream_id': stream.streamId ?? '',
-            'event_id': stream.eventId ?? '',
-            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
-          }
-        ],
-      );
-
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.controllerInitializeAndJoinSuccess,
-        properties: [
-          {
-            'stream_id': stream.streamId ?? '',
-            'event_id': stream.eventId ?? '',
-            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
-          }
-        ],
-      );
     } catch (e) {
       IsmLiveDelegate.trackEvent(
         IsmLiveAnalyticsEvent.controllerJoinStreamFailure,
@@ -672,17 +650,6 @@ mixin StreamJoinMixin {
           context: context,
           reJoin: reJoin,
           deferConnection: true);
-
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.joinStreamConnectStreamSuccess,
-        properties: [
-          {
-            'stream_id': stream.streamId ?? '',
-            'event_id': stream.eventId ?? '',
-            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
-          }
-        ],
-      );
     } catch (e, st) {
       if (!isHost && viewerUsedCachedToken) {
         final streamId = stream.streamId ?? '';
@@ -720,17 +687,6 @@ mixin StreamJoinMixin {
                 context: context,
                 reJoin: reJoin,
                 deferConnection: true);
-            IsmLiveDelegate.trackEvent(
-              IsmLiveAnalyticsEvent.joinStreamConnectStreamSuccess,
-              properties: [
-                {
-                  'stream_id': stream.streamId ?? '',
-                  'event_id': stream.eventId ?? '',
-                  'duration_ms':
-                      DateTime.now().difference(startedAt).inMilliseconds,
-                }
-              ],
-            );
             return;
           } catch (_) {}
         }
@@ -1098,15 +1054,6 @@ mixin StreamJoinMixin {
         products: products,
         performNavigation: !joinByScrolling,
         showLoader: true,
-      );
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.connectRoomAndInitializeSuccess,
-        properties: [
-          {
-            'stream_id': streamId,
-            'duration_ms': DateTime.now().difference(startedAt).inMilliseconds,
-          }
-        ],
       );
     } catch (e) {
       IsmLiveDelegate.trackEvent(
@@ -1931,15 +1878,55 @@ mixin StreamJoinMixin {
         _controller.isViewerJoiningStream = false;
       }
 
-      IsmLiveDelegate.trackEvent(
-        IsmLiveAnalyticsEvent.roomConnectSuccess,
-        properties: [
-          {
-            'stream_id': streamId,
-            'duration_ms': sw.elapsedMilliseconds,
-          }
-        ],
-      );
+      if (!isHost) {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamJoin,
+          properties: [
+            {
+              'stream_id': streamId,
+              'event_id': eventId ?? stream?.eventId ?? '',
+              'stream_description': stream?.streamDescription ??
+                  _controller.streamDetails?.streamDescription ??
+                  '',
+              'start_date_time': (stream?.startDateTime ??
+                          _controller.streamDetails?.startDateTime)
+                      ?.toIso8601String() ??
+                  '',
+              'is_scheduled_stream': stream?.isScheduledStream ??
+                  _controller.streamDetails?.isScheduledStream ??
+                  false,
+              'initiator_user_id': _controller.user?.userId ?? '',
+              'initiator_user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+              'user_id': stream?.userId ??
+                  stream?.userDetails?.id ??
+                  _controller.streamDetails?.userId ??
+                  _controller.streamDetails?.userDetails?.id ??
+                  '',
+              'user_name': stream?.userDetails?.userName ??
+                  stream?.userDetails?.name ??
+                  _controller.streamDetails?.userDetails?.userName ??
+                  _controller.streamDetails?.userDetails?.name ??
+                  '',
+            }
+          ],
+        );
+      }
+      if (isHost && isNewStream) {
+        IsmLiveDelegate.trackEvent(
+          IsmLiveAnalyticsEvent.streamStarted,
+          properties: [
+            {
+              'stream_id': streamId,
+              'event_id': eventId ?? '',
+              'is_scheduled_stream': isScheduledStream ?? false,
+              'user_id': _controller.user?.userId ?? '',
+              'user_name':
+                  _controller.user?.userName ?? _controller.user?.name ?? '',
+            }
+          ],
+        );
+      }
 
       // Route audio to the loudspeaker. Mobile WebRTC defaults to the
       // earpiece; live-stream participants expect loudspeaker output.
@@ -2358,6 +2345,35 @@ mixin StreamJoinMixin {
           _controller.streamDuration += const Duration(
             seconds: 1,
           );
+          final currentStreamId = _controller.streamId;
+          final currentSeconds = _controller.streamDuration.inSeconds;
+          if (currentStreamId != null &&
+              currentStreamId.isNotEmpty &&
+              currentSeconds > 0 &&
+              currentSeconds % 30 == 0) {
+            final isHost = _controller.isHost;
+            if (_controller._lastHeartbeatStreamId == currentStreamId &&
+                _controller._lastHeartbeatSecondEmitted == currentSeconds) {
+              return;
+            }
+            _controller._lastHeartbeatStreamId = currentStreamId;
+            _controller._lastHeartbeatSecondEmitted = currentSeconds;
+            IsmLiveDelegate.trackEvent(
+              IsmLiveAnalyticsEvent.streamHeartbeat,
+              properties: [
+                {
+                  'stream_id': currentStreamId,
+                  'watch_duration_seconds': currentSeconds,
+                  'is_host': isHost,
+                  'participant_role': isHost ? 'host' : 'viewer',
+                  'user_id': _controller.user?.userId ?? '',
+                  'user_name': _controller.user?.userName ??
+                      _controller.user?.name ??
+                      '',
+                }
+              ],
+            );
+          }
         } catch (e) {
           IsmLiveLog.error('Stream timer tick error: $e');
           timer.cancel(); // Stops the timer permanently
