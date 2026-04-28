@@ -653,6 +653,7 @@ class IsmLiveApp extends StatefulWidget {
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
+    ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder,
     IsmLiveCartBuilder? cartBuilder,
     TopViewersListCallback? topViewersListCallback,
     ModeratorsListCallback? moderatorsListCallback,
@@ -812,6 +813,11 @@ class IsmLiveApp extends StatefulWidget {
     // Set standalone goLiveSmallButtonBuilder if provided
     if (goLiveSmallButtonBuilder != null) {
       IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
+    }
+
+    if (scheduleStreamCenterOverlayBuilder != null) {
+      IsmLiveDelegate.scheduleStreamCenterOverlayBuilder =
+          scheduleStreamCenterOverlayBuilder;
     }
 
     IsmLiveDelegate.controlOptionCallback = effectiveControlOptionCallback;
@@ -1262,6 +1268,17 @@ class IsmLiveApp extends StatefulWidget {
       GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder) {
     IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
     // Trigger rebuild of stream view to apply new small button
+    if (Get.isRegistered<IsmLiveStreamController>()) {
+      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+    }
+  }
+
+  /// Update scheduled stream center overlay builder dynamically at runtime
+  static void updateScheduleStreamCenterOverlayBuilder(
+      ScheduleStreamCenterOverlayBuilder?
+          scheduleStreamCenterOverlayBuilder) {
+    IsmLiveDelegate.scheduleStreamCenterOverlayBuilder =
+        scheduleStreamCenterOverlayBuilder;
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }

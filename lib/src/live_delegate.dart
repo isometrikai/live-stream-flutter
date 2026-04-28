@@ -383,6 +383,16 @@ typedef GoLiveSmallButtonBuilder = Widget Function(
   bool isEnabled,
 );
 
+/// Builder for custom centered overlay UI in scheduled stream view.
+///
+/// Host apps can use this to render their own centered content on top of the
+/// scheduled-stream overlay without replacing the SDK's existing chat or
+/// controls layout.
+typedef ScheduleStreamCenterOverlayBuilder = Widget Function(
+  BuildContext context,
+  IsmLiveStreamController controller,
+);
+
 /// Callback for handling any control option tap
 /// Allows host apps to customize any control button behavior
 /// - Custom control button functionality
@@ -1135,6 +1145,9 @@ class IsmLiveDelegate {
 
   static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
 
+  static ScheduleStreamCenterOverlayBuilder?
+      scheduleStreamCenterOverlayBuilder;
+
   static ControlOptionCallback? controlOptionCallback;
 
   static ControlWidgetBuilder? controlWidgetBuilder;
@@ -1416,6 +1429,7 @@ class IsmLiveGoLiveScreenConfigure {
     GoLiveDisposeCallback? onGoLiveDispose,
     this.goLiveHeaderBuilder,
     this.goLiveButtonBuilder,
+    this.scheduleStreamCenterOverlayBuilder,
     this.onScheduleLiveToggle,
     bool? defaultHdBroadcastToggleValue,
     bool? defaultRecordBroadcastToggleValue,
@@ -1510,6 +1524,12 @@ class IsmLiveGoLiveScreenConfigure {
 
   /// Optional callback invoked when `Schedule Live` toggle value changes.
   final ScheduleLiveToggleCallback? onScheduleLiveToggle;
+
+  /// Custom centered overlay builder for scheduled stream view.
+  ///
+  /// If provided, this widget is rendered in the center of the scheduled
+  /// stream overlay while preserving the SDK's existing layout and controls.
+  final ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder;
 
   /// Optional default value for `HD Broadcast` toggle on fresh GoLive flow.
   ///
@@ -1709,6 +1729,7 @@ class IsmLiveGoLiveScreenConfigure {
     GoLiveDisposeCallback? onGoLiveDispose,
     GoLiveHeaderBuilder? goLiveHeaderBuilder,
     GoLiveButtonBuilder? goLiveButtonBuilder,
+    ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder,
     ScheduleLiveToggleCallback? onScheduleLiveToggle,
     bool? defaultHdBroadcastToggleValue,
     bool? defaultRecordBroadcastToggleValue,
@@ -1766,6 +1787,8 @@ class IsmLiveGoLiveScreenConfigure {
             onGoLiveViewDispose ?? onGoLiveDispose ?? this.onGoLiveViewDispose,
         goLiveHeaderBuilder: goLiveHeaderBuilder ?? this.goLiveHeaderBuilder,
         goLiveButtonBuilder: goLiveButtonBuilder ?? this.goLiveButtonBuilder,
+        scheduleStreamCenterOverlayBuilder: scheduleStreamCenterOverlayBuilder ??
+            this.scheduleStreamCenterOverlayBuilder,
         onScheduleLiveToggle: onScheduleLiveToggle ?? this.onScheduleLiveToggle,
         defaultHdBroadcastToggleValue: defaultHdBroadcastToggleValue ??
             defaultHdBroadcast ??

@@ -1268,78 +1268,104 @@ class ScheduleStreamView extends StatelessWidget {
     );
   }
 
+  Widget _buildCenterOverlay(
+    BuildContext context,
+    IsmLiveStreamController controller,
+  ) {
+    final builder = IsmLiveDelegate.scheduleStreamCenterOverlayBuilder;
+    if (builder == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Center(
+      child: builder(context, controller),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => SafeArea(
         child: GetBuilder<IsmLiveStreamController>(
-          builder: (controller) => Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
+          builder: (controller) => Stack(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: IsmLiveDimens.edgeInsets8_0,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildChatView(
-                              context,
-                              isHost: true,
-                              streamId: controller.streamId ?? '',
-                            ),
-                            IsmLiveDimens.boxHeight8,
-                            IsmLiveApp.inputBuilder?.call(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: IsmLiveDimens.edgeInsets8_0,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildChatView(
                                   context,
-                                  IsmLiveMessageField(
-                                    streamId: controller.streamId ?? '',
-                                    isHost: controller.isPublishing,
-                                    disabled:
-                                        !_IsmLiveStreamView.isValidStreamId(
-                                            controller.streamId),
-                                  ),
-                                ) ??
-                                IsmLiveMessageField(
-                                  streamId: () {
-                                    // Debug logging for streamId at line 903
-                                    final streamId =
-                                        controller.streamDetails?.streamId ??
-                                            '';
-                                    return streamId;
-                                  }(),
-                                  isHost: controller.isPublishing,
-                                  disabled: !_IsmLiveStreamView.isValidStreamId(
-                                      controller.streamDetails?.streamId),
+                                  isHost: true,
+                                  streamId: controller.streamId ?? '',
                                 ),
-                          ],
-                        ),
-                      ),
-                      IsmLiveDimens.boxWidth2,
-                      if (!isKeyboardOpen)
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            IsmLiveControlsWidget(
-                              isHost: true,
-                              isCopublishing: false,
-                              isSchedule: true,
-                              streamId:
-                                  controller.streamDetails?.streamId ?? '',
-                              isKeyboardOpen: isKeyboardOpen,
+                                IsmLiveDimens.boxHeight8,
+                                IsmLiveApp.inputBuilder?.call(
+                                      context,
+                                      IsmLiveMessageField(
+                                        streamId: controller.streamId ?? '',
+                                        isHost: controller.isPublishing,
+                                        disabled:
+                                            !_IsmLiveStreamView.isValidStreamId(
+                                                controller.streamId),
+                                      ),
+                                    ) ??
+                                    IsmLiveMessageField(
+                                      streamId: () {
+                                        // Debug logging for streamId at line 903
+                                        final streamId =
+                                            controller.streamDetails?.streamId ??
+                                                '';
+                                        return streamId;
+                                      }(),
+                                      isHost: controller.isPublishing,
+                                      disabled:
+                                          !_IsmLiveStreamView.isValidStreamId(
+                                              controller.streamDetails?.streamId),
+                                    ),
+                              ],
                             ),
-                            IsmLiveDimens.boxHeight32,
-                            _buildScheduledGoLiveButton(
-                                context, controller, isKeyboardOpen),
-                          ],
-                        )
-                    ],
+                          ),
+                          IsmLiveDimens.boxWidth2,
+                          if (!isKeyboardOpen)
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                IsmLiveControlsWidget(
+                                  isHost: true,
+                                  isCopublishing: false,
+                                  isSchedule: true,
+                                  streamId:
+                                      controller.streamDetails?.streamId ?? '',
+                                  isKeyboardOpen: isKeyboardOpen,
+                                ),
+                                IsmLiveDimens.boxHeight32,
+                                _buildScheduledGoLiveButton(
+                                    context, controller, isKeyboardOpen),
+                              ],
+                            )
+                        ],
+                      ),
+                    ),
                   ),
+                  IsmLiveDimens.boxHeight4,
+                ],
+              ),
+              Positioned.fill(
+                child: IgnorePointer(
+                  ignoring:
+                      IsmLiveDelegate.scheduleStreamCenterOverlayBuilder == null,
+                  child: _buildCenterOverlay(context, controller),
                 ),
               ),
-              IsmLiveDimens.boxHeight4,
             ],
           ),
         ),
