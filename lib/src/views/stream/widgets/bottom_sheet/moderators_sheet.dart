@@ -8,6 +8,46 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
   });
 
   static const String updateId = 'stream-moderator-sheet';
+  static const double _moderatorPaginationTriggerExtent = 240;
+
+  Future<void> _loadMoreModeratorsIfNeeded(
+    IsmLiveStreamController controller,
+  ) async {
+    if (controller.isModeratorsApiCall) {
+      return;
+    }
+    if (!controller.moderatorListController.hasClients) {
+      return;
+    }
+
+    final position = controller.moderatorListController.position;
+    if (!position.hasContentDimensions) {
+      return;
+    }
+
+    if (position.extentAfter > _moderatorPaginationTriggerExtent) {
+      return;
+    }
+
+    final streamId = controller.streamId;
+    if (streamId == null || streamId.isEmpty) {
+      return;
+    }
+
+    controller.isModeratorsApiCall = true;
+    try {
+      await controller.fetchModerators(
+        forceFetch: true,
+        streamId: streamId,
+        skip: controller.moderatorsList.length,
+        searchTag: controller.searchModeratorFieldController.text.trim().isEmpty
+            ? null
+            : controller.searchModeratorFieldController.text.trim(),
+      );
+    } finally {
+      controller.isModeratorsApiCall = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,150 +95,162 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Expanded(
-                      child: IsmLiveScrollSheet(
-                        showHeader: false,
-                        showSearchBar: false,
-                        placeHolder:
-                            IsmLiveAssetConstants.moderator_placeholder,
-                        placeHolderText: IsmLiveStrings.noModerator,
-                        controller: controller.moderatorListController,
-                        title: IsmLiveStrings.moderators,
-                        itemCount: controller.moderatorsList
-                            .where(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification.metrics.axis != Axis.vertical) {
+                            return false;
+                          }
+                          _loadMoreModeratorsIfNeeded(controller);
+                          return false;
+                        },
+                        child: IsmLiveScrollSheet(
+                          showHeader: false,
+                          showSearchBar: false,
+                          placeHolder:
+                              IsmLiveAssetConstants.moderator_placeholder,
+                          placeHolderText: IsmLiveStrings.noModerator,
+                          controller: controller.moderatorListController,
+                          title: IsmLiveStrings.moderators,
+                          itemCount: controller.moderatorsList
+                              .where(
+                                (moderator) =>
+                                    moderator.userId !=
+                                        controller.hostDetails?.userId &&
+                                    moderator.userIdentifier !=
+                                        controller.hostDetails?.userIdentifier,
+                              )
+                              .length,
+                          itemBuilder: (context, index) {
+                            final filteredModerators =
+                                controller.moderatorsList.where(
                               (moderator) =>
                                   moderator.userId !=
                                       controller.hostDetails?.userId &&
                                   moderator.userIdentifier !=
                                       controller.hostDetails?.userIdentifier,
-                            )
-                            .length,
-                        itemBuilder: (context, index) {
-                          final filteredModerators =
-                              controller.moderatorsList.where(
-                            (moderator) =>
-                                moderator.userId !=
-                                    controller.hostDetails?.userId &&
-                                moderator.userIdentifier !=
-                                    controller.hostDetails?.userIdentifier,
-                          );
-                          final moderator = filteredModerators.elementAt(index);
-                          final imageUrl = IsmLiveDelegate.getUserProfileUrl
-                                  ?.call(moderator.profileUrl) ??
-                              moderator.profileUrl;
-                          return InkWell(
-                            onTap: () {
-                              IsmLiveUtility.openBottomSheet(
-                                StreamLiveSheet(
-                                  widget: IsmLiveImage.network(
-                                    imageUrl,
-                                    isProfileImage: true,
-                                    name: moderator.name,
-                                    initials: moderator.profileInitials,
-                                    height: IsmLiveDimens.hundred,
-                                    width: IsmLiveDimens.hundred,
+                            );
+                            final moderator =
+                                filteredModerators.elementAt(index);
+                            final imageUrl = IsmLiveDelegate.getUserProfileUrl
+                                    ?.call(moderator.profileUrl) ??
+                                moderator.profileUrl;
+                            return InkWell(
+                              onTap: () {
+                                IsmLiveUtility.openBottomSheet(
+                                  StreamLiveSheet(
+                                    widget: IsmLiveImage.network(
+                                      imageUrl,
+                                      isProfileImage: true,
+                                      name: moderator.name,
+                                      initials: moderator.profileInitials,
+                                      height: IsmLiveDimens.hundred,
+                                      width: IsmLiveDimens.hundred,
+                                    ),
+                                    title: moderator.name,
+                                    subTitle: null,
+                                    buttonLable: IsmLiveStrings.viewProfile,
+                                    onTap: () {
+                                      IsmLiveDelegate.openUserProfileView
+                                          ?.call(moderator.userIdentifier);
+                                    },
                                   ),
-                                  title: moderator.name,
-                                  subTitle: null,
-                                  buttonLable: IsmLiveStrings.viewProfile,
-                                  onTap: () {
-                                    IsmLiveDelegate.openUserProfileView
-                                        ?.call(moderator.userIdentifier);
-                                  },
+                                  isScrollController: true,
+                                );
+                              },
+                              child: ListTile(
+                                leading: IsmLiveImage.network(
+                                  imageUrl,
+                                  name: moderator.name,
+                                  initials: moderator.profileInitials,
+                                  dimensions: IsmLiveDimens.forty,
+                                  isProfileImage: true,
                                 ),
-                                isScrollController: true,
-                              );
-                            },
-                            child: ListTile(
-                              leading: IsmLiveImage.network(
-                                imageUrl,
-                                name: moderator.name,
-                                initials: moderator.profileInitials,
-                                dimensions: IsmLiveDimens.forty,
-                                isProfileImage: true,
-                              ),
-                              title: Text(
-                                moderator.name,
-                                style: TextStyle(color: textColor),
-                              ),
-                              subtitle: moderator.displayUserName !=
-                                      moderator.fullName
-                                  ? Text(
-                                      moderator.displayUserName,
-                                      style: TextStyle(
-                                        color: context.liveTheme
-                                                ?.unselectedTextColor ??
-                                            (isDarkMode
-                                                ? const Color(0xFFB0B0B0)
-                                                : Colors.grey),
-                                      ),
-                                    )
-                                  : null,
-                              trailing: (moderator.userId !=
-                                          controller.user?.userId &&
-                                      controller.isHost == true)
-                                  ? IconButton(
-                                      iconSize: 24,
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      icon: const IsmLiveImage.svg(
-                                        IsmLiveAssetConstants.removeModerator,
-                                      ),
-                                      onPressed: () {
-                                        // Show confirmation bottom sheet
-                                        final name = moderator.name;
-                                        IsmLiveUtility.openBottomSheet(
-                                          _RemoveModeratorConfirmSheet(
-                                            moderatorName: name,
-                                            onConfirm: () async {
-                                              final streamId =
-                                                  controller.streamId ?? '';
-                                              final moderatorId =
-                                                  moderator.userId;
-                                              final removed = await controller
-                                                  .removeModerator(
-                                                streamId: streamId,
-                                                moderatorId: moderatorId,
-                                              );
-                                              if (removed) {
-                                                controller.moderatorsList
-                                                    .removeWhere(
-                                                  (m) =>
-                                                      m.userId == moderatorId,
+                                title: Text(
+                                  moderator.name,
+                                  style: TextStyle(color: textColor),
+                                ),
+                                subtitle: moderator.displayUserName !=
+                                        moderator.fullName
+                                    ? Text(
+                                        moderator.displayUserName,
+                                        style: TextStyle(
+                                          color: context.liveTheme
+                                                  ?.unselectedTextColor ??
+                                              (isDarkMode
+                                                  ? const Color(0xFFB0B0B0)
+                                                  : Colors.grey),
+                                        ),
+                                      )
+                                    : null,
+                                trailing: (moderator.userId !=
+                                            controller.user?.userId &&
+                                        controller.isHost == true)
+                                    ? IconButton(
+                                        iconSize: 24,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        icon: const IsmLiveImage.svg(
+                                          IsmLiveAssetConstants.removeModerator,
+                                        ),
+                                        onPressed: () {
+                                          // Show confirmation bottom sheet
+                                          final name = moderator.name;
+                                          IsmLiveUtility.openBottomSheet(
+                                            _RemoveModeratorConfirmSheet(
+                                              moderatorName: name,
+                                              onConfirm: () async {
+                                                final streamId =
+                                                    controller.streamId ?? '';
+                                                final moderatorId =
+                                                    moderator.userId;
+                                                final removed = await controller
+                                                    .removeModerator(
+                                                  streamId: streamId,
+                                                  moderatorId: moderatorId,
                                                 );
-                                                controller.update([
-                                                  IsmLiveModeratorsSheet
-                                                      .updateId
-                                                ]);
-                                              }
+                                                if (removed) {
+                                                  controller.moderatorsList
+                                                      .removeWhere(
+                                                    (m) =>
+                                                        m.userId ==
+                                                        moderatorId,
+                                                  );
+                                                  controller.update([
+                                                    IsmLiveModeratorsSheet
+                                                        .updateId
+                                                  ]);
+                                                }
+                                              },
+                                            ),
+                                            isScrollController: true,
+                                            backgroundColor: context
+                                                    .liveTheme
+                                                    ?.backgroundColor ??
+                                                (Theme.of(context).brightness ==
+                                                        Brightness.dark
+                                                    ? const Color(0xFF121212)
+                                                    : Colors.white),
+                                          );
+                                        },
+                                      )
+                                    : controller.isModerator &&
+                                            controller.isHost != true &&
+                                            (controller.user?.userId ==
+                                                moderator.userId)
+                                        ? IsmLiveButton.icon(
+                                            icon: Icons.exit_to_app_rounded,
+                                            onTap: () {
+                                              IsmLiveRoute.pop();
+                                              controller.leaveModerator(
+                                                controller.streamId ?? '',
+                                              );
                                             },
-                                          ),
-                                          isScrollController: true,
-                                          backgroundColor: context
-                                                  .liveTheme?.backgroundColor ??
-                                              (Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? const Color(0xFF121212)
-                                                  : Colors.white),
-                                        );
-                                      },
-                                    )
-                                  : controller.isModerator &&
-                                          controller.isHost != true &&
-                                          (controller.user?.userId ==
-                                              moderator.userId)
-                                      ? IsmLiveButton.icon(
-                                          icon: Icons.exit_to_app_rounded,
-                                          onTap: () {
-                                            IsmLiveRoute.pop();
-                                            controller.leaveModerator(
-                                              controller.streamId ?? '',
-                                            );
-                                          },
-                                        )
-                                      : null,
-                            ),
-                          );
-                        },
+                                          )
+                                        : null,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -235,7 +287,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'Add Moderator',
+                        IsmLiveStrings.addModerator,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
