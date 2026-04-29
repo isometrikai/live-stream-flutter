@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/utils/extensions.dart';
 import 'package:flutter/foundation.dart';
 
 class IsmLiveStreamDataModel {
@@ -55,6 +54,7 @@ class IsmLiveStreamDataModel {
     this.status,
     this.isStreamActive,
     this.eventId,
+    this.metaData,
   });
 
   factory IsmLiveStreamDataModel.fromMap(Map<String, dynamic> map) =>
@@ -114,6 +114,10 @@ class IsmLiveStreamDataModel {
         type: map['type'] != null ? map['type'] as String : null,
         status: map['status'] != null ? map['status'] as String : null,
         eventId: map['eventId'] != null ? map['eventId'] as String : null,
+        metaData: map['metaData'] != null
+            ? IsmLiveMetaData.fromMap(
+                Map<String, dynamic>.from(map['metaData'] as Map))
+            : null,
         isStreamActive: map['isStreamActive'] != null
             ? map['isStreamActive'] as bool
             : null,
@@ -264,6 +268,7 @@ class IsmLiveStreamDataModel {
   final String? status;
   final bool? isStreamActive;
   final String? eventId;
+  final IsmLiveMetaData? metaData;
 
   IsmLiveStreamDataModel copyWith({
     String? streamId,
@@ -314,6 +319,7 @@ class IsmLiveStreamDataModel {
     String? status,
     bool? isStreamActive,
     String? eventId,
+    IsmLiveMetaData? metaData,
   }) =>
       IsmLiveStreamDataModel(
         streamId: streamId ?? this.streamId,
@@ -365,6 +371,7 @@ class IsmLiveStreamDataModel {
         status: status ?? this.status,
         isStreamActive: isStreamActive ?? this.isStreamActive,
         eventId: eventId ?? this.eventId,
+        metaData: metaData ?? this.metaData,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -418,13 +425,14 @@ class IsmLiveStreamDataModel {
         'status': status,
         'isStreamActive': isStreamActive,
         'eventId': eventId,
+        'metaData': metaData?.toMap(),
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, scheduleStartTimeInMilliseconds: ${scheduleStartTime.epochMilliseconds}, scheduleStartTimeInSeconds: ${scheduleStartTime.epochSeconds}, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, startDateTimeInMilliseconds: ${startDateTime.epochMilliseconds}, startDateTimeInSeconds: ${startDateTime.epochSeconds}, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream,      status: $status, isStreamActive: $isStreamActive , eventId: $eventId , userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
+      'IsmLiveStreamDataModel(streamId: $streamId, amount: $amount, scheduleStartTime: $scheduleStartTime, scheduleStartTimeInMilliseconds: ${scheduleStartTime.epochMilliseconds}, scheduleStartTimeInSeconds: ${scheduleStartTime.epochSeconds}, isBuy: $isBuy, streamTitle: $streamTitle, streamImage: $streamImage, startDateTime: $startDateTime, startDateTimeInMilliseconds: ${startDateTime.epochMilliseconds}, startDateTimeInSeconds: ${startDateTime.epochSeconds}, recordUrl: $recordUrl, streamDescription: $streamDescription, isRecorded: $isRecorded, isGroupStream: $isGroupStream, isPublicStream: $isPublicStream,      status: $status, isStreamActive: $isStreamActive , eventId: $eventId , metaData: $metaData, userId: $userId, userType: $userType, audioOnly: $audioOnly, isPaid: $isPaid, alreadyPaid: $alreadyPaid, isScheduledStream: $isScheduledStream, paymentCurrencyCode: $paymentCurrencyCode, country: $country, duration: $duration, streamTags: $streamTags, streamTypes: $streamTypes, members: $members, paymentAmount: $paymentAmount, paymentType: $paymentType, viewersCount: $viewersCount, coinsCount: $coinsCount, userDetails: $userDetails, type: $type, hdBroadcast: $hdBroadcast, restream: $restream, productsLinked: $productsLinked, productsCount: $productsCount, products: $products, firstUserDetails: $firstUserDetails, secondUserDetails: $secondUserDetails, inviteId: $inviteId, isPkChallenge: $isPkChallenge, pkId: $pkId, selfHosted: $selfHosted, rtmpIngest: $rtmpIngest, persistRtmpIngestEndpoint: $persistRtmpIngestEndpoint, firstUserCoins: $firstUserCoins, secondUserCoins: $secondUserCoins)';
 
   @override
   bool operator ==(covariant IsmLiveStreamDataModel other) {
@@ -477,6 +485,7 @@ class IsmLiveStreamDataModel {
         other.status == status &&
         other.isStreamActive == isStreamActive &&
         other.eventId == eventId &&
+        other.metaData == metaData &&
         other.secondUserCoins == secondUserCoins;
   }
 
@@ -529,6 +538,7 @@ class IsmLiveStreamDataModel {
       status.hashCode ^
       eventId.hashCode ^
       isStreamActive.hashCode ^
+      metaData.hashCode ^
       secondUserCoins.hashCode;
 }
 
