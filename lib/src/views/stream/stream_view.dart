@@ -545,7 +545,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                             child: const ColoredBox(color: Colors.transparent),
                           ),
                         ),
-                      if (isActiveStreamPage || widget.isSchedule)
+                      if (isActiveStreamPage || (widget.isSchedule && !_IsmLiveStreamView.isValidStreamId(
+                          widget.streamId)))
                         Positioned.fill(
                           child: IgnorePointer(
                             ignoring: !_overlaysVisible,

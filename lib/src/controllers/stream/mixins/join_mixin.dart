@@ -848,6 +848,24 @@ mixin StreamJoinMixin {
     // Persist for both host and viewer to support foreground rejoin with cached token.
     _controller.rtcToken = token;
     unawaited(_dbWrapper.saveValueSecurely(streamId, token));
+
+    // When connecting to a different stream than the one we currently
+    // hold data for, proactively clear any stale chat messages.
+    //
+    // The previous stream's `streamDispose()` (which clears the chat list)
+    // runs via `IsmLiveUtility.updateLater` (next frame + 10ms). If the user
+    // joins a new stream within that window, the next view can briefly show
+    // the previous stream's chat. Skipped when `reJoin` is true so that
+    // intentional preserve-state flows (PK guest, foreground rejoin) keep
+    // their existing messages.
+    if (!reJoin &&
+        _controller.streamId != null &&
+        _controller.streamId!.isNotEmpty &&
+        _controller.streamId != streamId &&
+        _controller.streamMessagesList.isNotEmpty) {
+      _controller.streamMessagesList.clear();
+    }
+
     // Subscribe to the stream
     _controller.streamId = streamId;
 

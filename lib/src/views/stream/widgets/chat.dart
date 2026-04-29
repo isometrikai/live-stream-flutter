@@ -190,9 +190,29 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView>
           final mediaQuery = MediaQuery.of(context);
           final isKeyboardOpen = _isKeyboardOpen;
 
+          // Only render messages that belong to this view's stream.
+          //
+          // This guards against a rare race where the previous stream's
+          // `streamMessagesList` has not yet been cleared (the cleanup runs
+          // via `IsmLiveUtility.updateLater`, i.e. next frame + 10ms) by the
+          // time the next stream's view is built. Without this filter, the
+          // audience can briefly see chat from the previous stream in the
+          // newly joined stream. Messages from different streams are not
+          // de-duplicated by `.toSet()` because `IsmLiveChatModel` equality
+          // is `(streamId, messageId)`.
+          //
+          // Falls back to the unfiltered list when `widget.streamId` is empty
+          // (e.g. the schedule view before a stream is active) to preserve
+          // existing behavior in those edge cases.
+          final messagesForStream = widget.streamId.isEmpty
+              ? controller.streamMessagesList
+              : controller.streamMessagesList
+                  .where((m) => m.streamId == widget.streamId)
+                  .toList();
+
           // Scroll to bottom only when new message arrives (not on updates)
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            final currentMessageCount = controller.streamMessagesList.length;
+            final currentMessageCount = messagesForStream.length;
             // Reset counter if messages were cleared (e.g., stream ended)
             if (currentMessageCount == 0) {
               _previousMessageCount = 0;
@@ -247,9 +267,9 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView>
                 controller: messagesListController,
                 padding: IsmLiveDimens.edgeInsets0_8,
                 shrinkWrap: true,
-                itemCount: controller.streamMessagesList.length,
+                itemCount: messagesForStream.length,
                 itemBuilder: (context, index) {
-                  final message = controller.streamMessagesList[index];
+                  final message = messagesForStream[index];
 
                   // Get custom background color if callback provided
                   final customBackgroundColor =
