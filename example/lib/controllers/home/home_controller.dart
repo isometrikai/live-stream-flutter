@@ -101,8 +101,9 @@ class HomeController extends GetxController {
       hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
               imageUrl, description) async =>
           true,
-      inputBuilder: (context, defaultMessageField) => Container(
-      ),
+      // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+      //   defaultMessageField: defaultMessageField,
+      // ),
 
       restrictProfileSheetOnProfileClick: true,
 
@@ -687,13 +688,15 @@ class HomeController extends GetxController {
     BuildContext context,
     IsmLiveStreamController controller,
   ) {
+
+    final show = controller.streamDetails?.eventId?.isNotEmpty == true && controller.streamId.isNullOrEmpty;
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final scheduledText = scheduleTime != null
         ? _formatScheduleTime(scheduleTime)
         : 'No schedule selected';
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
+    return show ? Container(
       width: screenWidth,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -730,7 +733,7 @@ class HomeController extends GetxController {
           ],
         ),
       ),
-    );
+    ) : Container();
   }
 
   /// Formats schedule time to "22 Sept, 04:15 PM" format
