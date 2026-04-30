@@ -1,5 +1,6 @@
 export 'debouncer.dart';
 export 'enums.dart';
+export 'stream_id_validation.dart';
 export 'extensions.dart';
 export 'file_manager.dart';
 export 'heart_tap_feedback.dart';

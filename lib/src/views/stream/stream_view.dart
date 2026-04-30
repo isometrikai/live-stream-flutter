@@ -254,19 +254,6 @@ class _IsmLiveStreamView extends StatefulWidget {
   final bool isInteractive;
   final bool isSchedule;
 
-  /// Validates if streamId is valid
-  /// Returns true if streamId is valid (not empty, not null, and doesn't start with '00000')
-  /// Returns false otherwise
-  static bool isValidStreamId(String? streamId) {
-    if (streamId == null || streamId.isEmpty) {
-      return false;
-    }
-    if (streamId.startsWith('00000')) {
-      return false;
-    }
-    return true;
-  }
-
   @override
   State<_IsmLiveStreamView> createState() => _IsmLiveStreamViewState();
 }
@@ -545,7 +532,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                             child: const ColoredBox(color: Colors.transparent),
                           ),
                         ),
-                      if (isActiveStreamPage || (widget.isSchedule && !_IsmLiveStreamView.isValidStreamId(
+                      if (isActiveStreamPage || (widget.isSchedule && !IsmLiveStreamId.isValid(
                           widget.streamId)))
                         Positioned.fill(
                           child: IgnorePointer(
@@ -672,8 +659,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                                   '',
                                                               isHost: controller
                                                                   .isPublishing,
-                                                              disabled: !_IsmLiveStreamView
-                                                                  .isValidStreamId(
+                                                              disabled: !IsmLiveStreamId.isValid(
                                                                       controller
                                                                           .streamId),
                                                             ),
@@ -684,8 +670,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                                 '',
                                                             isHost: controller
                                                                 .isPublishing,
-                                                            disabled: !_IsmLiveStreamView
-                                                                .isValidStreamId(
+                                                            disabled: !IsmLiveStreamId.isValid(
                                                                     controller
                                                                         .streamId),
                                                           ),
@@ -1314,7 +1299,7 @@ class ScheduleStreamView extends StatelessWidget {
                                         streamId: controller.streamId ?? '',
                                         isHost: controller.isPublishing,
                                         disabled:
-                                            !_IsmLiveStreamView.isValidStreamId(
+                                            !IsmLiveStreamId.isValid(
                                                 controller.streamId),
                                       ),
                                     ) ??
@@ -1328,7 +1313,7 @@ class ScheduleStreamView extends StatelessWidget {
                                       }(),
                                       isHost: controller.isPublishing,
                                       disabled:
-                                          !_IsmLiveStreamView.isValidStreamId(
+                                          !IsmLiveStreamId.isValid(
                                               controller.streamDetails?.streamId),
                                     ),
                               ],
