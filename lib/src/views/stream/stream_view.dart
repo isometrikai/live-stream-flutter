@@ -743,7 +743,9 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                             ],
                                           ),
                                         )
-                                      : widget.isSchedule
+                                      : widget.isSchedule &&
+                                              !IsmLiveStreamId.isValid(
+                                                  widget.streamId)
                                           ? ScheduleStreamView(
                                               isKeyboardOpen: isKeyboardOpen)
                                           : const SizedBox.shrink(),
