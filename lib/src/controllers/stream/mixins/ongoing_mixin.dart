@@ -1590,6 +1590,21 @@ mixin StreamOngoingMixin {
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       return;
     }
+
+    // Idempotent for the current stream lifecycle. Once closeStreamView has
+    // marked the lifecycle closed, a second disconnectRoom (e.g., the local
+    // disconnectStream completing its API await AFTER MQTT-broadcast
+    // streamStopped already drove the close path) would re-fire streamDispose
+    // and wipe state on the next-mounted view (notably IsmLiveEndStream after
+    // its analytics load). The guard is reset at the top of [connectStream]
+    // via [resetOnStreamEndTrigger], so subsequent stream sessions are
+    // unaffected. PK rejoin uses preventDispose=true and is unaffected.
+    if (_controller._hasClosedStreamView && !_controller.preventDispose) {
+      IsmLiveLog(
+          'disconnectRoom skipped: stream lifecycle already closed (concurrent close path)');
+      return;
+    }
+
     _controller.isViewerJoiningStream = false;
 
     // Capture room reference synchronously BEFORE any await. When this method
