@@ -844,6 +844,14 @@ mixin StreamJoinMixin {
       ],
     );
 
+    // Reset single-fire guards for the new stream lifecycle. Done here
+    // (centralized funnel for all connect paths: host startStream, viewer
+    // initializeAndJoinStream, scroll join, PK rejoin, copublisher reconnect)
+    // instead of streamDispose to avoid the host-end vs viewer-leave race
+    // where streamDispose during route teardown would prematurely re-arm
+    // closeStreamView and cause a double Navigator.pop on an empty stack.
+    _controller.resetOnStreamEndTrigger();
+
     // Store token for background lifecycle / deferred connect flows.
     // Persist for both host and viewer to support foreground rejoin with cached token.
     _controller.rtcToken = token;
