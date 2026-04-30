@@ -155,14 +155,14 @@ class IsmLiveModeratorCount extends StatelessWidget {
         builder: (controller) {
           final isScheduled =
               controller.streamDetails?.isScheduledStream ?? false;
-          final streamIdOkForScheduled = !isScheduled ||
-              IsmLiveStreamId.isValid(controller.streamId);
-          final showShield = (/*controller.isMember ||
+          final streamIdOkForScheduled =
+              !isScheduled || IsmLiveStreamId.isValid(controller.streamId);
+          final showShield =
+              (/*controller.isMember ||
                   (controller.isCopublisher) ||*/
-              (controller.isHost) ||
-                  (controller.isModerator)) &&
-              !controller.isPk &&
-              streamIdOkForScheduled;
+                      (controller.isHost) || (controller.isModerator)) &&
+                  !controller.isPk &&
+                  streamIdOkForScheduled;
           return showShield
               ? IsmLiveTapHandler(
                   onTap: onTap,

@@ -77,7 +77,9 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       initials: controller.hostDetails?.profileInitials,
                     );
             } else if (controller.participantTracks.isEmpty) {
-              child = !isSchedule
+              final streamIdOkForScheduled = !isSchedule ||
+                  IsmLiveStreamId.isValid(controller.streamId);
+              child = streamIdOkForScheduled
                   ? NoVideoWidget(
                       imageUrl: controller.hostDetails?.image ?? streamImage,
                       name: controller.hostDetails?.name ?? '',
