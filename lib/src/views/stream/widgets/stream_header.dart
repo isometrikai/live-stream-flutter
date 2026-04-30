@@ -152,28 +152,35 @@ class IsmLiveModeratorCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
-        builder: (controller) =>
-                    (/*controller.isMember ||
-                    (controller.isCopublisher) ||*/
-                    (controller.isHost) ||
-                    (controller.isModerator)) &&
-                !controller.isPk
-            ? IsmLiveTapHandler(
-                onTap: onTap,
-                child: Container(
-                  padding: IsmLiveDimens.edgeInsets4,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white24,
+        builder: (controller) {
+          final isScheduled =
+              controller.streamDetails?.isScheduledStream ?? false;
+          final streamIdOkForScheduled = !isScheduled ||
+              IsmLiveStreamId.isValid(controller.streamId);
+          final showShield = (/*controller.isMember ||
+                  (controller.isCopublisher) ||*/
+              (controller.isHost) ||
+                  (controller.isModerator)) &&
+              !controller.isPk &&
+              streamIdOkForScheduled;
+          return showShield
+              ? IsmLiveTapHandler(
+                  onTap: onTap,
+                  child: Container(
+                    padding: IsmLiveDimens.edgeInsets4,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white24,
+                    ),
+                    child: Icon(
+                      Icons.local_police_rounded,
+                      color: IsmLiveColors.white,
+                      size: IsmLiveDimens.sixteen,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.local_police_rounded,
-                    color: IsmLiveColors.white,
-                    size: IsmLiveDimens.sixteen,
-                  ),
-                ),
-              )
-            : IsmLiveDimens.box0,
+                )
+              : IsmLiveDimens.box0;
+        },
       );
 }
 

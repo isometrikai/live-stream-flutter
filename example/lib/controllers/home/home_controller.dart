@@ -425,12 +425,6 @@ class HomeController extends GetxController {
       //   IsmLiveLog.info('Token expired');
       //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';
       // },
-      goLiveSmallButtonBuilder: (
-        context,
-        controller,
-        onGoLivePressed,
-        isEnabled,
-      ) => Container(),
     );
 
     // Set up listener for MQTT events from IsmLiveApp
