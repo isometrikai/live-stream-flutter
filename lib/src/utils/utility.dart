@@ -861,7 +861,10 @@ class IsmLiveRoute {
 
   /// Pop the top-most route off the navigation stack.
   static void pop<T>([T? result]) {
-    IsmLiveUtility.navigatorKey.currentState?.pop(result);
+    final nav = IsmLiveUtility.navigatorKey.currentState;
+    if (nav != null && nav.canPop()) {
+      nav.pop(result);
+    }
   }
 
   /// Maybe pop the top-most route if possible.

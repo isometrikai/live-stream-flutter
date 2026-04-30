@@ -838,7 +838,9 @@ class IsmLiveStreamController extends GetxController
       IsmLiveLog('Skipping streamDispose due to preventDispose flag');
       return;
     }
-    resetOnStreamEndTrigger();
+    // Avoid resetOnStreamEndTrigger(): it clears _hasClosedStreamView while route
+    // cleanup can still be followed by a second closeStreamView (host end + leave).
+    _hasTriggeredOnStreamEnd = false;
     isViewerJoiningStream = false;
     print('initializeAndJoinStream: streamDisposeddd');
     // Clear PK controller data
