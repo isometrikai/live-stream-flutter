@@ -74,6 +74,7 @@ class _IsmLiveStreamRecordingBottomControlsState
     final actualPosition = value?.position ?? Duration.zero;
     final duration = value?.duration ?? Duration.zero;
     final showPause = value != null && value.isPlaying && !value.isBuffering;
+    final showHours = duration.inHours > 0;
     final maxMs = duration.inMilliseconds > 0 ? duration.inMilliseconds : 1;
     final currentSliderMs = (_isDragging
             ? _dragPositionMs.clamp(0, maxMs.toDouble())
@@ -189,7 +190,7 @@ class _IsmLiveStreamRecordingBottomControlsState
               buildControl(
                 IsmLiveStreamRecordingControlWidgetSlot.bottomDuration,
                 Text(
-                  '${_formatDuration(displayPosition)} / ${_formatDuration(duration)}',
+                  '${_formatDuration(displayPosition, showHours: showHours)} / ${_formatDuration(duration, showHours: showHours)}',
                   style: theme.textTheme.bodySmall?.copyWith(color: iconColor),
                 ),
               ),
@@ -200,9 +201,15 @@ class _IsmLiveStreamRecordingBottomControlsState
     );
   }
 
-  String _formatDuration(Duration d) {
-    final m = d.inMinutes;
+  String _formatDuration(Duration d, {required bool showHours}) {
+    final h = d.inHours;
+    final m = d.inMinutes % 60;
     final s = d.inSeconds % 60;
-    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    final mm = m.toString().padLeft(2, '0');
+    final ss = s.toString().padLeft(2, '0');
+    if (!showHours) {
+      return '$mm:$ss';
+    }
+    return '${h.toString().padLeft(2, '0')}:$mm:$ss';
   }
 }
