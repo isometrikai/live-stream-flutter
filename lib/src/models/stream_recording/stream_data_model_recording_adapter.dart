@@ -31,4 +31,7 @@ class IsmLiveStreamDataModelRecordingAdapter
 
   @override
   String? get userImageUrl => _model.userDetails?.userProfile;
+
+  @override
+  String? get thumbnailUrl => _model.streamImage;
 }

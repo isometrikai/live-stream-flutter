@@ -23,4 +23,7 @@ abstract class IsmLiveStreamRecordingItem {
 
   /// Streamer profile image URL.
   String? get userImageUrl;
+
+  /// Poster or thumbnail URL for this recording (e.g. preview before playback).
+  String? get thumbnailUrl;
 }
