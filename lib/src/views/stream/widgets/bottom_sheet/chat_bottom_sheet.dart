@@ -16,10 +16,11 @@ class ChatBottomSheet extends StatelessWidget {
     final textColor = context.liveTheme?.primaryColor ??
         (isDarkMode ? Colors.white : Colors.black);
 
-    final isPrivilegedUser =
-        controller.isHost || controller.isModerator || controller.isCopublisher;
-
-    final canDelete = isPrivilegedUser || message.sentByMe;
+    // Host or moderator: reply/delete on any message. Others: own messages only.
+    // Keep in sync with tap gate in [IsmLiveChatView] (chat.dart).
+    final isHostOrModerator =
+        controller.isHost || controller.isModerator;
+    final canActOnMessage = isHostOrModerator || message.sentByMe;
 
     return Padding(
       padding: IsmLiveDimens.edgeInsets16_0_16_20,
@@ -28,7 +29,7 @@ class ChatBottomSheet extends StatelessWidget {
         title: IsmLiveStrings.messageOptions,
         showHeader: false,
         showCancelIcon: true,
-        itemCount: !message.isReply && canDelete ? 2 : 1,
+        itemCount: !message.isReply && canActOnMessage ? 2 : 1,
         itemBuilder: (context, index) {
           if (index == 0 && message.isReply == false) {
             // Reply item
@@ -55,7 +56,7 @@ class ChatBottomSheet extends StatelessWidget {
               ),
             );
           } else {
-            // Delete item (only when `canDelete` is true, controlled by itemCount)
+            // Delete row (second slot when itemCount is 2; sole row for replies)
             return IsmLiveTapHandler(
               onTap: () {
                 controller.deleteMessage(

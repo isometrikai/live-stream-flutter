@@ -281,29 +281,18 @@ class _IsmLiveChatViewState extends State<IsmLiveChatView>
                     isHost: widget.isHost,
                     backgroundColor: customBackgroundColor,
                     onTap: () {
-                      // Any of these role flags being true means the user is not a "viewer"
-                      final isPrivilegedUser = controller.isHost ||
-                          controller.isModerator ||
-                          controller.isCopublisher ||
-                          controller.isMember;
+                      // Only host and moderator may reply/delete arbitrary messages.
+                      // Co-publishers and members behave like viewers unless they are moderators.
+                      final isHostOrModerator =
+                          controller.isHost || controller.isModerator;
 
-                      // Viewer: none of the role flags are true
-                      final isViewer = !isPrivilegedUser;
-
-                      // Existing restriction for host messages:
-                      // only privileged roles or members can act on host messages.
+                      // Messages from the host: still only host or moderator.
                       final openSheetByMessageSource = message.sentByHost
-                          ? (/*controller.isCopublisher ||*/
-                              controller.isModerator ||
-                             /* controller.isMember ||*/
-                              controller.isHost)
+                          ? isHostOrModerator
                           : true;
 
-                      // New restriction:
-                      // - Plain viewers can only act on their own messages.
-                      // - Privileged users retain existing behavior.
                       final openSheetByUserRole =
-                          isViewer ? message.sentByMe : true;
+                          isHostOrModerator ? true : message.sentByMe;
 
                       final canOpenSheet =
                           openSheetByMessageSource && openSheetByUserRole;
