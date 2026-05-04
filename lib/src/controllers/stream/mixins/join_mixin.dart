@@ -2070,9 +2070,14 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('Stream initialization error: $e');
       }
 
-      // Initialize timer if not already set (for direct connectStream calls)
+      // Never move the anchor backward (e.g. schedule slot overwriting real
+      // go-live). Still accept a strictly later [startTime] when the backend
+      // refines the session start after an earlier placeholder.
       if (startTime != null) {
-        _controller._streamStartTime = startTime;
+        final existing = _controller._streamStartTime;
+        if (existing == null || startTime.isAfter(existing)) {
+          _controller._streamStartTime = startTime;
+        }
       }
 
       startStreamTimer();
@@ -2199,6 +2204,10 @@ mixin StreamJoinMixin {
     // streamId mismatch and discard the connection automatically.
     _controller.pendingConnection = false;
 
+    // Host already stored real session start from go-live/create; avoid passing
+    // schedule slot here (it is earlier than actual start when going live late).
+    final deferredStartTime = isHost ? null : details?.startDateTime;
+
     await _connectRoomAndInitialize(
       stream: details,
       token: token,
@@ -2215,7 +2224,7 @@ mixin StreamJoinMixin {
       joinByScrolling: false,
       isScrolling: false,
       isInteractive: isInteractive,
-      startTime: details?.startDateTime,
+      startTime: deferredStartTime,
       context: context,
       eventId: details?.eventId,
       reJoin: false,
