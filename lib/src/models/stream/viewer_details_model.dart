@@ -18,6 +18,7 @@ class IsmLiveViewerModel {
   factory IsmLiveViewerModel.fromMap(Map<String, dynamic> map) =>
       IsmLiveViewerModel(
         imageUrl: map['userProfileImageUrl'] as String? ??
+            map['userProfilePic'] as String? ??
             map['viewerProfilePic'] as String?,
         userName: map['userName'] as String? ??
             map['viewerName'] as String? ??

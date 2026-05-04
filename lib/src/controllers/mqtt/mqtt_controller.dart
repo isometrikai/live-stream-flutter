@@ -809,12 +809,24 @@ class IsmLiveMqttController extends GetxController {
           final memberName = payload['memberName'] as String? ?? '';
           final memberIdentifier = payload['memberIdentifier'] as String? ?? '';
           final memberProfilePic = payload['memberProfilePic'] as String? ?? '';
-          final hostName = payload['initiatorName'] as String? ?? 'Host';
+          final initiatorName = payload['initiatorName'] as String? ?? 'Host';
           final hostId = payload['initiatorId'] as String? ?? '';
+          final initiatorMetaData = (payload['initiatorMetaData'] ??
+                  payload['initiatorMetadata'])
+              as Map<String, dynamic>?;
+          final initiatorFirstName =
+              (initiatorMetaData?['firstName'] as String?)?.trim() ?? '';
+          final initiatorLastName =
+              (initiatorMetaData?['lastName'] as String?)?.trim() ?? '';
+          final initiatorFullNameFromMeta =
+              '$initiatorFirstName $initiatorLastName'.trim();
+          final initiatorDisplayName = initiatorFullNameFromMeta.isNotEmpty
+              ? initiatorFullNameFromMeta
+              : initiatorName;
           var body = '';
           if (memberId == userId) {
             _streamController.memberStatus = IsmLiveMemberStatus.gotRequest;
-            body = '$hostName has added you as a Co-publisher';
+            body = '$initiatorDisplayName has added you as a Co-publisher';
             _streamController.update([
               IsmLiveStreamView.updateId,
               IsmLiveControlsWidget.updateId,
@@ -822,11 +834,11 @@ class IsmLiveMqttController extends GetxController {
           } else if (hostId == userId) {
             body = 'You\'ve added $memberName as a Co-publisher';
           } else {
-            body = '$hostName has added $memberName as a Co-publisher';
+            body = '$initiatorDisplayName has added $memberName as a Co-publisher';
           }
           final message = IsmLiveMessageModel(
             streamId: streamId!,
-            senderName: hostName,
+            senderName: initiatorDisplayName,
             senderProfileImageUrl: memberProfilePic,
             senderIdentifier: memberIdentifier,
             senderId: hostId,
@@ -918,19 +930,28 @@ class IsmLiveMqttController extends GetxController {
           if (streamId == _streamController.streamId) {
             _syncLiveViewersCountFromPayload(payload);
           }
-          final memberId = payload['userId'] as String? ?? '';
-          final memberName = payload['userName'] as String? ?? '';
+          var member = IsmLiveViewerModel.fromMap(payload);
+          final memberId = member.userId;
+          final memberDisplayName = member.fullName;
+          final topPic = member.imageUrl?.trim() ?? '';
+          final metaPic = member.metaData?.profilePic?.trim() ?? '';
+          final senderProfileImageUrl = topPic.isNotEmpty
+              ? topPic
+              : metaPic.isNotEmpty
+                  ? metaPic
+                  : null;
           var body = '';
           if (memberId == userId) {
             body = 'You\'ve enabled your video';
           } else {
-            body = '$memberName has enabled his video';
+            body = '$memberDisplayName has enabled his video';
           }
           final message = IsmLiveMessageModel(
             streamId: streamId!,
-            senderName: memberName,
-            senderIdentifier: '',
+            senderName: memberDisplayName,
+            senderIdentifier: member.identifier,
             senderId: memberId,
+            senderProfileImageUrl: senderProfileImageUrl,
             messageType: IsmLiveMessageType.normal,
             messageId: '',
             body: body,
