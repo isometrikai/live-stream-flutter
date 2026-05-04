@@ -176,6 +176,9 @@ class _DebugRecordingItem implements IsmLiveStreamRecordingItem {
 
   @override
   final String? userImageUrl;
+
+  @override
+  String? get thumbnailUrl => null;
 }
 
 class _StreamListing extends StatefulWidget {
