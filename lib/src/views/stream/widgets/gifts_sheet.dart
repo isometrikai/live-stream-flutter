@@ -33,10 +33,37 @@ class IsmLiveGiftsSheet extends StatelessWidget {
       child: GetBuilder<IsmLiveStreamController>(
         id: updateId,
         initState: (state) async {
-          await Get.find<IsmLiveStreamController>().totalWalletCoins();
+          final streamController = Get.find<IsmLiveStreamController>();
+          await streamController.totalWalletCoins();
 
           IsmLiveUtility.updateLater(() {
-            pkController.getGiftCategories();
+            if (pkController.giftCategoriesList.isEmpty) {
+              pkController.getGiftCategories();
+              return;
+            }
+
+            final selectedIndex = streamController.giftType;
+            final hasCachedSelectedCategoryGifts =
+                (pkController.localGift != null) &&
+                    (selectedIndex < (pkController.localGift?.length ?? 0)) &&
+                    (pkController.localGift?[selectedIndex]?.isNotEmpty ??
+                        false);
+
+            if (!hasCachedSelectedCategoryGifts &&
+                selectedIndex < pkController.giftCategoriesList.length) {
+              pkController.getGiftsForACategory(
+                giftGroupId:
+                    pkController.giftCategoriesList[selectedIndex].id ?? '',
+                categoryIndex: selectedIndex,
+              );
+              return;
+            }
+            if (hasCachedSelectedCategoryGifts) {
+              pkController.giftList = List<IsmLiveGiftsCategoryModel>.from(
+                pkController.localGift?[selectedIndex] ?? [],
+              );
+              streamController.update([updateId]);
+            }
           });
         },
         builder: (controller) => Padding(
@@ -113,10 +140,23 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                     return IsmLiveTapHandler(
                       onTap: () async {
                         controller.giftType = index;
+                        final hasCachedCategoryGifts =
+                            (pkController.localGift != null) &&
+                                (index < (pkController.localGift?.length ?? 0)) &&
+                                (pkController.localGift?[index]?.isNotEmpty ??
+                                    false);
 
-                        await pkController.getGiftsForACategory(
-                          giftGroupId: categoryDetails.id ?? '',
-                        );
+                        if (!hasCachedCategoryGifts) {
+                          await pkController.getGiftsForACategory(
+                            giftGroupId: categoryDetails.id ?? '',
+                            categoryIndex: index,
+                          );
+                        } else {
+                          pkController.giftList =
+                              List<IsmLiveGiftsCategoryModel>.from(
+                            pkController.localGift?[index] ?? [],
+                          );
+                        }
                         controller.update([updateId]);
                       },
                       child: CategoryType(
