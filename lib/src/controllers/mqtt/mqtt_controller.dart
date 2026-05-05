@@ -349,14 +349,26 @@ class IsmLiveMqttController extends GetxController {
           }
         ],
       );
+
+      // Always record the topic locally first so any current/future (re)connect
+      // path picks it up via `_ensureStreamTopicsSubscribed` on `_onConnected`.
+      final topic = '$_topicPrefix/$streamId';
+      if (!_topics.contains(topic)) {
+        _topics.add(topic);
+      }
+
+      // Hand the topic to the helper. If the client is connected it subscribes
+      // immediately; otherwise it enqueues to `_pendingSubscriptions`, which the
+      // helper flushes from `_onConnected` / `_onAutoReconnected`.
+      if (_mqttInitialized) {
+        _mqttHelper.subscribeTopic(topic);
+      }
+
       // Use the actual broker connection state instead of the debounced UI
       // flag (`IsmLiveApp.isMqttConnected`). The debounce delay can hide a
-      // disconnect that occurred < 3s ago, causing us to skip reconnect while
+      // disconnect that occurred < 3s ago, causing us to skip recovery while
       // the broker link is actually down.
       if (!helperConnected && !_manualReconnectInFlight) {
-        IsmLiveLog.info(
-          'MQTT not connected; starting full re-init in background',
-        );
         IsmLiveDelegate.trackEvent(
           IsmLiveAnalyticsEvent.mqttSubscribeStreamNotConnected,
           properties: [
@@ -366,14 +378,27 @@ class IsmLiveMqttController extends GetxController {
             }
           ],
         );
-        unawaited(reconnect());
-      }
-      final topic = '$_topicPrefix/$streamId';
-      if (!_topics.contains(topic)) {
-        _topics.add(topic);
-      }
-      if (_mqttInitialized) {
-        _mqttHelper.subscribeTopic(topic);
+        if (_mqttInitialized) {
+          // Prefer a soft nudge over a full re-init: replacing the client
+          // mid-flight (while a prior client is still auto-reconnecting) caused
+          // stale callbacks from the OLD client to fire into the helper after
+          // `_client` was swapped, surfacing as duplicate `mqtt_connected`
+          // events with `helper_connected:false` and stream-topic
+          // subscriptions getting lost on weak networks while joining.
+          // The helper's pending-subscription queue + broker-level auto
+          // resubscription handle the topic once the client comes back.
+          IsmLiveLog.info(
+            'MQTT not connected; nudging auto-reconnect (topic enqueued)',
+          );
+          _mqttHelper.requestAutoReconnectIfDisconnected();
+        } else {
+          // Helper was never initialized for this session (or was torn down).
+          // Full re-init is the only option.
+          IsmLiveLog.info(
+            'MQTT not initialized; starting full re-init in background',
+          );
+          unawaited(reconnect());
+        }
       }
     } catch (e) {
       IsmLiveLog.error('Subscribe Error - $e');

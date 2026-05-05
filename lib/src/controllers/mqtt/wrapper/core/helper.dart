@@ -147,6 +147,15 @@ class MqttHelper {
       }
     }
 
+    // Tear down any previous client/streams before swapping in new ones.
+    // Without this, an in-flight auto-reconnect on the previous `_client`
+    // can complete after `_client` has been replaced, causing the previous
+    // client's `onConnected` / `onAutoReconnected` callbacks to fire into
+    // the new helper state (observed as duplicate `mqtt_connected` events
+    // with `helper_connected:false`, and stream-topic subscriptions queued
+    // against a not-yet-connected client and subsequently lost).
+    _teardownPreviousClient();
+
     _rawEventStream = StreamController<MqttHelperPayload>.broadcast();
     _eventStream = StreamController<EventModel>.broadcast();
     _connectionStream = StreamController<bool>.broadcast();
@@ -162,6 +171,37 @@ class MqttHelper {
     _unSubscribedTopicsCallback = unSubscribedTopicsCallback;
     await _initializeClient();
     await _connectClient();
+  }
+
+  /// Detaches callbacks from and disconnects the previous `_client` (if any)
+  /// so that pending auto-reconnect cycles on the old socket cannot fire
+  /// callbacks into the helper after `initialize()` has swapped in a new
+  /// client. Safe to call even when `_client` is null or already disconnected.
+  void _teardownPreviousClient() {
+    final previous = _client;
+    _updatesSub?.cancel();
+    _updatesSub = null;
+    if (previous == null) return;
+    try {
+      // Detach callbacks first so any in-flight reconnect that completes
+      // mid-teardown cannot reach helper state.
+      previous.onConnected = null;
+      previous.onDisconnected = null;
+      previous.onAutoReconnect = null;
+      previous.onAutoReconnected = null;
+      previous.onSubscribed = null;
+      previous.onUnsubscribed = null;
+      previous.onSubscribeFail = null;
+      previous.pongCallback = null;
+      previous.autoReconnect = false;
+      final state = previous.connectionStatus?.state;
+      if (state == MqttConnectionState.connected ||
+          state == MqttConnectionState.connecting) {
+        previous.disconnect();
+      }
+    } catch (e, st) {
+      _debugLog('Error tearing down previous MQTT client: $e\n$st');
+    }
   }
 
   bool _isClientConnected() =>
