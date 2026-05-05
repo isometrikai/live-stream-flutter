@@ -183,7 +183,18 @@ mixin StreamOngoingMixin {
     if (streamId == null || streamId.isEmpty) return;
     if (_controller.isInBackground) return;
     _controller.nudgeMqttReconnectAfterAppResume();
-    if (IsmLiveApp.isMqttConnected) return;
+
+    if (IsmLiveApp.isMqttConnected) {
+      // Even when `isMqttConnected` reports true, mobile OSes commonly
+      // suspend the MQTT socket while backgrounded, and the broker is not
+      // guaranteed to replay messages that arrived during the suspend
+      // window. Without a one-shot API catch-up here, messages other users
+      // sent while we were backgrounded never appear after foregrounding.
+      // Duplicates with live MQTT delivery are safely deduped via
+      // IsmLiveChatModel equality (streamId + messageId).
+      unawaited(_fetchChatCatchUpMessages(streamId));
+      return;
+    }
     unawaited(_startMqttDisconnectedChatFallback(streamId));
   }
 
@@ -346,7 +357,6 @@ mixin StreamOngoingMixin {
       safeInterval,
       (timer) => unawaited(_pollNewMqttMessages(streamId)),
     );
-
     // Immediate run so we don't wait for the first tick.
     unawaited(_pollNewMqttMessages(streamId));
   }
@@ -357,10 +367,23 @@ mixin StreamOngoingMixin {
       _stopMqttDisconnectedChatFallback();
       return;
     }
+    await _fetchChatCatchUpMessages(streamId);
+  }
 
-    // Reduce background load; skip ticks while app isn't active.
+  /// Shared chat catch-up fetch. Two callers:
+  ///   1. The periodic MQTT-disconnected poll [_pollNewMqttMessages] —
+  ///      runs only while MQTT is down so the chat keeps updating.
+  ///   2. The foreground resume path
+  ///      [resumeMqttDisconnectedChatFallbackIfNeeded] — runs once on
+  ///      foreground regardless of MQTT state, to recover messages that
+  ///      arrived while the OS had the MQTT socket suspended in background.
+  ///
+  /// Skips during background and dedupes concurrent callers via
+  /// `_controller._mqttChatFallbackInFlight`. Uses since-timestamp fetch on
+  /// subsequent runs so existing messages are not refetched, and falls back
+  /// to the pagination API when the local list is still empty.
+  Future<void> _fetchChatCatchUpMessages(String streamId) async {
     if (_controller.isInBackground) return;
-
     if (_controller._mqttChatFallbackInFlight) return;
     _controller._mqttChatFallbackInFlight = true;
     try {
@@ -397,7 +420,12 @@ mixin StreamOngoingMixin {
         return;
       }
 
+      // Use only non-event chat messages as the cursor for normal-message
+      // catch-up. If we include event/system items, a newer event timestamp can
+      // move the cursor past normal chat messages sent by others while we were
+      // backgrounded, causing them to be skipped.
       final lastTimestampMs = _controller.streamMessagesList
+          .where((m) => !m.isEvent)
           .map((m) => m.timeStamp.millisecondsSinceEpoch)
           .fold<int>(0, (prev, ms) => ms > prev ? ms : prev);
 

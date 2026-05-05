@@ -180,6 +180,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     // in background and also resumes correctly in foreground.
     switch (state) {
       case AppLifecycleState.resumed:
+        // Resume chat fallback after foregrounding. `resume...IfNeeded` guards
+        // on `isInBackground`, so clear the lightweight background mark first
+        // to avoid skipping catch-up when lifecycle callbacks are
+        // `inactive -> resumed` and heavy background handling is disabled.
+        _isInBackground.value = false;
         if (_isStreamActive.value) {
           _controller.resumeMqttDisconnectedChatFallbackIfNeeded();
         }
