@@ -654,6 +654,7 @@ class IsmLivePkController extends GetxController
     String? searchTag,
     bool fetchMore = false,
     required String giftGroupId,
+    int? categoryIndex,
   }) async {
     _giftDebouncer.run(() async {
       await _getGiftsForACategory(
@@ -662,6 +663,7 @@ class IsmLivePkController extends GetxController
         fetchMore: fetchMore,
         searchTag: searchTag,
         giftGroupId: giftGroupId,
+        categoryIndex: categoryIndex,
       );
     });
   }
@@ -672,7 +674,9 @@ class IsmLivePkController extends GetxController
     required String giftGroupId,
     required bool fetchMore,
     String? searchTag,
+    int? categoryIndex,
   }) async {
+    final targetCategoryIndex = categoryIndex ?? streamController.giftType;
     var res = await _viewModel.getGiftsForACategory(
       limit: limit,
       skip: skip,
@@ -687,7 +691,16 @@ class IsmLivePkController extends GetxController
 
     giftList = giftList.toSet().toList();
 
-    localGift?[streamController.giftType] = giftList;
+    if (targetCategoryIndex < (localGift?.length ?? 0)) {
+      localGift?[targetCategoryIndex] =
+          List<IsmLiveGiftsCategoryModel>.from(giftList);
+    }
+    if (targetCategoryIndex == streamController.giftType) {
+      giftList =
+          List<IsmLiveGiftsCategoryModel>.from(
+            localGift?[targetCategoryIndex] ?? [],
+          );
+    }
     streamController.update([IsmLiveGiftsSheet.updateId]);
   }
 
