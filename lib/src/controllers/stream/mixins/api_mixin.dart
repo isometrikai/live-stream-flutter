@@ -408,12 +408,19 @@ mixin StreamAPIMixin {
         .map((message) => _processMessage(message, false))
         .whereType<IsmLiveMessageModel>()
         .toList();
-
+    // Safety: do not rewrite messages that explicitly belong to another stream.
+    // - If streamId is empty, fill it with the requested streamId (backend inconsistency).
+    // - If streamId is non-empty and different, drop it to avoid cross-stream mixing.
+    final normalizedMessages = processedMessages
+        .where((m) => m.streamId.isEmpty || m.streamId == streamId)
+        .map((m) => m.streamId.isEmpty ? m.copyWith(streamId: streamId) : m)
+        .toList();
     // Ensure chronological order when appending.
-    processedMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
+    normalizedMessages.sort((a, b) => a.sentAt.compareTo(b.sentAt));
 
-    if (processedMessages.isEmpty) return;
-    await _controller.addMessages(processedMessages, true);
+    if (normalizedMessages.isEmpty) return;
+
+    await _controller.addMessages(normalizedMessages, true);
   }
 
   // Process message through host app's callback if provided
