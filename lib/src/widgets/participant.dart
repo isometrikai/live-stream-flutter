@@ -200,7 +200,11 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
   List<Widget> extraWidgets(bool isScreenShare) => [];
 
   @override
-  Widget build(BuildContext ctx) => Container(
+  Widget build(BuildContext ctx) {
+    final canShowMakeHostAction =
+        widget.showStatsLayer && widget.isViewer && !widget.isFirstIndex;
+
+    return Container(
         // Blue border removed - was causing unwanted border around stream view
         foregroundDecoration: null,
         decoration: BoxDecoration(
@@ -253,9 +257,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                   gustper: pkController.pkBarGustPersentage,
                 ),
               ),
-            if (widget.showStatsLayer &&
-                widget.isViewer &&
-                !widget.isFirstIndex)
+            if (canShowMakeHostAction)
               Align(
                 alignment: Alignment.bottomRight,
                 child: IsmLiveTapHandler(
@@ -268,7 +270,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                   },
                   child: Container(
                     padding: IsmLiveDimens.edgeInsets5,
-                    margin: IsmLiveDimens.edgeInsets10,
+                    margin: const EdgeInsets.only(right: 10, bottom: 72),
                     decoration: BoxDecoration(
                       color: Colors.black38,
                       borderRadius: BorderRadius.circular(
@@ -304,6 +306,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
           ],
         ),
       );
+  }
 }
 
 class _LocalParticipantWidgetState

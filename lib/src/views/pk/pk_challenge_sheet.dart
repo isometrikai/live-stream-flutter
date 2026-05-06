@@ -104,9 +104,9 @@ class IsmLivePkChallengeSheet extends StatelessWidget {
                       final selectedBg =
                           selectedBorderColor.withValues(alpha: 0.12);
                       final effectiveBg = isSelected ? selectedBg : chipBg;
-                      final chipTextColor = effectiveBg.computeLuminance() > 0.5
-                          ? Colors.black
-                          : Colors.white;
+                      final chipTextColor = isSelected
+                          ? selectedBorderColor
+                          : Colors.black;
 
                       return IsmLiveTapHandler(
                         onTap: () {

@@ -72,9 +72,10 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
+      useGridLayoutForMultipleParticipants : true,
       productionMode: true,
       goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
-        isProductStreamFeatureEnabled: true,
+        isProductStreamFeatureEnabled: false,
         isScheduleStreamFeatureEnabled: true,
         // isHdStreamFeatureEnabled: true,
         // isRtmpStreamFeatureEnabled: true,
@@ -342,7 +343,7 @@ class HomeController extends GetxController {
         hostOptions: [
           IsmLiveStreamOption.bars,
           IsmLiveStreamOption.share,
-          IsmLiveStreamOption.product,
+          IsmLiveStreamOption.vs,
           IsmLiveStreamOption.rotateCamera,
           IsmLiveStreamOption.settings,
           IsmLiveStreamOption.multiLive,
