@@ -821,6 +821,10 @@ mixin StreamJoinMixin {
     bool deferConnection = false,
   }) async {
     final startedAt = DateTime.now();
+    final trackedStartDateTime = (startTime ??
+            stream?.startDateTime ??
+            _controller.streamDetails?.startDateTime)
+        ?.toIso8601String();
 
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.connectStreamAttemptDetailed,
@@ -841,6 +845,7 @@ mixin StreamJoinMixin {
           'defer_connection': deferConnection,
           'event_id': eventId,
           'is_scheduled_stream': isScheduledStream,
+          'start_date_time': trackedStartDateTime ?? '',
         }
       ],
     );
@@ -897,10 +902,12 @@ mixin StreamJoinMixin {
           'defer_connection': deferConnection,
           'event_id': eventId,
           'is_scheduled_stream': isScheduledStream,
+          'start_date_time': trackedStartDateTime ?? '',
         }
       ],
     );
 
+    final hadExistingStreamDetails = _controller.streamDetails != null;
     _controller.streamDetails ??= stream ??
         IsmLiveStreamDataModel(
           streamDescription: streamDiscription,
@@ -912,7 +919,10 @@ mixin StreamJoinMixin {
           eventId: eventId,
           products: products ?? [],
         );
-
+    if (hadExistingStreamDetails && startTime != null) {
+      _controller.streamDetails =
+          _controller.streamDetails?.copyWith(startDateTime: startTime);
+    }
 
     // Reset callback trigger flag for new stream
     _controller._streamViewLoadedCallbackTriggered = false;
@@ -1053,6 +1063,7 @@ mixin StreamJoinMixin {
           'is_scrolling': isScrolling,
           'is_interactive': isInteractive,
           'duration_ms': 0,
+          'start_date_time': trackedStartDateTime ?? '',
         }
       ],
     );
