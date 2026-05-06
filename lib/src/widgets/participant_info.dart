@@ -129,8 +129,8 @@ class ParticipantInfoWidget extends StatelessWidget {
           if (battleStart) ...[
             Positioned(
               bottom: 5,
-              left: isHost ? -8 : null,
-              right: !isHost ? -8 : null,
+              left: isHost ? 4 : null,
+              right: !isHost ? 4 : null,
               child: IsmLiveImage.svg(
                 isHost
                     ? IsmLiveAssetConstants.hostRing

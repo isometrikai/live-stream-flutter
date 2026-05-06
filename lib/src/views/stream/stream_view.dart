@@ -522,7 +522,11 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                               )
                             : const SizedBox.shrink(),
                       ),
-                      if (isActiveStreamPage || widget.isSchedule)
+                      if ((isActiveStreamPage || widget.isSchedule) &&
+                          !(controller.isPk &&
+                              (controller.pkStages?.isPkStart ?? false) &&
+                              !(controller.userRole?.isHost ?? false) &&
+                              !(controller.userRole?.isPkGuest ?? false)))
                         // Tap-to-toggle overlay layer. This sits ABOVE the video/grid
                         // but BELOW all overlay UI, so taps on buttons/chat won't toggle.
                         Positioned.fill(
