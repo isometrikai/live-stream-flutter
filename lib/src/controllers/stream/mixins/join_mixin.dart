@@ -742,6 +742,7 @@ mixin StreamJoinMixin {
       }
       stream = res;
       image = _controller.streamDetails?.streamImage;
+      _controller.streamDetails =_controller.streamDetails?.copyWith(startDateTime: res.startTime);
     } else {
       var data = await _controller.createStream(context: context);
       if (data == null) {
@@ -911,6 +912,7 @@ mixin StreamJoinMixin {
           eventId: eventId,
           products: products ?? [],
         );
+
 
     // Reset callback trigger flag for new stream
     _controller._streamViewLoadedCallbackTriggered = false;
@@ -2070,14 +2072,9 @@ mixin StreamJoinMixin {
         IsmLiveLog.error('Stream initialization error: $e');
       }
 
-      // Never move the anchor backward (e.g. schedule slot overwriting real
-      // go-live). Still accept a strictly later [startTime] when the backend
-      // refines the session start after an earlier placeholder.
+      // Initialize timer if not already set (for direct connectStream calls)
       if (startTime != null) {
-        final existing = _controller._streamStartTime;
-        if (existing == null || startTime.isAfter(existing)) {
-          _controller._streamStartTime = startTime;
-        }
+        _controller._streamStartTime = startTime;
       }
 
       startStreamTimer();
@@ -2204,10 +2201,6 @@ mixin StreamJoinMixin {
     // streamId mismatch and discard the connection automatically.
     _controller.pendingConnection = false;
 
-    // Host already stored real session start from go-live/create; avoid passing
-    // schedule slot here (it is earlier than actual start when going live late).
-    final deferredStartTime = isHost ? null : details?.startDateTime;
-
     await _connectRoomAndInitialize(
       stream: details,
       token: token,
@@ -2224,7 +2217,7 @@ mixin StreamJoinMixin {
       joinByScrolling: false,
       isScrolling: false,
       isInteractive: isInteractive,
-      startTime: deferredStartTime,
+      startTime: details?.startDateTime,
       context: context,
       eventId: details?.eventId,
       reJoin: false,
