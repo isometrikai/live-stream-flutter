@@ -84,6 +84,12 @@ class IsmLiveStreamController extends GetxController
 
   bool isHdBroadcast = false;
 
+  /// True while [toggleCamera] is in progress. Used by the local
+  /// participant tile to briefly fade-cover the preview so the user
+  /// does not see the 1-2 frame mirror/orientation glitch during a
+  /// native camera hardware swap.
+  bool isCameraSwitching = false;
+
   bool isRecordingBroadcast = false;
 
   bool isRestreamBroadcast = false;
@@ -1063,7 +1069,14 @@ class IsmLiveStreamController extends GetxController
     final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 
+    final previousPosition = position;
     final newPosition = position.switched();
+
+    // Briefly cover the local preview during the swap so the user does not
+    // see the 1-2 frame mirror/orientation glitch caused by native camera
+    // hardware switching. Reset on completion or failure.
+    isCameraSwitching = true;
+    update();
 
     // Prefer a fast hardware-level camera flip on native platforms. This keeps
     // the same underlying MediaStreamTrack/renderer alive instead of tearing it
@@ -1082,8 +1095,17 @@ class IsmLiveStreamController extends GetxController
         }
         position = newPosition;
         update();
+        // Allow camera pipeline to flush new frames before fading the
+        // overlay out so users never see un-mirrored front frames or
+        // mirrored back frames.
+        await Future.delayed(const Duration(milliseconds: 140));
+        isCameraSwitching = false;
+        update();
         return;
       } catch (error) {
+        position = previousPosition;
+        isCameraSwitching = false;
+        update();
         IsmLiveLog(
           'fast camera switch failed, falling back to restart: $error',
         );
@@ -1094,7 +1116,13 @@ class IsmLiveStreamController extends GetxController
       await track.setCameraPosition(newPosition);
       position = newPosition;
       update();
+      await Future.delayed(const Duration(milliseconds: 140));
+      isCameraSwitching = false;
+      update();
     } catch (error) {
+      position = previousPosition;
+      isCameraSwitching = false;
+      update();
       IsmLiveLog('could not restart track: $error');
       return;
     }

@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -199,6 +201,15 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
 
   List<Widget> extraWidgets(bool isScreenShare) => [];
 
+  /// Local preview mirror mode; [VideoViewMirrorMode.auto] for remote participants.
+  VideoViewMirrorMode get videoPreviewMirrorMode => VideoViewMirrorMode.auto;
+
+  Widget buildVideoRenderer() => VideoTrackRenderer(
+        activeVideoTrack!,
+        fit: widget.showFullVideo ? VideoViewFit.contain : VideoViewFit.cover,
+        mirrorMode: videoPreviewMirrorMode,
+      );
+
   @override
   Widget build(BuildContext ctx) {
     final canShowMakeHostAction =
@@ -214,12 +225,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         child: Stack(
           children: [
             activeVideoTrack != null && !activeVideoTrack!.muted
-                ? VideoTrackRenderer(
-                    activeVideoTrack!,
-                    fit: widget.showFullVideo
-                        ? VideoViewFit.contain
-                        : VideoViewFit.cover,
-                  )
+                ? buildVideoRenderer()
                 : NoVideoWidget(
                     name: widget.participant.name,
                     imageUrl: widget.imageUrl ?? '',
@@ -311,6 +317,57 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
 
 class _LocalParticipantWidgetState
     extends _ParticipantWidgetState<LocalParticipantWidget> {
+  /// Prefers app [IsmLiveStreamController.position] over WebRTC `facingMode`,
+  /// which can stay `user` after a fast camera switch so the rear preview looks mirrored.
+  @override
+  VideoViewMirrorMode get videoPreviewMirrorMode {
+    if (widget.isScreenShare ||
+        activeVideoTrack?.source == TrackSource.screenShareVideo) {
+      return VideoViewMirrorMode.off;
+    }
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      return VideoViewMirrorMode.auto;
+    }
+    final controller = Get.find<IsmLiveStreamController>();
+    return controller.position == CameraPosition.front
+        ? VideoViewMirrorMode.mirror
+        : VideoViewMirrorMode.off;
+  }
+
+  @override
+  Widget buildVideoRenderer() {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      return super.buildVideoRenderer();
+    }
+    // Rebuilds local preview immediately when camera position toggles, and
+    // overlays a brief blur while [IsmLiveStreamController.isCameraSwitching]
+    // is true so the native camera swap glitch is not visible.
+    return GetBuilder<IsmLiveStreamController>(
+      builder: (controller) => Stack(
+        fit: StackFit.expand,
+        children: [
+          super.buildVideoRenderer(),
+          IgnorePointer(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 140),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: controller.isCameraSwitching
+                  ? BackdropFilter(
+                      key: const ValueKey('camera-switch-blur'),
+                      filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                      child: const ColoredBox(color: Color(0x33000000)),
+                    )
+                  : const SizedBox.shrink(
+                      key: ValueKey('camera-switch-idle'),
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   LocalTrackPublication<LocalVideoTrack>? get videoPublication =>
       widget.participant.videoTrackPublications
