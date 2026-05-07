@@ -2381,9 +2381,18 @@ mixin StreamJoinMixin {
       const Duration(seconds: 1),
       (timer) {
         try {
-          _controller.streamDuration += const Duration(
-            seconds: 1,
-          );
+          if (_controller._streamStartTime != null) {
+            // Use wall-clock elapsed time so app background pauses (notably iOS)
+            // don't freeze the stream timer.
+            final elapsed =
+                DateTime.now().difference(_controller._streamStartTime!);
+            _controller.streamDuration =
+                elapsed.isNegative ? Duration.zero : elapsed;
+          } else {
+            _controller.streamDuration += const Duration(
+              seconds: 1,
+            );
+          }
           final currentStreamId = _controller.streamId;
           final currentSeconds = _controller.streamDuration.inSeconds;
           if (currentStreamId != null &&
