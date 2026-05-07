@@ -11,23 +11,21 @@ import 'package:get/get.dart';
 /// Usage example:
 /// ```dart
 /// IsmLiveApp.configureInterface(
-///   // Custom widget builder - replace specific control widgets
-///   controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
-///     if (option == IsmLiveStreamOption.gift) {
-///       return MyCustomGiftButton(onTap: onTap);
-///     }
-///     return null; // Use default widget
-///   },
-///
-///   // Unified callback - handle all option taps
-///   controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
-///     if (option == IsmLiveStreamOption.share) {
-///       // Custom share logic
-///       await MyCustomShareService.share(streamId);
-///       return true; // Handled, don't use default behavior
-///     }
-///     return false; // Use default behavior
-///   },
+///   sideIconsConfigure: IsmLiveSideIconsConfigure(
+///     controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
+///       if (option == IsmLiveStreamOption.gift) {
+///         return MyCustomGiftButton(onTap: onTap);
+///       }
+///       return null; // Use default widget
+///     },
+///     controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
+///       if (option == IsmLiveStreamOption.share) {
+///         await MyCustomShareService.share(streamId);
+///         return true; // Handled, don't use default behavior
+///       }
+///       return false; // Use default behavior
+///     },
+///   ),
 /// );
 /// ```
 class IsmLiveControlsWidget extends StatelessWidget {

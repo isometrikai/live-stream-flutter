@@ -80,22 +80,20 @@ class IsmGoLiveView extends StatelessWidget {
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
             controller.descriptionController.clear();
-            controller.isHdBroadcast =
-                IsmLiveDelegate.goLiveScreenConfigure?.defaultHdBroadcast ??
-                    IsmLiveDelegate.defaultHdBroadcast ??
-                    false;
-            controller.isRecordingBroadcast =
-                IsmLiveDelegate.goLiveScreenConfigure
-                    ?.defaultRecordBroadcast ??
-                    IsmLiveDelegate.defaultRecordBroadcast ??
-                    false;
+            controller.isHdBroadcast = IsmLiveDelegate
+                    .goLiveScreenConfigure?.defaultHdBroadcastToggleValue ??
+                IsmLiveDelegate.defaultHdBroadcast ??
+                false;
+            controller.isRecordingBroadcast = IsmLiveDelegate
+                    .goLiveScreenConfigure?.defaultRecordBroadcastToggleValue ??
+                IsmLiveDelegate.defaultRecordBroadcast ??
+                false;
             controller.isSchedulingBroadcast = false;
             controller.isPremium = false;
-            controller.isRestreamBroadcast =
-                IsmLiveDelegate.goLiveScreenConfigure
-                    ?.defaultRestreamBroadcast ??
-                    IsmLiveDelegate.defaultRestreamBroadcast ??
-                    false;
+            controller.isRestreamBroadcast = IsmLiveDelegate
+                    .goLiveScreenConfigure?.defaultRestreamBroadcastToggleValue ??
+                IsmLiveDelegate.defaultRestreamBroadcast ??
+                false;
           } else if (controller.streamDetails?.isScheduledStream ?? false) {
             controller.premiumStreamCoinsController.clear();
             controller.cameraFuture = null;

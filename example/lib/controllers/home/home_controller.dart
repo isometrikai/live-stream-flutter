@@ -74,20 +74,32 @@ class HomeController extends GetxController {
     IsmLiveApp.configureInterface(
       useGridLayoutForMultipleParticipants : true,
       productionMode: true,
-      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+      // Remove `const` if you uncomment builders or callbacks below.
+      goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
         isProductStreamFeatureEnabled: false,
         isScheduleStreamFeatureEnabled: true,
+        // Feature flags:
         // isHdStreamFeatureEnabled: true,
         // isRtmpStreamFeatureEnabled: true,
         // isRestreamStreamFeatureEnabled: true,
         // isPaidStreamFeatureEnabled: false,
         // isMultiLiveStreamFeatureEnabled: true,
         // isRecordedStreamFeatureEnabled: true,
-        // goLiveButtonBuilder: _buildCustomGoLiveButton,
-        // goLiveHeaderBuilder: _buildCustomGoLiveHeader,
-        // onGoLiveButtonTap: (context, isScheduledStream, streamDetails, goLiveData) async {
+        //
+        // Default toggles for a fresh Go Live flow (ignored when editing a stream):
+        // defaultHdBroadcastToggleValue: false,
+        // defaultRecordBroadcastToggleValue: false,
+        // defaultRestreamBroadcastToggleValue: false,
+        //
+        // goLiveHeaderBuilder: HomeController._buildCustomGoLiveHeader,
+        // goLiveButtonBuilder: HomeController._buildCustomGoLiveButton,
+        //
+        // onGoLiveButtonTap:
+        //     (context, isScheduledStream, streamDetails, goLiveData) async {
         //   if (goLiveData.pickedImage != null) {
-        //     IsmLiveLog.info('User picked image: ${goLiveData.pickedImage!.path}');
+        //     IsmLiveLog.info(
+        //       'User picked image: ${goLiveData.pickedImage!.path}',
+        //     );
         //   }
         // },
         // onGoLiveViewDispose: () {},
@@ -325,11 +337,8 @@ class HomeController extends GetxController {
         ),
         hostArrowButtonsSize: 56,
         pinItemCallback: (direction, context) {},
-        hasPinnedProductGetter: () {
-          // Return true if a product is currently pinned, false otherwise
-          // This will be called every time the UI needs to check the pinned status
-          return true; // Replace with your actual logic to check if product is pinned
-        },
+        // Replace with real pinned-product state; invoked whenever the UI refreshes.
+        hasPinnedProductGetter: () => true,
         // pinnedProductBuilder: (context, controller) => SizedBox(
         //   width: 150,
         //   height: 200,
@@ -337,8 +346,8 @@ class HomeController extends GetxController {
         //     color: Colors.red,
         //   ),
         // ),
+        // addProductViewBuilder: (context) => MyCustomAddProductView(),
       ),
-      // Optional: isPaidStreamFeatureEnabled → [goLiveScreenConfigure] (see comment block there).
       sideIconsConfigure: const IsmLiveSideIconsConfigure(
         hostOptions: [
           IsmLiveStreamOption.bars,
@@ -359,23 +368,26 @@ class HomeController extends GetxController {
           IsmLiveStreamOption.speaker,
           IsmLiveStreamOption.heart,
         ],
-        //  controlOptionCallback: (context, option, streamId, isHost, isCopublishing) async {
-        //     if (option == IsmLiveStreamOption.gift) {
-        //       // await yourCustomGiftFlow(context);
-        //       return true; // handled
-        //     }
-        //     return false; // use SDK default
-        //   },
-        //    controlWidgetBuilder: (context, option, onTap, isHost, isCopublishing, streamId) {
-        //     if (option == IsmLiveStreamOption.gift) {
-        //       return YourGiftButton(onTap: onTap);
-        //     }
-        //     return null; // use default
-        //   },
-        //    productStreamSideOptionsBottomMargin: (context) {
-        //     final h = MediaQuery.of(context).size.height;
-        //     return h * 0.45; // or null for SDK default (~28% of height)
-        //   },
+        // Must live under sideIconsConfigure (not on configureInterface):
+        // controlOptionCallback:
+        //     (context, option, streamId, isHost, isCopublishing) async {
+        //   if (option == IsmLiveStreamOption.gift) {
+        //     // await yourCustomGiftFlow(context);
+        //     return true; // handled
+        //   }
+        //   return false; // use SDK default
+        // },
+        // controlWidgetBuilder:
+        //     (context, option, onTap, isHost, isCopublishing, streamId) {
+        //   if (option == IsmLiveStreamOption.gift) {
+        //     return IconButton(icon: const Icon(Icons.card_giftcard), onTap: onTap);
+        //   }
+        //   return null; // SDK default widget
+        // },
+        // productStreamSideOptionsBottomMargin: (context) {
+        //   final h = MediaQuery.sizeOf(context).height;
+        //   return h * 0.45; // or null for SDK default (~28% of height)
+        // },
       ),
 
       // ismLiveButtonConfig: IsmLiveButtonConfig(
@@ -415,13 +427,8 @@ class HomeController extends GetxController {
       //   IsmLiveAnalyticsOptions.duration,
       // ]
       // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
-      // addProductViewBuilder: (
-      //   BuildContext context
-      // ) {
-      //   return MyCustomAddProductView(
-
-      //   );
-      // },
+      // Paid / HD / RTMP toggles belong in goLiveScreenConfigure → see flags above.
+      // addProductViewBuilder lives inside ecomConfigure → see commented line there.
       // tokenExpiredCallback: () async {
       //   IsmLiveLog.info('Token expired');
       //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';
@@ -683,52 +690,55 @@ class HomeController extends GetxController {
     BuildContext context,
     IsmLiveStreamController controller,
   ) {
-
-    final show = controller.streamDetails?.eventId?.isNotEmpty == true && controller.streamId.isNullOrEmpty;
+    final show = controller.streamDetails?.eventId?.isNotEmpty == true &&
+        controller.streamId.isNullOrEmpty;
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final scheduledText = scheduleTime != null
         ? _formatScheduleTime(scheduleTime)
         : 'No schedule selected';
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return show ? Container(
-      width: screenWidth,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.55),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white24),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.calendar_month, color: Colors.white, size: 24),
-            const SizedBox(height: 8),
-            const Text(
-              'Center Overlay Demo',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+    return show
+        ? Container(
+            width: screenWidth,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.calendar_month,
+                      color: Colors.white, size: 24),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Center Overlay Demo',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    scheduledText,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              scheduledText,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ) : Container();
+          )
+        : Container();
   }
 
   /// Formats schedule time to "22 Sept, 04:15 PM" format
