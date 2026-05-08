@@ -773,10 +773,12 @@ class IsmLiveStreamRepository {
   Future<IsmLiveResponseModel> fetchScheduledStream({
     required int skip,
     required int limit,
+    String? userId,
   }) {
     var payload = {
       'skip': skip,
       'limit': limit,
+      'userId': userId,
     };
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.scheduledStream}?${payload.makeQuery()}',

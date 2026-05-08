@@ -100,24 +100,40 @@ mixin StreamAPIMixin {
     _controller.update([IsmLiveStreamListing.updateId]);
   }
 
-  Future<void> fetchScheduledStream(
-          {IsmLiveStreamType? type, int skip = 0}) async =>
+  Future<void> fetchScheduledStream({
+    IsmLiveStreamType? type,
+    int skip = 0,
+    String? userId,
+  }) async =>
       _controller._scheduledStreamDebouncer.run(
-        () => _fetchScheduledStream(type: type, skip: skip),
+        () => _fetchScheduledStream(type: type, skip: skip, userId: userId),
+      );
+
+  /// Dedicated helper for fetching scheduled streams scoped to a user.
+  Future<void> fetchScheduledStreamByUserId({
+    required String userId,
+    IsmLiveStreamType? type,
+    int skip = 0,
+  }) async =>
+      fetchScheduledStream(
+        type: type,
+        skip: skip,
+        userId: userId,
       );
 
   Future<void> _fetchScheduledStream({
     IsmLiveStreamType? type,
     required int skip,
+    String? userId,
   }) async {
     var streamType = type ?? _controller.streamType;
 
     if (skip == 0) {
       _controller.streamsMap[streamType] = await _controller.viewModel
-          .fetchScheduledStream(limit: 10, skip: skip);
+          .fetchScheduledStream(limit: 10, skip: skip, userId: userId);
     } else {
       final newItems = await _controller.viewModel
-          .fetchScheduledStream(limit: 10, skip: skip);
+          .fetchScheduledStream(limit: 10, skip: skip, userId: userId);
       _controller.streamsMap[streamType] =
           List.from(_controller.streamsMap[streamType] ?? [])..addAll(newItems);
     }

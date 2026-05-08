@@ -1008,11 +1008,13 @@ class IsmLiveStreamViewModel {
   Future<List<IsmLiveStreamDataModel>> fetchScheduledStream({
     required int skip,
     required int limit,
+    String? userId,
   }) async {
     try {
       var res = await _repository.fetchScheduledStream(
         limit: limit,
         skip: skip,
+        userId: userId,
       );
       if (res.hasError || res.statusCode != 200) {
         return [];
