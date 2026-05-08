@@ -360,7 +360,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
       chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
-    // Apply width constraint only when productStream is enabled
+    // Keep chat anchored to the left in all modes so keyboard/layout changes
+    // don't visually shift it horizontally when sibling widgets hide/show.
     if (IsmLiveDelegate.productStream == true) {
       return Align(
         alignment: Alignment.centerLeft,
@@ -373,7 +374,10 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
       );
     }
 
-    return chatView;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: chatView,
+    );
   }
 
   /// Common method to handle "Buy now" button click functionality
@@ -1151,7 +1155,8 @@ class ScheduleStreamView extends StatelessWidget {
       chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
     );
 
-    // Apply width constraint only when productStream is enabled
+    // Keep chat anchored to the left in all modes so keyboard/layout changes
+    // don't visually shift it horizontally when sibling widgets hide/show.
     if (IsmLiveDelegate.productStream == true) {
       return Align(
         alignment: Alignment.centerLeft,
@@ -1164,7 +1169,10 @@ class ScheduleStreamView extends StatelessWidget {
       );
     }
 
-    return chatView;
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: chatView,
+    );
   }
 
   /// Formats schedule time to "22 Sept, 04:15 PM" format
