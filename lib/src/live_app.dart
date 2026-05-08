@@ -182,6 +182,36 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches paginated recorded streams.
+  ///
+  /// Pass [userId] to fetch recorded streams for a specific user.
+  /// Returns an empty list if the request fails.
+  static Future<List<IsmLiveStreamDataModel>> fetchRecordedStreams({
+    int limit = 10,
+    int skip = 0,
+    String? userId,
+  }) async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      final query = IsmLiveStreamType.recorded
+          .queryModel(skip: skip)
+          .copyWith(limit: limit, userId: userId);
+      return await controller.viewModel.getStreams(queryModel: query);
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.fetchRecordedStreams failed: $e\n$stack');
+      return <IsmLiveStreamDataModel>[];
+    }
+  }
+
   /// Fetches a paginated list of users.
   ///
   /// Host apps can use this helper to build custom user-pickers (e.g. add

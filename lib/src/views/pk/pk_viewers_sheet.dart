@@ -126,7 +126,7 @@ class IsmLivePkViewersSheet extends StatelessWidget {
                         placeHolderText: IsmLiveStrings.noDataFound,
                         showHeader: false,
                         title: '',
-                        itemCount: 5,
+                        itemCount: 0,
                         itemBuilder: (context, index) => ListTile(
                           leading: IsmLiveImage.network(
                             '',
