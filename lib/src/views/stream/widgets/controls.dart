@@ -94,7 +94,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
   static void _ensureMultiLiveForViewerCopublishFlow(
     List<IsmLiveStreamOption> options,
     IsmLiveMemberStatus memberStatus,
+    bool isPkEnabled,
   ) {
+    if (isPkEnabled) {
+      return;
+    }
     if (options.contains(IsmLiveStreamOption.multiLive)) {
       return;
     }
@@ -208,6 +212,7 @@ class IsmLiveControlsWidget extends StatelessWidget {
               _ensureMultiLiveForViewerCopublishFlow(
                 options,
                 controller.memberStatus,
+                controller.isPk,
               );
             }
           }
