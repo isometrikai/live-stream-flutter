@@ -107,7 +107,7 @@ class IsmLiveStreamRepository {
         type: IsmLiveRequestType.post,
         headers: IsmLiveUtility.tokenHeader(),
         payload: {
-          'isRecorded': false,
+          'isRecorded': streamModel.enableRecording,
           'rtmpIngest': streamModel.rtmpIngest,
           'enableRecording': streamModel.enableRecording,
           'streamDescription': streamModel.streamDescription,
