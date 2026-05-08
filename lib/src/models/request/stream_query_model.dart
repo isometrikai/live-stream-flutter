@@ -33,6 +33,7 @@ class IsmLiveStreamQueryModel {
   final bool? isScheduledStream;
   final int? startDateTime;
   final int? endDateTime;
+  final String? userId;
   IsmLiveStreamQueryModel({
     this.ids,
     this.customType,
@@ -65,6 +66,7 @@ class IsmLiveStreamQueryModel {
     this.isScheduledStream,
     this.startDateTime,
     this.endDateTime,
+    this.userId,
   });
 
   IsmLiveStreamQueryModel copyWith({
@@ -99,6 +101,7 @@ class IsmLiveStreamQueryModel {
     bool? isScheduledStream,
     int? startDateTime,
     int? endDateTime,
+    String? userId,
   }) =>
       IsmLiveStreamQueryModel(
         ids: ids ?? this.ids,
@@ -132,6 +135,7 @@ class IsmLiveStreamQueryModel {
         isScheduledStream: isScheduledStream ?? this.isScheduledStream,
         startDateTime: startDateTime ?? this.startDateTime,
         endDateTime: endDateTime ?? this.endDateTime,
+        userId: userId ?? this.userId,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -166,6 +170,7 @@ class IsmLiveStreamQueryModel {
         'isScheduledStream': isScheduledStream,
         'startDateTime': startDateTime,
         'endDateTime': endDateTime,
+        'userId': userId,
       };
 
   factory IsmLiveStreamQueryModel.fromMap(Map<String, dynamic> map) =>
@@ -222,6 +227,7 @@ class IsmLiveStreamQueryModel {
             map['startDateTime'] != null ? map['startDateTime'] as int : null,
         endDateTime:
             map['endDateTime'] != null ? map['endDateTime'] as int : null,
+        userId: map['userId'] != null ? map['userId'] as String : null,
       );
 
   String toJson() => json.encode(toMap());
@@ -232,7 +238,7 @@ class IsmLiveStreamQueryModel {
 
   @override
   String toString() =>
-      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sortOrder: $sortOrder, sort: $sort, limit: $limit, status: $status, skip: $skip, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish, fetchLive: $fetchLive, isRecorded: $isRecorded, private: $private, restream: $restream, hdbroadcast: $hdbroadcast, pk: $pk, isScheduledStream: $isScheduledStream, startDateTime: $startDateTime, endDateTime: $endDateTime)';
+      'IsmLiveStreamQueryModel(ids: $ids, customType: $customType, searchTag: $searchTag, membersIncluded: $membersIncluded, membersExactly: $membersExactly, sortOrder: $sortOrder, sort: $sort, limit: $limit, status: $status, skip: $skip, includeMembers: $includeMembers, membersSkip: $membersSkip, membersLimit: $membersLimit, hdBroadcast: $hdBroadcast, lowLatencyMode: $lowLatencyMode, recorded: $recorded, public: $public, productsLinked: $productsLinked, multiLive: $multiLive, audioOnly: $audioOnly, reStream: $reStream, canPublish: $canPublish, fetchLive: $fetchLive, isRecorded: $isRecorded, private: $private, restream: $restream, hdbroadcast: $hdbroadcast, pk: $pk, isScheduledStream: $isScheduledStream, startDateTime: $startDateTime, endDateTime: $endDateTime, userId: $userId)';
 
   @override
   bool operator ==(covariant IsmLiveStreamQueryModel other) {
@@ -268,7 +274,8 @@ class IsmLiveStreamQueryModel {
         other.pk == pk &&
         other.isScheduledStream == isScheduledStream &&
         other.startDateTime == startDateTime &&
-        other.endDateTime == endDateTime;
+        other.endDateTime == endDateTime &&
+        other.userId == userId;
   }
 
   @override
@@ -303,5 +310,6 @@ class IsmLiveStreamQueryModel {
       pk.hashCode ^
       isScheduledStream.hashCode ^
       startDateTime.hashCode ^
-      endDateTime.hashCode;
+      endDateTime.hashCode ^
+      userId.hashCode;
 }

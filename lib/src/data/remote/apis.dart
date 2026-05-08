@@ -37,7 +37,7 @@ class IsmLiveApis {
   static const String scheduledStreamGoLive = '$_live/stream/schedule/golive';
   // static const String streamAnalyticsViewers =
   //     '$_live/analytics/stream/viewers';
-  static const String streamAnalyticsViewers = '$_live/stream/viewer';
+  static const String streamAnalyticsViewers = '$_live/streams/viewers';
 
   static const String getUsersToInviteForPK = '$_live/invite/users';
   static const String sendInvitationToUserForPK = '$_live/invite/users';
