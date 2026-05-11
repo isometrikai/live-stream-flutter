@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
@@ -212,6 +213,7 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
 
   @override
   Widget build(BuildContext ctx) {
+    final uiData = _participantUiData(widget.participant, widget.imageUrl);
     final canShowMakeHostAction =
         widget.showStatsLayer && widget.isViewer && !widget.isFirstIndex;
 
@@ -227,9 +229,9 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
             activeVideoTrack != null && !activeVideoTrack!.muted
                 ? buildVideoRenderer()
                 : NoVideoWidget(
-                    name: widget.participant.name,
-                    imageUrl: widget.imageUrl ?? '',
-                    initials: IsmLiveInitials.extract(widget.participant.name),
+                    name: uiData.displayName,
+                    imageUrl: uiData.imageUrl,
+                    initials: IsmLiveInitials.extract(uiData.displayName),
                   ),
             if (widget.isbattleFinish)
               widget.isWinner
@@ -245,15 +247,11 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
               Align(
                 alignment: Alignment.topCenter,
                 child: ParticipantInfoWidget(
-                  imageUrl: widget.imageUrl ?? '',
-                  name: widget.participant.name.isNotEmpty
-                      ? widget.participant.name
-                      : widget.participant.identity,
+                  imageUrl: uiData.imageUrl,
+                  name: uiData.displayName,
                   isHost: widget.isHost,
                   isFirstIndex: widget.isFirstIndex,
-                  title: widget.participant.name.isNotEmpty
-                      ? widget.participant.name
-                      : widget.participant.identity,
+                  title: uiData.displayName,
                   hostCoins: pkController.pkHostValue.toInt(),
                   battleStart:
                       pkController.streamController.pkStages?.isPkStart ??
@@ -270,8 +268,8 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                   onTap: () {
                     pkController.pkChangeHostSheet(
                       userId: widget.participant.identity,
-                      name: widget.participant.name,
-                      image: widget.imageUrl ?? '',
+                      name: uiData.displayName,
+                      image: uiData.imageUrl,
                     );
                   },
                   child: Container(
@@ -396,4 +394,82 @@ class _RemoteParticipantWidgetState
 
   @override
   VideoTrack? get activeVideoTrack => widget.videoTrack;
+}
+
+class _ParticipantUiData {
+  const _ParticipantUiData({
+    required this.displayName,
+    required this.imageUrl,
+  });
+
+  final String displayName;
+  final String imageUrl;
+}
+
+_ParticipantUiData _participantUiData(
+  Participant participant,
+  String? fallbackImageUrl,
+) {
+  final fallbackName = participant.name.isNotEmpty
+      ? participant.name
+      : participant.identity;
+  final fallbackImg = fallbackImageUrl ?? '';
+
+  final map = _tryDecodeParticipantMetadata(participant.metadata);
+  if (map == null) {
+    return _ParticipantUiData(
+      displayName: fallbackName,
+      imageUrl: fallbackImg,
+    );
+  }
+
+  final metaName = _displayNameFromMetadataMap(map);
+  final metaImg = _profileImageFromMetadataMap(map);
+
+  return _ParticipantUiData(
+    displayName: (metaName != null && metaName.isNotEmpty)
+        ? metaName
+        : fallbackName,
+    imageUrl:
+        (metaImg != null && metaImg.isNotEmpty) ? metaImg : fallbackImg,
+  );
+}
+
+Map<String, dynamic>? _tryDecodeParticipantMetadata(String? raw) {
+  if (raw == null || raw.trim().isEmpty) {
+    return null;
+  }
+  try {
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      return null;
+    }
+    return Map<String, dynamic>.from(decoded);
+  } catch (_) {}
+  return null;
+}
+
+String? _displayNameFromMetadataMap(Map<String, dynamic> map) {
+  final first = map['firstName'];
+  final last = map['lastName'];
+  final firstStr = first is String ? first.trim() : '';
+  final lastStr = last is String ? last.trim() : '';
+  final fullName =
+      [firstStr, lastStr].where((s) => s.isNotEmpty).join(' ');
+  if (fullName.isNotEmpty) {
+    return fullName;
+  }
+  final username = map['username'];
+  if (username is String && username.trim().isNotEmpty) {
+    return username.trim();
+  }
+  return null;
+}
+
+String? _profileImageFromMetadataMap(Map<String, dynamic> map) {
+  final url = map['profileImage'];
+  if (url is String && url.trim().isNotEmpty) {
+    return url.trim();
+  }
+  return null;
 }
