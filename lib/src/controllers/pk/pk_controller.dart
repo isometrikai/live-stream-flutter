@@ -82,6 +82,24 @@ class IsmLivePkController extends GetxController
 
   String? get getstreamId => streamController.streamId;
 
+  /// Stream id to send as `senderStreamId` for PK invites. Prefer
+  /// [IsmLiveStreamController.streamId], but fall back to
+  /// [IsmLiveStreamController.streamDetails] when the former is unset or still
+  /// invalid (e.g. first frame after go-live with deferred LiveKit connect),
+  /// matching how stream UI resolves ids.
+  String get senderStreamIdForPkInvite {
+    final c = streamController;
+    final primary = c.streamId;
+    if (IsmLiveStreamId.isValid(primary)) {
+      return primary!;
+    }
+    final fromDetails = c.streamDetails?.streamId;
+    if (IsmLiveStreamId.isValid(fromDetails)) {
+      return fromDetails!;
+    }
+    return '';
+  }
+
   num pkHostValue = 0;
   num pkGustValue = 0;
 
@@ -422,7 +440,7 @@ class IsmLivePkController extends GetxController
   }) async {
     var res = await _viewModel.sendInvitationToUserForPK(
       reciverStreamId: reciverDetails.streamId,
-      senderStreamId: getstreamId ?? '',
+      senderStreamId: senderStreamIdForPkInvite,
       userId: reciverDetails.userId,
     );
 
