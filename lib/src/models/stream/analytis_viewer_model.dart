@@ -61,22 +61,68 @@ class IsmLiveAnalyticViewerModel {
         'statusLogs': statusLogs?.map((x) => x.toMap()).toList(),
       };
 
-  factory IsmLiveAnalyticViewerModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveAnalyticViewerModel(
+  /// Display full name: metadata first/last when either is non-empty,
+  /// otherwise root [firstName]/[lastName], otherwise [userName].
+  String get fullName {
+    final mf = userMetaData?.firstName?.trim() ?? '';
+    final ml = userMetaData?.lastName?.trim() ?? '';
+    if (mf.isNotEmpty || ml.isNotEmpty) {
+      return [mf, ml].where((s) => s.isNotEmpty).join(' ');
+    }
+    final rf = firstName?.trim() ?? '';
+    final rl = lastName?.trim() ?? '';
+    if (rf.isNotEmpty || rl.isNotEmpty) {
+      return [rf, rl].where((s) => s.isNotEmpty).join(' ');
+    }
+    return userName ?? '';
+  }
+
+  /// Login / handle for UI: metadata `userName` when set, otherwise root [userName].
+  String get displayUserName {
+    final meta = userMetaData?.userName?.trim() ?? '';
+    if (meta.isNotEmpty) return meta;
+    return userName ?? '';
+  }
+
+  /// Same as [fullName]. Kept for call sites that use a single display name.
+  String get name => fullName;
+
+  /// Two-letter uppercase initials: [fullName] then [displayUserName].
+  String get profileInitials => IsmLiveInitials.fromNames(
+        primary: fullName,
+        secondary: displayUserName,
+      );
+
+  /// Profile image URL: metadata first, then root [profilePic].
+  String? get displayProfilePic => userMetaData?.profilePic ?? profilePic;
+
+  factory IsmLiveAnalyticViewerModel.fromMap(Map<String, dynamic> map) {
+    final rawMeta = map['userMetaData'] ?? map['metaData'];
+    IsmLiveMetaData? userMetaData;
+    if (rawMeta != null && rawMeta is Map) {
+      userMetaData =
+          IsmLiveMetaData.fromMap(Map<String, dynamic>.from(rawMeta));
+    }
+
+    String? preferMetaString(String? meta, dynamic root) {
+      final fromMeta = meta?.trim();
+      if (fromMeta != null && fromMeta.isNotEmpty) return fromMeta;
+      return root != null ? root as String? : null;
+    }
+
+    return IsmLiveAnalyticViewerModel(
         isometrikUserId: map['isometrikUserId'] != null
             ? map['isometrikUserId'] as String
             : null,
         appUserId: map['appUserId'] != null ? map['appUserId'] as String : null,
-        firstName: map['firstName'] != null ? map['firstName'] as String : null,
-        userMetaData: map['userMetaData'] != null
-            ? IsmLiveMetaData.fromMap(
-                map['userMetaData'] as Map<String, dynamic>)
-            : null,
-        lastName: map['lastName'] != null ? map['lastName'] as String : null,
+        firstName:
+            preferMetaString(userMetaData?.firstName, map['firstName']),
+        userMetaData: userMetaData,
+        lastName: preferMetaString(userMetaData?.lastName, map['lastName']),
         timestamp: map['timestamp'] != null ? map['timestamp'] as num : null,
-        profilePic:
-            map['profilePic'] != null ? map['profilePic'] as String : null,
-        userName: map['userName'] != null ? map['userName'] as String : null,
+        profilePic: userMetaData?.profilePic ??
+            (map['profilePic'] != null ? map['profilePic'] as String : null),
+        userName: preferMetaString(userMetaData?.userName, map['userName']),
         statusLogs: map['statusLogs'] != null
             ? List<IsmLiveStatusLogs>.from(
                 (map['statusLogs'] as List<dynamic>).map<IsmLiveStatusLogs?>(
@@ -85,6 +131,7 @@ class IsmLiveAnalyticViewerModel {
               )
             : null,
       );
+  }
 
   String toJson() => json.encode(toMap());
 
