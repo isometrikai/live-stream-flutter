@@ -192,19 +192,20 @@ class IsmLiveListSheetTwo extends StatelessWidget {
                     return ListTile(
                       contentPadding: IsmLiveDimens.edgeInsets0,
                       leading: IsmLiveImage.network(
-                        viewer.profilePic ?? '',
-                        name: viewer.userName ?? '',
+                        viewer.displayProfilePic ?? '',
+                        name: viewer.fullName,
+                        initials: viewer.profileInitials,
                         dimensions: IsmLiveDimens.forty,
                         isProfileImage: true,
                       ),
                       title: Text(
-                        '${viewer.firstName} ${viewer.lastName}',
+                        viewer.fullName,
                         style: context.textTheme.titleMedium?.copyWith(
                           color: textColor,
                         ),
                       ),
                       subtitle: Text(
-                        '@${viewer.userName}',
+                        '@${viewer.displayUserName}',
                         style: context.textTheme.bodySmall?.copyWith(
                           color: subtitleColor,
                         ),
