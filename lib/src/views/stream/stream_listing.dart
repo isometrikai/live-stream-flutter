@@ -195,6 +195,35 @@ class _StreamListing extends StatefulWidget {
 class _StreamListingState extends State<_StreamListing> {
   late final RefreshController _refreshController;
 
+  void _openRecordedStreamPlayer(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    IsmLiveStreamDataModel streamModel,
+  ) {
+    final list = controller.streamsMap[widget.streamType]!;
+    final items =
+        list.map(IsmLiveStreamDataModelRecordingAdapter.new).toList();
+    if (items.isEmpty) return;
+    final index =
+        list.indexWhere((s) => s.streamId == streamModel.streamId);
+    final adapter = IsmLiveStreamDataModelRecordingAdapter(streamModel);
+    if (adapter.recordedUrls.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No playable recording URL for this stream'),
+        ),
+      );
+      return;
+    }
+    final config = IsmLiveDelegate.streamRecordingPlayerConfig ??
+        IsmLiveDelegate.defaultStreamRecordingPlayerConfig;
+    IsmLiveRouteManagement.goToStreamRecordingPlayer(
+      recordings: items,
+      initialIndex: (index >= 0 ? index : 0).clamp(0, items.length - 1),
+      config: config,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -269,6 +298,34 @@ class _StreamListingState extends State<_StreamListing> {
                               return;
                             }
 
+                            if (widget.streamType ==
+                                IsmLiveStreamType.recorded) {
+                              if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
+                                controller.paidStreamSheet(
+                                  coins: e.amount ?? 0,
+                                  onTap: () async {
+                                    IsmLiveRoute.pop();
+                                    var res = await controller
+                                        .buyStream(e.streamId ?? '');
+                                    if (res) {
+                                      _openRecordedStreamPlayer(
+                                        context,
+                                        controller,
+                                        e,
+                                      );
+                                    }
+                                  },
+                                );
+                              } else {
+                                _openRecordedStreamPlayer(
+                                  context,
+                                  controller,
+                                  e,
+                                );
+                              }
+                              return;
+                            }
+
                             if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
                               controller.paidStreamSheet(
                                   coins: e.amount ?? 0,
@@ -295,6 +352,8 @@ class _StreamListingState extends State<_StreamListing> {
                           child: IsmLiveStreamCard(
                             e,
                             isCreatedByMe: isCreatedByMe,
+                            showOwnerBadge: widget.streamType !=
+                                IsmLiveStreamType.recorded,
                           ),
                         );
                       },
