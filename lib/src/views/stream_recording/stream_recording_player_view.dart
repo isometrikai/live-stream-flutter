@@ -197,23 +197,91 @@ class _IsmLiveStreamRecordingPlayerViewState
 
   Future<void> _preloadAround(int index) async {
     if (widget.recordings.isEmpty) return;
-    final urls = <String>[];
+    final activeUrls = <String>[];
+    final neighborUrls = <String>[];
 
-    void addUrlFor(int i) {
+    void collect(int i, List<String> bucket) {
       if (i < 0 || i >= widget.recordings.length) return;
       final recording = widget.recordings[i];
       final recorded = recording.recordedUrls;
       if (recorded.isNotEmpty) {
-        urls.add(recorded.first);
+        bucket.add(recorded.first);
       }
     }
 
-    addUrlFor(index);
-    addUrlFor(index + 1);
-    addUrlFor(index - 1);
+    collect(index, activeUrls);
+    collect(index + 1, neighborUrls);
+    collect(index - 1, neighborUrls);
 
-    await _cacheManager.precacheMedia(urls);
-    await _cacheManager.clearOutsideRange(urls);
+    final keepUrls = <String>[...activeUrls, ...neighborUrls];
+
+    // Speed up first-frame for the currently visible recording – especially
+    // important for long videos and slow CDNs where parallel preloads were
+    // splitting bandwidth/decoder budget three ways while the user stared at
+    // the spinner. The widget for [index] joins this same future via the
+    // cache manager's in-flight coalescing, so it doesn't double-fetch.
+    await _cacheManager.precacheMedia(activeUrls);
+
+    // Hold off neighbor preload until the active video is actually playing
+    // (or a short safety cap elapses). For long videos on slow CDNs this
+    // stops neighbor HTTP sessions from stealing bandwidth while the user is
+    // still waiting on the first decodable frame of the active recording.
+    if (activeUrls.isNotEmpty) {
+      await _waitForActivePlaying(activeUrls.first);
+    }
+
+    // Then warm neighbors so swiping still feels instant. Awaited so that
+    // [clearOutsideRange] below runs after preload (same invariant as before).
+    await _cacheManager.precacheMedia(neighborUrls);
+
+    await _cacheManager.clearOutsideRange(keepUrls);
+  }
+
+  /// Waits until the cached controller for [url] reports `isPlaying`, or
+  /// until [maxWait] elapses - whichever comes first.
+  ///
+  /// Returns immediately if the controller is already playing or is unknown
+  /// (e.g. evicted before this call). Always cleans up the temporary listener
+  /// and safety timer so it can't leak across page changes.
+  ///
+  /// 10s rather than the original 4s: long recordings on slow networks can
+  /// take several seconds beyond `initialize()` completion before they
+  /// actually start playing, and we want to keep the full bandwidth pipe on
+  /// the active video until then (otherwise neighbor preload starts stealing
+  /// bytes and the active's first-frame stalls).
+  Future<void> _waitForActivePlaying(
+    String url, {
+    Duration maxWait = const Duration(seconds: 10),
+  }) async {
+    final controller = _cacheManager.getCachedController(url);
+    if (controller == null) return;
+    if (controller.value.isPlaying) return;
+
+    final completer = Completer<void>();
+    Timer? safetyTimer;
+    late VoidCallback listener;
+
+    void finish() {
+      if (completer.isCompleted) return;
+      completer.complete();
+    }
+
+    listener = () {
+      final value = controller.value;
+      if (value.hasError || value.isPlaying) {
+        finish();
+      }
+    };
+
+    controller.addListener(listener);
+    safetyTimer = Timer(maxWait, finish);
+
+    try {
+      await completer.future;
+    } finally {
+      safetyTimer.cancel();
+      controller.removeListener(listener);
+    }
   }
 
   @override
@@ -438,6 +506,7 @@ class _RecordingPage extends StatelessWidget {
             ? IsmLiveRecordingAutoVideoPlayer(
                 key: playerKey,
                 url: recording.recordedUrls.first,
+                thumbnailUrl: recording.thumbnailUrl,
                 onControllerReady: onControllerReady,
                 onCompleted:
                     autoMoveToNextOnCompletion ? onVideoCompleted : null,

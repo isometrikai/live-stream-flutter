@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:video_player/video_player.dart';
 
 /// Lightweight cache manager for recording playback.
@@ -26,6 +24,23 @@ class RecordingVideoCacheManager {
   final Map<String, Future<VideoPlayerController>> _inflight =
       <String, Future<VideoPlayerController>>{};
 
+  /// Session-scoped record of URLs that already failed with a permanent
+  /// (e.g. 4xx) error. Lets [IsmLiveRecordingAutoVideoPlayer] short-circuit
+  /// the spinner and surface the retry CTA immediately on subsequent mounts
+  /// of the same broken URL (scroll back / re-entry), instead of forcing the
+  /// user to wait for a fresh HTTP round-trip to discover the same failure.
+  final Map<String, String> _knownFailures = <String, String>{};
+
+  /// Returns the cached failure message for [url] if we've already seen it
+  /// fail with a permanent error this session, otherwise null.
+  String? getKnownFailure(String url) => _knownFailures[url];
+
+  /// Forgets any cached failure for [url]. Call from the retry path so the
+  /// next [getOrCreate] takes a fresh swing at the network.
+  void forgetKnownFailure(String url) {
+    _knownFailures.remove(url);
+  }
+
   /// Returns a cached controller if it exists and is still usable.
   VideoPlayerController? getCachedController(String url) {
     final entry = _cache[url];
@@ -47,9 +62,26 @@ class RecordingVideoCacheManager {
       throw ArgumentError.value(url, 'url', 'Video URL must not be empty');
     }
 
+    // Fast-fail for URLs proven broken this session. Stops neighbor preload
+    // from re-burning HTTP sessions / decoder budget on a URL whose server
+    // already told us "no". The widget path also short-circuits earlier via
+    // [getKnownFailure], so this primarily protects the preload path.
+    final knownFailure = _knownFailures[url];
+    if (knownFailure != null) {
+      throw _RecordingPlaybackException(knownFailure);
+    }
+
     final existing = _cache[url];
     if (existing != null && !existing.disposed) {
-      if (existing.controller.value.isInitialized) {
+      final value = existing.controller.value;
+      // Never hand back a controller that already errored (e.g. 403 / source
+      // error during a previous attempt). Drop it and fall through to fresh
+      // init so the UI gets a usable controller instead of an endless spinner.
+      if (value.hasError) {
+        existing.disposed = true;
+        unawaited(existing.controller.dispose());
+        _cache.remove(url);
+      } else if (value.isInitialized) {
         existing.lastAccess = DateTime.now();
         return existing.controller;
       }
@@ -71,6 +103,15 @@ class RecordingVideoCacheManager {
     }
   }
 
+  /// Hard cap so a misbehaving CDN / hung HTTP socket / silent native failure
+  /// can't leave the UI on an endless spinner. Sized to fit genuinely long
+  /// recordings on slow mobile networks - QA observed real-world inits of
+  /// 45-70s for large non-fast-start MP4s on weak 4G, which the previous 45s
+  /// cap was cutting off (especially when a neighbor preload had already
+  /// started the in-flight future before the user reached that page and
+  /// joined it via [_inflight] coalescing).
+  static const Duration _initializeTimeout = Duration(seconds: 90);
+
   Future<VideoPlayerController> _createAndInitialize(String url) async {
     final stale = _cache.remove(url);
     if (stale != null && !stale.disposed) {
@@ -81,15 +122,78 @@ class RecordingVideoCacheManager {
     final controller = VideoPlayerController.networkUrl(Uri.parse(url));
     final entry = _CachedVideo(controller: controller);
     _cache[url] = entry;
+
+    // Some platform versions (notably media3/ExoPlayer on Android) surface
+    // source errors like HTTP 403 via `controller.value.hasError` instead of
+    // rejecting the [initialize] future. Bridge both paths so we never silently
+    // sit on an initialized-but-broken controller.
+    final settled = Completer<void>();
+    void onValueChanged() {
+      if (settled.isCompleted) return;
+      final value = controller.value;
+      if (value.hasError) {
+        settled.completeError(
+          _RecordingPlaybackException(
+            value.errorDescription ?? 'Video player error',
+          ),
+        );
+      }
+    }
+
+    controller.addListener(onValueChanged);
+
+    final initFuture = controller.initialize();
+    // Mirror init future completion into [settled] without leaving an
+    // unhandled async error if the listener wins the race.
+    unawaited(initFuture.then(
+      (_) {
+        if (!settled.isCompleted) settled.complete();
+      },
+      onError: (Object e, StackTrace s) {
+        if (!settled.isCompleted) settled.completeError(e, s);
+      },
+    ));
+
     try {
-      await controller.initialize();
+      await settled.future.timeout(_initializeTimeout);
+      if (controller.value.hasError) {
+        throw _RecordingPlaybackException(
+          controller.value.errorDescription ?? 'Video player error',
+        );
+      }
+      controller.removeListener(onValueChanged);
       entry.lastAccess = DateTime.now();
+      // A previously-bad URL that is now reachable should not stay marked
+      // as broken for the rest of the session.
+      _knownFailures.remove(url);
       return controller;
-    } catch (_) {
+    } catch (e) {
+      controller.removeListener(onValueChanged);
       await controller.dispose();
       _cache.remove(url);
+      if (_isPermanentFailure(e)) {
+        _knownFailures[url] = e.toString();
+      }
       rethrow;
     }
+  }
+
+  /// Heuristic: is [error] the kind of failure where retrying immediately is
+  /// going to fail the same way (closed S3 ACL, deleted object, expired
+  /// presigned URL, etc.)?
+  ///
+  /// Conservative on purpose - we never want to permanently blacklist a URL
+  /// over a transient socket / timeout / decoder hiccup. Only well-known
+  /// "the server told us no" responses qualify.
+  static bool _isPermanentFailure(Object error) {
+    final message = error.toString().toLowerCase();
+    if (message.contains('response code: 4')) return true;
+    if (message.contains('http 4')) return true;
+    if (message.contains('status 4')) return true;
+    if (message.contains('403')) return true;
+    if (message.contains('404')) return true;
+    if (message.contains('410')) return true;
+    return false;
   }
 
   /// Preload a list of video URLs in the background.
@@ -108,25 +212,16 @@ class RecordingVideoCacheManager {
       await _preload(url);
     }
 
-    // iOS + long assets: parallel AVPlayer HTTP sessions can trigger CDN/WAF
-    // 403 (CoreMedia -12660). Preload neighbors one at a time on iOS only.
-    final serialPrecache =
-        !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
-    if (serialPrecache) {
-      for (final url in urls) {
-        if (url.isEmpty) continue;
-        await runOne(url);
-      }
-      return;
-    }
-
-    final futures = <Future<void>>[];
+    // Always preload one URL at a time. Originally serial was iOS-only (to
+    // dodge CoreMedia/AVPlayer 403s on parallel sessions), but parallel
+    // neighbor preloads on Android were splitting bandwidth between two long
+    // MP4 downloads and routinely pushing each one past [_initializeTimeout].
+    // Serial keeps each download on the full pipe and finishes the most
+    // important neighbor (the next one) first - callers should pass URLs in
+    // priority order.
     for (final url in urls) {
       if (url.isEmpty) continue;
-      futures.add(runOne(url));
-    }
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
+      await runOne(url);
     }
   }
 
@@ -204,6 +299,9 @@ class RecordingVideoCacheManager {
       await Future.wait(futures);
     }
     _cache.clear();
+    // Player screen is going away entirely - drop any known-bad markings so
+    // a future re-open of the player can take a fresh swing at each URL.
+    _knownFailures.clear();
   }
 }
 
@@ -218,5 +316,16 @@ class _CachedVideo {
   bool isVisible;
   bool disposed;
   DateTime lastAccess;
+}
+
+/// Thin error type so callers (and analytics) can distinguish recording
+/// playback failures from generic [Exception]s.
+class _RecordingPlaybackException implements Exception {
+  _RecordingPlaybackException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
 }
 
