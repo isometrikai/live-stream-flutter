@@ -14,6 +14,7 @@ class IsmLiveRecordingAutoVideoPlayer extends StatefulWidget {
   const IsmLiveRecordingAutoVideoPlayer({
     super.key,
     required this.url,
+    this.thumbnailUrl,
     this.isMuted = false,
     this.onProgress,
     this.onCompleted,
@@ -21,6 +22,12 @@ class IsmLiveRecordingAutoVideoPlayer extends StatefulWidget {
   });
 
   final String url;
+
+  /// Optional poster image shown behind the spinner while the controller is
+  /// still initializing (especially helpful for long videos on slow networks
+  /// where the user would otherwise stare at a black frame). When null or on
+  /// load failure the background falls back to black.
+  final String? thumbnailUrl;
   final bool isMuted;
   final void Function(Duration total, Duration position)? onProgress;
   final VoidCallback? onCompleted;
@@ -52,6 +59,24 @@ class _IsmLiveRecordingAutoVideoPlayerState
   String? _lastTrackedControllerError;
   String? _loadFailureMessage;
 
+  /// Wall-clock timestamp of the first transition into `isPlaying`.
+  /// Used to switch the buffering UI from cold-init mode (always visible) to
+  /// mid-playback rebuffer mode (suppressed for a short grace window).
+  int? _firstPlayMillis;
+
+  /// Wall-clock timestamp of the most recent transition into `isBuffering`.
+  /// Used together with [_bufferingFlashGraceMs] to hide the rebuffer overlay
+  /// for very short rebuffers (which would otherwise just look like a flash).
+  int? _bufferingStartMillis;
+
+  /// Last time we rebuilt the widget specifically to advance the cold-init
+  /// progress bar. Throttled so the controller listener doesn't redraw the
+  /// whole subtree more than ~2.5x per second.
+  int _lastBufferingRebuildMillis = 0;
+
+  static const int _bufferingFlashGraceMs = 700;
+  static const int _bufferingRebuildIntervalMs = 400;
+
   bool get isPlaying =>
       _controller != null && _controller!.value.isPlaying == true;
 
@@ -66,6 +91,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
   @override
   void initState() {
     super.initState();
+    if (_consumeKnownFailureIfAny()) return;
     _initializeIfNeeded();
   }
 
@@ -75,6 +101,10 @@ class _IsmLiveRecordingAutoVideoPlayerState
     if (oldWidget.url != widget.url) {
       _loadFailureMessage = null;
       _lastTrackedControllerError = null;
+      _firstPlayMillis = null;
+      _bufferingStartMillis = null;
+      _lastBufferingRebuildMillis = 0;
+      if (_consumeKnownFailureIfAny()) return;
       _initializeIfNeeded();
     }
     if (oldWidget.isMuted != widget.isMuted &&
@@ -82,6 +112,20 @@ class _IsmLiveRecordingAutoVideoPlayerState
         _controller!.value.isInitialized) {
       _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
     }
+  }
+
+  /// If the cache manager has already seen [widget.url] fail with a
+  /// permanent (e.g. 403) error this session, surface the retry UI on the
+  /// very first build instead of paying the cost of a fresh HTTP round-trip
+  /// just to discover the same failure. Returns true when a known failure
+  /// was consumed (caller should NOT call [_initializeIfNeeded]).
+  bool _consumeKnownFailureIfAny() {
+    if (widget.url.isEmpty) return false;
+    final message = _cache.getKnownFailure(widget.url);
+    if (message == null) return false;
+    _loadFailureMessage = message;
+    _lastTrackedControllerError = message;
+    return true;
   }
 
   Future<void> _initializeIfNeeded() async {
@@ -123,6 +167,18 @@ class _IsmLiveRecordingAutoVideoPlayerState
     _controller!.addListener(_handleProgress);
     _controller!.setLooping(true);
     _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+    // A cached controller that previously played all the way through (e.g.
+    // auto-advance from `onCompleted`) is parked at `position == duration`.
+    // `setLooping(true)` only loops while actively playing, so a plain
+    // `play()` from that state surfaces no frames - the user sees the
+    // frozen last frame and assumes the video is broken. Rewind first so
+    // playback restarts cleanly when the user scrolls back to it.
+    final value = _controller!.value;
+    final durationMs = value.duration.inMilliseconds;
+    if (durationMs > 0 &&
+        durationMs - value.position.inMilliseconds <= 300) {
+      unawaited(_controller!.seekTo(Duration.zero));
+    }
     // Inform parent that a usable controller is now available.
     widget.onControllerReady?.call(_controller!);
   }
@@ -139,6 +195,34 @@ class _IsmLiveRecordingAutoVideoPlayerState
     final position = value.position;
     final total = value.duration;
     _trackControllerValueErrorIfAny(value);
+
+    // Stop the stuck-detection / buffering→play recovery loop once the
+    // controller is in an error state - retry is now a user action.
+    if (value.hasError) {
+      _stopStuckDetection();
+      return;
+    }
+
+    // First transition into playback: remember the timestamp and force one
+    // rebuild so the cold-init buffered progress bar disappears at the
+    // moment playback actually starts.
+    if (_firstPlayMillis == null && value.isPlaying) {
+      _firstPlayMillis = now;
+      _bufferingStartMillis = null;
+      if (mounted) {
+        scheduleMicrotask(() {
+          if (mounted) setState(() {});
+        });
+      }
+    }
+
+    // Track the start of each new buffering window for the post-play
+    // rebuffer-flash grace period.
+    if (value.isBuffering && !_wasBuffering) {
+      _bufferingStartMillis = now;
+    } else if (!value.isBuffering && _wasBuffering) {
+      _bufferingStartMillis = null;
+    }
 
     if (_wasBuffering &&
         !value.isBuffering &&
@@ -159,6 +243,38 @@ class _IsmLiveRecordingAutoVideoPlayerState
         (total.inMilliseconds - position.inMilliseconds).abs() <= 300) {
       widget.onCompleted?.call();
     }
+
+    // Throttled rebuild so the cold-init buffered progress bar updates as
+    // the player downloads more of the file. We only redraw when the bar
+    // would actually be visible to avoid wasted work during normal playback.
+    if (_shouldShowBufferingBar(value) &&
+        now - _lastBufferingRebuildMillis >= _bufferingRebuildIntervalMs) {
+      _lastBufferingRebuildMillis = now;
+      if (mounted) {
+        scheduleMicrotask(() {
+          if (mounted) setState(() {});
+        });
+      }
+    }
+  }
+
+  /// Whether the cold-init / rebuffer progress bar should currently be drawn.
+  ///
+  /// - Before the first play: visible whenever playback hasn't started yet.
+  ///   This is the long-video first-frame wait we want to make legible.
+  /// - After the first play: visible only after [_bufferingFlashGraceMs] of
+  ///   continuous buffering so short rebuffers don't flash UI.
+  bool _shouldShowBufferingBar(VideoPlayerValue value) {
+    if (!value.isInitialized) return false;
+    if (value.hasError) return false;
+    if (_firstPlayMillis == null) {
+      return !value.isPlaying;
+    }
+    if (!value.isBuffering) return false;
+    final bufferingStart = _bufferingStartMillis;
+    if (bufferingStart == null) return false;
+    return DateTime.now().millisecondsSinceEpoch - bufferingStart >
+        _bufferingFlashGraceMs;
   }
 
   void _trackControllerValueErrorIfAny(VideoPlayerValue value) {
@@ -166,13 +282,24 @@ class _IsmLiveRecordingAutoVideoPlayerState
     final rawError = value.errorDescription;
     final normalizedError =
         (rawError == null || rawError.isEmpty) ? 'unknown' : rawError;
+    final isFirstReport = _lastTrackedControllerError != normalizedError;
     _loadFailureMessage = normalizedError;
-    if (_lastTrackedControllerError == normalizedError) return;
-    _lastTrackedControllerError = normalizedError;
-    _trackVideoLoadFailure(
-      stage: 'controller',
-      error: normalizedError,
-    );
+    if (isFirstReport) {
+      _lastTrackedControllerError = normalizedError;
+      _trackVideoLoadFailure(
+        stage: 'controller',
+        error: normalizedError,
+      );
+    }
+    // The controller listener doesn't trigger a rebuild on its own, so a
+    // post-initialization error (e.g. mid-stream HTTP 403 / source error)
+    // would otherwise leave the user staring at a blank/loading frame.
+    // Schedule a rebuild so the retry UI surfaces immediately.
+    if (isFirstReport && mounted) {
+      scheduleMicrotask(() {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   void _trackVideoLoadFailure({
@@ -203,7 +330,12 @@ class _IsmLiveRecordingAutoVideoPlayerState
     if (wasVisible == _isVisible) return;
 
     if (_controller == null || !_controller!.value.isInitialized) {
-      if (_isVisible) {
+      // If we've already recorded a load failure for this URL, don't silently
+      // re-trigger init on every visibility flip - that just thrashes the
+      // spinner and hides the retry CTA from the user. Fresh widget mounts
+      // (PageView re-entry / URL change) still go through [initState] /
+      // [didUpdateWidget] which clear the failure state.
+      if (_isVisible && _loadFailureMessage == null) {
         _initializeIfNeeded();
       }
       return;
@@ -276,17 +408,30 @@ class _IsmLiveRecordingAutoVideoPlayerState
   }
 
   void _playInternal() {
-    if (_controller == null || !_controller!.value.isInitialized) return;
-    _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
-    _controller!.play();
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) return;
+    // Don't try to drive playback on an errored controller; doing so would
+    // either no-op silently or thrash auto-recovery and keep the spinner up.
+    if (controller.value.hasError) return;
+    controller.setVolume(widget.isMuted ? 0.0 : 1.0);
+    controller.play();
   }
 
   Future<void> _retryLoad() async {
     if (_isInitializing) return;
     await _cache.clear(widget.url);
+    // The user explicitly asked for another attempt - drop the cached
+    // failure marker so [_initializeIfNeeded] is allowed to take a fresh
+    // swing at the network (otherwise it would short-circuit straight
+    // back to the retry UI via [_consumeKnownFailureIfAny]).
+    _cache.forgetKnownFailure(widget.url);
     _controller?.removeListener(_handleProgress);
     _controller = null;
     _loadFailureMessage = null;
+    _lastTrackedControllerError = null;
+    _firstPlayMillis = null;
+    _bufferingStartMillis = null;
+    _lastBufferingRebuildMillis = 0;
     if (mounted) {
       setState(() {});
     }
@@ -315,12 +460,19 @@ class _IsmLiveRecordingAutoVideoPlayerState
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
-    final isReady = controller != null && controller.value.isInitialized;
     final hasControllerError = controller?.value.hasError == true;
+    // Treat an initialized-but-errored controller as "not ready" so we render
+    // the retry UI instead of mounting [VideoPlayer] on a broken controller
+    // (which would show as an endless blank/loading frame on some devices).
+    final isReady = controller != null &&
+        controller.value.isInitialized &&
+        !hasControllerError;
     final errorMessage = hasControllerError
         ? (controller?.value.errorDescription ?? 'Failed to load video')
         : _loadFailureMessage;
     final hasLoadError = errorMessage != null && errorMessage.isNotEmpty;
+    final showBufferingBar =
+        isReady && _shouldShowBufferingBar(controller.value);
 
     return VisibilityDetector(
       key: Key('recording_video_${widget.url}'),
@@ -335,10 +487,69 @@ class _IsmLiveRecordingAutoVideoPlayerState
             else if (hasLoadError)
               _buildRetryUi()
             else
-              const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              ),
+              _buildLoadingUi(),
+            if (showBufferingBar) _buildBufferingBar(controller.value),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Loading state shown while the controller is still initializing.
+  ///
+  /// Uses `widget.thumbnailUrl` as a poster behind a translucent scrim and the
+  /// existing spinner so long-video first-frame waits don't look like a stuck
+  /// black screen. Falls back to plain black on missing / broken thumbnail.
+  Widget _buildLoadingUi() {
+    final thumbnailUrl = widget.thumbnailUrl;
+    final hasThumbnail = thumbnailUrl != null && thumbnailUrl.isNotEmpty;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (hasThumbnail)
+          Image.network(
+            thumbnailUrl,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+            errorBuilder: (_, __, ___) =>
+                const ColoredBox(color: Colors.black),
+            loadingBuilder: (_, child, progress) =>
+                progress == null ? child : const ColoredBox(color: Colors.black),
+          ),
+        // Translucent scrim keeps the spinner / progress bar legible even on
+        // very bright thumbnails.
+        const ColoredBox(color: Color(0x66000000)),
+        const Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      ],
+    );
+  }
+
+  /// Thin progress bar pinned to the bottom showing how much of the file has
+  /// been buffered, expressed as a fraction of total duration. Indeterminate
+  /// (null value) when we don't have enough info yet.
+  Widget _buildBufferingBar(VideoPlayerValue value) {
+    final totalMs = value.duration.inMilliseconds;
+    double? progress;
+    if (totalMs > 0 && value.buffered.isNotEmpty) {
+      var maxEndMs = 0;
+      for (final range in value.buffered) {
+        final endMs = range.end.inMilliseconds;
+        if (endMs > maxEndMs) maxEndMs = endMs;
+      }
+      progress = (maxEndMs / totalMs).clamp(0.0, 1.0);
+    }
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: SizedBox(
+        height: 2,
+        child: LinearProgressIndicator(
+          value: progress,
+          backgroundColor: Colors.white24,
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
         ),
       ),
     );
