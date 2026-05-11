@@ -2297,15 +2297,20 @@ mixin StreamJoinMixin {
         userName: details?.userName ?? '',
         userProfileImageUrl: details?.userProfile ?? '');
 
-    _controller.room = lk.Room();
+    // Scheduled "not started yet" preview does not join LiveKit. Do not stash a
+    // placeholder Room on the controller: `completeDeferredConnection` awaits
+    // `previousRoom.disconnect()`, and disconnect() on a never-connected Room can
+    // block ~10s (SDK timeout)—the main slowdown when hosting a scheduled go-live.
+    _controller.room = null;
     if (!joinByScrolling) {
+      final previewRoom = lk.Room();
       IsmLiveRouteManagement.goToStreamView(
         isHost: isHost,
         isNewStream: false,
-        room: lk.Room(),
+        room: previewRoom,
         isScrolling: isScrolling,
         streamImage: stream.streamImage,
-        listener: lk.Room().createListener(),
+        listener: previewRoom.createListener(),
         streamId: stream.streamId ?? '',
         isSchedule: true,
         reJoin: false, // This is for scheduled streams, not rejoin
