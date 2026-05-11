@@ -4,6 +4,21 @@ import 'dart:convert';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/foundation.dart';
 
+/// Parses API field `recordedUrl` (array of strings or a single string).
+List<String>? _recordedUrlsFromMap(Map<String, dynamic> map) {
+  final raw = map['recordedUrl'];
+  if (raw == null) return null;
+  if (raw is List) {
+    final urls = raw
+        .map((e) => e?.toString() ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList();
+    return urls.isEmpty ? null : urls;
+  }
+  if (raw is String && raw.isNotEmpty) return [raw];
+  return null;
+}
+
 class IsmLiveStreamDataModel {
   IsmLiveStreamDataModel({
     this.amount,
@@ -13,6 +28,7 @@ class IsmLiveStreamDataModel {
     this.streamImage,
     this.startDateTime,
     this.recordUrl,
+    this.recordedUrls,
     this.streamDescription,
     this.isRecorded,
     this.isGroupStream,
@@ -68,6 +84,7 @@ class IsmLiveStreamDataModel {
         scheduleStartTime:
             (map['scheduleStartTime'] as Object?).asEpochDateTime,
         recordUrl: map['recordUrl'] != null ? map['recordUrl'] as String : null,
+        recordedUrls: _recordedUrlsFromMap(map),
         streamDescription: map['streamDescription'] != null
             ? map['streamDescription'] as String
             : null,
@@ -190,6 +207,7 @@ class IsmLiveStreamDataModel {
       startDateTime: (startTime as Object?).asEpochDateTime,
       recordUrl:
           map['recordingUrl'] != null ? map['recordingUrl'] as String : null,
+      recordedUrls: _recordedUrlsFromMap(map),
       streamDescription: map['streamDescription'] != null
           ? map['streamDescription'] as String
           : null,
@@ -225,6 +243,9 @@ class IsmLiveStreamDataModel {
   final String? streamImage;
   final DateTime? startDateTime;
   final String? recordUrl;
+
+  /// Playback URLs from API field `recordedUrl` (array). Takes precedence over [recordUrl].
+  final List<String>? recordedUrls;
   final String? streamDescription;
   final bool? isRecorded;
   final bool? isGroupStream;
@@ -277,6 +298,7 @@ class IsmLiveStreamDataModel {
     DateTime? startDateTime,
     DateTime? scheduleStartTime,
     String? recordUrl,
+    List<String>? recordedUrls,
     String? streamDescription,
     bool? isRecorded,
     bool? isGroupStream,
@@ -328,6 +350,7 @@ class IsmLiveStreamDataModel {
         startDateTime: startDateTime ?? this.startDateTime,
         scheduleStartTime: scheduleStartTime ?? this.scheduleStartTime,
         recordUrl: recordUrl ?? this.recordUrl,
+        recordedUrls: recordedUrls ?? this.recordedUrls,
         streamDescription: streamDescription ?? this.streamDescription,
         isRecorded: isRecorded ?? this.isRecorded,
         isGroupStream: isGroupStream ?? this.isGroupStream,
@@ -383,6 +406,7 @@ class IsmLiveStreamDataModel {
         'scheduleStartTime': scheduleStartTime.epochMilliseconds,
         'scheduleStartTimeInSeconds': scheduleStartTime.epochSeconds,
         'recordUrl': recordUrl,
+        'recordedUrl': recordedUrls,
         'streamDescription': streamDescription,
         'isRecorded': isRecorded,
         'isGroupStream': isGroupStream,
@@ -444,6 +468,7 @@ class IsmLiveStreamDataModel {
         other.startDateTime == startDateTime &&
         other.scheduleStartTime == scheduleStartTime &&
         other.recordUrl == recordUrl &&
+        listEquals(other.recordedUrls, recordedUrls) &&
         other.streamDescription == streamDescription &&
         other.isRecorded == isRecorded &&
         other.isGroupStream == isGroupStream &&
@@ -497,6 +522,7 @@ class IsmLiveStreamDataModel {
       startDateTime.hashCode ^
       scheduleStartTime.hashCode ^
       recordUrl.hashCode ^
+      Object.hashAll(recordedUrls ?? const []) ^
       streamDescription.hashCode ^
       isRecorded.hashCode ^
       isGroupStream.hashCode ^

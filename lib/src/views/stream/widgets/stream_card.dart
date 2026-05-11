@@ -9,11 +9,15 @@ class IsmLiveStreamCard extends StatelessWidget {
     super.key,
     this.onTap,
     this.isCreatedByMe = false,
+    this.showOwnerBadge = true,
   });
 
   final IsmLiveStreamDataModel stream;
   final VoidCallback? onTap;
   final bool isCreatedByMe;
+
+  /// When false, hides the top-right owner badge (e.g. "Continue" / schedule time).
+  final bool showOwnerBadge;
 
   @override
   Widget build(BuildContext context) => IsmLiveTapHandler(
@@ -55,7 +59,7 @@ class IsmLiveStreamCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (isCreatedByMe)
+                    if (isCreatedByMe && showOwnerBadge)
                       Expanded(
                         child: Align(
                           alignment: Alignment.topRight,

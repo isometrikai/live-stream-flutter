@@ -12,10 +12,13 @@ class IsmLiveStreamDataModelRecordingAdapter
   String get streamId => _model.streamId ?? '';
 
   @override
-  List<String> get recordedUrls =>
-      _model.recordUrl != null && _model.recordUrl!.isNotEmpty
-          ? [_model.recordUrl!]
-          : [];
+  List<String> get recordedUrls {
+    final fromApi = _model.recordedUrls;
+    if (fromApi != null && fromApi.isNotEmpty) return fromApi;
+    final single = _model.recordUrl;
+    if (single != null && single.isNotEmpty) return [single];
+    return [];
+  }
 
   @override
   int get recordViewCount => _model.viewersCount ?? 0;
