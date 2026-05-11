@@ -404,6 +404,18 @@ class IsmLiveUtility {
     }
   }
 
+  /// Close the top dialog (if any), then pop the route below it — e.g. dismiss
+  /// the screen that presented the dialog. The extra pop runs after layout so the
+  /// navigator stack reflects the dialog removal first.
+  static void closeDialogAndPopUnderlyingRoute() {
+    closeDialog();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (IsmLiveRoute.canPop()) {
+        IsmLiveRoute.pop<void>();
+      }
+    });
+  }
+
   /// Check if a dialog is currently open by checking the Navigator's top route
   ///
   /// This method checks if there's a DialogRoute or CupertinoDialogRoute

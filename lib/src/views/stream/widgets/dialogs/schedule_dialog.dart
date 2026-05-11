@@ -31,8 +31,8 @@ class IsmLiveScheduleDialog extends StatelessWidget {
         ),
         IsmLiveDimens.boxHeight20,
         const IsmLiveButton(
-          label: IsmLiveStrings.tvContinue,
-          onTap: IsmLiveUtility.closeDialog,
+          label: IsmLiveStrings.okay,
+          onTap: IsmLiveUtility.closeDialogAndPopUnderlyingRoute,
         ),
       ],
     );
@@ -67,9 +67,9 @@ class IsmLiveEditScheduleDialog extends StatelessWidget {
           style: context.textTheme.bodyMedium?.copyWith(color: textColor),
         ),
         IsmLiveDimens.boxHeight20,
-        IsmLiveButton(
+        const IsmLiveButton(
           label: IsmLiveStrings.tvContinue,
-          onTap: IsmLiveUtility.closeDialog,
+          onTap: IsmLiveUtility.closeDialogAndPopUnderlyingRoute,
         ),
       ],
     );
