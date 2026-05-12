@@ -72,11 +72,11 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      useGridLayoutForMultipleParticipants : true,
+      useGridLayoutForMultipleParticipants : false,
       productionMode: true,
       // Remove `const` if you uncomment builders or callbacks below.
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
-        isProductStreamFeatureEnabled: false,
+        isProductStreamFeatureEnabled: true,
         isScheduleStreamFeatureEnabled: true,
         // Feature flags:
         // isHdStreamFeatureEnabled: true,

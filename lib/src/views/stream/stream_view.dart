@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
@@ -170,7 +169,6 @@ class IsmLiveStreamView extends StatelessWidget {
         statusBarBrightness: Brightness.dark, // For iOS
       ),
     );
-    log('IsmLiveStreamView: isHost: $isHost');
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,

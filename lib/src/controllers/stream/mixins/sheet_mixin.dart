@@ -244,6 +244,7 @@ mixin StreamSheetMixin {
             await _controller.connectStream(
                 token: token,
                 streamId: _controller.streamId ?? '',
+                streamImage: _controller.streamDetails?.streamImage,
                 isHost: false,
                 isNewStream: false,
                 isCopublisher: true,
