@@ -268,15 +268,49 @@ mixin StreamAPIMixin {
     required int skip,
     String? searchTag,
   }) async {
-    final members = await _controller.viewModel.getStreamMembers(
-      streamId: streamId,
-      limit: limit,
-      skip: skip,
-    );
+    // Initial page only: [getStreamMembers] returns [] on API failure (no throw), so we
+    // retry once. Pagination / search must not retry on empty (valid end-of-list / no hits).
+    final isBootstrapMembersFetch = skip == 0 &&
+        (searchTag == null || searchTag.trim().isEmpty);
+
+    Future<List<IsmLiveMemberDetailsModel>> loadMembers() =>
+        _controller.viewModel.getStreamMembers(
+          streamId: streamId,
+          limit: limit,
+          skip: skip,
+          searchTag: searchTag,
+        );
+
+    var members = await loadMembers();
+
     // Ignore delayed responses from a previous stream to prevent stale host UI.
     if (_controller.streamId != streamId) {
       return;
     }
+
+    if (isBootstrapMembersFetch && members.isEmpty) {
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      if (_controller.streamId != streamId) {
+        return;
+      }
+      members = await loadMembers();
+      if (_controller.streamId != streamId) {
+        return;
+      }
+    }
+
+    void triggerStreamViewLoadedOnce(IsmLiveMemberDetailsModel? hostDetails) {
+      if (_controller._streamViewLoadedCallbackTriggered) {
+        return;
+      }
+      _controller._streamViewLoadedCallbackTriggered = true;
+      IsmLiveDelegate.streamViewLoadedCallback?.call(
+        _controller.isHost,
+        hostDetails,
+        _controller.streamDetails,
+      );
+    }
+
     _controller.streamMembersList = members;
     if (_controller.streamMembersList.isNotEmpty) {
       _controller.hostDetails = _controller.streamMembersList.firstWhere(
@@ -284,14 +318,7 @@ mixin StreamAPIMixin {
       );
 
       // Trigger stream view loaded callback once host details are available (only once per stream)
-      if (!_controller._streamViewLoadedCallbackTriggered) {
-        _controller._streamViewLoadedCallbackTriggered = true;
-        IsmLiveDelegate.streamViewLoadedCallback?.call(
-          _controller.isHost,
-          _controller.hostDetails,
-          _controller.streamDetails,
-        );
-      }
+      triggerStreamViewLoadedOnce(_controller.hostDetails);
 
       var isCopublisher = false;
       isCopublisher = _controller.streamMembersList
@@ -302,6 +329,9 @@ mixin StreamAPIMixin {
       } else {
         await statusCopublisherRequest(streamId);
       }
+    } else if (isBootstrapMembersFetch) {
+      // Members failed or empty after retry; still notify so host apps can initialize.
+      triggerStreamViewLoadedOnce(null);
     }
     _controller
         .update([IsmLiveStreamView.updateId, IsmLiveMembersSheet.updateId]);
