@@ -126,8 +126,21 @@ class IsmLivePublisherGrid extends StatelessWidget {
 
                   final topPad = IsmLiveDimens.hundred;
 
+                  final mq = MediaQuery.of(context);
+                  final imeBottom = mq.viewInsets.bottom;
+                  final viewportCap =
+                      max(1.0, mq.size.height - mq.viewPadding.vertical);
+                  // Ancestors may shrink [constraints.maxHeight] when the IME is open.
+                  // Use full-viewport height for grid math so tiles match the full-bleed
+                  // video layer; [UnconstrainedBox] below lets this paint past the
+                  // shrunk layout box when needed (stream Stack uses [Clip.none]).
+                  final layoutViewportHeight = min(
+                    constraints.maxHeight + imeBottom,
+                    viewportCap,
+                  );
+
                   final maxGridHeight =
-                      max(1.0, constraints.maxHeight - topPad);
+                      max(1.0, layoutViewportHeight - topPad);
                   final crossCount = participantCount < 3 ? 2 : 3;
                   final rowCount =
                       (participantCount + crossCount - 1) ~/ crossCount;
@@ -150,29 +163,39 @@ class IsmLivePublisherGrid extends StatelessWidget {
                   );
                   final mainExtent =
                       (gridHeight - (rowCount - 1) * mainSpacing) / rowCount;
-                  final aspectRatio =
-                      (crossExtent / mainExtent).clamp(0.25, 4.0);
+                  // childAspectRatio = cross/main. An upper clamp (e.g. 4.0) made
+                  // cells taller than [mainExtent], clipping the last row when
+                  // height is tight (IME). Keep only a small positive floor.
+                  final aspectRatio = max(crossExtent / mainExtent, 0.02);
 
                   return Align(
                     alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: topPad),
+                    child: UnconstrainedBox(
+                      constrainedAxis: Axis.horizontal,
+                      clipBehavior: Clip.none,
                       child: SizedBox(
                         width: constraints.maxWidth,
-                        height: gridHeight,
-                        child: GridView.builder(
-                          restorationId: '',
-                          itemCount: participantCount,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossCount,
-                            mainAxisSpacing: mainSpacing,
-                            crossAxisSpacing: crossSpacing,
-                            childAspectRatio: aspectRatio,
+                        height: layoutViewportHeight,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: topPad),
+                          child: SizedBox(
+                            width: constraints.maxWidth,
+                            height: gridHeight,
+                            child: GridView.builder(
+                              restorationId: '',
+                              itemCount: participantCount,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossCount,
+                                mainAxisSpacing: mainSpacing,
+                                crossAxisSpacing: crossSpacing,
+                                childAspectRatio: aspectRatio,
+                              ),
+                              itemBuilder: (_, index) =>
+                                  _multiParticipantTile(controller, index),
+                            ),
                           ),
-                          itemBuilder: (_, index) =>
-                              _multiParticipantTile(controller, index),
                         ),
                       ),
                     ),
