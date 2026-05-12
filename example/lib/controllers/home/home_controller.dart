@@ -73,6 +73,7 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       useGridLayoutForMultipleParticipants : false,
+      showParticipantFullNamesInPublisherGrid : true,
       productionMode: true,
       // Remove `const` if you uncomment builders or callbacks below.
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(

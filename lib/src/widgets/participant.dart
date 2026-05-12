@@ -56,6 +56,12 @@ abstract class ParticipantWidget extends StatefulWidget {
     throw UnimplementedError('Unknown participant type');
   }
 
+  /// Display label aligned with participant tiles: JSON metadata
+  /// (`firstName` / `lastName` / `username`), then LiveKit [Participant.name],
+  /// then [Participant.identity].
+  static String resolvedDisplayNameForParticipant(Participant participant) =>
+      _participantUiData(participant, null).displayName;
+
   // Must be implemented by child class
   abstract final Participant participant;
   abstract final String? imageUrl;

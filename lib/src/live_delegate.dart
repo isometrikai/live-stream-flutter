@@ -1038,6 +1038,13 @@ class IsmLiveDelegate {
   /// `IsmLiveApp.configureInterface`.
   static bool useGridLayoutForMultipleParticipants = false;
 
+  /// When `true`, each tile in the multi-participant publisher area shows the
+  /// participant [IsmLiveMemberDetailsModel.fullName] (with LiveKit name as
+  /// fallback) on a semi-transparent strip at the bottom-left. Only applies
+  /// when two or more publishers are shown. Default `false`. Set via
+  /// `IsmLiveApp.configureInterface`.
+  static bool showParticipantFullNamesInPublisherGrid = false;
+
   static List<IsmLiveStreamOption> viewersOption = [];
 
   static List<IsmLiveStreamOption> hostOptions = [];
