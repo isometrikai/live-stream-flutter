@@ -15,21 +15,82 @@ String _participantProfileImageUrl(
   return '';
 }
 
-Widget _multiParticipantTile(IsmLiveStreamController controller, int index) =>
-    ParticipantWidget.widgetFor(
-      controller.participantList[index],
-      imageUrl: _participantProfileImageUrl(controller, index),
-      isFirstIndex: index == 0,
-      isViewer: !(controller.userRole?.isHost ?? false) &&
-          !(controller.userRole?.isPkGuest ?? false) &&
-          (controller.pkStages?.isPkStart ?? false),
-      isHost: index == 0,
-      showStatsLayer: controller.isPk,
-      isWinner: controller.pkWinnerId ==
-          controller.participantList[index].participant.identity,
-      isbattleFinish: (controller.pkStages?.isPkStop ?? false) &&
-          controller.pkWinnerId != null,
-    );
+String _participantFullName(IsmLiveStreamController controller, int index) {
+  final participant = controller.participantList[index].participant;
+  return ParticipantWidget.resolvedDisplayNameForParticipant(participant);
+}
+
+Widget _multiParticipantTile(
+  IsmLiveStreamController controller,
+  int index, {
+  required int participantCount,
+}) {
+  final base = ParticipantWidget.widgetFor(
+    controller.participantList[index],
+    imageUrl: _participantProfileImageUrl(controller, index),
+    isFirstIndex: index == 0,
+    isViewer: !(controller.userRole?.isHost ?? false) &&
+        !(controller.userRole?.isPkGuest ?? false) &&
+        (controller.pkStages?.isPkStart ?? false),
+    isHost: index == 0,
+    showStatsLayer: controller.isPk,
+    isWinner: controller.pkWinnerId ==
+        controller.participantList[index].participant.identity,
+    isbattleFinish: (controller.pkStages?.isPkStop ?? false) &&
+        controller.pkWinnerId != null,
+  );
+
+  final showName =
+      IsmLiveDelegate.showParticipantFullNamesInPublisherGrid &&
+          participantCount > 1;
+  if (!showName) {
+    return base;
+  }
+
+  final fullName = _participantFullName(controller, index);
+  if (fullName.isEmpty) {
+    return base;
+  }
+
+  return Stack(
+    fit: StackFit.expand,
+    clipBehavior: Clip.hardEdge,
+    children: [
+      base,
+      Positioned(
+        left: IsmLiveDimens.eight,
+        right: IsmLiveDimens.eight,
+        bottom: IsmLiveDimens.eight,
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: IsmLiveDimens.eight,
+                vertical: IsmLiveDimens.four,
+              ),
+              child: Text(
+                fullName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: IsmLiveDimens.twelve,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
 class IsmLivePublisherGrid extends StatelessWidget {
   const IsmLivePublisherGrid({
@@ -118,6 +179,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                           child: _multiParticipantTile(
                             controller,
                             index,
+                            participantCount: participantCount,
                           ),
                         ),
                       ),
@@ -193,7 +255,11 @@ class IsmLivePublisherGrid extends StatelessWidget {
                                 childAspectRatio: aspectRatio,
                               ),
                               itemBuilder: (_, index) =>
-                                  _multiParticipantTile(controller, index),
+                                  _multiParticipantTile(
+                                    controller,
+                                    index,
+                                    participantCount: participantCount,
+                                  ),
                             ),
                           ),
                         ),

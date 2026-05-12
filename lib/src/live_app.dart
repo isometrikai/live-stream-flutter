@@ -660,6 +660,10 @@ class IsmLiveApp extends StatefulWidget {
     /// When `true`, uses the multi-column grid layout.
     bool useGridLayoutForMultipleParticipants = false,
 
+    /// When `true`, 2+ publishers show each participant's full name at the
+    /// bottom-left of their tile in the publisher grid/stack. Default `false`.
+    bool showParticipantFullNamesInPublisherGrid = false,
+
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
     bool enableInternalStreamListingRefresh = true,
@@ -784,6 +788,8 @@ class IsmLiveApp extends StatefulWidget {
         enableInternalStreamListingRefresh;
     IsmLiveDelegate.useGridLayoutForMultipleParticipants =
         useGridLayoutForMultipleParticipants;
+    IsmLiveDelegate.showParticipantFullNamesInPublisherGrid =
+        showParticipantFullNamesInPublisherGrid;
   }
 
   static Future<void> endStream(
@@ -1014,6 +1020,10 @@ class IsmLiveApp extends StatefulWidget {
   /// See [IsmLiveDelegate.useGridLayoutForMultipleParticipants].
   static bool get useGridLayoutForMultipleParticipants =>
       IsmLiveDelegate.useGridLayoutForMultipleParticipants;
+
+  /// See [IsmLiveDelegate.showParticipantFullNamesInPublisherGrid].
+  static bool get showParticipantFullNamesInPublisherGrid =>
+      IsmLiveDelegate.showParticipantFullNamesInPublisherGrid;
 
   static Alignment get headerPosition => IsmLiveDelegate.headerPosition;
 
