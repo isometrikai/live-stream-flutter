@@ -79,7 +79,11 @@ class IsmGoLiveView extends StatelessWidget {
             controller.premiumStreamCoinsController.clear();
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
-            controller.descriptionController.clear();
+            controller.descriptionController.text =
+                IsmLiveDelegate.goLiveScreenConfigure
+                        ?.defaultBroadcastDescription ??
+                    IsmLiveDelegate.defaultBroadcastDescription ??
+                    '';
             controller.isHdBroadcast = IsmLiveDelegate
                     .goLiveScreenConfigure?.defaultHdBroadcastToggleValue ??
                 IsmLiveDelegate.defaultHdBroadcast ??
