@@ -1069,6 +1069,12 @@ class IsmLiveDelegate {
   /// Optional default value for Restream Broadcast toggle in Go Live.
   static bool? defaultRestreamBroadcast;
 
+  /// Optional default text for the stream description field in Go Live.
+  ///
+  /// Used when [IsmLiveGoLiveScreenConfigure.defaultBroadcastDescription] is
+  /// not set. Ignored for existing/scheduled streams (see go live view init).
+  static String? defaultBroadcastDescription;
+
   static bool? productStream;
 
   static bool? rtmpStream;
@@ -1385,6 +1391,7 @@ class IsmLiveGoLiveScreenConfigure {
     this.defaultHdBroadcastToggleValue,
     this.defaultRecordBroadcastToggleValue,
     this.defaultRestreamBroadcastToggleValue,
+    this.defaultBroadcastDescription,
     this.radioTileTextStyle,
     this.addCoverTextStyle,
     this.addIcon,
@@ -1460,6 +1467,11 @@ class IsmLiveGoLiveScreenConfigure {
   /// This is ignored while editing an existing/scheduled stream.
   final bool? defaultRestreamBroadcastToggleValue;
 
+  /// Optional default text for the stream description on a fresh GoLive flow.
+  ///
+  /// This is ignored while editing an existing/scheduled stream.
+  final String? defaultBroadcastDescription;
+
   /// Custom text style for radio tile components (switches, toggles).
   ///
   /// If provided, this function will be called to generate text styles for text elements
@@ -1520,6 +1532,7 @@ class IsmLiveGoLiveScreenConfigure {
     bool? defaultHdBroadcastToggleValue,
     bool? defaultRecordBroadcastToggleValue,
     bool? defaultRestreamBroadcastToggleValue,
+    String? defaultBroadcastDescription,
     TextStyle Function(BuildContext context, bool isDark)? radioTileTextStyle,
     TextStyle? addCoverTextStyle,
     IconData? addIcon,
@@ -1558,6 +1571,8 @@ class IsmLiveGoLiveScreenConfigure {
         defaultRestreamBroadcastToggleValue:
             defaultRestreamBroadcastToggleValue ??
                 this.defaultRestreamBroadcastToggleValue,
+        defaultBroadcastDescription: defaultBroadcastDescription ??
+            this.defaultBroadcastDescription,
         radioTileTextStyle: radioTileTextStyle ?? this.radioTileTextStyle,
         addCoverTextStyle: addCoverTextStyle ?? this.addCoverTextStyle,
         addIcon: addIcon ?? this.addIcon,
