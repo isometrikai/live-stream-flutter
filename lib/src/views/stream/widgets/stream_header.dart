@@ -447,42 +447,67 @@ class _ExpandableDescription extends StatefulWidget {
 
 class _ExpandableDescriptionState extends State<_ExpandableDescription> {
   bool _isExpanded = false;
-  late bool _showViewMore;
 
   @override
-  void initState() {
-    super.initState();
-    // Simple heuristic: show "View more" if text is longer than 80 characters
-    // This is a reasonable estimate for 2 lines of text
-    _showViewMore = widget.description.length > 80;
+  void didUpdateWidget(_ExpandableDescription oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.description != oldWidget.description ||
+        widget.textStyle != oldWidget.textStyle) {
+      _isExpanded = false;
+    }
+  }
+
+  /// True when the description needs more than two lines at [maxWidth].
+  bool _textExceedsTwoLines(double maxWidth, BuildContext context) {
+    if (widget.description.isEmpty ||
+        maxWidth <= 0 ||
+        !maxWidth.isFinite) {
+      return false;
+    }
+    final painter = TextPainter(
+      text: TextSpan(text: widget.description, style: widget.textStyle),
+      textDirection: Directionality.of(context),
+      maxLines: 2,
+      textScaler: MediaQuery.textScalerOf(context),
+      locale: Localizations.maybeLocaleOf(context),
+    );
+    painter.layout(maxWidth: maxWidth);
+    return painter.didExceedMaxLines;
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.description,
-            style: widget.textStyle,
-            maxLines: _isExpanded ? null : 2,
-            overflow:
-                _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-          ),
-          if (_showViewMore) ...[
-            IsmLiveDimens.boxHeight4,
-            IsmLiveTapHandler(
-              onTap: () {
-                setState(() {
-                  _isExpanded = !_isExpanded;
-                });
-              },
-              child: Text(
-                _isExpanded ? 'View less' : 'View more',
-                style: widget.textStyle?.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) {
+          final showToggle =
+              _textExceedsTwoLines(constraints.maxWidth, context);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.description,
+                style: widget.textStyle,
+                maxLines: _isExpanded ? null : 2,
+                overflow: _isExpanded
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
               ),
-            ),
-          ],
-        ],
+              if (showToggle) ...[
+                IsmLiveDimens.boxHeight4,
+                IsmLiveTapHandler(
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  child: Text(
+                    _isExpanded ? 'View less' : 'View more',
+                    style: widget.textStyle?.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ],
+          );
+        },
       );
 }
