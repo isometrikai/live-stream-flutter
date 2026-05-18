@@ -121,8 +121,10 @@ mixin StreamMessageMixin {
         break;
       case IsmLiveMessageType.gift3D:
         break;
-      case IsmLiveMessageType.probe:
-        IsmLiveLog.success('Probe Message');
+      case IsmLiveMessageType.unknown:
+        IsmLiveLog.info(
+          'Unknown message type ${processedMessage.messageTypeValue}',
+        );
         break;
     }
   }

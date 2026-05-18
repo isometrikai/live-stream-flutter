@@ -24,7 +24,9 @@ class IsmLiveSendMessageModel {
         customType: map['customType'] != null ? map['customType'] : null,
         deviceId: map['deviceId'] as String,
         parentMessageId: map['parentMessageId'] as String?,
-        messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
+        messageType: IsmLiveMessageType.fromValue(
+          IsmLiveMessageType.parseValue(map['messageType']),
+        ),
       );
 
   factory IsmLiveSendMessageModel.fromJson(String source) =>
