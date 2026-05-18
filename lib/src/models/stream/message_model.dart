@@ -4,7 +4,7 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/foundation.dart';
 
 class IsmLiveMessageModel {
-  const IsmLiveMessageModel({
+  IsmLiveMessageModel({
     this.sentAt = 0,
     required this.streamId,
     this.senderProfileImageUrl,
@@ -16,6 +16,7 @@ class IsmLiveMessageModel {
     this.repliesCount = 0,
     this.metaData,
     required this.messageType,
+    int? messageTypeValue,
     required this.messageId,
     this.deviceId,
     this.customType,
@@ -24,10 +25,11 @@ class IsmLiveMessageModel {
     this.parentMessageId,
     this.parentMessageSenderId,
     this.isCopublisherRequest = false,
-  });
+  }) : messageTypeValue = messageTypeValue ?? messageType.value;
 
-  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) =>
-      IsmLiveMessageModel(
+  factory IsmLiveMessageModel.fromMap(Map<String, dynamic> map) {
+    final typeValue = IsmLiveMessageType.parseValue(map['messageType']);
+    return IsmLiveMessageModel(
         sentAt: map['sentAt'] as int,
         streamId: map['streamId'] as String? ?? '',
         senderProfileImageUrl: map['senderProfileImageUrl'] as String?,
@@ -41,7 +43,8 @@ class IsmLiveMessageModel {
         metaData: map['metaData'] != null
             ? IsmLiveMetaData.fromMap(map['metaData'] as Map<String, dynamic>)
             : null,
-        messageType: IsmLiveMessageType.fromValue(map['messageType'] as int),
+        messageType: IsmLiveMessageType.fromValue(typeValue),
+        messageTypeValue: typeValue,
         messageId: map['messageId'] as String,
         deviceId: map['deviceId'] as String?,
         customType: map['customType'] != null
@@ -51,6 +54,7 @@ class IsmLiveMessageModel {
         parentMessageId: map['parentMessageId'] as String?,
         parentMessageSenderId: map['parentMessageSenderId'] as String?,
       );
+  }
 
   factory IsmLiveMessageModel.fromJson(String source) =>
       IsmLiveMessageModel.fromMap(json.decode(source) as Map<String, dynamic>);
@@ -66,6 +70,10 @@ class IsmLiveMessageModel {
   final int repliesCount;
   final IsmLiveMetaData? metaData;
   final IsmLiveMessageType messageType;
+
+  /// Raw `messageType` from the server payload. Always preferred over
+  /// [messageType].value when handling newly introduced backend types.
+  final int messageTypeValue;
   final String messageId;
   final String? deviceId;
   final IsmLiveGifts? customType;
@@ -105,6 +113,7 @@ class IsmLiveMessageModel {
     int? repliesCount,
     IsmLiveMetaData? metaData,
     IsmLiveMessageType? messageType,
+    int? messageTypeValue,
     String? messageId,
     String? deviceId,
     IsmLiveGifts? customType,
@@ -126,6 +135,8 @@ class IsmLiveMessageModel {
         repliesCount: repliesCount ?? this.repliesCount,
         metaData: metaData ?? this.metaData,
         messageType: messageType ?? this.messageType,
+        messageTypeValue: messageTypeValue ??
+            (messageType != null ? messageType.value : this.messageTypeValue),
         messageId: messageId ?? this.messageId,
         deviceId: deviceId ?? this.deviceId,
         customType: customType ?? this.customType,
@@ -147,7 +158,7 @@ class IsmLiveMessageModel {
         'replyMessage': replyMessage,
         'repliesCount': repliesCount,
         'metaData': metaData?.toMap(),
-        'messageType': messageType.value,
+        'messageType': messageTypeValue,
         'messageId': messageId,
         'deviceId': deviceId,
         'customType': customType?.name,
@@ -161,7 +172,7 @@ class IsmLiveMessageModel {
 
   @override
   String toString() =>
-      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, replyMessage: $replyMessage, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body, isEvent: $isEvent, parentMessageId: $parentMessageId, parentMessageSenderId: $parentMessageSenderId)';
+      'IsmLiveMessageModel(sentAt: $sentAt, streamId: $streamId, senderProfileImageUrl: $senderProfileImageUrl, senderName: $senderName, senderIdentifier: $senderIdentifier, senderId: $senderId, searchableTags: $searchableTags, replyMessage: $replyMessage, repliesCount: $repliesCount, metaData: $metaData, messageType: $messageType, messageTypeValue: $messageTypeValue, messageId: $messageId, deviceId: $deviceId, customType: $customType, body: $body, isEvent: $isEvent, parentMessageId: $parentMessageId, parentMessageSenderId: $parentMessageSenderId)';
 
   @override
   bool operator ==(covariant IsmLiveMessageModel other) {
@@ -178,6 +189,7 @@ class IsmLiveMessageModel {
         other.repliesCount == repliesCount &&
         other.metaData == metaData &&
         other.messageType == messageType &&
+        other.messageTypeValue == messageTypeValue &&
         other.messageId == messageId &&
         other.deviceId == deviceId &&
         other.customType == customType &&
@@ -200,6 +212,7 @@ class IsmLiveMessageModel {
       repliesCount.hashCode ^
       metaData.hashCode ^
       messageType.hashCode ^
+      messageTypeValue.hashCode ^
       messageId.hashCode ^
       deviceId.hashCode ^
       customType.hashCode ^

@@ -389,7 +389,20 @@ enum IsmLiveMessageType {
   pk(20),
   pkStop(22),
   presence(4),
-  probe(99);
+
+  /// Server message types not yet mapped in this SDK (e.g. newly introduced).
+  /// Use [IsmLiveMessageModel.messageTypeValue] for the raw payload value.
+  unknown(-1);
+
+  const IsmLiveMessageType(this.value);
+  final int value;
+
+  static int parseValue(dynamic raw) {
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    if (raw is String) return int.tryParse(raw) ?? 0;
+    return 0;
+  }
 
   factory IsmLiveMessageType.fromValue(int data) =>
       <int, IsmLiveMessageType>{
@@ -403,12 +416,8 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.changeStream.value: IsmLiveMessageType.changeStream,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
         IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
-        IsmLiveMessageType.probe.value: IsmLiveMessageType.probe,
       }[data] ??
-      IsmLiveMessageType.normal;
-
-  const IsmLiveMessageType(this.value);
-  final int value;
+      IsmLiveMessageType.unknown;
 }
 
 enum IsmLiveCustomType {
