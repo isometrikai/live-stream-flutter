@@ -20,6 +20,78 @@ String _participantFullName(IsmLiveStreamController controller, int index) {
   return ParticipantWidget.resolvedDisplayNameForParticipant(participant);
 }
 
+String _profileImageUrlForIdentity(
+  IsmLiveStreamController controller,
+  String identity,
+) {
+  for (final element in controller.streamMembersList) {
+    if (element.userId == identity) {
+      return element.userProfileImageUrl;
+    }
+  }
+  return '';
+}
+
+bool _isSameParticipantTrack(
+  IsmLiveParticipantTrack a,
+  IsmLiveParticipantTrack b,
+) =>
+    a.participant.identity == b.participant.identity &&
+    a.isScreenShare == b.isScreenShare;
+
+/// RTMP gamer layout: game / host feed on top, co-publishers below.
+IsmLiveParticipantTrack? _rtmpMainTrack(IsmLiveStreamController controller) {
+  final tracks = controller.participantTracks;
+  if (tracks.isEmpty) {
+    return null;
+  }
+
+  final hostId = controller.hostDetails?.userId;
+
+  if (hostId != null) {
+    for (final track in tracks) {
+      if (track.participant.identity == hostId && track.isScreenShare) {
+        return track;
+      }
+    }
+  }
+
+  for (final track in tracks) {
+    if (track.isScreenShare) {
+      return track;
+    }
+  }
+
+  if (hostId != null) {
+    for (final track in tracks) {
+      if (track.participant.identity == hostId && !track.isScreenShare) {
+        return track;
+      }
+    }
+  }
+
+  return tracks.first;
+}
+
+List<IsmLiveParticipantTrack> _rtmpCoPublisherTracks(
+  IsmLiveStreamController controller,
+  IsmLiveParticipantTrack mainTrack,
+) =>
+    controller.participantTracks
+        .where((track) => !_isSameParticipantTrack(track, mainTrack))
+        .toList();
+
+String _rtmpProfileImageUrl(
+  IsmLiveStreamController controller,
+  IsmLiveParticipantTrack track,
+) {
+  final hostId = controller.hostDetails?.userId;
+  if (hostId != null && track.participant.identity == hostId) {
+    return controller.hostDetails?.userProfileImageUrl ?? '';
+  }
+  return _profileImageUrlForIdentity(controller, track.participant.identity);
+}
+
 Widget _multiParticipantTile(
   IsmLiveStreamController controller,
   int index, {
@@ -40,9 +112,8 @@ Widget _multiParticipantTile(
         controller.pkWinnerId != null,
   );
 
-  final showName =
-      IsmLiveDelegate.showParticipantFullNamesInPublisherGrid &&
-          participantCount > 1;
+  final showName = IsmLiveDelegate.showParticipantFullNamesInPublisherGrid &&
+      participantCount > 1;
   if (!showName) {
     return base;
   }
@@ -138,8 +209,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                       initials: controller.hostDetails?.profileInitials,
                     );
             } else if (controller.participantTracks.isEmpty) {
-              final streamIdOkForScheduled = !isSchedule ||
-                  IsmLiveStreamId.isValid(controller.streamId);
+              final streamIdOkForScheduled =
+                  !isSchedule || IsmLiveStreamId.isValid(controller.streamId);
               child = streamIdOkForScheduled
                   ? NoVideoWidget(
                       imageUrl: controller.hostDetails?.image ?? streamImage,
@@ -201,8 +272,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     viewportCap,
                   );
 
-                  final maxGridHeight =
-                      max(1.0, layoutViewportHeight - topPad);
+                  final maxGridHeight = max(1.0, layoutViewportHeight - topPad);
                   final crossCount = participantCount < 3 ? 2 : 3;
                   final rowCount =
                       (participantCount + crossCount - 1) ~/ crossCount;
@@ -254,12 +324,11 @@ class IsmLivePublisherGrid extends StatelessWidget {
                                 crossAxisSpacing: crossSpacing,
                                 childAspectRatio: aspectRatio,
                               ),
-                              itemBuilder: (_, index) =>
-                                  _multiParticipantTile(
-                                    controller,
-                                    index,
-                                    participantCount: participantCount,
-                                  ),
+                              itemBuilder: (_, index) => _multiParticipantTile(
+                                controller,
+                                index,
+                                participantCount: participantCount,
+                              ),
                             ),
                           ),
                         ),
@@ -278,81 +347,179 @@ class IsmLivePublisherGrid extends StatelessWidget {
 class _RtmlView extends StatelessWidget {
   const _RtmlView();
 
+  /// Backend publisher cap; UI fits all co-publishers in one row.
+  static const int _maxCoPublishers = 5;
+
+  static const double _videoAspectRatio = 16 / 9;
+
+  /// Main stage height cap when stacked with the co-publisher row.
+  static const double _mainStageMaxHeightFraction = 0.58;
+
+  /// Vertical bias for stacked layout: 0 = center, negative = slightly above center.
+  static const double _stackedLayoutVerticalBias = -0.35;
+
+  Widget _mainVideo(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    IsmLiveParticipantTrack? mainTrack,
+  ) {
+    if (mainTrack == null) {
+      return NoVideoWidget(
+        imageUrl: controller.hostDetails?.image ?? '',
+        name: controller.hostDetails?.name ?? '',
+        showConnectingState: controller.isViewerJoiningStream,
+        connectingText: context
+                .liveTranslations?.streamTranslations?.connectingToLiveStream ??
+            IsmLiveStrings.connectingToLiveStream,
+        initials: controller.hostDetails?.profileInitials,
+      );
+    }
+
+    return ParticipantWidget.widgetFor(
+      mainTrack,
+      imageUrl: _rtmpProfileImageUrl(controller, mainTrack),
+      showStatsLayer: false,
+      showFullVideo: true,
+    );
+  }
+
+  Widget _coPublisherTile(
+    IsmLiveStreamController controller,
+    IsmLiveParticipantTrack track,
+  ) =>
+      ClipRRect(
+        borderRadius: BorderRadius.circular(IsmLiveDimens.four),
+        child: ParticipantWidget.widgetFor(
+          track,
+          imageUrl: _rtmpProfileImageUrl(controller, track),
+          showStatsLayer: false,
+          showFullVideo: false,
+        ),
+      );
+
+  /// Single row of equal-width co-publisher tiles (max [_maxCoPublishers]).
+  Widget _coPublisherRow(
+    IsmLiveStreamController controller,
+    List<IsmLiveParticipantTrack> coPublishers,
+  ) {
+    final tiles = coPublishers.take(_maxCoPublishers).toList();
+    if (tiles.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        IsmLiveDimens.eight,
+        IsmLiveDimens.eight,
+        IsmLiveDimens.eight,
+        IsmLiveDimens.four,
+      ),
+      child: Row(
+        children: [
+          for (var i = 0; i < tiles.length; i++) ...[
+            if (i > 0) SizedBox(width: IsmLiveDimens.eight),
+            Expanded(
+              child: AspectRatio(
+                aspectRatio: _videoAspectRatio,
+                child: _coPublisherTile(controller, tiles[i]),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  double _coPublisherRowHeight(double layoutWidth, int tileCount) {
+    if (tileCount <= 0) {
+      return 0;
+    }
+    final horizontalPad = IsmLiveDimens.eight * 2;
+    final gaps = IsmLiveDimens.eight * (tileCount - 1);
+    final tileWidth = (layoutWidth - horizontalPad - gaps) / tileCount;
+    final tileHeight = tileWidth / _videoAspectRatio;
+    return tileHeight + IsmLiveDimens.eight + IsmLiveDimens.four;
+  }
+
+  double _mainStageHeight(
+    double width,
+    double maxHeight, {
+    required double coPublisherRowHeight,
+  }) {
+    final aspectHeight = width / _videoAspectRatio;
+    final maxMainByViewport = max(
+      1.0,
+      (maxHeight - coPublisherRowHeight) * _mainStageMaxHeightFraction,
+    );
+    return min(aspectHeight, maxMainByViewport);
+  }
+
+  Widget _rtmpStackedLayout({
+    required double width,
+    required double mainHeight,
+    required Widget mainVideo,
+    required IsmLiveStreamController controller,
+    required List<IsmLiveParticipantTrack> coPublishers,
+  }) =>
+      Align(
+        alignment: const Alignment(0, _stackedLayoutVerticalBias),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              width: width,
+              height: mainHeight,
+              child: mainVideo,
+            ),
+            _coPublisherRow(controller, coPublishers),
+          ],
+        ),
+      );
+
   @override
   Widget build(BuildContext context) => GetX<IsmLiveStreamController>(
         builder: (controller) {
-          IsmLiveParticipantTrack? hostScreen;
+          final mainTrack = _rtmpMainTrack(controller);
+          final coPublishers = mainTrack == null
+              ? const <IsmLiveParticipantTrack>[]
+              : _rtmpCoPublisherTracks(controller, mainTrack);
+          final mainVideo = _mainVideo(context, controller, mainTrack);
 
-          for (var value in controller.participantTracks) {
-            if (value.participant.identity == controller.hostDetails?.userId) {
-              hostScreen = value;
-            }
-          }
-
-          return Container(
+          return ColoredBox(
             color: Colors.black,
-            child: SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: hostScreen == null
-                      ? NoVideoWidget(
-                          imageUrl: controller.hostDetails?.image ?? '',
-                          name: controller.hostDetails?.name ?? '',
-                          showConnectingState: controller.isViewerJoiningStream,
-                          connectingText: context
-                                  .liveTranslations
-                                  ?.streamTranslations
-                                  ?.connectingToLiveStream ??
-                              IsmLiveStrings.connectingToLiveStream,
-                          initials: controller.hostDetails?.profileInitials,
-                        )
-                      : ParticipantWidget.widgetFor(
-                          hostScreen,
-                          imageUrl: controller.hostDetails?.userProfileImageUrl,
-                          showStatsLayer: false,
-                          showFullVideo: true,
-                        ),
-                ),
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth;
+
+                if (coPublishers.isEmpty) {
+                  return Center(
+                    child: SizedBox(
+                      width: width,
+                      height: constraints.maxHeight,
+                      child: mainVideo,
+                    ),
+                  );
+                }
+
+                final coCount = min(coPublishers.length, _maxCoPublishers);
+                final coRowHeight = _coPublisherRowHeight(width, coCount);
+                final mainHeight = _mainStageHeight(
+                  width,
+                  constraints.maxHeight,
+                  coPublisherRowHeight: coRowHeight,
+                );
+
+                return _rtmpStackedLayout(
+                  width: width,
+                  mainHeight: mainHeight,
+                  mainVideo: mainVideo,
+                  controller: controller,
+                  coPublishers: coPublishers,
+                );
+              },
             ),
           );
-          // IN RTMP NOT REQUIRED MUlTIPLE STREAMS
-          // GridView.builder(
-          //   padding: IsmLiveDimens.edgeInsets0,
-          //   restorationId: '',
-          //   itemCount: 4,
-          //   shrinkWrap: true,
-          //   physics: const NeverScrollableScrollPhysics(),
-          //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          //     crossAxisCount: 4,
-          //     childAspectRatio: 0.5,
-          //   ),
-          //   itemBuilder: (_, index) {
-          //     if (controller.participantTracks.length > index &&
-          //         hostScreen != controller.participantTracks[index]) {
-          //       var url = '';
-          //       for (var element in controller.streamMembersList) {
-          //         if (element.userId ==
-          //             controller
-          //                 .participantList[index].participant.identity) {
-          //           url = element.userProfileImageUrl;
-          //         }
-          //       }
-
-          //       return ParticipantWidget.widgetFor(
-          //         controller.participantList[index],
-          //         imageUrl: url,
-          //       );
-          //     }
-          //     return const NoVideoIconWidget();
-          //   },
-          // )
-          // ],
-          // )
         },
       );
 }

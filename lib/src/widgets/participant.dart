@@ -237,7 +237,10 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
                 : NoVideoWidget(
                     name: uiData.displayName,
                     imageUrl: uiData.imageUrl,
-                    initials: IsmLiveInitials.extract(uiData.displayName),
+                    initials: IsmLiveInitials.fromNames(
+                      primary: uiData.displayName,
+                      secondary: widget.participant.name,
+                    ),
                   ),
             if (widget.isbattleFinish)
               widget.isWinner
@@ -383,7 +386,17 @@ class _LocalParticipantWidgetState
       widget.participant.audioTrackPublications.firstOrNull;
 
   @override
-  VideoTrack? get activeVideoTrack => widget.videoTrack;
+  VideoTrack? get activeVideoTrack {
+    if (widget.videoTrack != null) {
+      return widget.videoTrack;
+    }
+    for (final pub in widget.participant.videoTrackPublications) {
+      if (pub.isScreenShare == widget.isScreenShare && pub.track != null) {
+        return pub.track;
+      }
+    }
+    return null;
+  }
 }
 
 class _RemoteParticipantWidgetState
@@ -399,7 +412,17 @@ class _RemoteParticipantWidgetState
       widget.participant.audioTrackPublications.firstOrNull;
 
   @override
-  VideoTrack? get activeVideoTrack => widget.videoTrack;
+  VideoTrack? get activeVideoTrack {
+    if (widget.videoTrack != null) {
+      return widget.videoTrack;
+    }
+    for (final pub in widget.participant.videoTrackPublications) {
+      if (pub.isScreenShare == widget.isScreenShare && pub.track != null) {
+        return pub.track;
+      }
+    }
+    return null;
+  }
 }
 
 class _ParticipantUiData {

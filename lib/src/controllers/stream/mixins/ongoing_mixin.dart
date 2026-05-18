@@ -543,6 +543,39 @@ mixin StreamOngoingMixin {
         ..on<lk.RoomRecordingStatusChanged>((event) {})
         ..on<lk.LocalTrackPublishedEvent>((_) => sortParticipants())
         ..on<lk.LocalTrackUnpublishedEvent>((_) => sortParticipants())
+        ..on<lk.TrackPublishedEvent>((event) {
+          if (event.publication.kind != lk.TrackType.VIDEO) {
+            return;
+          }
+          IsmLiveLog.info(
+            'TrackPublishedEvent: identity=${event.participant.identity} '
+            'sid=${event.publication.sid} subscribed=${event.publication.subscribed} '
+            'subscriptionAllowed=${event.publication.subscriptionAllowed} '
+            'isRtmp=${_controller.isRtmp}',
+          );
+          if (_controller.isRtmp &&
+              !event.publication.subscribed &&
+              event.publication.subscriptionAllowed) {
+            unawaited(() async {
+              try {
+                await event.publication.subscribe();
+                IsmLiveLog.info(
+                  'TrackPublishedEvent: subscribe requested for '
+                  '${event.participant.identity}',
+                );
+              } catch (e, st) {
+                IsmLiveLog.error(
+                  'TrackPublishedEvent: subscribe failed for '
+                  '${event.participant.identity}: $e',
+                  st,
+                );
+              }
+              await sortParticipants();
+            }());
+            return;
+          }
+          sortParticipants();
+        })
         ..on<lk.TrackE2EEStateEvent>((event) {
           IsmLiveLog.info('TrackE2EEStateEvent: $event');
         })
@@ -564,7 +597,10 @@ mixin StreamOngoingMixin {
           }
         })
         ..on<lk.TrackSubscribedEvent>((event) {
-          if (event.track.kind != lk.TrackType.AUDIO) {
+          if (event.track.kind == lk.TrackType.VIDEO) {
+            // Remote co-publisher video arrives after publish; refresh track list
+            // so publisher grid gets a non-null VideoTrack (was stale on publish-only sort).
+            sortParticipants();
             return;
           }
           if (!Get.isRegistered<IsmLiveStreamController>()) return;
@@ -596,6 +632,11 @@ mixin StreamOngoingMixin {
             }
             await _syncRemoteAudioPlaybackWithSpeakerFlag(room);
           }));
+        })
+        ..on<lk.TrackUnsubscribedEvent>((event) {
+          if (event.track.kind == lk.TrackType.VIDEO) {
+            sortParticipants();
+          }
         })
         ..on<lk.TrackUnmutedEvent>((event) {
           if (event.publication.kind != lk.TrackType.AUDIO) {
@@ -684,9 +725,17 @@ mixin StreamOngoingMixin {
       hostUserId: _controller.hostDetails?.userId,
     );
 
+    if (_controller.isRtmp) {
+      await _ensureRtmpRemoteVideoSubscriptions(room);
+    }
+
     _controller.participantTracks = orderedTracks;
     _controller.participantList = orderedTracks;
-    _controller.update([IsmLiveStreamView.updateId]);
+    _logParticipantTrackDiagnostics(room, userMediaTracks, orderedTracks);
+    _controller.update([
+      IsmLiveStreamView.updateId,
+      IsmLivePublisherGrid.updateId,
+    ]);
 
     if (_controller.isPk &&
         _controller.participantTracks.length == 2 &&
@@ -702,6 +751,104 @@ mixin StreamOngoingMixin {
           IsmLiveLog('animation error - $e');
         }
       });
+    }
+  }
+
+  /// RTMP co-publishers often join after the host ingest is already live.
+  /// Request explicit video subscriptions so their tracks are not left
+  /// published-but-unsubscribed on the viewer client.
+  Future<void> _ensureRtmpRemoteVideoSubscriptions(lk.Room room) async {
+    for (final participant in room.remoteParticipants.values) {
+      for (final pub in participant.videoTrackPublications) {
+        if (pub.subscribed || !pub.subscriptionAllowed) {
+          continue;
+        }
+        try {
+          await pub.subscribe();
+          IsmLiveLog.info(
+            'RTMP remote video subscribe: identity=${participant.identity} '
+            'sid=${pub.sid}',
+          );
+        } catch (e, st) {
+          IsmLiveLog.error(
+            'RTMP remote video subscribe failed: '
+            'identity=${participant.identity} sid=${pub.sid}: $e',
+            st,
+          );
+        }
+      }
+    }
+  }
+
+  void _logParticipantTrackDiagnostics(
+    lk.Room room,
+    List<IsmLiveParticipantTrack> rawTracks,
+    List<IsmLiveParticipantTrack> orderedTracks,
+  ) {
+    final remoteCount = room.remoteParticipants.length;
+    var remoteVideoPubs = 0;
+    var remoteVideoSubscribedFlag = 0;
+    var remoteVideoWithTrack = 0;
+    final remoteSummaries = <String>[];
+    final hostUserId = _controller.hostDetails?.userId;
+
+    for (final participant in room.remoteParticipants.values) {
+      final pubs = participant.videoTrackPublications;
+      remoteVideoPubs += pubs.length;
+      for (final pub in pubs) {
+        if (pub.subscribed) {
+          remoteVideoSubscribedFlag++;
+        }
+        if (pub.track != null) {
+          remoteVideoWithTrack++;
+        }
+      }
+      final pubDetails = pubs
+          .map(
+            (pub) =>
+                'sid=${pub.sid.substring(0, min(8, pub.sid.length))}..'
+                'sub=${pub.subscribed}'
+                'track=${pub.track != null}'
+                'allowed=${pub.subscriptionAllowed}',
+          )
+          .join(';');
+      remoteSummaries.add(
+        '${participant.identity}${participant.identity == hostUserId ? '(host)' : ''}: '
+        'pubs=${pubs.length} [$pubDetails]',
+      );
+    }
+
+    final orderedSummary = orderedTracks
+        .map(
+          (t) =>
+              '${t.participant.identity}${t.isScreenShare ? '(screen)' : ''}:'
+              'track=${t.videoTrack != null}',
+        )
+        .join(', ');
+
+    final coPublisherTrackCount = hostUserId == null
+        ? orderedTracks.length
+        : orderedTracks
+            .where((t) => t.participant.identity != hostUserId)
+            .length;
+
+    IsmLiveLog.info(
+      'sortParticipants: isRtmp=${_controller.isRtmp} '
+      'hostUserId=$hostUserId '
+      'remoteParticipants=$remoteCount '
+      'remoteVideoPublications=$remoteVideoPubs '
+      'remoteVideoSubscribedFlag=$remoteVideoSubscribedFlag '
+      'remoteVideoWithTrack=$remoteVideoWithTrack '
+      'coPublisherTracksInGrid=$coPublisherTrackCount '
+      'rawTracks=${rawTracks.length} orderedTracks=${orderedTracks.length} '
+      '[$orderedSummary]',
+    );
+    if (remoteSummaries.isNotEmpty) {
+      IsmLiveLog.info('sortParticipants remote: ${remoteSummaries.join(' | ')}');
+    } else if (_controller.isRtmp) {
+      IsmLiveLog.info(
+        'sortParticipants remote: none (only local/ingest tracks in room)',
+      );
     }
   }
 
