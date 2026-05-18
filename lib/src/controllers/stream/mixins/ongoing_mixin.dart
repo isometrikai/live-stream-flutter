@@ -456,6 +456,8 @@ mixin StreamOngoingMixin {
       searchTag: _controller.user?.userName,
     );
 
+    if (!Get.isRegistered<IsmLiveStreamController>()) return;
+
     var isModerator = _controller.moderatorsList.any(
       (e) => e.userId == _controller.user?.userId,
     );
@@ -465,6 +467,8 @@ mixin StreamOngoingMixin {
     } else {
       _controller.userRole?.leaveModeration();
     }
+
+    _controller.update();
 
     ///This is to update the List of moderators without search
     unawaited(_controller.fetchModerators(
