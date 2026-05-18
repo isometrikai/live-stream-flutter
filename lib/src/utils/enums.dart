@@ -310,9 +310,9 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get rtmpOptions =>
       IsmLiveDelegate.rtmpOptions.isEmpty
           ? [
-              // IsmLiveStreamOption.members,
-              // IsmLiveStreamOption.vs,
-              // IsmLiveStreamOption.multiLive,
+              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.vs,
+              IsmLiveStreamOption.multiLive,
               // IsmLiveStreamOption.product,
               // IsmLiveStreamOption.share,
               // // IsmLiveStreamOption.favourite,

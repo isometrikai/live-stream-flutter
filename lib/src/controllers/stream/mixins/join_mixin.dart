@@ -1977,29 +1977,28 @@ mixin StreamJoinMixin {
       // Store the token for background lifecycle reconnection
       _controller.storeToken(token);
 
-      // Set track subscription permissions
-      try {
-        room.localParticipant?.setTrackSubscriptionPermissions(
-          allParticipantsAllowed: true,
-          trackPermissions: [
-            const lk.ParticipantTrackPermission(
-              'allowed-identity',
-              true,
-              null,
-            ),
-          ],
-        );
-      } catch (e) {
-        IsmLiveLog.error('Track subscription permissions error: $e');
+      // Allow every participant to subscribe to our published tracks.
+      void applyOpenSubscriptionPermissions() {
+        try {
+          room.localParticipant?.setTrackSubscriptionPermissions(
+            allParticipantsAllowed: true,
+          );
+        } catch (e) {
+          IsmLiveLog.error('Track subscription permissions error: $e');
+        }
       }
 
-      // Enable video if the user is a host or copublisher
-      if (!_controller.isRtmp) {
+      applyOpenSubscriptionPermissions();
+
+      // Enable video if the user is a host or copublisher.
+      // RTMP host ingests via OBS; only co-publishers / PK guests publish from the app.
+      final shouldPublishFromDevice =
+          isCopublisher || isPkGust || (!_controller.isRtmp && isHost);
+      if (shouldPublishFromDevice) {
         try {
-          if (isHost || isCopublisher || isPkGust) {
-            await enableMyVideo();
-          }
-          // Toggle audio if the user is a host or copublisher
+          await enableMyVideo();
+          // Re-send after publish so co-publisher camera tracks are subscribable.
+          applyOpenSubscriptionPermissions();
           unawaited(
             _controller.toggleAudio(
               value: isHost || isCopublisher,

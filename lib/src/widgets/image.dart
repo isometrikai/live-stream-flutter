@@ -7,17 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 /// Safe label for network image placeholders when URL fails or [name] is empty.
-String _networkImagePlaceholderLabel(String name, String? initials) {
-  final trimmedInitials = initials?.trim();
-  if (trimmedInitials != null && trimmedInitials.isNotEmpty) {
-    return trimmedInitials;
-  }
-  final trimmedName = name.trim();
-  if (trimmedName.isNotEmpty) {
-    return trimmedName[0];
-  }
-  return 'U';
-}
+String _networkImagePlaceholderLabel(String name, String? initials) =>
+    IsmLiveInitials.fromNames(
+      primary: initials,
+      secondary: name,
+    );
 
 class IsmLiveImage extends StatelessWidget {
   const IsmLiveImage.asset(
