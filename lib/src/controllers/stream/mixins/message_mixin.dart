@@ -345,6 +345,22 @@ mixin StreamMessageMixin {
     if (isSent) {}
   }
 
+  /// Clears co-publisher accept/deny actions from chat for [requestById].
+  void clearCopublisherRequestFromChat(String requestById) {
+    var updated = false;
+    for (var i = 0; i < _controller.streamMessagesList.length; i++) {
+      final message = _controller.streamMessagesList[i];
+      if (message.isCopublisherRequest && message.userId == requestById) {
+        _controller.streamMessagesList[i] =
+            message.copyWith(isCopublisherRequest: false);
+        updated = true;
+      }
+    }
+    if (updated) {
+      _controller._streamMessagesList.refresh();
+    }
+  }
+
   // Handle a message being removed
   Future<void> messageRemoved(String messageId, String userName) async {
     var message =
