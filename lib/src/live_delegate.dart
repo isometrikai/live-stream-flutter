@@ -819,7 +819,8 @@ typedef GiftClickCallback = void Function(
 /// [likesCount] - Batch size (same value the SDK sends as `metaData.likeCounts` via
 /// the standard `sendMessage` / post-message API in `sendHeartMessage`).
 ///
-/// **If this callback is not set**, behavior is unchanged (only `sendHeartMessage`).
+/// **If this callback is not set**, the SDK posts batched likes to the internal
+/// `POST /live/v1/stream/like` endpoint (`sentViaMqtt: true`) after `sendHeartMessage`.
 typedef HeartBatchFlushCallback = Future<void> Function(
   String streamId,
   int likesCount,

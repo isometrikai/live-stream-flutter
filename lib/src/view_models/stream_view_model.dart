@@ -841,21 +841,15 @@ class IsmLiveStreamViewModel {
   Future<bool> sendHearts({
     required String streamId,
     required String senderId,
-    required String senderImage,
-    required String senderName,
-    required String deviceId,
-    required String customType,
-    int likesCount = 1,
+    int likeCount = 1,
+    bool sentViaMqtt = true,
   }) async {
     try {
       var res = await _repository.sendHearts(
         streamId: streamId,
-        customType: customType,
-        deviceId: deviceId,
-        senderImage: senderImage,
         senderId: senderId,
-        senderName: senderName,
-        likesCount: likesCount,
+        likeCount: likeCount,
+        sentViaMqtt: sentViaMqtt,
       );
 
       return !res.hasError;

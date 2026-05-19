@@ -694,24 +694,14 @@ class IsmLiveStreamRepository {
   Future<IsmLiveResponseModel> sendHearts({
     required String streamId,
     required String senderId,
-    required String senderImage,
-    required String senderName,
-    required String deviceId,
-    required String customType,
-    int likesCount = 1,
+    int likeCount = 1,
+    bool sentViaMqtt = true,
   }) {
     final payload = {
       'streamId': streamId,
-      'senderImage': senderImage,
-      'senderName': senderName,
-      'deviceId': deviceId,
-      'customType': customType,
       'senderId': senderId,
-      'likesCount': likesCount,
-      'metaData': {
-        'likeCount': likesCount,
-        'likesCount': likesCount,
-      },
+      'sentViaMqtt': sentViaMqtt,
+      'likeCount': likeCount,
     };
     return _apiWrapper.makeRequest(IsmLiveApis.sendHearts,
         type: IsmLiveRequestType.post,
