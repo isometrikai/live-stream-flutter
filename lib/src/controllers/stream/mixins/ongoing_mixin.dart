@@ -1199,6 +1199,26 @@ mixin StreamOngoingMixin {
     final delegate = IsmLiveDelegate.heartBatchFlushCallback;
     if (delegate != null) {
       unawaited(_invokeHeartBatchFlushDelegate(delegate, streamId, count));
+    } else {
+      unawaited(_invokeInternalHeartBatchFlush(streamId, count));
+    }
+  }
+
+  Future<void> _invokeInternalHeartBatchFlush(
+    String streamId,
+    int count,
+  ) async {
+    try {
+      final senderId = _controller.user?.userId ?? '';
+      if (senderId.isEmpty) return;
+      await _controller.sendHearts(
+        streamId: streamId,
+        senderId: senderId,
+        likeCount: count,
+        sentViaMqtt: true,
+      );
+    } catch (e, st) {
+      IsmLiveLog.error('sendHearts (stream/like) error: $e', st);
     }
   }
 
