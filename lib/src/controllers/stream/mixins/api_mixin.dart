@@ -745,7 +745,15 @@ mixin StreamAPIMixin {
     int skip = 0,
     String? searchTag,
   }) async {
-    if (forceFetch || _controller.copublisherRequestsList.isEmpty) {
+    if (!(forceFetch || _controller.copublisherRequestsList.isEmpty)) {
+      return;
+    }
+    final wasAlreadyLoading = _controller.isCopublisherApiCall;
+    if (!wasAlreadyLoading) {
+      _controller.isCopublisherApiCall = true;
+      _controller.update([IsmLiveCopublishingHostSheet.updateId]);
+    }
+    try {
       if (forceFetch && skip == 0) {
         _controller.copublisherRequestsList.clear();
       }
@@ -758,8 +766,10 @@ mixin StreamAPIMixin {
       _controller.copublisherRequestsList.addAll(list);
       _controller.copublisherRequestsList =
           _controller.copublisherRequestsList.toSet().toList();
+    } finally {
+      _controller.isCopublisherApiCall = false;
+      _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
-    _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
 
 // Fetches eligible members for co-publishing a live stream.
@@ -788,7 +798,15 @@ mixin StreamAPIMixin {
     int skip = 0,
     String? searchTag,
   }) async {
-    if (forceFetch || _controller.eligibleMembersList.isEmpty) {
+    if (!(forceFetch || _controller.eligibleMembersList.isEmpty)) {
+      return;
+    }
+    final wasAlreadyLoading = _controller.isMembersApiCall;
+    if (!wasAlreadyLoading) {
+      _controller.isMembersApiCall = true;
+      _controller.update([IsmLiveCopublishingHostSheet.updateId]);
+    }
+    try {
       if (forceFetch && skip == 0) {
         _controller.eligibleMembersList.clear();
       }
@@ -801,8 +819,10 @@ mixin StreamAPIMixin {
       _controller.eligibleMembersList.addAll(list);
       _controller.eligibleMembersList =
           _controller.eligibleMembersList.toSet().toList();
+    } finally {
+      _controller.isMembersApiCall = false;
+      _controller.update([IsmLiveCopublishingHostSheet.updateId]);
     }
-    _controller.update([IsmLiveCopublishingHostSheet.updateId]);
   }
 
 //  Accepts a request for co-publishing a live stream.

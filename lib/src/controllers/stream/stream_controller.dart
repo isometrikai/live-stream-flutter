@@ -548,6 +548,7 @@ class IsmLiveStreamController extends GetxController
           return;
         }
         isCopublisherApiCall = true;
+        update([IsmLiveCopublishingHostSheet.updateId]);
         await fetchCopublisherRequests(
           forceFetch: true,
           streamId: streamId,
@@ -556,7 +557,6 @@ class IsmLiveStreamController extends GetxController
               ? null
               : searchCopublisherFieldController.text.trim(),
         );
-        isCopublisherApiCall = false;
       }
     });
 
@@ -591,6 +591,7 @@ class IsmLiveStreamController extends GetxController
           return;
         }
         isMembersApiCall = true;
+        update([IsmLiveCopublishingHostSheet.updateId]);
         await fetchEligibleMembers(
           forceFetch: true,
           streamId: streamId,
@@ -599,7 +600,6 @@ class IsmLiveStreamController extends GetxController
               ? null
               : searchMembersFieldController.text.trim(),
         );
-        isMembersApiCall = false;
       }
     });
   }
