@@ -629,6 +629,7 @@ class IsmLiveApp extends StatefulWidget {
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
     IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure,
+    IsmLiveStreamScreenConfigure? streamScreenConfigure,
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
     String? fontFamily,
@@ -677,6 +678,8 @@ class IsmLiveApp extends StatefulWidget {
         sideIconsConfigure ?? const IsmLiveSideIconsConfigure();
     final resolvedGoLiveScreenConfigure =
         goLiveScreenConfigure ?? const IsmLiveGoLiveScreenConfigure();
+    final resolvedStreamScreenConfigure =
+        streamScreenConfigure ?? const IsmLiveStreamScreenConfigure();
 
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -730,6 +733,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
     IsmLiveDelegate.goLiveScreenConfigure = resolvedGoLiveScreenConfigure;
+    IsmLiveDelegate.streamScreenConfigure = resolvedStreamScreenConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
@@ -1043,6 +1047,9 @@ class IsmLiveApp extends StatefulWidget {
 
   static IsmLiveGoLiveScreenConfigure? get goLiveScreenConfigure =>
       IsmLiveDelegate.goLiveScreenConfigure;
+
+  static IsmLiveStreamScreenConfigure get streamScreenConfigure =>
+      IsmLiveDelegate.streamScreenConfigure;
 
   static String? get fontFamily => IsmLiveDelegate.fontFamily;
 
