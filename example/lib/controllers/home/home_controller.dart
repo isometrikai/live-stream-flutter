@@ -76,31 +76,31 @@ class HomeController extends GetxController {
       showParticipantFullNamesInPublisherGrid : true,
       productionMode: true,
       // Remove `const` if you uncomment builders or callbacks below.
-      streamScreenConfigure: IsmLiveStreamScreenConfigure(
-        streamBottomWidgetBuilder:
-            (context, streamId, isHost, isKeyboardOpen) {
-          if (isKeyboardOpen || streamId.isEmpty) {
-            return null;
-          }
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 12),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              isHost
-                  ? 'Host custom bottom bar'
-                  : 'Viewer custom bottom bar',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
-            ),
-          );
-        },
-      ),
+      // streamScreenConfigure: IsmLiveStreamScreenConfigure(
+      //   streamBottomWidgetBuilder:
+      //       (context, streamId, isHost, isKeyboardOpen) {
+      //     if (isKeyboardOpen || streamId.isEmpty) {
+      //       return null;
+      //     }
+      //     return Container(
+      //       margin: const EdgeInsets.symmetric(horizontal: 12),
+      //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      //       decoration: BoxDecoration(
+      //         color: Colors.white.withValues(alpha: 0.2),
+      //         borderRadius: BorderRadius.circular(8),
+      //       ),
+      //       child: Text(
+      //         isHost
+      //             ? 'Host custom bottom bar'
+      //             : 'Viewer custom bottom bar',
+      //         textAlign: TextAlign.center,
+      //         style: const TextStyle(color: Colors.white, fontSize: 12),
+      //       ),
+      //     );
+      //   },
+      // ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
-        isProductStreamFeatureEnabled: true,
+        isProductStreamFeatureEnabled: false,
         isScheduleStreamFeatureEnabled: true,
         defaultBroadcastDescription: "Hey dubly!"
         // Feature flags:

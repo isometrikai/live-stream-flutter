@@ -102,6 +102,17 @@ class _IsmLiveCopublishingHostSheetState
     );
   }
 
+  static const Widget _loadMoreIndicator = Padding(
+    padding: EdgeInsets.symmetric(vertical: 12),
+    child: Center(
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    ),
+  );
+
   Widget _buildEmptyPlaceholder({
     required String? placeHolder,
     required String? placeHolderText,
@@ -278,22 +289,33 @@ class _IsmLiveCopublishingHostSheetState
                             IsmLiveDimens.boxHeight10,
                             Expanded(
                               child: copublisherRequests.isEmpty
-                                  ? Center(
-                                      child: _buildEmptyPlaceholder(
-                                        placeHolder: IsmLiveAssetConstants
-                                            .user_request_placeholder,
-                                        placeHolderText:
-                                            IsmLiveStrings.noRequestUsers,
-                                      ),
-                                    )
+                                  ? controller.isCopublisherApiCall
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Center(
+                                          child: _buildEmptyPlaceholder(
+                                            placeHolder: IsmLiveAssetConstants
+                                                .user_request_placeholder,
+                                            placeHolderText: IsmLiveStrings
+                                                .noRequestUsers,
+                                          ),
+                                        )
                                   : ListView.separated(
                                       controller:
                                           controller.copublisherListController,
-                                      itemCount: copublisherRequests.length,
+                                      itemCount: copublisherRequests.length +
+                                          (controller.isCopublisherApiCall
+                                              ? 1
+                                              : 0),
                                       itemBuilder: (context, index) {
-                                        if (index < 0 ||
-                                            index >=
-                                                copublisherRequests.length) {
+                                        if (index >=
+                                            copublisherRequests.length) {
+                                          return _loadMoreIndicator;
+                                        }
+                                        if (index < 0) {
                                           return const SizedBox.shrink();
                                         }
                                         final copublisher =
@@ -402,20 +424,32 @@ class _IsmLiveCopublishingHostSheetState
                             IsmLiveDimens.boxHeight10,
                             Expanded(
                               child: eligibleMembers.isEmpty
-                                  ? Center(
-                                      child: _buildEmptyPlaceholder(
-                                        placeHolder: IsmLiveAssetConstants
-                                            .user_placeholder,
-                                        placeHolderText: IsmLiveStrings.noUsers,
-                                      ),
-                                    )
+                                  ? controller.isMembersApiCall
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Center(
+                                          child: _buildEmptyPlaceholder(
+                                            placeHolder: IsmLiveAssetConstants
+                                                .user_placeholder,
+                                            placeHolderText:
+                                                IsmLiveStrings.noUsers,
+                                          ),
+                                        )
                                   : ListView.separated(
                                       controller:
                                           controller.membersListController,
-                                      itemCount: eligibleMembers.length,
+                                      itemCount: eligibleMembers.length +
+                                          (controller.isMembersApiCall
+                                              ? 1
+                                              : 0),
                                       itemBuilder: (context, index) {
-                                        if (index < 0 ||
-                                            index >= eligibleMembers.length) {
+                                        if (index >= eligibleMembers.length) {
+                                          return _loadMoreIndicator;
+                                        }
+                                        if (index < 0) {
                                           return const SizedBox.shrink();
                                         }
                                         final members = eligibleMembers[index];
