@@ -72,12 +72,12 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      useGridLayoutForMultipleParticipants : false,
+      useGridLayoutForMultipleParticipants : true,
       showParticipantFullNamesInPublisherGrid : true,
       productionMode: true,
       // Remove `const` if you uncomment builders or callbacks below.
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
-        isProductStreamFeatureEnabled: true,
+        isProductStreamFeatureEnabled: false,
         isScheduleStreamFeatureEnabled: true,
         defaultBroadcastDescription: "Hey dubly!"
         // Feature flags:
@@ -369,6 +369,7 @@ class HomeController extends GetxController {
           IsmLiveStreamOption.share,
           IsmLiveStreamOption.speaker,
           IsmLiveStreamOption.heart,
+          IsmLiveStreamOption.multiLive,
         ],
         // Must live under sideIconsConfigure (not on configureInterface):
         // controlOptionCallback:

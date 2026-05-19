@@ -816,6 +816,7 @@ mixin StreamAPIMixin {
     );
     if (res) {
       _controller.copublisherRequestsList.clear();
+      _controller.clearCopublisherRequestFromChat(requestById);
     }
 
     return res;
@@ -832,6 +833,7 @@ mixin StreamAPIMixin {
     );
     if (res) {
       _controller.copublisherRequestsList.clear();
+      _controller.clearCopublisherRequestFromChat(requestById);
     }
 
     return res;

@@ -783,7 +783,9 @@ class IsmLiveMqttController extends GetxController {
               senderProfileImageUrl: user.profileUrl,
               senderId: user.userId,
               messageType: IsmLiveMessageType.normal,
-              messageId: '',
+              // Unique per requester — empty id caused addMessages().toSet()
+              // to drop all but the first co-publisher request in chat.
+              messageId: 'copublish-request-${user.userId}',
               body: '${user.userName} has requested for Co-publishing',
               isEvent: true,
               isCopublisherRequest: true,
