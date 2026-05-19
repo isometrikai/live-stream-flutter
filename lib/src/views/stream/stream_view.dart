@@ -265,6 +265,31 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
     setState(() => _overlaysVisible = !_overlaysVisible);
   }
 
+  /// Full-width widgets from [IsmLiveStreamScreenConfigure.streamBottomWidgetBuilder].
+  List<Widget> _streamBottomWidgets(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    bool isKeyboardOpen,
+  ) {
+    final widget = IsmLiveDelegate
+        .streamScreenConfigure.streamBottomWidgetBuilder
+        ?.call(
+      context,
+      controller.streamId ?? '',
+      controller.isHost,
+      isKeyboardOpen,
+    );
+    if (widget == null) {
+      return const [];
+    }
+    return [
+      SizedBox(
+        width: double.infinity,
+        child: widget,
+      ),
+    ];
+  }
+
   /// Builds two arrow buttons for hosts with customizable size
   Widget _buildHostArrowButtons(BuildContext context, {double? size}) =>
       GetBuilder<IsmLiveStreamController>(
@@ -745,6 +770,11 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                             ]
                                                           ],
                                                         ),
+                                                      ),
+                                                      ..._streamBottomWidgets(
+                                                        context,
+                                                        controller,
+                                                        isKeyboardOpen,
                                                       ),
                                                       IsmLiveDimens.boxHeight8,
                                                       if (IsmLiveApp

@@ -1131,6 +1131,10 @@ class IsmLiveDelegate {
 
   static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
 
+  /// Configuration for the live stream screen UI.
+  static IsmLiveStreamScreenConfigure streamScreenConfigure =
+      const IsmLiveStreamScreenConfigure();
+
   static bool enableFreeGift = false;
 
   static bool restrictProfileSheetOnProfileClick = false;
@@ -1371,6 +1375,31 @@ class IsmLiveEcomConfigure {
 
   /// Gets the current pinned product status dynamically
   bool get hasPinnedProduct => hasPinnedProductGetter?.call() ?? false;
+}
+
+/// Builder for a full-width widget at the bottom of the live stream screen,
+/// rendered directly below the message input row.
+///
+/// Return `null` to hide the widget for the current state (e.g. when the
+/// keyboard is open).
+typedef StreamBottomWidgetBuilder = Widget? Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isKeyboardOpen,
+);
+
+/// Configuration for the live stream screen UI.
+///
+/// Set via `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
+class IsmLiveStreamScreenConfigure {
+  const IsmLiveStreamScreenConfigure({
+    this.streamBottomWidgetBuilder,
+  });
+
+  /// Full-width widget shown at the bottom of the stream screen, below the
+  /// message input row.
+  final StreamBottomWidgetBuilder? streamBottomWidgetBuilder;
 }
 
 /// Configuration class for GoLive screen customization.
