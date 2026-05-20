@@ -742,7 +742,8 @@ mixin StreamJoinMixin {
       }
       stream = res;
       image = _controller.streamDetails?.streamImage;
-      _controller.streamDetails =_controller.streamDetails?.copyWith(startDateTime: res.startTime);
+      _controller.streamDetails =
+          _controller.streamDetails?.copyWith(startDateTime: res.startTime);
     } else {
       var data = await _controller.createStream(context: context);
       if (data == null) {

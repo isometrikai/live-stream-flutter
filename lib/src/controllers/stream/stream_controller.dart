@@ -1091,8 +1091,7 @@ class IsmLiveStreamController extends GetxController
         // correct facing direction after this fast switch.
         final options = track.currentOptions;
         if (options is lk.CameraCaptureOptions) {
-          track.currentOptions =
-              options.copyWith(cameraPosition: newPosition);
+          track.currentOptions = options.copyWith(cameraPosition: newPosition);
         }
         position = newPosition;
         update();

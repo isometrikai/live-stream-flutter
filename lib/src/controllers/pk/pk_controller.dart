@@ -10,7 +10,11 @@ class IsmLivePkController extends GetxController
 
   final IsmLivePkViewModel _viewModel;
 
-  final IsmLiveStreamController streamController =
+  /// Resolves the current [IsmLiveStreamController] on each access (not a
+  /// one-time [Get.find] at construction). After host logout/login a new
+  /// stream controller is registered; a captured field would keep pointing
+  /// at the disposed instance and break PK invite `senderStreamId`.
+  IsmLiveStreamController get streamController =>
       Get.find<IsmLiveStreamController>();
 
   late TabController pkTabController;
@@ -438,9 +442,14 @@ class IsmLivePkController extends GetxController
   Future<void> sendInvitationToUserForPK({
     required IsmLivePkInviteModel reciverDetails,
   }) async {
+    final senderStreamId = senderStreamIdForPkInvite;
+    if (!IsmLiveStreamId.isValid(senderStreamId)) {
+      return;
+    }
+
     var res = await _viewModel.sendInvitationToUserForPK(
       reciverStreamId: reciverDetails.streamId,
-      senderStreamId: senderStreamIdForPkInvite,
+      senderStreamId: senderStreamId,
       userId: reciverDetails.userId,
     );
 
@@ -714,10 +723,9 @@ class IsmLivePkController extends GetxController
           List<IsmLiveGiftsCategoryModel>.from(giftList);
     }
     if (targetCategoryIndex == streamController.giftType) {
-      giftList =
-          List<IsmLiveGiftsCategoryModel>.from(
-            localGift?[targetCategoryIndex] ?? [],
-          );
+      giftList = List<IsmLiveGiftsCategoryModel>.from(
+        localGift?[targetCategoryIndex] ?? [],
+      );
     }
     streamController.update([IsmLiveGiftsSheet.updateId]);
   }
