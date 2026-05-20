@@ -271,9 +271,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
     IsmLiveStreamController controller,
     bool isKeyboardOpen,
   ) {
-    final widget = IsmLiveDelegate
-        .streamScreenConfigure.streamBottomWidgetBuilder
-        ?.call(
+    final widget =
+        IsmLiveDelegate.streamScreenConfigure.streamBottomWidgetBuilder?.call(
       context,
       controller.streamId ?? '',
       controller.isHost,
