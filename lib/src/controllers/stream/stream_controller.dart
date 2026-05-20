@@ -134,6 +134,11 @@ class IsmLiveStreamController extends GetxController
 
   IsmLiveStreamAnalyticsModel? streamAnalytis;
 
+  /// Hearts (likes) for the live analytics sheet: grows with incoming MQTT
+  /// heart batches from other users, and is raised to at least the server
+  /// analytics hearts value when stream analytics are fetched.
+  int realtimeStreamLikeCount = 0;
+
   final Rx<IsmLiveMemberStatus> _memberStatus =
       IsmLiveMemberStatus.notMember.obs;
   IsmLiveMemberStatus get memberStatus => _memberStatus.value;
@@ -887,6 +892,7 @@ class IsmLiveStreamController extends GetxController
       bytes = null;
       parentMessage = null;
       streamAnalytis = null;
+      realtimeStreamLikeCount = 0;
       hostDetails = null;
     }
 

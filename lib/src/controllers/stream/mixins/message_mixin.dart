@@ -83,6 +83,10 @@ mixin StreamMessageMixin {
           final meta =
               payload?['metaData'] ?? processedMessage.metaData?.rawJson;
           final heartCount = _heartLikeCountFromPayload(meta, payload) ?? 1;
+          if (isMqtt) {
+            _controller.realtimeStreamLikeCount += heartCount;
+            _controller.update([IsmliveAnalyticsSheet.updateId]);
+          }
           _controller.addHeart(processedMessage, count: heartCount);
         }
         break;

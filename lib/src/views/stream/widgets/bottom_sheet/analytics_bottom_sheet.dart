@@ -88,7 +88,7 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
 
                   switch (option) {
                     case IsmLiveAnalyticsOptions.hearts:
-                      points = '${controller.streamAnalytis?.hearts ?? 0}';
+                      points = '${controller.realtimeStreamLikeCount}';
                       title = IsmLiveStrings.hearts;
                       color = textIconColor;
                       break;
