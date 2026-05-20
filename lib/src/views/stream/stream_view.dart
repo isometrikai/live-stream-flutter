@@ -77,6 +77,7 @@ class IsmLiveStreamView extends StatelessWidget {
 
       // Clear analytics data
       controller.streamAnalytis = null;
+      controller.realtimeStreamLikeCount = 0;
       controller.analyticsViewers.clear();
 
       // Clear messages and viewers

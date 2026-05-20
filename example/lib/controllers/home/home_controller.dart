@@ -102,7 +102,7 @@ class HomeController extends GetxController {
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
         isProductStreamFeatureEnabled: false,
         isScheduleStreamFeatureEnabled: true,
-        defaultBroadcastDescription: "Hey dubly!"
+        defaultBroadcastDescription: "Hey!"
         // Feature flags:
         // isHdStreamFeatureEnabled: true,
         // isRtmpStreamFeatureEnabled: true,

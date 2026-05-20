@@ -1010,6 +1010,14 @@ mixin StreamAPIMixin {
       streamId: streamId,
       isHost: _controller.isHost,
     );
+    final apiHearts = _controller.streamAnalytis?.hearts;
+    if (apiHearts != null) {
+      final apiHeartsInt = apiHearts.toInt();
+      _controller.realtimeStreamLikeCount = max(
+        _controller.realtimeStreamLikeCount,
+        apiHeartsInt,
+      );
+    }
     _controller
         .update([IsmLiveEndStream.updateId, IsmliveAnalyticsSheet.updateId]);
   }

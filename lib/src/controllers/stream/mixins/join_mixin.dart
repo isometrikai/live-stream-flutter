@@ -882,7 +882,11 @@ mixin StreamJoinMixin {
     }
 
     // Subscribe to the stream
+    final previousStreamId = _controller.streamId;
     _controller.streamId = streamId;
+    if (previousStreamId != streamId) {
+      _controller.realtimeStreamLikeCount = 0;
+    }
 
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.streamConnectAttempt,
