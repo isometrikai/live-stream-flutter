@@ -1391,13 +1391,33 @@ typedef StreamBottomWidgetBuilder = Widget? Function(
 /// Builder for a custom widget at the end of the live timer row in the stream
 /// header (after LIVE label, timer, and coins).
 ///
-/// Return `null` to hide the widget for the current state.
+/// Only used when [streamHeaderInfoSectionBuilder] returns `null` (default UI).
+/// Return `null` to hide the trailing widget.
 typedef StreamHeaderTimerTrailingWidgetBuilder = Widget? Function(
   BuildContext context,
   String streamId,
   bool isHost,
   String streamCoins,
   bool isPaidStream,
+);
+
+/// Builder that replaces the stream header info section (live timer row and
+/// description / PK result banner).
+///
+/// Return `null` to show the default timer and description UI. Return a widget
+/// to show custom content instead. The stream duration timer in
+/// [IsmLiveStreamController] keeps running while custom content is shown; only
+/// the display is swapped.
+typedef StreamHeaderInfoSectionBuilder = Widget? Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  String streamCoins,
+  bool isPaidStream,
+  String description,
+  bool pkCompleted,
+  bool isBattleTie,
+  String? winnerName,
 );
 
 /// Configuration for the live stream screen UI.
@@ -1407,6 +1427,7 @@ class IsmLiveStreamScreenConfigure {
   const IsmLiveStreamScreenConfigure({
     this.streamBottomWidgetBuilder,
     this.streamHeaderTimerTrailingWidgetBuilder,
+    this.streamHeaderInfoSectionBuilder,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
@@ -1416,6 +1437,9 @@ class IsmLiveStreamScreenConfigure {
   /// Custom widget appended at the end of the stream header timer row.
   final StreamHeaderTimerTrailingWidgetBuilder?
       streamHeaderTimerTrailingWidgetBuilder;
+
+  /// Custom widget replacing the timer row and description / PK banner.
+  final StreamHeaderInfoSectionBuilder? streamHeaderInfoSectionBuilder;
 }
 
 /// Configuration class for GoLive screen customization.

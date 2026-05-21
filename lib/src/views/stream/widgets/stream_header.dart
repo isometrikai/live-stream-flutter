@@ -107,39 +107,101 @@ class IsmLiveStreamHeader extends StatelessWidget {
             ],
           ),
           IsmLiveDimens.boxHeight10,
-          Padding(
-            padding: IsmLiveDimens.edgeInsets10_0,
-            child: _LiveTimer(
-              streamCoins: streamCoins,
-              isPaidStream: isPaidStream,
-            ),
+          _StreamHeaderInfoSection(
+            streamCoins: streamCoins,
+            isPaidStream: isPaidStream,
+            description: description,
+            pkCompleted: pkCompleted,
+            isBattleTie: isBattleTie,
+            winnerName: winnerName,
           ),
-          IsmLiveDimens.boxHeight8,
-          if (pkCompleted)
-            Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.blue,
-              height: IsmLiveDimens.twenty,
-              child: Text(
-                isBattleTie
-                    ? 'Congratulations to @$winnerName'
-                    : 'It\'s a Draw!',
-                style: context.textTheme.bodySmall?.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            )
-          else
-            Container(
-              margin: IsmLiveDimens.edgeInsets10_0,
-              child: _ExpandableDescription(
-                description: description,
-                textStyle:
-                    context.textTheme.bodySmall?.copyWith(color: Colors.white),
-              ),
-            ),
         ],
       );
+}
+
+class _StreamHeaderInfoSection extends StatelessWidget {
+  const _StreamHeaderInfoSection({
+    required this.streamCoins,
+    required this.isPaidStream,
+    required this.description,
+    required this.pkCompleted,
+    required this.isBattleTie,
+    required this.winnerName,
+  });
+
+  final String streamCoins;
+  final bool isPaidStream;
+  final String description;
+  final bool pkCompleted;
+  final bool isBattleTie;
+  final String? winnerName;
+
+  Widget _defaultSection(BuildContext context) => Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: IsmLiveDimens.edgeInsets10_0,
+          child: _LiveTimer(
+            streamCoins: streamCoins,
+            isPaidStream: isPaidStream,
+          ),
+        ),
+        IsmLiveDimens.boxHeight8,
+        if (pkCompleted)
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.blue,
+            height: IsmLiveDimens.twenty,
+            child: Text(
+              isBattleTie
+                  ? 'Congratulations to @$winnerName'
+                  : 'It\'s a Draw!',
+              style: context.textTheme.bodySmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          )
+        else
+          Container(
+            margin: IsmLiveDimens.edgeInsets10_0,
+            child: _ExpandableDescription(
+              description: description,
+              textStyle:
+                  context.textTheme.bodySmall?.copyWith(color: Colors.white),
+            ),
+          ),
+      ],
+    );
+
+  @override
+  Widget build(BuildContext context) {
+    final infoSectionBuilder =
+        IsmLiveDelegate.streamScreenConfigure.streamHeaderInfoSectionBuilder;
+    if (infoSectionBuilder == null) {
+      return _defaultSection(context);
+    }
+
+    return GetBuilder<IsmLiveStreamController>(
+      id: IsmLiveStreamView.updateId,
+      builder: (controller) {
+        final customSection = infoSectionBuilder(
+          context,
+          controller.streamId ?? '',
+          controller.isHost,
+          streamCoins,
+          isPaidStream,
+          description,
+          pkCompleted,
+          isBattleTie,
+          winnerName,
+        );
+        return customSection ?? _defaultSection(context);
+      },
+    );
+  }
 }
 
 class IsmLiveModeratorCount extends StatelessWidget {

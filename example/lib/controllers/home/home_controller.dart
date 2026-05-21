@@ -72,63 +72,91 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      useGridLayoutForMultipleParticipants : true,
-      showParticipantFullNamesInPublisherGrid : true,
+      useGridLayoutForMultipleParticipants: true,
+      showParticipantFullNamesInPublisherGrid: true,
       productionMode: true,
       // Remove `const` if you uncomment builders or callbacks below.
       // streamScreenConfigure: IsmLiveStreamScreenConfigure(
-      //   streamBottomWidgetBuilder:
-      //       (context, streamId, isHost, isKeyboardOpen) {
-      //     if (isKeyboardOpen || streamId.isEmpty) {
-      //       return null;
-      //     }
-      //     return Container(
-      //       margin: const EdgeInsets.symmetric(horizontal: 12),
-      //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      //       decoration: BoxDecoration(
-      //         color: Colors.white.withValues(alpha: 0.2),
-      //         borderRadius: BorderRadius.circular(8),
-      //       ),
-      //       child: Text(
-      //         isHost
-      //             ? 'Host custom bottom bar'
-      //             : 'Viewer custom bottom bar',
-      //         textAlign: TextAlign.center,
-      //         style: const TextStyle(color: Colors.white, fontSize: 12),
-      //       ),
-      //     );
-      //   },
+        // streamBottomWidgetBuilder:
+        //     (context, streamId, isHost, isKeyboardOpen) {
+        //   if (isKeyboardOpen || streamId.isEmpty) {
+        //     return null;
+        //   }
+        //   return Container(
+        //     margin: const EdgeInsets.symmetric(horizontal: 12),
+        //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        //     decoration: BoxDecoration(
+        //       color: Colors.white.withValues(alpha: 0.2),
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //     child: Text(
+        //       isHost
+        //           ? 'Host custom bottom bar'
+        //           : 'Viewer custom bottom bar',
+        //       textAlign: TextAlign.center,
+        //       style: const TextStyle(color: Colors.white, fontSize: 12),
+        //     ),
+        //   );
+        // },
+        // Return null to show default timer + description. Toggle
+        // [useCustomStreamHeaderInfoSection] and call
+        // [notifyStreamHeaderInfoSectionChanged] to switch at runtime.
+        // streamHeaderInfoSectionBuilder: (context, streamId, isHost, streamCoins,
+        //     isPaidStream, description, pkCompleted, isBattleTie, winnerName) {
+        //   if (streamId.isEmpty) {
+        //     return null;
+        //   }
+        //   return Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 10),
+        //     child: Container(
+        //       width: double.infinity,
+        //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        //       decoration: BoxDecoration(
+        //         color: Colors.deepPurple.withValues(alpha: 0.85),
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //       child: Text(
+        //         'Custom promo ',
+        //         style: const TextStyle(
+        //           color: Colors.white,
+        //           fontSize: 12,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        // },
       // ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
-        isProductStreamFeatureEnabled: false,
-        isScheduleStreamFeatureEnabled: true,
-        defaultBroadcastDescription: "Hey!"
-        // Feature flags:
-        // isHdStreamFeatureEnabled: true,
-        // isRtmpStreamFeatureEnabled: true,
-        // isRestreamStreamFeatureEnabled: true,
-        // isPaidStreamFeatureEnabled: false,
-        // isMultiLiveStreamFeatureEnabled: true,
-        // isRecordedStreamFeatureEnabled: true,
-        //
-        // Default toggles for a fresh Go Live flow (ignored when editing a stream):
-        // defaultHdBroadcastToggleValue: false,
-        // defaultRecordBroadcastToggleValue: false,
-        // defaultRestreamBroadcastToggleValue: false,
-        //
-        // goLiveHeaderBuilder: HomeController._buildCustomGoLiveHeader,
-        // goLiveButtonBuilder: HomeController._buildCustomGoLiveButton,
-        //
-        // onGoLiveButtonTap:
-        //     (context, isScheduledStream, streamDetails, goLiveData) async {
-        //   if (goLiveData.pickedImage != null) {
-        //     IsmLiveLog.info(
-        //       'User picked image: ${goLiveData.pickedImage!.path}',
-        //     );
-        //   }
-        // },
-        // onGoLiveViewDispose: () {},
-      ),
+          isProductStreamFeatureEnabled: false,
+          isScheduleStreamFeatureEnabled: true,
+          defaultBroadcastDescription: "Hey!"
+          // Feature flags:
+          // isHdStreamFeatureEnabled: true,
+          // isRtmpStreamFeatureEnabled: true,
+          // isRestreamStreamFeatureEnabled: true,
+          // isPaidStreamFeatureEnabled: false,
+          // isMultiLiveStreamFeatureEnabled: true,
+          // isRecordedStreamFeatureEnabled: true,
+          //
+          // Default toggles for a fresh Go Live flow (ignored when editing a stream):
+          // defaultHdBroadcastToggleValue: false,
+          // defaultRecordBroadcastToggleValue: false,
+          // defaultRestreamBroadcastToggleValue: false,
+          //
+          // goLiveHeaderBuilder: HomeController._buildCustomGoLiveHeader,
+          // goLiveButtonBuilder: HomeController._buildCustomGoLiveButton,
+          //
+          // onGoLiveButtonTap:
+          //     (context, isScheduledStream, streamDetails, goLiveData) async {
+          //   if (goLiveData.pickedImage != null) {
+          //     IsmLiveLog.info(
+          //       'User picked image: ${goLiveData.pickedImage!.path}',
+          //     );
+          //   }
+          // },
+          // onGoLiveViewDispose: () {},
+          ),
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
       scheduleStreamCenterOverlayBuilder: _buildScheduleCenterOverlay,
