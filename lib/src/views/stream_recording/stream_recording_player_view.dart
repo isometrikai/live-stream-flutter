@@ -444,8 +444,8 @@ class _RecordingOverlay extends StatelessWidget {
                   ),
             ),
           ),
-          // Center play icon: hide only while actively playing (not while buffering).
-          // During buffering, show play icon instead of a loading-style UX.
+          // Center overlay: hide while actively playing; show a loader while the
+          // player is buffering (e.g. after a seek); show play only when paused.
           if (!isVideoReady)
             const SizedBox.shrink()
           else
@@ -456,6 +456,11 @@ class _RecordingOverlay extends StatelessWidget {
                 final showPlaying = v.isPlaying && !v.isBuffering;
                 if (showPlaying) {
                   return const SizedBox.shrink();
+                }
+                if (v.isBuffering) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
                 }
                 return Center(
                   child: GestureDetector(
