@@ -8,7 +8,7 @@ String _formatCompactCount(int value) {
 
   String formatUnit(num n, String suffix) {
     // Show 1 decimal only for small numbers (e.g. 1.2k, 9.8k, 1.2m).
-    final bool useOneDecimal = n < 10 && n != n.roundToDouble();
+    final useOneDecimal = n < 10 && n != n.roundToDouble();
     final s = useOneDecimal ? n.toStringAsFixed(1) : n.round().toString();
     return '$s$suffix';
   }
@@ -301,30 +301,46 @@ class _LiveTimer extends StatelessWidget {
   final controller = Get.find<IsmLiveStreamController>();
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (controller.streamTimer != null) ...[
-            const IsmLiveLabel(),
-            IsmLiveDimens.boxWidth10,
-            const IsmLiveStreamTimer()
-          ],
+  Widget build(BuildContext context) {
+    final trailingWidget = IsmLiveDelegate
+        .streamScreenConfigure.streamHeaderTimerTrailingWidgetBuilder
+        ?.call(
+      context,
+      controller.streamId ?? '',
+      controller.isHost,
+      streamCoins,
+      isPaidStream,
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (controller.streamTimer != null) ...[
+          const IsmLiveLabel(),
           IsmLiveDimens.boxWidth10,
-          // IsmLiveStreamMemberCount(
-          //   onTap: () => IsmLiveUtility.openBottomSheet(
-          //     const IsmLiveMembersSheet(),
-          //     isScrollController: true,
-          //   ),
-          // ),
-          if (isPaidStream) ...[
-            IsmLiveDimens.boxWidth10,
-            IsmLiveCoins(
-              coins: streamCoins,
-            ),
-          ]
+          const IsmLiveStreamTimer()
         ],
-      );
+        IsmLiveDimens.boxWidth10,
+        // IsmLiveStreamMemberCount(
+        //   onTap: () => IsmLiveUtility.openBottomSheet(
+        //     const IsmLiveMembersSheet(),
+        //     isScrollController: true,
+        //   ),
+        // ),
+        if (isPaidStream) ...[
+          IsmLiveDimens.boxWidth10,
+          IsmLiveCoins(
+            coins: streamCoins,
+          ),
+        ],
+        if (trailingWidget != null) ...[
+          IsmLiveDimens.boxWidth10,
+          trailingWidget,
+        ],
+      ],
+    );
+  }
 }
 
 class IsmLiveStreamMemberCount extends StatelessWidget {
@@ -459,9 +475,7 @@ class _ExpandableDescriptionState extends State<_ExpandableDescription> {
 
   /// True when the description needs more than two lines at [maxWidth].
   bool _textExceedsTwoLines(double maxWidth, BuildContext context) {
-    if (widget.description.isEmpty ||
-        maxWidth <= 0 ||
-        !maxWidth.isFinite) {
+    if (widget.description.isEmpty || maxWidth <= 0 || !maxWidth.isFinite) {
       return false;
     }
     final painter = TextPainter(
@@ -487,9 +501,8 @@ class _ExpandableDescriptionState extends State<_ExpandableDescription> {
                 widget.description,
                 style: widget.textStyle,
                 maxLines: _isExpanded ? null : 2,
-                overflow: _isExpanded
-                    ? TextOverflow.visible
-                    : TextOverflow.ellipsis,
+                overflow:
+                    _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
               ),
               if (showToggle) ...[
                 IsmLiveDimens.boxHeight4,

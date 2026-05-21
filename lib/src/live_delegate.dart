@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/analytics/live_analytics.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -1164,8 +1163,7 @@ class IsmLiveDelegate {
 
   static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
 
-  static ScheduleStreamCenterOverlayBuilder?
-      scheduleStreamCenterOverlayBuilder;
+  static ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder;
 
   static ControlOptionCallback? controlOptionCallback;
 
@@ -1390,17 +1388,34 @@ typedef StreamBottomWidgetBuilder = Widget? Function(
   bool isKeyboardOpen,
 );
 
+/// Builder for a custom widget at the end of the live timer row in the stream
+/// header (after LIVE label, timer, and coins).
+///
+/// Return `null` to hide the widget for the current state.
+typedef StreamHeaderTimerTrailingWidgetBuilder = Widget? Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  String streamCoins,
+  bool isPaidStream,
+);
+
 /// Configuration for the live stream screen UI.
 ///
 /// Set via `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
 class IsmLiveStreamScreenConfigure {
   const IsmLiveStreamScreenConfigure({
     this.streamBottomWidgetBuilder,
+    this.streamHeaderTimerTrailingWidgetBuilder,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
   /// message input row.
   final StreamBottomWidgetBuilder? streamBottomWidgetBuilder;
+
+  /// Custom widget appended at the end of the stream header timer row.
+  final StreamHeaderTimerTrailingWidgetBuilder?
+      streamHeaderTimerTrailingWidgetBuilder;
 }
 
 /// Configuration class for GoLive screen customization.
@@ -1580,8 +1595,8 @@ class IsmLiveGoLiveScreenConfigure {
       IsmLiveGoLiveScreenConfigure(
         isHdStreamFeatureEnabled:
             isHdStreamFeatureEnabled ?? this.isHdStreamFeatureEnabled,
-        isScheduleStreamFeatureEnabled:
-            isScheduleStreamFeatureEnabled ?? this.isScheduleStreamFeatureEnabled,
+        isScheduleStreamFeatureEnabled: isScheduleStreamFeatureEnabled ??
+            this.isScheduleStreamFeatureEnabled,
         isProductStreamFeatureEnabled:
             isProductStreamFeatureEnabled ?? this.isProductStreamFeatureEnabled,
         isRtmpStreamFeatureEnabled:
@@ -1598,18 +1613,19 @@ class IsmLiveGoLiveScreenConfigure {
         onGoLiveViewDispose: onGoLiveViewDispose ?? this.onGoLiveViewDispose,
         goLiveHeaderBuilder: goLiveHeaderBuilder ?? this.goLiveHeaderBuilder,
         goLiveButtonBuilder: goLiveButtonBuilder ?? this.goLiveButtonBuilder,
-        scheduleStreamCenterOverlayBuilder: scheduleStreamCenterOverlayBuilder ??
-            this.scheduleStreamCenterOverlayBuilder,
+        scheduleStreamCenterOverlayBuilder:
+            scheduleStreamCenterOverlayBuilder ??
+                this.scheduleStreamCenterOverlayBuilder,
         onScheduleLiveToggle: onScheduleLiveToggle ?? this.onScheduleLiveToggle,
-        defaultHdBroadcastToggleValue: defaultHdBroadcastToggleValue ??
-            this.defaultHdBroadcastToggleValue,
+        defaultHdBroadcastToggleValue:
+            defaultHdBroadcastToggleValue ?? this.defaultHdBroadcastToggleValue,
         defaultRecordBroadcastToggleValue: defaultRecordBroadcastToggleValue ??
             this.defaultRecordBroadcastToggleValue,
         defaultRestreamBroadcastToggleValue:
             defaultRestreamBroadcastToggleValue ??
                 this.defaultRestreamBroadcastToggleValue,
-        defaultBroadcastDescription: defaultBroadcastDescription ??
-            this.defaultBroadcastDescription,
+        defaultBroadcastDescription:
+            defaultBroadcastDescription ?? this.defaultBroadcastDescription,
         radioTileTextStyle: radioTileTextStyle ?? this.radioTileTextStyle,
         addCoverTextStyle: addCoverTextStyle ?? this.addCoverTextStyle,
         addIcon: addIcon ?? this.addIcon,
