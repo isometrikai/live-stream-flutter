@@ -494,6 +494,16 @@ class IsmLivePkController extends GetxController
     }
   }
 
+  /// RTC token for an active PK guest reconnect (foreground resume / rejoin).
+  Future<String?> fetchPublishPkRtcToken({
+    required String streamId,
+    bool startPublish = true,
+  }) =>
+      _viewModel.publishPk(
+        streamId: streamId,
+        startPublish: startPublish,
+      );
+
   Future<void> publishPk({
     required String reciverStreamId,
     String? streamImage,

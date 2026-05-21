@@ -13,6 +13,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   final RxBool _isStreamActive = false.obs;
   final RxBool _isHost = false.obs;
   final RxBool _isCopublisher = false.obs;
+  final RxBool _isPkGuest = false.obs;
 
   // Connection details for reconnection
   String? _lastStreamId;
@@ -58,7 +59,8 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   bool get isStreamActive => _isStreamActive.value;
   bool get isHost => _isHost.value;
   bool get isCopublisherBackground => _isCopublisher.value;
-  bool get _isPublishing => _isHost.value || _isCopublisher.value;
+  bool get _isPublishing =>
+      _isHost.value || _isCopublisher.value || _isPkGuest.value;
   String? get storedToken => _storedToken;
 
   // Get the controller instance
@@ -100,12 +102,13 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
   // Set stream active state
   void setStreamActive(bool active, bool isHost,
-      {bool isCopublisher = false}) {
+      {bool isCopublisher = false, bool isPkGuest = false}) {
     _isStreamActive.value = active;
     _isHost.value = isHost;
     _isCopublisher.value = isCopublisher;
+    _isPkGuest.value = isPkGuest;
     IsmLiveLog.info(
-        'Stream active: $active, isHost: $isHost, isCopublisher: $isCopublisher');
+        'Stream active: $active, isHost: $isHost, isCopublisher: $isCopublisher, isPkGuest: $isPkGuest');
 
     // Initialize background lifecycle when stream becomes active
     if (active) {
@@ -417,7 +420,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
   }
 
   void _handlePublisherBackground() {
-    final role = _isHost.value ? 'Host' : 'Copublisher';
+    final role = _isHost.value
+        ? 'Host'
+        : (_isPkGuest.value ? 'PK guest' : 'Copublisher');
     IsmLiveLog.info('$role going to background');
 
     // Pause video immediately if not enabled for background
@@ -456,7 +461,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
         // Video was enabled: unpublish camera so LiveKit full-reconnect won't
         // call rePublishAllTracks on a muted track whose native track is null.
-        final role = _isHost.value ? 'host' : 'copublisher';
+        final role = _isHost.value
+            ? 'host'
+            : (_isPkGuest.value ? 'pk guest' : 'copublisher');
         IsmLiveLog.info(
             'Pausing $role video for background via camera unpublish (safe for long reconnects)');
         _videoPausedByBackground = true;
@@ -514,8 +521,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
         IsmLiveLog.info('Stream became inactive during resume delay, aborting');
         return;
       }
-      final role =
-          _isHost.value ? 'Host' : (_isCopublisher.value ? 'Copublisher' : null);
+      final role = _isHost.value
+          ? 'Host'
+          : (_isPkGuest.value
+              ? 'PK guest'
+              : (_isCopublisher.value ? 'Copublisher' : null));
       if (_isPublishing && _videoPausedByBackground) {
         IsmLiveLog.info(
             '$role video was paused by background, resuming camera');
@@ -578,7 +588,9 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
       try {
         if (_isPublishing) {
-          final role = _isHost.value ? 'host' : 'copublisher';
+          final role = _isHost.value
+              ? 'host'
+              : (_isPkGuest.value ? 'pk guest' : 'copublisher');
           IsmLiveLog.info(
               'Resuming $role camera via setCameraEnabled (fresh publish after unpublish)');
           await _controller.resumeHostCameraAfterBackground();
