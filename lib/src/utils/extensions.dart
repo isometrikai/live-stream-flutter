@@ -64,13 +64,13 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
       // case IsmLiveStreamType.ecommerce:
       //   return model.copyWith(productsLinked: true);
       case IsmLiveStreamType.restream:
-        return model.copyWith(reStream: true);
+        return model.copyWith(reStream: true, fetchLive: true);
       case IsmLiveStreamType.hd:
-        return model.copyWith(hdbroadcast: true);
+        return model.copyWith(hdbroadcast: true,fetchLive: true);
       case IsmLiveStreamType.recorded:
         return model.copyWith(isRecorded: true);
       case IsmLiveStreamType.pk:
-        return model.copyWith(pk: true);
+        return model.copyWith(pk: true,fetchLive: true);
       case IsmLiveStreamType.scheduledStreams:
         return model.copyWith(isScheduledStream: true);
     }
