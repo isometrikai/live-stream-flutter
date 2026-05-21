@@ -933,7 +933,12 @@ mixin StreamJoinMixin {
     _controller._streamViewLoadedCallbackTriggered = false;
 
     // Set up background lifecycle management
-    _controller.setStreamActive(true, isHost, isCopublisher: isCopublisher);
+    _controller.setStreamActive(
+      true,
+      isHost,
+      isCopublisher: isCopublisher,
+      isPkGuest: isPkGust,
+    );
 
     // Show a loader while connecting
     _controller.isModerationWarningVisible = true;
@@ -1114,14 +1119,15 @@ mixin StreamJoinMixin {
     }
   }
 
-  /// Viewer-only: rejoin the currently open stream after app resumes.
+  /// Viewer / PK-guest: rejoin the currently open stream after app resumes.
   ///
   /// Why this exists:
   /// - When coming back from background, message/probe APIs may fail with 400
   ///   (viewer not considered a member). Reconnecting LiveKit with an old token
   ///   can also produce SDP order errors.
-  /// - This method uses the existing `getRTCToken()` + `_connectRoomAndInitialize()`
-  ///   flow to obtain a fresh token and rejoin without navigating.
+  /// - Reuses the token saved on the original join (`publishPk` for PK guests,
+  ///   `getRTCToken` for viewers) from [rtcToken], [storedToken], or secure storage
+  ///   before requesting a new token.
   Future<bool> rejoinCurrentViewerStreamAfterForeground({
     bool showProgress = true,
   }) async {
@@ -1140,6 +1146,13 @@ mixin StreamJoinMixin {
     }
 
     final details = _controller.streamDetails;
+
+    // Capture before `_connectRoomAndInitialize` resets role/PK flags.
+    final wasPkGuest = _controller.userRole?.isPkGuest ?? false;
+    final reconnectAsPkGuest = wasPkGuest;
+    final reconnectAsPk = wasPkGuest ||
+        _controller.isPk ||
+        (details?.isPkChallenge ?? false);
 
     var loaderShown = false;
     try {
@@ -1170,8 +1183,8 @@ mixin StreamJoinMixin {
           restream: details?.restream ?? _controller.isRestreamBroadcast,
           isHost: false,
           isCopublisher: false,
-          isPk: details?.isPkChallenge ?? false,
-          isPkGust: false,
+          isPk: reconnectAsPk,
+          isPkGust: reconnectAsPkGuest,
           isNewStream: false,
           joinByScrolling: false,
           isScrolling: false,
@@ -1191,51 +1204,81 @@ mixin StreamJoinMixin {
         final connected =
             _controller.room?.connectionState == lk.ConnectionState.connected;
         IsmLiveLog.info(
-            'rejoinCurrentViewerStreamAfterForeground: source=$source connected=$connected state=${_controller.room?.connectionState}');
+            'rejoinCurrentViewerStreamAfterForeground: source=$source connected=$connected state=${_controller.room?.connectionState} is_pk_guest=$reconnectAsPkGuest');
+        if (connected && reconnectAsPkGuest) {
+          _controller.acknowledgeForegroundPublisherRejoinRestoredCamera();
+        }
         return connected;
       }
 
-      var existingToken = (_controller.rtcToken ?? '').trim();
-      if (existingToken.isEmpty) {
-        existingToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
+      // Prefer the token from the original join (PK accept uses publishPk →
+      // connectStream, which persists via rtcToken, storeToken, and secure storage).
+      var storedToken = (_controller.rtcToken ?? '').trim();
+      if (storedToken.isEmpty) {
+        storedToken = (_controller.storedToken ?? '').trim();
       }
-      if (existingToken.isNotEmpty) {
+      if (storedToken.isEmpty) {
+        storedToken = (await _dbWrapper.getSecuredValue(streamId)).trim();
+      }
+      if (storedToken.isNotEmpty) {
+        final tokenKind =
+            reconnectAsPkGuest ? 'stored PK publish' : 'stored RTC';
         IsmLiveLog.info(
-            'rejoinCurrentViewerStreamAfterForeground: attempting with existing RTC token for $streamId');
+            'rejoinCurrentViewerStreamAfterForeground: attempting with $tokenKind token for $streamId');
         try {
           final connected = await _attemptRejoinWithToken(
-            token: existingToken,
+            token: storedToken,
             startTime: details?.startDateTime,
-            source: 'existing_token',
+            source: reconnectAsPkGuest
+                ? 'stored_pk_publish_token'
+                : 'stored_token',
           );
           if (connected) return true;
         } catch (e, st) {
           IsmLiveLog.error(
-              'rejoinCurrentViewerStreamAfterForeground: existing RTC token rejoin failed, falling back to fresh token: $e',
+              'rejoinCurrentViewerStreamAfterForeground: stored token rejoin failed, falling back: $e',
               st);
         }
       } else {
         IsmLiveLog.info(
-            'rejoinCurrentViewerStreamAfterForeground: existing RTC token unavailable, requesting fresh token for $streamId');
+            'rejoinCurrentViewerStreamAfterForeground: no stored token for $streamId');
       }
 
-      final rtc = await _controller.getRTCToken(streamId);
-      if (rtc == null || rtc.rtcToken.trim().isEmpty) {
-        IsmLiveLog.error(
-            'rejoinCurrentViewerStreamAfterForeground: RTC token fetch failed');
-        return false;
-      }
+      var startTime = details?.startDateTime;
+      String? freshToken;
 
-      final token = rtc.rtcToken;
+      if (reconnectAsPkGuest) {
+        // PK guest must use a publish token — never downgrade to viewer getRTCToken.
+        if (Get.isRegistered<IsmLivePkController>()) {
+          IsmLiveLog.info(
+              'rejoinCurrentViewerStreamAfterForeground: PK guest — stored token missing or failed, fetching new publish PK token for $streamId');
+          freshToken = await Get.find<IsmLivePkController>()
+              .fetchPublishPkRtcToken(streamId: streamId);
+        }
+        if (freshToken == null || freshToken.trim().isEmpty) {
+          IsmLiveLog.error(
+              'rejoinCurrentViewerStreamAfterForeground: PK guest publish token fetch failed');
+          return false;
+        }
+      } else {
+        final rtc = await _controller.getRTCToken(streamId);
+        if (rtc == null || rtc.rtcToken.trim().isEmpty) {
+          IsmLiveLog.error(
+              'rejoinCurrentViewerStreamAfterForeground: RTC token fetch failed');
+          return false;
+        }
+        freshToken = rtc.rtcToken;
+        startTime = rtc.startTime ?? startTime;
+      }
 
       // Keep token available for background lifecycle reconnection.
-      _controller.rtcToken = token;
-      _controller.storeToken(token);
+      _controller.rtcToken = freshToken;
+      _controller.storeToken(freshToken);
 
       final connected = await _attemptRejoinWithToken(
-        token: token,
-        startTime: rtc.startTime ?? details?.startDateTime,
-        source: 'fresh_token',
+        token: freshToken,
+        startTime: startTime,
+        source: reconnectAsPkGuest ? 'fresh_pk_publish_token' : 'fresh_token',
       );
       return connected;
     } catch (e, st) {

@@ -1142,8 +1142,8 @@ class IsmLiveMqttController extends GetxController {
         case IsmLiveActions.publishStarted:
           break;
         case IsmLiveActions.publishStopped:
-          _pkController.pkTimer?.cancel();
-          _pkController.pkTimer = null;
+          // _pkController.pkTimer?.cancel();
+          // _pkController.pkTimer = null;
           break;
         case IsmLiveActions.streamStartPresence:
           if (IsmLiveDelegate.streamListingRefreshCallback != null) {
