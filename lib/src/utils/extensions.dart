@@ -64,7 +64,7 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
       // case IsmLiveStreamType.ecommerce:
       //   return model.copyWith(productsLinked: true);
       case IsmLiveStreamType.restream:
-        return model.copyWith(reStream: true, fetchLive: true);
+        return model.copyWith(restream: true, fetchLive: true);
       case IsmLiveStreamType.hd:
         return model.copyWith(hdbroadcast: true,fetchLive: true);
       case IsmLiveStreamType.recorded:
