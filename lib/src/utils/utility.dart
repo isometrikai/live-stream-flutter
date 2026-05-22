@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -65,6 +67,26 @@ class IsmLiveUtility {
         callback();
       });
     });
+  }
+
+  /// Warms the disk/memory cache for a stream cover before opening [IsmLiveStreamView].
+  static Future<void> precacheStreamCover(
+    String? imageUrl,
+    BuildContext context, {
+    Duration timeout = const Duration(seconds: 2),
+  }) async {
+    final url = imageUrl?.trim();
+    if (url == null || url.isEmpty) {
+      return;
+    }
+    try {
+      await precacheImage(CachedNetworkImageProvider(url), context).timeout(
+        timeout,
+        onTimeout: () {},
+      );
+    } catch (e, st) {
+      IsmLiveLog.error('precacheStreamCover failed: $e', st);
+    }
   }
 
   static String jsonEncodePretty(Object? object) =>
