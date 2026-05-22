@@ -60,6 +60,7 @@ class IsmLiveDimens {
   static final double ninty = 90.sp;
 
   static final double hundred = 100.sp;
+  static final double hundredTen = 110.sp;
   static final double oneHundredTwenty = 120.sp;
   static final double hundredFourty = 140.sp;
   static final double oneHundredFifty = 150.sp;

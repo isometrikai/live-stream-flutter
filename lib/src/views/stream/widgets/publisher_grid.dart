@@ -113,7 +113,8 @@ Widget _multiParticipantTile(
   );
 
   final showName = IsmLiveDelegate.showParticipantFullNamesInPublisherGrid &&
-      participantCount > 1;
+      participantCount > 1 &&
+      !controller.isPk;
   if (!showName) {
     return base;
   }
@@ -190,6 +191,76 @@ class IsmLivePublisherGrid extends StatelessWidget {
     return 0.68;
   }
 
+  /// Extra top inset so the multi-participant grid clears the stream header
+  /// description. [IsmLiveDimens.hundred] already reserves host row + timer +
+  /// ~one description line; add height for additional collapsed lines only.
+  static double extraTopPaddingForStreamDescription(
+    BuildContext context,
+    String description,
+    double layoutWidth,
+  ) {
+    final text = description.trim();
+    if (text.isEmpty || layoutWidth <= 0) {
+      return 0;
+    }
+
+    final style = Theme.of(context).textTheme.bodySmall;
+    if (style == null) {
+      return 0;
+    }
+
+    final textDirection = Directionality.of(context);
+    final textScaler = MediaQuery.textScalerOf(context);
+    final locale = Localizations.maybeLocaleOf(context);
+    // Matches [_ExpandableDescription] horizontal margin in stream header.
+    final contentWidth = max(1.0, layoutWidth - IsmLiveDimens.ten * 2);
+
+    double measureHeight(String sample, {int? maxLines}) {
+      final painter = TextPainter(
+        text: TextSpan(text: sample, style: style),
+        textDirection: textDirection,
+        maxLines: maxLines,
+        textScaler: textScaler,
+        locale: locale,
+      );
+      painter.layout(maxWidth: contentWidth);
+      return painter.height;
+    }
+
+    // Header shows up to two lines before "View more".
+    final descriptionHeight = measureHeight(text, maxLines: 2);
+    final singleLineHeight = measureHeight('Ag', maxLines: 1);
+    final extraLines = descriptionHeight - singleLineHeight;
+    if (extraLines <= 0) {
+      return 0;
+    }
+
+    // Small buffer for spacing between timer row and description block.
+    return extraLines + IsmLiveDimens.eight;
+  }
+
+  /// [Align.alignment] Y for overlays centered in the video region below the
+  /// stream header (0 = screen center, positive = slightly lower).
+  static double contentCenterAlignmentY(
+    BuildContext context, {
+    required String description,
+    required double layoutHeight,
+    required double layoutWidth,
+  }) {
+    if (layoutHeight <= 0) {
+      return 0;
+    }
+    final descriptionExtra = IsmLiveApp.showHeader
+        ? extraTopPaddingForStreamDescription(
+            context,
+            description,
+            layoutWidth,
+          )
+        : 0.0;
+    final topInset = IsmLiveDimens.eighty + descriptionExtra;
+    return (topInset / layoutHeight).clamp(0.0, 0.5);
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -257,7 +328,15 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     );
                   }
 
-                  final topPad = IsmLiveDimens.hundred;
+                  final descriptionExtraTopPad = IsmLiveApp.showHeader
+                      ? extraTopPaddingForStreamDescription(
+                          context,
+                          controller.descriptionController.text,
+                          constraints.maxWidth,
+                        )
+                      : 0.0;
+                  final topPad =
+                      IsmLiveDimens.hundredTen + descriptionExtraTopPad;
 
                   final mq = MediaQuery.of(context);
                   final imeBottom = mq.viewInsets.bottom;

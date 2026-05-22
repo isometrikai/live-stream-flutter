@@ -862,29 +862,25 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                           2) ...[
                                     AnimatedBuilder(
                                       animation: controller.alignmentAnimation,
-                                      builder: (context, child) =>
-                                          AnimatedAlign(
+                                      child: const IsmLiveImage.svg(
+                                        IsmLiveAssetConstants.v,
+                                      ),
+                                      builder: (context, child) => Align(
                                         alignment:
                                             controller.alignmentAnimation.value,
-                                        duration: const Duration(
-                                          milliseconds: 100,
-                                        ),
-                                        child: const IsmLiveImage.svg(
-                                            IsmLiveAssetConstants.v),
+                                        child: child,
                                       ),
                                     ),
                                     AnimatedBuilder(
                                       animation:
                                           controller.alignmentAnimationRight,
-                                      builder: (context, child) =>
-                                          AnimatedAlign(
+                                      child: const IsmLiveImage.svg(
+                                        IsmLiveAssetConstants.s,
+                                      ),
+                                      builder: (context, child) => Align(
                                         alignment: controller
                                             .alignmentAnimationRight.value,
-                                        duration: const Duration(
-                                          milliseconds: 100,
-                                        ),
-                                        child: const IsmLiveImage.svg(
-                                            IsmLiveAssetConstants.s),
+                                        child: child,
                                       ),
                                     ),
                                   ],
@@ -897,14 +893,27 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                       controller.participantTracks.length ==
                                           2 &&
                                       !(controller.pkStages?.isPkStop ?? false))
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: IsmLiveTapHandler(
-                                        onTap: controller.pkChallengeSheet,
-                                        child: const IsmLiveImage.svg(
-                                          IsmLiveAssetConstants.start,
-                                        ),
-                                      ),
+                                    LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        final centerY =
+                                            IsmLivePublisherGrid
+                                                .contentCenterAlignmentY(
+                                          context,
+                                          description: controller
+                                              .descriptionController.text,
+                                          layoutHeight: constraints.maxHeight,
+                                          layoutWidth: constraints.maxWidth,
+                                        );
+                                        return Align(
+                                          alignment: Alignment(0, centerY),
+                                          child: IsmLiveTapHandler(
+                                            onTap: controller.pkChallengeSheet,
+                                            child: const IsmLiveImage.svg(
+                                              IsmLiveAssetConstants.start,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   if ((controller.pkStages?.isPkStart ??
                                           false) &&

@@ -746,6 +746,10 @@ mixin StreamOngoingMixin {
       }
       IsmLiveDebouncer(durationtime: 3000).run(() async {
         try {
+          if (_controller.animationController.isCompleted ||
+              _controller.animationController.isDismissed) {
+            _controller.animationController.reset();
+          }
           await _controller.animationController.forward();
         } catch (e) {
           IsmLiveLog('animation error - $e');

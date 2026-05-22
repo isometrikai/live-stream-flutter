@@ -16,9 +16,9 @@ class IsmLivePkTimerContainer extends StatelessWidget {
           ),
           Align(
             alignment: const Alignment(0, -0.4),
-            child: GetX<IsmLivePkController>(
-              builder: (controller) => Text(
-                controller.pkDuration.formattedTimeInMin,
+            child: Obx(
+              () => Text(
+                Get.find<IsmLivePkController>().pkDuration.formattedTimeInMin,
                 style: context.textTheme.bodyLarge?.copyWith(
                   color: Colors.yellow,
                 ),

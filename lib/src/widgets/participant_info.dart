@@ -51,6 +51,7 @@ class ParticipantInfoWidget extends StatelessWidget {
                 '@$title',
                 style: const TextStyle(color: Colors.white, fontSize: 14),
                 textAlign: isFirstIndex ? TextAlign.start : TextAlign.end,
+                maxLines: 1,
               ),
               subtitle: Column(
                 crossAxisAlignment:

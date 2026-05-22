@@ -389,6 +389,7 @@ class IsmLiveStreamController extends GetxController
   late AnimationController animationController;
   late Animation<Alignment> alignmentAnimation;
   late Animation<Alignment> alignmentAnimationRight;
+  bool _pkIntroAnimationListenerAttached = false;
   bool preventDispose = false;
 
   @override
@@ -457,6 +458,15 @@ class IsmLiveStreamController extends GetxController
 
     alignmentAnimation = alignmentTween.animate(animationController);
     alignmentAnimationRight = alignmentTweenRight.animate(animationController);
+
+    if (!_pkIntroAnimationListenerAttached) {
+      animationController.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          update([IsmLiveStreamView.updateId]);
+        }
+      });
+      _pkIntroAnimationListenerAttached = true;
+    }
   }
 
   void disposeAnimationController() {

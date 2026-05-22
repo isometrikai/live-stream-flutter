@@ -193,6 +193,10 @@ class IsmLivePkController extends GetxController
       startPkTimer(
         time: pkDetails.timeInMin ?? 0,
       );
+      streamController.update([
+        IsmLiveStreamView.updateId,
+        IsmLivePublisherGrid.updateId,
+      ]);
     } catch (e) {
       IsmLiveLog(e);
     }
@@ -586,6 +590,10 @@ class IsmLivePkController extends GetxController
         time: res.timeRemain ?? 0,
         inSec: true,
       );
+      streamController.update([
+        IsmLiveStreamView.updateId,
+        IsmLivePublisherGrid.updateId,
+      ]);
     }
   }
 
