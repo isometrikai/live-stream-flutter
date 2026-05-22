@@ -29,7 +29,10 @@ class IsmLiveImage extends StatelessWidget {
   })  : _imageType = IsmLiveImageType.asset,
         showError = false,
         color = null,
-        initials = null;
+        initials = null,
+        isCoverImage = false,
+        memCacheWidth = null,
+        memCacheHeight = null;
 
   const IsmLiveImage.svg(
     this.path, {
@@ -46,7 +49,10 @@ class IsmLiveImage extends StatelessWidget {
     this.fromPackage = true,
   })  : _imageType = IsmLiveImageType.svg,
         showError = false,
-        initials = null;
+        initials = null,
+        isCoverImage = false,
+        memCacheWidth = null,
+        memCacheHeight = null;
 
   const IsmLiveImage.network(
     this.path, {
@@ -54,6 +60,7 @@ class IsmLiveImage extends StatelessWidget {
     required this.name,
     this.initials,
     this.isProfileImage = false,
+    this.isCoverImage = false,
     this.dimensions,
     this.height,
     this.width,
@@ -62,6 +69,8 @@ class IsmLiveImage extends StatelessWidget {
     this.border,
     this.fromPackage = true,
     this.showError = true,
+    this.memCacheWidth,
+    this.memCacheHeight,
   })  : _imageType = IsmLiveImageType.network,
         color = null;
 
@@ -80,12 +89,18 @@ class IsmLiveImage extends StatelessWidget {
   })  : _imageType = IsmLiveImageType.file,
         showError = false,
         color = null,
-        initials = null;
+        initials = null,
+        isCoverImage = false,
+        memCacheWidth = null,
+        memCacheHeight = null;
 
   final String path;
   final String name;
   final String? initials;
   final bool isProfileImage;
+  final bool isCoverImage;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
   final double? dimensions;
   final double? height;
   final double? width;
@@ -117,9 +132,12 @@ class IsmLiveImage extends StatelessWidget {
           IsmLiveImageType.network => _Network(
               path,
               isProfileImage: isProfileImage,
+              isCoverImage: isCoverImage,
               name: name,
               initials: initials,
               showError: showError,
+              memCacheWidth: memCacheWidth,
+              memCacheHeight: memCacheHeight,
             ),
         },
       );
@@ -156,14 +174,20 @@ class _Network extends StatelessWidget {
     required this.name,
     this.initials,
     required this.isProfileImage,
+    this.isCoverImage = false,
     required this.showError,
+    this.memCacheWidth,
+    this.memCacheHeight,
   });
 
   final String imageUrl;
   final String name;
   final String? initials;
   final bool isProfileImage;
+  final bool isCoverImage;
   final bool showError;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +197,10 @@ class _Network extends StatelessWidget {
         fit: BoxFit.cover,
         alignment: Alignment.center,
         cacheKey: imageUrl,
+        memCacheWidth: memCacheWidth,
+        memCacheHeight: memCacheHeight,
+        maxWidthDiskCache: memCacheWidth,
+        maxHeightDiskCache: memCacheHeight,
         imageBuilder: (_, image) {
           try {
             if (imageUrl.isEmpty) {
@@ -202,7 +230,11 @@ class _Network extends StatelessWidget {
         placeholder: (context, url) => Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: IsmLiveColors.black.withValues(alpha: 0.2),
+            color: isCoverImage
+                ? (context.liveTheme?.secondaryColor ??
+                        IsmLiveColors.secondary)
+                    .withValues(alpha: 0.35)
+                : IsmLiveColors.black.withValues(alpha: 0.2),
             shape: isProfileImage ? BoxShape.circle : BoxShape.rectangle,
           ),
           child: isProfileImage &&
@@ -216,9 +248,11 @@ class _Network extends StatelessWidget {
                     color: IsmLiveColors.black,
                   ),
                 )
-              : const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                ),
+              : isCoverImage
+                  ? null
+                  : const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
         ),
         errorWidget: (context, url, error) => _ErrorImage(
           isProfileImage: isProfileImage,

@@ -2350,6 +2350,12 @@ mixin StreamJoinMixin {
     // block ~10s (SDK timeout)—the main slowdown when hosting a scheduled go-live.
     _controller.room = null;
     if (!joinByScrolling) {
+      final navContext = IsmLiveUtility.navigatorKey.currentContext;
+      if (navContext != null) {
+        unawaited(
+          IsmLiveUtility.precacheStreamCover(stream.streamImage, navContext),
+        );
+      }
       final previewRoom = lk.Room();
       IsmLiveRouteManagement.goToStreamView(
         isHost: isHost,

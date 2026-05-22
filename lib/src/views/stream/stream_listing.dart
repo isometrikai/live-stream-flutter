@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
@@ -309,6 +311,12 @@ class _StreamListingState extends State<_StreamListing> {
                             if (widget.streamType ==
                                     IsmLiveStreamType.scheduledStreams &&
                                 isCreatedByMe) {
+                              unawaited(
+                                IsmLiveUtility.precacheStreamCover(
+                                  e.streamImage,
+                                  context,
+                                ),
+                              );
                               controller.startSeduleStream(e);
                               return;
                             }

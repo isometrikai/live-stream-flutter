@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet_binding.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
@@ -54,6 +56,11 @@ abstract class IsmLiveRouteManagement {
     print(
         'initializeAndJoinStream goToStreamView called with reJoin=$reJoin, isHost=$isHost, isNewStream=$isNewStream');
     IsmLiveStreamBinding().dependencies();
+
+    final navContext = IsmLiveUtility.navigatorKey.currentContext;
+    if (navContext != null && streamImage != null && streamImage.trim().isNotEmpty) {
+      unawaited(IsmLiveUtility.precacheStreamCover(streamImage, navContext));
+    }
 
     var widget = IsmLiveStreamView(
       listener: listener,
