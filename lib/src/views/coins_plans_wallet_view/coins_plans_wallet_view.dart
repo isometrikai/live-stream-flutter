@@ -22,6 +22,8 @@ class CoinsPlansWalletView extends StatelessWidget {
         (isDarkMode ? const Color(0xFFB0B0B0) : const Color(0xffB1B6D1));
     final borderColor = context.liveTheme?.borderColor ??
         (isDarkMode ? const Color(0xFF1E1E1E) : Colors.purple.shade100);
+    final walletConfigure = IsmLiveDelegate.coinsPlansWalletScreenConfigure ??
+        const IsmLiveCoinsPlansWalletScreenConfigure();
 
     return GetBuilder<CoinsPlansWalletController>(
       id: updateId,
@@ -163,6 +165,18 @@ class CoinsPlansWalletView extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (walletConfigure.showWithdrawButton) ...[
+                          IsmLiveDimens.boxWidth50,
+                          Flexible(
+                            child: walletConfigure.buildWithdrawButton(
+                              context,
+                              balanceFormatted:
+                                  controller.balance.formatWithKAndL(),
+                              onWithdrawTap: () => walletConfigure.onWithdrawTap
+                                  ?.call(context, controller.balance),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

@@ -217,6 +217,7 @@ class IsmLiveStrings {
   static const String totalCoins = 'Total Coins';
   static const String coins = 'Coins';
   static const String transactions = 'Transactions';
+  static const String withdraw = 'Withdraw';
   static const String totalMoney = 'Total Money';
   static const String coinTransactions = 'Coin Transactions';
   static const String noData = 'No Data';

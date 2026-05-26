@@ -628,6 +628,7 @@ class IsmLiveApp extends StatefulWidget {
     StreamDisconnectApiHandler? streamDisconnectApiHandler,
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
+    IsmLiveCoinsPlansWalletScreenConfigure? coinsPlansWalletScreenConfigure,
     IsmLiveBackButtonBuilder? backButtonBuilder,
     IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure,
     IsmLiveStreamScreenConfigure? streamScreenConfigure,
@@ -681,6 +682,8 @@ class IsmLiveApp extends StatefulWidget {
         goLiveScreenConfigure ?? const IsmLiveGoLiveScreenConfigure();
     final resolvedStreamScreenConfigure =
         streamScreenConfigure ?? const IsmLiveStreamScreenConfigure();
+    final resolvedCoinsPlansWalletConfigure =
+        coinsPlansWalletScreenConfigure ?? const IsmLiveCoinsPlansWalletScreenConfigure();
 
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -733,6 +736,8 @@ class IsmLiveApp extends StatefulWidget {
         resolvedGoLiveScreenConfigure.onGoLiveViewDispose;
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
+    IsmLiveDelegate.coinsPlansWalletScreenConfigure =
+        resolvedCoinsPlansWalletConfigure;
     IsmLiveDelegate.backButtonBuilder = backButtonBuilder;
     IsmLiveDelegate.goLiveScreenConfigure = resolvedGoLiveScreenConfigure;
     IsmLiveDelegate.streamScreenConfigure = resolvedStreamScreenConfigure;
@@ -1046,6 +1051,10 @@ class IsmLiveApp extends StatefulWidget {
 
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
+
+  static IsmLiveCoinsPlansWalletScreenConfigure get coinsPlansWalletScreenConfigure =>
+      IsmLiveDelegate.coinsPlansWalletScreenConfigure ??
+      const IsmLiveCoinsPlansWalletScreenConfigure();
 
   static IsmLiveBackButtonBuilder? get backButtonBuilder =>
       IsmLiveDelegate.backButtonBuilder;
