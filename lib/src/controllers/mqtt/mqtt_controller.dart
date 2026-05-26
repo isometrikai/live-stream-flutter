@@ -1000,7 +1000,9 @@ class IsmLiveMqttController extends GetxController {
           break;
 
         case IsmLiveActions.pubsubMessagePublished:
-          _pkController.pkInviteEvent(payload);
+          if(_streamController.streamId != null){
+            _pkController.pkInviteEvent(payload);
+          }
 
           break;
         case IsmLiveActions.pubsubDirectMessagePublished:
@@ -1025,11 +1027,9 @@ class IsmLiveMqttController extends GetxController {
           break;
         case IsmLiveActions.messageReplySent:
         case IsmLiveActions.messageSent:
-          print('PKKKK ==>00 ${_streamController.streamId}  ==>11 $streamId');
           if (_streamController.streamId == streamId) {
             final message = IsmLiveMessageModel.fromMap(payload);
 
-            print('PKKKK ==>    inn   $payload');
             await _streamController.handleMessage(
               message: message,
               payload: payload,

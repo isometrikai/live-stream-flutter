@@ -74,8 +74,6 @@ mixin StreamMessageMixin {
       return;
     }
 
-    print('PKKKK ==>    processedMessage == >  ${processedMessage.messageType}  ${processedMessage.messageTypeValue}');
-
     switch (processedMessage.messageType) {
       case IsmLiveMessageType.normal:
         await _controller.addMessages([processedMessage], isMqtt);
