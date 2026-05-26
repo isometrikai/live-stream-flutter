@@ -164,6 +164,42 @@ Widget _multiParticipantTile(
   );
 }
 
+Color _multiParticipantGridLineColor(BuildContext context) {
+  final themeColor =
+      context.liveTheme?.primaryColor ?? IsmLiveColors.primary;
+  return themeColor.withValues(alpha: 0.35);
+}
+
+/// 1sp grid lines between multi-participant tiles (no spacing gap).
+Widget _multiParticipantGridTile(
+  BuildContext context,
+  Widget child, {
+  required int index,
+  required int crossCount,
+  required int participantCount,
+}) {
+  final row = index ~/ crossCount;
+  final col = index % crossCount;
+  final lineWidth = IsmLiveDimens.one;
+  final lineColor = _multiParticipantGridLineColor(context);
+
+  return DecoratedBox(
+    decoration: BoxDecoration(
+      border: Border(
+        top: row == 0
+            ? BorderSide(color: lineColor, width: lineWidth)
+            : BorderSide.none,
+        left: col == 0
+            ? BorderSide(color: lineColor, width: lineWidth)
+            : BorderSide.none,
+        right: BorderSide(color: lineColor, width: lineWidth),
+        bottom: BorderSide(color: lineColor, width: lineWidth),
+      ),
+    ),
+    child: child,
+  );
+}
+
 class IsmLivePublisherGrid extends StatelessWidget {
   const IsmLivePublisherGrid({
     super.key,
@@ -177,9 +213,6 @@ class IsmLivePublisherGrid extends StatelessWidget {
   final bool isSchedule;
 
   static const String updateId = 'publisher-grid';
-
-  /// Gutter between multi-participant tiles; stream background shows through.
-  static final double _multiParticipantTileSpacing = IsmLiveDimens.two;
 
   /// Lower bound on grid height as a fraction of available viewport below the top inset.
   /// Pairs with 16:9 intrinsic sizing: common live apps use large tiles for few hosts
@@ -358,8 +391,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                   final crossCount = participantCount < 3 ? 2 : 3;
                   final rowCount =
                       (participantCount + crossCount - 1) ~/ crossCount;
-                  final crossSpacing = _multiParticipantTileSpacing;
-                  final mainSpacing = _multiParticipantTileSpacing;
+                  const crossSpacing = 0.0;
+                  const mainSpacing = 0.0;
                   final crossExtent =
                       (constraints.maxWidth - (crossCount - 1) * crossSpacing) /
                           crossCount;
@@ -406,9 +439,16 @@ class IsmLivePublisherGrid extends StatelessWidget {
                                 crossAxisSpacing: crossSpacing,
                                 childAspectRatio: aspectRatio,
                               ),
-                              itemBuilder: (_, index) => _multiParticipantTile(
-                                controller,
-                                index,
+                              itemBuilder: (context, index) =>
+                                  _multiParticipantGridTile(
+                                context,
+                                _multiParticipantTile(
+                                  controller,
+                                  index,
+                                  participantCount: participantCount,
+                                ),
+                                index: index,
+                                crossCount: crossCount,
                                 participantCount: participantCount,
                               ),
                             ),
