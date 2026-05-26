@@ -74,6 +74,8 @@ mixin StreamMessageMixin {
       return;
     }
 
+    print('PKKKK ==>    processedMessage == >  ${processedMessage.messageType}  ${processedMessage.messageTypeValue}');
+
     switch (processedMessage.messageType) {
       case IsmLiveMessageType.normal:
         await _controller.addMessages([processedMessage], isMqtt);
@@ -118,6 +120,7 @@ mixin StreamMessageMixin {
         _pkController.pkStartEvent(payload ?? {});
         break;
       case IsmLiveMessageType.changeStream:
+      case IsmLiveMessageType.changestream:
         await _changeStream(processedMessage);
         break;
       case IsmLiveMessageType.pkStop:
