@@ -18,6 +18,8 @@ class IsmLiveTagProducts extends StatelessWidget {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: ismLiveBuildBackButton(context, color: iconColor),
         backgroundColor: bgColor,
         actions: [
           TextButton(
