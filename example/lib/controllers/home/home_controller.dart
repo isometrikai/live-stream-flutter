@@ -392,13 +392,13 @@ class HomeController extends GetxController {
         pinItemCallback: (direction, context) {},
         // Replace with real pinned-product state; invoked whenever the UI refreshes.
         hasPinnedProductGetter: () => true,
-        // pinnedProductBuilder: (context, controller) => SizedBox(
-        //   width: 150,
-        //   height: 200,
-        //   child: Container(
-        //     color: Colors.red,
-        //   ),
-        // ),
+        pinnedProductBuilder: (context, controller) => SizedBox(
+          width: 150,
+          height: 200,
+          child: Container(
+            color: Colors.red,
+          ),
+        ),
         // addProductViewBuilder: (context) => MyCustomAddProductView(),
       ),
       sideIconsConfigure: const IsmLiveSideIconsConfigure(
