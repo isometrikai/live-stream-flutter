@@ -539,6 +539,27 @@ typedef BuyNowButtonBuilder = Widget Function(
   VoidCallback onTap,
 );
 
+/// Builder for host product navigation arrow buttons in product streams.
+///
+/// This builder allows host applications to provide custom left/right arrow
+/// controls shown when the host has a pinned product.
+///
+/// [context] - The build context where the buttons are rendered.
+/// [streamId] - The current stream identifier.
+/// [hasPinnedProduct] - Whether a product is currently pinned in the stream.
+/// [onPreviousTap] - Callback for the previous (left) arrow action.
+/// [onNextTap] - Callback for the next (right) arrow action.
+///
+/// Call [onPreviousTap] and [onNextTap] from the custom widget to preserve
+/// the default pin-item navigation behavior.
+typedef HostArrowButtonsBuilder = Widget Function(
+  BuildContext context,
+  String streamId,
+  bool hasPinnedProduct,
+  VoidCallback onPreviousTap,
+  VoidCallback onNextTap,
+);
+
 /// Builder for custom shopping cart widget in stream header.
 ///
 /// This builder allows host applications to provide a custom shopping cart widget
@@ -1357,6 +1378,7 @@ class IsmLiveEcomConfigure {
     this.pinnedProductBuilder,
     this.hasPinnedProductGetter,
     this.buyNowButtonBuilder,
+    this.hostArrowButtonsBuilder,
     this.hostArrowButtonsSize,
     this.pinItemCallback,
     this.buyNowCallback,
@@ -1368,6 +1390,7 @@ class IsmLiveEcomConfigure {
       pinnedProductBuilder;
   final bool Function()? hasPinnedProductGetter;
   final BuyNowButtonBuilder? buyNowButtonBuilder;
+  final HostArrowButtonsBuilder? hostArrowButtonsBuilder;
   final double? hostArrowButtonsSize;
   final PinItemCallback? pinItemCallback;
   final BuyNowCallback? buyNowCallback;

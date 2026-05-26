@@ -318,13 +318,10 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                         padding: EdgeInsets.zero,
                         elevation: 0,
                       ),
-                      onPressed: () {
-                        // Left arrow action - call pinItemCallback with previous direction
-                        IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
-                          context,
-                          IsmLiveArrowDirection.previous,
-                        );
-                      },
+                      onPressed: () => _onHostArrowTap(
+                        context,
+                        IsmLiveArrowDirection.previous,
+                      ),
                       child: const Icon(
                         Icons.keyboard_arrow_left,
                         color: Colors.white,
@@ -348,13 +345,10 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                         padding: EdgeInsets.zero,
                         elevation: 0,
                       ),
-                      onPressed: () {
-                        // Right arrow action - call pinItemCallback with next direction
-                        IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(
-                          context,
-                          IsmLiveArrowDirection.next,
-                        );
-                      },
+                      onPressed: () => _onHostArrowTap(
+                        context,
+                        IsmLiveArrowDirection.next,
+                      ),
                       child: const Icon(
                         Icons.keyboard_arrow_right,
                         color: Colors.white,
@@ -407,6 +401,13 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
   void _onBuyNowTap(BuildContext context, IsmLiveStreamController controller) {
     // Call the buy now callback if provided
     IsmLiveDelegate.ecomConfigure?.buyNowCallback?.call();
+  }
+
+  void _onHostArrowTap(
+    BuildContext context,
+    IsmLiveArrowDirection direction,
+  ) {
+    IsmLiveDelegate.ecomConfigure?.pinItemCallback?.call(context, direction);
   }
 
   /// Calculates the dynamic bottom position for `pinnedProductBuilder`.
@@ -744,8 +745,22 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                                               .isHost &&
                                                                           (IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
                                                                               false)
-                                                                      ? _buildHostArrowButtons(
-                                                                          context)
+                                                                      ? IsmLiveDelegate
+                                                                              .ecomConfigure
+                                                                              ?.hostArrowButtonsBuilder
+                                                                              ?.call(
+                                                                            context,
+                                                                            controller.streamId ??
+                                                                                '',
+                                                                            IsmLiveDelegate.ecomConfigure?.hasPinnedProduct ??
+                                                                                false,
+                                                                            () =>
+                                                                                _onHostArrowTap(context, IsmLiveArrowDirection.previous),
+                                                                            () =>
+                                                                                _onHostArrowTap(context, IsmLiveArrowDirection.next),
+                                                                          ) ??
+                                                                          _buildHostArrowButtons(
+                                                                              context)
                                                                       : IsmLiveDelegate
                                                                               .ecomConfigure
                                                                               ?.buyNowButtonBuilder
