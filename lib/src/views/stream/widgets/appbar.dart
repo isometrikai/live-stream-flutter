@@ -52,7 +52,12 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                   )
                 ],
           leading: showBackArrow
-              ? const BackButton(onPressed: IsmLiveRoute.pop)
+              ? ismLiveBuildBackButton(
+                  context,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                )
               : IsmLiveTapHandler(
                   onTap: () {
                     if (controller.user == null) {

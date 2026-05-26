@@ -41,10 +41,7 @@ class CoinsPlansWalletView extends StatelessWidget {
             ),
           ),
           iconTheme: IconThemeData(color: iconColor),
-          leading: const BackButton(
-            color: Colors.black,
-            onPressed: IsmLiveRoute.pop,
-          ),
+          leading: ismLiveBuildBackButton(context, color: iconColor),
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(

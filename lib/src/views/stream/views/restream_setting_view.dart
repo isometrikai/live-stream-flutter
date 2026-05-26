@@ -20,6 +20,11 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
       backgroundColor: context.liveTheme?.backgroundColor ??
           (isDarkMode ? const Color(0xFF121212) : Colors.white),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: ismLiveBuildBackButton(
+          context,
+          color: isDarkMode ? Colors.white : Colors.black,
+        ),
         backgroundColor: context.liveTheme?.backgroundColor ??
             (isDarkMode ? const Color(0xFF121212) : Colors.white),
         title: Text(

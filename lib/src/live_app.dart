@@ -628,6 +628,7 @@ class IsmLiveApp extends StatefulWidget {
     StreamDisconnectApiHandler? streamDisconnectApiHandler,
     bool productionMode = false,
     IsmLiveEcomConfigure? ecomConfigure,
+    IsmLiveBackButtonBuilder? backButtonBuilder,
     IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure,
     IsmLiveStreamScreenConfigure? streamScreenConfigure,
     bool enableFreeGift = false,
@@ -732,6 +733,7 @@ class IsmLiveApp extends StatefulWidget {
         resolvedGoLiveScreenConfigure.onGoLiveViewDispose;
     IsmLiveDelegate.productionMode = productionMode;
     IsmLiveDelegate.ecomConfigure = ecomConfigure;
+    IsmLiveDelegate.backButtonBuilder = backButtonBuilder;
     IsmLiveDelegate.goLiveScreenConfigure = resolvedGoLiveScreenConfigure;
     IsmLiveDelegate.streamScreenConfigure = resolvedStreamScreenConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
@@ -1044,6 +1046,9 @@ class IsmLiveApp extends StatefulWidget {
 
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
+
+  static IsmLiveBackButtonBuilder? get backButtonBuilder =>
+      IsmLiveDelegate.backButtonBuilder;
 
   static IsmLiveGoLiveScreenConfigure? get goLiveScreenConfigure =>
       IsmLiveDelegate.goLiveScreenConfigure;

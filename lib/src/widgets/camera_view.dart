@@ -199,18 +199,9 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        onTap: IsmLiveRoute.pop,
-                        child: Container(
-                          height: IsmLiveDimens.forty,
-                          width: IsmLiveDimens.forty,
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
+                      ismLiveBuildBackButton(
+                        context,
+                        color: Colors.white,
                       ),
                       if (!isCameraFront &&
                           cameraControllerback?.value.isInitialized == true)
