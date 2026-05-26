@@ -1556,6 +1556,8 @@ class IsmLiveStreamScreenConfigure {
     this.streamHeaderInfoSectionBuilder,
     this.messageSendIconInsideInputField,
     this.messageSendButtonBuilder,
+    this.constrainChatViewWidth,
+    this.chatViewMaxWidthFraction,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
@@ -1582,6 +1584,18 @@ class IsmLiveStreamScreenConfigure {
   /// When `null`, the SDK uses the default send icon / [CustomIconButton].
   final MessageSendButtonBuilder? messageSendButtonBuilder;
 
+  /// When `true`, the live chat overlay is left-aligned with a capped max width
+  /// ([chatViewMaxWidthFraction] of the screen) so sibling UI (e.g. product
+  /// tiles) can share the row.
+  ///
+  /// When `null`, defaults to [IsmLiveDelegate.productStream] == `true` for
+  /// backward compatibility.
+  final bool? constrainChatViewWidth;
+
+  /// Max chat width as a fraction of screen width when [constrainChatViewWidth]
+  /// is enabled. Default `0.5` (half screen).
+  final double? chatViewMaxWidthFraction;
+
   /// Resolves whether the send icon is inside the input field.
   ///
   /// Uses [messageSendIconInsideInputField] when set; otherwise mirrors legacy
@@ -1589,6 +1603,14 @@ class IsmLiveStreamScreenConfigure {
   bool resolveMessageSendIconInsideInputField() =>
       messageSendIconInsideInputField ??
       IsmLiveDelegate.productStream == true;
+
+  /// Resolves whether the stream chat view should use a width constraint.
+  bool resolveConstrainChatViewWidth() =>
+      constrainChatViewWidth ?? IsmLiveDelegate.productStream == true;
+
+  /// Resolves the chat max-width fraction (clamped to `0.1`–`1.0`).
+  double resolveChatViewMaxWidthFraction() =>
+      (chatViewMaxWidthFraction ?? 0.5).clamp(0.1, 1.0);
 }
 
 /// Configuration class for GoLive screen customization.
