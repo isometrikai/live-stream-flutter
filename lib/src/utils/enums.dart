@@ -386,6 +386,7 @@ enum IsmLiveMessageType {
   remove(1),
   pkStart(23),
   changeStream(21),
+  changestream(24),
   pk(20),
   pkStop(22),
   presence(4),
@@ -414,6 +415,7 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
         IsmLiveMessageType.changeStream.value: IsmLiveMessageType.changeStream,
+        IsmLiveMessageType.changestream.value: IsmLiveMessageType.changestream,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
         IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
       }[data] ??

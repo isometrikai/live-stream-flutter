@@ -2,6 +2,52 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_progress_bar/flutter_rounded_progress_bar.dart';
 import 'package:flutter_rounded_progress_bar/rounded_progress_bar_style.dart';
+import 'package:get/get.dart';
+
+/// PK battle stats overlay; rebuilds only this layer when coins/bars change.
+class IsmLivePkParticipantStatsOverlay extends StatelessWidget {
+  const IsmLivePkParticipantStatsOverlay({
+    super.key,
+    this.imageUrl,
+    required this.name,
+    required this.isHost,
+    required this.isFirstIndex,
+    this.title,
+  });
+
+  final String? imageUrl;
+  final String name;
+  final bool isHost;
+  final bool isFirstIndex;
+  final String? title;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Get.isRegistered<IsmLivePkController>()) {
+      return const SizedBox.shrink();
+    }
+
+    return RepaintBoundary(
+      child: Obx(
+        () {
+          final pk = Get.find<IsmLivePkController>();
+          return ParticipantInfoWidget(
+            imageUrl: imageUrl,
+            name: name,
+            isHost: isHost,
+            isFirstIndex: isFirstIndex,
+            title: title,
+            hostCoins: pk.pkHostValue.toInt(),
+            gustCoins: pk.pkGustValue.toInt(),
+            hostper: pk.pkBarHostPersentage,
+            gustper: pk.pkBarGustPersentage,
+            battleStart: pk.pkBattleStarted,
+          );
+        },
+      ),
+    );
+  }
+}
 
 class ParticipantInfoWidget extends StatelessWidget {
   const ParticipantInfoWidget({

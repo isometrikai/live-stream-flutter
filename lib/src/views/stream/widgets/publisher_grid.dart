@@ -178,6 +178,9 @@ class IsmLivePublisherGrid extends StatelessWidget {
 
   static const String updateId = 'publisher-grid';
 
+  /// Gutter between multi-participant tiles; stream background shows through.
+  static final double _multiParticipantTileSpacing = IsmLiveDimens.two;
+
   /// Lower bound on grid height as a fraction of available viewport below the top inset.
   /// Pairs with 16:9 intrinsic sizing: common live apps use large tiles for few hosts
   /// (side-by-side ~half screen for 2) and scale up as the grid grows (2×2, 3×3, …).
@@ -355,8 +358,8 @@ class IsmLivePublisherGrid extends StatelessWidget {
                   final crossCount = participantCount < 3 ? 2 : 3;
                   final rowCount =
                       (participantCount + crossCount - 1) ~/ crossCount;
-                  const crossSpacing = 0.0;
-                  const mainSpacing = 0.0;
+                  final crossSpacing = _multiParticipantTileSpacing;
+                  final mainSpacing = _multiParticipantTileSpacing;
                   final crossExtent =
                       (constraints.maxWidth - (crossCount - 1) * crossSpacing) /
                           crossCount;

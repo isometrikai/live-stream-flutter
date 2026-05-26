@@ -873,6 +873,7 @@ class IsmLiveStreamController extends GetxController
     pkcontroller.pkBarHostPersentage = 100;
     pkcontroller.pkHostValue = 0;
     pkcontroller.pkGustValue = 0;
+    pkcontroller.pkBattleStarted = false;
 
     // Clear timers
     streamTimer?.cancel();

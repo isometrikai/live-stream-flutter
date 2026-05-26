@@ -104,8 +104,19 @@ class IsmLivePkController extends GetxController
     return '';
   }
 
-  num pkHostValue = 0;
-  num pkGustValue = 0;
+  final Rx<num> _pkHostValue = Rx<num>(0);
+  num get pkHostValue => _pkHostValue.value;
+  set pkHostValue(num value) => _pkHostValue.value = value;
+
+  final Rx<num> _pkGustValue = Rx<num>(0);
+  num get pkGustValue => _pkGustValue.value;
+  set pkGustValue(num value) => _pkGustValue.value = value;
+
+  /// Mirrors [IsmLivePkStages.isPkStart] for scoped UI updates without
+  /// rebuilding the publisher grid.
+  final RxBool _pkBattleStarted = false.obs;
+  bool get pkBattleStarted => _pkBattleStarted.value;
+  set pkBattleStarted(bool value) => _pkBattleStarted.value = value;
 
   Timer? pkTimer;
 
@@ -142,61 +153,72 @@ class IsmLivePkController extends GetxController
     );
   }
 
-  void startPkTimer({
-    required int time,
-    bool inSec = false,
-  }) {
+  void _cancelPkPeriodicTimer() {
+    pkTimer?.cancel();
+    pkTimer = null;
+  }
+
+  void _armPkPeriodicTimer() {
     if (pkTimer != null) {
       return;
     }
-
-    if (inSec) {
-      pkDuration = Duration(seconds: time);
-    } else {
-      pkDuration = Duration(minutes: time);
-    }
-
     pkTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        pkDuration -= const Duration(
-          seconds: 1,
-        );
-        if (pkDuration.inSeconds <= 0) {
+        if (pkDuration.inSeconds <= 1) {
           pkTimer?.cancel();
           pkTimer = null;
           final currentPkId = pkId;
           if (currentPkId != null && currentPkId.isNotEmpty) {
             declainrPkBattleResult(pkId: currentPkId);
           }
+          return;
         }
+        pkDuration -= const Duration(seconds: 1);
       },
     );
+  }
+
+  /// Resets counters, shows battle UI on the next frame, then arms the ticker.
+  void _schedulePkBattleCountdown({
+    required int time,
+    bool inSec = false,
+  }) {
+    _cancelPkPeriodicTimer();
+    pkDuration = inSec ? Duration(seconds: time) : Duration(minutes: time);
+    pkBarPersentage = 0.0;
+    pkBarGustPersentage = 100;
+    pkBarHostPersentage = 100;
+    pkHostValue = 0;
+    pkGustValue = 0;
+
+    // Defer battle UI + periodic timer so the current frame is not blocked by
+    // overlay layout, progress bars, and stream-view rebuilds.
+    IsmLiveUtility.updateLater(() {
+      pkBattleStarted = true;
+      _armPkPeriodicTimer();
+    }, false);
+  }
+
+  void startPkTimer({
+    required int time,
+    bool inSec = false,
+  }) {
+    _schedulePkBattleCountdown(time: time, inSec: inSec);
   }
 
   void pkStartEvent(Map<String, dynamic> payload) async {
     try {
       var pkDetails = IsmLivePkEventMetaDataModel.fromMap(payload['metaData']);
-      if (pkTimer != null) {
-        pkTimer?.cancel();
-        pkTimer = null;
-      }
+      _cancelPkPeriodicTimer();
       streamController.pkStages ??= IsmLivePkStages.isPk();
       streamController.pkStages?.makePkStart();
+      pkBattleStarted = false;
       streamController.pkWinnerId = null;
       pkId = pkDetails.pkId;
-      pkBarPersentage = 0.0;
-      pkBarGustPersentage = 100;
-      pkBarHostPersentage = 100;
-      pkHostValue = 0;
-      pkGustValue = 0;
-      startPkTimer(
+      _schedulePkBattleCountdown(
         time: pkDetails.timeInMin ?? 0,
       );
-      streamController.update([
-        IsmLiveStreamView.updateId,
-        IsmLivePublisherGrid.updateId,
-      ]);
     } catch (e) {
       IsmLiveLog(e);
     }
@@ -212,8 +234,8 @@ class IsmLivePkController extends GetxController
       } else {
         stopPkId = payload['payload']['pkId'];
       }
-      pkTimer?.cancel();
-      pkTimer = null;
+      _cancelPkPeriodicTimer();
+      pkBattleStarted = false;
       streamController.pkStages?.removePkStart();
       streamController.pkStages?.makePkStop();
       await pkWinner(stopPkId);
@@ -586,14 +608,11 @@ class IsmLivePkController extends GetxController
       pkId = res.pkId;
       streamController.pkStages = IsmLivePkStages.isPk();
       streamController.pkStages?.makePkStart();
-      startPkTimer(
+      pkBattleStarted = false;
+      _schedulePkBattleCountdown(
         time: res.timeRemain ?? 0,
         inSec: true,
       );
-      streamController.update([
-        IsmLiveStreamView.updateId,
-        IsmLivePublisherGrid.updateId,
-      ]);
     }
   }
 
@@ -620,8 +639,8 @@ class IsmLivePkController extends GetxController
   Future<void> declainrPkBattleResult({
     required String pkId,
   }) async {
-    pkTimer?.cancel();
-    pkTimer = null;
+    _cancelPkPeriodicTimer();
+    pkBattleStarted = false;
     streamController.pkStages?.removePkStart();
     streamController.pkStages?.makePkStop();
     await pkWinner(pkId);
@@ -653,6 +672,7 @@ class IsmLivePkController extends GetxController
       intentToStop: intentToStop,
     );
     streamController.pkStages = null;
+    pkBattleStarted = false;
   }
 
   Future<void> getGiftCategories({
