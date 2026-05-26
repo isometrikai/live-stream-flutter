@@ -930,10 +930,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                         );
                                       },
                                     ),
-                                  if ((controller.pkStages?.isPkStart ??
-                                          false) &&
-                                      controller.participantTracks.length > 1)
-                                    const IsmLivePkTimerContainer(),
+                                  const IsmLivePkTimerOverlay(),
                                   if ((controller.pkStages?.isPkStop ??
                                           false) &&
                                       controller.pkWinnerId == null)

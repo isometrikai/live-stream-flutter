@@ -255,19 +255,12 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
             if (widget.showStatsLayer)
               Align(
                 alignment: Alignment.topCenter,
-                child: ParticipantInfoWidget(
+                child: IsmLivePkParticipantStatsOverlay(
                   imageUrl: uiData.imageUrl,
                   name: uiData.displayName,
                   isHost: widget.isHost,
                   isFirstIndex: widget.isFirstIndex,
                   title: uiData.displayName,
-                  hostCoins: pkController.pkHostValue.toInt(),
-                  battleStart:
-                      pkController.streamController.pkStages?.isPkStart ??
-                          false,
-                  gustCoins: pkController.pkGustValue.toInt(),
-                  hostper: pkController.pkBarHostPersentage,
-                  gustper: pkController.pkBarGustPersentage,
                 ),
               ),
             if (canShowMakeHostAction)
