@@ -28,6 +28,68 @@ class IsmLiveMessageField extends StatelessWidget {
 
   static const String updateId = 'message-field-id';
 
+  bool get _sendIconInsideInputField =>
+      IsmLiveDelegate.streamScreenConfigure
+          .resolveMessageSendIconInsideInputField();
+
+  VoidCallback? _onSendTap(
+    IsmLiveStreamController controller, {
+    required bool disabled,
+  }) {
+    if (disabled || controller.messageFieldController.text.trim().isEmpty) {
+      return null;
+    }
+    return () => controller.sendTextMessage(
+          streamId: streamId,
+          body: controller.messageFieldController.text.trim(),
+          parentMessage: controller.parentMessage,
+        );
+  }
+
+  Widget _buildSendButton(
+    BuildContext context,
+    IsmLiveStreamController controller, {
+    required bool disabled,
+    required bool isInsideInputField,
+  }) {
+    final messageText = controller.messageFieldController.text;
+    final onSend = _onSendTap(controller, disabled: disabled);
+    final customBuilder =
+        IsmLiveDelegate.streamScreenConfigure.messageSendButtonBuilder;
+
+    if (customBuilder != null) {
+      return customBuilder(
+        context,
+        streamId,
+        isHost,
+        disabled,
+        messageText,
+        onSend,
+        isInsideInputField,
+      );
+    }
+
+    if (isInsideInputField) {
+      return InkWell(
+        onTap: onSend,
+        child: const Icon(
+          Icons.send,
+          color: Colors.white,
+        ),
+      );
+    }
+
+    return CustomIconButton(
+      dimension: IsmLiveDimens.forty,
+      icon: const Icon(
+        Icons.send,
+        color: Colors.white,
+      ),
+      onTap: onSend,
+      gradient: IsmLiveDelegate.streamOptionsBgGradient,
+    );
+  }
+
   @override
   Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
         id: updateId,
@@ -62,7 +124,7 @@ class IsmLiveMessageField extends StatelessWidget {
                         children: [
                           IsmLiveImage.network(
                             IsmLiveDelegate.getUserProfileUrl?.call(
-                                controller.parentMessage!.imageUrl) ??
+                                    controller.parentMessage!.imageUrl) ??
                                 controller.parentMessage!.imageUrl,
                             name: controller.parentMessage!.userName,
                             dimensions: IsmLiveDimens.twentyFour,
@@ -141,65 +203,28 @@ class IsmLiveMessageField extends StatelessWidget {
                                     parentMessage: controller.parentMessage,
                                   );
                                 },
-                          suffixIcon: IsmLiveDelegate.productStream == true &&
+                          suffixIcon: _sendIconInsideInputField &&
                                   controller.messageFieldController.text
                                       .trim()
                                       .isNotEmpty &&
                                   !disabled
-                              ? Container(
-                                  child: InkWell(
-                                    onTap: controller
-                                            .messageFieldController.isNotEmpty
-                                        ? () => controller.sendTextMessage(
-                                              streamId: streamId,
-                                              body: controller
-                                                  .messageFieldController.text
-                                                  .trim(),
-                                              parentMessage:
-                                                  controller.parentMessage,
-                                            )
-                                        : null,
-                                    child: const Icon(
-                                      Icons.send,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                              ? _buildSendButton(
+                                  context,
+                                  controller,
+                                  disabled: disabled,
+                                  isInsideInputField: true,
                                 )
                               : null,
-                          // prefixIcon: Container(
-                            // child: InkWell(
-                            //     onTap: disabled
-                            //         ? null
-                            //         : () {
-                            //             controller.toggleEmojiBoard(context);
-                            //           },
-                            //     child: const Icon(
-                            //       Icons.mood,
-                            //       color: Colors.white,
-                            //     )),
-                          // ),
                         ),
                       ),
-                      if (IsmLiveDelegate.productStream != true &&
-                          !disabled) ...[
+                      if (!_sendIconInsideInputField && !disabled) ...[
                         IsmLiveDimens.boxWidth15,
-                        CustomIconButton(
-                          dimension: IsmLiveDimens.forty,
-                          icon: const Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          ),
-                          onTap: disabled ||
-                                  controller.messageFieldController.isEmpty
-                              ? null
-                              : () => controller.sendTextMessage(
-                                    streamId: streamId,
-                                    body: controller.messageFieldController.text
-                                        .trim(),
-                                    parentMessage: controller.parentMessage,
-                                  ),
-                          gradient: IsmLiveDelegate.streamOptionsBgGradient,
-                        )
+                        _buildSendButton(
+                          context,
+                          controller,
+                          disabled: disabled,
+                          isInsideInputField: false,
+                        ),
                       ]
                     ],
                   ),

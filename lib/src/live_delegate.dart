@@ -1443,6 +1443,24 @@ typedef StreamHeaderInfoSectionBuilder = Widget? Function(
   String? winnerName,
 );
 
+/// Builder for the message field send action button.
+///
+/// [disabled] reflects whether the message field is disabled.
+/// [messageText] is the current input text from the message field controller.
+/// [onSend] invokes the default send-message behavior when sending is allowed.
+///
+/// [isInsideInputField] is `true` when the send control is rendered as the
+/// input suffix icon; `false` when it is rendered beside the input field.
+typedef MessageSendButtonBuilder = Widget Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool disabled,
+  String messageText,
+  VoidCallback? onSend,
+  bool isInsideInputField,
+);
+
 /// Configuration for the live stream screen UI.
 ///
 /// Set via `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
@@ -1451,6 +1469,8 @@ class IsmLiveStreamScreenConfigure {
     this.streamBottomWidgetBuilder,
     this.streamHeaderTimerTrailingWidgetBuilder,
     this.streamHeaderInfoSectionBuilder,
+    this.messageSendIconInsideInputField,
+    this.messageSendButtonBuilder,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
@@ -1463,6 +1483,27 @@ class IsmLiveStreamScreenConfigure {
 
   /// Custom widget replacing the timer row and description / PK banner.
   final StreamHeaderInfoSectionBuilder? streamHeaderInfoSectionBuilder;
+
+  /// When `true`, the send action is shown inside [IsmLiveInputField] as a
+  /// suffix icon (visible only when the field has text). When `false`, it is
+  /// shown as a separate button next to the input.
+  ///
+  /// When `null`, defaults to [IsmLiveDelegate.productStream] == `true` for
+  /// backward compatibility.
+  final bool? messageSendIconInsideInputField;
+
+  /// Custom builder for the message send button (inside or outside the input).
+  ///
+  /// When `null`, the SDK uses the default send icon / [CustomIconButton].
+  final MessageSendButtonBuilder? messageSendButtonBuilder;
+
+  /// Resolves whether the send icon is inside the input field.
+  ///
+  /// Uses [messageSendIconInsideInputField] when set; otherwise mirrors legacy
+  /// [IsmLiveDelegate.productStream] behavior.
+  bool resolveMessageSendIconInsideInputField() =>
+      messageSendIconInsideInputField ??
+      IsmLiveDelegate.productStream == true;
 }
 
 /// Configuration class for GoLive screen customization.
