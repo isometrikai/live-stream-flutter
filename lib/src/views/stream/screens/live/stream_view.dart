@@ -1,5 +1,5 @@
 // Live stream screen library. Implementation is split into [part] files under
-// [stream_view/].
+// [parts/].
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
@@ -10,12 +10,12 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-part 'stream_view/ism_live_stream_view_body.dart';
-part 'stream_view/schedule_stream_view.dart';
-part 'stream_view/stream_view_chat.dart';
-part 'stream_view/stream_view_cleanup.dart';
-part 'stream_view/stream_view_gradients.dart';
-part 'stream_view/stream_view_header.dart';
+part 'parts/ism_live_stream_view_body.dart';
+part 'parts/schedule_stream_view.dart';
+part 'parts/stream_view_chat.dart';
+part 'parts/stream_view_cleanup.dart';
+part 'parts/stream_view_gradients.dart';
+part 'parts/stream_view_header.dart';
 
 class IsmLiveStreamView extends StatelessWidget {
   /// Refactored: All arguments must be passed via the constructor.

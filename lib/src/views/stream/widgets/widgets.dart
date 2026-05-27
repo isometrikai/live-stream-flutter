@@ -15,6 +15,7 @@ export 'live_streams_scrolling.dart';
 export 'logout_bottom_sheet.dart';
 export 'message_field.dart';
 export 'moderation_warning.dart';
+export 'pk/pk.dart';
 export 'pk_timer.dart';
 export 'product.dart';
 export 'product_container.dart';
