@@ -349,6 +349,7 @@ class IsmLiveStreamRepository {
       'skip': skip,
       'limit': limit,
       'searchTag': searchTag,
+      'sorting': 1,
     };
     if (queryParams != null && queryParams.isNotEmpty) {
       for (final entry in queryParams.entries) {
