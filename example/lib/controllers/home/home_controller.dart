@@ -128,7 +128,7 @@ class HomeController extends GetxController {
       // },
       // ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
-          isProductStreamFeatureEnabled: true,
+          isProductStreamFeatureEnabled: false,
           isScheduleStreamFeatureEnabled: true,
           defaultBroadcastDescription: 'Hey!'
           // Feature flags:
