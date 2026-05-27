@@ -776,7 +776,7 @@ mixin StreamAPIMixin {
   Future<void> fetchEligibleMembers({
     bool forceFetch = false,
     required String streamId,
-    int limit = 15,
+    int limit = 10,
     int skip = 0,
     String? searchTag,
   }) async {
