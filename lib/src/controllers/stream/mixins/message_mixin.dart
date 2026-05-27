@@ -118,7 +118,7 @@ mixin StreamMessageMixin {
         _pkController.pkStartEvent(payload ?? {});
         break;
       case IsmLiveMessageType.changeStream:
-      case IsmLiveMessageType.changestream:
+      case IsmLiveMessageType.changeStreamPkEnd:
         await _changeStream(processedMessage);
         break;
       case IsmLiveMessageType.pkStop:
