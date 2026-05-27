@@ -1528,6 +1528,17 @@ typedef StreamHeaderInfoSectionBuilder = Widget? Function(
   String? winnerName,
 );
 
+/// Builder for the stream overlay gradients that dim the video/grid.
+///
+/// When set, this single builder replaces the default SDK top + bottom
+/// gradients. Return `null` to hide gradients entirely.
+typedef StreamGradientOverlayBuilder = Widget? Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isSchedule,
+);
+
 /// Builder for the message field send action button.
 ///
 /// [disabled] reflects whether the message field is disabled.
@@ -1554,6 +1565,7 @@ class IsmLiveStreamScreenConfigure {
     this.streamBottomWidgetBuilder,
     this.streamHeaderTimerTrailingWidgetBuilder,
     this.streamHeaderInfoSectionBuilder,
+    this.streamGradientOverlayBuilder,
     this.messageSendIconInsideInputField,
     this.messageSendButtonBuilder,
     this.constrainChatViewWidth,
@@ -1570,6 +1582,12 @@ class IsmLiveStreamScreenConfigure {
 
   /// Custom widget replacing the timer row and description / PK banner.
   final StreamHeaderInfoSectionBuilder? streamHeaderInfoSectionBuilder;
+
+  /// Single builder for the gradients overlay shown on top of the video/grid.
+  ///
+  /// When `null`, the SDK uses the default top and bottom gradients.
+  /// Return `null` from the builder to hide gradients entirely.
+  final StreamGradientOverlayBuilder? streamGradientOverlayBuilder;
 
   /// When `true`, the send action is shown inside [IsmLiveInputField] as a
   /// suffix icon (visible only when the field has text). When `false`, it is

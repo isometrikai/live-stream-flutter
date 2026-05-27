@@ -257,6 +257,15 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
           // stay above the keyboard (body no longer resizes â€” see Scaffold flag).
           final overlayBottomPadding = systemBottomInset + keyboardBottom;
           final isActiveStreamPage = controller.streamId == widget.streamId;
+          final gradientOverlay = IsmLiveDelegate
+              .streamScreenConfigure
+              .streamGradientOverlayBuilder
+              ?.call(
+            context,
+            widget.streamId,
+            controller.isHost,
+            widget.isSchedule,
+          );
           return PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
@@ -332,9 +341,13 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                               child: Stack(
                                 fit: StackFit.expand,
                                 children: [
-                                  // Gradients positioned right after publisher grid to only overlay video content
-                                  const _TopDarkGradient(),
-                                  const _BottomDarkGradient(),
+                                  // Gradients positioned right after publisher grid to only overlay video content.
+                                  ...(gradientOverlay != null
+                                      ? [gradientOverlay]
+                                      : const [
+                                          _TopDarkGradient(),
+                                          _BottomDarkGradient(),
+                                        ]),
                                   Align(
                                     alignment: IsmLiveApp.headerPosition,
                                     child: Obx(
