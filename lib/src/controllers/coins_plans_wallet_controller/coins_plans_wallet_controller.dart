@@ -60,7 +60,7 @@ class CoinsPlansWalletController extends GetxController
       _transactions[type]!;
 
   final Rx<IsmLiveCoinTransactionType> _coinTransactionType =
-      IsmLiveCoinTransactionType.debit.obs;
+      IsmLiveCoinTransactionType.all.obs;
   IsmLiveCoinTransactionType get coinTransactionType =>
       _coinTransactionType.value;
   set coinTransactionType(IsmLiveCoinTransactionType value) =>
@@ -212,17 +212,20 @@ class CoinsPlansWalletController extends GetxController
     required int skip,
     required int limit,
   }) async {
-    var txnType = type ?? coinTransactionType;
+    var selectedType = type ?? coinTransactionType;
+    final txnType = selectedType == IsmLiveCoinTransactionType.all
+        ? null
+        : selectedType.label.toUpperCase();
     var txnlist = await _coinsPlansWalletViewMode.fetchTransactions(
-      txnType: txnType.label.toUpperCase(),
+      txnType: txnType,
       limit: limit,
       skip: skip,
     );
 
     if (moreFetch) {
-      _transactions[txnType]?.addAll(txnlist);
+      _transactions[selectedType]?.addAll(txnlist);
     } else {
-      _transactions[txnType] = txnlist;
+      _transactions[selectedType] = txnlist;
     }
 
     IsmLiveUtility.updateLater(() {

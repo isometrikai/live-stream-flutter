@@ -89,7 +89,7 @@ class CoinsPlansWalletViewMode {
   }
 
   Future<List<IsmLiveCoinTransactionModel>> fetchTransactions({
-    required String txnType,
+    String? txnType,
     required int skip,
     required int limit,
   }) async {
