@@ -51,7 +51,7 @@ class IsmLiveApis {
   static const String sendHearts = '$_live/stream/like';
   static const String buyStream = '$_live/buy/stream';
   static const String fetchCoins = '/v1/wallet/user';
-  static const String fetchTransactions = '/v1/transaction/user';
+  static const String fetchTransactions = '/v1/transaction/grouped';
   static const String getGiftCategories = '/v1/app/giftGroup';
   static const String getGiftsForACategory = '/v1/app/virtualGifts';
   static const String sendGiftToStreamer = '/live/v1/giftTransfer';

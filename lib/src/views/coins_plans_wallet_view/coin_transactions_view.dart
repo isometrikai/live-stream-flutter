@@ -135,7 +135,8 @@ class _CoinTransactionsListing extends StatelessWidget {
                       itemBuilder: (context, index) {
                         var tracsactionValue =
                             controller.transactionsFor(type)[index];
-                        final isCredit = type.value == 2;
+                        final isCredit =
+                            tracsactionValue.txnType?.toUpperCase() == 'CREDIT';
                         return ListTile(
                           contentPadding: IsmLiveDimens.edgeInsets0,
                           leading: Container(

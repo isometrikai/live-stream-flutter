@@ -65,17 +65,19 @@ class CoinsPlansWalletRepository {
   }
 
   Future<IsmLiveResponseModel> fetchTransactions({
-    required String txnType,
+    String? txnType,
     required int skip,
     required int limit,
   }) {
     var payload = {
       'currency': 'COIN',
-      'txnType': txnType,
-      'txnSpecific': true,
       'skip': skip,
       'limit': limit,
     };
+    if (txnType != null && txnType.isNotEmpty) {
+      payload['txnType'] = txnType;
+      payload['txnSpecific'] = true;
+    }
     return _apiWrapper.makeRequest(
       '${IsmLiveApis.fetchTransactions}?${payload.makeQuery()}',
       baseUrl: IsmLiveApis.baseUrlAsPerMode,

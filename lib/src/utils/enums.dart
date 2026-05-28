@@ -143,6 +143,7 @@ enum IsmLiveStreamType {
 }
 
 enum IsmLiveCoinTransactionType {
+  all(0, IsmLiveStrings.all),
   debit(1, IsmLiveStrings.debit),
 
   credit(2, IsmLiveStrings.credit);
