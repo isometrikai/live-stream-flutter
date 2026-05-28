@@ -888,6 +888,7 @@ class IsmLiveMqttController extends GetxController {
           break;
         case IsmLiveActions.memberLeft:
           var member = IsmLiveViewerModel.fromMap(payload);
+          final membersCount = payload['membersCount'] as num?;
           final message = IsmLiveMessageModel(
             streamId: streamId!,
             senderName: member.userName,
@@ -903,6 +904,13 @@ class IsmLiveMqttController extends GetxController {
           unawaited(_streamController.handleMessage(message: message));
           _streamController.streamMembersList
               .removeWhere((e) => e.userId == member.userId);
+          final shouldRevertHostCopublisherRole = _streamController.isHost &&
+              !_streamController.isPk &&
+              _streamController.userRole?.isCopublisher == true &&
+              (membersCount?.toInt() ?? 0) <= 1;
+          if (shouldRevertHostCopublisherRole) {
+            _streamController.userRole?.leaveCopublishing();
+          }
           await Future.delayed(const Duration(milliseconds: 500));
           _updateStream();
 
