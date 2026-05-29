@@ -222,6 +222,7 @@ class IsmLiveStrings {
   static const String coinTransactions = 'Coin Transactions';
   static const String noData = 'No Data';
   static const String transactionId = 'TransactionId:';
+  static const String breakdown = 'Breakdown';
 
   // Stream UI + sheets strings
   static const String searchCopublisher = 'Search Copublisher';

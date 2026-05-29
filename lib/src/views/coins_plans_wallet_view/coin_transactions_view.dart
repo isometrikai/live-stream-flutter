@@ -138,6 +138,16 @@ class _CoinTransactionsListing extends StatelessWidget {
                         final isCredit =
                             tracsactionValue.txnType?.toUpperCase() == 'CREDIT';
                         return ListTile(
+                          onTap: () => IsmLiveUtility.openBottomSheet(
+                            _CoinTransactionBreakdownSheet(
+                              transaction: tracsactionValue,
+                            ),
+                            isScrollController: true,
+                            backgroundColor: context.liveTheme?.backgroundColor ??
+                                (isDarkMode
+                                    ? const Color(0xFF121212)
+                                    : Colors.white),
+                          ),
                           contentPadding: IsmLiveDimens.edgeInsets0,
                           leading: Container(
                             height: IsmLiveDimens.twenty,
@@ -195,4 +205,152 @@ class _CoinTransactionsListing extends StatelessWidget {
                 ),
         ),
       );
+}
+
+class _CoinTransactionBreakdownSheet extends StatelessWidget {
+  const _CoinTransactionBreakdownSheet({required this.transaction});
+
+  final IsmLiveCoinTransactionModel transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = context.liveTheme?.primaryColor ??
+        (isDarkMode ? Colors.white : Colors.black);
+    final subtitleColor = context.liveTheme?.unselectedTextColor ??
+        (isDarkMode ? const Color(0xFFB0B0B0) : Colors.grey);
+    final isCredit = transaction.txnType?.toUpperCase() == 'CREDIT';
+    final title = (transaction.description?.trim().isNotEmpty ?? false)
+        ? transaction.description!.trim()
+        : '${IsmLiveStrings.transactionId} ${transaction.transactionId ?? ''}';
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: IsmLiveDimens.sixteen,
+        right: IsmLiveDimens.sixteen,
+        top: IsmLiveDimens.sixteen,
+        bottom: MediaQuery.paddingOf(context).bottom + IsmLiveDimens.sixteen,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                width: IsmLiveDimens.forty,
+                height: IsmLiveDimens.four,
+                decoration: BoxDecoration(
+                  color: subtitleColor.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(IsmLiveDimens.two),
+                ),
+              ),
+            ),
+            IsmLiveDimens.boxHeight16,
+            Text(
+              title,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            if (transaction.notes?.trim().isNotEmpty ?? false) ...[
+              IsmLiveDimens.boxHeight8,
+              Text(
+                transaction.notes!.trim(),
+                style: TextStyle(
+                  fontSize: IsmLiveDimens.fourteen,
+                  color: subtitleColor,
+                ),
+              ),
+            ],
+            IsmLiveDimens.boxHeight8,
+            Text(
+              transaction.formattedDuration,
+              style: TextStyle(
+                fontSize: IsmLiveDimens.twelve,
+                color: subtitleColor,
+              ),
+            ),
+            IsmLiveDimens.boxHeight16,
+            Row(
+              children: [
+                Container(
+                  height: IsmLiveDimens.twenty,
+                  width: IsmLiveDimens.twenty,
+                  color: isCredit ? Colors.green : Colors.red,
+                  child: Icon(
+                    isCredit
+                        ? Icons.arrow_downward_sharp
+                        : Icons.arrow_upward_sharp,
+                    color: Colors.white,
+                    size: IsmLiveDimens.ten,
+                  ),
+                ),
+                IsmLiveDimens.boxWidth8,
+                Text(
+                  transaction.txnType ?? '',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+                const Spacer(),
+                const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                IsmLiveDimens.boxWidth2,
+                Text(
+                  transaction.amount?.formatWithKAndL() ?? '0',
+                  style: context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+              ],
+            ),
+            if (transaction.breakdown.isNotEmpty) ...[
+              IsmLiveDimens.boxHeight24,
+              Text(
+                IsmLiveStrings.breakdown,
+                style: context.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              IsmLiveDimens.boxHeight8,
+              ...transaction.breakdown.map(
+                (item) => Padding(
+                  padding: EdgeInsets.only(bottom: IsmLiveDimens.twelve),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.label?.trim().isNotEmpty ?? false
+                              ? item.label!.trim()
+                              : (item.splitType ?? ''),
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: textColor,
+                          ),
+                        ),
+                      ),
+                      IsmLiveDimens.boxWidth8,
+                      const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
+                      IsmLiveDimens.boxWidth2,
+                      Text(
+                        item.amount?.formatWithKAndL() ?? '0',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -3,6 +3,33 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 
+class IsmLiveCoinTransactionBreakdownModel {
+  final String? splitType;
+  final String? label;
+  final num? amount;
+  final String? transactionId;
+
+  const IsmLiveCoinTransactionBreakdownModel({
+    this.splitType,
+    this.label,
+    this.amount,
+    this.transactionId,
+  });
+
+  factory IsmLiveCoinTransactionBreakdownModel.fromMap(
+    Map<String, dynamic> map,
+  ) =>
+      IsmLiveCoinTransactionBreakdownModel(
+        splitType:
+            map['splitType'] != null ? map['splitType'] as String : null,
+        label: map['label'] != null ? map['label'] as String : null,
+        amount: map['amount'] != null ? map['amount'] as num : null,
+        transactionId: map['transactionId'] != null
+            ? map['transactionId'] as String
+            : null,
+      );
+}
+
 class IsmLiveCoinTransactionModel {
   final num? amount;
   final num? closingBalance;
@@ -19,6 +46,7 @@ class IsmLiveCoinTransactionModel {
   final String? transactionId;
   final String? accountId;
   final String? projectId;
+  final List<IsmLiveCoinTransactionBreakdownModel> breakdown;
   IsmLiveCoinTransactionModel({
     this.amount,
     this.closingBalance,
@@ -35,6 +63,7 @@ class IsmLiveCoinTransactionModel {
     this.transactionId,
     this.accountId,
     this.projectId,
+    this.breakdown = const [],
   });
 
   IsmLiveCoinTransactionModel copyWith({
@@ -53,6 +82,7 @@ class IsmLiveCoinTransactionModel {
     String? transactionId,
     String? accountId,
     String? projectId,
+    List<IsmLiveCoinTransactionBreakdownModel>? breakdown,
   }) =>
       IsmLiveCoinTransactionModel(
         amount: amount ?? this.amount,
@@ -70,6 +100,7 @@ class IsmLiveCoinTransactionModel {
         transactionId: transactionId ?? this.transactionId,
         accountId: accountId ?? this.accountId,
         projectId: projectId ?? this.projectId,
+        breakdown: breakdown ?? this.breakdown,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -88,6 +119,12 @@ class IsmLiveCoinTransactionModel {
         'transactionId': transactionId,
         'accountId': accountId,
         'projectId': projectId,
+        'breakdown': breakdown.map((e) => {
+              'splitType': e.splitType,
+              'label': e.label,
+              'amount': e.amount,
+              'transactionId': e.transactionId,
+            }).toList(),
       };
 
   factory IsmLiveCoinTransactionModel.fromMap(Map<String, dynamic> map) =>
@@ -116,6 +153,15 @@ class IsmLiveCoinTransactionModel {
             : null,
         accountId: map['accountId'] != null ? map['accountId'] as String : null,
         projectId: map['projectId'] != null ? map['projectId'] as String : null,
+        breakdown: map['breakdown'] is List
+            ? (map['breakdown'] as List)
+                .map(
+                  (e) => IsmLiveCoinTransactionBreakdownModel.fromMap(
+                    e as Map<String, dynamic>,
+                  ),
+                )
+                .toList()
+            : const [],
       );
 
   String get formattedDuration {
