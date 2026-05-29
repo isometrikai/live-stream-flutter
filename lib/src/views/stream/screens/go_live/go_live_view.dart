@@ -732,7 +732,10 @@ class _PersistentStream extends StatelessWidget {
                         ClipboardData(text: controller.rtmlUrlDevice.text),
                       );
                     },
-                    suffixIcon: const Icon(Icons.copy),
+                    suffixIcon: Icon(
+                      Icons.copy,
+                      color: IsmGoLiveView.getTextStyle(context, true).color,
+                    ),
                   ),
                   IsmLiveDimens.boxHeight10,
                   _InputField(
@@ -745,7 +748,10 @@ class _PersistentStream extends StatelessWidget {
                         ClipboardData(text: controller.streamKeyDevice.text),
                       );
                     },
-                    suffixIcon: const Icon(Icons.copy),
+                    suffixIcon: Icon(
+                      Icons.copy,
+                      color: IsmGoLiveView.getTextStyle(context, true).color,
+                    ),
                   ),
                   IsmLiveDimens.boxHeight10,
                   Text.rich(
@@ -755,16 +761,16 @@ class _PersistentStream extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: 'click here.',
-                          style: context.dynamicTextTheme.labelMedium?.copyWith(
+                          style: IsmGoLiveView.getTextStyle(context, true)
+                              .copyWith(
                             decoration: TextDecoration.underline,
-                            decorationColor: IsmLiveColors.white,
+                            decorationColor:
+                                IsmGoLiveView.getTextStyle(context, true).color,
                           ),
                         ),
                       ],
                     ),
-                    style: context.dynamicTextTheme.labelMedium?.copyWith(
-                      color: IsmLiveColors.white,
-                    ),
+                    style: IsmGoLiveView.getTextStyle(context, true),
                   )
                 ],
               ),
@@ -789,25 +795,24 @@ class _InputField extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final fieldTextStyle = IsmGoLiveView.getTextStyle(context, true);
+
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: context.dynamicTextTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.white,
-            ),
+            style: fieldTextStyle,
           ),
           IsmLiveDimens.boxHeight4,
           IsmLiveInputField(
             controller: controller,
             hintText: hint ?? 'Enter $label',
-            hintStyle: context.dynamicTextTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.white,
+            hintStyle: fieldTextStyle.copyWith(
+              color: fieldTextStyle.color?.withValues(alpha: 0.7),
             ),
-            style: context.dynamicTextTheme.labelLarge?.copyWith(
-              color: IsmLiveColors.white,
-            ),
+            style: fieldTextStyle,
             onTap: onTap,
             readOnly: readOnly,
             fillColor: Colors.white30,
@@ -817,6 +822,7 @@ class _InputField extends StatelessWidget {
           ),
         ],
       );
+  }
 }
 
 class _CameraPreviewBackground extends StatelessWidget {
