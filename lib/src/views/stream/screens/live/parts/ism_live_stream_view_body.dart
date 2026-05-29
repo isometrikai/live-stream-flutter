@@ -621,8 +621,12 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                       child: const IsmLiveModerationWarning(),
                                     ),
                                     if (widget.isNewStream)
-                                      const IsmLiveCounterView(
-                                        onCompleteSheet: YourLiveSheet(),
+                                      IsmLiveCounterView(
+                                        onCompleteSheet: IsmLiveDelegate
+                                                .streamScreenConfigure
+                                                .showYourLiveSheet
+                                            ? const YourLiveSheet()
+                                            : null,
                                       ),
                                   ],
                                   if (controller.isPk &&
