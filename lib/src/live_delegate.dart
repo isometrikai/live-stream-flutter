@@ -1570,6 +1570,7 @@ class IsmLiveStreamScreenConfigure {
     this.messageSendButtonBuilder,
     this.constrainChatViewWidth,
     this.chatViewMaxWidthFraction,
+    this.showYourLiveSheet = true,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
@@ -1613,6 +1614,13 @@ class IsmLiveStreamScreenConfigure {
   /// Max chat width as a fraction of screen width when [constrainChatViewWidth]
   /// is enabled. Default `0.5` (half screen).
   final double? chatViewMaxWidthFraction;
+
+  /// When `true`, shows [YourLiveSheet] after the new-stream countdown completes.
+  ///
+  /// When `false`, the countdown still runs but the bottom sheet is not shown.
+  /// Theme [IsmLiveCounterProperties.showYoureLiveSheet] is also respected when
+  /// this is `true`. Default `true`.
+  final bool showYourLiveSheet;
 
   /// Resolves whether the send icon is inside the input field.
   ///

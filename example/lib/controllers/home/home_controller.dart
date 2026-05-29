@@ -75,8 +75,8 @@ class HomeController extends GetxController {
       useGridLayoutForMultipleParticipants: true,
       showParticipantFullNamesInPublisherGrid: true,
       productionMode: true,
-      // Remove `const` if you uncomment builders or callbacks below.
-      // streamScreenConfigure: IsmLiveStreamScreenConfigure(
+      streamScreenConfigure: IsmLiveStreamScreenConfigure(
+          // showYourLiveSheet:false
       // streamBottomWidgetBuilder:
       //     (context, streamId, isHost, isKeyboardOpen) {
       //   if (isKeyboardOpen || streamId.isEmpty) {
@@ -98,9 +98,6 @@ class HomeController extends GetxController {
       //     ),
       //   );
       // },
-      // Return null to show default timer + description. Toggle
-      // [useCustomStreamHeaderInfoSection] and call
-      // [notifyStreamHeaderInfoSectionChanged] to switch at runtime.
       // streamHeaderInfoSectionBuilder: (context, streamId, isHost, streamCoins,
       //     isPaidStream, description, pkCompleted, isBattleTie, winnerName) {
       //   if (streamId.isEmpty) {
@@ -126,7 +123,7 @@ class HomeController extends GetxController {
       //     ),
       //   );
       // },
-      // ),
+      ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
           isProductStreamFeatureEnabled: false,
           isScheduleStreamFeatureEnabled: true,
