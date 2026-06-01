@@ -58,6 +58,7 @@ class IsmLiveApis {
   static const String getCurrencyPlans = '/v1/currencyPlan/isometrikAuth';
   static const String purchaseCoinsPlans = '/v1/appWallet/tokenPurchase';
   static const String applePurchaseToken = '/v1/appWallet/applePurchaseToken';
+  static const String virtualToBase = '/v1/currency/virtualToBase';
 
   // Streams
   static const String _streaming = '/streaming/v2';

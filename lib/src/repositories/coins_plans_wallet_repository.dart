@@ -64,6 +64,18 @@ class CoinsPlansWalletRepository {
     );
   }
 
+  Future<IsmLiveResponseModel> virtualToBase({required num amount}) {
+    final payload = {'amount': amount};
+    return _apiWrapper.makeRequest(
+      '${IsmLiveApis.virtualToBase}?${payload.makeQuery()}',
+      baseUrl: IsmLiveApis.baseUrlAsPerMode,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
+
   Future<IsmLiveResponseModel> fetchTransactions({
     String? txnType,
     required int skip,

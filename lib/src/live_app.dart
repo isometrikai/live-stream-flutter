@@ -44,7 +44,6 @@ class IsmLiveApp extends StatefulWidget {
     }
     final controller = Get.find<CoinsPlansWalletController>();
     await controller.totalWalletCoins('coin');
-    await controller.totalWalletCoins('usd');
   }
 
   /// Get coins balance with automatic controller registration if needed
@@ -55,12 +54,12 @@ class IsmLiveApp extends StatefulWidget {
     return Get.find<CoinsPlansWalletController>().coinBalance;
   }
 
-  /// Get wallet balance in USD with automatic controller registration if needed
-  static int get walletBalance {
+  /// Coin balance converted to base currency ([baseCurrencyAmount]).
+  static num get walletBalance {
     if (!Get.isRegistered<CoinsPlansWalletController>()) {
       CoinsPlansWalletBinding().dependencies();
     }
-    return Get.find<CoinsPlansWalletController>().balance;
+    return Get.find<CoinsPlansWalletController>().baseCurrencyAmount;
   }
 
   /// Manual MQTT reconnection method

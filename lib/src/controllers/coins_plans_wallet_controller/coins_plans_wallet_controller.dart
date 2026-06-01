@@ -18,7 +18,6 @@ class CoinsPlansWalletController extends GetxController
     super.onInit();
     IsmLiveUtility.updateLater(() {
       totalWalletCoins('coin');
-      totalWalletCoins('usd');
       getCoinsPlans();
     });
     for (final type in IsmLiveCoinTransactionType.values) {
@@ -78,7 +77,11 @@ class CoinsPlansWalletController extends GetxController
   );
 
   int coinBalance = 0;
-  int balance = 0;
+  num baseCurrencyAmount = 0;
+  String baseCurrencySymbol = '\$';
+
+  String get formattedBaseCurrencyAmount =>
+      '$baseCurrencySymbol ${baseCurrencyAmount.formatWithKAndL()}';
 
   /// to fetch coins plans
   Future<void> getCoinsPlans() async {
@@ -141,7 +144,6 @@ class CoinsPlansWalletController extends GetxController
     }
     if (res == null || res.statusCode != 200) return;
     unawaited(totalWalletCoins('coin'));
-    unawaited(totalWalletCoins('usd'));
   }
 
   void onTapBuyPlan({
@@ -173,20 +175,29 @@ class CoinsPlansWalletController extends GetxController
         }
 
         await totalWalletCoins('coin');
-        await totalWalletCoins('usd');
       },
     );
   }
 
   Future<void> totalWalletCoins(String currency) async {
     final res = await _coinsPlansWalletViewMode.totalWalletCoins(currency);
-    if (res != null) {
-      if (currency == 'coin') {
-        coinBalance = res.balance?.toInt() ?? 0;
-      } else {
-        balance = res.balance?.toInt() ?? 0;
-      }
+    if (res != null && currency == 'coin') {
+      coinBalance = res.balance?.toInt() ?? 0;
+      await fetchCoinValueInBaseCurrency();
       update([CoinsPlansWalletView.updateId]);
+    }
+  }
+
+  Future<void> fetchCoinValueInBaseCurrency() async {
+    final res = await _coinsPlansWalletViewMode.virtualToBase(
+      amount: coinBalance,
+    );
+    if (res != null) {
+      baseCurrencyAmount = res.baseCurrencyAmount ?? 0;
+      final symbol = res.baseCurrencySymbol?.trim();
+      if (symbol != null && symbol.isNotEmpty) {
+        baseCurrencySymbol = symbol;
+      }
     }
   }
 
