@@ -73,6 +73,23 @@ class CoinsPlansWalletViewMode {
     }
   }
 
+  Future<IsmLiveVirtualToBaseCurrencyModel?> virtualToBase({
+    required num amount,
+  }) async {
+    try {
+      final res =
+          await _coinsPlansWalletRepository.virtualToBase(amount: amount);
+      if (res.hasError) return null;
+      final data = jsonDecode(res.data)['data'];
+      if (data is Map<String, dynamic>) {
+        return IsmLiveVirtualToBaseCurrencyModel.fromMap(data);
+      }
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+    }
+    return null;
+  }
+
   Future<IsmLiveCoinBalanceModel?> totalWalletCoins(String currency) async {
     try {
       var res = await _coinsPlansWalletRepository.totalWalletCoins(currency);

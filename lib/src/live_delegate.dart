@@ -1405,9 +1405,12 @@ class IsmLiveEcomConfigure {
 }
 
 /// Callback when the user taps Withdraw on the coins wallet screen.
+///
+/// [balance] is the coin balance converted to base currency
+/// ([baseCurrencyAmount] from `/v1/currency/virtualToBase`).
 typedef CoinsPlansWalletWithdrawClickCallback = void Function(
   BuildContext context,
-  int balance,
+  num balance,
 );
 
 /// Builder for the Withdraw action on the coins wallet total-money card.

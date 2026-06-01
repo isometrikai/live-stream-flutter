@@ -158,7 +158,7 @@ class CoinsPlansWalletView extends StatelessWidget {
                             ),
                             IsmLiveDimens.boxHeight2,
                             Text(
-                              '\$ ${controller.balance.formatWithKAndL()} ',
+                              controller.formattedBaseCurrencyAmount,
                               style: IsmLiveStyles.blackBold16.copyWith(
                                 color: textColor,
                               ),
@@ -171,9 +171,12 @@ class CoinsPlansWalletView extends StatelessWidget {
                             child: walletConfigure.buildWithdrawButton(
                               context,
                               balanceFormatted:
-                                  controller.balance.formatWithKAndL(),
+                                  controller.formattedBaseCurrencyAmount,
                               onWithdrawTap: () => walletConfigure.onWithdrawTap
-                                  ?.call(context, controller.balance),
+                                  ?.call(
+                                context,
+                                controller.baseCurrencyAmount,
+                              ),
                             ),
                           ),
                         ],

@@ -19,3 +19,4 @@ export 'stream_recording/stream_recording.dart';
 export 'translations/translations.dart';
 export 'user_model.dart';
 export 'user_role.dart';
+export 'virtual_to_base_currency_model.dart';
