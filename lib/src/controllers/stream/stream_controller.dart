@@ -319,6 +319,7 @@ class IsmLiveStreamController extends GetxController
   ScrollController membersListController = ScrollController();
 
   final streamsMap = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
+  final _presenceStoppedStreamIds = <String>{};
 
   List<IsmLiveStreamDataModel> get streams => streamsMap[streamType]!;
 
@@ -678,6 +679,33 @@ class IsmLiveStreamController extends GetxController
   void generateVariables() {
     for (var type in IsmLiveStreamType.values) {
       streamsMap[type] = [];
+    }
+  }
+
+  void markStreamStoppedByPresence(String streamId) {
+    if (streamId.isEmpty) {
+      return;
+    }
+    _presenceStoppedStreamIds.add(streamId);
+  }
+
+  bool isStreamStoppedByPresence(String? streamId) {
+    if (streamId == null || streamId.isEmpty) {
+      return false;
+    }
+    return _presenceStoppedStreamIds.contains(streamId);
+  }
+
+  void clearStreamStoppedByPresence(String? streamId) {
+    if (streamId == null || streamId.isEmpty) {
+      return;
+    }
+    _presenceStoppedStreamIds.remove(streamId);
+  }
+
+  void removeStreamFromStreamsMap(String streamId) {
+    for (final streams in streamsMap.values) {
+      streams.removeWhere((stream) => stream.streamId == streamId);
     }
   }
 

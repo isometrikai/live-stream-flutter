@@ -178,6 +178,7 @@ enum IsmLiveActions {
   streamStarted('streamStarted'),
   streamStopped('streamStopped'),
   streamStartPresence('streamStartPresence'),
+  streamStopPresence('streamStopPresence'),
   viewerJoined('viewerJoined'),
   viewerLeft('viewerLeft'),
   viewerRemoved('viewerRemoved'),
@@ -218,6 +219,8 @@ enum IsmLiveActions {
         IsmLiveActions.streamStopped.value: IsmLiveActions.streamStopped,
         IsmLiveActions.streamStartPresence.value:
             IsmLiveActions.streamStartPresence,
+        IsmLiveActions.streamStopPresence.value:
+            IsmLiveActions.streamStopPresence,
         IsmLiveActions.viewerJoined.value: IsmLiveActions.viewerJoined,
         IsmLiveActions.viewerLeft.value: IsmLiveActions.viewerLeft,
         IsmLiveActions.viewerRemoved.value: IsmLiveActions.viewerRemoved,
