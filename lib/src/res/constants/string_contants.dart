@@ -188,6 +188,13 @@ class IsmLiveStrings {
   static const String premiumStreamPayToJoinMessage =
       'This stream is premium. To join you need to pay %s coins';
   static const String payAndContinue = 'Pay & Continue';
+  static const String exit = 'Exit';
+  static const String unableToReconnectToYourStream =
+      'Unable to reconnect to your stream. Please try again or start a new stream';
+  static const String unableToReconnectToStreamRejoin =
+      'Unable to reconnect to the stream. Please try again or rejoin the stream';
+  static const String unableToReconnectToStreamBrowseOther =
+      'Unable to reconnect to the stream. Please try again or browse other streams';
 
   // PK sheet strings
   static const String pkWithFriends = 'PK With Friends';
