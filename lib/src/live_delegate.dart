@@ -849,10 +849,10 @@ typedef HeartBatchFlushCallback = Future<void> Function(
 /// Callback for stream listing refresh events.
 ///
 /// This callback is triggered when stream listing data needs to be refreshed
-/// due to MQTT events like streamStartPresence or streamStopped.
+/// due to MQTT events like streamStartPresence, streamStopPresence, or streamStopped.
 /// If this callback is provided, the internal stream listing refresh will be skipped.
 ///
-/// [eventType] - The type of event that triggered the refresh (streamStartPresence, streamStopped).
+/// [eventType] - The type of event that triggered the refresh (streamStartPresence, streamStopPresence, streamStopped).
 /// [streamId] - The stream ID related to the event (null for streamStartPresence).
 /// [payload] - The full MQTT payload for additional context.
 typedef StreamListingRefreshCallback = void Function(

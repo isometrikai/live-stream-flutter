@@ -1191,6 +1191,23 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     }
   }
 
+  /// Show the same reconnect-failed dialog for scroll attempts to streams that
+  /// were already stopped via presence events.
+  void showStoppedPresenceUnavailableDialog() {
+    _stopStreamTimerForInfoDialog();
+    _hasShownInfoDialogInSession = true;
+    _blockAutoReconnectAfterLifecycleDialog = true;
+    IsmLiveUtility.showCustomDialog(
+      _streamLifecycleInfoDialogLayout(
+        message:
+            'Unable to reconnect to the stream. Please try again or browse other streams',
+        textAlign: TextAlign.left,
+        gapBeforeExitButton: IsmLiveDimens.boxHeight50,
+      ),
+      isDismissible: false,
+    );
+  }
+
   Future<void> _disconnectLiveKitRoomForLifecycleInfoDialog() async {
     final room = _controller.room;
     if (room == null) {

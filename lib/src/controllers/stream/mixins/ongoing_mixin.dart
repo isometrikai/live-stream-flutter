@@ -1544,6 +1544,7 @@ mixin StreamOngoingMixin {
     required int index,
     required BuildContext context,
   }) async {
+    var shouldShowStoppedPresenceDialog = false;
     if (onChangeCall) {
       _pendingScrollIndex = index;
       return;
@@ -1610,19 +1611,24 @@ mixin StreamOngoingMixin {
         return;
       }
 
-      if ((_controller.streams[index].isPaid ?? false) &&
-          !(_controller.streams[index].isBuy ?? false)) {
+      final targetStream = _controller.streams[index];
+      final targetStreamId = targetStream.streamId;
+      if (_controller.isStreamStoppedByPresence(targetStreamId)) {
+        shouldShowStoppedPresenceDialog = true;
+        return;
+      }
+
+      if ((targetStream.isPaid ?? false) && !(targetStream.isBuy ?? false)) {
         IsmLiveUtility.closeLoader();
         _controller.paidStreamSheet(
-            coins: _controller.streams[index].amount ?? 0,
+            coins: targetStream.amount ?? 0,
             onTap: () async {
               IsmLiveRoute.pop();
-              var res = await _controller
-                  .buyStream(_controller.streams[index].streamId ?? '');
+              var res = await _controller.buyStream(targetStream.streamId ?? '');
               if (res) {
-                _controller.streams[index].copyWith(isBuy: true);
+                targetStream.copyWith(isBuy: true);
                 await _controller.joinStream(
-                  _controller.streams[index],
+                  targetStream,
                   false,
                   joinByScrolling: true,
                   isScrolling: true,
@@ -1632,7 +1638,7 @@ mixin StreamOngoingMixin {
             });
       } else {
         await _controller.joinStream(
-          _controller.streams[index],
+          targetStream,
           false,
           joinByScrolling: true,
           isScrolling: true,
@@ -1647,14 +1653,18 @@ mixin StreamOngoingMixin {
       onChangeCall = false;
       IsmLiveUtility.closeLoader();
 
-      // Process the latest pending scroll after this operation completes.
-      // This runs inside finally so onChangeCall is already false, and the
-      // recursive call will set it back to true synchronously (before its
-      // first await), preventing concurrent entry.
-      final pending = _pendingScrollIndex;
-      if (pending != null) {
-        _pendingScrollIndex = null;
-        onStreamScroll(index: pending, context: context);
+      if (shouldShowStoppedPresenceDialog) {
+        _controller.showStoppedPresenceUnavailableDialog();
+      } else {
+        // Process the latest pending scroll after this operation completes.
+        // This runs inside finally so onChangeCall is already false, and the
+        // recursive call will set it back to true synchronously (before its
+        // first await), preventing concurrent entry.
+        final pending = _pendingScrollIndex;
+        if (pending != null) {
+          _pendingScrollIndex = null;
+          onStreamScroll(index: pending, context: context);
+        }
       }
     }
   }

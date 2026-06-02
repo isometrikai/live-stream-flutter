@@ -839,8 +839,7 @@ class IsmLiveMqttController extends GetxController {
           final initiatorName = payload['initiatorName'] as String? ?? 'Host';
           final hostId = payload['initiatorId'] as String? ?? '';
           final initiatorMetaData = (payload['initiatorMetaData'] ??
-                  payload['initiatorMetadata'])
-              as Map<String, dynamic>?;
+              payload['initiatorMetadata']) as Map<String, dynamic>?;
           final initiatorFirstName =
               (initiatorMetaData?['firstName'] as String?)?.trim() ?? '';
           final initiatorLastName =
@@ -861,7 +860,8 @@ class IsmLiveMqttController extends GetxController {
           } else if (hostId == userId) {
             body = 'You\'ve added $memberName as a Co-publisher';
           } else {
-            body = '$initiatorDisplayName has added $memberName as a Co-publisher';
+            body =
+                '$initiatorDisplayName has added $memberName as a Co-publisher';
           }
           final message = IsmLiveMessageModel(
             streamId: streamId!,
@@ -1008,7 +1008,7 @@ class IsmLiveMqttController extends GetxController {
           break;
 
         case IsmLiveActions.pubsubMessagePublished:
-          if(_streamController.streamId != null){
+          if (_streamController.streamId != null) {
             _pkController.pkInviteEvent(payload);
           }
 
@@ -1166,7 +1166,22 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.getStreams());
           }
           break;
+        case IsmLiveActions.streamStopPresence:
+          if (streamId != null) {
+            _streamController.markStreamStoppedByPresence(streamId);
+          }
+          // if (IsmLiveDelegate.streamListingRefreshCallback != null) {
+          //   IsmLiveDelegate.streamListingRefreshCallback!(
+          //     'streamStopPresence',
+          //     streamId,
+          //     payload,
+          //   );
+          // } else {
+          //   _updateStreamListing();
+          // }
+          break;
         case IsmLiveActions.streamStarted:
+          _streamController.clearStreamStoppedByPresence(streamId);
           break;
         case IsmLiveActions.streamStopped:
           final initiatorId = payload['initiatorId'] as String?;

@@ -17,7 +17,9 @@ class StreamService {
   void initialize() {
     // Listen to MQTT events
     _mqttController.actionStreamController.stream.listen((event) {
-      if (event.payload['action'] == IsmLiveActions.streamStartPresence.name) {
+      final action = event.payload['action'];
+      if (action == IsmLiveActions.streamStartPresence.name ||
+          action == IsmLiveActions.streamStopPresence.name) {
         refreshStreams();
       }
     });
