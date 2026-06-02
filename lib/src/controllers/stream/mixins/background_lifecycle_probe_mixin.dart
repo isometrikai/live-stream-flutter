@@ -1125,7 +1125,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: IsmLiveButton(
                   onTap: _exitStreamFromLifecycleInfoDialog,
-                  label: 'Exit',
+                  label: IsmLiveStrings.exit,
                 ),
               ),
             ],
@@ -1168,14 +1168,11 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
 
       final String message;
       if (_isHost.value) {
-        message =
-            'Unable to reconnect to your stream. Please try again or start a new stream';
+        message = IsmLiveStrings.unableToReconnectToYourStream;
       } else if (_isCopublisher.value) {
-        message =
-            'Unable to reconnect to the stream. Please try again or rejoin the stream';
+        message = IsmLiveStrings.unableToReconnectToStreamRejoin;
       } else {
-        message =
-            'Unable to reconnect to the stream. Please try again or browse other streams';
+        message = IsmLiveStrings.unableToReconnectToStreamBrowseOther;
       }
 
       IsmLiveUtility.showCustomDialog(
@@ -1199,8 +1196,7 @@ mixin StreamBackgroundLifecycleMixin on GetxController {
     _blockAutoReconnectAfterLifecycleDialog = true;
     IsmLiveUtility.showCustomDialog(
       _streamLifecycleInfoDialogLayout(
-        message:
-            'Unable to reconnect to the stream. Please try again or browse other streams',
+        message: IsmLiveStrings.unableToReconnectToStreamBrowseOther,
         textAlign: TextAlign.left,
         gapBeforeExitButton: IsmLiveDimens.boxHeight50,
       ),
