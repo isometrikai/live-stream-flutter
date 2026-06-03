@@ -912,7 +912,7 @@ class IsmLiveMqttController extends GetxController {
             _streamController.userRole?.leaveCopublishing();
           }
           await Future.delayed(const Duration(milliseconds: 500));
-          _updateStream();
+          _updateStream([IsmLiveMembersSheet.updateId]);
 
           break;
         case IsmLiveActions.memberRemoved:
@@ -958,7 +958,7 @@ class IsmLiveMqttController extends GetxController {
               }
             }
             await Future.delayed(const Duration(milliseconds: 300));
-            _updateStream();
+            _updateStream([IsmLiveMembersSheet.updateId]);
           }
           break;
         case IsmLiveActions.profileSwitched:

@@ -1574,6 +1574,7 @@ class IsmLiveStreamScreenConfigure {
     this.constrainChatViewWidth,
     this.chatViewMaxWidthFraction,
     this.showYourLiveSheet = true,
+    this.showStreamMemberCount = false,
   });
 
   /// Full-width widget shown at the bottom of the stream screen, below the
@@ -1624,6 +1625,10 @@ class IsmLiveStreamScreenConfigure {
   /// Theme [IsmLiveCounterProperties.showYoureLiveSheet] is also respected when
   /// this is `true`. Default `true`.
   final bool showYourLiveSheet;
+
+  /// When `true`, shows the member count chip in the stream header timer row.
+  /// Tapping it opens [IsmLiveMembersSheet]. Default `false` (hidden).
+  final bool showStreamMemberCount;
 
   /// Resolves whether the send icon is inside the input field.
   ///

@@ -1034,7 +1034,7 @@ class IsmLiveStreamController extends GetxController
     }
   }
 
-  void searchMember(String values) async {
+  Future<void> searchMember(String values) async {
     streamMembersList.clear();
     if (values.trim().isNotEmpty || streamMembersList.isNotEmpty) {
       await getStreamMembers(

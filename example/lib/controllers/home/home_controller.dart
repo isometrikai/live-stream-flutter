@@ -76,6 +76,7 @@ class HomeController extends GetxController {
       showParticipantFullNamesInPublisherGrid: true,
       productionMode: true,
       streamScreenConfigure: IsmLiveStreamScreenConfigure(
+        showStreamMemberCount: true
           // showYourLiveSheet:false
       // streamBottomWidgetBuilder:
       //     (context, streamId, isHost, isKeyboardOpen) {
