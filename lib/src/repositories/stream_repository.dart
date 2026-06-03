@@ -189,14 +189,19 @@ class IsmLiveStreamRepository {
     required int limit,
     required int skip,
     String? searchTag,
-  }) =>
-      _apiWrapper.makeRequest(
-        '${IsmLiveApis.getStreamMembers}?streamId=$streamId&limit=$limit&skip=$skip',
-        type: IsmLiveRequestType.get,
-        headers: IsmLiveUtility.tokenHeader(),
-        showLoader: false,
-        showDialog: false,
-      );
+  }) {
+    var url = '${IsmLiveApis.getStreamMembers}?streamId=$streamId&limit=$limit&skip=$skip';
+    if (searchTag != null && searchTag.isNotEmpty) {
+      url += '&searchTag=$searchTag';
+    }
+   return _apiWrapper.makeRequest(
+     url,
+      type: IsmLiveRequestType.get,
+      headers: IsmLiveUtility.tokenHeader(),
+      showLoader: false,
+      showDialog: false,
+    );
+  }
 
   Future<IsmLiveResponseModel> getStreamViewer({
     required String streamId,

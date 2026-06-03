@@ -890,7 +890,10 @@ mixin StreamAPIMixin {
     if (res) {
       _controller.streamMembersList
           .removeWhere((element) => element.userId == memberId);
-      _controller.update([IsmLiveCopublishingHostSheet.updateId]);
+      _controller.update([
+        IsmLiveCopublishingHostSheet.updateId,
+        IsmLiveMembersSheet.updateId,
+      ]);
     }
 
     return res;

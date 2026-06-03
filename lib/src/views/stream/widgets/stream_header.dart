@@ -383,13 +383,15 @@ class _LiveTimer extends StatelessWidget {
           IsmLiveDimens.boxWidth10,
           const IsmLiveStreamTimer()
         ],
-        IsmLiveDimens.boxWidth10,
-        // IsmLiveStreamMemberCount(
-        //   onTap: () => IsmLiveUtility.openBottomSheet(
-        //     const IsmLiveMembersSheet(),
-        //     isScrollController: true,
-        //   ),
-        // ),
+        if (IsmLiveDelegate.streamScreenConfigure.showStreamMemberCount) ...[
+          IsmLiveDimens.boxWidth10,
+          IsmLiveStreamMemberCount(
+            onTap: () => IsmLiveUtility.openBottomSheet(
+              const IsmLiveMembersSheet(),
+              isScrollController: true,
+            ),
+          ),
+        ],
         if (isPaidStream) ...[
           IsmLiveDimens.boxWidth10,
           IsmLiveCoins(
