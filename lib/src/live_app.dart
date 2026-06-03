@@ -604,16 +604,34 @@ class IsmLiveApp extends StatefulWidget {
   }
 
   static void configureInterface({
+    @Deprecated('Set on streamScreenConfigure instead.')
     IsmLiveStreamHeaderBuilder? streamHeader,
+    @Deprecated('Set on streamScreenConfigure instead.')
+    IsmLiveStreamBottomBuilder? streamBottomBuilder,
+    @Deprecated('Set streamBottomBuilder on streamScreenConfigure instead.')
     IsmLiveHeaderBuilder? bottomBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     IsmLiveInputBuilder? inputBuilder,
     IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     IsmLiveChatMessageBuilder? chatMessageBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     IsmLiveChatItemBgColorCallback? chatItemBgColorCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     Widget? endButton,
+    @Deprecated('Set on streamScreenConfigure instead.')
     Widget? endStreamScreen,
-    bool showHeader = true,
+    @Deprecated('Set showStreamHeader on streamScreenConfigure instead.')
+    bool? showStreamHeader,
+    @Deprecated('Set showStreamHeader on streamScreenConfigure instead.')
+    bool? showHeader,
+    @Deprecated('Set streamHeaderPosition on streamScreenConfigure instead.')
+    Alignment? streamHeaderPosition,
+    @Deprecated('Set endStreamWidgetPosition on streamScreenConfigure instead.')
+    Alignment? endStreamWidgetPosition,
+    @Deprecated('Set streamHeaderPosition on streamScreenConfigure instead.')
     Alignment? headerPosition,
+    @Deprecated('Set endStreamWidgetPosition on streamScreenConfigure instead.')
     Alignment? endStreamPosition,
     Function(String id)? subscribStreamById,
     Function(String id)? unsubscribStreamById,
@@ -621,8 +639,18 @@ class IsmLiveApp extends StatefulWidget {
     Widget? homeScreen,
     void Function(String userId)? openUserProfileView,
     String Function(String key)? getUserProfileUrl,
+    IsmLiveButtonConfig? buttonConfig,
+    @Deprecated('Use buttonConfig instead.')
     IsmLiveButtonConfig? ismLiveButtonConfig,
+    @Deprecated(
+      'Set controlOptionBgGradient on sideIconsConfigure instead.',
+    )
+    LinearGradient? controlOptionBgGradient,
+    @Deprecated(
+      'Set controlOptionBgGradient on sideIconsConfigure instead.',
+    )
     LinearGradient? streamOptionsBgGradient,
+    @Deprecated('Set on streamScreenConfigure instead.')
     Widget? logoWidget,
     StreamDisconnectApiHandler? streamDisconnectApiHandler,
     bool productionMode = false,
@@ -634,22 +662,36 @@ class IsmLiveApp extends StatefulWidget {
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
     String? fontFamily,
+    @Deprecated('Set on streamScreenConfigure instead.')
     MessageProcessCallback? messageProcessCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
+    StreamViewLoadedCallback? streamScreenLoadedCallback,
+    @Deprecated('Set streamScreenLoadedCallback on streamScreenConfigure instead.')
     StreamViewLoadedCallback? streamViewLoadedCallback,
     StreamAnalyticsApiHandler? streamAnalyticsApiHandler,
     StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler,
+    @Deprecated('Set on streamScreenConfigure instead.')
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     IsmLiveCartBuilder? cartBuilder,
+    @Deprecated('Set on streamScreenConfigure instead.')
     TopViewersListCallback? topViewersListCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     ModeratorsListCallback? moderatorsListCallback,
     AttentionDialogButtonCallback? attentionDialogButtonCallback,
     StreamListingRefreshCallback? streamListingRefreshCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     OnStreamScrollCallback? onStreamScrollCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     AddCoinsClickCallback? addCoinsClickCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     GiftClickCallback? giftClickCallback,
+    @Deprecated('Set on streamScreenConfigure instead.')
     HeartBatchFlushCallback? heartBatchFlushCallback,
     IsmLiveAnalyticsDelegate? analyticsDelegate,
     Set<IsmLiveAnalyticsEventType>? enabledAnalyticsEventTypes,
@@ -660,11 +702,13 @@ class IsmLiveApp extends StatefulWidget {
 
     /// When `false` (default), 2+ participants use horizontal full-width rows.
     /// When `true`, uses the multi-column grid layout.
-    bool useGridLayoutForMultipleParticipants = false,
+    @Deprecated('Set on streamScreenConfigure instead.')
+    bool? useGridLayoutForMultipleParticipants,
 
     /// When `true`, 2+ publishers show each participant's full name at the
     /// bottom-left of their tile in the publisher grid/stack. Default `false`.
-    bool showParticipantFullNamesInPublisherGrid = false,
+    @Deprecated('Set on streamScreenConfigure instead.')
+    bool? showParticipantFullNamesInPublisherGrid,
 
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
@@ -675,27 +719,87 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveSideIconsConfigure? sideIconsConfigure,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
   }) {
-    final resolvedSideIconsConfigure =
+    final baseSideIconsConfigure =
         sideIconsConfigure ?? const IsmLiveSideIconsConfigure();
+    final topLevelControlOptionBgGradient =
+        controlOptionBgGradient ?? streamOptionsBgGradient;
+    final resolvedSideIconsConfigure =
+        baseSideIconsConfigure.controlOptionBgGradient != null
+            ? baseSideIconsConfigure
+            : (topLevelControlOptionBgGradient != null
+                ? baseSideIconsConfigure.copyWith(
+                    controlOptionBgGradient: topLevelControlOptionBgGradient,
+                  )
+                : baseSideIconsConfigure);
+    IsmLiveDelegate.sideIconsConfigure = resolvedSideIconsConfigure;
     final resolvedGoLiveScreenConfigure =
         goLiveScreenConfigure ?? const IsmLiveGoLiveScreenConfigure();
-    final resolvedStreamScreenConfigure =
+    final baseStreamScreenConfigure =
         streamScreenConfigure ?? const IsmLiveStreamScreenConfigure();
+    final resolvedStreamScreenConfigure = baseStreamScreenConfigure.copyWith(
+      streamHeader: baseStreamScreenConfigure.streamHeader ?? streamHeader,
+      streamBottomBuilder: baseStreamScreenConfigure.streamBottomBuilder ??
+          streamBottomBuilder ??
+          bottomBuilder,
+      inputBuilder: baseStreamScreenConfigure.inputBuilder ?? inputBuilder,
+      chatMessageBuilder:
+          baseStreamScreenConfigure.chatMessageBuilder ?? chatMessageBuilder,
+      chatItemBgColorCallback: baseStreamScreenConfigure.chatItemBgColorCallback ??
+          chatItemBgColorCallback,
+      endButton: baseStreamScreenConfigure.endButton ?? endButton,
+      endStreamScreen:
+          baseStreamScreenConfigure.endStreamScreen ?? endStreamScreen,
+      showStreamHeader:
+          showHeader ?? showStreamHeader ?? baseStreamScreenConfigure.showStreamHeader,
+      streamHeaderPosition: baseStreamScreenConfigure.streamHeaderPosition ??
+          streamHeaderPosition ??
+          headerPosition,
+      endStreamWidgetPosition:
+          baseStreamScreenConfigure.endStreamWidgetPosition ??
+              endStreamWidgetPosition ??
+              endStreamPosition,
+      logoWidget: baseStreamScreenConfigure.logoWidget ?? logoWidget,
+      messageProcessCallback: baseStreamScreenConfigure.messageProcessCallback ??
+          messageProcessCallback,
+      streamScreenLoadedCallback:
+          baseStreamScreenConfigure.streamScreenLoadedCallback ??
+              streamScreenLoadedCallback ??
+              streamViewLoadedCallback,
+      hostTopProfileClickCallback:
+          baseStreamScreenConfigure.hostTopProfileClickCallback ??
+              hostTopProfileClickCallback,
+      goLiveSmallButtonBuilder: baseStreamScreenConfigure.goLiveSmallButtonBuilder ??
+          goLiveSmallButtonBuilder,
+      scheduleStreamCenterOverlayBuilder:
+          baseStreamScreenConfigure.scheduleStreamCenterOverlayBuilder ??
+              scheduleStreamCenterOverlayBuilder,
+      cartBuilder: baseStreamScreenConfigure.cartBuilder ?? cartBuilder,
+      topViewersListCallback: baseStreamScreenConfigure.topViewersListCallback ??
+          topViewersListCallback,
+      moderatorsListCallback: baseStreamScreenConfigure.moderatorsListCallback ??
+          moderatorsListCallback,
+      onStreamScrollCallback: baseStreamScreenConfigure.onStreamScrollCallback ??
+          onStreamScrollCallback,
+      addCoinsClickCallback: baseStreamScreenConfigure.addCoinsClickCallback ??
+          addCoinsClickCallback,
+      giftClickCallback:
+          baseStreamScreenConfigure.giftClickCallback ?? giftClickCallback,
+      heartBatchFlushCallback: baseStreamScreenConfigure.heartBatchFlushCallback ??
+          heartBatchFlushCallback,
+      useGridLayoutForMultipleParticipants:
+          baseStreamScreenConfigure.useGridLayoutForMultipleParticipants ??
+              useGridLayoutForMultipleParticipants,
+      showParticipantFullNamesInPublisherGrid:
+          baseStreamScreenConfigure.showParticipantFullNamesInPublisherGrid ??
+              showParticipantFullNamesInPublisherGrid,
+    );
+    IsmLiveDelegate.streamScreenConfigure = resolvedStreamScreenConfigure;
     final resolvedCoinsPlansWalletConfigure =
         coinsPlansWalletScreenConfigure ?? const IsmLiveCoinsPlansWalletScreenConfigure();
 
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
-    IsmLiveDelegate.streamHeader = streamHeader;
-    IsmLiveDelegate.bottomBuilder = bottomBuilder;
-    IsmLiveDelegate.showHeader = showHeader;
-    IsmLiveDelegate.inputBuilder = inputBuilder;
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
-    IsmLiveDelegate.chatMessageBuilder = chatMessageBuilder;
-    IsmLiveDelegate.chatItemBgColorCallback = chatItemBgColorCallback;
-    IsmLiveDelegate.endButton = endButton;
-    IsmLiveDelegate.headerPosition = headerPosition ?? Alignment.topLeft;
-    IsmLiveDelegate.endStreamPosition = endStreamPosition ?? Alignment.topRight;
     IsmLiveDelegate.viewersOption = resolvedSideIconsConfigure.viewersOptions;
     IsmLiveDelegate.hostOptions = resolvedSideIconsConfigure.hostOptions;
     IsmLiveDelegate.rtmpOptions = resolvedSideIconsConfigure.rtmpOptions;
@@ -719,15 +823,12 @@ class IsmLiveApp extends StatefulWidget {
         resolvedGoLiveScreenConfigure.isProductStreamFeatureEnabled;
     IsmLiveDelegate.recordeStream =
         resolvedGoLiveScreenConfigure.isRecordedStreamFeatureEnabled;
-    IsmLiveDelegate.endStreamScreen = endStreamScreen;
     IsmLiveDelegate.subscribStreamById = subscribStreamById;
     IsmLiveDelegate.unsubscribStreamById = unsubscribStreamById;
     IsmLiveDelegate.openUserProfileView = openUserProfileView;
     IsmLiveDelegate.getUserProfileUrl = getUserProfileUrl;
-    IsmLiveDelegate.ismLiveButtonConfig = ismLiveButtonConfig;
-    IsmLiveDelegate.streamOptionsBgGradient = streamOptionsBgGradient;
+    IsmLiveDelegate.buttonConfig = buttonConfig ?? ismLiveButtonConfig;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
-    IsmLiveDelegate.logoWidget = logoWidget;
     IsmLiveDelegate.streamDisconnectApiHandler = streamDisconnectApiHandler;
     IsmLiveDelegate.onGoLiveClick =
         resolvedGoLiveScreenConfigure.onGoLiveButtonTap;
@@ -739,30 +840,16 @@ class IsmLiveApp extends StatefulWidget {
         resolvedCoinsPlansWalletConfigure;
     IsmLiveDelegate.backButtonBuilder = backButtonBuilder;
     IsmLiveDelegate.goLiveScreenConfigure = resolvedGoLiveScreenConfigure;
-    IsmLiveDelegate.streamScreenConfigure = resolvedStreamScreenConfigure;
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
     IsmLiveDelegate.fontFamily = fontFamily;
-    IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
-    IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
     // Heart message is now handled via controlOptionCallback
     IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
     IsmLiveDelegate.streamAnalyticsViewersApiHandler =
         streamAnalyticsViewersApiHandler;
-    IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
     IsmLiveDelegate.missingHostTokenStopStreamCallback =
         missingHostTokenStopStreamCallback;
-
-    // Set standalone goLiveSmallButtonBuilder if provided
-    if (goLiveSmallButtonBuilder != null) {
-      IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
-    }
-
-    if (scheduleStreamCenterOverlayBuilder != null) {
-      IsmLiveDelegate.scheduleStreamCenterOverlayBuilder =
-          scheduleStreamCenterOverlayBuilder;
-    }
 
     IsmLiveDelegate.controlOptionCallback =
         resolvedSideIconsConfigure.controlOptionCallback;
@@ -770,17 +857,9 @@ class IsmLiveApp extends StatefulWidget {
         resolvedSideIconsConfigure.controlWidgetBuilder;
     IsmLiveDelegate.productStreamSideOptionsBottomMargin =
         resolvedSideIconsConfigure.productStreamSideOptionsBottomMargin;
-    IsmLiveDelegate.sideIconsConfigure = resolvedSideIconsConfigure;
-    IsmLiveDelegate.cartBuilder = cartBuilder;
-    IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
-    IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
     IsmLiveDelegate.attentionDialogButtonCallback =
         attentionDialogButtonCallback;
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
-    IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
-    IsmLiveDelegate.addCoinsClickCallback = addCoinsClickCallback;
-    IsmLiveDelegate.giftClickCallback = giftClickCallback;
-    IsmLiveDelegate.heartBatchFlushCallback = heartBatchFlushCallback;
     IsmLiveDelegate.tokenExpiredCallback = tokenExpiredCallback;
     IsmLiveDelegate.analyticsDelegate = analyticsDelegate;
     IsmLiveDelegate.enabledAnalyticsEventTypes = enabledAnalyticsEventTypes;
@@ -796,10 +875,6 @@ class IsmLiveApp extends StatefulWidget {
         mqttChatFallbackInterval ?? const Duration(seconds: 6);
     IsmLiveDelegate.enableInternalStreamListingRefresh =
         enableInternalStreamListingRefresh;
-    IsmLiveDelegate.useGridLayoutForMultipleParticipants =
-        useGridLayoutForMultipleParticipants;
-    IsmLiveDelegate.showParticipantFullNamesInPublisherGrid =
-        showParticipantFullNamesInPublisherGrid;
   }
 
   static Future<void> endStream(
@@ -1013,31 +1088,50 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.onStreamEnd = callback;
 
   static IsmLiveStreamHeaderBuilder? get streamHeader =>
-      IsmLiveDelegate.streamHeader;
+      IsmLiveDelegate.streamScreenConfigure.streamHeader;
 
-  static IsmLiveHeaderBuilder? get bottomBuilder =>
-      IsmLiveDelegate.bottomBuilder;
+  static IsmLiveStreamBottomBuilder? get streamBottomBuilder =>
+      IsmLiveDelegate.streamScreenConfigure.streamBottomBuilder;
 
-  static IsmLiveInputBuilder? get inputBuilder => IsmLiveDelegate.inputBuilder;
+  @Deprecated('Use streamBottomBuilder instead.')
+  static IsmLiveHeaderBuilder? get bottomBuilder => streamBottomBuilder;
+
+  static IsmLiveInputBuilder? get inputBuilder =>
+      IsmLiveDelegate.streamScreenConfigure.inputBuilder;
 
   static IsmLiveCustomBottomSheetBuilder? get customBottomSheetBuilder =>
       IsmLiveDelegate.customBottomSheetBuilder;
 
-  static Widget? get endButton => IsmLiveDelegate.endButton;
+  static Widget? get endButton =>
+      IsmLiveDelegate.streamScreenConfigure.endButton;
 
-  static bool get showHeader => IsmLiveDelegate.showHeader;
+  static bool get showStreamHeader =>
+      IsmLiveDelegate.streamScreenConfigure.showStreamHeader;
+
+  @Deprecated('Use showStreamHeader instead.')
+  static bool get showHeader => showStreamHeader;
 
   /// See [IsmLiveDelegate.useGridLayoutForMultipleParticipants].
   static bool get useGridLayoutForMultipleParticipants =>
-      IsmLiveDelegate.useGridLayoutForMultipleParticipants;
+      IsmLiveDelegate.streamScreenConfigure
+          .resolvedUseGridLayoutForMultipleParticipants;
 
-  /// See [IsmLiveDelegate.showParticipantFullNamesInPublisherGrid].
+  /// See [IsmLiveStreamScreenConfigure.showParticipantFullNamesInPublisherGrid].
   static bool get showParticipantFullNamesInPublisherGrid =>
-      IsmLiveDelegate.showParticipantFullNamesInPublisherGrid;
+      IsmLiveDelegate.streamScreenConfigure
+          .resolvedShowParticipantFullNamesInPublisherGrid;
 
-  static Alignment get headerPosition => IsmLiveDelegate.headerPosition;
+  static Alignment get streamHeaderPosition =>
+      IsmLiveDelegate.streamScreenConfigure.resolvedStreamHeaderPosition;
 
-  static Alignment get endStreamPosition => IsmLiveDelegate.endStreamPosition;
+  @Deprecated('Use streamHeaderPosition instead.')
+  static Alignment get headerPosition => streamHeaderPosition;
+
+  static Alignment get endStreamWidgetPosition =>
+      IsmLiveDelegate.streamScreenConfigure.resolvedEndStreamWidgetPosition;
+
+  @Deprecated('Use endStreamWidgetPosition instead.')
+  static Alignment get endStreamPosition => endStreamWidgetPosition;
 
   static GoLiveClickCallback? get onGoLiveClick =>
       IsmLiveDelegate.onGoLiveClick;
@@ -1067,10 +1161,14 @@ class IsmLiveApp extends StatefulWidget {
   static String? get fontFamily => IsmLiveDelegate.fontFamily;
 
   static MessageProcessCallback? get messageProcessCallback =>
-      IsmLiveDelegate.messageProcessCallback;
+      IsmLiveDelegate.streamScreenConfigure.messageProcessCallback;
 
+  static StreamViewLoadedCallback? get streamScreenLoadedCallback =>
+      IsmLiveDelegate.streamScreenConfigure.streamScreenLoadedCallback;
+
+  @Deprecated('Use streamScreenLoadedCallback instead.')
   static StreamViewLoadedCallback? get streamViewLoadedCallback =>
-      IsmLiveDelegate.streamViewLoadedCallback;
+      streamScreenLoadedCallback;
 
   static StreamAnalyticsApiHandler? get streamAnalyticsApiHandler =>
       IsmLiveDelegate.streamAnalyticsApiHandler;
@@ -1080,7 +1178,7 @@ class IsmLiveApp extends StatefulWidget {
           IsmLiveDelegate.streamAnalyticsViewersApiHandler;
 
   static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
-      IsmLiveDelegate.hostTopProfileClickCallback;
+      IsmLiveDelegate.streamScreenConfigure.hostTopProfileClickCallback;
 
   static MissingHostTokenStopStreamCallback?
       get missingHostTokenStopStreamCallback =>
@@ -1092,13 +1190,14 @@ class IsmLiveApp extends StatefulWidget {
   static GoLiveButtonBuilder? get goLiveButtonBuilder =>
       IsmLiveDelegate.goLiveScreenConfigure?.goLiveButtonBuilder;
 
-  static IsmLiveCartBuilder? get cartBuilder => IsmLiveDelegate.cartBuilder;
+  static IsmLiveCartBuilder? get cartBuilder =>
+      IsmLiveDelegate.streamScreenConfigure.cartBuilder;
 
   static TopViewersListCallback? get topViewersListCallback =>
-      IsmLiveDelegate.topViewersListCallback;
+      IsmLiveDelegate.streamScreenConfigure.topViewersListCallback;
 
   static ModeratorsListCallback? get moderatorsListCallback =>
-      IsmLiveDelegate.moderatorsListCallback;
+      IsmLiveDelegate.streamScreenConfigure.moderatorsListCallback;
 
   static AttentionDialogButtonCallback? get attentionDialogButtonCallback =>
       IsmLiveDelegate.attentionDialogButtonCallback;
@@ -1110,10 +1209,10 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.streamListingRefreshCallback;
 
   static OnStreamScrollCallback? get onStreamScrollCallback =>
-      IsmLiveDelegate.onStreamScrollCallback;
+      IsmLiveDelegate.streamScreenConfigure.onStreamScrollCallback;
 
   static AddCoinsClickCallback? get addCoinsClickCallback =>
-      IsmLiveDelegate.addCoinsClickCallback;
+      IsmLiveDelegate.streamScreenConfigure.addCoinsClickCallback;
 
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
@@ -1127,17 +1226,25 @@ class IsmLiveApp extends StatefulWidget {
   /// Update message process callback dynamically at runtime
   static void updateMessageProcessCallback(
       MessageProcessCallback? messageProcessCallback) {
-    IsmLiveDelegate.messageProcessCallback = messageProcessCallback;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(messageProcessCallback: messageProcessCallback);
     // Trigger rebuild of stream view to apply new filter
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
   }
 
-  /// Update stream view loaded callback dynamically at runtime
+  /// Update stream screen loaded callback dynamically at runtime.
+  static void updateStreamScreenLoadedCallback(
+      StreamViewLoadedCallback? streamScreenLoadedCallback) {
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(streamScreenLoadedCallback: streamScreenLoadedCallback);
+  }
+
+  @Deprecated('Use updateStreamScreenLoadedCallback instead.')
   static void updateStreamViewLoadedCallback(
       StreamViewLoadedCallback? streamViewLoadedCallback) {
-    IsmLiveDelegate.streamViewLoadedCallback = streamViewLoadedCallback;
+    updateStreamScreenLoadedCallback(streamViewLoadedCallback);
   }
 
   // Removed: updateHeartMessageCallback (use controlOptionCallback instead)
@@ -1158,7 +1265,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update host top profile click callback dynamically at runtime
   static void updateHostTopProfileClickCallback(
       HostTopProfileClickCallback? hostTopProfileClickCallback) {
-    IsmLiveDelegate.hostTopProfileClickCallback = hostTopProfileClickCallback;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(hostTopProfileClickCallback: hostTopProfileClickCallback);
   }
 
   /// Update missing host token stop stream callback dynamically at runtime
@@ -1228,7 +1336,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update go live small button builder dynamically at runtime
   static void updateGoLiveSmallButtonBuilder(
       GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder) {
-    IsmLiveDelegate.goLiveSmallButtonBuilder = goLiveSmallButtonBuilder;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(goLiveSmallButtonBuilder: goLiveSmallButtonBuilder);
     // Trigger rebuild of stream view to apply new small button
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
@@ -1239,8 +1348,11 @@ class IsmLiveApp extends StatefulWidget {
   static void updateScheduleStreamCenterOverlayBuilder(
       ScheduleStreamCenterOverlayBuilder?
           scheduleStreamCenterOverlayBuilder) {
-    IsmLiveDelegate.scheduleStreamCenterOverlayBuilder =
-        scheduleStreamCenterOverlayBuilder;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(
+      scheduleStreamCenterOverlayBuilder:
+          scheduleStreamCenterOverlayBuilder,
+    );
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
     }
@@ -1248,7 +1360,8 @@ class IsmLiveApp extends StatefulWidget {
 
   /// Update cart builder dynamically at runtime
   static void updateCartBuilder(IsmLiveCartBuilder? cartBuilder) {
-    IsmLiveDelegate.cartBuilder = cartBuilder;
+    IsmLiveDelegate.streamScreenConfigure =
+        IsmLiveDelegate.streamScreenConfigure.copyWith(cartBuilder: cartBuilder);
     // Trigger rebuild of stream view to apply new cart builder
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
@@ -1258,13 +1371,15 @@ class IsmLiveApp extends StatefulWidget {
   /// Update top viewers list callback dynamically at runtime
   static void updateTopViewersListCallback(
       TopViewersListCallback? topViewersListCallback) {
-    IsmLiveDelegate.topViewersListCallback = topViewersListCallback;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(topViewersListCallback: topViewersListCallback);
   }
 
   /// Update moderators list callback dynamically at runtime
   static void updateModeratorsListCallback(
       ModeratorsListCallback? moderatorsListCallback) {
-    IsmLiveDelegate.moderatorsListCallback = moderatorsListCallback;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(moderatorsListCallback: moderatorsListCallback);
   }
 
   /// Update attention dialog button callback dynamically at runtime
@@ -1289,7 +1404,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update stream scroll callback dynamically at runtime
   static void updateOnStreamScrollCallback(
       OnStreamScrollCallback? onStreamScrollCallback) {
-    IsmLiveDelegate.onStreamScrollCallback = onStreamScrollCallback;
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+        .copyWith(onStreamScrollCallback: onStreamScrollCallback);
   }
 
   /// Update custom bottom sheet builder dynamically at runtime

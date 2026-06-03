@@ -207,7 +207,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
           // Defer wakelock so first frame paints immediately for a snappier open.
           unawaited(WakelockPlus.enable());
 
-          // Note: streamViewLoadedCallback is now triggered when hostDetails becomes available
+          // Note: streamScreenLoadedCallback is now triggered when hostDetails becomes available
           // in the _getStreamMembers method of api_mixin.dart
 
           IsmLiveUtility.updateLater(() {
@@ -349,7 +349,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                           _BottomDarkGradient(),
                                         ]),
                                   Align(
-                                    alignment: IsmLiveApp.headerPosition,
+                                    alignment: IsmLiveApp.streamHeaderPosition,
                                     child: Obx(
                                       () {
                                         final isActiveStreamPage =
@@ -361,7 +361,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                         if (!((controller.room
                                                         ?.localParticipant !=
                                                     null) &&
-                                                IsmLiveApp.showHeader) &&
+                                                IsmLiveApp.showStreamHeader) &&
                                             !widget.isSchedule) {
                                           return IsmLiveDimens.box0;
                                         }
@@ -404,7 +404,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                             children: [
                                                               Expanded(
                                                                 child: IsmLiveApp
-                                                                        .bottomBuilder
+                                                                        .streamBottomBuilder
                                                                         ?.call(
                                                                       context,
                                                                       controller.streamId ==
@@ -554,7 +554,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                       ),
                                                       IsmLiveDimens.boxHeight8,
                                                       if (IsmLiveApp
-                                                          .endStreamPosition
+                                                          .endStreamWidgetPosition
                                                           .isBottomAligned)
                                                         ...[],
                                                       if (controller
@@ -594,10 +594,11 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                       ),
                                     ),
                                   Align(
-                                    alignment: IsmLiveApp.endStreamPosition,
+                                    alignment: IsmLiveApp.endStreamWidgetPosition,
                                     child: Padding(
                                       padding: IsmLiveApp
-                                              .endStreamPosition.isBottomAligned
+                                              .endStreamWidgetPosition
+                                              .isBottomAligned
                                           ? EdgeInsets.only(
                                               bottom: overlayBottomPadding)
                                           : EdgeInsets.zero,

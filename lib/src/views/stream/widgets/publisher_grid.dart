@@ -286,7 +286,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
     if (layoutHeight <= 0) {
       return 0;
     }
-    final descriptionExtra = IsmLiveApp.showHeader
+    final descriptionExtra = IsmLiveApp.showStreamHeader
         ? extraTopPaddingForStreamDescription(
             context,
             description,
@@ -364,7 +364,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                     );
                   }
 
-                  final descriptionExtraTopPad = IsmLiveApp.showHeader
+                  final descriptionExtraTopPad = IsmLiveApp.showStreamHeader
                       ? extraTopPaddingForStreamDescription(
                           context,
                           controller.descriptionController.text,

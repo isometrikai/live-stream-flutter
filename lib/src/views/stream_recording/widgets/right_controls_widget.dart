@@ -127,7 +127,8 @@ class _ControlItem extends StatelessWidget {
         dimension: IsmLiveDimens.fifty,
         icon: iconWidget,
         onTap: onTap,
-        gradient: IsmLiveDelegate.streamOptionsBgGradient,
+        gradient:
+            IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient,
       ),
     );
   }

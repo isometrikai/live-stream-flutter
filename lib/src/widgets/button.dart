@@ -108,7 +108,7 @@ class IsmLiveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = IsmLiveDelegate.ismLiveButtonConfig;
+    final config = IsmLiveDelegate.buttonConfig;
     final builder = switch (_type) {
       IsmLiveButtonType.primary => config?.primaryBuilder,
       IsmLiveButtonType.secondary => config?.secondaryBuilder,

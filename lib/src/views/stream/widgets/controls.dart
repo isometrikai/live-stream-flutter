@@ -292,7 +292,8 @@ class IsmLiveControlsWidget extends StatelessWidget {
                                               : null
                                       : null
                                   : null,
-                          gradient: IsmLiveDelegate.streamOptionsBgGradient,
+                          gradient: IsmLiveDelegate
+                              .sideIconsConfigure.controlOptionBgGradient,
                         ),
                       );
                     },
