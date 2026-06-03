@@ -459,7 +459,8 @@ enum IsmLiveSideIconsHorizontalAlignment {
 /// Configuration for right-side stream control icons.
 ///
 /// Use this object in `IsmLiveApp.configureInterface(sideIconsConfigure: ...)`
-/// to customize width and horizontal alignment of control icons.
+/// to customize width, horizontal alignment, control option styling, and
+/// related side-icon behavior.
 class IsmLiveSideIconsConfigure {
   const IsmLiveSideIconsConfigure({
     this.width,
@@ -472,6 +473,7 @@ class IsmLiveSideIconsConfigure {
     this.controlOptionCallback,
     this.controlWidgetBuilder,
     this.productStreamSideOptionsBottomMargin,
+    this.controlOptionBgGradient,
   });
 
   /// Width of side icons container in logical pixels.
@@ -506,6 +508,42 @@ class IsmLiveSideIconsConfigure {
   /// Custom bottom margin for side options in product stream mode.
   final ProductStreamSideOptionsBottomMarginBuilder?
       productStreamSideOptionsBottomMargin;
+
+  /// Background gradient for stream control option buttons and message field.
+  final LinearGradient? controlOptionBgGradient;
+
+  IsmLiveSideIconsConfigure copyWith({
+    double? width,
+    IsmLiveSideIconsHorizontalAlignment? horizontalAlignment,
+    List<IsmLiveStreamOption>? viewersOptions,
+    List<IsmLiveStreamOption>? hostOptions,
+    List<IsmLiveStreamOption>? rtmpOptions,
+    List<IsmLiveStreamOption>? copublisherOptions,
+    List<IsmLiveStreamOption>? pkOptions,
+    ControlOptionCallback? controlOptionCallback,
+    ControlWidgetBuilder? controlWidgetBuilder,
+    ProductStreamSideOptionsBottomMarginBuilder?
+        productStreamSideOptionsBottomMargin,
+    LinearGradient? controlOptionBgGradient,
+  }) =>
+      IsmLiveSideIconsConfigure(
+        width: width ?? this.width,
+        horizontalAlignment: horizontalAlignment ?? this.horizontalAlignment,
+        viewersOptions: viewersOptions ?? this.viewersOptions,
+        hostOptions: hostOptions ?? this.hostOptions,
+        rtmpOptions: rtmpOptions ?? this.rtmpOptions,
+        copublisherOptions: copublisherOptions ?? this.copublisherOptions,
+        pkOptions: pkOptions ?? this.pkOptions,
+        controlOptionCallback:
+            controlOptionCallback ?? this.controlOptionCallback,
+        controlWidgetBuilder:
+            controlWidgetBuilder ?? this.controlWidgetBuilder,
+        productStreamSideOptionsBottomMargin:
+            productStreamSideOptionsBottomMargin ??
+                this.productStreamSideOptionsBottomMargin,
+        controlOptionBgGradient:
+            controlOptionBgGradient ?? this.controlOptionBgGradient,
+      );
 }
 
 /// Builder for custom "Buy now" button in product streams.
@@ -1033,38 +1071,154 @@ class IsmLiveDelegate {
 
   static Function(String id)? unsubscribStreamById;
 
-  static IsmLiveStreamHeaderBuilder? streamHeader;
+  @Deprecated('Use streamScreenConfigure.streamHeader instead.')
+  static IsmLiveStreamHeaderBuilder? get streamHeader =>
+      streamScreenConfigure.streamHeader;
 
-  static IsmLiveHeaderBuilder? bottomBuilder;
+  @Deprecated('Use streamScreenConfigure.streamHeader instead.')
+  static set streamHeader(IsmLiveStreamHeaderBuilder? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(streamHeader: value);
+  }
 
-  static IsmLiveInputBuilder? inputBuilder;
+  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
+  static IsmLiveStreamBottomBuilder? get streamBottomBuilder =>
+      streamScreenConfigure.streamBottomBuilder;
+
+  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
+  static set streamBottomBuilder(IsmLiveStreamBottomBuilder? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(streamBottomBuilder: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
+  static IsmLiveHeaderBuilder? get bottomBuilder => streamBottomBuilder;
+
+  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
+  static set bottomBuilder(IsmLiveHeaderBuilder? value) =>
+      streamBottomBuilder = value;
+
+  @Deprecated('Use streamScreenConfigure.inputBuilder instead.')
+  static IsmLiveInputBuilder? get inputBuilder =>
+      streamScreenConfigure.inputBuilder;
+
+  @Deprecated('Use streamScreenConfigure.inputBuilder instead.')
+  static set inputBuilder(IsmLiveInputBuilder? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(inputBuilder: value);
+  }
 
   static IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder;
 
-  static IsmLiveChatMessageBuilder? chatMessageBuilder;
+  @Deprecated('Use streamScreenConfigure.chatMessageBuilder instead.')
+  static IsmLiveChatMessageBuilder? get chatMessageBuilder =>
+      streamScreenConfigure.chatMessageBuilder;
 
-  static IsmLiveChatItemBgColorCallback? chatItemBgColorCallback;
+  @Deprecated('Use streamScreenConfigure.chatMessageBuilder instead.')
+  static set chatMessageBuilder(IsmLiveChatMessageBuilder? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(chatMessageBuilder: value);
+  }
 
-  static Widget? endButton;
+  @Deprecated('Use streamScreenConfigure.chatItemBgColorCallback instead.')
+  static IsmLiveChatItemBgColorCallback? get chatItemBgColorCallback =>
+      streamScreenConfigure.chatItemBgColorCallback;
 
-  static bool showHeader = true;
+  @Deprecated('Use streamScreenConfigure.chatItemBgColorCallback instead.')
+  static set chatItemBgColorCallback(IsmLiveChatItemBgColorCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(chatItemBgColorCallback: value);
+  }
 
-  static Alignment headerPosition = Alignment.topLeft;
+  @Deprecated('Use streamScreenConfigure.endButton instead.')
+  static Widget? get endButton => streamScreenConfigure.endButton;
 
-  static Alignment endStreamPosition = Alignment.topRight;
+  @Deprecated('Use streamScreenConfigure.endButton instead.')
+  static set endButton(Widget? value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(endButton: value);
+  }
 
-  /// When `false` (default), two or more live participants use full-width
-  /// horizontal strips stacked vertically (entire viewport split by row).
-  /// When `true`, uses the legacy 2–3 column grid. Set via
-  /// `IsmLiveApp.configureInterface`.
-  static bool useGridLayoutForMultipleParticipants = false;
+  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
+  static bool get showStreamHeader => streamScreenConfigure.showStreamHeader;
 
-  /// When `true`, each tile in the multi-participant publisher area shows the
-  /// participant [IsmLiveMemberDetailsModel.fullName] (with LiveKit name as
-  /// fallback) on a semi-transparent strip at the bottom-left. Only applies
-  /// when two or more publishers are shown. Default `false`. Set via
-  /// `IsmLiveApp.configureInterface`.
-  static bool showParticipantFullNamesInPublisherGrid = false;
+  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
+  static set showStreamHeader(bool value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(showStreamHeader: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
+  static bool get showHeader => showStreamHeader;
+
+  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
+  static set showHeader(bool value) => showStreamHeader = value;
+
+  @Deprecated('Use streamScreenConfigure.resolvedStreamHeaderPosition instead.')
+  static Alignment get streamHeaderPosition =>
+      streamScreenConfigure.resolvedStreamHeaderPosition;
+
+  @Deprecated('Use streamScreenConfigure.streamHeaderPosition instead.')
+  static set streamHeaderPosition(Alignment value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(streamHeaderPosition: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.resolvedStreamHeaderPosition instead.')
+  static Alignment get headerPosition => streamHeaderPosition;
+
+  @Deprecated('Use streamScreenConfigure.streamHeaderPosition instead.')
+  static set headerPosition(Alignment value) => streamHeaderPosition = value;
+
+  @Deprecated(
+    'Use streamScreenConfigure.resolvedEndStreamWidgetPosition instead.',
+  )
+  static Alignment get endStreamWidgetPosition =>
+      streamScreenConfigure.resolvedEndStreamWidgetPosition;
+
+  @Deprecated('Use streamScreenConfigure.endStreamWidgetPosition instead.')
+  static set endStreamWidgetPosition(Alignment value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(endStreamWidgetPosition: value);
+  }
+
+  @Deprecated(
+    'Use streamScreenConfigure.resolvedEndStreamWidgetPosition instead.',
+  )
+  static Alignment get endStreamPosition => endStreamWidgetPosition;
+
+  @Deprecated('Use streamScreenConfigure.endStreamWidgetPosition instead.')
+  static set endStreamPosition(Alignment value) =>
+      endStreamWidgetPosition = value;
+
+  @Deprecated(
+    'Use streamScreenConfigure.useGridLayoutForMultipleParticipants instead.',
+  )
+  static bool get useGridLayoutForMultipleParticipants =>
+      streamScreenConfigure.resolvedUseGridLayoutForMultipleParticipants;
+
+  @Deprecated(
+    'Use streamScreenConfigure.useGridLayoutForMultipleParticipants instead.',
+  )
+  static set useGridLayoutForMultipleParticipants(bool value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(
+      useGridLayoutForMultipleParticipants: value,
+    );
+  }
+
+  @Deprecated(
+    'Use streamScreenConfigure.showParticipantFullNamesInPublisherGrid instead.',
+  )
+  static bool get showParticipantFullNamesInPublisherGrid =>
+      streamScreenConfigure.resolvedShowParticipantFullNamesInPublisherGrid;
+
+  @Deprecated(
+    'Use streamScreenConfigure.showParticipantFullNamesInPublisherGrid instead.',
+  )
+  static set showParticipantFullNamesInPublisherGrid(bool value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(
+      showParticipantFullNamesInPublisherGrid: value,
+    );
+  }
 
   static List<IsmLiveStreamOption> viewersOption = [];
 
@@ -1080,9 +1234,22 @@ class IsmLiveDelegate {
 
   static Widget? homeScreen;
 
-  static Widget? logoWidget;
+  @Deprecated('Use streamScreenConfigure.logoWidget instead.')
+  static Widget? get logoWidget => streamScreenConfigure.logoWidget;
 
-  static Widget? endStreamScreen;
+  @Deprecated('Use streamScreenConfigure.logoWidget instead.')
+  static set logoWidget(Widget? value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(logoWidget: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.endStreamScreen instead.')
+  static Widget? get endStreamScreen => streamScreenConfigure.endStreamScreen;
+
+  @Deprecated('Use streamScreenConfigure.endStreamScreen instead.')
+  static set endStreamScreen(Widget? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(endStreamScreen: value);
+  }
 
   static bool? hdStream;
 
@@ -1131,9 +1298,40 @@ class IsmLiveDelegate {
   /// Default is `true`. Set via [IsmLiveApp.configureInterface].
   static bool enableInternalStreamListingRefresh = true;
 
-  static IsmLiveButtonConfig? ismLiveButtonConfig;
+  static IsmLiveButtonConfig? buttonConfig;
 
-  static LinearGradient? streamOptionsBgGradient;
+  @Deprecated('Use buttonConfig instead.')
+  static IsmLiveButtonConfig? get ismLiveButtonConfig => buttonConfig;
+
+  @Deprecated('Use buttonConfig instead.')
+  static set ismLiveButtonConfig(IsmLiveButtonConfig? value) =>
+      buttonConfig = value;
+
+  @Deprecated(
+    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
+  )
+  static LinearGradient? get controlOptionBgGradient =>
+      sideIconsConfigure.controlOptionBgGradient;
+
+  @Deprecated(
+    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
+  )
+  static set controlOptionBgGradient(LinearGradient? value) {
+    sideIconsConfigure = sideIconsConfigure.copyWith(
+      controlOptionBgGradient: value,
+    );
+  }
+
+  @Deprecated(
+    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
+  )
+  static LinearGradient? get streamOptionsBgGradient => controlOptionBgGradient;
+
+  @Deprecated(
+    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
+  )
+  static set streamOptionsBgGradient(LinearGradient? value) =>
+      controlOptionBgGradient = value;
 
   /// API handler for custom stream disconnect operations.
   ///
@@ -1167,9 +1365,33 @@ class IsmLiveDelegate {
 
   static String? fontFamily;
 
-  static MessageProcessCallback? messageProcessCallback;
+  @Deprecated('Use streamScreenConfigure.messageProcessCallback instead.')
+  static MessageProcessCallback? get messageProcessCallback =>
+      streamScreenConfigure.messageProcessCallback;
 
-  static StreamViewLoadedCallback? streamViewLoadedCallback;
+  @Deprecated('Use streamScreenConfigure.messageProcessCallback instead.')
+  static set messageProcessCallback(MessageProcessCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(messageProcessCallback: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
+  static StreamViewLoadedCallback? get streamScreenLoadedCallback =>
+      streamScreenConfigure.streamScreenLoadedCallback;
+
+  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
+  static set streamScreenLoadedCallback(StreamViewLoadedCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(streamScreenLoadedCallback: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
+  static StreamViewLoadedCallback? get streamViewLoadedCallback =>
+      streamScreenLoadedCallback;
+
+  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
+  static set streamViewLoadedCallback(StreamViewLoadedCallback? value) =>
+      streamScreenLoadedCallback = value;
 
   /// API handler for custom stream analytics implementation.
   ///
@@ -1183,13 +1405,46 @@ class IsmLiveDelegate {
   /// See [StreamAnalyticsViewersApiHandler] for detailed documentation and examples.
   static StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler;
 
-  static HostTopProfileClickCallback? hostTopProfileClickCallback;
+  @Deprecated('Use streamScreenConfigure.hostTopProfileClickCallback instead.')
+  static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
+      streamScreenConfigure.hostTopProfileClickCallback;
+
+  @Deprecated('Use streamScreenConfigure.hostTopProfileClickCallback instead.')
+  static set hostTopProfileClickCallback(HostTopProfileClickCallback? value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(
+      hostTopProfileClickCallback: value,
+    );
+  }
 
   static MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback;
 
-  static GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
+  @Deprecated('Use streamScreenConfigure.goLiveSmallButtonBuilder instead.')
+  static GoLiveSmallButtonBuilder? get goLiveSmallButtonBuilder =>
+      streamScreenConfigure.goLiveSmallButtonBuilder;
 
-  static ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder;
+  @Deprecated('Use streamScreenConfigure.goLiveSmallButtonBuilder instead.')
+  static set goLiveSmallButtonBuilder(GoLiveSmallButtonBuilder? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(goLiveSmallButtonBuilder: value);
+  }
+
+  @Deprecated(
+    'Use streamScreenConfigure.scheduleStreamCenterOverlayBuilder instead.',
+  )
+  static ScheduleStreamCenterOverlayBuilder?
+      get scheduleStreamCenterOverlayBuilder =>
+          streamScreenConfigure.scheduleStreamCenterOverlayBuilder;
+
+  @Deprecated(
+    'Use streamScreenConfigure.scheduleStreamCenterOverlayBuilder instead.',
+  )
+  static set scheduleStreamCenterOverlayBuilder(
+    ScheduleStreamCenterOverlayBuilder? value,
+  ) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(
+      scheduleStreamCenterOverlayBuilder: value,
+    );
+  }
 
   static ControlOptionCallback? controlOptionCallback;
 
@@ -1203,21 +1458,68 @@ class IsmLiveDelegate {
   static IsmLiveSideIconsConfigure sideIconsConfigure =
       const IsmLiveSideIconsConfigure();
 
-  static IsmLiveCartBuilder? cartBuilder;
+  @Deprecated('Use streamScreenConfigure.cartBuilder instead.')
+  static IsmLiveCartBuilder? get cartBuilder =>
+      streamScreenConfigure.cartBuilder;
 
-  static TopViewersListCallback? topViewersListCallback;
+  @Deprecated('Use streamScreenConfigure.cartBuilder instead.')
+  static set cartBuilder(IsmLiveCartBuilder? value) {
+    streamScreenConfigure = streamScreenConfigure.copyWith(cartBuilder: value);
+  }
 
-  static ModeratorsListCallback? moderatorsListCallback;
+  @Deprecated('Use streamScreenConfigure.topViewersListCallback instead.')
+  static TopViewersListCallback? get topViewersListCallback =>
+      streamScreenConfigure.topViewersListCallback;
+
+  @Deprecated('Use streamScreenConfigure.topViewersListCallback instead.')
+  static set topViewersListCallback(TopViewersListCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(topViewersListCallback: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.moderatorsListCallback instead.')
+  static ModeratorsListCallback? get moderatorsListCallback =>
+      streamScreenConfigure.moderatorsListCallback;
+
+  @Deprecated('Use streamScreenConfigure.moderatorsListCallback instead.')
+  static set moderatorsListCallback(ModeratorsListCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(moderatorsListCallback: value);
+  }
 
   static AttentionDialogButtonCallback? attentionDialogButtonCallback;
 
   static StreamListingRefreshCallback? streamListingRefreshCallback;
 
-  static OnStreamScrollCallback? onStreamScrollCallback;
+  @Deprecated('Use streamScreenConfigure.onStreamScrollCallback instead.')
+  static OnStreamScrollCallback? get onStreamScrollCallback =>
+      streamScreenConfigure.onStreamScrollCallback;
 
-  static AddCoinsClickCallback? addCoinsClickCallback;
+  @Deprecated('Use streamScreenConfigure.onStreamScrollCallback instead.')
+  static set onStreamScrollCallback(OnStreamScrollCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(onStreamScrollCallback: value);
+  }
 
-  static GiftClickCallback? giftClickCallback;
+  @Deprecated('Use streamScreenConfigure.addCoinsClickCallback instead.')
+  static AddCoinsClickCallback? get addCoinsClickCallback =>
+      streamScreenConfigure.addCoinsClickCallback;
+
+  @Deprecated('Use streamScreenConfigure.addCoinsClickCallback instead.')
+  static set addCoinsClickCallback(AddCoinsClickCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(addCoinsClickCallback: value);
+  }
+
+  @Deprecated('Use streamScreenConfigure.giftClickCallback instead.')
+  static GiftClickCallback? get giftClickCallback =>
+      streamScreenConfigure.giftClickCallback;
+
+  @Deprecated('Use streamScreenConfigure.giftClickCallback instead.')
+  static set giftClickCallback(GiftClickCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(giftClickCallback: value);
+  }
 
   /// Optional callback invoked when `userToken` is expired.
   /// If it returns a new token, the SDK retries the failed request once.
@@ -1226,7 +1528,15 @@ class IsmLiveDelegate {
   /// Optional hook when batched heart (like) taps are flushed to the backend.
   ///
   /// See [HeartBatchFlushCallback].
-  static HeartBatchFlushCallback? heartBatchFlushCallback;
+  @Deprecated('Use streamScreenConfigure.heartBatchFlushCallback instead.')
+  static HeartBatchFlushCallback? get heartBatchFlushCallback =>
+      streamScreenConfigure.heartBatchFlushCallback;
+
+  @Deprecated('Use streamScreenConfigure.heartBatchFlushCallback instead.')
+  static set heartBatchFlushCallback(HeartBatchFlushCallback? value) {
+    streamScreenConfigure =
+        streamScreenConfigure.copyWith(heartBatchFlushCallback: value);
+  }
 
   /// Optional analytics delegate to capture SDK events.
   static IsmLiveAnalyticsDelegate? analyticsDelegate;
@@ -1565,6 +1875,31 @@ typedef MessageSendButtonBuilder = Widget Function(
 /// Set via `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
 class IsmLiveStreamScreenConfigure {
   const IsmLiveStreamScreenConfigure({
+    this.streamHeader,
+    this.streamBottomBuilder,
+    this.inputBuilder,
+    this.chatMessageBuilder,
+    this.chatItemBgColorCallback,
+    this.endButton,
+    this.endStreamScreen,
+    this.showStreamHeader = true,
+    this.streamHeaderPosition,
+    this.endStreamWidgetPosition,
+    this.logoWidget,
+    this.messageProcessCallback,
+    this.streamScreenLoadedCallback,
+    this.hostTopProfileClickCallback,
+    this.goLiveSmallButtonBuilder,
+    this.scheduleStreamCenterOverlayBuilder,
+    this.cartBuilder,
+    this.topViewersListCallback,
+    this.moderatorsListCallback,
+    this.onStreamScrollCallback,
+    this.addCoinsClickCallback,
+    this.giftClickCallback,
+    this.heartBatchFlushCallback,
+    this.useGridLayoutForMultipleParticipants,
+    this.showParticipantFullNamesInPublisherGrid,
     this.streamBottomWidgetBuilder,
     this.streamHeaderTimerTrailingWidgetBuilder,
     this.streamHeaderInfoSectionBuilder,
@@ -1576,6 +1911,70 @@ class IsmLiveStreamScreenConfigure {
     this.showYourLiveSheet = true,
     this.showStreamMemberCount = false,
   });
+
+  final IsmLiveStreamHeaderBuilder? streamHeader;
+
+  final IsmLiveStreamBottomBuilder? streamBottomBuilder;
+
+  final IsmLiveInputBuilder? inputBuilder;
+
+  final IsmLiveChatMessageBuilder? chatMessageBuilder;
+
+  final IsmLiveChatItemBgColorCallback? chatItemBgColorCallback;
+
+  final Widget? endButton;
+
+  final Widget? endStreamScreen;
+
+  final bool showStreamHeader;
+
+  final Alignment? streamHeaderPosition;
+
+  final Alignment? endStreamWidgetPosition;
+
+  final Widget? logoWidget;
+
+  final MessageProcessCallback? messageProcessCallback;
+
+  final StreamViewLoadedCallback? streamScreenLoadedCallback;
+
+  final HostTopProfileClickCallback? hostTopProfileClickCallback;
+
+  final GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder;
+
+  final ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder;
+
+  final IsmLiveCartBuilder? cartBuilder;
+
+  final TopViewersListCallback? topViewersListCallback;
+
+  final ModeratorsListCallback? moderatorsListCallback;
+
+  final OnStreamScrollCallback? onStreamScrollCallback;
+
+  final AddCoinsClickCallback? addCoinsClickCallback;
+
+  final GiftClickCallback? giftClickCallback;
+
+  final HeartBatchFlushCallback? heartBatchFlushCallback;
+
+  /// When `true`, 2+ participants use the multi-column grid layout.
+  final bool? useGridLayoutForMultipleParticipants;
+
+  /// When `true`, publisher tiles show participant full names.
+  final bool? showParticipantFullNamesInPublisherGrid;
+
+  Alignment get resolvedStreamHeaderPosition =>
+      streamHeaderPosition ?? Alignment.topLeft;
+
+  Alignment get resolvedEndStreamWidgetPosition =>
+      endStreamWidgetPosition ?? Alignment.topRight;
+
+  bool get resolvedUseGridLayoutForMultipleParticipants =>
+      useGridLayoutForMultipleParticipants ?? false;
+
+  bool get resolvedShowParticipantFullNamesInPublisherGrid =>
+      showParticipantFullNamesInPublisherGrid ?? false;
 
   /// Full-width widget shown at the bottom of the stream screen, below the
   /// message input row.
@@ -1629,6 +2028,109 @@ class IsmLiveStreamScreenConfigure {
   /// When `true`, shows the member count chip in the stream header timer row.
   /// Tapping it opens [IsmLiveMembersSheet]. Default `false` (hidden).
   final bool showStreamMemberCount;
+
+  IsmLiveStreamScreenConfigure copyWith({
+    IsmLiveStreamHeaderBuilder? streamHeader,
+    IsmLiveStreamBottomBuilder? streamBottomBuilder,
+    IsmLiveInputBuilder? inputBuilder,
+    IsmLiveChatMessageBuilder? chatMessageBuilder,
+    IsmLiveChatItemBgColorCallback? chatItemBgColorCallback,
+    Widget? endButton,
+    Widget? endStreamScreen,
+    bool? showStreamHeader,
+    Alignment? streamHeaderPosition,
+    Alignment? endStreamWidgetPosition,
+    Widget? logoWidget,
+    MessageProcessCallback? messageProcessCallback,
+    StreamViewLoadedCallback? streamScreenLoadedCallback,
+    HostTopProfileClickCallback? hostTopProfileClickCallback,
+    GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
+    ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder,
+    IsmLiveCartBuilder? cartBuilder,
+    TopViewersListCallback? topViewersListCallback,
+    ModeratorsListCallback? moderatorsListCallback,
+    OnStreamScrollCallback? onStreamScrollCallback,
+    AddCoinsClickCallback? addCoinsClickCallback,
+    GiftClickCallback? giftClickCallback,
+    HeartBatchFlushCallback? heartBatchFlushCallback,
+    bool? useGridLayoutForMultipleParticipants,
+    bool? showParticipantFullNamesInPublisherGrid,
+    StreamBottomWidgetBuilder? streamBottomWidgetBuilder,
+    StreamHeaderTimerTrailingWidgetBuilder?
+        streamHeaderTimerTrailingWidgetBuilder,
+    StreamHeaderInfoSectionBuilder? streamHeaderInfoSectionBuilder,
+    StreamGradientOverlayBuilder? streamGradientOverlayBuilder,
+    bool? messageSendIconInsideInputField,
+    MessageSendButtonBuilder? messageSendButtonBuilder,
+    bool? constrainChatViewWidth,
+    double? chatViewMaxWidthFraction,
+    bool? showYourLiveSheet,
+    bool? showStreamMemberCount,
+  }) =>
+      IsmLiveStreamScreenConfigure(
+        streamHeader: streamHeader ?? this.streamHeader,
+        streamBottomBuilder: streamBottomBuilder ?? this.streamBottomBuilder,
+        inputBuilder: inputBuilder ?? this.inputBuilder,
+        chatMessageBuilder: chatMessageBuilder ?? this.chatMessageBuilder,
+        chatItemBgColorCallback:
+            chatItemBgColorCallback ?? this.chatItemBgColorCallback,
+        endButton: endButton ?? this.endButton,
+        endStreamScreen: endStreamScreen ?? this.endStreamScreen,
+        showStreamHeader: showStreamHeader ?? this.showStreamHeader,
+        streamHeaderPosition: streamHeaderPosition ?? this.streamHeaderPosition,
+        endStreamWidgetPosition:
+            endStreamWidgetPosition ?? this.endStreamWidgetPosition,
+        logoWidget: logoWidget ?? this.logoWidget,
+        messageProcessCallback:
+            messageProcessCallback ?? this.messageProcessCallback,
+        streamScreenLoadedCallback:
+            streamScreenLoadedCallback ?? this.streamScreenLoadedCallback,
+        hostTopProfileClickCallback:
+            hostTopProfileClickCallback ?? this.hostTopProfileClickCallback,
+        goLiveSmallButtonBuilder:
+            goLiveSmallButtonBuilder ?? this.goLiveSmallButtonBuilder,
+        scheduleStreamCenterOverlayBuilder:
+            scheduleStreamCenterOverlayBuilder ??
+                this.scheduleStreamCenterOverlayBuilder,
+        cartBuilder: cartBuilder ?? this.cartBuilder,
+        topViewersListCallback:
+            topViewersListCallback ?? this.topViewersListCallback,
+        moderatorsListCallback:
+            moderatorsListCallback ?? this.moderatorsListCallback,
+        onStreamScrollCallback:
+            onStreamScrollCallback ?? this.onStreamScrollCallback,
+        addCoinsClickCallback:
+            addCoinsClickCallback ?? this.addCoinsClickCallback,
+        giftClickCallback: giftClickCallback ?? this.giftClickCallback,
+        heartBatchFlushCallback:
+            heartBatchFlushCallback ?? this.heartBatchFlushCallback,
+        useGridLayoutForMultipleParticipants:
+            useGridLayoutForMultipleParticipants ??
+                this.useGridLayoutForMultipleParticipants,
+        showParticipantFullNamesInPublisherGrid:
+            showParticipantFullNamesInPublisherGrid ??
+                this.showParticipantFullNamesInPublisherGrid,
+        streamBottomWidgetBuilder:
+            streamBottomWidgetBuilder ?? this.streamBottomWidgetBuilder,
+        streamHeaderTimerTrailingWidgetBuilder:
+            streamHeaderTimerTrailingWidgetBuilder ??
+                this.streamHeaderTimerTrailingWidgetBuilder,
+        streamHeaderInfoSectionBuilder: streamHeaderInfoSectionBuilder ??
+            this.streamHeaderInfoSectionBuilder,
+        streamGradientOverlayBuilder:
+            streamGradientOverlayBuilder ?? this.streamGradientOverlayBuilder,
+        messageSendIconInsideInputField: messageSendIconInsideInputField ??
+            this.messageSendIconInsideInputField,
+        messageSendButtonBuilder:
+            messageSendButtonBuilder ?? this.messageSendButtonBuilder,
+        constrainChatViewWidth:
+            constrainChatViewWidth ?? this.constrainChatViewWidth,
+        chatViewMaxWidthFraction:
+            chatViewMaxWidthFraction ?? this.chatViewMaxWidthFraction,
+        showYourLiveSheet: showYourLiveSheet ?? this.showYourLiveSheet,
+        showStreamMemberCount:
+            showStreamMemberCount ?? this.showStreamMemberCount,
+      );
 
   /// Resolves whether the send icon is inside the input field.
   ///

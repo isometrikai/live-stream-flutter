@@ -86,7 +86,7 @@ class IsmLiveMessageField extends StatelessWidget {
         color: Colors.white,
       ),
       onTap: onSend,
-      gradient: IsmLiveDelegate.streamOptionsBgGradient,
+      gradient: IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient,
     );
   }
 
@@ -257,6 +257,6 @@ class IsmLiveHeartButton extends StatelessWidget {
         ),
         onTap: onTap,
         color: IsmLiveColors.red,
-        gradient: IsmLiveDelegate.streamOptionsBgGradient,
+        gradient: IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient,
       );
 }

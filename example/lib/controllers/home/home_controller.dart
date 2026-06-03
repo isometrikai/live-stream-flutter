@@ -72,11 +72,18 @@ class HomeController extends GetxController {
     );
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
-      useGridLayoutForMultipleParticipants: true,
-      showParticipantFullNamesInPublisherGrid: true,
       productionMode: true,
       streamScreenConfigure: IsmLiveStreamScreenConfigure(
-        showStreamMemberCount: true
+        showStreamMemberCount: true,
+        useGridLayoutForMultipleParticipants: true,
+        showParticipantFullNamesInPublisherGrid: true,
+        scheduleStreamCenterOverlayBuilder: _buildScheduleCenterOverlay,
+        hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
+            imageUrl, description) async => true,
+        // streamScreenLoadedCallback: (streamId, isHost, hostDetails) {
+        //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
+        // },
+        // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
           // showYourLiveSheet:false
       // streamBottomWidgetBuilder:
       //     (context, streamId, isHost, isKeyboardOpen) {
@@ -124,6 +131,38 @@ class HomeController extends GetxController {
       //     ),
       //   );
       // },
+      //   messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
+      //   cartBuilder: (context, controller) => Container(
+      //     padding: const EdgeInsets.all(8),
+      //     decoration: const BoxDecoration(
+      //       shape: BoxShape.circle,
+      //       color: Colors.white24,
+      //     ),
+      //     child: const Icon(
+      //       Icons.shopping_cart_outlined,
+      //       color: Colors.white,
+      //       size: 16,
+      //     ),
+      //   ),
+      //   chatMessageBuilder: (context, message, defaultChild) {
+      //     // Change background color for host messages
+      //     return defaultChild; // Use default for others
+      //   },
+      //   chatItemBgColorCallback: (message) {
+      //     // ✅ New name
+      //     if (message.sentByHost) {
+      //       return Colors.red.withValues(alpha: 0.4);
+      //     }
+      //     return null;
+      //   },
+      //   inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+      //     defaultMessageField: defaultMessageField,
+      //   ),
+      //   moderatorsListCallback: (context, streamId, isHost, isModerator,
+      //       moderatorsList, hostDetails) async {
+      //     // Custom moderators list implementation
+      //     return true;
+      //   },
       ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
           isProductStreamFeatureEnabled: false,
@@ -157,46 +196,11 @@ class HomeController extends GetxController {
           ),
       enableFreeGift: false,
       analyticsDelegate: const _ExampleAnalyticsDelegate(),
-      scheduleStreamCenterOverlayBuilder: _buildScheduleCenterOverlay,
       enabledAnalyticsEventTypes: {
         ...IsmLiveAnalyticsEvent.allTypes,
         IsmLiveAnalyticsEventType.streamInitializeAndJoinSuccess,
       },
-      hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
-              imageUrl, description) async =>
-          true,
-      // inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
-      //   defaultMessageField: defaultMessageField,
-      // ),
-
       restrictProfileSheetOnProfileClick: true,
-
-      // chatMessageBuilder: (context, message, defaultChild) {
-      //   // Change background color for host messages
-
-      //   return defaultChild; // Use default for others
-      // },
-      // chatItemBgColorCallback: (message) {
-      //   // ✅ New name
-      //   if (message.sentByHost) {
-      //     return Colors.red.withValues(alpha: 0.4);
-      //   }
-      //   return null;
-      // },
-
-      // messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
-      // cartBuilder: (context, controller) => Container(
-      //   padding: const EdgeInsets.all(8),
-      //   decoration: const BoxDecoration(
-      //     shape: BoxShape.circle,
-      //     color: Colors.white24,
-      //   ),
-      //   child: const Icon(
-      //     Icons.shopping_cart_outlined,
-      //     color: Colors.white,
-      //     size: 16,
-      //   ),
-      // ),
       // customBottomSheetBuilder:
       //     (context, title, leftLabel, rightLabel, onLeft, onRight) {
       //   return Container(
@@ -279,11 +283,7 @@ class HomeController extends GetxController {
         },
       ),
 
-      // moderatorsListCallback: (context, streamId, isHost, isModerator,
-      //     moderatorsList, hostDetails) async {
-      //   // Custom moderators list implementation
-      //   return true;
-      // },
+
 
       // topViewersListCallback: (context, viewerList, streamId, isHost,
       //     isModerator, streamViewersList) async {
@@ -367,13 +367,6 @@ class HomeController extends GetxController {
 
       //   return true; // Prevent default viewers sheet
       // },
-
-      // streamViewLoadedCallback: (streamId, isHost, hostDetails) {
-      //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
-      // },
-      // Custom Go Live header with host app branding
-      // Custom Go Live button with host app branding
-      // Configure dynamic font family - host app can provide their font name
       // fontFamily: 'Satoshi', // Example: Use Poppins font family
       // Enable free gifts - amount will be sent as 0
       ecomConfigure: IsmLiveEcomConfigure(
@@ -440,9 +433,17 @@ class HomeController extends GetxController {
         //   final h = MediaQuery.sizeOf(context).height;
         //   return h * 0.45; // or null for SDK default (~28% of height)
         // },
+        // controlOptionBgGradient : const LinearGradient(
+        //   begin: Alignment.bottomCenter,
+        //   end: Alignment.topCenter,
+        //   colors: [
+        //     ColorsValue.gradientStart,
+        //     ColorsValue.gradientEnd,
+        //   ],
+        // ),
       ),
 
-      // ismLiveButtonConfig: IsmLiveButtonConfig(
+      //   buttonConfig: IsmLiveButtonConfig(
       //   primaryBuilder: (context,
       //           {required label,
       //           onTap,
@@ -463,14 +464,6 @@ class HomeController extends GetxController {
       //           required secondary}) =>
       //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
       // ),
-      //   streamOptionsBgGradient : const LinearGradient(
-      //     begin: Alignment.bottomCenter,
-      //     end: Alignment.topCenter,
-      //     colors: [
-      //       ColorsValue.gradientStart,
-      //       ColorsValue.gradientEnd,
-      //     ],
-      //   ),
       // liveAnalyticsOptions: [
       //   IsmLiveAnalyticsOptions.hearts,
       //   IsmLiveAnalyticsOptions.viewers,
@@ -478,9 +471,6 @@ class HomeController extends GetxController {
       //   IsmLiveAnalyticsOptions.earnings,
       //   IsmLiveAnalyticsOptions.duration,
       // ]
-      // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
-      // Paid / HD / RTMP toggles belong in goLiveScreenConfigure → see flags above.
-      // addProductViewBuilder lives inside ecomConfigure → see commented line there.
       // tokenExpiredCallback: () async {
       //   IsmLiveLog.info('Token expired');
       //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';

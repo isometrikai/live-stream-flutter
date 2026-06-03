@@ -304,7 +304,7 @@ mixin StreamAPIMixin {
         return;
       }
       _controller._streamViewLoadedCallbackTriggered = true;
-      IsmLiveDelegate.streamViewLoadedCallback?.call(
+      IsmLiveDelegate.streamScreenLoadedCallback?.call(
         _controller.isHost,
         hostDetails,
         _controller.streamDetails,

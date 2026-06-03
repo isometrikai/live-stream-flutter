@@ -21,11 +21,15 @@ typedef FutureFunction = Future<void> Function();
 
 typedef RoomListener = EventsListener<RoomEvent>;
 
-typedef IsmLiveHeaderBuilder = Widget Function(
+/// Builder for the stream bottom section (e.g. chat list above the input).
+typedef IsmLiveStreamBottomBuilder = Widget Function(
   BuildContext context,
   IsmLiveMemberDetailsModel? hostDetails,
   String description,
 );
+
+@Deprecated('Use IsmLiveStreamBottomBuilder instead.')
+typedef IsmLiveHeaderBuilder = IsmLiveStreamBottomBuilder;
 
 /// Builder for the stream header. Receives [defaultHeader] so the host can use
 /// it as-is, wrap it, or replace it with a fully custom widget.

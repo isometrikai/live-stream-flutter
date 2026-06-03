@@ -139,7 +139,7 @@ IsmLiveApp.configureInterface(
   fontFamily: 'Roboto',
   
   // UI customization
-  showHeader: true,
+  showStreamHeader: true,
   streamHeader: (context) => CustomHeader(),
 );
 ```
