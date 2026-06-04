@@ -356,6 +356,10 @@ class IsmLiveStreamRepository {
       'searchTag': searchTag,
       'sorting': 1,
     };
+    if (IsmLiveDelegate.excludeGuestUsers) {
+      payload['q'] = 'role-guest';
+      payload['op'] = 'ne';
+    }
     if (queryParams != null && queryParams.isNotEmpty) {
       for (final entry in queryParams.entries) {
         // Protect core pagination/search params from accidental override.
@@ -493,6 +497,10 @@ class IsmLiveStreamRepository {
       'limit': limit,
       'searchTag': searchTag,
     };
+    if (IsmLiveDelegate.excludeGuestUsers) {
+      payload['q'] = 'role-guest';
+      payload['op'] = 'ne';
+    }
 
     return await _apiWrapper.makeRequest(
       '${IsmLiveApis.eligibleMembers}?${payload.makeQuery()}',

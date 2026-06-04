@@ -661,6 +661,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveStreamScreenConfigure? streamScreenConfigure,
     bool enableFreeGift = false,
     bool restrictProfileSheetOnProfileClick = false,
+    bool excludeGuestUsers = false,
     String? fontFamily,
     @Deprecated('Set on streamScreenConfigure instead.')
     MessageProcessCallback? messageProcessCallback,
@@ -843,6 +844,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.enableFreeGift = enableFreeGift;
     IsmLiveDelegate.restrictProfileSheetOnProfileClick =
         restrictProfileSheetOnProfileClick;
+    IsmLiveDelegate.excludeGuestUsers = excludeGuestUsers;
     IsmLiveDelegate.fontFamily = fontFamily;
     // Heart message is now handled via controlOptionCallback
     IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;

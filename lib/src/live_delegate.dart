@@ -1363,6 +1363,9 @@ class IsmLiveDelegate {
 
   static bool restrictProfileSheetOnProfileClick = false;
 
+  /// When `true`, user listing APIs exclude guest-role users (`q=role-guest&op=ne`).
+  static bool excludeGuestUsers = false;
+
   static String? fontFamily;
 
   @Deprecated('Use streamScreenConfigure.messageProcessCallback instead.')
