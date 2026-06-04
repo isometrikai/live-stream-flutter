@@ -73,96 +73,98 @@ class HomeController extends GetxController {
     // await IsmLiveApp.initialize(configData, navigatorKey: kNavigatorKey);
     IsmLiveApp.configureInterface(
       productionMode: true,
+      excludeGuestUsers: true,
       streamScreenConfigure: IsmLiveStreamScreenConfigure(
         showStreamMemberCount: true,
         useGridLayoutForMultipleParticipants: true,
         showParticipantFullNamesInPublisherGrid: true,
         scheduleStreamCenterOverlayBuilder: _buildScheduleCenterOverlay,
         hostTopProfileClickCallback: (context, isHost, userIdentifier, name,
-            imageUrl, description) async => true,
+                imageUrl, description) async =>
+            true,
         // streamScreenLoadedCallback: (streamId, isHost, hostDetails) {
         //   IsmLiveLog.info('Stream_view_loaded: $streamId, $isHost, $hostDetails');
         // },
         // logoWidget: SvgPicture.asset('assets/logo/iamat_logo.svg'),
-          // showYourLiveSheet:false
-      // streamBottomWidgetBuilder:
-      //     (context, streamId, isHost, isKeyboardOpen) {
-      //   if (isKeyboardOpen || streamId.isEmpty) {
-      //     return null;
-      //   }
-      //   return Container(
-      //     margin: const EdgeInsets.symmetric(horizontal: 12),
-      //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      //     decoration: BoxDecoration(
-      //       color: Colors.white.withValues(alpha: 0.2),
-      //       borderRadius: BorderRadius.circular(8),
-      //     ),
-      //     child: Text(
-      //       isHost
-      //           ? 'Host custom bottom bar'
-      //           : 'Viewer custom bottom bar',
-      //       textAlign: TextAlign.center,
-      //       style: const TextStyle(color: Colors.white, fontSize: 12),
-      //     ),
-      //   );
-      // },
-      // streamHeaderInfoSectionBuilder: (context, streamId, isHost, streamCoins,
-      //     isPaidStream, description, pkCompleted, isBattleTie, winnerName) {
-      //   if (streamId.isEmpty) {
-      //     return null;
-      //   }
-      //   return Padding(
-      //     padding: const EdgeInsets.symmetric(horizontal: 10),
-      //     child: Container(
-      //       width: double.infinity,
-      //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      //       decoration: BoxDecoration(
-      //         color: Colors.deepPurple.withValues(alpha: 0.85),
-      //         borderRadius: BorderRadius.circular(8),
-      //       ),
-      //       child: Text(
-      //         'Custom promo ',
-      //         style: const TextStyle(
-      //           color: Colors.white,
-      //           fontSize: 12,
-      //           fontWeight: FontWeight.w600,
-      //         ),
-      //       ),
-      //     ),
-      //   );
-      // },
-      //   messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
-      //   cartBuilder: (context, controller) => Container(
-      //     padding: const EdgeInsets.all(8),
-      //     decoration: const BoxDecoration(
-      //       shape: BoxShape.circle,
-      //       color: Colors.white24,
-      //     ),
-      //     child: const Icon(
-      //       Icons.shopping_cart_outlined,
-      //       color: Colors.white,
-      //       size: 16,
-      //     ),
-      //   ),
-      //   chatMessageBuilder: (context, message, defaultChild) {
-      //     // Change background color for host messages
-      //     return defaultChild; // Use default for others
-      //   },
-      //   chatItemBgColorCallback: (message) {
-      //     // ✅ New name
-      //     if (message.sentByHost) {
-      //       return Colors.red.withValues(alpha: 0.4);
-      //     }
-      //     return null;
-      //   },
-      //   inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
-      //     defaultMessageField: defaultMessageField,
-      //   ),
-      //   moderatorsListCallback: (context, streamId, isHost, isModerator,
-      //       moderatorsList, hostDetails) async {
-      //     // Custom moderators list implementation
-      //     return true;
-      //   },
+        // showYourLiveSheet:false
+        // streamBottomWidgetBuilder:
+        //     (context, streamId, isHost, isKeyboardOpen) {
+        //   if (isKeyboardOpen || streamId.isEmpty) {
+        //     return null;
+        //   }
+        //   return Container(
+        //     margin: const EdgeInsets.symmetric(horizontal: 12),
+        //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        //     decoration: BoxDecoration(
+        //       color: Colors.white.withValues(alpha: 0.2),
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //     child: Text(
+        //       isHost
+        //           ? 'Host custom bottom bar'
+        //           : 'Viewer custom bottom bar',
+        //       textAlign: TextAlign.center,
+        //       style: const TextStyle(color: Colors.white, fontSize: 12),
+        //     ),
+        //   );
+        // },
+        // streamHeaderInfoSectionBuilder: (context, streamId, isHost, streamCoins,
+        //     isPaidStream, description, pkCompleted, isBattleTie, winnerName) {
+        //   if (streamId.isEmpty) {
+        //     return null;
+        //   }
+        //   return Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 10),
+        //     child: Container(
+        //       width: double.infinity,
+        //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        //       decoration: BoxDecoration(
+        //         color: Colors.deepPurple.withValues(alpha: 0.85),
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //       child: Text(
+        //         'Custom promo ',
+        //         style: const TextStyle(
+        //           color: Colors.white,
+        //           fontSize: 12,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        // },
+        //   messageProcessCallback: (message, streamId, isMqtt, isHost) => message,
+        //   cartBuilder: (context, controller) => Container(
+        //     padding: const EdgeInsets.all(8),
+        //     decoration: const BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       color: Colors.white24,
+        //     ),
+        //     child: const Icon(
+        //       Icons.shopping_cart_outlined,
+        //       color: Colors.white,
+        //       size: 16,
+        //     ),
+        //   ),
+        //   chatMessageBuilder: (context, message, defaultChild) {
+        //     // Change background color for host messages
+        //     return defaultChild; // Use default for others
+        //   },
+        //   chatItemBgColorCallback: (message) {
+        //     // ✅ New name
+        //     if (message.sentByHost) {
+        //       return Colors.red.withValues(alpha: 0.4);
+        //     }
+        //     return null;
+        //   },
+        //   inputBuilder: (context, defaultMessageField) => LiveCustomInputField(
+        //     defaultMessageField: defaultMessageField,
+        //   ),
+        //   moderatorsListCallback: (context, streamId, isHost, isModerator,
+        //       moderatorsList, hostDetails) async {
+        //     // Custom moderators list implementation
+        //     return true;
+        //   },
       ),
       goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
           isProductStreamFeatureEnabled: false,
@@ -282,8 +284,6 @@ class HomeController extends GetxController {
           );
         },
       ),
-
-
 
       // topViewersListCallback: (context, viewerList, streamId, isHost,
       //     isModerator, streamViewersList) async {
