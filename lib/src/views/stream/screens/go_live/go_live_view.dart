@@ -306,7 +306,7 @@ class IsmGoLiveView extends StatelessWidget {
                             !(controller.streamDetails?.isScheduledStream ??
                                 false),
                       ),
-                      const SizedBox(height: 120),
+                       SizedBox(height: IsmLiveDimens.twoHundred),
                     ],
                   ),
                 ),
