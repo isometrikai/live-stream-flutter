@@ -14,6 +14,8 @@ class IsmLivePkInviteModel {
     required this.viewerCount,
     required this.streamPic,
     this.profilePic,
+    this.inviteId,
+    this.timestamp,
   });
 
   factory IsmLivePkInviteModel.fromMap(Map<String, dynamic> map) =>
@@ -32,6 +34,8 @@ class IsmLivePkInviteModel {
         streamPic: map['streamPic'] as String,
         profilePic:
             map['profilePic'] != null ? map['profilePic'] as String : null,
+        inviteId: map['inviteId'] != null ? map['inviteId'] as String : null,
+        timestamp: map['timestamp'] != null ? map['timestamp'] as int : null,
       );
 
   factory IsmLivePkInviteModel.fromJson(String source) =>
@@ -46,6 +50,8 @@ class IsmLivePkInviteModel {
   final int viewerCount;
   final String streamPic;
   final String? profilePic;
+  final String? inviteId;
+  final int? timestamp;
 
   IsmLivePkInviteModel copyWith({
     String? streamId,
@@ -58,6 +64,8 @@ class IsmLivePkInviteModel {
     int? viewerCount,
     String? streamPic,
     String? profilePic,
+    String? inviteId,
+    int? timestamp,
   }) =>
       IsmLivePkInviteModel(
         streamId: streamId ?? this.streamId,
@@ -70,6 +78,8 @@ class IsmLivePkInviteModel {
         viewerCount: viewerCount ?? this.viewerCount,
         streamPic: streamPic ?? this.streamPic,
         profilePic: profilePic ?? this.profilePic,
+        inviteId: inviteId ?? this.inviteId,
+        timestamp: timestamp ?? this.timestamp,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -83,7 +93,20 @@ class IsmLivePkInviteModel {
         'viewerCount': viewerCount,
         'streamPic': streamPic,
         'profilePic': profilePic,
+        'inviteId': inviteId,
+        'timestamp': timestamp,
       };
+
+  String get displayProfilePic {
+    if (profilePic != null && profilePic!.isNotEmpty) {
+      return profilePic!;
+    }
+    final metaPic = userMetaData?.profilePic;
+    if (metaPic != null && metaPic.isNotEmpty) {
+      return metaPic;
+    }
+    return streamPic;
+  }
 
   String get name {
     if (userMetaData?.firstName?.isNotEmpty ?? false) {
@@ -111,7 +134,9 @@ class IsmLivePkInviteModel {
         other.userId == userId &&
         other.viewerCount == viewerCount &&
         other.streamPic == streamPic &&
-        other.profilePic == profilePic;
+        other.profilePic == profilePic &&
+        other.inviteId == inviteId &&
+        other.timestamp == timestamp;
   }
 
   @override
@@ -125,5 +150,7 @@ class IsmLivePkInviteModel {
       userId.hashCode ^
       viewerCount.hashCode ^
       streamPic.hashCode ^
-      profilePic.hashCode;
+      profilePic.hashCode ^
+      inviteId.hashCode ^
+      timestamp.hashCode;
 }

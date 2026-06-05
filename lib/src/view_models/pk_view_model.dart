@@ -34,6 +34,31 @@ class IsmLivePkViewModel {
     }
   }
 
+  Future<List<IsmLivePkInviteModel>> getPkInvites({
+    required String streamId,
+    required int skip,
+    required int limit,
+  }) async {
+    try {
+      var res = await _repository.getPkInvites(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+      );
+      if (res.hasError) {
+        return [];
+      }
+      List list = jsonDecode(res.data)['data'];
+
+      return list
+          .map((e) => IsmLivePkInviteModel.fromMap(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return [];
+    }
+  }
+
   Future<bool> sendInvitationToUserForPK({
     required String reciverStreamId,
     required String userId,

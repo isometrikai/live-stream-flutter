@@ -23,6 +23,8 @@ class IsmLivePkController extends GetxController
 
   ScrollController pkInviteListController = ScrollController();
 
+  ScrollController pkReceivedInviteListController = ScrollController();
+
   ScrollController giftController = ScrollController();
 
   TextEditingController pkInviteTextController = TextEditingController();
@@ -38,6 +40,12 @@ class IsmLivePkController extends GetxController
   List<IsmLivePkInviteModel> get pkInviteList => _pkInviteList;
   set pkInviteList(List<IsmLivePkInviteModel> list) =>
       _pkInviteList.value = list;
+
+  final RxList<IsmLivePkInviteModel> _pkReceivedInviteList =
+      <IsmLivePkInviteModel>[].obs;
+  List<IsmLivePkInviteModel> get pkReceivedInviteList => _pkReceivedInviteList;
+  set pkReceivedInviteList(List<IsmLivePkInviteModel> list) =>
+      _pkReceivedInviteList.value = list;
 
   final RxList<IsmLiveGiftGroupModel> _giftCategoriesList =
       <IsmLiveGiftGroupModel>[].obs;
@@ -308,6 +316,7 @@ class IsmLivePkController extends GetxController
   }
 
   bool isPkInviteApisCall = false;
+  bool isPkReceivedInviteApiCall = false;
   bool isGiftApiCall = false;
   void pkPagination() {
     pkInviteListController.addListener(() async {
@@ -324,6 +333,22 @@ class IsmLivePkController extends GetxController
           searchTag: pkInviteTextController.text,
         );
         isPkInviteApisCall = false;
+      }
+    });
+
+    pkReceivedInviteListController.addListener(() async {
+      if (pkReceivedInviteListController.position.maxScrollExtent * 0.8 <=
+          pkReceivedInviteListController.position.pixels) {
+        if (isPkReceivedInviteApiCall) {
+          return;
+        }
+        isPkReceivedInviteApiCall = true;
+
+        await getPkInvites(
+          limit: 10,
+          skip: pkReceivedInviteList.length,
+        );
+        isPkReceivedInviteApiCall = false;
       }
     });
 
@@ -463,6 +488,41 @@ class IsmLivePkController extends GetxController
     );
     pkInviteList.addAll(res);
     pkInviteList = pkInviteList.toSet().toList();
+  }
+
+  Future<void> getPkInvites({
+    int limit = 10,
+    int skip = 0,
+  }) async {
+    await _getPkInvites(
+      limit: limit,
+      skip: skip,
+    );
+  }
+
+  Future<void> _getPkInvites({
+    required int limit,
+    required int skip,
+  }) async {
+    final streamId = senderStreamIdForPkInvite;
+    if (!IsmLiveStreamId.isValid(streamId)) {
+      return;
+    }
+
+    var res = await _viewModel.getPkInvites(
+      streamId: streamId,
+      limit: limit,
+      skip: skip,
+    );
+    if (skip == 0) {
+      pkReceivedInviteList = res;
+      if (pkReceivedInviteListController.hasClients) {
+        pkReceivedInviteListController.jumpTo(0);
+      }
+    } else {
+      pkReceivedInviteList.addAll(res);
+      pkReceivedInviteList = pkReceivedInviteList.toSet().toList();
+    }
   }
 
   Future<void> sendInvitationToUserForPK({
