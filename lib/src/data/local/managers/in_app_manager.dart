@@ -21,6 +21,15 @@ class InAppManager {
 
   static ValueChanged<PurchaseDetails>? _onPurchase;
 
+  /// True while the purchase-flow loader from [PurchaseStatus.pending] is shown.
+  static bool _purchaseLoaderVisible = false;
+
+  static void _dismissPurchaseLoaderIfShown() {
+    if (!_purchaseLoaderVisible) return;
+    _purchaseLoaderVisible = false;
+    IsmLiveUtility.closeDialog();
+  }
+
   /// Method for Initialize In App Purchase
   void _initialize() async {
     unawaited(_finishPastPurchases());
@@ -33,24 +42,27 @@ class InAppManager {
       for (final purchase in purchaseLists) {
         switch (purchase.status) {
           case PurchaseStatus.pending:
+            _purchaseLoaderVisible = true;
             IsmLiveUtility.showLoader();
             break;
           case PurchaseStatus.purchased:
-            IsmLiveUtility.closeDialog();
+            _dismissPurchaseLoaderIfShown();
             _onPurchase?.call(purchase);
             _onPurchase = null;
             break;
           case PurchaseStatus.error:
             InAppPurchase.instance.completePurchase(purchase);
-            IsmLiveUtility.closeDialog();
+            _dismissPurchaseLoaderIfShown();
             IsmLiveUtility.showAlertDialog(
               message: purchase.error?.message ?? '',
             );
+            _onPurchase = null;
             break;
           case PurchaseStatus.restored:
             break;
           case PurchaseStatus.canceled:
-            IsmLiveUtility.closeDialog();
+            _dismissPurchaseLoaderIfShown();
+            _onPurchase = null;
             InAppPurchase.instance.completePurchase(purchase);
             break;
         }
