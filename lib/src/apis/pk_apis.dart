@@ -41,6 +41,25 @@ class IsmLivePkApis {
     );
   }
 
+  Future<IsmLiveResponseModel> getPkInvites({
+    required String streamId,
+    required int skip,
+    required int limit,
+  }) async {
+    var params = {
+      'streamId': streamId,
+      'skip': skip,
+      'limit': limit,
+    };
+
+    return await _apiWrapper.makeRequest(
+      '${IsmLiveApis.invitaionPK}?${params.makeQuery()}',
+      type: IsmLiveRequestType.get,
+      showDialog: false,
+      headers: IsmLiveUtility.tokenHeader(),
+    );
+  }
+
   Future<IsmLiveResponseModel> invitationPK({
     required String streamId,
     required String inviteId,

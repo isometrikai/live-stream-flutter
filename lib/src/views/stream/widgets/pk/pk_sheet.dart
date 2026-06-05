@@ -52,6 +52,7 @@ class IsmLivePkSheet extends StatelessWidget {
                 initState: (state) {
                   Get.find<IsmLivePkController>()
                     ..pkInviteList.clear()
+                    ..pkReceivedInviteList.clear()
                     ..getUsersToInviteForPK()
                     ..pkTabController.index = 0
                     ..pk = IsmLivePk.values[0];
@@ -64,6 +65,9 @@ class IsmLivePkSheet extends StatelessWidget {
                   controller: controller.pkTabController,
                   onTap: (index) {
                     controller.pk = IsmLivePk.values[index];
+                    if (index == IsmLivePk.inviteList.index) {
+                      controller.getPkInvites();
+                    }
                   },
                   tabs: IsmLivePk.values.map(
                     (type) {
@@ -158,44 +162,63 @@ class IsmLivePkSheet extends StatelessWidget {
                         },
                       ),
                       IsmLiveScrollSheet(
+                        controller: controller.pkReceivedInviteListController,
                         placeHolderText: IsmLiveStrings.noDataFound,
                         showHeader: false,
                         title: '',
-                        itemCount: 0,
-                        itemBuilder: (context, index) => ListTile(
-                          leading: IsmLiveImage.network(
-                            '',
-                            name: '@tayne22',
-                            dimensions: IsmLiveDimens.forty,
-                            isProfileImage: true,
-                          ),
-                          title: Text(
-                            '@tayne22',
-                            style: TextStyle(color: textColor),
-                          ),
-                          subtitle: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.remove_red_eye,
-                                size: 16,
-                                color: subtitleColor,
-                              ),
-                              IsmLiveDimens.boxWidth2,
-                              Text(
-                                '123',
-                                style: TextStyle(color: subtitleColor),
-                              ),
-                            ],
-                          ),
-                          trailing: SizedBox(
-                            width: IsmLiveDimens.hundred,
-                            child: const IsmLiveButton(
-                              label: IsmLiveStrings.accept,
-                              onTap: IsmLiveRoute.pop,
+                        itemCount: controller.pkReceivedInviteList.length,
+                        itemBuilder: (context, index) {
+                          if (index >= controller.pkReceivedInviteList.length) {
+                            return const SizedBox.shrink();
+                          }
+                          var details =
+                              controller.pkReceivedInviteList[index];
+                          return ListTile(
+                            leading: IsmLiveImage.network(
+                              details.displayProfilePic,
+                              name: details.name,
+                              dimensions: IsmLiveDimens.forty,
+                              isProfileImage: true,
                             ),
-                          ),
-                        ),
+                            title: Text(
+                              details.name,
+                              style: TextStyle(color: textColor),
+                            ),
+                            subtitle: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.remove_red_eye,
+                                  size: 16,
+                                  color: subtitleColor,
+                                ),
+                                IsmLiveDimens.boxWidth4,
+                                Text(
+                                  '${details.viewerCount}',
+                                  style: TextStyle(color: subtitleColor),
+                                ),
+                              ],
+                            ),
+                            trailing: SizedBox(
+                              width: IsmLiveDimens.hundred,
+                              child: IsmLiveButton(
+                                label: IsmLiveStrings.accept,
+                                onTap: () {
+                                  IsmLiveRoute.pop();
+                                  controller.inviteId =
+                                      details.inviteId ?? '';
+                                  controller.invitationPk(
+                                    inviteId: details.inviteId ?? '',
+                                    reciverStreamId: details.streamId,
+                                    response: IsmLivePkResponceToSend
+                                        .accepted.value,
+                                    context: context,
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

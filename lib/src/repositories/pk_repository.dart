@@ -26,6 +26,17 @@ class IsmLivePkRepository {
         userId: userId,
       );
 
+  Future<IsmLiveResponseModel> getPkInvites({
+    required String streamId,
+    required int skip,
+    required int limit,
+  }) async =>
+      await _api.getPkInvites(
+        streamId: streamId,
+        limit: limit,
+        skip: skip,
+      );
+
   Future<IsmLiveResponseModel> invitationPK({
     required String streamId,
     required String inviteId,
