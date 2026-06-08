@@ -20,8 +20,20 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 part 'mixins/api_mixin.dart';
 part 'mixins/join_mixin.dart';
+part 'mixins/join_mixin_camera.dart';
+part 'mixins/join_mixin_connection.dart';
+part 'mixins/join_mixin_rejoin.dart';
+part 'mixins/join_mixin_schedule.dart';
+part 'mixins/join_mixin_stream_ops.dart';
 part 'mixins/message_mixin.dart';
 part 'mixins/ongoing_mixin.dart';
+part 'mixins/ongoing_mixin_audio.dart';
+part 'mixins/ongoing_mixin_chat.dart';
+part 'mixins/ongoing_mixin_controls.dart';
+part 'mixins/ongoing_mixin_disconnect.dart';
+part 'mixins/ongoing_mixin_participants.dart';
+part 'mixins/ongoing_mixin_scroll.dart';
+part 'mixins/ongoing_mixin_social.dart';
 part 'mixins/restream_mixin.dart';
 part 'mixins/sheet_mixin.dart';
 
@@ -32,7 +44,18 @@ class IsmLiveStreamController extends GetxController
         StreamAPIMixin,
         StreamBackgroundLifecycleMixin,
         StreamJoinMixin,
+        StreamJoinCameraMixin,
+        StreamJoinScheduleMixin,
+        StreamJoinConnectionMixin,
+        StreamJoinRejoinMixin,
+        StreamJoinStreamOpsMixin,
         StreamOngoingMixin,
+        StreamOngoingChatMixin,
+        StreamOngoingSocialMixin,
+        StreamOngoingControlsMixin,
+        StreamOngoingParticipantsMixin,
+        StreamOngoingDisconnectMixin,
+        StreamOngoingScrollMixin,
         StreamMessageMixin,
         StreamSheetMixin,
         RestreamMixin {
