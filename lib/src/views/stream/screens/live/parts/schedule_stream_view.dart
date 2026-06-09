@@ -189,7 +189,7 @@ class ScheduleStreamView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 IsmLiveControlsWidget(
-                                  isHost: true,
+                                  isHost: controller.isHost,
                                   isCopublishing: false,
                                   isSchedule: true,
                                   streamId:
