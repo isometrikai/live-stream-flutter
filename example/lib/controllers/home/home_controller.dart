@@ -243,6 +243,7 @@ class HomeController extends GetxController {
       bottomSheetBorderRadius:
           const BorderRadius.vertical(top: Radius.circular(12)),
       streamRecordingPlayerConfig: IsmLiveStreamRecordingPlayerConfig(
+        showChatReplay: true,
         onControlOption: (context, option, recording) async {
           await showModalBottomSheet<void>(
             context: context,

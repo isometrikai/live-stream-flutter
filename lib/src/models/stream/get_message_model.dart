@@ -15,6 +15,8 @@ class IsmLiveGetMessageModel {
     this.lastMessageTimestamp,
     this.customType,
     this.messageType,
+    this.activeStream,
+    this.archived,
   });
 
   factory IsmLiveGetMessageModel.fromMap(Map<String, dynamic> map) =>
@@ -30,6 +32,8 @@ class IsmLiveGetMessageModel {
         lastMessageTimestamp: map['lastMessageTimestamp'] as int?,
         customType: (map['customType'] as List<dynamic>? ?? []).cast<String>(),
         messageType: (map['messageType'] as List<dynamic>? ?? []).cast<int>(),
+        activeStream: map['activeStream'] as bool?,
+        archived: map['archived'] as bool?,
       );
 
   factory IsmLiveGetMessageModel.fromJson(String source) =>
@@ -47,6 +51,12 @@ class IsmLiveGetMessageModel {
   final List<String>? customType;
   final List<int>? messageType;
 
+  /// When false, fetches messages for inactive/ended streams. Omit for live chat.
+  final bool? activeStream;
+
+  /// When true, fetches archived messages for recorded streams. Omit for live chat.
+  final bool? archived;
+
   IsmLiveGetMessageModel copyWith({
     String? streamId,
     int? sort,
@@ -59,6 +69,8 @@ class IsmLiveGetMessageModel {
     int? lastMessageTimestamp,
     List<String>? customType,
     List<int>? messageType,
+    bool? activeStream,
+    bool? archived,
   }) =>
       IsmLiveGetMessageModel(
         streamId: streamId ?? this.streamId,
@@ -72,6 +84,8 @@ class IsmLiveGetMessageModel {
         lastMessageTimestamp: lastMessageTimestamp ?? this.lastMessageTimestamp,
         customType: customType ?? this.customType,
         messageType: messageType ?? this.messageType,
+        activeStream: activeStream ?? this.activeStream,
+        archived: archived ?? this.archived,
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -86,13 +100,15 @@ class IsmLiveGetMessageModel {
         'lastMessageTimestamp': lastMessageTimestamp,
         'customType': customType,
         'messageType': messageType,
+        'activeStream': activeStream,
+        'archived': archived,
       };
 
   String toJson() => json.encode(toMap());
 
   @override
   String toString() =>
-      'IsmLiveGetMessageModel(streamId: $streamId, sort: $sort, skip: $skip, limit: $limit, senderIdsExclusive: $senderIdsExclusive, searchTag: $searchTag, ids: $ids, senderIds: $senderIds, lastMessageTimestamp: $lastMessageTimestamp, customType: $customType, messageType: $messageType)';
+      'IsmLiveGetMessageModel(streamId: $streamId, sort: $sort, skip: $skip, limit: $limit, senderIdsExclusive: $senderIdsExclusive, searchTag: $searchTag, ids: $ids, senderIds: $senderIds, lastMessageTimestamp: $lastMessageTimestamp, customType: $customType, messageType: $messageType, activeStream: $activeStream, archived: $archived)';
 
   @override
   bool operator ==(covariant IsmLiveGetMessageModel other) {
@@ -108,7 +124,9 @@ class IsmLiveGetMessageModel {
         listEquals(other.senderIds, senderIds) &&
         other.lastMessageTimestamp == lastMessageTimestamp &&
         listEquals(other.customType, customType) &&
-        listEquals(other.messageType, messageType);
+        listEquals(other.messageType, messageType) &&
+        other.activeStream == activeStream &&
+        other.archived == archived;
   }
 
   @override
@@ -123,5 +141,7 @@ class IsmLiveGetMessageModel {
       senderIds.hashCode ^
       lastMessageTimestamp.hashCode ^
       customType.hashCode ^
-      messageType.hashCode;
+      messageType.hashCode ^
+      activeStream.hashCode ^
+      archived.hashCode;
 }
