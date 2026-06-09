@@ -1,6 +1,7 @@
 part of '../stream_controller.dart';
 
-mixin StreamOngoingParticipantsMixin on StreamOngoingMixin, StreamOngoingChatMixin, StreamOngoingControlsMixin {
+mixin StreamOngoingParticipantsMixin
+    on StreamOngoingMixin, StreamOngoingChatMixin, StreamOngoingControlsMixin {
   // Function to initialize the stream
   void initializeStream({
     required String streamId,
@@ -87,6 +88,7 @@ mixin StreamOngoingParticipantsMixin on StreamOngoingMixin, StreamOngoingChatMix
       _controller.update([IsmLiveStreamView.updateId]);
     });
   }
+
 // Function to set up event listeners
   Future<void> setUpListeners({
     required bool isHost,
@@ -419,8 +421,7 @@ mixin StreamOngoingParticipantsMixin on StreamOngoingMixin, StreamOngoingChatMix
       }
       final pubDetails = pubs
           .map(
-            (pub) =>
-                'sid=${pub.sid.substring(0, min(8, pub.sid.length))}..'
+            (pub) => 'sid=${pub.sid.substring(0, min(8, pub.sid.length))}..'
                 'sub=${pub.subscribed}'
                 'track=${pub.track != null}'
                 'allowed=${pub.subscriptionAllowed}',
@@ -458,7 +459,8 @@ mixin StreamOngoingParticipantsMixin on StreamOngoingMixin, StreamOngoingChatMix
       '[$orderedSummary]',
     );
     if (remoteSummaries.isNotEmpty) {
-      IsmLiveLog.info('sortParticipants remote: ${remoteSummaries.join(' | ')}');
+      IsmLiveLog.info(
+          'sortParticipants remote: ${remoteSummaries.join(' | ')}');
     } else if (_controller.isRtmp) {
       IsmLiveLog.info(
         'sortParticipants remote: none (only local/ingest tracks in room)',
@@ -656,5 +658,4 @@ mixin StreamOngoingParticipantsMixin on StreamOngoingMixin, StreamOngoingChatMix
       //   return option.muteValues;
     }
   }
-
 }
