@@ -27,3 +27,13 @@ abstract class IsmLiveStreamRecordingItem {
   /// Poster or thumbnail URL for this recording (e.g. preview before playback).
   String? get thumbnailUrl;
 }
+
+/// Optional capability for chat replay sync on a recording item.
+///
+/// Host apps that `implement` [IsmLiveStreamRecordingItem] are not required to
+/// adopt this interface. Chat replay can use config `resolveStreamStartTime`
+/// or the first message timestamp when start time is unavailable.
+abstract class IsmLiveStreamRecordingReplayCapable {
+  /// When the live stream started. Used to align comments with video position.
+  DateTime? get streamStartTime;
+}
