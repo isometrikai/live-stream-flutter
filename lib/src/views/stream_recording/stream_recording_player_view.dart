@@ -329,6 +329,7 @@ class _IsmLiveStreamRecordingPlayerViewState
                   if (_showOverlay)
                     _RecordingOverlay(
                       recording: recording,
+                      isActive: isActive,
                       playerKey: playerKey,
                       videoController: overlayController,
                       config: config,
@@ -349,6 +350,7 @@ class _IsmLiveStreamRecordingPlayerViewState
 class _RecordingOverlay extends StatelessWidget {
   const _RecordingOverlay({
     required this.recording,
+    required this.isActive,
     required this.playerKey,
     required this.videoController,
     required this.config,
@@ -357,6 +359,7 @@ class _RecordingOverlay extends StatelessWidget {
   });
 
   final IsmLiveStreamRecordingItem recording;
+  final bool isActive;
   final GlobalKey playerKey;
   final VideoPlayerController? videoController;
   final IsmLiveStreamRecordingPlayerConfig config;
@@ -450,6 +453,13 @@ class _RecordingOverlay extends StatelessWidget {
                   ),
             ),
           ),
+          if (config.showChatReplay)
+            IsmLiveRecordingChatOverlay(
+              recording: recording,
+              config: config,
+              videoController: videoController,
+              isActive: isActive,
+            ),
           // Center overlay: hide while actively playing; show a loader while the
           // player is buffering (e.g. after a seek); show play only when paused.
           if (!isVideoReady)

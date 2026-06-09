@@ -79,6 +79,12 @@ typedef IsmLiveStreamRecordingRightControlsBuilder = Widget Function(
   IsmLiveStreamRecordingPlayerConfig config,
 );
 
+/// Resolves stream start time for chat replay when the recording item does not
+/// implement [IsmLiveStreamRecordingReplayCapable].
+typedef IsmLiveStreamRecordingResolveStartTimeCallback = DateTime? Function(
+  IsmLiveStreamRecordingItem recording,
+);
+
 /// Configuration for the Stream Recording Player.
 ///
 /// Use [onLoaded] for initial-load logic (e.g. record view count, fetch products).
@@ -92,6 +98,8 @@ class IsmLiveStreamRecordingPlayerConfig {
     this.topControlsBuilder,
     this.bottomControlsBuilder,
     this.rightControlsBuilder,
+    this.showChatReplay = false,
+    this.resolveStreamStartTime,
   });
 
   /// Optional. For "my stream" vs others.
@@ -117,4 +125,10 @@ class IsmLiveStreamRecordingPlayerConfig {
 
   /// Optional. If provided, replaces [IsmLiveStreamRecordingRightControls] widget.
   final IsmLiveStreamRecordingRightControlsBuilder? rightControlsBuilder;
+
+  /// When true, replays stream chat comments in sync with video playback.
+  final bool showChatReplay;
+
+  /// Optional fallback when start time is not available on the recording item.
+  final IsmLiveStreamRecordingResolveStartTimeCallback? resolveStreamStartTime;
 }

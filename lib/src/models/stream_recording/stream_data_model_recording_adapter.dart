@@ -3,7 +3,9 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 /// Adapts [IsmLiveStreamDataModel] to [IsmLiveStreamRecordingItem] for use in
 /// the recording player.
 class IsmLiveStreamDataModelRecordingAdapter
-    implements IsmLiveStreamRecordingItem {
+    implements
+        IsmLiveStreamRecordingItem,
+        IsmLiveStreamRecordingReplayCapable {
   IsmLiveStreamDataModelRecordingAdapter(this._model);
 
   final IsmLiveStreamDataModel _model;
@@ -37,4 +39,7 @@ class IsmLiveStreamDataModelRecordingAdapter
 
   @override
   String? get thumbnailUrl => _model.streamImage;
+
+  @override
+  DateTime? get streamStartTime => _model.startDateTime;
 }
