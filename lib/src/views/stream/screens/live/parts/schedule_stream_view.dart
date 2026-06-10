@@ -132,94 +132,115 @@ class ScheduleStreamView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final keyboardBottom = MediaQuery.viewInsetsOf(context).bottom;
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: keyboardBottom),
-        child: GetBuilder<IsmLiveStreamController>(
-          builder: (controller) => Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: IsmLiveDimens.edgeInsets8_0,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildChatView(
-                                  context,
-                                  isHost: true,
-                                  streamId: controller.streamId ?? '',
-                                ),
-                                IsmLiveDimens.boxHeight8,
-                                IsmLiveApp.inputBuilder?.call(
-                                      context,
+    return GetBuilder<IsmLiveStreamController>(
+      builder: (controller) {
+        final gradientOverlay = IsmLiveDelegate
+            .streamScreenConfigure
+            .streamGradientOverlayBuilder
+            ?.call(
+          context,
+          controller.streamDetails?.streamId ??
+              controller.streamId ??
+              '',
+          controller.isHost,
+          true,
+        );
+        return Stack(
+          children: [
+            // Full-screen gradients (match live stream: extend behind status bar).
+            ...(gradientOverlay != null
+                ? [gradientOverlay]
+                : const [
+                    _TopDarkGradient(),
+                    _BottomDarkGradient(),
+                  ]),
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: keyboardBottom),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: IsmLiveDimens.edgeInsets8_0,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _buildChatView(
+                                    context,
+                                    isHost: true,
+                                    streamId: controller.streamId ?? '',
+                                  ),
+                                  IsmLiveDimens.boxHeight8,
+                                  IsmLiveApp.inputBuilder?.call(
+                                        context,
+                                        IsmLiveMessageField(
+                                          streamId: controller.streamId ?? '',
+                                          isHost: controller.isPublishing,
+                                          disabled: !IsmLiveStreamId.isValid(
+                                              controller.streamId),
+                                        ),
+                                      ) ??
                                       IsmLiveMessageField(
-                                        streamId: controller.streamId ?? '',
+                                        streamId: () {
+                                          // Debug logging for streamId at line 903
+                                          final streamId = controller
+                                                  .streamDetails?.streamId ??
+                                              '';
+                                          return streamId;
+                                        }(),
                                         isHost: controller.isPublishing,
                                         disabled: !IsmLiveStreamId.isValid(
-                                            controller.streamId),
+                                            controller.streamDetails?.streamId),
                                       ),
-                                    ) ??
-                                    IsmLiveMessageField(
-                                      streamId: () {
-                                        // Debug logging for streamId at line 903
-                                        final streamId = controller
-                                                .streamDetails?.streamId ??
-                                            '';
-                                        return streamId;
-                                      }(),
-                                      isHost: controller.isPublishing,
-                                      disabled: !IsmLiveStreamId.isValid(
-                                          controller.streamDetails?.streamId),
-                                    ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          IsmLiveDimens.boxWidth2,
-                          if (!isKeyboardOpen)
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                IsmLiveControlsWidget(
-                                  isHost: controller.isHost,
-                                  isCopublishing: false,
-                                  isSchedule: true,
-                                  streamId:
-                                      controller.streamDetails?.streamId ?? '',
-                                  isKeyboardOpen: isKeyboardOpen,
-                                ),
-                                IsmLiveDimens.boxHeight32,
-                                _buildScheduledGoLiveButton(
-                                    context, controller, isKeyboardOpen),
-                              ],
-                            )
-                        ],
+                            IsmLiveDimens.boxWidth2,
+                            if (!isKeyboardOpen)
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  IsmLiveControlsWidget(
+                                    isHost: controller.isHost,
+                                    isCopublishing: false,
+                                    isSchedule: true,
+                                    streamId: controller
+                                            .streamDetails?.streamId ??
+                                        '',
+                                    isKeyboardOpen: isKeyboardOpen,
+                                  ),
+                                  IsmLiveDimens.boxHeight32,
+                                  _buildScheduledGoLiveButton(
+                                      context, controller, isKeyboardOpen),
+                                ],
+                              )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  IsmLiveDimens.boxHeight4,
-                ],
-              ),
-              Positioned.fill(
-                child: IgnorePointer(
-                  ignoring:
-                      IsmLiveDelegate.scheduleStreamCenterOverlayBuilder ==
-                          null,
-                  child: _buildCenterOverlay(context, controller),
+                    IsmLiveDimens.boxHeight4,
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring:
+                    IsmLiveDelegate.scheduleStreamCenterOverlayBuilder == null,
+                child: _buildCenterOverlay(context, controller),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

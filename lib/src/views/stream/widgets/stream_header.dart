@@ -384,7 +384,8 @@ class _LiveTimer extends StatelessWidget {
           const IsmLiveStreamTimer()
         ],
         if (IsmLiveDelegate.streamScreenConfigure.showStreamMemberCount &&
-            !controller.isPk) ...[
+            !controller.isPk &&
+            IsmLiveStreamId.isValid(controller.streamId)) ...[
           IsmLiveDimens.boxWidth10,
           IsmLiveStreamMemberCount(
             onTap: () => IsmLiveUtility.openBottomSheet(

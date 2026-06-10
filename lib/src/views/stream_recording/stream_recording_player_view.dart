@@ -387,10 +387,33 @@ class _RecordingOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isVideoReady = videoController?.value.isInitialized ?? false;
+    final currentUserId = config.getCurrentUserId?.call();
+    final streamerUserId = recording.userId;
+    final isHost = currentUserId != null &&
+        currentUserId.isNotEmpty &&
+        streamerUserId != null &&
+        streamerUserId.isNotEmpty &&
+        currentUserId == streamerUserId;
+    final gradientOverlay = IsmLiveDelegate
+        .streamScreenConfigure
+        .streamGradientOverlayBuilder
+        ?.call(
+      context,
+      recording.streamId,
+      isHost,
+      false,
+    );
     return Stack(
       fit: StackFit.expand,
       children: [
-          Positioned(
+        // Gradients overlay video content behind recording controls.
+        ...(gradientOverlay != null
+            ? [gradientOverlay]
+            : const [
+                _RecordingTopDarkGradient(),
+                _RecordingBottomDarkGradient(),
+              ]),
+        Positioned(
             top: 0,
             left: 0,
             right: 0,
@@ -521,5 +544,57 @@ class _RecordingPage extends StatelessWidget {
                     autoMoveToNextOnCompletion ? onVideoCompleted : null,
               )
             : const ColoredBox(color: Colors.black),
+      );
+}
+
+class _RecordingTopDarkGradient extends StatelessWidget {
+  const _RecordingTopDarkGradient();
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: MediaQuery.of(context).size.height * 0.3,
+        child: const IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black38,
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
+class _RecordingBottomDarkGradient extends StatelessWidget {
+  const _RecordingBottomDarkGradient();
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: MediaQuery.of(context).size.height * 0.3,
+        child: const IgnorePointer(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black38,
+                ],
+              ),
+            ),
+          ),
+        ),
       );
 }
