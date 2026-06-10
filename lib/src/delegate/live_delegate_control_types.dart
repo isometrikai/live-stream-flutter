@@ -66,9 +66,11 @@ enum IsmLiveSideIconsHorizontalAlignment {
 
 /// Configuration for right-side stream control icons.
 ///
-/// Use this object in `IsmLiveApp.configureInterface(sideIconsConfigure: ...)`
-/// to customize width, horizontal alignment, control option styling, and
-/// related side-icon behavior.
+/// Set at init via `IsmLiveApp.configureInterface(sideIconsConfigure: ...)`.
+/// After initialization, change layout or option order with
+/// `IsmLiveApp.updateSideIconsConfigure(...)` (merges with the current config).
+/// For bottom inset that tracks host UI (e.g. pinned product height), set
+/// [productStreamSideOptionsBottomMargin] once — it runs on every controls build.
 class IsmLiveSideIconsConfigure {
   const IsmLiveSideIconsConfigure({
     this.width,
