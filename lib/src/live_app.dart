@@ -732,7 +732,7 @@ class IsmLiveApp extends StatefulWidget {
                     controlOptionBgGradient: topLevelControlOptionBgGradient,
                   )
                 : baseSideIconsConfigure);
-    IsmLiveDelegate.sideIconsConfigure = resolvedSideIconsConfigure;
+    _applySideIconsConfigure(resolvedSideIconsConfigure);
     final resolvedGoLiveScreenConfigure =
         goLiveScreenConfigure ?? const IsmLiveGoLiveScreenConfigure();
     final baseStreamScreenConfigure =
@@ -801,12 +801,6 @@ class IsmLiveApp extends StatefulWidget {
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
-    IsmLiveDelegate.viewersOption = resolvedSideIconsConfigure.viewersOptions;
-    IsmLiveDelegate.hostOptions = resolvedSideIconsConfigure.hostOptions;
-    IsmLiveDelegate.rtmpOptions = resolvedSideIconsConfigure.rtmpOptions;
-    IsmLiveDelegate.copublisherOptions =
-        resolvedSideIconsConfigure.copublisherOptions;
-    IsmLiveDelegate.pkOptions = resolvedSideIconsConfigure.pkOptions;
     IsmLiveDelegate.homeScreen = homeScreen;
     IsmLiveDelegate.scheduleStream =
         resolvedGoLiveScreenConfigure.isScheduleStreamFeatureEnabled;
@@ -853,12 +847,6 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.missingHostTokenStopStreamCallback =
         missingHostTokenStopStreamCallback;
 
-    IsmLiveDelegate.controlOptionCallback =
-        resolvedSideIconsConfigure.controlOptionCallback;
-    IsmLiveDelegate.controlWidgetBuilder =
-        resolvedSideIconsConfigure.controlWidgetBuilder;
-    IsmLiveDelegate.productStreamSideOptionsBottomMargin =
-        resolvedSideIconsConfigure.productStreamSideOptionsBottomMargin;
     IsmLiveDelegate.attentionDialogButtonCallback =
         attentionDialogButtonCallback;
     IsmLiveDelegate.streamListingRefreshCallback = streamListingRefreshCallback;
@@ -1416,11 +1404,77 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.customBottomSheetBuilder = customBottomSheetBuilder;
   }
 
-  /// Triggers a rebuild of stream view
-  static void rebuildStreamUi() {
-    if (Get.isRegistered<IsmLiveStreamController>()) {
-      Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
+  /// Updates side-icon layout and option lists after SDK initialization.
+  ///
+  /// Only non-null parameters are applied; omitted fields keep their current
+  /// values. Triggers a stream controls rebuild when a stream is active.
+  ///
+  /// For vertical position that changes frequently (e.g. product stream with
+  /// a pinned product), prefer setting
+  /// [ProductStreamSideOptionsBottomMarginBuilder] once at init — it is
+  /// evaluated on every controls build.
+  static void updateSideIconsConfigure({
+    double? width,
+    IsmLiveSideIconsHorizontalAlignment? horizontalAlignment,
+    List<IsmLiveStreamOption>? viewersOptions,
+    List<IsmLiveStreamOption>? hostOptions,
+    List<IsmLiveStreamOption>? rtmpOptions,
+    List<IsmLiveStreamOption>? copublisherOptions,
+    List<IsmLiveStreamOption>? pkOptions,
+    ControlOptionCallback? controlOptionCallback,
+    ControlWidgetBuilder? controlWidgetBuilder,
+    ProductStreamSideOptionsBottomMarginBuilder?
+        productStreamSideOptionsBottomMargin,
+    LinearGradient? controlOptionBgGradient,
+  }) {
+    final updated = IsmLiveDelegate.sideIconsConfigure.copyWith(
+      width: width,
+      horizontalAlignment: horizontalAlignment,
+      viewersOptions: viewersOptions,
+      hostOptions: hostOptions,
+      rtmpOptions: rtmpOptions,
+      copublisherOptions: copublisherOptions,
+      pkOptions: pkOptions,
+      controlOptionCallback: controlOptionCallback,
+      controlWidgetBuilder: controlWidgetBuilder,
+      productStreamSideOptionsBottomMargin:
+          productStreamSideOptionsBottomMargin,
+      controlOptionBgGradient: controlOptionBgGradient,
+    );
+    _applySideIconsConfigure(updated);
+    _refreshSideIconsUi();
+  }
+
+  static void _applySideIconsConfigure(
+    IsmLiveSideIconsConfigure sideIconsConfigure,
+  ) {
+    IsmLiveDelegate.sideIconsConfigure = sideIconsConfigure;
+    IsmLiveDelegate.viewersOption = sideIconsConfigure.viewersOptions;
+    IsmLiveDelegate.hostOptions = sideIconsConfigure.hostOptions;
+    IsmLiveDelegate.rtmpOptions = sideIconsConfigure.rtmpOptions;
+    IsmLiveDelegate.copublisherOptions = sideIconsConfigure.copublisherOptions;
+    IsmLiveDelegate.pkOptions = sideIconsConfigure.pkOptions;
+    IsmLiveDelegate.controlOptionCallback =
+        sideIconsConfigure.controlOptionCallback;
+    IsmLiveDelegate.controlWidgetBuilder =
+        sideIconsConfigure.controlWidgetBuilder;
+    IsmLiveDelegate.productStreamSideOptionsBottomMargin =
+        sideIconsConfigure.productStreamSideOptionsBottomMargin;
+  }
+
+  static void _refreshSideIconsUi() {
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      return;
     }
+    Get.find<IsmLiveStreamController>().update([
+      IsmLiveStreamView.updateId,
+      IsmLiveControlsWidget.updateId,
+    ]);
+  }
+
+  /// Triggers a rebuild of stream view and side controls.
+  static void rebuildStreamUi() {
+    _refreshSideIconsUi();
   }
 
   /// Opens the stream recording player. Host app can use this to play a list of
