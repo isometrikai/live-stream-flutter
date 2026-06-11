@@ -56,6 +56,8 @@ class _IsmLiveRecordingAutoVideoPlayerState
   Timer? _stuckTimer;
   int _recoveryAttempts = 0;
   static const int _maxRecoveryAttempts = 5;
+  int _initAttempts = 0;
+  static const int _maxInitAttempts = 2;
   String? _lastTrackedControllerError;
   String? _loadFailureMessage;
 
@@ -139,6 +141,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
         // Controller is shared in [RecordingVideoCacheManager]; never dispose it here.
         return;
       }
+      _initAttempts = 0;
       _attachController(controller);
       if (mounted) {
         setState(() {});
@@ -147,6 +150,16 @@ class _IsmLiveRecordingAutoVideoPlayerState
         _playInternal();
       }
     } catch (e, st) {
+      if (_shouldAutoRetryInit(e) && _initAttempts < _maxInitAttempts - 1) {
+        _initAttempts++;
+        await _cache.clear(widget.url);
+        _isInitializing = false;
+        if (mounted) {
+          setState(() {});
+        }
+        await _initializeIfNeeded();
+        return;
+      }
       _loadFailureMessage = e.toString();
       _trackVideoLoadFailure(
         stage: 'initialize',
@@ -159,6 +172,15 @@ class _IsmLiveRecordingAutoVideoPlayerState
         setState(() {});
       }
     }
+  }
+
+  /// Transient init failures (timeouts / contention after rapid scroll) are
+  /// retried once automatically so the user doesn't have to tap retry.
+  bool _shouldAutoRetryInit(Object error) {
+    if (error is TimeoutException) return true;
+    final message = error.toString().toLowerCase();
+    if (message.contains('timeout')) return true;
+    return false;
   }
 
   void _attachController(VideoPlayerController controller) {
@@ -419,6 +441,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
 
   Future<void> _retryLoad() async {
     if (_isInitializing) return;
+    _initAttempts = 0;
     await _cache.clear(widget.url);
     // The user explicitly asked for another attempt - drop the cached
     // failure marker so [_initializeIfNeeded] is allowed to take a fresh

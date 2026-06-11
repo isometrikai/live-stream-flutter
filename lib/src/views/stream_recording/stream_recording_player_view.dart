@@ -79,6 +79,11 @@ class _IsmLiveStreamRecordingPlayerViewState
   int _currentIndex = 0;
   bool _showOverlay = true;
 
+  /// Bumped on every page change so in-flight [_preloadAround] work from a
+  /// previous index can bail out instead of precaching neighbors / clearing
+  /// the cache for a window the user has already scrolled past.
+  int _preloadGeneration = 0;
+
   final RecordingVideoCacheManager _cacheManager =
       RecordingVideoCacheManager.instance;
   final Map<int, GlobalKey> _pageKeys = {};
@@ -105,15 +110,47 @@ class _IsmLiveStreamRecordingPlayerViewState
       if (targetPage > 0 && _pageController.hasClients) {
         _pageController.jumpToPage(targetPage);
       }
-      _preloadAround(_currentIndex);
+      final generation = _preloadGeneration;
+      unawaited(
+        _cacheManager.abandonOutside(_urlsAroundIndex(_currentIndex)),
+      );
+      _preloadAround(_currentIndex, generation);
       _config.onLoaded?.call(context, _currentRecording);
     });
   }
 
+  /// URLs for [index] and its immediate neighbors (the retention window).
+  Set<String> _urlsAroundIndex(int index) {
+    final urls = <String>{};
+    void collect(int i) {
+      if (i < 0 || i >= widget.recordings.length) return;
+      final recorded = widget.recordings[i].recordedUrls;
+      if (recorded.isNotEmpty) {
+        urls.add(recorded.first);
+      }
+    }
+
+    collect(index);
+    collect(index + 1);
+    collect(index - 1);
+    return urls;
+  }
+
   void _onPageChanged(int index) {
     if (index == _currentIndex) return;
+    final generation = ++_preloadGeneration;
     setState(() => _currentIndex = index);
-    _preloadAround(index);
+
+    // Stop downloads / decoder work for URLs outside the new window right
+    // away. Without this, stale [_preloadAround] calls from rapid scrolling
+    // keep HTTP sessions open and routinely push the *active* video past the
+    // initialize timeout (user sees "failed to load"; manual retry works once
+    // the stale sessions finish).
+    unawaited(
+      _cacheManager.abandonOutside(_urlsAroundIndex(index)),
+    );
+
+    _preloadAround(index, generation);
 
     // Notify host every time a new recording becomes the visible one.
     final recording = widget.recordings[index];
@@ -195,8 +232,10 @@ class _IsmLiveStreamRecordingPlayerViewState
     super.dispose();
   }
 
-  Future<void> _preloadAround(int index) async {
+  Future<void> _preloadAround(int index, int generation) async {
     if (widget.recordings.isEmpty) return;
+    if (generation != _preloadGeneration) return;
+
     final activeUrls = <String>[];
     final neighborUrls = <String>[];
 
@@ -221,6 +260,7 @@ class _IsmLiveStreamRecordingPlayerViewState
     // the spinner. The widget for [index] joins this same future via the
     // cache manager's in-flight coalescing, so it doesn't double-fetch.
     await _cacheManager.precacheMedia(activeUrls);
+    if (!mounted || generation != _preloadGeneration) return;
 
     // Hold off neighbor preload until the active video is actually playing
     // (or a short safety cap elapses). For long videos on slow CDNs this
@@ -228,11 +268,13 @@ class _IsmLiveStreamRecordingPlayerViewState
     // still waiting on the first decodable frame of the active recording.
     if (activeUrls.isNotEmpty) {
       await _waitForActivePlaying(activeUrls.first);
+      if (!mounted || generation != _preloadGeneration) return;
     }
 
     // Then warm neighbors so swiping still feels instant. Awaited so that
     // [clearOutsideRange] below runs after preload (same invariant as before).
     await _cacheManager.precacheMedia(neighborUrls);
+    if (!mounted || generation != _preloadGeneration) return;
 
     await _cacheManager.clearOutsideRange(keepUrls);
   }

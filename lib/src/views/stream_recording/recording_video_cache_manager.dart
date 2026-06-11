@@ -24,6 +24,16 @@ class RecordingVideoCacheManager {
   final Map<String, Future<VideoPlayerController>> _inflight =
       <String, Future<VideoPlayerController>>{};
 
+  /// Serializes controller creation across URLs so rapid scrolling can't spin
+  /// up multiple ExoPlayer/AVPlayer sessions that split bandwidth and push
+  /// the visible recording past [_initializeTimeout].
+  Future<void> _initChain = Future<void>.value();
+
+  /// URLs the feed currently wants to keep warm (active + neighbors). Updated
+  /// on every page change so stale preload work can't resurrect controllers for
+  /// pages the user has already scrolled past.
+  Set<String> _retentionWindow = <String>{};
+
   /// Session-scoped record of URLs that already failed with a permanent
   /// (e.g. 4xx) error. Lets [IsmLiveRecordingAutoVideoPlayer] short-circuit
   /// the spinner and surface the retry CTA immediately on subsequent mounts
@@ -95,10 +105,8 @@ class RecordingVideoCacheManager {
     try {
       return await tracked;
     } finally {
-      final current = _inflight[url];
-      if (identical(current, tracked)) {
-        final removed = _inflight.remove(url);
-        if (removed != null) await removed;
+      if (identical(_inflight[url], tracked)) {
+        _inflight.remove(url);
       }
     }
   }
@@ -113,6 +121,21 @@ class RecordingVideoCacheManager {
   static const Duration _initializeTimeout = Duration(seconds: 90);
 
   Future<VideoPlayerController> _createAndInitialize(String url) async {
+    final previous = _initChain;
+    final gate = Completer<void>();
+    _initChain = gate.future;
+    await previous;
+
+    try {
+      return await _createAndInitializeUnlocked(url);
+    } finally {
+      if (!gate.isCompleted) {
+        gate.complete();
+      }
+    }
+  }
+
+  Future<VideoPlayerController> _createAndInitializeUnlocked(String url) async {
     final stale = _cache.remove(url);
     if (stale != null && !stale.disposed) {
       stale.disposed = true;
@@ -226,6 +249,9 @@ class RecordingVideoCacheManager {
   }
 
   Future<void> _preload(String url) async {
+    if (_retentionWindow.isNotEmpty && !_retentionWindow.contains(url)) {
+      return;
+    }
     try {
       await getOrCreate(url);
     } catch (_) {
@@ -247,6 +273,34 @@ class RecordingVideoCacheManager {
     if (entry == null || entry.disposed) return;
     entry.isVisible = false;
     entry.lastAccess = DateTime.now();
+  }
+
+  /// Immediately dispose controllers (and abort in-flight inits) for every URL
+  /// outside [keepUrls]. Called on page change so stale neighbor preloads from
+  /// a previous index stop competing for bandwidth / decoders.
+  Future<void> abandonOutside(Set<String> keepUrls) async {
+    _retentionWindow = keepUrls;
+
+    final urlsToDrop = <String>{
+      ..._cache.keys,
+      ..._inflight.keys,
+    }..removeWhere(keepUrls.contains);
+
+    if (urlsToDrop.isEmpty) return;
+
+    final disposeFutures = <Future<void>>[];
+    for (final url in urlsToDrop) {
+      final entry = _cache[url];
+      if (entry != null && !entry.disposed) {
+        entry.disposed = true;
+        disposeFutures.add(entry.controller.dispose());
+      }
+      _cache.remove(url);
+    }
+
+    if (disposeFutures.isNotEmpty) {
+      await Future.wait(disposeFutures);
+    }
   }
 
   /// Clear and dispose controllers for all URLs not in [activeUrls].
@@ -299,6 +353,7 @@ class RecordingVideoCacheManager {
       await Future.wait(futures);
     }
     _cache.clear();
+    _retentionWindow = <String>{};
     // Player screen is going away entirely - drop any known-bad markings so
     // a future re-open of the player can take a fresh swing at each URL.
     _knownFailures.clear();
