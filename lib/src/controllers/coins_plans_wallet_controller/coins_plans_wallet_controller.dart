@@ -16,6 +16,7 @@ class CoinsPlansWalletController extends GetxController
   @override
   void onInit() {
     super.onInit();
+    unawaited(InAppManager.i.prepareForPurchase());
     IsmLiveUtility.updateLater(() {
       totalWalletCoins('coin');
       getCoinsPlans();
@@ -137,10 +138,12 @@ class CoinsPlansWalletController extends GetxController
     };
     data.removeWhere((key, value) => value == null || value.isEmpty);
     final res = await _coinsPlansWalletViewMode.purchaseCoinsPlans(data: data);
-    try {
-      await InAppPurchase.instance.completePurchase(purchaseDetails);
-    } catch (_) {
-      debugPrint('Complete Purchase Error :- $_');
+    if (purchaseDetails.pendingCompletePurchase) {
+      try {
+        await InAppPurchase.instance.completePurchase(purchaseDetails);
+      } catch (_) {
+        debugPrint('Complete Purchase Error :- $_');
+      }
     }
     if (res == null || res.statusCode != 200) return;
     unawaited(totalWalletCoins('coin'));
@@ -168,10 +171,12 @@ class CoinsPlansWalletController extends GetxController
       onPurchase: (purchaseDetails) async {
         // No backend `tokenPurchase` call from here (per requirement).
         // Still complete the platform purchase to avoid leaving it pending.
-        try {
-          await InAppPurchase.instance.completePurchase(purchaseDetails);
-        } catch (_) {
-          debugPrint('Complete Purchase Error :- $_');
+        if (purchaseDetails.pendingCompletePurchase) {
+          try {
+            await InAppPurchase.instance.completePurchase(purchaseDetails);
+          } catch (_) {
+            debugPrint('Complete Purchase Error :- $_');
+          }
         }
 
         await totalWalletCoins('coin');

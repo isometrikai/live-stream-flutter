@@ -31,10 +31,9 @@ class InAppManager {
   }
 
   /// Method for Initialize In App Purchase
-  void _initialize() async {
-    unawaited(_finishPastPurchases());
+  void _initialize() {
     try {
-      await _purchaseStream?.cancel();
+      unawaited(_purchaseStream?.cancel());
     } catch (_) {}
     _purchaseStream = null;
     _purchaseStream =
@@ -51,7 +50,7 @@ class InAppManager {
             _onPurchase = null;
             break;
           case PurchaseStatus.error:
-            InAppPurchase.instance.completePurchase(purchase);
+            _completePurchaseIfNeeded(purchase);
             _dismissPurchaseLoaderIfShown();
             IsmLiveUtility.showAlertDialog(
               message: purchase.error?.message ?? '',
@@ -59,16 +58,34 @@ class InAppManager {
             _onPurchase = null;
             break;
           case PurchaseStatus.restored:
+            // iOS re-delivers unfinished consumables as restored when the user
+            // tries to buy again ("already been bought, will be restored").
+            _dismissPurchaseLoaderIfShown();
+            final handler = _onPurchase;
+            _onPurchase = null;
+            if (handler != null) {
+              handler(purchase);
+            } else {
+              _completePurchaseIfNeeded(purchase);
+            }
             break;
           case PurchaseStatus.canceled:
             _dismissPurchaseLoaderIfShown();
             _onPurchase = null;
-            InAppPurchase.instance.completePurchase(purchase);
+            _completePurchaseIfNeeded(purchase);
             break;
         }
       }
     });
   }
+
+  static void _completePurchaseIfNeeded(PurchaseDetails purchase) {
+    if (!purchase.pendingCompletePurchase) return;
+    unawaited(InAppPurchase.instance.completePurchase(purchase));
+  }
+
+  /// Clears unfinished platform transactions before starting a new purchase.
+  Future<void> prepareForPurchase() => _finishPastPurchases();
 
   /// Method for Finish Past Purchases
   Future<void> _finishPastPurchases() async {
@@ -110,9 +127,20 @@ class InAppManager {
     required PurchaseParam purchaseParam,
     required ValueChanged<PurchaseDetails> onPurchase,
   }) {
+    unawaited(_buyConsumable(
+      purchaseParam: purchaseParam,
+      onPurchase: onPurchase,
+    ));
+  }
+
+  Future<void> _buyConsumable({
+    required PurchaseParam purchaseParam,
+    required ValueChanged<PurchaseDetails> onPurchase,
+  }) async {
     try {
+      await prepareForPurchase();
       _onPurchase = onPurchase;
-      InAppPurchase.instance.buyConsumable(
+      await InAppPurchase.instance.buyConsumable(
         purchaseParam: purchaseParam,
         autoConsume: Platform.isIOS,
       );
