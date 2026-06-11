@@ -69,6 +69,43 @@ class IsmLiveUtility {
     });
   }
 
+  /// Waits until [context]'s route is covered by another route, then becomes
+  /// current again. Used to refresh stale data after host navigation (e.g.
+  /// withdraw) without requiring a [RouteObserver] in the host app.
+  static Future<void> waitForRouteResume(
+    BuildContext context, {
+    Duration coverTimeout = const Duration(seconds: 2),
+    Duration resumeTimeout = const Duration(minutes: 10),
+  }) async {
+    if (!context.mounted) return;
+    final route = ModalRoute.of(context);
+    if (route == null) return;
+
+    final coverDeadline = DateTime.now().add(coverTimeout);
+    while (context.mounted &&
+        route.isCurrent &&
+        DateTime.now().isBefore(coverDeadline)) {
+      await _waitForNextFrame();
+    }
+
+    if (!context.mounted || route.isCurrent) return;
+
+    final resumeDeadline = DateTime.now().add(resumeTimeout);
+    while (context.mounted &&
+        !route.isCurrent &&
+        DateTime.now().isBefore(resumeDeadline)) {
+      await _waitForNextFrame();
+    }
+  }
+
+  static Future<void> _waitForNextFrame() async {
+    final completer = Completer<void>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!completer.isCompleted) completer.complete();
+    });
+    await completer.future;
+  }
+
   /// Warms the disk/memory cache for a stream cover before opening [IsmLiveStreamView].
   static Future<void> precacheStreamCover(
     String? imageUrl,

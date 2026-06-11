@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
-import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet_binding.dart';
+import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -236,6 +236,7 @@ abstract class IsmLiveRouteManagement {
       },
     );
     CoinsPlansWalletBinding().dependencies();
+    unawaited(Get.find<CoinsPlansWalletController>().totalWalletCoins('coin'));
     if (fromStream) {
       IsmLiveUtility.openBottomSheet(
         Builder(

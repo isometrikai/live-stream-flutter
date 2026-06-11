@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,14 @@ class CoinsPlansWalletView extends StatelessWidget {
 
     return GetBuilder<CoinsPlansWalletController>(
       id: updateId,
+      initState: (_) {
+        IsmLiveUtility.updateLater(() {
+          if (!Get.isRegistered<CoinsPlansWalletController>()) return;
+          unawaited(
+            Get.find<CoinsPlansWalletController>().totalWalletCoins('coin'),
+          );
+        }, false);
+      },
       builder: (controller) => Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
@@ -172,10 +182,10 @@ class CoinsPlansWalletView extends StatelessWidget {
                               context,
                               balanceFormatted:
                                   controller.formattedBaseCurrencyAmount,
-                              onWithdrawTap: () => walletConfigure.onWithdrawTap
-                                  ?.call(
+                              onWithdrawTap: () => _onWithdrawTap(
                                 context,
-                                controller.baseCurrencyAmount,
+                                controller,
+                                walletConfigure,
                               ),
                             ),
                           ),
@@ -273,5 +283,24 @@ class CoinsPlansWalletView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static void _onWithdrawTap(
+    BuildContext context,
+    CoinsPlansWalletController controller,
+    IsmLiveCoinsPlansWalletScreenConfigure walletConfigure,
+  ) {
+    final onWithdraw = walletConfigure.onWithdrawTap;
+    if (onWithdraw == null) return;
+
+    onWithdraw(context, controller.baseCurrencyAmount);
+    unawaited(_refreshWalletAfterReturn(context));
+  }
+
+  static Future<void> _refreshWalletAfterReturn(BuildContext context) async {
+    await IsmLiveUtility.waitForRouteResume(context);
+    if (!context.mounted) return;
+    if (!Get.isRegistered<CoinsPlansWalletController>()) return;
+    await Get.find<CoinsPlansWalletController>().totalWalletCoins('coin');
   }
 }
