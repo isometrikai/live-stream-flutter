@@ -94,6 +94,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
   void initState() {
     super.initState();
     if (_consumeKnownFailureIfAny()) return;
+    if (_attachCachedControllerIfReady()) return;
     _initializeIfNeeded();
   }
 
@@ -107,6 +108,10 @@ class _IsmLiveRecordingAutoVideoPlayerState
       _bufferingStartMillis = null;
       _lastBufferingRebuildMillis = 0;
       if (_consumeKnownFailureIfAny()) return;
+      if (_attachCachedControllerIfReady()) {
+        if (mounted) setState(() {});
+        return;
+      }
       _initializeIfNeeded();
     }
     if (oldWidget.isMuted != widget.isMuted &&
@@ -130,13 +135,33 @@ class _IsmLiveRecordingAutoVideoPlayerState
     return true;
   }
 
+  /// Instant attach when a neighbor preload already finished - avoids an
+  /// extra async frame before first paint on swipe.
+  bool _attachCachedControllerIfReady() {
+    if (widget.url.isEmpty) return false;
+    final cached = _cache.getCachedController(widget.url);
+    if (cached == null ||
+        !cached.value.isInitialized ||
+        cached.value.hasError) {
+      return false;
+    }
+    _attachController(cached);
+    if (!_isManuallyPaused) {
+      _playInternal();
+    }
+    return true;
+  }
+
   Future<void> _initializeIfNeeded() async {
     if (_isInitializing || widget.url.isEmpty) return;
     _loadFailureMessage = null;
     _isInitializing = true;
     setState(() {});
     try {
-      final controller = await _cache.getOrCreate(widget.url);
+      final controller = await _cache.getOrCreate(
+        widget.url,
+        highPriority: true,
+      );
       if (_isDisposed) {
         // Controller is shared in [RecordingVideoCacheManager]; never dispose it here.
         return;
@@ -201,8 +226,16 @@ class _IsmLiveRecordingAutoVideoPlayerState
         durationMs - value.position.inMilliseconds <= 300) {
       unawaited(_controller!.seekTo(Duration.zero));
     }
-    // Inform parent that a usable controller is now available.
-    widget.onControllerReady?.call(_controller!);
+    // Defer parent notification: [_attachCachedControllerIfReady] can run from
+    // [initState] while the PageView is still building, and the host's
+    // [onControllerReady] calls setState on [IsmLiveStreamRecordingPlayerView].
+    final onReady = widget.onControllerReady;
+    if (onReady != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _controller != controller) return;
+        onReady(controller);
+      });
+    }
   }
 
   void _handleProgress() {
@@ -351,6 +384,12 @@ class _IsmLiveRecordingAutoVideoPlayerState
 
     if (wasVisible == _isVisible) return;
 
+    if (_isVisible) {
+      _cache.markVisible(widget.url);
+    } else {
+      _cache.markNotVisible(widget.url);
+    }
+
     if (_controller == null || !_controller!.value.isInitialized) {
       // If we've already recorded a load failure for this URL, don't silently
       // re-trigger init on every visibility flip - that just thrashes the
@@ -358,17 +397,19 @@ class _IsmLiveRecordingAutoVideoPlayerState
       // (PageView re-entry / URL change) still go through [initState] /
       // [didUpdateWidget] which clear the failure state.
       if (_isVisible && _loadFailureMessage == null) {
+        if (_attachCachedControllerIfReady()) {
+          if (mounted) setState(() {});
+          return;
+        }
         _initializeIfNeeded();
       }
       return;
     }
 
     if (_isVisible && !_isManuallyPaused) {
-      _cache.markVisible(widget.url);
       _playInternal();
       _startStuckDetection();
     } else {
-      _cache.markNotVisible(widget.url);
       _controller!.pause();
       _stopStuckDetection();
     }

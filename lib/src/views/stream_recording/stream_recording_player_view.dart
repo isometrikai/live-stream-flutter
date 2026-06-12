@@ -111,10 +111,13 @@ class _IsmLiveStreamRecordingPlayerViewState
         _pageController.jumpToPage(targetPage);
       }
       final generation = _preloadGeneration;
-      unawaited(
-        _cacheManager.abandonOutside(_urlsAroundIndex(_currentIndex)),
-      );
-      _preloadAround(_currentIndex, generation);
+      final keepUrls = _urlsAroundIndex(_currentIndex);
+      unawaited(_cacheManager.abandonOutside(keepUrls));
+      final activeUrl = _urlAtIndex(_currentIndex);
+      if (activeUrl != null) {
+        unawaited(_cacheManager.warmup(activeUrl));
+      }
+      unawaited(_preloadAround(_currentIndex, generation));
       _config.onLoaded?.call(context, _currentRecording);
     });
   }
@@ -122,18 +125,20 @@ class _IsmLiveStreamRecordingPlayerViewState
   /// URLs for [index] and its immediate neighbors (the retention window).
   Set<String> _urlsAroundIndex(int index) {
     final urls = <String>{};
-    void collect(int i) {
-      if (i < 0 || i >= widget.recordings.length) return;
-      final recorded = widget.recordings[i].recordedUrls;
-      if (recorded.isNotEmpty) {
-        urls.add(recorded.first);
-      }
-    }
-
-    collect(index);
-    collect(index + 1);
-    collect(index - 1);
+    final active = _urlAtIndex(index);
+    if (active != null) urls.add(active);
+    final next = _urlAtIndex(index + 1);
+    if (next != null) urls.add(next);
+    final previous = _urlAtIndex(index - 1);
+    if (previous != null) urls.add(previous);
     return urls;
+  }
+
+  String? _urlAtIndex(int index) {
+    if (index < 0 || index >= widget.recordings.length) return null;
+    final recorded = widget.recordings[index].recordedUrls;
+    if (recorded.isEmpty) return null;
+    return recorded.first;
   }
 
   void _onPageChanged(int index) {
@@ -141,16 +146,23 @@ class _IsmLiveStreamRecordingPlayerViewState
     final generation = ++_preloadGeneration;
     setState(() => _currentIndex = index);
 
+    final keepUrls = _urlsAroundIndex(index);
+    final activeUrl = _urlAtIndex(index);
+
     // Stop downloads / decoder work for URLs outside the new window right
     // away. Without this, stale [_preloadAround] calls from rapid scrolling
     // keep HTTP sessions open and routinely push the *active* video past the
     // initialize timeout (user sees "failed to load"; manual retry works once
     // the stale sessions finish).
-    unawaited(
-      _cacheManager.abandonOutside(_urlsAroundIndex(index)),
-    );
+    unawaited(_cacheManager.abandonOutside(keepUrls));
 
-    _preloadAround(index, generation);
+    // Start loading the visible recording before the player widget mounts so
+    // we don't lose a frame (or minutes, if the preload chain was blocked).
+    if (activeUrl != null) {
+      unawaited(_cacheManager.warmup(activeUrl));
+    }
+
+    unawaited(_preloadAround(index, generation));
 
     // Notify host every time a new recording becomes the visible one.
     final recording = widget.recordings[index];
@@ -236,94 +248,19 @@ class _IsmLiveStreamRecordingPlayerViewState
     if (widget.recordings.isEmpty) return;
     if (generation != _preloadGeneration) return;
 
-    final activeUrls = <String>[];
+    // Scroll-down first: users overwhelmingly swipe to the next recording.
     final neighborUrls = <String>[];
+    final next = _urlAtIndex(index + 1);
+    if (next != null) neighborUrls.add(next);
+    final previous = _urlAtIndex(index - 1);
+    if (previous != null) neighborUrls.add(previous);
 
-    void collect(int i, List<String> bucket) {
-      if (i < 0 || i >= widget.recordings.length) return;
-      final recording = widget.recordings[i];
-      final recorded = recording.recordedUrls;
-      if (recorded.isNotEmpty) {
-        bucket.add(recorded.first);
-      }
-    }
-
-    collect(index, activeUrls);
-    collect(index + 1, neighborUrls);
-    collect(index - 1, neighborUrls);
-
-    final keepUrls = <String>[...activeUrls, ...neighborUrls];
-
-    // Speed up first-frame for the currently visible recording – especially
-    // important for long videos and slow CDNs where parallel preloads were
-    // splitting bandwidth/decoder budget three ways while the user stared at
-    // the spinner. The widget for [index] joins this same future via the
-    // cache manager's in-flight coalescing, so it doesn't double-fetch.
-    await _cacheManager.precacheMedia(activeUrls);
-    if (!mounted || generation != _preloadGeneration) return;
-
-    // Hold off neighbor preload until the active video is actually playing
-    // (or a short safety cap elapses). For long videos on slow CDNs this
-    // stops neighbor HTTP sessions from stealing bandwidth while the user is
-    // still waiting on the first decodable frame of the active recording.
-    if (activeUrls.isNotEmpty) {
-      await _waitForActivePlaying(activeUrls.first);
-      if (!mounted || generation != _preloadGeneration) return;
-    }
-
-    // Then warm neighbors so swiping still feels instant. Awaited so that
-    // [clearOutsideRange] below runs after preload (same invariant as before).
+    // Neighbor warm-up is best-effort and must not block the UI isolate.
+    // Active URL loading is kicked off from [_onPageChanged] via [warmup].
     await _cacheManager.precacheMedia(neighborUrls);
     if (!mounted || generation != _preloadGeneration) return;
 
-    await _cacheManager.clearOutsideRange(keepUrls);
-  }
-
-  /// Waits until the cached controller for [url] reports `isPlaying`, or
-  /// until [maxWait] elapses - whichever comes first.
-  ///
-  /// Returns immediately if the controller is already playing or is unknown
-  /// (e.g. evicted before this call). Always cleans up the temporary listener
-  /// and safety timer so it can't leak across page changes.
-  ///
-  /// 10s rather than the original 4s: long recordings on slow networks can
-  /// take several seconds beyond `initialize()` completion before they
-  /// actually start playing, and we want to keep the full bandwidth pipe on
-  /// the active video until then (otherwise neighbor preload starts stealing
-  /// bytes and the active's first-frame stalls).
-  Future<void> _waitForActivePlaying(
-    String url, {
-    Duration maxWait = const Duration(seconds: 10),
-  }) async {
-    final controller = _cacheManager.getCachedController(url);
-    if (controller == null) return;
-    if (controller.value.isPlaying) return;
-
-    final completer = Completer<void>();
-    Timer? safetyTimer;
-    late VoidCallback listener;
-
-    void finish() {
-      if (completer.isCompleted) return;
-      completer.complete();
-    }
-
-    listener = () {
-      final value = controller.value;
-      if (value.hasError || value.isPlaying) {
-        finish();
-      }
-    };
-
-    controller.addListener(listener);
-    safetyTimer = Timer(maxWait, finish);
-
-    try {
-      await completer.future;
-    } finally {
-      safetyTimer.cancel();
-      controller.removeListener(listener);
-    }
+    await _cacheManager.clearOutsideRange(_urlsAroundIndex(index).toList());
   }
 
   @override

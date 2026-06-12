@@ -24,10 +24,19 @@ class RecordingVideoCacheManager {
   final Map<String, Future<VideoPlayerController>> _inflight =
       <String, Future<VideoPlayerController>>{};
 
-  /// Serializes controller creation across URLs so rapid scrolling can't spin
-  /// up multiple ExoPlayer/AVPlayer sessions that split bandwidth and push
-  /// the visible recording past [_initializeTimeout].
-  Future<void> _initChain = Future<void>.value();
+  /// The URL currently being initialized for the visible page. Neighbor
+  /// preloads yield until this completes so the active recording always gets
+  /// the full bandwidth / decoder budget first.
+  String? _highPriorityUrl;
+  Completer<void>? _highPriorityCompleter;
+
+  /// Serializes background (neighbor) preloads so we never open two low-
+  /// priority HTTP sessions at once.
+  Future<void> _backgroundPreloadChain = Future<void>.value();
+
+  /// Bumped on every [abandonOutside] call so stale [_preload] work from a
+  /// previous page does not block the chain for the new retention window.
+  int _preloadGeneration = 0;
 
   /// URLs the feed currently wants to keep warm (active + neighbors). Updated
   /// on every page change so stale preload work can't resurrect controllers for
@@ -67,7 +76,26 @@ class RecordingVideoCacheManager {
   ///
   /// If the controller is already cached and initialized, it is reused.
   /// Otherwise a new controller is created, initialized and cached.
-  Future<VideoPlayerController> getOrCreate(String url) async {
+  ///
+  /// Begin loading [url] as early as possible (e.g. on page change before the
+  /// player widget mounts). Errors are swallowed - the widget retries on demand.
+  Future<void> warmup(String url, {bool highPriority = true}) async {
+    if (url.isEmpty) return;
+    try {
+      await getOrCreate(url, highPriority: highPriority);
+    } on _RecordingInitAbortedException {
+      // Bumped aside by a newer page change - expected during fast scroll.
+    } catch (_) {
+      // Widget path / retry will surface failures to the user.
+    }
+  }
+
+  /// Pass [highPriority] for the visible page's player so neighbor preloads
+  /// and stale in-flight work are bumped aside instead of blocking first-frame.
+  Future<VideoPlayerController> getOrCreate(
+    String url, {
+    bool highPriority = false,
+  }) async {
     if (url.isEmpty) {
       throw ArgumentError.value(url, 'url', 'Video URL must not be empty');
     }
@@ -97,16 +125,68 @@ class RecordingVideoCacheManager {
       }
     }
 
-    var tracked = _inflight[url];
-    if (tracked == null) {
-      tracked = _createAndInitialize(url);
-      _inflight[url] = tracked;
+    if (highPriority) {
+      // Fire-and-forget competitor teardown so first-frame init is not delayed
+      // waiting for native decoder release on URLs outside the retention window.
+      unawaited(_abortCompetingInits(keepUrl: url));
+      return _runAsHighPriority(url, () => _getOrCreateTracked(url));
     }
+
+    final highPriorityWaiter = _highPriorityCompleter;
+    if (highPriorityWaiter != null) {
+      await highPriorityWaiter.future;
+    }
+    return _getOrCreateTracked(url);
+  }
+
+  Future<VideoPlayerController> _getOrCreateTracked(String url) async {
+    final existing = _inflight[url];
+    if (existing != null) {
+      return existing;
+    }
+
+    // Register before any await so concurrent callers coalesce instead of
+    // each running [_createAndInitialize] and thrashing ExoPlayer.
+    final completer = Completer<VideoPlayerController>();
+    final tracked = completer.future;
+    _inflight[url] = tracked;
+
     try {
-      return await tracked;
+      final controller = await _createAndInitialize(url);
+      if (!completer.isCompleted) {
+        completer.complete(controller);
+      }
+      return controller;
+    } catch (e, st) {
+      if (!completer.isCompleted) {
+        completer.completeError(e, st);
+      }
+      rethrow;
     } finally {
       if (identical(_inflight[url], tracked)) {
         _inflight.remove(url);
+      }
+    }
+  }
+
+  Future<VideoPlayerController> _runAsHighPriority(
+    String url,
+    Future<VideoPlayerController> Function() action,
+  ) async {
+    _highPriorityUrl = url;
+    final gate = Completer<void>();
+    _highPriorityCompleter = gate;
+    try {
+      return await action();
+    } finally {
+      if (_highPriorityUrl == url) {
+        _highPriorityUrl = null;
+      }
+      if (!gate.isCompleted) {
+        gate.complete();
+      }
+      if (identical(_highPriorityCompleter, gate)) {
+        _highPriorityCompleter = null;
       }
     }
   }
@@ -120,25 +200,43 @@ class RecordingVideoCacheManager {
   /// joined it via [_inflight] coalescing).
   static const Duration _initializeTimeout = Duration(seconds: 90);
 
-  Future<VideoPlayerController> _createAndInitialize(String url) async {
-    final previous = _initChain;
-    final gate = Completer<void>();
-    _initChain = gate.future;
-    await previous;
+  /// Dispose not-yet-initialized controllers outside the retention window so a
+  /// newly visible recording is not stuck behind HTTP work for old pages.
+  Future<void> _abortCompetingInits({required String keepUrl}) async {
+    final keepUrls = _retentionWindow.isEmpty
+        ? {keepUrl}
+        : {..._retentionWindow, keepUrl};
 
-    try {
-      return await _createAndInitializeUnlocked(url);
-    } finally {
-      if (!gate.isCompleted) {
-        gate.complete();
-      }
+    final competitors = <String>{
+      ..._cache.keys,
+      ..._inflight.keys,
+    }..removeWhere(keepUrls.contains);
+
+    if (competitors.isEmpty) return;
+
+    for (final competitorUrl in competitors) {
+      final entry = _cache[competitorUrl];
+      if (entry == null || entry.disposed) continue;
+      if (entry.controller.value.isInitialized) continue;
+      entry.disposed = true;
+      _cache.remove(competitorUrl);
+      unawaited(entry.controller.dispose());
     }
   }
 
-  Future<VideoPlayerController> _createAndInitializeUnlocked(String url) async {
-    final stale = _cache.remove(url);
+  Future<VideoPlayerController> _createAndInitialize(String url) async {
+    final stale = _cache[url];
     if (stale != null && !stale.disposed) {
+      final value = stale.controller.value;
+      if (value.isInitialized && !value.hasError) {
+        stale.lastAccess = DateTime.now();
+        return stale.controller;
+      }
+      // Orphaned / errored session from a prior attempt - tear down before
+      // opening a fresh HTTP session (rare now that [_inflight] registers
+      // before the first await).
       stale.disposed = true;
+      _cache.remove(url);
       await stale.controller.dispose();
     }
 
@@ -179,6 +277,14 @@ class RecordingVideoCacheManager {
 
     try {
       await settled.future.timeout(_initializeTimeout);
+      if (entry.disposed) {
+        throw _RecordingInitAbortedException();
+      }
+      if (_retentionWindow.isNotEmpty &&
+          !_retentionWindow.contains(url) &&
+          _highPriorityUrl != url) {
+        throw _RecordingInitAbortedException();
+      }
       if (controller.value.hasError) {
         throw _RecordingPlaybackException(
           controller.value.errorDescription ?? 'Video player error',
@@ -194,6 +300,9 @@ class RecordingVideoCacheManager {
       controller.removeListener(onValueChanged);
       await controller.dispose();
       _cache.remove(url);
+      if (e is _RecordingInitAbortedException) {
+        rethrow;
+      }
       if (_isPermanentFailure(e)) {
         _knownFailures[url] = e.toString();
       }
@@ -252,10 +361,27 @@ class RecordingVideoCacheManager {
     if (_retentionWindow.isNotEmpty && !_retentionWindow.contains(url)) {
       return;
     }
+
+    final generation = _preloadGeneration;
+    final previous = _backgroundPreloadChain;
+    final gate = Completer<void>();
+    _backgroundPreloadChain = gate.future;
+    await previous;
+    if (generation != _preloadGeneration) return;
+
     try {
+      if (_retentionWindow.isNotEmpty && !_retentionWindow.contains(url)) {
+        return;
+      }
       await getOrCreate(url);
+    } on _RecordingInitAbortedException {
+      // Preload was bumped aside for the visible recording - expected.
     } catch (_) {
       // Ignore preload failures; playback can retry on demand.
+    } finally {
+      if (!gate.isCompleted) {
+        gate.complete();
+      }
     }
   }
 
@@ -280,6 +406,17 @@ class RecordingVideoCacheManager {
   /// a previous index stop competing for bandwidth / decoders.
   Future<void> abandonOutside(Set<String> keepUrls) async {
     _retentionWindow = keepUrls;
+    // Drop queued neighbor work from previous pages immediately. Without this,
+    // a slow preload started 5 pages ago can block the chain and leave the
+    // visible recording on a 60s+ cold start even for short clips.
+    _preloadGeneration++;
+    _backgroundPreloadChain = Future<void>.value();
+
+    if (_highPriorityUrl != null && !keepUrls.contains(_highPriorityUrl)) {
+      _highPriorityUrl = null;
+      _highPriorityCompleter?.complete();
+      _highPriorityCompleter = null;
+    }
 
     final urlsToDrop = <String>{
       ..._cache.keys,
@@ -354,10 +491,22 @@ class RecordingVideoCacheManager {
     }
     _cache.clear();
     _retentionWindow = <String>{};
+    _highPriorityUrl = null;
+    _highPriorityCompleter?.complete();
+    _highPriorityCompleter = null;
+    _backgroundPreloadChain = Future<void>.value();
+    _preloadGeneration++;
     // Player screen is going away entirely - drop any known-bad markings so
     // a future re-open of the player can take a fresh swing at each URL.
     _knownFailures.clear();
   }
+}
+
+/// Thrown when a background preload is intentionally cancelled so the visible
+/// recording can initialize without waiting in a global queue.
+class _RecordingInitAbortedException implements Exception {
+  @override
+  String toString() => 'Recording init aborted';
 }
 
 class _CachedVideo {
