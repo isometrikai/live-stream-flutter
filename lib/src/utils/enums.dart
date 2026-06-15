@@ -291,8 +291,8 @@ enum IsmLiveStreamOption {
 
   static List<IsmLiveStreamOption> get scheduleOptions => [
         IsmLiveStreamOption.share,
-        if (IsmLiveDelegate.productStream == true) IsmLiveStreamOption.product,
         IsmLiveStreamOption.scheduleModify,
+       if (IsmLiveDelegate.productStream == true) IsmLiveStreamOption.product,
       ];
 
   ///host options
