@@ -1423,6 +1423,7 @@ class IsmLiveApp extends StatefulWidget {
     List<IsmLiveStreamOption>? viewersOptions,
     List<IsmLiveStreamOption>? hostOptions,
     List<IsmLiveStreamOption>? rtmpOptions,
+    List<IsmLiveStreamOption>? scheduleOptions,
     List<IsmLiveStreamOption>? copublisherOptions,
     List<IsmLiveStreamOption>? pkOptions,
     ControlOptionCallback? controlOptionCallback,
@@ -1437,6 +1438,7 @@ class IsmLiveApp extends StatefulWidget {
       viewersOptions: viewersOptions,
       hostOptions: hostOptions,
       rtmpOptions: rtmpOptions,
+      scheduleOptions: scheduleOptions,
       copublisherOptions: copublisherOptions,
       pkOptions: pkOptions,
       controlOptionCallback: controlOptionCallback,
@@ -1456,6 +1458,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.viewersOption = sideIconsConfigure.viewersOptions;
     IsmLiveDelegate.hostOptions = sideIconsConfigure.hostOptions;
     IsmLiveDelegate.rtmpOptions = sideIconsConfigure.rtmpOptions;
+    IsmLiveDelegate.scheduleOptions = sideIconsConfigure.scheduleOptions;
     IsmLiveDelegate.copublisherOptions = sideIconsConfigure.copublisherOptions;
     IsmLiveDelegate.pkOptions = sideIconsConfigure.pkOptions;
     IsmLiveDelegate.controlOptionCallback =

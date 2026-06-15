@@ -78,6 +78,7 @@ class IsmLiveSideIconsConfigure {
     this.viewersOptions = const [],
     this.hostOptions = const [],
     this.rtmpOptions = const [],
+    this.scheduleOptions = const [],
     this.copublisherOptions = const [],
     this.pkOptions = const [],
     this.controlOptionCallback,
@@ -102,6 +103,9 @@ class IsmLiveSideIconsConfigure {
 
   /// Side icons shown in RTMP streams.
   final List<IsmLiveStreamOption> rtmpOptions;
+
+  /// Side icons shown in scheduled streams.
+  final List<IsmLiveStreamOption> scheduleOptions;
 
   /// Side icons shown to copublishers.
   final List<IsmLiveStreamOption> copublisherOptions;
@@ -128,6 +132,7 @@ class IsmLiveSideIconsConfigure {
     List<IsmLiveStreamOption>? viewersOptions,
     List<IsmLiveStreamOption>? hostOptions,
     List<IsmLiveStreamOption>? rtmpOptions,
+    List<IsmLiveStreamOption>? scheduleOptions,
     List<IsmLiveStreamOption>? copublisherOptions,
     List<IsmLiveStreamOption>? pkOptions,
     ControlOptionCallback? controlOptionCallback,
@@ -142,6 +147,7 @@ class IsmLiveSideIconsConfigure {
         viewersOptions: viewersOptions ?? this.viewersOptions,
         hostOptions: hostOptions ?? this.hostOptions,
         rtmpOptions: rtmpOptions ?? this.rtmpOptions,
+        scheduleOptions: scheduleOptions ?? this.scheduleOptions,
         copublisherOptions: copublisherOptions ?? this.copublisherOptions,
         pkOptions: pkOptions ?? this.pkOptions,
         controlOptionCallback:

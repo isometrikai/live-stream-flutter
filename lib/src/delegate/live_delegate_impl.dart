@@ -174,6 +174,8 @@ class IsmLiveDelegate {
 
   static List<IsmLiveStreamOption> rtmpOptions = [];
 
+  static List<IsmLiveStreamOption> scheduleOptions = [];
+
   static List<IsmLiveStreamOption> copublisherOptions = [];
 
   static List<IsmLiveStreamOption> pkOptions = [];
