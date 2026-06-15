@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 class InAppManager {
@@ -79,8 +80,12 @@ class InAppManager {
     });
   }
 
+  static bool shouldCompletePurchase(PurchaseDetails purchase) =>
+      purchase.pendingCompletePurchase ||
+      purchase.status == PurchaseStatus.restored;
+
   static void _completePurchaseIfNeeded(PurchaseDetails purchase) {
-    if (!purchase.pendingCompletePurchase) return;
+    if (!shouldCompletePurchase(purchase)) return;
     unawaited(InAppPurchase.instance.completePurchase(purchase));
   }
 
@@ -90,6 +95,7 @@ class InAppManager {
   /// Method for Finish Past Purchases
   Future<void> _finishPastPurchases() async {
     if (GetPlatform.isIOS) {
+      await _finishUnfinishedStoreKit2Transactions();
       final transactions = <SKPaymentTransactionWrapper>[];
       try {
         await SKPaymentQueueWrapper().transactions().then((value) {
@@ -98,6 +104,10 @@ class InAppManager {
         });
       } catch (_) {}
       for (final transaction in transactions) {
+        if (transaction.transactionState ==
+            SKPaymentTransactionStateWrapper.purchasing) {
+          continue;
+        }
         try {
           await SKPaymentQueueWrapper().finishTransaction(transaction);
         } catch (_) {}
@@ -120,6 +130,18 @@ class InAppManager {
       }
       return;
     }
+  }
+
+  /// StoreKit 2 keeps unfinished consumables in its own queue (not SK1).
+  Future<void> _finishUnfinishedStoreKit2Transactions() async {
+    try {
+      final unfinished = await SK2Transaction.unfinishedTransactions();
+      for (final transaction in unfinished) {
+        try {
+          await SK2Transaction.finish(int.parse(transaction.id));
+        } catch (_) {}
+      }
+    } catch (_) {}
   }
 
   /// Method for Request to Purchase Consumable
