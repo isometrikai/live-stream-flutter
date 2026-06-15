@@ -138,7 +138,7 @@ class CoinsPlansWalletController extends GetxController
     };
     data.removeWhere((key, value) => value == null || value.isEmpty);
     final res = await _coinsPlansWalletViewMode.purchaseCoinsPlans(data: data);
-    if (purchaseDetails.pendingCompletePurchase) {
+    if (InAppManager.shouldCompletePurchase(purchaseDetails)) {
       try {
         await InAppPurchase.instance.completePurchase(purchaseDetails);
       } catch (_) {
@@ -171,7 +171,7 @@ class CoinsPlansWalletController extends GetxController
       onPurchase: (purchaseDetails) async {
         // No backend `tokenPurchase` call from here (per requirement).
         // Still complete the platform purchase to avoid leaving it pending.
-        if (purchaseDetails.pendingCompletePurchase) {
+        if (InAppManager.shouldCompletePurchase(purchaseDetails)) {
           try {
             await InAppPurchase.instance.completePurchase(purchaseDetails);
           } catch (_) {
