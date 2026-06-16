@@ -98,8 +98,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             }
                           ],
                         );
-                        if (IsmLiveDelegate.addCoinsClickCallback != null) {
-                          IsmLiveDelegate.addCoinsClickCallback!(context);
+                        if (IsmLiveDelegate.streamScreenConfigure.addCoinsClickCallback != null) {
+                          IsmLiveDelegate.streamScreenConfigure.addCoinsClickCallback!(context);
                         } else {
                           IsmLiveUtility.popUntilStreamView();
                           IsmLiveRouteManagement.goToCoinsPlanWallet(
@@ -210,9 +210,11 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                                     onPress: () {
                                       IsmLiveUtility.closeDialog();
                                       if (IsmLiveDelegate
+                                              .streamScreenConfigure
                                               .addCoinsClickCallback !=
                                           null) {
                                         IsmLiveDelegate
+                                            .streamScreenConfigure
                                             .addCoinsClickCallback!(context);
                                       } else {
                                         IsmLiveRouteManagement
@@ -248,8 +250,8 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                                 ],
                               );
 
-                              if (IsmLiveDelegate.giftClickCallback != null) {
-                                IsmLiveDelegate.giftClickCallback!(
+                              if (IsmLiveDelegate.streamScreenConfigure.giftClickCallback != null) {
+                                IsmLiveDelegate.streamScreenConfigure.giftClickCallback!(
                                   context,
                                   gift,
                                 );

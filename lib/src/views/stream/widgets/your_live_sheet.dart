@@ -61,7 +61,7 @@ class YourLiveSheet extends StatelessWidget {
           ),
         ),
         // Circle Icon Overlapping Top
-        if (IsmLiveDelegate.logoWidget != null) ...[
+        if (IsmLiveDelegate.streamScreenConfigure.logoWidget != null) ...[
           CircleAvatar(
             radius: 40,
             backgroundColor: Colors.transparent,
@@ -69,7 +69,7 @@ class YourLiveSheet extends StatelessWidget {
               width: 80,
               height: 80,
               child: ClipOval(
-                child: IsmLiveDelegate.logoWidget!,
+                child: IsmLiveDelegate.streamScreenConfigure.logoWidget!,
               ),
             ),
           ),

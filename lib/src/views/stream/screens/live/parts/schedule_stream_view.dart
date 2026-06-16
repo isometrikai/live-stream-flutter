@@ -15,8 +15,8 @@ class ScheduleStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
-      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
-      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
+      chatMessageBuilder: IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
     );
 
     return _wrapStreamChatView(context, chatView);
@@ -67,8 +67,8 @@ class ScheduleStreamView extends StatelessWidget {
     Widget buttonWidget;
 
     // Use custom builder if provided
-    if (IsmLiveDelegate.goLiveSmallButtonBuilder != null) {
-      buttonWidget = IsmLiveDelegate.goLiveSmallButtonBuilder!.call(
+    if (IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder != null) {
+      buttonWidget = IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder!.call(
         context,
         controller,
         () => controller.startStream(context: context),
@@ -119,7 +119,7 @@ class ScheduleStreamView extends StatelessWidget {
     BuildContext context,
     IsmLiveStreamController controller,
   ) {
-    final builder = IsmLiveDelegate.scheduleStreamCenterOverlayBuilder;
+    final builder = IsmLiveDelegate.streamScreenConfigure.scheduleStreamCenterOverlayBuilder;
     if (builder == null) {
       return const SizedBox.shrink();
     }
@@ -234,7 +234,7 @@ class ScheduleStreamView extends StatelessWidget {
             Positioned.fill(
               child: IgnorePointer(
                 ignoring:
-                    IsmLiveDelegate.scheduleStreamCenterOverlayBuilder == null,
+                    IsmLiveDelegate.streamScreenConfigure.scheduleStreamCenterOverlayBuilder == null,
                 child: _buildCenterOverlay(context, controller),
               ),
             ),

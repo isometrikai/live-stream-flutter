@@ -19,154 +19,7 @@ class IsmLiveDelegate {
 
   static Function(String id)? unsubscribStreamById;
 
-  @Deprecated('Use streamScreenConfigure.streamHeader instead.')
-  static IsmLiveStreamHeaderBuilder? get streamHeader =>
-      streamScreenConfigure.streamHeader;
-
-  @Deprecated('Use streamScreenConfigure.streamHeader instead.')
-  static set streamHeader(IsmLiveStreamHeaderBuilder? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(streamHeader: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
-  static IsmLiveStreamBottomBuilder? get streamBottomBuilder =>
-      streamScreenConfigure.streamBottomBuilder;
-
-  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
-  static set streamBottomBuilder(IsmLiveStreamBottomBuilder? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(streamBottomBuilder: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
-  static IsmLiveHeaderBuilder? get bottomBuilder => streamBottomBuilder;
-
-  @Deprecated('Use streamScreenConfigure.streamBottomBuilder instead.')
-  static set bottomBuilder(IsmLiveHeaderBuilder? value) =>
-      streamBottomBuilder = value;
-
-  @Deprecated('Use streamScreenConfigure.inputBuilder instead.')
-  static IsmLiveInputBuilder? get inputBuilder =>
-      streamScreenConfigure.inputBuilder;
-
-  @Deprecated('Use streamScreenConfigure.inputBuilder instead.')
-  static set inputBuilder(IsmLiveInputBuilder? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(inputBuilder: value);
-  }
-
   static IsmLiveCustomBottomSheetBuilder? customBottomSheetBuilder;
-
-  @Deprecated('Use streamScreenConfigure.chatMessageBuilder instead.')
-  static IsmLiveChatMessageBuilder? get chatMessageBuilder =>
-      streamScreenConfigure.chatMessageBuilder;
-
-  @Deprecated('Use streamScreenConfigure.chatMessageBuilder instead.')
-  static set chatMessageBuilder(IsmLiveChatMessageBuilder? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(chatMessageBuilder: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.chatItemBgColorCallback instead.')
-  static IsmLiveChatItemBgColorCallback? get chatItemBgColorCallback =>
-      streamScreenConfigure.chatItemBgColorCallback;
-
-  @Deprecated('Use streamScreenConfigure.chatItemBgColorCallback instead.')
-  static set chatItemBgColorCallback(IsmLiveChatItemBgColorCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(chatItemBgColorCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.endButton instead.')
-  static Widget? get endButton => streamScreenConfigure.endButton;
-
-  @Deprecated('Use streamScreenConfigure.endButton instead.')
-  static set endButton(Widget? value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(endButton: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
-  static bool get showStreamHeader => streamScreenConfigure.showStreamHeader;
-
-  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
-  static set showStreamHeader(bool value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(showStreamHeader: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
-  static bool get showHeader => showStreamHeader;
-
-  @Deprecated('Use streamScreenConfigure.showStreamHeader instead.')
-  static set showHeader(bool value) => showStreamHeader = value;
-
-  @Deprecated('Use streamScreenConfigure.resolvedStreamHeaderPosition instead.')
-  static Alignment get streamHeaderPosition =>
-      streamScreenConfigure.resolvedStreamHeaderPosition;
-
-  @Deprecated('Use streamScreenConfigure.streamHeaderPosition instead.')
-  static set streamHeaderPosition(Alignment value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(streamHeaderPosition: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.resolvedStreamHeaderPosition instead.')
-  static Alignment get headerPosition => streamHeaderPosition;
-
-  @Deprecated('Use streamScreenConfigure.streamHeaderPosition instead.')
-  static set headerPosition(Alignment value) => streamHeaderPosition = value;
-
-  @Deprecated(
-    'Use streamScreenConfigure.resolvedEndStreamWidgetPosition instead.',
-  )
-  static Alignment get endStreamWidgetPosition =>
-      streamScreenConfigure.resolvedEndStreamWidgetPosition;
-
-  @Deprecated('Use streamScreenConfigure.endStreamWidgetPosition instead.')
-  static set endStreamWidgetPosition(Alignment value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(endStreamWidgetPosition: value);
-  }
-
-  @Deprecated(
-    'Use streamScreenConfigure.resolvedEndStreamWidgetPosition instead.',
-  )
-  static Alignment get endStreamPosition => endStreamWidgetPosition;
-
-  @Deprecated('Use streamScreenConfigure.endStreamWidgetPosition instead.')
-  static set endStreamPosition(Alignment value) =>
-      endStreamWidgetPosition = value;
-
-  @Deprecated(
-    'Use streamScreenConfigure.useGridLayoutForMultipleParticipants instead.',
-  )
-  static bool get useGridLayoutForMultipleParticipants =>
-      streamScreenConfigure.resolvedUseGridLayoutForMultipleParticipants;
-
-  @Deprecated(
-    'Use streamScreenConfigure.useGridLayoutForMultipleParticipants instead.',
-  )
-  static set useGridLayoutForMultipleParticipants(bool value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(
-      useGridLayoutForMultipleParticipants: value,
-    );
-  }
-
-  @Deprecated(
-    'Use streamScreenConfigure.showParticipantFullNamesInPublisherGrid instead.',
-  )
-  static bool get showParticipantFullNamesInPublisherGrid =>
-      streamScreenConfigure.resolvedShowParticipantFullNamesInPublisherGrid;
-
-  @Deprecated(
-    'Use streamScreenConfigure.showParticipantFullNamesInPublisherGrid instead.',
-  )
-  static set showParticipantFullNamesInPublisherGrid(bool value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(
-      showParticipantFullNamesInPublisherGrid: value,
-    );
-  }
 
   static List<IsmLiveStreamOption> viewersOption = [];
 
@@ -183,23 +36,6 @@ class IsmLiveDelegate {
   static List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = [];
 
   static Widget? homeScreen;
-
-  @Deprecated('Use streamScreenConfigure.logoWidget instead.')
-  static Widget? get logoWidget => streamScreenConfigure.logoWidget;
-
-  @Deprecated('Use streamScreenConfigure.logoWidget instead.')
-  static set logoWidget(Widget? value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(logoWidget: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.endStreamScreen instead.')
-  static Widget? get endStreamScreen => streamScreenConfigure.endStreamScreen;
-
-  @Deprecated('Use streamScreenConfigure.endStreamScreen instead.')
-  static set endStreamScreen(Widget? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(endStreamScreen: value);
-  }
 
   static bool? hdStream;
 
@@ -250,39 +86,6 @@ class IsmLiveDelegate {
 
   static IsmLiveButtonConfig? buttonConfig;
 
-  @Deprecated('Use buttonConfig instead.')
-  static IsmLiveButtonConfig? get ismLiveButtonConfig => buttonConfig;
-
-  @Deprecated('Use buttonConfig instead.')
-  static set ismLiveButtonConfig(IsmLiveButtonConfig? value) =>
-      buttonConfig = value;
-
-  @Deprecated(
-    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
-  )
-  static LinearGradient? get controlOptionBgGradient =>
-      sideIconsConfigure.controlOptionBgGradient;
-
-  @Deprecated(
-    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
-  )
-  static set controlOptionBgGradient(LinearGradient? value) {
-    sideIconsConfigure = sideIconsConfigure.copyWith(
-      controlOptionBgGradient: value,
-    );
-  }
-
-  @Deprecated(
-    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
-  )
-  static LinearGradient? get streamOptionsBgGradient => controlOptionBgGradient;
-
-  @Deprecated(
-    'Use IsmLiveDelegate.sideIconsConfigure.controlOptionBgGradient instead.',
-  )
-  static set streamOptionsBgGradient(LinearGradient? value) =>
-      controlOptionBgGradient = value;
-
   /// API handler for custom stream disconnect operations.
   ///
   /// Provides your own API implementation to replace the SDK's default disconnect endpoints.
@@ -318,34 +121,6 @@ class IsmLiveDelegate {
 
   static String? fontFamily;
 
-  @Deprecated('Use streamScreenConfigure.messageProcessCallback instead.')
-  static MessageProcessCallback? get messageProcessCallback =>
-      streamScreenConfigure.messageProcessCallback;
-
-  @Deprecated('Use streamScreenConfigure.messageProcessCallback instead.')
-  static set messageProcessCallback(MessageProcessCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(messageProcessCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
-  static StreamViewLoadedCallback? get streamScreenLoadedCallback =>
-      streamScreenConfigure.streamScreenLoadedCallback;
-
-  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
-  static set streamScreenLoadedCallback(StreamViewLoadedCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(streamScreenLoadedCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
-  static StreamViewLoadedCallback? get streamViewLoadedCallback =>
-      streamScreenLoadedCallback;
-
-  @Deprecated('Use streamScreenConfigure.streamScreenLoadedCallback instead.')
-  static set streamViewLoadedCallback(StreamViewLoadedCallback? value) =>
-      streamScreenLoadedCallback = value;
-
   /// API handler for custom stream analytics implementation.
   ///
   /// Provides your own API implementation to replace the SDK's default analytics endpoint.
@@ -358,46 +133,7 @@ class IsmLiveDelegate {
   /// See [StreamAnalyticsViewersApiHandler] for detailed documentation and examples.
   static StreamAnalyticsViewersApiHandler? streamAnalyticsViewersApiHandler;
 
-  @Deprecated('Use streamScreenConfigure.hostTopProfileClickCallback instead.')
-  static HostTopProfileClickCallback? get hostTopProfileClickCallback =>
-      streamScreenConfigure.hostTopProfileClickCallback;
-
-  @Deprecated('Use streamScreenConfigure.hostTopProfileClickCallback instead.')
-  static set hostTopProfileClickCallback(HostTopProfileClickCallback? value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(
-      hostTopProfileClickCallback: value,
-    );
-  }
-
   static MissingHostTokenStopStreamCallback? missingHostTokenStopStreamCallback;
-
-  @Deprecated('Use streamScreenConfigure.goLiveSmallButtonBuilder instead.')
-  static GoLiveSmallButtonBuilder? get goLiveSmallButtonBuilder =>
-      streamScreenConfigure.goLiveSmallButtonBuilder;
-
-  @Deprecated('Use streamScreenConfigure.goLiveSmallButtonBuilder instead.')
-  static set goLiveSmallButtonBuilder(GoLiveSmallButtonBuilder? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(goLiveSmallButtonBuilder: value);
-  }
-
-  @Deprecated(
-    'Use streamScreenConfigure.scheduleStreamCenterOverlayBuilder instead.',
-  )
-  static ScheduleStreamCenterOverlayBuilder?
-      get scheduleStreamCenterOverlayBuilder =>
-          streamScreenConfigure.scheduleStreamCenterOverlayBuilder;
-
-  @Deprecated(
-    'Use streamScreenConfigure.scheduleStreamCenterOverlayBuilder instead.',
-  )
-  static set scheduleStreamCenterOverlayBuilder(
-    ScheduleStreamCenterOverlayBuilder? value,
-  ) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(
-      scheduleStreamCenterOverlayBuilder: value,
-    );
-  }
 
   static ControlOptionCallback? controlOptionCallback;
 
@@ -411,85 +147,13 @@ class IsmLiveDelegate {
   static IsmLiveSideIconsConfigure sideIconsConfigure =
       const IsmLiveSideIconsConfigure();
 
-  @Deprecated('Use streamScreenConfigure.cartBuilder instead.')
-  static IsmLiveCartBuilder? get cartBuilder =>
-      streamScreenConfigure.cartBuilder;
-
-  @Deprecated('Use streamScreenConfigure.cartBuilder instead.')
-  static set cartBuilder(IsmLiveCartBuilder? value) {
-    streamScreenConfigure = streamScreenConfigure.copyWith(cartBuilder: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.topViewersListCallback instead.')
-  static TopViewersListCallback? get topViewersListCallback =>
-      streamScreenConfigure.topViewersListCallback;
-
-  @Deprecated('Use streamScreenConfigure.topViewersListCallback instead.')
-  static set topViewersListCallback(TopViewersListCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(topViewersListCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.moderatorsListCallback instead.')
-  static ModeratorsListCallback? get moderatorsListCallback =>
-      streamScreenConfigure.moderatorsListCallback;
-
-  @Deprecated('Use streamScreenConfigure.moderatorsListCallback instead.')
-  static set moderatorsListCallback(ModeratorsListCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(moderatorsListCallback: value);
-  }
-
   static AttentionDialogButtonCallback? attentionDialogButtonCallback;
 
   static StreamListingRefreshCallback? streamListingRefreshCallback;
 
-  @Deprecated('Use streamScreenConfigure.onStreamScrollCallback instead.')
-  static OnStreamScrollCallback? get onStreamScrollCallback =>
-      streamScreenConfigure.onStreamScrollCallback;
-
-  @Deprecated('Use streamScreenConfigure.onStreamScrollCallback instead.')
-  static set onStreamScrollCallback(OnStreamScrollCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(onStreamScrollCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.addCoinsClickCallback instead.')
-  static AddCoinsClickCallback? get addCoinsClickCallback =>
-      streamScreenConfigure.addCoinsClickCallback;
-
-  @Deprecated('Use streamScreenConfigure.addCoinsClickCallback instead.')
-  static set addCoinsClickCallback(AddCoinsClickCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(addCoinsClickCallback: value);
-  }
-
-  @Deprecated('Use streamScreenConfigure.giftClickCallback instead.')
-  static GiftClickCallback? get giftClickCallback =>
-      streamScreenConfigure.giftClickCallback;
-
-  @Deprecated('Use streamScreenConfigure.giftClickCallback instead.')
-  static set giftClickCallback(GiftClickCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(giftClickCallback: value);
-  }
-
   /// Optional callback invoked when `userToken` is expired.
   /// If it returns a new token, the SDK retries the failed request once.
   static TokenExpiredCallback? tokenExpiredCallback;
-
-  /// Optional hook when batched heart (like) taps are flushed to the backend.
-  ///
-  /// See [HeartBatchFlushCallback].
-  @Deprecated('Use streamScreenConfigure.heartBatchFlushCallback instead.')
-  static HeartBatchFlushCallback? get heartBatchFlushCallback =>
-      streamScreenConfigure.heartBatchFlushCallback;
-
-  @Deprecated('Use streamScreenConfigure.heartBatchFlushCallback instead.')
-  static set heartBatchFlushCallback(HeartBatchFlushCallback? value) {
-    streamScreenConfigure =
-        streamScreenConfigure.copyWith(heartBatchFlushCallback: value);
-  }
 
   /// Optional analytics delegate to capture SDK events.
   static IsmLiveAnalyticsDelegate? analyticsDelegate;

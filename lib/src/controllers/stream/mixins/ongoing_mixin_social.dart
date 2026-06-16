@@ -107,7 +107,7 @@ mixin StreamOngoingSocialMixin on StreamOngoingMixin {
         }
       ],
     );
-    final delegate = IsmLiveDelegate.heartBatchFlushCallback;
+    final delegate = IsmLiveDelegate.streamScreenConfigure.heartBatchFlushCallback;
     if (delegate != null) {
       unawaited(_invokeHeartBatchFlushDelegate(delegate, streamId, count));
     } else {

@@ -30,7 +30,7 @@ class IsmLiveEndStream extends StatelessWidget {
           });
         },
         builder: (controller) =>
-            IsmLiveDelegate.endStreamScreen ??
+            IsmLiveDelegate.streamScreenConfigure.endStreamScreen ??
             Scaffold(
               backgroundColor: context.liveTheme?.backgroundColor ??
                   (isDarkMode ? const Color(0xFF121212) : Colors.white),
