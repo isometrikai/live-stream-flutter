@@ -39,7 +39,7 @@ class _StreamHeader extends StatelessWidget {
               }
 
               // Check if host app wants to handle the moderators list tap
-              final moderatorsCallback = IsmLiveDelegate.moderatorsListCallback;
+              final moderatorsCallback = IsmLiveDelegate.streamScreenConfigure.moderatorsListCallback;
               if (moderatorsCallback != null) {
                 final handled = await moderatorsCallback(
                   context,
@@ -106,7 +106,7 @@ class _StreamHeader extends StatelessWidget {
             },
             onTapViewers: (viewerList) async {
               // Check if host app wants to handle the viewers list tap
-              final viewersCallback = IsmLiveDelegate.topViewersListCallback;
+              final viewersCallback = IsmLiveDelegate.streamScreenConfigure.topViewersListCallback;
               if (viewersCallback != null) {
                 final handled = await viewersCallback(
                   context,

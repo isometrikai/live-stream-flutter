@@ -99,7 +99,7 @@ class IsmLiveStreamHeader extends StatelessWidget {
               ),
               IsmLiveDimens.boxWidth10,
               // Cart icon - use custom builder if provided, otherwise use default
-              IsmLiveDelegate.cartBuilder?.call(
+              IsmLiveDelegate.streamScreenConfigure.cartBuilder?.call(
                     context,
                     Get.find<IsmLiveStreamController>(),
                   ) ??

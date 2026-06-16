@@ -304,7 +304,7 @@ mixin StreamAPIMixin {
         return;
       }
       _controller._streamViewLoadedCallbackTriggered = true;
-      IsmLiveDelegate.streamScreenLoadedCallback?.call(
+      IsmLiveDelegate.streamScreenConfigure.streamScreenLoadedCallback?.call(
         _controller.isHost,
         hostDetails,
         _controller.streamDetails,
@@ -475,12 +475,12 @@ mixin StreamAPIMixin {
     bool isMqtt,
   ) {
     // If no process callback is provided, return the original message
-    if (IsmLiveDelegate.messageProcessCallback == null) {
+    if (IsmLiveDelegate.streamScreenConfigure.messageProcessCallback == null) {
       return message;
     }
 
     // Apply the host app's message processing
-    return IsmLiveDelegate.messageProcessCallback!.call(
+    return IsmLiveDelegate.streamScreenConfigure.messageProcessCallback!.call(
       message,
       _controller.streamId ?? '',
       isMqtt,

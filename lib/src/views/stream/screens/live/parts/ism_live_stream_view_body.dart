@@ -138,8 +138,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
-      chatMessageBuilder: IsmLiveDelegate.chatMessageBuilder,
-      chatItemBgColorCallback: IsmLiveDelegate.chatItemBgColorCallback,
+      chatMessageBuilder: IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
+      chatItemBgColorCallback: IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
     );
 
     return _wrapStreamChatView(context, chatView);

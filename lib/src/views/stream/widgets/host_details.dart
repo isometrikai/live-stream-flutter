@@ -39,7 +39,7 @@ class IsmLiveHostDetail extends StatelessWidget {
     return IsmLiveTapHandler(
       onTap: () async {
         final hostTopProfileCallback =
-            IsmLiveDelegate.hostTopProfileClickCallback;
+            IsmLiveDelegate.streamScreenConfigure.hostTopProfileClickCallback;
         if (hostTopProfileCallback != null) {
           final handled = await hostTopProfileCallback(
             context,

@@ -23,7 +23,7 @@ mixin StreamOngoingScrollMixin on StreamOngoingMixin, StreamOngoingDisconnectMix
     }
 
     // Notify host app about stream scroll (fire and forget)
-    IsmLiveDelegate.onStreamScrollCallback?.call(
+    IsmLiveDelegate.streamScreenConfigure.onStreamScrollCallback?.call(
       context,
       _controller.streamId ?? '',
       index,

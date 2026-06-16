@@ -28,8 +28,6 @@ typedef IsmLiveStreamBottomBuilder = Widget Function(
   String description,
 );
 
-@Deprecated('Use IsmLiveStreamBottomBuilder instead.')
-typedef IsmLiveHeaderBuilder = IsmLiveStreamBottomBuilder;
 
 /// Builder for the stream header. Receives [defaultHeader] so the host can use
 /// it as-is, wrap it, or replace it with a fully custom widget.

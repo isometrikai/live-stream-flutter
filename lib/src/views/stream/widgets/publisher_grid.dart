@@ -112,7 +112,7 @@ Widget _multiParticipantTile(
         controller.pkWinnerId != null,
   );
 
-  final showName = IsmLiveDelegate.showParticipantFullNamesInPublisherGrid &&
+  final showName = IsmLiveDelegate.streamScreenConfigure.resolvedShowParticipantFullNamesInPublisherGrid &&
       participantCount > 1 &&
       !controller.isPk;
   if (!showName) {
@@ -348,7 +348,7 @@ class IsmLivePublisherGrid extends StatelessWidget {
                 builder: (context, constraints) {
                   final participantCount = controller.participantTracks.length;
 
-                  if (!IsmLiveDelegate.useGridLayoutForMultipleParticipants) {
+                  if (!IsmLiveDelegate.streamScreenConfigure.resolvedUseGridLayoutForMultipleParticipants) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: List<Widget>.generate(

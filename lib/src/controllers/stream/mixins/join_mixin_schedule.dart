@@ -90,7 +90,7 @@ mixin StreamJoinScheduleMixin on StreamJoinMixin {
       // Trigger stream view loaded callback for scheduled streams (only once per stream)
       if (!_controller._streamViewLoadedCallbackTriggered) {
         _controller._streamViewLoadedCallbackTriggered = true;
-        IsmLiveDelegate.streamScreenLoadedCallback?.call(
+        IsmLiveDelegate.streamScreenConfigure.streamScreenLoadedCallback?.call(
           _controller.isHost,
           _controller.hostDetails,
           stream,
