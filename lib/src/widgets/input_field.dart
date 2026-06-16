@@ -156,7 +156,7 @@ class IsmLiveInputField extends StatelessWidget {
           focusNode: focusNode,
           onFieldSubmitted: onFieldSubmit,
           maxLines: maxLines ?? 1,
-          minLines: minLines ?? 1,
+          minLines: minLines,
           style: style ??
               TextStyle(
                 color: Theme.of(context).brightness == Brightness.dark
@@ -247,7 +247,10 @@ class IsmLiveInputField extends StatelessWidget {
           validator: validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           keyboardType: _textInputType,
-          textInputAction: textInputAction,
+          textInputAction: textInputAction ??
+              ((maxLines ?? 1) == 1 && onFieldSubmit != null
+                  ? TextInputAction.send
+                  : null),
           obscureText: obscureText,
           obscuringCharacter: obscureCharacter,
           onChanged: onchange,

@@ -177,6 +177,8 @@ class IsmLiveMessageField extends StatelessWidget {
                               context.textTheme.bodySmall
                                   ?.copyWith(color: Colors.white),
                           controller: controller.messageFieldController,
+                          textInputType: TextInputType.text,
+                          maxLines: 1,
                           hintText: 'Say Something…',
                           contentPadding: customContentPadding ??
                               const EdgeInsets.symmetric(
@@ -194,15 +196,20 @@ class IsmLiveMessageField extends StatelessWidget {
                               : (value) => controller
                                   .update([IsmLiveStreamView.updateId]),
                           textInputAction: TextInputAction.send,
-                          onFieldSubmit: disabled
-                              ? null
-                              : (value) {
-                                  controller.sendTextMessage(
-                                    streamId: streamId,
-                                    body: value.trim(),
-                                    parentMessage: controller.parentMessage,
-                                  );
-                                },
+                          onFieldSubmit: (value) {
+                            if (disabled) {
+                              return;
+                            }
+                            final body = value.trim();
+                            if (body.isEmpty) {
+                              return;
+                            }
+                            controller.sendTextMessage(
+                              streamId: streamId,
+                              body: body,
+                              parentMessage: controller.parentMessage,
+                            );
+                          },
                           suffixIcon: _sendIconInsideInputField &&
                                   controller.messageFieldController.text
                                       .trim()
