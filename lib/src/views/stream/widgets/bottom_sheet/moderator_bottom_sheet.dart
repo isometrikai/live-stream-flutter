@@ -24,6 +24,16 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
   final String? streamId;
   final VoidCallback? onManageModerators;
 
+  void _acceptModeratorRole(IsmLiveStreamController controller) {
+    final userId = controller.user?.userId;
+    if (userId == null) return;
+    final isStillModerator =
+        controller.moderatorsList.any((e) => e.userId == userId);
+    if (!isStillModerator) return;
+    controller.userRole?.makeModerator();
+    controller.update([IsmLiveStreamView.updateId]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<IsmLiveStreamController>();
@@ -136,10 +146,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
                         IsmLiveRoute.pop();
                         if (type ==
                             IsmLiveModeratorBottomSheetType.addedToModerator) {
-                          // Update userRole to moderator without disconnect/rejoin
-                          controller.userRole?.makeModerator();
-                          // Update UI
-                          controller.update([IsmLiveStreamView.updateId]);
+                          _acceptModeratorRole(controller);
                         }
                       },
                     ),
@@ -160,10 +167,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
               color: Colors.transparent,
               onTap: () {
                 if (type == IsmLiveModeratorBottomSheetType.addedToModerator) {
-                  // Update userRole to moderator without disconnect/rejoin
-                  controller.userRole?.makeModerator();
-                  // Update UI
-                  controller.update([IsmLiveStreamView.updateId]);
+                  _acceptModeratorRole(controller);
                 }
                 IsmLiveRoute.pop();
               },

@@ -1142,6 +1142,9 @@ class IsmLiveMqttController extends GetxController {
                 .removeWhere((e) => e.userId == moderatorId);
             if (moderatorId == userId) {
               _streamController.userRole?.leaveModeration();
+              if (IsmLiveUtility.isAnyBottomSheetOpen) {
+                IsmLiveRoute.pop();
+              }
             }
             _updateStream();
           }
