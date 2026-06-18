@@ -15,40 +15,13 @@ class ScheduleStreamView extends StatelessWidget {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
-      chatMessageBuilder: IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
-      chatItemBgColorCallback: IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
+      chatMessageBuilder:
+          IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
+      chatItemBgColorCallback:
+          IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
     );
 
     return _wrapStreamChatView(context, chatView);
-  }
-
-  /// Formats schedule time to "22 Sept, 04:15 PM" format
-  String _formatScheduleTime(DateTime scheduleTime) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sept',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-
-    final day = scheduleTime.day;
-    final month = months[scheduleTime.month - 1];
-    final hour = scheduleTime.hour;
-    final minute = scheduleTime.minute.toString().padLeft(2, '0');
-
-    // Convert to 12-hour format
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-
-    return '$day $month, ${displayHour.toString().padLeft(2, '0')}:$minute $period';
   }
 
   /// Determines if the scheduled time has passed
@@ -63,19 +36,23 @@ class ScheduleStreamView extends StatelessWidget {
       IsmLiveStreamController controller, bool isKeyboardOpen) {
     final scheduleTime = controller.streamDetails?.scheduleStartTime;
     final isTimePassed = _isScheduleTimePassed(scheduleTime);
+    final isStreamCreator =
+        controller.streamDetails?.userId == controller.user?.userId;
 
     Widget buttonWidget;
 
     // Use custom builder if provided
-    if (IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder != null) {
-      buttonWidget = IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder!.call(
+    if (IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder !=
+        null) {
+      buttonWidget =
+          IsmLiveDelegate.streamScreenConfigure.goLiveSmallButtonBuilder!.call(
         context,
         controller,
         () => controller.startStream(context: context),
         true, // Always enabled - let host manage the logic
       );
-    } else if (isTimePassed) {
-      // Time has passed, show "Go Live" button
+    } else if (isTimePassed && isStreamCreator) {
+      // Time has passed and current user created the stream
       buttonWidget = IsmLiveButton(
         label: 'Go Live',
         onTap: () {
@@ -83,10 +60,9 @@ class ScheduleStreamView extends StatelessWidget {
         },
       );
     } else {
-      // Time hasn't passed yet, show schedule time
-      final formattedTime = scheduleTime != null
-          ? _formatScheduleTime(scheduleTime)
-          : 'No time set';
+      // Future schedule time, or past time for non-creators
+      final formattedTime =
+          scheduleTime != null ? scheduleTime.formattedScheduleDate : 'No time set';
       buttonWidget = Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
@@ -119,7 +95,8 @@ class ScheduleStreamView extends StatelessWidget {
     BuildContext context,
     IsmLiveStreamController controller,
   ) {
-    final builder = IsmLiveDelegate.streamScreenConfigure.scheduleStreamCenterOverlayBuilder;
+    final builder = IsmLiveDelegate
+        .streamScreenConfigure.scheduleStreamCenterOverlayBuilder;
     if (builder == null) {
       return const SizedBox.shrink();
     }
@@ -135,13 +112,10 @@ class ScheduleStreamView extends StatelessWidget {
     return GetBuilder<IsmLiveStreamController>(
       builder: (controller) {
         final gradientOverlay = IsmLiveDelegate
-            .streamScreenConfigure
-            .streamGradientOverlayBuilder
+            .streamScreenConfigure.streamGradientOverlayBuilder
             ?.call(
           context,
-          controller.streamDetails?.streamId ??
-              controller.streamId ??
-              '',
+          controller.streamDetails?.streamId ?? controller.streamId ?? '',
           controller.isHost,
           true,
         );
@@ -212,9 +186,9 @@ class ScheduleStreamView extends StatelessWidget {
                                     isHost: controller.isHost,
                                     isCopublishing: false,
                                     isSchedule: true,
-                                    streamId: controller
-                                            .streamDetails?.streamId ??
-                                        '',
+                                    streamId:
+                                        controller.streamDetails?.streamId ??
+                                            '',
                                     isKeyboardOpen: isKeyboardOpen,
                                   ),
                                   IsmLiveDimens.boxHeight32,
@@ -233,8 +207,9 @@ class ScheduleStreamView extends StatelessWidget {
             ),
             Positioned.fill(
               child: IgnorePointer(
-                ignoring:
-                    IsmLiveDelegate.streamScreenConfigure.scheduleStreamCenterOverlayBuilder == null,
+                ignoring: IsmLiveDelegate.streamScreenConfigure
+                        .scheduleStreamCenterOverlayBuilder ==
+                    null,
                 child: _buildCenterOverlay(context, controller),
               ),
             ),
