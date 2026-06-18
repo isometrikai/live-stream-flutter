@@ -79,11 +79,10 @@ class IsmGoLiveView extends StatelessWidget {
             controller.premiumStreamCoinsController.clear();
             controller.selectedGoLiveStream = IsmLiveStreamTypes.free;
             controller.pickedImage = null;
-            controller.descriptionController.text =
-                IsmLiveDelegate.goLiveScreenConfigure
-                        ?.defaultBroadcastDescription ??
-                    IsmLiveDelegate.defaultBroadcastDescription ??
-                    '';
+            controller.descriptionController.text = IsmLiveDelegate
+                    .goLiveScreenConfigure?.defaultBroadcastDescription ??
+                IsmLiveDelegate.defaultBroadcastDescription ??
+                '';
             controller.isHdBroadcast = IsmLiveDelegate
                     .goLiveScreenConfigure?.defaultHdBroadcastToggleValue ??
                 IsmLiveDelegate.defaultHdBroadcast ??
@@ -95,7 +94,8 @@ class IsmGoLiveView extends StatelessWidget {
             controller.isSchedulingBroadcast = false;
             controller.isPremium = false;
             controller.isRestreamBroadcast = IsmLiveDelegate
-                    .goLiveScreenConfigure?.defaultRestreamBroadcastToggleValue ??
+                    .goLiveScreenConfigure
+                    ?.defaultRestreamBroadcastToggleValue ??
                 IsmLiveDelegate.defaultRestreamBroadcast ??
                 false;
           } else if (controller.streamDetails?.isScheduledStream ?? false) {
@@ -216,7 +216,8 @@ class IsmGoLiveView extends StatelessWidget {
                                 borderRadius:
                                     BorderRadius.circular(IsmLiveDimens.twelve),
                                 border: Border.all(color: IsmLiveColors.white),
-                                color: IsmLiveColors.white.withValues(alpha: 0.3),
+                                color:
+                                    IsmLiveColors.white.withValues(alpha: 0.3),
                               ),
                               child: IsmLiveInputField(
                                 hintStyle: getTextStyle(context, true),
@@ -306,7 +307,7 @@ class IsmGoLiveView extends StatelessWidget {
                             !(controller.streamDetails?.isScheduledStream ??
                                 false),
                       ),
-                       SizedBox(height: IsmLiveDimens.twoHundred),
+                      SizedBox(height: IsmLiveDimens.twoHundred),
                     ],
                   ),
                 ),
@@ -799,29 +800,29 @@ class _InputField extends StatelessWidget {
     final fieldTextStyle = IsmGoLiveView.getTextStyle(context, true);
 
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: fieldTextStyle,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: fieldTextStyle,
+        ),
+        IsmLiveDimens.boxHeight4,
+        IsmLiveInputField(
+          controller: controller,
+          hintText: hint ?? 'Enter $label',
+          hintStyle: fieldTextStyle.copyWith(
+            color: fieldTextStyle.color?.withValues(alpha: 0.7),
           ),
-          IsmLiveDimens.boxHeight4,
-          IsmLiveInputField(
-            controller: controller,
-            hintText: hint ?? 'Enter $label',
-            hintStyle: fieldTextStyle.copyWith(
-              color: fieldTextStyle.color?.withValues(alpha: 0.7),
-            ),
-            style: fieldTextStyle,
-            onTap: onTap,
-            readOnly: readOnly,
-            fillColor: Colors.white30,
-            radius: IsmLiveDimens.twelve,
-            borderColor: IsmLiveColors.white,
-            suffixIcon: suffixIcon,
-          ),
-        ],
-      );
+          style: fieldTextStyle,
+          onTap: onTap,
+          readOnly: readOnly,
+          fillColor: Colors.white30,
+          radius: IsmLiveDimens.twelve,
+          borderColor: IsmLiveColors.white,
+          suffixIcon: suffixIcon,
+        ),
+      ],
+    );
   }
 }
 

@@ -66,11 +66,11 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
       case IsmLiveStreamType.restream:
         return model.copyWith(restream: true, fetchLive: true);
       case IsmLiveStreamType.hd:
-        return model.copyWith(hdbroadcast: true,fetchLive: true);
+        return model.copyWith(hdbroadcast: true, fetchLive: true);
       case IsmLiveStreamType.recorded:
         return model.copyWith(isRecorded: true);
       case IsmLiveStreamType.pk:
-        return model.copyWith(pk: true,fetchLive: true);
+        return model.copyWith(pk: true, fetchLive: true);
       case IsmLiveStreamType.scheduledStreams:
         return model.copyWith(isScheduledStream: true);
     }
@@ -214,6 +214,11 @@ extension IsmLiveDateExtensions on DateTime {
     return date.format(this);
   }
 
+  String get formattedScheduleDate {
+    final date = DateFormat('dd MMM, hh:mm aa');
+    return date.format(this);
+  }
+
   String get formattedTime {
     final date = DateFormat('hh:mm aa');
     return date.format(this);
@@ -228,7 +233,7 @@ extension IsmLiveEpochDateParsingExtension on Object? {
     final value = this;
     if (value == null) return null;
 
-    final num? epoch = switch (value) {
+    final epoch = switch (value) {
       num numValue => numValue,
       String stringValue => num.tryParse(stringValue.trim()),
       _ => null,
@@ -236,9 +241,9 @@ extension IsmLiveEpochDateParsingExtension on Object? {
 
     if (epoch == null) return null;
 
-    final int normalized = epoch.round();
+    final normalized = epoch.round();
     // 10-digit values are usually seconds; 13-digit values are milliseconds.
-    final int milliseconds =
+    final milliseconds =
         normalized.abs() < 100000000000 ? normalized * 1000 : normalized;
     return DateTime.fromMillisecondsSinceEpoch(milliseconds);
   }
@@ -247,7 +252,8 @@ extension IsmLiveEpochDateParsingExtension on Object? {
 extension IsmLiveNullableDateTimeEpochExtension on DateTime? {
   int? get epochMilliseconds => this?.millisecondsSinceEpoch;
 
-  int? get epochSeconds => this == null ? null : this!.millisecondsSinceEpoch ~/ 1000;
+  int? get epochSeconds =>
+      this == null ? null : this!.millisecondsSinceEpoch ~/ 1000;
 }
 
 extension IsmLiveUserConfigExtensions on IsmLiveUserConfig {

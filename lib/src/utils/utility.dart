@@ -358,10 +358,7 @@ class IsmLiveUtility {
           CupertinoDialogAction(
             onPressed: IsmLiveRoute.pop,
             isDefaultAction: true,
-            child: Text(
-              'Okay',
-              style: IsmLiveStyles.black16,
-            ),
+            child: const Text('Okay'),
           ),
           if (onRetry != null)
             CupertinoDialogAction(
@@ -370,10 +367,7 @@ class IsmLiveUtility {
                 onRetry();
               },
               isDefaultAction: true,
-              child: Text(
-                'Retry',
-                style: IsmLiveStyles.black16,
-              ),
+              child: const Text('Retry'),
             ),
         ],
       ),
