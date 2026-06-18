@@ -240,6 +240,41 @@ class IsmLiveStreamController extends GetxController
   bool _hasTriggeredOnStreamEnd = false;
   bool _hasClosedStreamView = false;
 
+  /// Set after scheduled-stream edits; consumed when [IsmLiveStreamListing]
+  /// becomes visible so host apps with custom listings skip the refresh API.
+  bool _scheduledStreamsListingRefreshPending = false;
+
+  bool get scheduledStreamsListingRefreshPending =>
+      _scheduledStreamsListingRefreshPending;
+
+  void markScheduledStreamsListingRefreshPending() {
+    _scheduledStreamsListingRefreshPending = true;
+  }
+
+  /// Refreshes scheduled streams when [markScheduledStreamsListingRefreshPending]
+  /// was called. Safe to call from listing visibility hooks; no-op when not pending.
+  Future<void> refreshScheduledStreamsListingIfNeeded() async {
+    if (!_scheduledStreamsListingRefreshPending) {
+      return;
+    }
+    _scheduledStreamsListingRefreshPending = false;
+    // Bypass the debounced wrapper so this await completes after data is loaded.
+    await _fetchScheduledStream(
+      type: IsmLiveStreamType.scheduledStreams,
+      skip: 0,
+    );
+    _notifyStreamListingUpdated();
+  }
+
+  void _notifyStreamListingUpdated() {
+    update([IsmLiveStreamListing.updateId]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isClosed) {
+        update([IsmLiveStreamListing.updateId]);
+      }
+    });
+  }
+
   /// Ensures `onStreamEnd` callback is emitted only once per stream lifecycle.
   void triggerOnStreamEndOnce() {
     if (_hasTriggeredOnStreamEnd) {

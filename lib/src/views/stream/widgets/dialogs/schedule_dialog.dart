@@ -47,6 +47,7 @@ class IsmLiveEditScheduleDialog extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = context.liveTheme?.primaryColor ??
         (isDarkMode ? Colors.white : Colors.black);
+    final secondaryTextColor = textColor.withValues(alpha: 0.85);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -54,22 +55,26 @@ class IsmLiveEditScheduleDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          IsmLiveStrings.editScheduleStream,
+          IsmLiveStrings.scheduleUpdated,
           style: context.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: textColor,
           ),
           textAlign: TextAlign.center,
         ),
         IsmLiveDimens.boxHeight8,
         Text(
-          'at ${message.formattedDate}',
-          style: context.textTheme.bodyMedium?.copyWith(color: textColor),
+          '${IsmLiveStrings.scheduleUpdatedDescription} ${message.formattedDate}.',
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: secondaryTextColor,
+            height: 1.4,
+          ),
+          textAlign: TextAlign.center,
         ),
         IsmLiveDimens.boxHeight20,
-        const IsmLiveButton(
-          label: IsmLiveStrings.tvContinue,
-          onTap: IsmLiveUtility.closeDialogAndPopUnderlyingRoute,
+        IsmLiveButton(
+          label: IsmLiveStrings.okay,
+          onTap: IsmLiveUtility.closeEditScheduleDialogAndReturn,
         ),
       ],
     );
