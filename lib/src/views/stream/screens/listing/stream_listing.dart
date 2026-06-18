@@ -14,6 +14,26 @@ class IsmLiveStreamListing extends StatefulWidget {
 
   static const String route = IsmLiveRoutes.streamListing;
 
+  static final List<VoidCallback> _pendingRefreshListeners = [];
+
+  /// Wakes mounted SDK listing screens to consume
+  /// [IsmLiveStreamController.scheduledStreamsListingRefreshPending].
+  static void notifyPendingRefresh() {
+    for (final listener in List<VoidCallback>.from(_pendingRefreshListeners)) {
+      listener();
+    }
+  }
+
+  static void _registerPendingRefreshListener(VoidCallback listener) {
+    if (!_pendingRefreshListeners.contains(listener)) {
+      _pendingRefreshListeners.add(listener);
+    }
+  }
+
+  static void _unregisterPendingRefreshListener(VoidCallback listener) {
+    _pendingRefreshListeners.remove(listener);
+  }
+
   final bool showBackArrow;
 
   @override
@@ -21,6 +41,8 @@ class IsmLiveStreamListing extends StatefulWidget {
 }
 
 class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
+  late final VoidCallback _pendingRefreshListener;
+  bool _isPendingRefreshInFlight = false;
   // static const List<String> _debugRecordingUrls = [
   //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/6a2a6259a1db8f0001c10530.mp4',
   //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/6a293963a1db8f0001478812.mp4',
@@ -76,11 +98,73 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
     if (!Get.isRegistered<IsmLiveStreamController>()) {
       IsmLiveStreamBinding().dependencies();
     }
+
+    _pendingRefreshListener = () {
+      unawaited(_refreshAndRebuildIfPendingWithRetry());
+    };
+    IsmLiveStreamListing._registerPendingRefreshListener(
+      _pendingRefreshListener,
+    );
   }
 
   @override
-  Widget build(BuildContext context) =>
-      IsmLiveDelegate.homeScreen ??
+  void dispose() {
+    IsmLiveStreamListing._unregisterPendingRefreshListener(
+      _pendingRefreshListener,
+    );
+    super.dispose();
+  }
+
+  Future<void> _refreshAndRebuildIfPendingWithRetry() async {
+    for (var attempt = 0; attempt < 8; attempt++) {
+      if (!mounted) {
+        return;
+      }
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        await _refreshAndRebuildIfPending();
+        return;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+    }
+  }
+
+  Future<void> _refreshAndRebuildIfPending() async {
+    if (_isPendingRefreshInFlight || !mounted) {
+      return;
+    }
+    if (ModalRoute.of(context)?.isCurrent != true) {
+      return;
+    }
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      return;
+    }
+
+    final controller = Get.find<IsmLiveStreamController>();
+    if (!controller.scheduledStreamsListingRefreshPending) {
+      return;
+    }
+
+    _isPendingRefreshInFlight = true;
+    try {
+      await controller.refreshScheduledStreamsListingIfNeeded();
+      if (mounted) {
+        setState(() {});
+      }
+    } finally {
+      _isPendingRefreshInFlight = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (ModalRoute.of(context)?.isCurrent ?? false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(_refreshAndRebuildIfPending());
+      });
+    }
+
+    return IsmLiveDelegate.homeScreen ??
       Scaffold(
         appBar: IsmLiveAppbar(showBackArrow: widget.showBackArrow),
         floatingActionButton: Row(
@@ -163,6 +247,7 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
           ),
         ),
       );
+  }
 }
 
 class _DebugRecordingItem implements IsmLiveStreamRecordingItem {

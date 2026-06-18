@@ -100,6 +100,8 @@ mixin StreamJoinScheduleMixin on StreamJoinMixin {
   }
 
   void editScheduleStream(BuildContext context) async {
+    final scheduledAt =
+        _controller.streamDetails?.scheduleStartTime ?? DateTime.now();
     String? image;
     if (_controller.streamDetails?.streamImage?.isEmpty ?? true) {
       if (_controller.pickedImage == null) {
@@ -126,14 +128,16 @@ mixin StreamJoinScheduleMixin on StreamJoinMixin {
       streamImage: image ?? _controller.streamDetails?.streamImage,
       streamDescription: _controller.descriptionController.text.trim(),
     );
-    _controller.streamDetails = null;
     if (res) {
+      _controller.markScheduledStreamsListingRefreshPending();
+      _controller.streamDetails = null;
       IsmLiveUtility.showCustomDialog(
         IsmLiveEditScheduleDialog(
-          message:
-              _controller.streamDetails?.scheduleStartTime ?? DateTime.now(),
+          message: scheduledAt,
         ),
       );
+      return;
     }
+    _controller.streamDetails = null;
   }
 }

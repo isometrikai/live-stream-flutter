@@ -7,10 +7,12 @@ class _DefaultGoLiveButton extends StatelessWidget {
   const _DefaultGoLiveButton({
     required this.onGoLivePressed,
     required this.isEnabled,
+    required this.label,
   });
 
   final VoidCallback onGoLivePressed;
   final bool isEnabled;
+  final String label;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -36,7 +38,7 @@ class _DefaultGoLiveButton extends StatelessWidget {
                 ),
               ),
               IsmLiveButton(
-                label: 'Go Live',
+                label: label,
                 showBorder: true,
                 onTap: isEnabled ? onGoLivePressed : null,
               ),
@@ -128,6 +130,10 @@ class IsmGoLiveNavBar extends StatelessWidget {
           id: IsmGoLiveView.buttonUpdateId,
           builder: (controller) {
             final isEnabled = controller.isGoLiveButtonEnabled;
+            final buttonLabel =
+                controller.streamDetails?.isScheduledStream ?? false
+                    ? 'Update'
+                    : 'Go Live';
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -142,6 +148,7 @@ class IsmGoLiveNavBar extends StatelessWidget {
                       onGoLivePressed: () =>
                           controller.handleGoLivePress(context),
                       isEnabled: isEnabled,
+                      label: buttonLabel,
                     ),
                 const Divider(),
                 // Tab selector (always use default implementation)

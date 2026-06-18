@@ -469,6 +469,17 @@ class IsmLiveUtility {
     });
   }
 
+  /// Used after a scheduled-stream edit success dialog: dismiss dialog, pop the
+  /// go-live screen, then wake the SDK listing to consume the pending refresh.
+  static void closeEditScheduleDialogAndReturn() {
+    closeDialogAndPopUnderlyingRoute();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        IsmLiveStreamListing.notifyPendingRefresh();
+      });
+    });
+  }
+
   /// Check if a dialog is currently open by checking the Navigator's top route
   ///
   /// This method checks if there's a DialogRoute or CupertinoDialogRoute

@@ -139,9 +139,7 @@ mixin StreamAPIMixin {
     }
 
     // Removed refreshCompleted/loadComplete calls
-    IsmLiveUtility.updateLater(() {
-      _controller.update([IsmLiveStreamListing.updateId]);
-    });
+    _controller.update([IsmLiveStreamListing.updateId]);
   }
 
   /// Get an RTC token for joining a stream.

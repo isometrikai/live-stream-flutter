@@ -162,6 +162,9 @@ class IsmLiveStrings {
   static const String confirm = 'Confirm';
   static const String streamSchedule = 'Stream Schedule';
   static const String editScheduleStream = 'Edit Schedule Stream';
+  static const String scheduleUpdated = 'Schedule Updated';
+  static const String scheduleUpdatedDescription =
+      'Your stream will go live on';
   static const String editStream = 'Edit Stream';
   static const String deleteStream = 'Delete Stream';
 
