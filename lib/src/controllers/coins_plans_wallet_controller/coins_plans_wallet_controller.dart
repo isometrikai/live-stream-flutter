@@ -13,9 +13,14 @@ class CoinsPlansWalletController extends GetxController
   CoinsPlansWalletController(this._coinsPlansWalletViewMode);
   final CoinsPlansWalletViewMode _coinsPlansWalletViewMode;
 
+  void _onStaleTransactionsCleared() {
+    unawaited(totalWalletCoins('coin'));
+  }
+
   @override
   void onInit() {
     super.onInit();
+    InAppManager.onStaleTransactionsCleared = _onStaleTransactionsCleared;
     unawaited(InAppManager.i.prepareForPurchase());
     IsmLiveUtility.updateLater(() {
       totalWalletCoins('coin');
@@ -25,6 +30,14 @@ class CoinsPlansWalletController extends GetxController
       _refreshControllers[type] = RefreshController();
       _transactions[type] = [];
     }
+  }
+
+  @override
+  void onClose() {
+    if (identical(InAppManager.onStaleTransactionsCleared, _onStaleTransactionsCleared)) {
+      InAppManager.onStaleTransactionsCleared = null;
+    }
+    super.onClose();
   }
 
   @override
@@ -166,7 +179,7 @@ class CoinsPlansWalletController extends GetxController
       productDetails: storePlan,
       applicationUserName: accountPurchasetoken,
     );
-    InAppManager.i.buyConsumable(
+    await InAppManager.i.buyConsumable(
       purchaseParam: purchaseParam,
       onPurchase: (purchaseDetails) async {
         // No backend `tokenPurchase` call from here (per requirement).
