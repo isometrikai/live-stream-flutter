@@ -5,7 +5,13 @@ import 'package:get/get.dart';
 ///
 /// Uses the same messages API as live streams but keeps results isolated from
 /// [IsmLiveStreamController.streamMessagesList].
-/// Resolves stream start time for recording chat replay.
+///
+/// Backend lifecycle for recordings:
+/// - Recently ended streams: `activeStream=false`
+/// - After archive migration: `activeStream=false` + `archived=true`
+///
+/// We probe with the messages API only (no count). Whichever param set returns
+/// the first page is reused for all further pagination (`skip` / `limit`).
 DateTime? ismLiveRecordingStreamStartTime(
   IsmLiveStreamRecordingItem recording,
   IsmLiveStreamRecordingPlayerConfig config,
@@ -20,25 +26,21 @@ DateTime? ismLiveRecordingStreamStartTime(
   return null;
 }
 
-class _ResolvedRecordedMessageQuery {
-  const _ResolvedRecordedMessageQuery({
+class _ResolvedRecordedMessageAccess {
+  const _ResolvedRecordedMessageAccess({
     required this.query,
-    required this.count,
+    required this.firstPage,
   });
 
   final IsmLiveGetMessageModel query;
-  final int count;
+  final List<IsmLiveMessageModel> firstPage;
 }
 
 class IsmLiveRecordingChatHelper {
   const IsmLiveRecordingChatHelper._();
 
-  static const int _defaultPageSize = 50;
+  static const int _defaultPageSize = 10;
 
-  /// Base query for ended/recorded streams (`activeStream=false`).
-  ///
-  /// Pass [useArchived] to also request archived messages after the initial
-  /// attempt returns no data.
   static IsmLiveGetMessageModel _recordedStreamMessageQuery(
     String streamId, {
     bool useArchived = false,
@@ -57,51 +59,64 @@ class IsmLiveRecordingChatHelper {
     return Get.find<IsmLiveStreamController>().viewModel;
   }
 
-  /// Picks the recording message query params for this stream.
-  ///
-  /// 1. Try `activeStream=false`.
-  /// 2. If count is zero or the first page is empty, retry with
-  ///    `activeStream=false` and `archived=true`.
-  /// 3. All pagination for this recording uses the resolved params.
-  static Future<_ResolvedRecordedMessageQuery> _resolveRecordedMessageQuery(
-    String streamId,
+  static Future<List<IsmLiveMessageModel>> _fetchMessagePage(
     IsmLiveStreamViewModel viewModel,
-  ) async {
-    final inactiveQuery = _recordedStreamMessageQuery(streamId);
-    final inactiveCount = await viewModel.fetchMessagesCount(
-      showLoading: false,
-      getMessageModel: inactiveQuery,
-    );
-    if (inactiveCount > 0) {
-      final firstPage = await viewModel.fetchMessages(
+    IsmLiveGetMessageModel baseQuery, {
+    required int skip,
+    required int limit,
+  }) =>
+      viewModel.fetchMessages(
         showLoading: false,
         showDialog: false,
-        getMessageModel: inactiveQuery.copyWith(
+        getMessageModel: baseQuery.copyWith(
           sort: 1,
-          skip: 0,
-          limit: 1,
+          skip: skip,
+          limit: limit,
           senderIdsExclusive: false,
         ),
       );
-      if (firstPage.isNotEmpty) {
-        return _ResolvedRecordedMessageQuery(
-          query: inactiveQuery,
-          count: inactiveCount,
-        );
-      }
+
+  /// Resolves which query params work for this recording and returns page 0.
+  ///
+  /// 1. `fetchMessages` with `activeStream=false`
+  /// 2. If empty, `fetchMessages` with `activeStream=false` + `archived=true`
+  /// 3. Further pages use the same params with increasing `skip`
+  static Future<_ResolvedRecordedMessageAccess?> _resolveRecordedMessageAccess(
+    String streamId,
+    IsmLiveStreamViewModel viewModel,
+    int pageSize,
+  ) async {
+    final inactiveQuery = _recordedStreamMessageQuery(streamId);
+    final inactivePage = await _fetchMessagePage(
+      viewModel,
+      inactiveQuery,
+      skip: 0,
+      limit: pageSize,
+    );
+    if (inactivePage.isNotEmpty) {
+      return _ResolvedRecordedMessageAccess(
+        query: inactiveQuery,
+        firstPage: inactivePage,
+      );
     }
 
     final archivedQuery = _recordedStreamMessageQuery(
       streamId,
       useArchived: true,
     );
-    final archivedCount = await viewModel.fetchMessagesCount(
-      showLoading: false,
-      getMessageModel: archivedQuery,
+    final archivedPage = await _fetchMessagePage(
+      viewModel,
+      archivedQuery,
+      skip: 0,
+      limit: pageSize,
     );
-    return _ResolvedRecordedMessageQuery(
+    if (archivedPage.isEmpty) {
+      return null;
+    }
+
+    return _ResolvedRecordedMessageAccess(
       query: archivedQuery,
-      count: archivedCount,
+      firstPage: archivedPage,
     );
   }
 
@@ -117,28 +132,34 @@ class IsmLiveRecordingChatHelper {
     }
 
     final viewModel = _viewModel();
-    final resolved = await _resolveRecordedMessageQuery(streamId, viewModel);
-    if (resolved.count <= 0) {
+    final safePageSize = pageSize <= 0 ? _defaultPageSize : pageSize;
+    final resolved = await _resolveRecordedMessageAccess(
+      streamId,
+      viewModel,
+      safePageSize,
+    );
+    if (resolved == null) {
       return const [];
     }
 
-    final allMessages = <IsmLiveMessageModel>[];
-    final safePageSize = pageSize <= 0 ? _defaultPageSize : pageSize;
+    final allMessages = List<IsmLiveMessageModel>.from(resolved.firstPage);
+    var skip = resolved.firstPage.length;
 
-    for (var skip = 0; skip < resolved.count; skip += safePageSize) {
-      final remaining = resolved.count - skip;
-      final limit = remaining < safePageSize ? remaining : safePageSize;
-      final batch = await viewModel.fetchMessages(
-        showLoading: false,
-        showDialog: false,
-        getMessageModel: resolved.query.copyWith(
-          sort: 1,
-          skip: skip,
-          limit: limit,
-          senderIdsExclusive: false,
-        ),
+    while (true) {
+      final batch = await _fetchMessagePage(
+        viewModel,
+        resolved.query,
+        skip: skip,
+        limit: safePageSize,
       );
+      if (batch.isEmpty) {
+        break;
+      }
       allMessages.addAll(batch);
+      skip += batch.length;
+      if (batch.length < safePageSize) {
+        break;
+      }
     }
 
     final chats = allMessages
