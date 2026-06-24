@@ -25,7 +25,7 @@ class IsmLiveSettingsSheet extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: IsmLiveDimens.edgeInsets16_0_16_20,
+          padding: IsmLiveDimens.edgeInsets16_0_16_20.copyWith(bottom: 0),
           child: IsmLiveScrollSheet(
             separatedWidgat: IsmLiveDimens.boxHeight24,
             title: 'Settings',

@@ -421,7 +421,12 @@ class _RemoveModeratorConfirmSheet extends StatelessWidget {
           ),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        ismLiveBottomSheetActionBottomInset(context, designBottom: 16),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

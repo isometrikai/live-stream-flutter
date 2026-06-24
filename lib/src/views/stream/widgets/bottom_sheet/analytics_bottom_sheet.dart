@@ -129,6 +129,9 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                   );
                 }).toList(),
               ),
+              SizedBox(
+                height: ismLiveBottomSheetBottomInset(context, designBottom: 0),
+              ),
             ],
           ),
         ),
