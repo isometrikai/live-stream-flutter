@@ -120,6 +120,9 @@ class IsmLiveScrollSheet extends StatelessWidget {
                           separatedWidgat ?? IsmLiveDimens.box0,
                     ),
                   ),
+            SizedBox(
+              height: ismLiveBottomSheetBottomInset(context, designBottom: 20),
+            ),
           ],
         ),
       );

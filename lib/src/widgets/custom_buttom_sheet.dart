@@ -69,7 +69,9 @@ class IsmLiveCustomButtomSheet extends StatelessWidget {
                 ),
               ],
             ),
-            IsmLiveDimens.boxHeight20,
+            SizedBox(
+              height: ismLiveBottomSheetActionBottomInset(context, designBottom: 20),
+            ),
           ],
         ),
       ),

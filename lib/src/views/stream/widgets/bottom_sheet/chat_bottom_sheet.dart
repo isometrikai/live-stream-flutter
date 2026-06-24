@@ -23,7 +23,7 @@ class ChatBottomSheet extends StatelessWidget {
     final canActOnMessage = isHostOrModerator || message.sentByMe;
 
     return Padding(
-      padding: IsmLiveDimens.edgeInsets16_0_16_20,
+      padding: IsmLiveDimens.edgeInsets16_0_16_20.copyWith(bottom: 0),
       child: IsmLiveScrollSheet(
         separatedWidgat: IsmLiveDimens.boxHeight24,
         title: IsmLiveStrings.messageOptions,

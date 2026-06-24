@@ -22,7 +22,12 @@ class YourLiveSheet extends StatelessWidget {
         // Bottom Sheet Background
         Container(
           margin: const EdgeInsets.only(top: 40),
-          padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
+          padding: EdgeInsets.fromLTRB(
+            20,
+            60,
+            20,
+            ismLiveBottomSheetActionBottomInset(context, designBottom: 30),
+          ),
           decoration: BoxDecoration(
             color: context.liveTheme?.backgroundColor ??
                 (isDarkMode ? const Color(0xFF121212) : Colors.white),
