@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -125,14 +124,13 @@ class InAppManager {
   Future<void> _finishPastPurchases({String? productId}) async {
     if (GetPlatform.isIOS) {
       var clearedAny = false;
-      clearedAny = await _syncAndClearIosQueue(productId: productId) || clearedAny;
+      clearedAny = await _clearIosQueue(productId: productId) || clearedAny;
       if (productId != null && await _iosQueueHasProduct(productId)) {
         await Future<void>.delayed(const Duration(milliseconds: 150));
         clearedAny =
-            await _syncAndClearIosQueue(productId: productId) || clearedAny;
+            await _clearIosQueue(productId: productId) || clearedAny;
         if (await _iosQueueHasProduct(productId)) {
-          clearedAny =
-              await _syncAndClearIosQueue(productId: null) || clearedAny;
+          clearedAny = await _clearIosQueue(productId: null) || clearedAny;
         }
       }
       if (clearedAny) {
@@ -158,8 +156,8 @@ class InAppManager {
     }
   }
 
-  Future<bool> _syncAndClearIosQueue({String? productId}) async {
-    await _syncStoreKitIfAvailable();
+  /// Finishes unfinished local StoreKit transactions (no App Store network sync).
+  Future<bool> _clearIosQueue({String? productId}) async {
     var clearedAny = false;
     clearedAny =
         await _finishUnfinishedStoreKit2Transactions(productId: productId) ||
@@ -167,14 +165,6 @@ class InAppManager {
     clearedAny =
         await _finishStoreKit1Transactions(productId: productId) || clearedAny;
     return clearedAny;
-  }
-
-  Future<void> _syncStoreKitIfAvailable() async {
-    try {
-      final addition = InAppPurchase.instance
-          .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-      await addition.sync();
-    } catch (_) {}
   }
 
   Future<bool> _iosQueueHasProduct(String productId) async {
