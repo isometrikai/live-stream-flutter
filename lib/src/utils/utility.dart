@@ -214,7 +214,6 @@ class IsmLiveUtility {
     Widget bottomSheetWidget;
 
     if (customBuilder != null) {
-      // Use custom builder
       bottomSheetWidget = customBuilder(
         context,
         title,
@@ -265,9 +264,8 @@ class IsmLiveUtility {
         isDismissible: isDismissible,
         isScrollControlled: isScrollController,
         enableDrag: enableDrag,
-        // `showModalBottomSheet` already applies SafeArea when true; wrapping
-        // `child` in SafeArea again doubled the bottom inset (noticeable e.g.
-        // on YourLiveSheet). Respect `ignoreSafeArea` for full-bleed sheets.
+        // Bottom nav clearance is applied inside sheet widgets via
+        // [ismLiveBottomSheetBottomInset] / [ismLiveBottomSheetNavClearance].
         useSafeArea: ignoreSafeArea != true,
         backgroundColor: backgroundColor ?? IsmLiveColors.white,
         shape: RoundedRectangleBorder(

@@ -59,7 +59,7 @@ class IsmLiveModeratorBottomSheet extends StatelessWidget {
         left: IsmLiveDimens.twelve,
         right: IsmLiveDimens.twelve,
         top: IsmLiveDimens.sixteen,
-        bottom: IsmLiveDimens.sixteen,
+        bottom: ismLiveBottomSheetActionBottomInset(context, designBottom: 16),
       ),
       child: Stack(
         clipBehavior: Clip.none,

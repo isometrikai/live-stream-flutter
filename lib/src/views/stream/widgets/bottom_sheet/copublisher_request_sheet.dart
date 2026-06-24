@@ -127,6 +127,7 @@ class IsmLiveCopublishingViewerSheet extends StatelessWidget {
                 },
               ),
             IsmLiveDimens.boxHeight10,
+            SizedBox(height: ismLiveBottomSheetActionBottomInset(context, designBottom: 10)),
           ],
         ),
       );

@@ -37,7 +37,9 @@ class StreamLiveSheet extends StatelessWidget {
           ),
         ),
       ),
-      padding: IsmLiveDimens.edgeInsets16,
+      padding: IsmLiveDimens.edgeInsets16.copyWith(
+        bottom: ismLiveBottomSheetActionBottomInset(context, designBottom: 16),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

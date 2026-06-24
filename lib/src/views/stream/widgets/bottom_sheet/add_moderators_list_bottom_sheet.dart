@@ -339,7 +339,10 @@ class _AddModeratorsListBottomSheetState
                           ),
               ),
               if (allUsers.isNotEmpty) _buildConfirmButton(context),
-              const SizedBox(height: 12),
+              SizedBox(
+                height:
+                    ismLiveBottomSheetActionBottomInset(context, designBottom: 12),
+              ),
             ],
           ),
         );

@@ -276,6 +276,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                             .localGift?[controller.giftType]?.length,
                       ),
               ),
+              SizedBox(
+                height: ismLiveBottomSheetBottomInset(context, designBottom: 16),
+              ),
             ],
           ),
         ),
