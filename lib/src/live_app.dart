@@ -537,10 +537,6 @@ class IsmLiveApp extends StatefulWidget {
       );
       IsmLiveLog.info('initializeMqtt DONE');
 
-      if (GetPlatform.isIOS || GetPlatform.isAndroid) {
-        unawaited(InAppManager.i.prepareForPurchase());
-      }
-
       _initialized = true;
       IsmLiveLog.info('IsmLiveApp.initialize: SUCCESS');
 
