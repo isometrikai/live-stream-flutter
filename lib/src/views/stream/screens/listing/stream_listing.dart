@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/res/navigation/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -43,6 +45,33 @@ class IsmLiveStreamListing extends StatefulWidget {
 class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
   late final VoidCallback _pendingRefreshListener;
   bool _isPendingRefreshInFlight = false;
+
+  /// Timestamp of the last system back press while on the root listing screen.
+  /// Used to implement the standard Android "tap again to exit" behaviour.
+  DateTime? _lastBackPressTime;
+
+  /// Handles the Android system back button when the listing is the root
+  /// route (nothing left to pop). First press shows a toast, a second press
+  /// within [_exitInterval] closes the app.
+  static const Duration _exitInterval = Duration(seconds: 2);
+
+  void _handleRootBackPress() {
+    final now = DateTime.now();
+    final canExit = _lastBackPressTime != null &&
+        now.difference(_lastBackPressTime!) <= _exitInterval;
+
+    if (canExit) {
+      SystemNavigator.pop();
+      return;
+    }
+
+    _lastBackPressTime = now;
+    Fluttertoast.showToast(
+      msg: IsmLiveStrings.tapAgainToExit,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
   // static const List<String> _debugRecordingUrls = [
   //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/6a2a6259a1db8f0001c10530.mp4',
   //   'https://streamrecordings.isometrik.ai/670f56a22ad940512be88f33/e07899be-0771-4cbf-9514-18fc4d2197cf/6a293963a1db8f0001478812.mp4',
@@ -164,8 +193,23 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
       });
     }
 
-    return IsmLiveDelegate.homeScreen ??
-      Scaffold(
+    if (IsmLiveDelegate.homeScreen != null) {
+      return IsmLiveDelegate.homeScreen!;
+    }
+
+    // When the listing is pushed on top of another route (e.g. a host app
+    // navigates to it), [canPop] is true so the system back button performs a
+    // normal pop. When it is the root route, [canPop] is false and the
+    // standard "tap again to exit" flow runs via [_handleRootBackPress].
+    final canPopRoute = ModalRoute.of(context)?.canPop ?? false;
+
+    return PopScope(
+      canPop: canPopRoute,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        _handleRootBackPress();
+      },
+      child: Scaffold(
         appBar: IsmLiveAppbar(showBackArrow: widget.showBackArrow),
         floatingActionButton: Row(
           mainAxisSize: MainAxisSize.min,
@@ -246,7 +290,8 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
             ],
           ),
         ),
-      );
+      ),
+    );
   }
 }
 

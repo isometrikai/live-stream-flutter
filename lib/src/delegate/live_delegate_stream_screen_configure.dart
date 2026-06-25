@@ -73,6 +73,20 @@ typedef MessageSendButtonBuilder = Widget Function(
   bool isInsideInputField,
 );
 
+/// Handler invoked when the user presses the system back button while on the
+/// live stream screen.
+///
+/// Use this to mirror whatever the top-right cross / end-stream button does in
+/// your app — that button can itself be customized via [endButton], so the SDK
+/// cannot infer its action automatically. When this handler is `null`, the SDK
+/// runs its default end-stream flow (identical to the default cross icon).
+typedef StreamBackPressCallback = void Function(
+  BuildContext context,
+  String streamId,
+  bool isHost,
+  bool isSchedule,
+);
+
 /// Configuration for the live stream screen UI.
 ///
 /// Set via `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
@@ -113,6 +127,7 @@ class IsmLiveStreamScreenConfigure {
     this.chatViewMaxWidthFraction,
     this.showYourLiveSheet = true,
     this.showStreamMemberCount = false,
+    this.onStreamBackPress,
   });
 
   final IsmLiveStreamHeaderBuilder? streamHeader;
@@ -232,6 +247,13 @@ class IsmLiveStreamScreenConfigure {
   /// Tapping it opens [IsmLiveMembersSheet]. Default `false` (hidden).
   final bool showStreamMemberCount;
 
+  /// Invoked when the system back button is pressed on the live stream screen.
+  ///
+  /// When set, the SDK delegates the back press to this handler so host apps
+  /// can run the same action as their (possibly customized) top-right cross
+  /// icon. When `null`, the SDK runs its default end-stream flow.
+  final StreamBackPressCallback? onStreamBackPress;
+
   IsmLiveStreamScreenConfigure copyWith({
     IsmLiveStreamHeaderBuilder? streamHeader,
     IsmLiveStreamBottomBuilder? streamBottomBuilder,
@@ -269,6 +291,7 @@ class IsmLiveStreamScreenConfigure {
     double? chatViewMaxWidthFraction,
     bool? showYourLiveSheet,
     bool? showStreamMemberCount,
+    StreamBackPressCallback? onStreamBackPress,
   }) =>
       IsmLiveStreamScreenConfigure(
         streamHeader: streamHeader ?? this.streamHeader,
@@ -333,6 +356,7 @@ class IsmLiveStreamScreenConfigure {
         showYourLiveSheet: showYourLiveSheet ?? this.showYourLiveSheet,
         showStreamMemberCount:
             showStreamMemberCount ?? this.showStreamMemberCount,
+        onStreamBackPress: onStreamBackPress ?? this.onStreamBackPress,
       );
 
   /// Resolves whether the send icon is inside the input field.

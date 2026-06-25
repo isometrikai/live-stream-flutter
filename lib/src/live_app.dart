@@ -1043,6 +1043,13 @@ class IsmLiveApp extends StatefulWidget {
   static AddCoinsClickCallback? get addCoinsClickCallback =>
       IsmLiveDelegate.streamScreenConfigure.addCoinsClickCallback;
 
+  /// Handler invoked when the system back button is pressed on the live stream
+  /// screen. Host apps set this via
+  /// `IsmLiveApp.configureInterface(streamScreenConfigure: ...)` to mirror
+  /// their (possibly customized) top-right cross icon action.
+  static StreamBackPressCallback? get onStreamBackPress =>
+      IsmLiveDelegate.streamScreenConfigure.onStreamBackPress;
+
   /// Update font family dynamically at runtime
   static void updateFontFamily(String? fontFamily) {
     IsmLiveDelegate.fontFamily = fontFamily;

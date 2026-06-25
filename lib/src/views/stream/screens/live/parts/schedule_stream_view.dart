@@ -61,8 +61,9 @@ class ScheduleStreamView extends StatelessWidget {
       );
     } else {
       // Future schedule time, or past time for non-creators
-      final formattedTime =
-          scheduleTime != null ? scheduleTime.formattedScheduleDate : 'No time set';
+      final formattedTime = scheduleTime != null
+          ? scheduleTime.formattedScheduleDate
+          : 'No time set';
       buttonWidget = Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
