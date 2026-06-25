@@ -353,10 +353,10 @@ class IsmLiveUtility {
           _getErrorMessage(data.data),
         ),
         actions: [
-          CupertinoDialogAction(
+          const CupertinoDialogAction(
             onPressed: IsmLiveRoute.pop,
             isDefaultAction: true,
-            child: const Text('Okay'),
+            child: Text('Okay'),
           ),
           if (onRetry != null)
             CupertinoDialogAction(

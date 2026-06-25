@@ -103,6 +103,8 @@ class IsmLiveStrings {
   static const String pleaseSelectCoverPhoto =
       'Please select a cover photo to go live';
 
+  static const String tapAgainToExit = 'Tap again to exit';
+
   static const String takePhoto = 'Take photo';
   static const String chooseFromGallery = 'Choose from gallery';
 

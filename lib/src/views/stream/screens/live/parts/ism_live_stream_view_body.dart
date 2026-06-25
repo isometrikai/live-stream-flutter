@@ -31,6 +31,32 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
     setState(() => _overlaysVisible = !_overlaysVisible);
   }
 
+  /// Handles the system back button on the live stream screen.
+  ///
+  /// Mirrors the top-right cross / end-stream button: if the host app provided
+  /// a back-press handler (e.g. alongside a customized [endButton]), it is
+  /// invoked so back press matches their cross icon action. Otherwise the SDK
+  /// runs its default end-stream flow — the same call wired to the default
+  /// cross icon ([IsmLiveEndStreamButton]).
+  void _handleStreamBackPress(BuildContext context) {
+    final backPressHandler = IsmLiveApp.onStreamBackPress;
+    if (backPressHandler != null) {
+      backPressHandler(
+        context,
+        widget.streamId,
+        widget.isHost,
+        widget.isSchedule,
+      );
+      return;
+    }
+
+    IsmLiveApp.endStream(
+      context: context,
+      isSchedule: widget.isSchedule,
+      showViewerLeaveDialog: true,
+    );
+  }
+
   /// Full-width widgets from [IsmLiveStreamScreenConfigure.streamBottomWidgetBuilder].
   List<Widget> _streamBottomWidgets(
     BuildContext context,
@@ -138,8 +164,10 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
     final chatView = IsmLiveChatView(
       isHost: isHost,
       streamId: streamId,
-      chatMessageBuilder: IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
-      chatItemBgColorCallback: IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
+      chatMessageBuilder:
+          IsmLiveDelegate.streamScreenConfigure.chatMessageBuilder,
+      chatItemBgColorCallback:
+          IsmLiveDelegate.streamScreenConfigure.chatItemBgColorCallback,
     );
 
     return _wrapStreamChatView(context, chatView);
@@ -258,8 +286,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
           final overlayBottomPadding = systemBottomInset + keyboardBottom;
           final isActiveStreamPage = controller.streamId == widget.streamId;
           final gradientOverlay = IsmLiveDelegate
-              .streamScreenConfigure
-              .streamGradientOverlayBuilder
+              .streamScreenConfigure.streamGradientOverlayBuilder
               ?.call(
             context,
             widget.streamId,
@@ -269,11 +296,18 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
           return PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
-              if (didPop && !controller.preventDispose) {
-                // Clean up stream data in background so pop transition stays smooth.
-                // Awaiting cleanup here was blocking the route transition and causing lag.
-                unawaited(IsmLiveStreamView.cleanupStreamData(controller));
+              if (didPop) {
+                if (!controller.preventDispose) {
+                  // Clean up stream data in background so pop transition stays smooth.
+                  // Awaiting cleanup here was blocking the route transition and causing lag.
+                  unawaited(IsmLiveStreamView.cleanupStreamData(controller));
+                }
+                return;
               }
+
+              // Back pressed while the route is blocked ([canPop] is false):
+              // trigger the same action as the top-right cross icon.
+              _handleStreamBackPress(context);
             },
             child: Scaffold(
               extendBodyBehindAppBar: true,
@@ -594,7 +628,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                       ),
                                     ),
                                   Align(
-                                    alignment: IsmLiveApp.endStreamWidgetPosition,
+                                    alignment:
+                                        IsmLiveApp.endStreamWidgetPosition,
                                     child: Padding(
                                       padding: IsmLiveApp
                                               .endStreamWidgetPosition
@@ -676,9 +711,8 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                       !(controller.pkStages?.isPkStop ?? false))
                                     LayoutBuilder(
                                       builder: (context, constraints) {
-                                        final centerY =
-                                            IsmLivePublisherGrid
-                                                .contentCenterAlignmentY(
+                                        final centerY = IsmLivePublisherGrid
+                                            .contentCenterAlignmentY(
                                           context,
                                           description: controller
                                               .descriptionController.text,
