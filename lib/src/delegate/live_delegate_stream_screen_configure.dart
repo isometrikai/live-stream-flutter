@@ -127,6 +127,7 @@ class IsmLiveStreamScreenConfigure {
     this.chatViewMaxWidthFraction,
     this.showYourLiveSheet = true,
     this.showStreamMemberCount = false,
+    this.showHostProfileAddIcon = false,
     this.onStreamBackPress,
   });
 
@@ -247,6 +248,12 @@ class IsmLiveStreamScreenConfigure {
   /// Tapping it opens [IsmLiveMembersSheet]. Default `false` (hidden).
   final bool showStreamMemberCount;
 
+  /// When `true`, shows a trailing "+" icon on the host profile pill in the
+  /// stream header for viewers (hidden when the current user is the host).
+  /// Tapping it uses the same action as the profile image.
+  /// Default `false` (hidden).
+  final bool showHostProfileAddIcon;
+
   /// Invoked when the system back button is pressed on the live stream screen.
   ///
   /// When set, the SDK delegates the back press to this handler so host apps
@@ -291,6 +298,7 @@ class IsmLiveStreamScreenConfigure {
     double? chatViewMaxWidthFraction,
     bool? showYourLiveSheet,
     bool? showStreamMemberCount,
+    bool? showHostProfileAddIcon,
     StreamBackPressCallback? onStreamBackPress,
   }) =>
       IsmLiveStreamScreenConfigure(
@@ -356,6 +364,8 @@ class IsmLiveStreamScreenConfigure {
         showYourLiveSheet: showYourLiveSheet ?? this.showYourLiveSheet,
         showStreamMemberCount:
             showStreamMemberCount ?? this.showStreamMemberCount,
+        showHostProfileAddIcon:
+            showHostProfileAddIcon ?? this.showHostProfileAddIcon,
         onStreamBackPress: onStreamBackPress ?? this.onStreamBackPress,
       );
 
