@@ -58,6 +58,13 @@ class IsmLiveStreamRepository {
         showDialog: false,
       );
 
+  Future<IsmLiveResponseModel> getHomeStreams() => _apiWrapper.makeRequest(
+        IsmLiveApis.streamsHome,
+        type: IsmLiveRequestType.get,
+        headers: IsmLiveUtility.tokenHeader(),
+        showDialog: false,
+      );
+
   Future<IsmLiveResponseModel> getRecordings() => _apiWrapper.makeRequest(
         IsmLiveApis.getRecordings,
         type: IsmLiveRequestType.get,

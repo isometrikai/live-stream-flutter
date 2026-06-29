@@ -263,6 +263,9 @@ class IsmLiveStreamController extends GetxController
       type: IsmLiveStreamType.scheduledStreams,
       skip: 0,
     );
+    if (streamType == IsmLiveStreamType.all) {
+      await _fetchHomeStreams();
+    }
     _notifyStreamListingUpdated();
   }
 
@@ -377,6 +380,7 @@ class IsmLiveStreamController extends GetxController
   ScrollController membersListController = ScrollController();
 
   final streamsMap = <IsmLiveStreamType, List<IsmLiveStreamDataModel>>{};
+  IsmLiveHomeStreamsModel homeStreams = const IsmLiveHomeStreamsModel();
   final _presenceStoppedStreamIds = <String>{};
 
   List<IsmLiveStreamDataModel> get streams => streamsMap[streamType]!;
@@ -765,6 +769,7 @@ class IsmLiveStreamController extends GetxController
     for (final streams in streamsMap.values) {
       streams.removeWhere((stream) => stream.streamId == streamId);
     }
+    homeStreams = homeStreams.withoutStream(streamId);
   }
 
   Future<bool> subscribeUser() => _subscribeUser(true);

@@ -67,9 +67,32 @@ mixin StreamAPIMixin {
     if (!IsmLiveDelegate.enableInternalStreamListingRefresh) {
       return;
     }
+    final streamType = type ?? _controller.streamType;
+    if (streamType == IsmLiveStreamType.all) {
+      _controller.getStreamDebouncer.run(
+        () => fetchHomeStreams(),
+      );
+      return;
+    }
     _controller.getStreamDebouncer.run(
       () => _getStreams(type: type, skip: skip),
     );
+  }
+
+  /// Fetches categorized streams for the home / "All" tab.
+  Future<void> fetchHomeStreams() => _fetchHomeStreams();
+
+  Future<void> _fetchHomeStreams() async {
+    final homeStreams = await _controller.viewModel.getHomeStreams();
+    _controller.homeStreams = homeStreams;
+    _controller.streamsMap[IsmLiveStreamType.all] = [
+      ...homeStreams.scheduled,
+      ...homeStreams.live,
+      ...homeStreams.pk,
+      ...homeStreams.restream,
+      ...homeStreams.recorded,
+    ];
+    _controller.update([IsmLiveStreamListing.updateId]);
   }
 
   /// Internal method for getting streams based on the specified type.
@@ -78,6 +101,15 @@ mixin StreamAPIMixin {
     required int skip,
   }) async {
     var streamType = type ?? _controller.streamType;
+
+    if (streamType == IsmLiveStreamType.all) {
+      if (skip > 0) {
+        _controller.update([IsmLiveStreamListing.updateId]);
+        return;
+      }
+      await _fetchHomeStreams();
+      return;
+    }
 
     if (_controller.streamType == IsmLiveStreamType.scheduledStreams) {
       unawaited(fetchScheduledStream());
