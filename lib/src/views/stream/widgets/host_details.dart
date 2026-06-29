@@ -28,6 +28,53 @@ class IsmLiveHostDetail extends StatelessWidget {
           ? Colors.white
           : Colors.black);
 
+  Future<void> _onProfileTap(BuildContext context) async {
+    final hostTopProfileCallback =
+        IsmLiveDelegate.streamScreenConfigure.hostTopProfileClickCallback;
+    if (hostTopProfileCallback != null) {
+      final handled = await hostTopProfileCallback(
+        context,
+        isHost,
+        userIdentifier,
+        name,
+        imageUrl,
+        description,
+      );
+
+      if (handled) {
+        return;
+      }
+    }
+
+    final sheetBg = context.liveTheme?.backgroundColor ??
+        (Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF121212)
+            : Colors.white);
+
+    IsmLiveUtility.openBottomSheet(
+      StreamLiveSheet(
+        widget: IsmLiveImage.network(
+          imageUrl,
+          isProfileImage: true,
+          name: name,
+          initials: initials,
+          height: IsmLiveDimens.hundred,
+          width: IsmLiveDimens.hundred,
+        ),
+        title: name,
+        subTitle: description.trim().isEmpty ? null : description,
+        buttonLable: isHost ? null : IsmLiveStrings.viewProfile,
+        onTap: isHost
+            ? null
+            : () {
+                IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
+              },
+      ),
+      isScrollController: true,
+      backgroundColor: sheetBg,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -35,56 +82,14 @@ class IsmLiveHostDetail extends StatelessWidget {
     final pillFillColor = isDarkMode
         ? Colors.white.withValues(alpha: 0.2)
         : Colors.black.withValues(alpha: 0.2);
+    final showAddIcon =
+        IsmLiveDelegate.streamScreenConfigure.showHostProfileAddIcon &&
+            !isHost;
 
-    return IsmLiveTapHandler(
-      onTap: () async {
-        final hostTopProfileCallback =
-            IsmLiveDelegate.streamScreenConfigure.hostTopProfileClickCallback;
-        if (hostTopProfileCallback != null) {
-          final handled = await hostTopProfileCallback(
-            context,
-            isHost,
-            userIdentifier,
-            name,
-            imageUrl,
-            description,
-          );
-
-          if (handled) {
-            return;
-          }
-        }
-
-        final sheetBg = context.liveTheme?.backgroundColor ??
-            (Theme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF121212)
-                : Colors.white);
-
-        IsmLiveUtility.openBottomSheet(
-          StreamLiveSheet(
-            widget: IsmLiveImage.network(
-              imageUrl,
-              isProfileImage: true,
-              name: name,
-              initials: initials,
-              height: IsmLiveDimens.hundred,
-              width: IsmLiveDimens.hundred,
-            ),
-            title: name,
-            subTitle: description.trim().isEmpty ? null : description,
-            buttonLable: isHost ? null : IsmLiveStrings.viewProfile,
-            onTap: isHost
-                ? null
-                : () {
-                    IsmLiveDelegate.openUserProfileView?.call(userIdentifier);
-                  },
-          ),
-          isScrollController: true,
-          backgroundColor: sheetBg,
-        );
-      },
-      child: Container(
-        width: IsmLiveDimens.hundredFourty,
+    return Container(
+        width: showAddIcon
+            ? IsmLiveDimens.oneHundredFifty
+            : IsmLiveDimens.hundredFourty,
         decoration: BoxDecoration(
           color: pillFillColor,
           borderRadius: BorderRadius.circular(IsmLiveDimens.hundred),
@@ -94,27 +99,60 @@ class IsmLiveHostDetail extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            IsmLiveImage.network(
-              imageUrl,
-              name: name,
-              initials: initials,
-              isProfileImage: true,
-              height: IsmLiveDimens.forty,
-              width: IsmLiveDimens.forty,
-              border: Border.all(color: pillColor),
-            ),
-            IsmLiveDimens.boxWidth4,
-            SizedBox(
-              width: IsmLiveDimens.seventy,
-              child: Text(
-                handle.isEmpty ? '$name' : '@$handle',
-                style: IsmLiveStyles.white12,
-                maxLines: 1,
+            IsmLiveTapHandler(
+              onTap: () => _onProfileTap(context),
+              child: IsmLiveImage.network(
+                imageUrl,
+                name: name,
+                initials: initials,
+                isProfileImage: true,
+                height: IsmLiveDimens.forty,
+                width: IsmLiveDimens.forty,
+                border: Border.all(color: pillColor),
               ),
             ),
+            IsmLiveDimens.boxWidth4,
+            if (showAddIcon)
+              Expanded(
+                child: Text(
+                  handle.isEmpty ? '$name' : '@$handle',
+                  style: IsmLiveStyles.white12,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )
+            else
+              SizedBox(
+                width: IsmLiveDimens.seventy,
+                child: Text(
+                  handle.isEmpty ? '$name' : '@$handle',
+                  style: IsmLiveStyles.white12,
+                  maxLines: 1,
+                ),
+              ),
+            if (showAddIcon) ...[
+              IsmLiveDimens.boxWidth2,
+              IsmLiveTapHandler(
+                onTap: () => _onProfileTap(context),
+                child: Container(
+                  height: IsmLiveDimens.twenty,
+                  width: IsmLiveDimens.twenty,
+                  decoration: BoxDecoration(
+                    color: pillColor,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.add,
+                    size: IsmLiveDimens.sixteen,
+                    color: IsmLiveColors.white,
+                  ),
+                ),
+              ),
+              IsmLiveDimens.boxWidth4,
+            ],
           ],
         ),
-      ),
-    );
+      );
   }
 }
