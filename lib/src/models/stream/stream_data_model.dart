@@ -101,7 +101,9 @@ class IsmLiveStreamDataModel {
         isPaid: map['isPaid'] != null ? map['isPaid'] as bool : null,
         alreadyPaid:
             map['alreadyPaid'] != null ? map['alreadyPaid'] as bool : null,
-        isBuy: map['isBuy'] != null ? map['isBuy'] as bool : null,
+        isBuy: map['isBuy'] != null
+            ? map['isBuy'] as bool
+            : map['alreadyPaid'] as bool?,
         isScheduledStream: map['isScheduledStream'] != null
             ? map['isScheduledStream'] as bool
             : null,
@@ -110,7 +112,9 @@ class IsmLiveStreamDataModel {
             : null,
         country: map['country'] != null ? map['country'] as String : null,
         duration: map['duration'] != null ? map['duration'] as int : null,
-        amount: map['amount'] != null ? map['amount'] as num : null,
+        amount: map['amount'] != null
+            ? map['amount'] as num
+            : map['paymentAmount'] as num?,
         streamTags:
             map['streamTags'] != null ? map['streamTags'] as String : null,
         streamTypes:

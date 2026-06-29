@@ -54,6 +54,8 @@ extension IsmLiveStreamTypeExtension on IsmLiveStreamType {
         endDateTime: endDateTime);
     switch (this) {
       case IsmLiveStreamType.all:
+        return model;
+      case IsmLiveStreamType.live:
         return model.copyWith(fetchLive: true);
       // case IsmLiveStreamType.audioOnly:
       //   return model.copyWith(audioOnly: true);
@@ -222,6 +224,19 @@ extension IsmLiveDateExtensions on DateTime {
   String get formattedTime {
     final date = DateFormat('hh:mm aa');
     return date.format(this);
+  }
+
+  String get scheduleBadgeLabel {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final date = DateTime(year, month, day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final dayLabel = date == today
+        ? 'Today'
+        : date == tomorrow
+            ? 'Tomorrow'
+            : DateFormat('dd MMM').format(this);
+    return '$dayLabel • $formattedTime';
   }
 }
 

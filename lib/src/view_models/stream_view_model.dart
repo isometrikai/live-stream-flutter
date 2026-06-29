@@ -70,6 +70,25 @@ class IsmLiveStreamViewModel {
     }
   }
 
+  Future<IsmLiveHomeStreamsModel> getHomeStreams() async {
+    try {
+      final res = await _repository.getHomeStreams();
+      if (res.hasError || res.statusCode != 200) {
+        return const IsmLiveHomeStreamsModel();
+      }
+
+      final decoded = jsonDecode(res.data);
+      if (decoded is! Map<String, dynamic>) {
+        return const IsmLiveHomeStreamsModel();
+      }
+
+      return IsmLiveHomeStreamsModel.fromMap(decoded);
+    } catch (e, st) {
+      IsmLiveLog.error(e, st);
+      return const IsmLiveHomeStreamsModel();
+    }
+  }
+
   Future<List<IsmLiveStreamDataModel>> getRecordings() async {
     try {
       var res = await _repository.getRecordings();

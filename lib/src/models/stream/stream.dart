@@ -2,6 +2,7 @@ export 'analytis_viewer_model.dart';
 export 'chat_model.dart';
 export 'create_model.dart';
 export 'get_message_model.dart';
+export 'home_streams_model.dart';
 export 'member_details_model.dart';
 export 'member_model.dart';
 export 'message_model.dart';

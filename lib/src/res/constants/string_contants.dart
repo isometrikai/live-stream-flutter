@@ -17,6 +17,9 @@ class IsmLiveStrings {
   static const String noStreams = 'No Streams';
 
   static const String all = 'All';
+  static const String live = 'Live';
+  static const String viewAll = 'View all';
+  static const String liveStreams = 'Live Streams';
   static const String credit = 'Credit';
   static const String debit = 'Debit';
   static const String audioOnly = 'Audio Only';

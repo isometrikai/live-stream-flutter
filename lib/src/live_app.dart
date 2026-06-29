@@ -181,6 +181,32 @@ class IsmLiveApp extends StatefulWidget {
     }
   }
 
+  /// Fetches categorized streams for the home / "All" tab.
+  ///
+  /// Returns preview lists for [IsmLiveHomeStreamsModel.scheduled],
+  /// [IsmLiveHomeStreamsModel.live], [IsmLiveHomeStreamsModel.pk],
+  /// [IsmLiveHomeStreamsModel.restream], and [IsmLiveHomeStreamsModel.recorded]
+  /// from `GET /live/v1/streams/home`.
+  /// Returns an empty model if the request fails.
+  static Future<IsmLiveHomeStreamsModel> fetchHomeStreams() async {
+    assert(
+      _initialized,
+      'IsmLiveApp || IsmLiveMqtt is not initialized. Initialize it using `IsmLiveApp.initialize(config) and/or IsmLiveApp.initializeMqtt()`',
+    );
+
+    if (!Get.isRegistered<IsmLiveStreamController>()) {
+      IsmLiveStreamBinding().dependencies();
+    }
+
+    try {
+      final controller = Get.find<IsmLiveStreamController>();
+      return await controller.viewModel.getHomeStreams();
+    } catch (e, stack) {
+      IsmLiveLog.error('IsmLiveApp.fetchHomeStreams failed: $e\n$stack');
+      return const IsmLiveHomeStreamsModel();
+    }
+  }
+
   /// Fetches paginated recorded streams.
   ///
   /// Pass [userId] to fetch recorded streams for a specific user.

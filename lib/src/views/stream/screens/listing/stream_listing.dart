@@ -258,6 +258,10 @@ class _IsmLiveStreamListingState extends State<IsmLiveStreamListing> {
                 onTap: (index) {
                   controller.streamType = IsmLiveStreamType.values[index];
 
+                  if (controller.streamType == IsmLiveStreamType.all) {
+                    controller.fetchHomeStreams();
+                    return;
+                  }
                   if (controller.streamType ==
                       IsmLiveStreamType.scheduledStreams) {
                     controller.fetchScheduledStream(
@@ -346,12 +350,53 @@ class _StreamListing extends StatefulWidget {
 class _StreamListingState extends State<_StreamListing> {
   late final RefreshController _refreshController;
 
+  bool get _isAllTab => widget.streamType == IsmLiveStreamType.all;
+
+  void _openViewAllTab(IsmLiveStreamController controller, IsmLiveStreamType type) {
+    final index = IsmLiveStreamType.values.indexOf(type);
+    if (index < 0) {
+      return;
+    }
+    controller.tabController.animateTo(index);
+    controller.streamType = type;
+    if (type == IsmLiveStreamType.scheduledStreams) {
+      unawaited(controller.fetchScheduledStream(type: type));
+      return;
+    }
+    unawaited(controller.getStreams(type: type));
+  }
+
+  void _handleHomeStreamTap(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    IsmLiveStreamDataModel stream,
+    IsmLiveHomeStreamCardStyle style,
+  ) {
+    switch (style) {
+      case IsmLiveHomeStreamCardStyle.scheduled:
+        _handleStreamTap(context, controller, stream,
+            streamType: IsmLiveStreamType.scheduledStreams);
+      case IsmLiveHomeStreamCardStyle.recorded:
+        _handleStreamTap(context, controller, stream,
+            streamType: IsmLiveStreamType.recorded);
+      case IsmLiveHomeStreamCardStyle.live:
+      case IsmLiveHomeStreamCardStyle.pk:
+      case IsmLiveHomeStreamCardStyle.restream:
+        _handleStreamTap(context, controller, stream,
+            streamType: widget.streamType);
+    }
+  }
+
   void _openRecordedStreamPlayer(
     BuildContext context,
     IsmLiveStreamController controller,
-    IsmLiveStreamDataModel streamModel,
-  ) {
-    final list = controller.streamsMap[widget.streamType]!;
+    IsmLiveStreamDataModel streamModel, {
+    List<IsmLiveStreamDataModel>? recordings,
+  }) {
+    final list = recordings ??
+        (_isAllTab
+            ? controller.homeStreams.recorded
+            : controller.streamsMap[widget.streamType]!);
     final items =
         list.map(IsmLiveStreamDataModelRecordingAdapter.new).toList();
     if (items.isEmpty) return;
@@ -375,6 +420,67 @@ class _StreamListingState extends State<_StreamListing> {
     );
   }
 
+  void _handleStreamTap(
+    BuildContext context,
+    IsmLiveStreamController controller,
+    IsmLiveStreamDataModel stream, {
+    required IsmLiveStreamType streamType,
+  }) {
+    final isCreatedByMe = stream.userId == controller.user?.userId;
+
+    if (streamType == IsmLiveStreamType.scheduledStreams && isCreatedByMe) {
+      unawaited(
+        IsmLiveUtility.precacheStreamCover(
+          stream.streamImage,
+          context,
+        ),
+      );
+      controller.startSeduleStream(stream);
+      return;
+    }
+
+    if (streamType == IsmLiveStreamType.recorded) {
+      if ((stream.isPaid ?? false) && !(stream.isBuy ?? false)) {
+        controller.paidStreamSheet(
+          coins: stream.amount ?? 0,
+          onTap: () async {
+            IsmLiveRoute.pop();
+            final res = await controller.buyStream(stream.streamId ?? '');
+            if (res) {
+              _openRecordedStreamPlayer(context, controller, stream);
+            }
+          },
+        );
+      } else {
+        _openRecordedStreamPlayer(context, controller, stream);
+      }
+      return;
+    }
+
+    if ((stream.isPaid ?? false) && !(stream.isBuy ?? false)) {
+      controller.paidStreamSheet(
+        coins: stream.amount ?? 0,
+        onTap: () async {
+          IsmLiveRoute.pop();
+          final res = await controller.buyStream(stream.streamId ?? '');
+          if (res) {
+            await controller.initializeAndJoinStream(
+              stream,
+              isCreatedByMe,
+              context: context,
+            );
+          }
+        },
+      );
+    } else {
+      controller.initializeAndJoinStream(
+        stream,
+        isCreatedByMe,
+        context: context,
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -393,10 +499,13 @@ class _StreamListingState extends State<_StreamListing> {
         builder: (controller) => SmartRefresher(
           controller: _refreshController,
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: !_isAllTab,
           onRefresh: () async {
             try {
-              if (widget.streamType == IsmLiveStreamType.scheduledStreams) {
+              if (_isAllTab) {
+                await controller.fetchHomeStreams();
+              } else if (widget.streamType ==
+                  IsmLiveStreamType.scheduledStreams) {
                 await controller.fetchScheduledStream(type: widget.streamType);
               } else {
                 await controller.getStreams(type: widget.streamType);
@@ -409,6 +518,9 @@ class _StreamListingState extends State<_StreamListing> {
           },
           onLoading: () async {
             try {
+              if (_isAllTab) {
+                return;
+              }
               if (widget.streamType == IsmLiveStreamType.scheduledStreams) {
                 await controller.fetchScheduledStream(
                     type: widget.streamType,
@@ -426,7 +538,17 @@ class _StreamListingState extends State<_StreamListing> {
               _refreshController.loadComplete();
             }
           },
-          child: controller.streamsMap[widget.streamType]!.isEmpty
+          child: _isAllTab
+              ? IsmLiveAllStreamsListing(
+                  onStreamTap: (stream, style) => _handleHomeStreamTap(
+                    context,
+                    controller,
+                    stream,
+                    style,
+                  ),
+                  onViewAllTap: (type) => _openViewAllTab(controller, type),
+                )
+              : controller.streamsMap[widget.streamType]!.isEmpty
               ? const IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noStreams,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
@@ -441,71 +563,12 @@ class _StreamListingState extends State<_StreamListing> {
                       (e) {
                         var isCreatedByMe = e.userId == controller.user?.userId;
                         return IsmLiveTapHandler(
-                          onTap: () {
-                            if (widget.streamType ==
-                                    IsmLiveStreamType.scheduledStreams &&
-                                isCreatedByMe) {
-                              unawaited(
-                                IsmLiveUtility.precacheStreamCover(
-                                  e.streamImage,
-                                  context,
-                                ),
-                              );
-                              controller.startSeduleStream(e);
-                              return;
-                            }
-
-                            if (widget.streamType ==
-                                IsmLiveStreamType.recorded) {
-                              if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
-                                controller.paidStreamSheet(
-                                  coins: e.amount ?? 0,
-                                  onTap: () async {
-                                    IsmLiveRoute.pop();
-                                    var res = await controller
-                                        .buyStream(e.streamId ?? '');
-                                    if (res) {
-                                      _openRecordedStreamPlayer(
-                                        context,
-                                        controller,
-                                        e,
-                                      );
-                                    }
-                                  },
-                                );
-                              } else {
-                                _openRecordedStreamPlayer(
-                                  context,
-                                  controller,
-                                  e,
-                                );
-                              }
-                              return;
-                            }
-
-                            if ((e.isPaid ?? false) && !(e.isBuy ?? false)) {
-                              controller.paidStreamSheet(
-                                  coins: e.amount ?? 0,
-                                  onTap: () async {
-                                    IsmLiveRoute.pop();
-                                    var res = await controller
-                                        .buyStream(e.streamId ?? '');
-                                    if (res) {
-                                      await controller.initializeAndJoinStream(
-                                        e,
-                                        isCreatedByMe,
-                                        context: context,
-                                      );
-                                    }
-                                  });
-                            } else {
-                              controller.initializeAndJoinStream(
-                                e,
-                                isCreatedByMe,
-                                context: context,
-                              );
-                            }
-                          },
+                          onTap: () => _handleStreamTap(
+                            context,
+                            controller,
+                            e,
+                            streamType: widget.streamType,
+                          ),
                           child: IsmLiveStreamCard(
                             e,
                             isCreatedByMe: isCreatedByMe,
