@@ -158,6 +158,8 @@ class IsmLiveStrings {
       'Key will be generated after you start a new stream';
   static const String rtmpStreamInstruction =
       'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device.';
+  static const String copiedToClipboard = 'Copied to clipboard';
+  static const String nothingToCopy = 'Nothing to copy';
   static const String youtubeStreamUrlInstruction =
       'You have to enter the youtube stream url here,\n';
   static const String clickHereToKnowMore = 'click here to know more.';

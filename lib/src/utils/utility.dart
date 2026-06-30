@@ -7,6 +7,8 @@ import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class IsmLiveUtility {
@@ -23,6 +25,30 @@ class IsmLiveUtility {
   }
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
+
+  /// Copies [text] to the clipboard and shows a system toast on success.
+  static Future<void> copyToClipboard(String text) async {
+    if (text.isEmpty) {
+      _showClipboardToast(IsmLiveStrings.nothingToCopy);
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: text));
+    _showClipboardToast(IsmLiveStrings.copiedToClipboard);
+  }
+
+  static void _showClipboardToast(String message) {
+    final toastContext = navigatorKey.currentContext;
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      // Center avoids being hidden behind bottom sheets and Go Live's bottom nav.
+      gravity: ToastGravity.CENTER,
+      fontSize: toastContext != null
+          ? toastContext.dynamicTextTheme.bodyMedium?.fontSize ?? 16.0
+          : 16.0,
+    );
+  }
 
   static IsmLiveConfigData? _config;
 
