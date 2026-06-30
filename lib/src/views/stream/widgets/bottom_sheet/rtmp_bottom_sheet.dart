@@ -1,6 +1,5 @@
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class IsmLiveRtmpSheet extends StatelessWidget {
@@ -50,11 +49,9 @@ class IsmLiveRtmpSheet extends StatelessWidget {
                 controller: controller.rtmlUrlDevice,
                 sheetBackground: sheetBackground,
                 textColor: textColor,
-                onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: controller.rtmlUrlDevice.text),
-                  );
-                },
+                onTap: () => IsmLiveUtility.copyToClipboard(
+                  controller.rtmlUrlDevice.text,
+                ),
               ),
               IsmLiveDimens.boxHeight10,
               _InputField(
@@ -64,11 +61,9 @@ class IsmLiveRtmpSheet extends StatelessWidget {
                 controller: controller.streamKeyDevice,
                 sheetBackground: sheetBackground,
                 textColor: textColor,
-                onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: controller.streamKeyDevice.text),
-                  );
-                },
+                onTap: () => IsmLiveUtility.copyToClipboard(
+                  controller.streamKeyDevice.text,
+                ),
               ),
               IsmLiveDimens.boxHeight10,
               Text.rich(
@@ -108,9 +103,8 @@ class _InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onDarkSheet =
-        ThemeData.estimateBrightnessForColor(sheetBackground) ==
-            Brightness.dark;
+    final onDarkSheet = ThemeData.estimateBrightnessForColor(sheetBackground) ==
+        Brightness.dark;
     final borderColor = context.liveTheme?.borderColor ??
         (onDarkSheet ? const Color(0xFF1E1E1E) : IsmLiveColors.black);
     final fillColor = context.liveTheme?.cardBackgroundColor ??

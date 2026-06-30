@@ -728,11 +728,9 @@ class _PersistentStream extends StatelessWidget {
                     label: 'RTML URL',
                     readOnly: true,
                     controller: controller.rtmlUrlDevice,
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: controller.rtmlUrlDevice.text),
-                      );
-                    },
+                    onTap: () => IsmLiveUtility.copyToClipboard(
+                      controller.rtmlUrlDevice.text,
+                    ),
                     suffixIcon: Icon(
                       Icons.copy,
                       color: IsmGoLiveView.getTextStyle(context, true).color,
@@ -744,11 +742,9 @@ class _PersistentStream extends StatelessWidget {
                     hint: 'Key will be generated after you start a new stream',
                     readOnly: true,
                     controller: controller.streamKeyDevice,
-                    onTap: () {
-                      Clipboard.setData(
-                        ClipboardData(text: controller.streamKeyDevice.text),
-                      );
-                    },
+                    onTap: () => IsmLiveUtility.copyToClipboard(
+                      controller.streamKeyDevice.text,
+                    ),
                     suffixIcon: Icon(
                       Icons.copy,
                       color: IsmGoLiveView.getTextStyle(context, true).color,
