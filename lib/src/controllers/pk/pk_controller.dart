@@ -850,7 +850,7 @@ class IsmLivePkController extends GetxController
         pkId: pkId,
         amount: IsmLiveDelegate.enableFreeGift ? 0 : amount,
         currency: 'COIN',
-        receiverCurrency: 'USD',
+        receiverCurrency: 'COIN',
         reciverUserType: (streamController.pkStages?.isPkStart ?? false)
             ? streamController.participantList.first.participant.identity ==
                     streamController.hostDetails?.userId
