@@ -272,6 +272,7 @@ enum IsmLiveStreamOption {
   vs(IsmLiveAssetConstants.vs),
   pk(IsmLiveAssetConstants.pk),
   heart(IsmLiveAssetConstants.heartSvg),
+  rtmpDetails(IsmLiveAssetConstants.infoSvg),
   ;
 
   const IsmLiveStreamOption(this.icon);
@@ -319,14 +320,11 @@ enum IsmLiveStreamOption {
   static List<IsmLiveStreamOption> get rtmpOptions =>
       IsmLiveDelegate.rtmpOptions.isEmpty
           ? [
-              IsmLiveStreamOption.members,
+              IsmLiveStreamOption.bars,
               IsmLiveStreamOption.vs,
               IsmLiveStreamOption.multiLive,
-              // IsmLiveStreamOption.product,
-              // IsmLiveStreamOption.share,
-              // // IsmLiveStreamOption.favourite,
-              // IsmLiveStreamOption.rotateCamera,
-              // IsmLiveStreamOption.settings,
+              IsmLiveStreamOption.share,
+              IsmLiveStreamOption.rtmpDetails,
             ]
           : IsmLiveDelegate.rtmpOptions;
 
@@ -424,7 +422,8 @@ enum IsmLiveMessageType {
         IsmLiveMessageType.presence.value: IsmLiveMessageType.presence,
         IsmLiveMessageType.pk.value: IsmLiveMessageType.pk,
         IsmLiveMessageType.changeStream.value: IsmLiveMessageType.changeStream,
-        IsmLiveMessageType.changeStreamPkEnd.value: IsmLiveMessageType.changeStreamPkEnd,
+        IsmLiveMessageType.changeStreamPkEnd.value:
+            IsmLiveMessageType.changeStreamPkEnd,
         IsmLiveMessageType.pkStart.value: IsmLiveMessageType.pkStart,
         IsmLiveMessageType.pkStop.value: IsmLiveMessageType.pkStop,
       }[data] ??

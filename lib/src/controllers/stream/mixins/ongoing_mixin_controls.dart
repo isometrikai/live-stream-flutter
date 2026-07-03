@@ -129,6 +129,9 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
       case IsmLiveStreamOption.pk:
         _pkController.stopPkBattleSheet();
         break;
+      case IsmLiveStreamOption.rtmpDetails:
+        _controller.rtmpSheet();
+        break;
     }
   }
 
