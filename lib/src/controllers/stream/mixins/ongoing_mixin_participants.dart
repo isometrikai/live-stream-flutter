@@ -532,6 +532,7 @@ mixin StreamOngoingParticipantsMixin
       case IsmLiveStreamOption.product:
       case IsmLiveStreamOption.pk:
       case IsmLiveStreamOption.heart:
+      case IsmLiveStreamOption.rtmpDetails:
         return option.icon;
       case IsmLiveStreamOption.speaker:
         if (_controller.speakerOn) {
