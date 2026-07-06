@@ -377,6 +377,16 @@ class IsmLiveStreamViewModel {
     bool showDialog = false,
   }) async {
     try {
+      if (IsmLiveDelegate.streamScreenConfigure.streamSendMessageApiHandler !=
+          null) {
+        return await IsmLiveDelegate
+            .streamScreenConfigure.streamSendMessageApiHandler!
+            .call(
+          getMessageModel,
+          IsmLiveSendMessageOperation.send,
+        );
+      }
+
       var res = await _repository.sendMessage(
         showLoading: showLoading,
         payload: getMessageModel.toMap(),
@@ -395,6 +405,16 @@ class IsmLiveStreamViewModel {
     required IsmLiveSendMessageModel getMessageModel,
   }) async {
     try {
+      if (IsmLiveDelegate.streamScreenConfigure.streamSendMessageApiHandler !=
+          null) {
+        return await IsmLiveDelegate
+            .streamScreenConfigure.streamSendMessageApiHandler!
+            .call(
+          getMessageModel,
+          IsmLiveSendMessageOperation.reply,
+        );
+      }
+
       var res = await _repository.replyMessage(
         showLoading: showLoading,
         payload: getMessageModel.toMap(),

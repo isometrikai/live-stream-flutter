@@ -104,6 +104,7 @@ class IsmLiveStreamScreenConfigure {
     this.endStreamWidgetPosition,
     this.logoWidget,
     this.messageProcessCallback,
+    this.streamSendMessageApiHandler,
     this.streamScreenLoadedCallback,
     this.hostTopProfileClickCallback,
     this.goLiveSmallButtonBuilder,
@@ -154,6 +155,11 @@ class IsmLiveStreamScreenConfigure {
   final Widget? logoWidget;
 
   final MessageProcessCallback? messageProcessCallback;
+
+  /// Replaces the SDK's default send/reply message API when set.
+  ///
+  /// See [StreamSendMessageApiHandler] for payload shape and return semantics.
+  final StreamSendMessageApiHandler? streamSendMessageApiHandler;
 
   final StreamViewLoadedCallback? streamScreenLoadedCallback;
 
@@ -274,6 +280,7 @@ class IsmLiveStreamScreenConfigure {
     Alignment? endStreamWidgetPosition,
     Widget? logoWidget,
     MessageProcessCallback? messageProcessCallback,
+    StreamSendMessageApiHandler? streamSendMessageApiHandler,
     StreamViewLoadedCallback? streamScreenLoadedCallback,
     HostTopProfileClickCallback? hostTopProfileClickCallback,
     GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder,
@@ -317,6 +324,8 @@ class IsmLiveStreamScreenConfigure {
         logoWidget: logoWidget ?? this.logoWidget,
         messageProcessCallback:
             messageProcessCallback ?? this.messageProcessCallback,
+        streamSendMessageApiHandler:
+            streamSendMessageApiHandler ?? this.streamSendMessageApiHandler,
         streamScreenLoadedCallback:
             streamScreenLoadedCallback ?? this.streamScreenLoadedCallback,
         hostTopProfileClickCallback:
