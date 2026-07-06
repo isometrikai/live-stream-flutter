@@ -60,6 +60,57 @@ typedef StreamDisconnectApiHandler = Future<bool> Function(
   IsmLiveStreamDisconnectType disconnectType,
 );
 
+/// Identifies which SDK send-message endpoint would be called by default.
+enum IsmLiveSendMessageOperation {
+  /// POST `/streaming/v2/message` — chat text, likes, gifts, etc.
+  send,
+
+  /// POST `/streaming/v2/message/reply` — reply to an existing chat message.
+  reply,
+}
+
+/// API handler callback for sending stream chat messages.
+///
+/// **Replaces the default SDK API calls** for [IsmLiveSendMessageOperation.send]
+/// and [IsmLiveSendMessageOperation.reply] when set via
+/// `IsmLiveApp.configureInterface(streamScreenConfigure: ...)`.
+///
+/// The SDK builds the same [IsmLiveSendMessageModel] it would post internally;
+/// use [IsmLiveSendMessageModel.toMap] for the exact JSON body your backend
+/// expects.
+///
+/// [sendMessageModel] — Full request payload (streamId, body, searchableTags,
+/// metaData, customType, deviceId, parentMessageId, messageType).
+///
+/// [operation] — `send` for `POST /streaming/v2/message`, `reply` for
+/// `POST /streaming/v2/message/reply`.
+///
+/// **Return value**
+/// - `true` — host API succeeded; SDK keeps existing UI behavior (clear input,
+///   analytics, etc.).
+/// - `false` — host API failed; SDK restores the message field for text/reply.
+///
+/// **When not set**, the SDK uses its built-in endpoints unchanged.
+///
+/// **Example (text chat)**
+/// ```dart
+/// IsmLiveApp.configureInterface(
+///   streamScreenConfigure: IsmLiveStreamScreenConfigure(
+///     streamSendMessageApiHandler: (model, operation) async {
+///       final payload = model.toMap();
+///       if (operation == IsmLiveSendMessageOperation.reply) {
+///         return (await myApi.replyStreamMessage(payload)).success;
+///       }
+///       return (await myApi.postStreamMessage(payload)).success;
+///     },
+///   ),
+/// );
+/// ```
+typedef StreamSendMessageApiHandler = Future<bool> Function(
+  IsmLiveSendMessageModel sendMessageModel,
+  IsmLiveSendMessageOperation operation,
+);
+
 /// Preferred initial camera position when starting a stream
 enum IsmLiveCameraPosition {
   front,

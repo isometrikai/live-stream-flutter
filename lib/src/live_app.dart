@@ -1028,6 +1028,9 @@ class IsmLiveApp extends StatefulWidget {
   static StreamAnalyticsApiHandler? get streamAnalyticsApiHandler =>
       IsmLiveDelegate.streamAnalyticsApiHandler;
 
+  static StreamSendMessageApiHandler? get streamSendMessageApiHandler =>
+      IsmLiveDelegate.streamScreenConfigure.streamSendMessageApiHandler;
+
   static StreamAnalyticsViewersApiHandler?
       get streamAnalyticsViewersApiHandler =>
           IsmLiveDelegate.streamAnalyticsViewersApiHandler;
@@ -1109,6 +1112,15 @@ class IsmLiveApp extends StatefulWidget {
   static void updateStreamAnalyticsApiHandler(
       StreamAnalyticsApiHandler? streamAnalyticsApiHandler) {
     IsmLiveDelegate.streamAnalyticsApiHandler = streamAnalyticsApiHandler;
+  }
+
+  /// Update stream send/reply message API handler dynamically at runtime.
+  static void updateStreamSendMessageApiHandler(
+      StreamSendMessageApiHandler? streamSendMessageApiHandler) {
+    IsmLiveDelegate.streamScreenConfigure =
+        IsmLiveDelegate.streamScreenConfigure.copyWith(
+      streamSendMessageApiHandler: streamSendMessageApiHandler,
+    );
   }
 
   /// Update stream analytics viewers API handler dynamically at runtime
