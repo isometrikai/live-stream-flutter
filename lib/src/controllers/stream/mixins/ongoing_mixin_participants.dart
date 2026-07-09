@@ -42,7 +42,10 @@ mixin StreamOngoingParticipantsMixin
       await _controller.fetchMessagesCount(
         showLoading: false,
         getMessageModel: IsmLiveGetMessageModel(
-            streamId: streamId, messageType: [IsmLiveMessageType.normal.value]),
+          streamId: streamId,
+          messageType:
+              IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
+        ),
       );
 
       if (_controller.messagesCount != 0) {
@@ -51,7 +54,8 @@ mixin StreamOngoingParticipantsMixin
             showLoading: false,
             getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
-              messageType: [IsmLiveMessageType.normal.value],
+              messageType:
+                  IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
               sort: 1,
               skip: _controller.messagesCount < 10
                   ? 0

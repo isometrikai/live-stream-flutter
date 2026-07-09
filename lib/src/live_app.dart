@@ -4,8 +4,6 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
-import 'package:appscrip_live_stream_component/src/res/localization/ism_live_localization.dart';
-import 'package:appscrip_live_stream_component/src/res/localization/ism_live_strings_en.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -678,8 +676,8 @@ class IsmLiveApp extends StatefulWidget {
         goLiveScreenConfigure ?? const IsmLiveGoLiveScreenConfigure();
     IsmLiveDelegate.streamScreenConfigure =
         streamScreenConfigure ?? const IsmLiveStreamScreenConfigure();
-    final resolvedCoinsPlansWalletConfigure =
-        coinsPlansWalletScreenConfigure ?? const IsmLiveCoinsPlansWalletScreenConfigure();
+    final resolvedCoinsPlansWalletConfigure = coinsPlansWalletScreenConfigure ??
+        const IsmLiveCoinsPlansWalletScreenConfigure();
 
     // assert(_initialized,
     //     'IsmLiveApp is not initialized, initialize it using `IsmLiveApp.initialize()`');
@@ -979,14 +977,12 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.streamScreenConfigure.showStreamHeader;
 
   /// See [IsmLiveStreamScreenConfigure.useGridLayoutForMultipleParticipants].
-  static bool get useGridLayoutForMultipleParticipants =>
-      IsmLiveDelegate.streamScreenConfigure
-          .resolvedUseGridLayoutForMultipleParticipants;
+  static bool get useGridLayoutForMultipleParticipants => IsmLiveDelegate
+      .streamScreenConfigure.resolvedUseGridLayoutForMultipleParticipants;
 
   /// See [IsmLiveStreamScreenConfigure.showParticipantFullNamesInPublisherGrid].
-  static bool get showParticipantFullNamesInPublisherGrid =>
-      IsmLiveDelegate.streamScreenConfigure
-          .resolvedShowParticipantFullNamesInPublisherGrid;
+  static bool get showParticipantFullNamesInPublisherGrid => IsmLiveDelegate
+      .streamScreenConfigure.resolvedShowParticipantFullNamesInPublisherGrid;
 
   static Alignment get streamHeaderPosition =>
       IsmLiveDelegate.streamScreenConfigure.resolvedStreamHeaderPosition;
@@ -1006,9 +1002,10 @@ class IsmLiveApp extends StatefulWidget {
   static IsmLiveEcomConfigure? get ecomConfigure =>
       IsmLiveDelegate.ecomConfigure;
 
-  static IsmLiveCoinsPlansWalletScreenConfigure get coinsPlansWalletScreenConfigure =>
-      IsmLiveDelegate.coinsPlansWalletScreenConfigure ??
-      const IsmLiveCoinsPlansWalletScreenConfigure();
+  static IsmLiveCoinsPlansWalletScreenConfigure
+      get coinsPlansWalletScreenConfigure =>
+          IsmLiveDelegate.coinsPlansWalletScreenConfigure ??
+          const IsmLiveCoinsPlansWalletScreenConfigure();
 
   static IsmLiveBackButtonBuilder? get backButtonBuilder =>
       IsmLiveDelegate.backButtonBuilder;
@@ -1093,7 +1090,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update message process callback dynamically at runtime
   static void updateMessageProcessCallback(
       MessageProcessCallback? messageProcessCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(messageProcessCallback: messageProcessCallback);
     // Trigger rebuild of stream view to apply new filter
     if (Get.isRegistered<IsmLiveStreamController>()) {
@@ -1104,7 +1102,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update stream screen loaded callback dynamically at runtime.
   static void updateStreamScreenLoadedCallback(
       StreamViewLoadedCallback? streamScreenLoadedCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(streamScreenLoadedCallback: streamScreenLoadedCallback);
   }
 
@@ -1135,7 +1134,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update host top profile click callback dynamically at runtime
   static void updateHostTopProfileClickCallback(
       HostTopProfileClickCallback? hostTopProfileClickCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(hostTopProfileClickCallback: hostTopProfileClickCallback);
   }
 
@@ -1206,7 +1206,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update go live small button builder dynamically at runtime
   static void updateGoLiveSmallButtonBuilder(
       GoLiveSmallButtonBuilder? goLiveSmallButtonBuilder) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(goLiveSmallButtonBuilder: goLiveSmallButtonBuilder);
     // Trigger rebuild of stream view to apply new small button
     if (Get.isRegistered<IsmLiveStreamController>()) {
@@ -1216,12 +1217,10 @@ class IsmLiveApp extends StatefulWidget {
 
   /// Update scheduled stream center overlay builder dynamically at runtime
   static void updateScheduleStreamCenterOverlayBuilder(
-      ScheduleStreamCenterOverlayBuilder?
-          scheduleStreamCenterOverlayBuilder) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
-        .copyWith(
-      scheduleStreamCenterOverlayBuilder:
-          scheduleStreamCenterOverlayBuilder,
+      ScheduleStreamCenterOverlayBuilder? scheduleStreamCenterOverlayBuilder) {
+    IsmLiveDelegate.streamScreenConfigure =
+        IsmLiveDelegate.streamScreenConfigure.copyWith(
+      scheduleStreamCenterOverlayBuilder: scheduleStreamCenterOverlayBuilder,
     );
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
@@ -1230,8 +1229,9 @@ class IsmLiveApp extends StatefulWidget {
 
   /// Update cart builder dynamically at runtime
   static void updateCartBuilder(IsmLiveCartBuilder? cartBuilder) {
-    IsmLiveDelegate.streamScreenConfigure =
-        IsmLiveDelegate.streamScreenConfigure.copyWith(cartBuilder: cartBuilder);
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
+        .copyWith(cartBuilder: cartBuilder);
     // Trigger rebuild of stream view to apply new cart builder
     if (Get.isRegistered<IsmLiveStreamController>()) {
       Get.find<IsmLiveStreamController>().update([IsmLiveStreamView.updateId]);
@@ -1241,14 +1241,16 @@ class IsmLiveApp extends StatefulWidget {
   /// Update top viewers list callback dynamically at runtime
   static void updateTopViewersListCallback(
       TopViewersListCallback? topViewersListCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(topViewersListCallback: topViewersListCallback);
   }
 
   /// Update moderators list callback dynamically at runtime
   static void updateModeratorsListCallback(
       ModeratorsListCallback? moderatorsListCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(moderatorsListCallback: moderatorsListCallback);
   }
 
@@ -1274,7 +1276,8 @@ class IsmLiveApp extends StatefulWidget {
   /// Update stream scroll callback dynamically at runtime
   static void updateOnStreamScrollCallback(
       OnStreamScrollCallback? onStreamScrollCallback) {
-    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate.streamScreenConfigure
+    IsmLiveDelegate.streamScreenConfigure = IsmLiveDelegate
+        .streamScreenConfigure
         .copyWith(onStreamScrollCallback: onStreamScrollCallback);
   }
 

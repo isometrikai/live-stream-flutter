@@ -704,7 +704,8 @@ class IsmLiveStreamController extends GetxController
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
             streamId: _controller.streamId ?? '',
-            messageType: [IsmLiveMessageType.normal.value],
+            messageType:
+                IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
             skip: computedSkip,
             limit: computedLimit,
             sort: 1,
