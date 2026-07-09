@@ -300,8 +300,8 @@ mixin StreamAPIMixin {
   }) async {
     // Initial page only: [getStreamMembers] returns [] on API failure (no throw), so we
     // retry once. Pagination / search must not retry on empty (valid end-of-list / no hits).
-    final isBootstrapMembersFetch = skip == 0 &&
-        (searchTag == null || searchTag.trim().isEmpty);
+    final isBootstrapMembersFetch =
+        skip == 0 && (searchTag == null || searchTag.trim().isEmpty);
 
     Future<List<IsmLiveMemberDetailsModel>> loadMembers() =>
         _controller.viewModel.getStreamMembers(
@@ -449,7 +449,8 @@ mixin StreamAPIMixin {
           final processedMessage = _processMessage(message, false);
           return processedMessage != null;
         })
-        .map((message) => _processMessage(message, false)!)
+        .map((message) =>
+            _controller.normalizeMessageForChat(_processMessage(message, false)!))
         .toList();
 
     await _controller.addMessages(processedMessages, false);
@@ -471,7 +472,8 @@ mixin StreamAPIMixin {
       showDialog: showDialog,
       getMessageModel: IsmLiveGetMessageModel(
         streamId: streamId,
-        messageType: [IsmLiveMessageType.normal.value],
+        messageType:
+            IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
         sort: 1,
         limit: limit,
         lastMessageTimestamp: lastMessageTimestamp,
@@ -483,6 +485,7 @@ mixin StreamAPIMixin {
     final processedMessages = res
         .map((message) => _processMessage(message, false))
         .whereType<IsmLiveMessageModel>()
+        .map(_controller.normalizeMessageForChat)
         .toList();
     // Safety: do not rewrite messages that explicitly belong to another stream.
     // - If streamId is empty, fill it with the requested streamId (backend inconsistency).

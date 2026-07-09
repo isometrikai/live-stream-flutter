@@ -130,6 +130,7 @@ class IsmLiveStreamScreenConfigure {
     this.showStreamMemberCount = false,
     this.showHostProfileAddIcon = false,
     this.onStreamBackPress,
+    this.showGiftMessagesInChat = false,
   });
 
   final IsmLiveStreamHeaderBuilder? streamHeader;
@@ -260,6 +261,19 @@ class IsmLiveStreamScreenConfigure {
   /// Default `false` (hidden).
   final bool showHostProfileAddIcon;
 
+  /// When `true`, gift MQTT/API messages are also appended to the live chat
+  /// overlay. Gift animations continue to work as before. Default `false`.
+  final bool showGiftMessagesInChat;
+
+  /// Message types requested when loading or polling chat history.
+  List<int> get resolvedChatMessageTypes => showGiftMessagesInChat
+      ? <int>[
+          IsmLiveMessageType.normal.value,
+          IsmLiveMessageType.gift.value,
+          IsmLiveMessageType.gift3D.value,
+        ]
+      : <int>[IsmLiveMessageType.normal.value];
+
   /// Invoked when the system back button is pressed on the live stream screen.
   ///
   /// When set, the SDK delegates the back press to this handler so host apps
@@ -307,6 +321,7 @@ class IsmLiveStreamScreenConfigure {
     bool? showStreamMemberCount,
     bool? showHostProfileAddIcon,
     StreamBackPressCallback? onStreamBackPress,
+    bool? showGiftMessagesInChat,
   }) =>
       IsmLiveStreamScreenConfigure(
         streamHeader: streamHeader ?? this.streamHeader,
@@ -376,6 +391,8 @@ class IsmLiveStreamScreenConfigure {
         showHostProfileAddIcon:
             showHostProfileAddIcon ?? this.showHostProfileAddIcon,
         onStreamBackPress: onStreamBackPress ?? this.onStreamBackPress,
+        showGiftMessagesInChat:
+            showGiftMessagesInChat ?? this.showGiftMessagesInChat,
       );
 
   /// Resolves whether the send icon is inside the input field.
@@ -383,8 +400,7 @@ class IsmLiveStreamScreenConfigure {
   /// Uses [messageSendIconInsideInputField] when set; otherwise mirrors legacy
   /// [IsmLiveDelegate.productStream] behavior.
   bool resolveMessageSendIconInsideInputField() =>
-      messageSendIconInsideInputField ??
-      IsmLiveDelegate.productStream == true;
+      messageSendIconInsideInputField ?? IsmLiveDelegate.productStream == true;
 
   /// Resolves whether the stream chat view should use a width constraint.
   bool resolveConstrainChatViewWidth() =>

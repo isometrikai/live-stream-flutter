@@ -75,6 +75,7 @@ class HomeController extends GetxController {
       productionMode: true,
       excludeGuestUsers: true,
       streamScreenConfigure: IsmLiveStreamScreenConfigure(
+        showGiftMessagesInChat: true,
         showStreamMemberCount: true,
         useGridLayoutForMultipleParticipants: true,
         showParticipantFullNamesInPublisherGrid: true,

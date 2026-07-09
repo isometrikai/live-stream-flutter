@@ -20,6 +20,85 @@ mixin StreamMessageMixin {
   IsmLiveStreamController get _controller =>
       Get.find<IsmLiveStreamController>();
   IsmLivePkController get _pkController => Get.find<IsmLivePkController>();
+
+  bool get _showGiftMessagesInChat =>
+      IsmLiveDelegate.streamScreenConfigure.showGiftMessagesInChat;
+
+  /// Readable chat line for gift MQTT/API payloads (body is often JSON).
+  String giftChatBodyFromMessage(IsmLiveMessageModel message) {
+    final meta = message.metaData?.rawJson;
+    String? giftName;
+    String? receiverName;
+    int? coinsValue;
+    if (meta is Map<String, dynamic>) {
+      giftName = meta['giftName'] as String?;
+      receiverName = meta['receiverName'] as String?;
+      coinsValue = _giftCoinsValue(meta['coinsValue']);
+    }
+    if (giftName == null || receiverName == null || coinsValue == null) {
+      try {
+        final gift = IsmLiveGiftModel.fromJson(message.body);
+        giftName ??= gift.giftName;
+        receiverName ??= gift.receiverName;
+        coinsValue ??= gift.coinsValue;
+      } catch (_) {}
+    }
+    final normalizedGiftName = giftName?.trim() ?? '';
+    final normalizedReceiverName = receiverName?.trim() ?? '';
+    final worthSuffix = _giftWorthSuffix(coinsValue);
+    if (normalizedGiftName.isNotEmpty && normalizedReceiverName.isNotEmpty) {
+      return 'sent $normalizedGiftName$worthSuffix to $normalizedReceiverName';
+    }
+    if (normalizedGiftName.isNotEmpty) {
+      return 'sent $normalizedGiftName$worthSuffix';
+    }
+    if (worthSuffix.isNotEmpty) {
+      return 'sent a gift$worthSuffix';
+    }
+    return 'sent a gift';
+  }
+
+  int? _giftCoinsValue(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return null;
+  }
+
+  String _giftWorthSuffix(int? coinsValue) {
+    if (coinsValue == null || coinsValue <= 0) {
+      return '';
+    }
+    return ' ($coinsValue coins)';
+  }
+
+  IsmLiveMessageModel giftMessageForChat(IsmLiveMessageModel message) =>
+      message.copyWith(body: giftChatBodyFromMessage(message));
+
+  IsmLiveMessageModel normalizeMessageForChat(IsmLiveMessageModel message) {
+    if (!_showGiftMessagesInChat) {
+      return message;
+    }
+    if (message.messageType == IsmLiveMessageType.gift ||
+        message.messageType == IsmLiveMessageType.gift3D) {
+      return giftMessageForChat(message);
+    }
+    return message;
+  }
+
+  Future<void> _addGiftMessageToChat(
+    IsmLiveMessageModel message, {
+    required bool isMqtt,
+  }) async {
+    if (!_showGiftMessagesInChat) {
+      return;
+    }
+    await _controller.addMessages([giftMessageForChat(message)], isMqtt);
+  }
+
 // Convert IsmLiveMessageModel to IsmLiveChatModel
   IsmLiveChatModel convertMessageToChat(IsmLiveMessageModel message) =>
       IsmLiveChatModel(
@@ -97,6 +176,7 @@ mixin StreamMessageMixin {
         if (processedMessage.senderId != _controller.user?.userId) {
           _controller.addGift(processedMessage, payload ?? {});
         }
+        await _addGiftMessageToChat(processedMessage, isMqtt: isMqtt);
         break;
       case IsmLiveMessageType.remove:
         IsmLiveLog.success('Message Removed');
@@ -125,6 +205,7 @@ mixin StreamMessageMixin {
         _pkController.pkStopEvent(payload ?? {}, true);
         break;
       case IsmLiveMessageType.gift3D:
+        await _addGiftMessageToChat(processedMessage, isMqtt: isMqtt);
         break;
       case IsmLiveMessageType.unknown:
         IsmLiveLog.info(

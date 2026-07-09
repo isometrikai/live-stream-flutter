@@ -70,7 +70,8 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
         showLoading: false,
         getMessageModel: IsmLiveGetMessageModel(
           streamId: streamId,
-          messageType: [IsmLiveMessageType.normal.value],
+          messageType:
+              IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
         ),
       );
 
@@ -79,7 +80,8 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
             streamId: streamId,
-            messageType: [IsmLiveMessageType.normal.value],
+            messageType:
+              IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
             sort: 1,
             skip: _controller.messagesCount < 10
                 ? 0
@@ -140,7 +142,8 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
           showLoading: false,
           getMessageModel: IsmLiveGetMessageModel(
             streamId: streamId,
-            messageType: [IsmLiveMessageType.normal.value],
+            messageType:
+              IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
           ),
         );
 
@@ -149,7 +152,8 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
             showLoading: false,
             getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
-              messageType: [IsmLiveMessageType.normal.value],
+              messageType:
+              IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
               sort: 1,
               skip: _controller.messagesCount < 10
                   ? 0
@@ -218,6 +222,7 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
       streamId: streamId,
     ));
   }
+
   // Function to add viewers to the stream
   Future<void> addViewers(
       List<IsmLiveViewerModel> viewers, bool isFirstCall) async {
@@ -251,9 +256,8 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
       return;
     }
 
-    final chats = messages
-        .map((e) => _controller.convertMessageToChat(e))
-        .toList();
+    final chats =
+        messages.map((e) => _controller.convertMessageToChat(e)).toList();
 
     if (isMqtt) {
       _controller.streamMessagesList.addAll(chats);
@@ -264,5 +268,4 @@ mixin StreamOngoingChatMixin on StreamOngoingMixin {
     _controller.streamMessagesList =
         _controller.streamMessagesList.toSet().toList();
   }
-
 }
