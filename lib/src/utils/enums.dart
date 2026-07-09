@@ -108,6 +108,11 @@ enum IsmLiveStreamTypes {
 
   const IsmLiveStreamTypes(this.value);
   final String value;
+
+  String get label => switch (this) {
+        IsmLiveStreamTypes.free => IsmLiveStrings.free,
+        IsmLiveStreamTypes.premium => IsmLiveStrings.premium,
+      };
 }
 
 enum IsmLiveMeetingType {
@@ -126,32 +131,45 @@ enum IsmLiveMeetingType {
 }
 
 enum IsmLiveStreamType {
-  all(0, IsmLiveStrings.all),
-  live(8, IsmLiveStrings.live),
-  scheduledStreams(1, IsmLiveStrings.scheduled),
-  // audioOnly(1, IsmLiveStrings.audioOnly),
-  pk(2, IsmLiveStrings.pk),
-  // private(3, IsmLiveStrings.private),
-  // ecommerce(4, IsmLiveStrings.ecommerce),
-  restream(5, IsmLiveStrings.reStream),
-  hd(6, IsmLiveStrings.hd),
-  recorded(7, IsmLiveStrings.recorded);
-  // multilive(8, IsmLiveStrings.multiLive);
+  all(0),
+  live(8),
+  scheduledStreams(1),
+  // audioOnly(1),
+  pk(2),
+  // private(3),
+  // ecommerce(4),
+  restream(5),
+  hd(6),
+  recorded(7);
+  // multilive(8);
 
-  const IsmLiveStreamType(this.value, this.label);
+  const IsmLiveStreamType(this.value);
   final int value;
-  final String label;
+
+  String get label => switch (this) {
+        IsmLiveStreamType.all => IsmLiveStrings.all,
+        IsmLiveStreamType.live => IsmLiveStrings.live,
+        IsmLiveStreamType.scheduledStreams => IsmLiveStrings.scheduled,
+        IsmLiveStreamType.pk => IsmLiveStrings.pk,
+        IsmLiveStreamType.restream => IsmLiveStrings.reStream,
+        IsmLiveStreamType.hd => IsmLiveStrings.hd,
+        IsmLiveStreamType.recorded => IsmLiveStrings.recorded,
+      };
 }
 
 enum IsmLiveCoinTransactionType {
-  all(0, IsmLiveStrings.all),
-  debit(1, IsmLiveStrings.debit),
+  all(0),
+  debit(1),
+  credit(2);
 
-  credit(2, IsmLiveStrings.credit);
-
-  const IsmLiveCoinTransactionType(this.value, this.label);
+  const IsmLiveCoinTransactionType(this.value);
   final int value;
-  final String label;
+
+  String get label => switch (this) {
+        IsmLiveCoinTransactionType.all => IsmLiveStrings.all,
+        IsmLiveCoinTransactionType.debit => IsmLiveStrings.debit,
+        IsmLiveCoinTransactionType.credit => IsmLiveStrings.credit,
+      };
 }
 
 enum IsmLiveActions {
@@ -356,10 +374,14 @@ enum IsmLiveStreamOption {
 }
 
 enum IsmLiveHostSettings {
-  muteMyVideo(IsmLiveAssetConstants.video_camera,
-      IsmLiveAssetConstants.video_off, 'Turn Off Video', 'Trun On Video'),
-  muteMyAudio(IsmLiveAssetConstants.micro_phone,
-      IsmLiveAssetConstants.micro_phone_off, 'Mute', 'Unmute');
+  muteMyVideo(
+    IsmLiveAssetConstants.video_camera,
+    IsmLiveAssetConstants.video_off,
+  ),
+  muteMyAudio(
+    IsmLiveAssetConstants.micro_phone,
+    IsmLiveAssetConstants.micro_phone_off,
+  );
   // block(IsmLiveAssetConstants.block, 'Block', 'Unblock'),
   // report(IsmLiveAssetConstants.report, 'Report', '');
   // muteRemoteVideo('Mute remote video', 'Unmute remote video'),
@@ -368,21 +390,32 @@ enum IsmLiveHostSettings {
   // hideChatMessages('Hide chat messages', 'Show chat messages'),
   // hideControlButtons('Hide control buttons', 'Show control buttons');
 
-  const IsmLiveHostSettings(
-      this.icon, this.offIcon, this.muteValues, this.unmuteValues);
-  final String muteValues;
-  final String unmuteValues;
+  const IsmLiveHostSettings(this.icon, this.offIcon);
   final String icon;
   final String offIcon;
+
+  String get muteValues => switch (this) {
+        IsmLiveHostSettings.muteMyVideo => IsmLiveStrings.turnOffVideo,
+        IsmLiveHostSettings.muteMyAudio => IsmLiveStrings.mute,
+      };
+
+  String get unmuteValues => switch (this) {
+        IsmLiveHostSettings.muteMyVideo => IsmLiveStrings.turnOnVideo,
+        IsmLiveHostSettings.muteMyAudio => IsmLiveStrings.unmute,
+      };
 }
 
 enum IsmLiveScheduleSettings {
-  edit(IsmLiveAssetConstants.edit, IsmLiveStrings.editStream),
-  delete(IsmLiveAssetConstants.delete, IsmLiveStrings.deleteStream);
+  edit(IsmLiveAssetConstants.edit),
+  delete(IsmLiveAssetConstants.delete);
 
-  const IsmLiveScheduleSettings(this.icon, this.label);
+  const IsmLiveScheduleSettings(this.icon);
   final String icon;
-  final String label;
+
+  String get label => switch (this) {
+        IsmLiveScheduleSettings.edit => IsmLiveStrings.editStream,
+        IsmLiveScheduleSettings.delete => IsmLiveStrings.deleteStream,
+      };
 }
 
 enum IsmLiveMessageType {
@@ -441,12 +474,15 @@ enum IsmLiveCustomType {
 }
 
 enum IsmLiveGiftType {
-  normal(IsmLiveStrings.normal),
-  threeD(IsmLiveStrings.threeD),
-  animated(IsmLiveStrings.animated);
+  normal,
+  threeD,
+  animated;
 
-  const IsmLiveGiftType(this.label);
-  final String label;
+  String get label => switch (this) {
+        IsmLiveGiftType.normal => IsmLiveStrings.normal,
+        IsmLiveGiftType.threeD => IsmLiveStrings.threeD,
+        IsmLiveGiftType.animated => IsmLiveStrings.animated,
+      };
 
   List<IsmLiveGifts> get gifts {
     switch (this) {
@@ -530,27 +566,35 @@ enum IsmLiveGifts {
 }
 
 enum IsmLiveCopublisher {
-  copublisherRequest(IsmLiveStrings.copublisherRequests),
-  users(IsmLiveStrings.users);
+  copublisherRequest,
+  users;
 
-  const IsmLiveCopublisher(this.label);
-  final String label;
+  String get label => switch (this) {
+        IsmLiveCopublisher.copublisherRequest =>
+          IsmLiveStrings.copublisherRequests,
+        IsmLiveCopublisher.users => IsmLiveStrings.users,
+      };
 }
 
 enum IsmLivePk {
-  onlineList(IsmLiveStrings.onlineList),
-  inviteList(IsmLiveStrings.inviteList);
+  onlineList,
+  inviteList;
 
-  const IsmLivePk(this.label);
-  final String label;
+  String get label => switch (this) {
+        IsmLivePk.onlineList => IsmLiveStrings.onlineList,
+        IsmLivePk.inviteList => IsmLiveStrings.inviteList,
+      };
 }
 
 enum IsmLivePkViewers {
-  audiencelist(IsmLiveStrings.audiencelist),
-  contributionRanking(IsmLiveStrings.contributionRanking);
+  audiencelist,
+  contributionRanking;
 
-  const IsmLivePkViewers(this.label);
-  final String label;
+  String get label => switch (this) {
+        IsmLivePkViewers.audiencelist => IsmLiveStrings.audiencelist,
+        IsmLivePkViewers.contributionRanking =>
+          IsmLiveStrings.contributionRanking,
+      };
 }
 
 enum IsmLiveMemberStatus {
@@ -593,15 +637,21 @@ enum IsmLiveRestreamType {
   const IsmLiveRestreamType(this.value);
   final int value;
 
-  String get label => name.capitalizeFirst!;
+  String get label => switch (this) {
+        IsmLiveRestreamType.facebook => IsmLiveStrings.facebook,
+        IsmLiveRestreamType.youtube => IsmLiveStrings.youtube,
+        IsmLiveRestreamType.instagram => IsmLiveStrings.instagram,
+      };
 }
 
 enum IsmGoLiveTabItem {
-  defaultLive('Single/Multi Guest Live'),
-  liveFromDevice('Live From Device');
+  defaultLive,
+  liveFromDevice;
 
-  const IsmGoLiveTabItem(this.label);
-  final String label;
+  String get label => switch (this) {
+        IsmGoLiveTabItem.defaultLive => IsmLiveStrings.singleMultiGuestLive,
+        IsmGoLiveTabItem.liveFromDevice => IsmLiveStrings.liveFromDevice,
+      };
 }
 
 enum IsmLivePermission {

@@ -116,7 +116,7 @@ class _CoinTransactionsListing extends StatelessWidget {
             controller.fetchTransactions(type: type);
           },
           child: controller.transactionsFor(type).isEmpty
-              ? const IsmLiveEmptyScreen(
+              ? IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noData,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
                 )

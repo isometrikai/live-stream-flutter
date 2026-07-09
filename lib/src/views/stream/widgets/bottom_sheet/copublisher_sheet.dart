@@ -378,12 +378,12 @@ class _IsmLiveCopublishingHostSheetState
                                                   ],
                                                 )
                                               : copublisher.accepted ?? false
-                                                  ? const Text(
+                                                  ? Text(
                                                       IsmLiveStrings.accepted,
                                                       style: TextStyle(
                                                           color: Colors.green),
                                                     )
-                                                  : const Text(
+                                                  : Text(
                                                       IsmLiveStrings.deny,
                                                       style: TextStyle(
                                                           color: Colors.red),

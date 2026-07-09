@@ -347,7 +347,7 @@ class _ErrorImage extends StatelessWidget {
                     ),
                   ),
                   alignment: Alignment.center,
-                  child: const Text(
+                  child: Text(
                     IsmLiveStrings.errorLoadingImage,
                   ),
                 ),

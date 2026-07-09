@@ -549,7 +549,7 @@ class _StreamListingState extends State<_StreamListing> {
                   onViewAllTap: (type) => _openViewAllTab(controller, type),
                 )
               : controller.streamsMap[widget.streamType]!.isEmpty
-              ? const IsmLiveEmptyScreen(
+              ? IsmLiveEmptyScreen(
                   label: IsmLiveStrings.noStreams,
                   placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
                 )

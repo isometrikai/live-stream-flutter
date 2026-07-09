@@ -461,12 +461,12 @@ class IsmLiveUtility {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: onPress,
-            child: Text('yes'.tr),
+            child: Text(IsmLiveStrings.yes),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
             onPressed: closeDialog,
-            child: Text('no'.tr),
+            child: Text(IsmLiveStrings.no),
           )
         ],
       ),

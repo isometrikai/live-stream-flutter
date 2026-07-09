@@ -42,12 +42,12 @@ const _kDarkThemeData = IsmLiveThemeData(
   fontFamily: null, // Will be set dynamically from delegate
 );
 
-const _kTranslationsData = IsmLiveTranslationsData(
-  uploadingImage: IsmLiveStrings.uploadingImage,
+final _kTranslationsData = IsmLiveTranslationsData(
+  uploadingImage: ismLiveStringsEn['uploadingImage'],
   streamTranslations: IsmLiveStreamTranslations(
-    youreLive: IsmLiveStrings.youreLive,
-    moderationWarning: IsmLiveStrings.moderationWarning,
-    connectingToLiveStream: IsmLiveStrings.connectingToLiveStream,
+    youreLive: ismLiveStringsEn['youreLive'],
+    moderationWarning: ismLiveStringsEn['moderationWarning'],
+    connectingToLiveStream: ismLiveStringsEn['connectingToLiveStream'],
   ),
 );
 
@@ -67,6 +67,7 @@ class IsmLiveData extends StatelessWidget {
     this.lightTheme,
     this.darkTheme,
     this.themeMode,
+    this.locale,
     this.translations,
     this.properties,
     this.configurations,
@@ -89,6 +90,10 @@ class IsmLiveData extends StatelessWidget {
   /// Theme mode to use. If null, follows system theme.
   /// Defaults to [ThemeMode.system] to automatically follow system brightness.
   final ThemeMode? themeMode;
+
+  /// Locale for component UI strings. When null, uses the ambient
+  /// [Localizations.localeOf] if available, otherwise English.
+  final Locale? locale;
 
   final IsmLiveTranslationsData? translations;
   final IsmLivePropertiesData? properties;
@@ -131,20 +136,34 @@ class IsmLiveData extends StatelessWidget {
         theme ??
         _kDarkThemeData;
 
-    return IsmLiveTheme(
-      lightTheme: _getDynamicThemeData(effectiveLightTheme),
-      darkTheme: _getDynamicThemeData(effectiveDarkTheme),
-      themeMode: themeMode ?? ThemeMode.system,
-      child: IsmLiveTranslations(
-        data: translations ?? materialExtension?.translations ?? _kTranslationsData,
-        child: IsmLiveProperties(
-          data: properties ?? materialExtension?.properties ?? _kPropertiesData,
-          child: configurations != null
-              ? IsmLiveConfig(
-                  data: configurations!,
-                  child: child,
-                )
-              : child,
+    final effectiveTranslations =
+        translations ?? materialExtension?.translations;
+    final effectiveLocale = IsmLiveSupportedLocales.resolve(
+      locale ?? Localizations.maybeLocaleOf(context),
+    );
+    final localization = IsmLiveLocalization.forLocale(
+      effectiveLocale,
+      overrides: effectiveTranslations,
+    );
+    IsmLiveLocalization.current = localization;
+
+    return IsmLiveLocalizationScope(
+      localization: localization,
+      child: IsmLiveTheme(
+        lightTheme: _getDynamicThemeData(effectiveLightTheme),
+        darkTheme: _getDynamicThemeData(effectiveDarkTheme),
+        themeMode: themeMode ?? ThemeMode.system,
+        child: IsmLiveTranslations(
+          data: effectiveTranslations ?? _kTranslationsData,
+          child: IsmLiveProperties(
+            data: properties ?? materialExtension?.properties ?? _kPropertiesData,
+            child: configurations != null
+                ? IsmLiveConfig(
+                    data: configurations!,
+                    child: child,
+                  )
+                : child,
+          ),
         ),
       ),
     );
