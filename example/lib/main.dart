@@ -134,7 +134,7 @@ class _MyAppState extends State<MyApp> {
               // ),
               builder: (context, child) => Obx(
                 () => IsmLiveData(
-                  locale: Get.locale ?? Localizations.localeOf(context),
+                  // locale: Get.locale ?? Localizations.localeOf(context),
                   // Automatically uses light/dark theme based on system brightness
                   // Themes are provided via Material Theme extensions above
                   themeMode: ThemeMode.system,

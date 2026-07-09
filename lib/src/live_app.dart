@@ -4,6 +4,8 @@ import 'package:appscrip_live_stream_component/appscrip_live_stream_component.da
 import 'package:appscrip_live_stream_component/src/controllers/coins_plans_wallet_controller/coins_plans_wallet.dart';
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/mqtt_helper.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
+import 'package:appscrip_live_stream_component/src/res/localization/ism_live_localization.dart';
+import 'package:appscrip_live_stream_component/src/res/localization/ism_live_strings_en.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,6 +23,7 @@ class IsmLiveApp extends StatefulWidget {
     this.onCallEnd,
     this.enableLog = true,
     this.onLogout,
+    this.locale,
   });
   final IsmLiveConfigData configuration;
   final GlobalKey<NavigatorState> navigatorKey;
@@ -28,6 +31,10 @@ class IsmLiveApp extends StatefulWidget {
   final VoidCallback? onCallEnd;
   final bool enableLog;
   final VoidCallback? onLogout;
+
+  /// Locale for SDK UI when using the plug-and-play [IsmLiveApp] widget.
+  /// For manual init, prefer [IsmLiveApp.setLocale] or [configureInterface].
+  final Locale? locale;
 
   static bool get isInitialized =>
       _initialized && IsmLiveUtility.hasValidUserToken;
@@ -490,6 +497,8 @@ class IsmLiveApp extends StatefulWidget {
     List<String>? mqttTopics,
     List<String>? mqttTopicChannels,
     VoidCallback? onStreamEnd,
+    Locale? locale,
+    IsmLiveTranslationsData? translations,
     // Background lifecycle configuration
     bool enableBackgroundLifecycle = true,
     bool enableBackgroundAudio = true,
@@ -562,6 +571,13 @@ class IsmLiveApp extends StatefulWidget {
         shouldInitializeMqtt: shouldInitializeMqtt,
       );
       IsmLiveLog.info('initializeMqtt DONE');
+
+      if (locale != null || translations != null) {
+        setLocale(
+          locale ?? IsmLiveLocaleController.instance.locale.value,
+          translations: translations,
+        );
+      }
 
       _initialized = true;
       IsmLiveLog.info('IsmLiveApp.initialize: SUCCESS');
@@ -661,6 +677,13 @@ class IsmLiveApp extends StatefulWidget {
     Duration? mqttChatFallbackInterval,
     TokenExpiredCallback? tokenExpiredCallback,
 
+    /// SDK UI language. Supported: en, fr, pt.
+    /// Use [setLocale] to change at runtime.
+    Locale? locale,
+
+    /// Optional per-string overrides (legacy API).
+    IsmLiveTranslationsData? translations,
+
     /// When `false`, [IsmLiveStreamController.getStreams] does not call the
     /// listing API. Default `true`.
     bool enableInternalStreamListingRefresh = true,
@@ -746,7 +769,36 @@ class IsmLiveApp extends StatefulWidget {
         mqttChatFallbackInterval ?? const Duration(seconds: 6);
     IsmLiveDelegate.enableInternalStreamListingRefresh =
         enableInternalStreamListingRefresh;
+
+    if (locale != null || translations != null) {
+      setLocale(
+        locale ?? IsmLiveLocaleController.instance.locale.value,
+        translations: translations,
+      );
+    }
   }
+
+  /// Sets the SDK UI language at runtime.
+  ///
+  /// Supported locales: [IsmLiveSupportedLocales.english],
+  /// [IsmLiveSupportedLocales.french], [IsmLiveSupportedLocales.portuguese].
+  ///
+  /// ```dart
+  /// IsmLiveApp.setLocale(const Locale('fr'));
+  /// ```
+  static void setLocale(
+    Locale locale, {
+    IsmLiveTranslationsData? translations,
+  }) {
+    IsmLiveLocaleController.instance.update(
+      locale,
+      translations: translations,
+    );
+  }
+
+  /// Current SDK UI locale.
+  static Locale get currentLocale =>
+      IsmLiveLocaleController.instance.locale.value;
 
   static Future<void> endStream(
           {required BuildContext context,
@@ -1462,6 +1514,7 @@ class _IsmLiveAppState extends State<IsmLiveApp> {
     _initFuture = IsmLiveApp.initialize(
       widget.configuration,
       navigatorKey: widget.navigatorKey,
+      // locale: const Locale('en'),
     );
   }
 

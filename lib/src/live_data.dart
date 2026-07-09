@@ -91,8 +91,8 @@ class IsmLiveData extends StatelessWidget {
   /// Defaults to [ThemeMode.system] to automatically follow system brightness.
   final ThemeMode? themeMode;
 
-  /// Locale for component UI strings. When null, uses the ambient
-  /// [Localizations.localeOf] if available, otherwise English.
+  /// Locale for component UI strings. When null, uses [IsmLiveApp.setLocale] /
+  /// [IsmLiveApp.configureInterface] if set, otherwise ambient app locale.
   final Locale? locale;
 
   final IsmLiveTranslationsData? translations;
@@ -113,7 +113,12 @@ class IsmLiveData extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ValueListenableBuilder<Locale>(
+        valueListenable: IsmLiveLocaleController.instance.locale,
+        builder: (context, _, __) => _buildContent(context),
+      );
+
+  Widget _buildContent(BuildContext context) {
     // Try to get theme from Material Theme extension (if available)
     // Material Theme extension provides the theme for the current brightness
     final materialExtension = Theme.of(context).extension<IsmLiveDataExtension>();
@@ -136,16 +141,25 @@ class IsmLiveData extends StatelessWidget {
         theme ??
         _kDarkThemeData;
 
+    final controller = IsmLiveLocaleController.instance;
     final effectiveTranslations =
-        translations ?? materialExtension?.translations;
-    final effectiveLocale = IsmLiveSupportedLocales.resolve(
-      locale ?? Localizations.maybeLocaleOf(context),
+        translations ?? materialExtension?.translations ?? controller.translations;
+    final effectiveLocale = controller.resolveLocale(
+      context,
+      widgetLocale: locale,
     );
     final localization = IsmLiveLocalization.forLocale(
       effectiveLocale,
       overrides: effectiveTranslations,
     );
     IsmLiveLocalization.current = localization;
+
+    if (locale != null) {
+      controller.update(
+        effectiveLocale,
+        translations: effectiveTranslations,
+      );
+    }
 
     return IsmLiveLocalizationScope(
       localization: localization,

@@ -131,6 +131,113 @@ class IsmLiveLocalization {
   }
 }
 
+/// Global locale controller for host apps using [IsmLiveApp.initialize] /
+/// [IsmLiveApp.configureInterface] without wrapping [IsmLiveData].
+class IsmLiveLocaleController {
+  IsmLiveLocaleController._();
+
+  static final IsmLiveLocaleController instance = IsmLiveLocaleController._();
+
+  final ValueNotifier<Locale> locale =
+      ValueNotifier<Locale>(IsmLiveSupportedLocales.english);
+
+  IsmLiveTranslationsData? _translations;
+  bool _hasExplicitLocale = false;
+
+  /// Whether [update] or [IsmLiveApp.setLocale] was called with a locale.
+  bool get hasExplicitLocale => _hasExplicitLocale;
+
+  IsmLiveTranslationsData? get translations => _translations;
+
+  /// Active localization resolved from [locale] and optional overrides.
+  IsmLiveLocalization get localization => IsmLiveLocalization.forLocale(
+        locale.value,
+        overrides: _translations,
+      );
+
+  /// Updates SDK locale. Call from host app when language changes.
+  void update(
+    Locale newLocale, {
+    IsmLiveTranslationsData? translations,
+    bool markExplicit = true,
+  }) {
+    if (translations != null) {
+      _translations = translations;
+    }
+    if (markExplicit) {
+      _hasExplicitLocale = true;
+    }
+    locale.value = IsmLiveSupportedLocales.resolve(newLocale);
+    IsmLiveLocalization.current = localization;
+  }
+
+  /// Resolves locale for widgets that do not pass an explicit [locale].
+  Locale resolveLocale(BuildContext context, {Locale? widgetLocale}) {
+    if (widgetLocale != null) {
+      return IsmLiveSupportedLocales.resolve(widgetLocale);
+    }
+    if (_hasExplicitLocale) {
+      return locale.value;
+    }
+    return IsmLiveSupportedLocales.resolve(Localizations.maybeLocaleOf(context));
+  }
+}
+
+/// Wrap host app content so SDK screens receive localized strings.
+///
+/// Use in `GetMaterialApp.builder` or `MaterialApp.builder` when not using
+/// [IsmLiveData]:
+///
+/// ```dart
+/// builder: (context, child) => IsmLiveLocalizationHost(child: child!),
+/// ```
+class IsmLiveLocalizationHost extends StatelessWidget {
+  const IsmLiveLocalizationHost({
+    super.key,
+    required this.child,
+    this.locale,
+    this.translations,
+  });
+
+  final Widget child;
+
+  /// When set, overrides the controller locale for this subtree.
+  final Locale? locale;
+
+  /// Optional per-string overrides (legacy [IsmLiveTranslationsData] API).
+  final IsmLiveTranslationsData? translations;
+
+  @override
+  Widget build(BuildContext context) {
+    if (locale != null || translations != null) {
+      final resolved = IsmLiveSupportedLocales.resolve(
+        locale ?? Localizations.maybeLocaleOf(context),
+      );
+      final localization = IsmLiveLocalization.forLocale(
+        resolved,
+        overrides: translations,
+      );
+      IsmLiveLocalization.current = localization;
+      return IsmLiveLocalizationScope(
+        localization: localization,
+        child: child,
+      );
+    }
+
+    return ValueListenableBuilder<Locale>(
+      valueListenable: IsmLiveLocaleController.instance.locale,
+      builder: (context, _, __) {
+        final localization = IsmLiveLocaleController.instance.localization;
+        IsmLiveLocalization.current = localization;
+        return IsmLiveLocalizationScope(
+          localization: localization,
+          child: child,
+        );
+      },
+    );
+  }
+}
+
 /// Provides [IsmLiveLocalization] to the widget tree.
 class IsmLiveLocalizationScope extends InheritedWidget {
   const IsmLiveLocalizationScope({
