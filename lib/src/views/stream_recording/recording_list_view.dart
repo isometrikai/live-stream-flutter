@@ -61,7 +61,7 @@ class _IsmLiveRecordingListViewState extends State<IsmLiveRecordingListView> {
             enablePullDown: true,
             onRefresh: _fetchRecordings,
             child: controller.recordingsList.isEmpty
-                ? const IsmLiveEmptyScreen(
+                ? IsmLiveEmptyScreen(
                     label: IsmLiveStrings.noRecordings,
                     placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
                   )

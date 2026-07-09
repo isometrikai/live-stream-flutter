@@ -132,25 +132,25 @@ class FileManager {
     bool enableVideo = false,
   }) =>
       <AttachmentModel>[
-        const AttachmentModel(
-          label: 'Camera',
+        AttachmentModel(
+          label: IsmLiveStrings.camera,
           iconPath: IsmLiveAssetConstants.camera,
           onTap: FileManager.pickCameraImage,
         ),
-        const AttachmentModel(
-          label: 'Gallery',
+        AttachmentModel(
+          label: IsmLiveStrings.gallery,
           iconPath: IsmLiveAssetConstants.photoVideo,
           onTap: FileManager.pickGalleryImage,
         ),
         if (enableVideo)
-          const AttachmentModel(
-            label: 'Video',
+          AttachmentModel(
+            label: IsmLiveStrings.video,
             iconPath: IsmLiveAssetConstants.videoIcon,
             onTap: FileManager.pickVideo,
           ),
         if (enableDoc)
-          const AttachmentModel(
-            label: 'Doc',
+          AttachmentModel(
+            label: IsmLiveStrings.doc,
             iconPath: IsmLiveAssetConstants.document,
             onTap: FileManager.pickDocument,
           ),

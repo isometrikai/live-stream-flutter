@@ -232,7 +232,7 @@ class IsmGoLiveView extends StatelessWidget {
                                 fillColor: Colors
                                     .transparent, // Remove fill since Container has it
                                 controller: controller.descriptionController,
-                                hintText: 'Enter description',
+                                hintText: IsmLiveStrings.enterDescription,
                                 maxLength: 250,
                                 onchange: (_) {
                                   controller.update([buttonUpdateId]);
@@ -245,19 +245,19 @@ class IsmGoLiveView extends StatelessWidget {
                       IsmLiveDimens.boxHeight10,
                       if (IsmLiveDelegate.hdStream ?? true)
                         IsmLiveRadioListTile(
-                          title: 'HD Broadcast',
+                          title: IsmLiveStrings.hdBroadcast,
                           onChange: controller.onChangeHdBroadcast,
                           value: controller.isHdBroadcast,
                         ),
                       if (IsmLiveDelegate.recordeStream ?? true)
                         IsmLiveRadioListTile(
-                          title: 'Record Broadcast',
+                          title: IsmLiveStrings.recordBroadcast,
                           onChange: controller.onChangeRecording,
                           value: controller.isRecordingBroadcast,
                         ),
                       if (IsmLiveDelegate.restreamStream ?? true)
                         IsmLiveRadioListTile(
-                          title: 'Restream Broadcast',
+                          title: IsmLiveStrings.restreamBroadcast,
                           onChange: controller.onChangeRestream,
                           value: controller.isRestreamBroadcast,
                         ),
@@ -265,7 +265,7 @@ class IsmGoLiveView extends StatelessWidget {
                         const _Restream(),
                       if (controller.isRtmp) ...[
                         IsmLiveRadioListTile(
-                          title: 'Use Persistent RTMP Stream Key',
+                          title: IsmLiveStrings.usePersistentRtmpStreamKey,
                           onChange: controller.onChangePersistent,
                           value: controller.usePersistentStreamKey,
                         ),
@@ -293,7 +293,7 @@ class IsmGoLiveView extends StatelessWidget {
                                   ? 0.5
                                   : 1.0,
                           child: IsmLiveRadioListTile(
-                            title: 'Schedule Live',
+                            title: IsmLiveStrings.scheduleLive,
                             onChange: controller
                                         .streamDetails?.isScheduledStream ??
                                     false
@@ -368,14 +368,14 @@ class _StreamTypes extends StatelessWidget {
                           e == IsmLiveStreamTypes.premium) ...[
                         const IsmLiveImage.svg(IsmLiveAssetConstants.coinSvg),
                         Text(
-                          ' ${controller.premiumStreamCoinsController.text} coins',
+                          ' ${IsmLiveStrings.coinsCountFormat(controller.premiumStreamCoinsController.text)}',
                           style: context.dynamicTextTheme.labelLarge?.copyWith(
                             color: !isSelected ? Colors.black : Colors.white,
                           ),
                         ),
                       ] else
                         Text(
-                          e.value,
+                          e.label,
                           style: context.dynamicTextTheme.labelLarge?.copyWith(
                             color: !isSelected ? Colors.black : Colors.white,
                           ),
@@ -488,7 +488,7 @@ class _StreamImage extends StatelessWidget {
                       ),
                       IsmLiveDimens.boxHeight10,
                       Text(
-                        'Add Cover',
+                        IsmLiveStrings.addCover,
                         style: IsmGoLiveView._getAddCoverTextStyle(context),
                       ),
                     ],
@@ -552,7 +552,7 @@ class _AddProduct extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Add product*',
+                  IsmLiveStrings.addProductRequired,
                   style: context.dynamicTextTheme.bodyMedium?.copyWith(
                     color: IsmLiveColors.white,
                     fontWeight: FontWeight.w600,
@@ -565,7 +565,7 @@ class _AddProduct extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                     ),
                     child: Text(
-                      '+Add',
+                      IsmLiveStrings.addPlus,
                       style: context.dynamicTextTheme.bodyMedium?.copyWith(
                         color: IsmLiveColors.white,
                         fontWeight: FontWeight.w600,
@@ -621,7 +621,7 @@ class _AddProduct extends StatelessWidget {
                               color: IsmLiveColors.white,
                             ),
                             Text(
-                              'Add products',
+                              IsmLiveStrings.addProductsAction,
                               style:
                                   IsmGoLiveView._getAddCoverTextStyle(context),
                             ),
@@ -653,7 +653,7 @@ class _Restream extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Restream',
+                          IsmLiveStrings.reStream,
                           style: IsmGoLiveView.getTextStyle(context, true),
                         ),
                         const Icon(
@@ -685,7 +685,7 @@ class _ScheduleStream extends StatelessWidget {
                 child: Column(
                   children: [
                     _InputField(
-                      label: 'Date & Time*',
+                      label: IsmLiveStrings.dateAndTimeRequired,
                       controller: TextEditingController(
                         text: controller.scheduleLiveDate.formattedDate,
                       ),
@@ -725,7 +725,7 @@ class _PersistentStream extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _InputField(
-                    label: 'RTML URL',
+                    label: IsmLiveStrings.rtmlUrl,
                     readOnly: true,
                     controller: controller.rtmlUrlDevice,
                     onTap: () => IsmLiveUtility.copyToClipboard(
@@ -738,8 +738,8 @@ class _PersistentStream extends StatelessWidget {
                   ),
                   IsmLiveDimens.boxHeight10,
                   _InputField(
-                    label: 'Stream Key',
-                    hint: 'Key will be generated after you start a new stream',
+                    label: IsmLiveStrings.streamKey,
+                    hint: IsmLiveStrings.streamKeyHint,
                     readOnly: true,
                     controller: controller.streamKeyDevice,
                     onTap: () => IsmLiveUtility.copyToClipboard(
@@ -753,11 +753,10 @@ class _PersistentStream extends StatelessWidget {
                   IsmLiveDimens.boxHeight10,
                   Text.rich(
                     TextSpan(
-                      text:
-                          'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device. \nIf you want to create a new stream key in case you think your key is compromised ',
+                      text: IsmLiveStrings.persistentRtmpStreamInstruction,
                       children: [
                         TextSpan(
-                          text: 'click here.',
+                          text: IsmLiveStrings.clickHere,
                           style: IsmGoLiveView.getTextStyle(context, true)
                               .copyWith(
                             decoration: TextDecoration.underline,
@@ -805,7 +804,7 @@ class _InputField extends StatelessWidget {
         IsmLiveDimens.boxHeight4,
         IsmLiveInputField(
           controller: controller,
-          hintText: hint ?? 'Enter $label',
+          hintText: hint ?? IsmLiveStrings.enterFieldFormat(label),
           hintStyle: fieldTextStyle.copyWith(
             color: fieldTextStyle.color?.withValues(alpha: 0.7),
           ),
@@ -838,7 +837,7 @@ class _CameraPreviewBackground extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    'Error while initializing Camera',
+                    IsmLiveStrings.errorInitializingCamera,
                     style: context.dynamicTextTheme.bodyLarge?.copyWith(
                       color: IsmLiveColors.white,
                     ),
@@ -886,7 +885,7 @@ class _DefaultGoLiveHeader extends StatelessWidget {
             onPressed: IsmLiveRoute.pop,
           ),
           Text(
-            'Go Live',
+            IsmLiveStrings.goLive,
             style: IsmLiveStyles.whiteBold16,
           ),
           const IconButton(

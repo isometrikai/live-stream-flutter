@@ -4,15 +4,21 @@ import 'package:get/get.dart';
 
 part 'translation_en.dart';
 part 'translation_nl.dart';
+part 'translation_fr.dart';
+part 'translation_pt.dart';
 
 class TranslationsFile extends Translations {
   /// List of locales used in the application
   static const listOfLocales = <Locale>[
     Locale('en'),
+    Locale('fr'),
+    Locale('pt'),
   ];
 
   @override
   Map<String, Map<String, String>> get keys => {
         'en': en,
+        'fr': fr,
+        'pt': pt,
       };
 }

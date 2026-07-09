@@ -95,6 +95,9 @@ extension IsmLiveContextExtension on BuildContext {
 
   IsmLiveTranslationsData? get liveTranslations => liveExtension?.translations;
 
+  IsmLiveLocalization get liveLocalization =>
+      IsmLiveLocalizationScope.of(this);
+
   IsmLivePropertiesData? get liveProperties => liveExtension?.properties;
 
   /// Get dynamic text theme that automatically applies the configured font family
@@ -232,9 +235,9 @@ extension IsmLiveDateExtensions on DateTime {
     final date = DateTime(year, month, day);
     final tomorrow = today.add(const Duration(days: 1));
     final dayLabel = date == today
-        ? 'Today'
+        ? IsmLiveStrings.today
         : date == tomorrow
-            ? 'Tomorrow'
+            ? IsmLiveStrings.tomorrow
             : DateFormat('dd MMM').format(this);
     return '$dayLabel • $formattedTime';
   }

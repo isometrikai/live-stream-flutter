@@ -38,7 +38,7 @@ class IsmLiveAppbar extends StatelessWidget implements PreferredSizeWidget {
                         SvgPicture.asset(IsmLiveAssetConstants.coinSvg),
                         IsmLiveDimens.boxWidth10,
                         Text(
-                          'Add Coins',
+                          IsmLiveStrings.addCoins,
                           style: IsmLiveStyles.black16.copyWith(
                             color:
                                 (Theme.of(context).brightness == Brightness.dark

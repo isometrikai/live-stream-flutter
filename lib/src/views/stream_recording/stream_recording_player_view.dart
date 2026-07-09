@@ -271,9 +271,9 @@ class _IsmLiveStreamRecordingPlayerViewState
         appBar: AppBar(
           automaticallyImplyLeading: false,
           leading: ismLiveBuildBackButton(context),
-          title: const Text(IsmLiveStrings.recording),
+          title: Text(IsmLiveStrings.recording),
         ),
-        body: const Center(child: Text(IsmLiveStrings.noRecordings)),
+        body: Center(child: Text(IsmLiveStrings.noRecordings)),
       );
     }
 

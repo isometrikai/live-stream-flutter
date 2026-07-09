@@ -67,7 +67,7 @@ class IsmLiveRtmpSheet extends StatelessWidget {
               ),
               IsmLiveDimens.boxHeight10,
               Text.rich(
-                const TextSpan(
+                TextSpan(
                   text: IsmLiveStrings.rtmpStreamInstruction,
                 ),
                 style: context.textTheme.labelMedium?.copyWith(
