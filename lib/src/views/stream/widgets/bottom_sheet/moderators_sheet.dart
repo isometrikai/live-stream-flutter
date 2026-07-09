@@ -286,7 +286,7 @@ class IsmLiveModeratorsSheet extends StatelessWidget {
                                   : Colors.white),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         IsmLiveStrings.addModerator,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
@@ -456,7 +456,7 @@ class _RemoveModeratorConfirmSheet extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: IsmLiveButton.secondary(
                   label: IsmLiveStrings.cancel,
                   onTap: IsmLiveRoute.pop,

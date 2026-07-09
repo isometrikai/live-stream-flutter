@@ -31,7 +31,7 @@ class _DefaultGoLiveButton extends StatelessWidget {
               Padding(
                 padding: IsmLiveDimens.edgeInsets4,
                 child: Text(
-                  'Broadcasters under 18 are not permitted',
+                  IsmLiveStrings.broadcastersUnder18NotPermitted,
                   style: context.dynamicTextTheme.bodySmall?.copyWith(
                     color: isEnabled ? Colors.white : Colors.white70,
                   ),
@@ -132,8 +132,8 @@ class IsmGoLiveNavBar extends StatelessWidget {
             final isEnabled = controller.isGoLiveButtonEnabled;
             final buttonLabel =
                 controller.streamDetails?.isScheduledStream ?? false
-                    ? 'Update'
-                    : 'Go Live';
+                    ? IsmLiveStrings.update
+                    : IsmLiveStrings.goLive;
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [

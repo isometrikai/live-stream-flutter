@@ -239,8 +239,8 @@ mixin StreamJoinStreamOpsMixin on StreamJoinMixin, StreamJoinConnectionMixin, St
               await IsmLiveUtility.openCustomBottomSheet<bool>(
             title:
                 "It looks like you're already live from another device. Do you want to stop that stream?",
-            leftLabel: 'no'.tr,
-            rightLabel: 'yes'.tr,
+            leftLabel: IsmLiveStrings.no,
+            rightLabel: IsmLiveStrings.yes,
             onLeft: () => IsmLiveRoute.pop(false),
             onRight: () => IsmLiveRoute.pop(true),
           );

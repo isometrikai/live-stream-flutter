@@ -55,7 +55,7 @@ class IsmLiveAllStreamsListing extends StatelessWidget {
     ].where((section) => section.streams.isNotEmpty).toList();
 
     if (sections.isEmpty) {
-      return const IsmLiveEmptyScreen(
+      return IsmLiveEmptyScreen(
         label: IsmLiveStrings.noStreams,
         placeHolder: IsmLiveAssetConstants.noStreamsPlaceholder,
       );

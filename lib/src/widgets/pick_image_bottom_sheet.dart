@@ -80,7 +80,7 @@ class PickImageSheet extends StatelessWidget {
                     ),
                     IsmLiveDimens.boxHeight10,
                     Text(
-                      attachments[index].label.tr,
+                      attachments[index].label,
                       style: context.textTheme.labelLarge?.copyWith(
                         color: textColor,
                       ),

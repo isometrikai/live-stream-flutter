@@ -1,263 +1,227 @@
+import 'package:appscrip_live_stream_component/src/res/localization/ism_live_localization.dart';
+
 class IsmLiveStrings {
   const IsmLiveStrings._();
 
-  static const String timeoutError =
-      'Oops! The request took too long to process. Please check your internet connection and try again. If the issue persists, you can contact our support team for assistance.';
+  static String _t(String key) => IsmLiveLocalization.current.translate(key);
 
-  static const String somethingWentWrong =
-      'Oops! Something went wrong. Please check your internet connection and try again.';
-
-  static const String noInternet =
-      'No internet connection. Please connect to the internet and try again.';
-
-  static const String errorLoadingImage = 'Error loading image';
-
-  static const String title = 'Live Streams';
-
-  static const String noStreams = 'No Streams';
-
-  static const String all = 'All';
-  static const String live = 'Live';
-  static const String viewAll = 'View all';
-  static const String liveStreams = 'Live Streams';
-  static const String credit = 'Credit';
-  static const String debit = 'Debit';
-  static const String audioOnly = 'Audio Only';
-  static const String scheduled = 'Scheduled Streams';
-  static const String multiLive = 'Multi Live';
-  static const String pk = 'pk';
-  static const String private = 'Private';
-  static const String ecommerce = 'Ecommerce';
-  static const String reStream = 'Restream';
-  static const String hd = 'HD';
-  static const String recorded = 'Recorded';
-  static const String recordings = 'Recordings';
-  static const String noRecordings = 'No Recordings';
-
-  static const String normal = 'Normal';
-  static const String threeD = '3D';
-  static const String animated = 'Animated';
-
-  static const String copublisherRequests = 'Requests';
-  static const String users = 'Users';
-  static const String members = 'Members';
-
-  static const String onlineList = 'Online List';
-  static const String inviteList = 'InviteList';
-
-  static const String audiencelist = 'Audience list';
-  static const String contributionRanking = 'Contribution Ranking';
-
-  static const String youreLive = 'You\'re Live';
-
-  static const String preparingYourStream = 'Preparing your stream';
-  static const String reconnecting = 'Reconnecting... Please wait';
-  static const String joiningLiveStream = 'Joining the live stream';
-  static const String connectingToLiveStream =
-      'Connecting to the live stream...';
-  static const String enablingYourVideo = 'Enabling your video';
-  static const String pkMessage = 'pk is starting';
-
-  static const String uploadingImage = 'Uploading Image';
-  static const String youAreLiveNow = 'You’re Live Now';
-  static const String tvContinue = 'Continue';
-
-  static const String areYouSureEndStream =
-      'Are you sure that you want to end your live stream?';
-  static const String areYouSureLeaveStream = 'Are you sure?';
-
-  static const String kickoutMessage =
-      'The host has removed you from the stream, you can watch other live videos';
-  static const String streamEnded =
-      'The host has ended the stream you were watching, but don\'t worry! You can check out other live videos';
-  static const String addedModerator =
-      '@name has added you as a moderator in a stream';
-
-  static const String attention = 'Attention';
-
-  static const String requestCopublishingTitle =
-      'Request to be in this live video';
-
-  static const String requestCopublishingDescription =
-      'Anyone can watch, some of yours followers may get notified elizabeth can save this to igtv, which means it\'ll appear on their profile and anywhere else the igtv video shows.';
-
-  static const String moderationWarning =
-      'We moderate live broadcasts. smoking vulgarity, porn,indecent exposure, chid pornograpgy is not allowedand will be banned. live broadcasts are monitored 24 hours a day.\nWarning: Third-party top-up or recharge is subject to account closure, suspension, or permanent ban.';
-  static const String weSentNotificationToFollowersText =
-      'We’ve sent a notification to your followers. Your fans will join the broadcast soon';
-  static const String broadcastingRulesTitle =
-      '📢 Broadcasting Rules & Regulations';
-  static const String viewerConductTitle = '🛑 Viewer Conduct';
-  static const String welcomeToStreamRulesText =
-      'Welcome to the stream! To ensure a safe, respectful, and enjoyable experience for everyone, please follow these rules:';
-  static const String broadcastingRulesText =
-      '18+ Only: This stream is strictly for adults (18+). Viewer discretion is advised. Respect Others: No hate speech, harassment, or discriminatory language.';
-  static const String noSpammingText =
-      'No Spamming: Avoid spamming the chat or promoting unrelated content.';
-
-  static const String hostAcceptedCopublishRequestTitle =
-      '@name has accepted your request to join as a co-publisher';
-  static const String youAreNowACopublisher = 'You\'re now a co-publisher';
-  static const String youCanJoinTheLiveStreamAndStartPublishingYourVideo =
-      'You can join the live stream and start publishing your video.';
-  static const String hostAcceptedCopublishRequestDescription =
-      'You can now join the live video as a co-publisher and start publishing';
-
-  static const String pleaseSelectCoverPhoto =
-      'Please select a cover photo to go live';
-
-  static const String tapAgainToExit = 'Tap again to exit';
-
-  static const String takePhoto = 'Take photo';
-  static const String chooseFromGallery = 'Choose from gallery';
-
-  // Moderator bottom sheet strings
-  static const String addedToModeratorGroupTitle =
-      'Added to moderator\'s group of broadcast';
-  static const String addedToModeratorGroupDescription =
-      '@moderatorName has been added to the moderator\'s group of broadcast by @initiatorName. Being a moderator one can kick out members and viewers, reply-to and delete messages';
-  static const String currentlyModeratingTitle =
-      'You\'re currently moderating the broadcast';
-  static const String currentlyModeratingDescription =
-      'Being a moderator you can kickout members and viewers, reply to and delete messages.';
-  static const String gotIt = 'Got It';
-  static const String manageModerators = 'Manage Moderators';
-  static const String stopModerating = 'Stop Moderating';
-  static const String noModerator = 'No Moderator';
-  static const String searchModerators = 'Search Moderators';
-  static const String moderators = 'Moderators';
-  static const String viewProfile = 'View Profile';
-  static const String searchUsers = 'Search Users';
-  static const String addModerator = 'Add Moderator';
-  static const String searchByUsername = 'Search by username';
-
-  // Copublisher sheet strings
-  static const String searchRequest = 'Search Request';
-  static const String noRequestUsers = 'No request users';
-  static const String accepted = 'Accepted';
-  static const String deny = 'Denied';
-  static const String noUsers = 'No users';
-  static const String searchUser = 'Search User';
-
-  // Premium stream sheet strings
-  static const String premiumBroadcast = 'Premium Broadcast';
-  static const String setCoinsFromFans =
-      'Set coins you want to get from your fans';
-  static const String enterCoins = 'Enter coins';
-  static const String save = 'Save';
-
-  // Restream view strings
-  static const String restreamChannel = 'Restream Channel';
-  static const String restreamOn = 'Restream on';
-  static const String enableStreamOn = 'Enable stream on';
-  static const String rtmlUrl = 'RTML URL';
-  static const String streamKey = 'Stream key';
-  static const String enterRtmlUrl = 'Enter RTML URL';
-  static const String enterStreamKey = 'Enter Stream key';
-  static const String streamKeyHint =
-      'Key will be generated after you start a new stream';
-  static const String rtmpStreamInstruction =
-      'Please copy and paste the STREAM KEY and the STREAM URL into your RTMP streaming device.';
-  static const String copiedToClipboard = 'Copied to clipboard';
-  static const String nothingToCopy = 'Nothing to copy';
-  static const String youtubeStreamUrlInstruction =
-      'You have to enter the youtube stream url here,\n';
-  static const String clickHereToKnowMore = 'click here to know more.';
-
-  // Schedule stream strings
-  static const String scheduleStream = 'Schedule Stream';
-  static const String confirm = 'Confirm';
-  static const String streamSchedule = 'Stream Schedule';
-  static const String editScheduleStream = 'Edit Schedule Stream';
-  static const String scheduleUpdated = 'Schedule Updated';
-  static const String scheduleUpdatedDescription =
-      'Your stream will go live on';
-  static const String editStream = 'Edit Stream';
-  static const String deleteStream = 'Delete Stream';
-
-  // End stream view / Analytics sheet strings
-  static const String liveStreamEnded = 'Live stream ended!';
-  static const String liveStream = 'Live stream';
-  static const String hearts = 'Hearts';
-  static const String order = 'Order';
-  static const String viewers = 'Viewers';
-  static const String followers = 'Followers';
-  static const String earnings = 'Earnings';
-  static const String duration = 'Duration';
-  static const String viewer = 'Viewer';
-
-  // Sheet mixin / exit & dialogs
-  static const String cancel = 'Cancel';
-  static const String stopStream = 'Stop stream';
-  static const String endStream = 'End Stream';
-  static const String leaveStream = 'Leave stream';
-  static const String requestDeniedByHost = 'Request denied by the host';
-  static const String requestedCopublishing = 'Requested Co-publishing';
-  static const String sendRequest = 'Send Request';
-  static const String startVideo = 'Start Video';
-  static const String premiumStreamPayToJoinMessage =
-      'This stream is premium. To join you need to pay %s coins';
-  static const String payAndContinue = 'Pay & Continue';
-  static const String exit = 'Exit';
-  static const String unableToReconnectToYourStream =
-      'Unable to reconnect to your stream. Please try again or start a new stream';
-  static const String unableToReconnectToStreamRejoin =
-      'Unable to reconnect to the stream. Please try again or rejoin the stream';
-  static const String unableToReconnectToStreamBrowseOther =
-      'Unable to reconnect to the stream. Please try again or browse other streams';
-
-  // PK sheet strings
-  static const String pkWithFriends = 'PK With Friends';
-  static const String search = 'search';
-  static const String noDataFound = 'no data found';
-  static const String invite = 'invite';
-  static const String accept = 'Accept';
-  static const String reject = 'Reject';
-  static const String pkChallengeSettings = 'PK Challenge Settings';
-  static const String pkChallengeSettingsDescription =
-      'Configure your PK challenge by modifying the settings below';
-  static const String winnerTakesAll = 'Winner takes all';
-  static const String winnerTakesAllDescription =
-      'This would transfer all the gifts earned by the looser to the winner';
-  static const String choosePkChallengeDuration =
-      'Choose PK Challenge Duration';
-  static const String confirmAndStart = 'Confirm & Start';
-  static const String minShort = 'min';
-
-  // Stream recording player strings
-  static const String recording = 'Recording';
-  static const String failedToLoadVideo = 'Failed to load video';
-  static const String retry = 'Retry';
-
-  // Coins / wallet strings
-  static const String coinsWallet = 'Coins Wallet';
-  static const String totalCoins = 'Total Coins';
-  static const String coins = 'Coins';
-  static const String transactions = 'Transactions';
-  static const String withdraw = 'Withdraw';
-  static const String totalMoney = 'Total Money';
-  static const String coinTransactions = 'Coin Transactions';
-  static const String noData = 'No Data';
-  static const String transactionId = 'TransactionId:';
-  static const String breakdown = 'Breakdown';
-
-  // Stream UI + sheets strings
-  static const String searchCopublisher = 'Search Copublisher';
-  static const String okay = 'Okay';
-  static const String discountPercentage = 'Discount Percentage';
-  static const String enterDiscountPercentage = 'Enter discount percentage';
-  static const String add = 'Add';
-  static const String addProducts = 'Add Products';
-  static const String noProductsAvailable =
-      'There are no products available to tag';
-  static const String selected = 'Selected';
-  static const String topViewers = 'Top Viewers';
-  static const String noViewers = 'No Viewers';
-  static const String tagProducts = 'Tag Products';
-  static const String pinItem = 'Pin Item';
-  static const String messageOptions = 'Message Options';
-  static const String reply = 'Reply';
-  static const String delete = 'Delete';
-  static const String myBalance = 'My Balance';
-  static const String addCoins = 'Add Coins';
+  static String get timeoutError => _t('timeoutError');
+  static String get somethingWentWrong => _t('somethingWentWrong');
+  static String get noInternet => _t('noInternet');
+  static String get errorLoadingImage => _t('errorLoadingImage');
+  static String get title => _t('title');
+  static String get noStreams => _t('noStreams');
+  static String get all => _t('all');
+  static String get live => _t('live');
+  static String get viewAll => _t('viewAll');
+  static String get liveStreams => _t('liveStreams');
+  static String get credit => _t('credit');
+  static String get debit => _t('debit');
+  static String get audioOnly => _t('audioOnly');
+  static String get scheduled => _t('scheduled');
+  static String get multiLive => _t('multiLive');
+  static String get pk => _t('pk');
+  static String get private => _t('private');
+  static String get ecommerce => _t('ecommerce');
+  static String get reStream => _t('reStream');
+  static String get hd => _t('hd');
+  static String get recorded => _t('recorded');
+  static String get recordings => _t('recordings');
+  static String get noRecordings => _t('noRecordings');
+  static String get normal => _t('normal');
+  static String get threeD => _t('threeD');
+  static String get animated => _t('animated');
+  static String get copublisherRequests => _t('copublisherRequests');
+  static String get users => _t('users');
+  static String get members => _t('members');
+  static String get onlineList => _t('onlineList');
+  static String get inviteList => _t('inviteList');
+  static String get audiencelist => _t('audiencelist');
+  static String get contributionRanking => _t('contributionRanking');
+  static String get youreLive => _t('youreLive');
+  static String get preparingYourStream => _t('preparingYourStream');
+  static String get reconnecting => _t('reconnecting');
+  static String get joiningLiveStream => _t('joiningLiveStream');
+  static String get connectingToLiveStream => _t('connectingToLiveStream');
+  static String get enablingYourVideo => _t('enablingYourVideo');
+  static String get pkMessage => _t('pkMessage');
+  static String get uploadingImage => _t('uploadingImage');
+  static String get youAreLiveNow => _t('youAreLiveNow');
+  static String get tvContinue => _t('tvContinue');
+  static String get areYouSureEndStream => _t('areYouSureEndStream');
+  static String get areYouSureLeaveStream => _t('areYouSureLeaveStream');
+  static String get kickoutMessage => _t('kickoutMessage');
+  static String get streamEnded => _t('streamEnded');
+  static String get addedModerator => _t('addedModerator');
+  static String get attention => _t('attention');
+  static String get requestCopublishingTitle => _t('requestCopublishingTitle');
+  static String get requestCopublishingDescription => _t('requestCopublishingDescription');
+  static String get moderationWarning => _t('moderationWarning');
+  static String get weSentNotificationToFollowersText => _t('weSentNotificationToFollowersText');
+  static String get broadcastingRulesTitle => _t('broadcastingRulesTitle');
+  static String get viewerConductTitle => _t('viewerConductTitle');
+  static String get welcomeToStreamRulesText => _t('welcomeToStreamRulesText');
+  static String get broadcastingRulesText => _t('broadcastingRulesText');
+  static String get noSpammingText => _t('noSpammingText');
+  static String get hostAcceptedCopublishRequestTitle => _t('hostAcceptedCopublishRequestTitle');
+  static String get youAreNowACopublisher => _t('youAreNowACopublisher');
+  static String get youCanJoinTheLiveStreamAndStartPublishingYourVideo => _t('youCanJoinTheLiveStreamAndStartPublishingYourVideo');
+  static String get hostAcceptedCopublishRequestDescription => _t('hostAcceptedCopublishRequestDescription');
+  static String get pleaseSelectCoverPhoto => _t('pleaseSelectCoverPhoto');
+  static String get tapAgainToExit => _t('tapAgainToExit');
+  static String get takePhoto => _t('takePhoto');
+  static String get chooseFromGallery => _t('chooseFromGallery');
+  static String get addedToModeratorGroupTitle => _t('addedToModeratorGroupTitle');
+  static String get addedToModeratorGroupDescription => _t('addedToModeratorGroupDescription');
+  static String get currentlyModeratingTitle => _t('currentlyModeratingTitle');
+  static String get currentlyModeratingDescription => _t('currentlyModeratingDescription');
+  static String get gotIt => _t('gotIt');
+  static String get manageModerators => _t('manageModerators');
+  static String get stopModerating => _t('stopModerating');
+  static String get noModerator => _t('noModerator');
+  static String get searchModerators => _t('searchModerators');
+  static String get moderators => _t('moderators');
+  static String get viewProfile => _t('viewProfile');
+  static String get searchUsers => _t('searchUsers');
+  static String get addModerator => _t('addModerator');
+  static String get searchByUsername => _t('searchByUsername');
+  static String get searchRequest => _t('searchRequest');
+  static String get noRequestUsers => _t('noRequestUsers');
+  static String get accepted => _t('accepted');
+  static String get deny => _t('deny');
+  static String get noUsers => _t('noUsers');
+  static String get searchUser => _t('searchUser');
+  static String get premiumBroadcast => _t('premiumBroadcast');
+  static String get setCoinsFromFans => _t('setCoinsFromFans');
+  static String get enterCoins => _t('enterCoins');
+  static String get save => _t('save');
+  static String get restreamChannel => _t('restreamChannel');
+  static String get restreamOn => _t('restreamOn');
+  static String get enableStreamOn => _t('enableStreamOn');
+  static String get rtmlUrl => _t('rtmlUrl');
+  static String get streamKey => _t('streamKey');
+  static String get enterRtmlUrl => _t('enterRtmlUrl');
+  static String get enterStreamKey => _t('enterStreamKey');
+  static String get streamKeyHint => _t('streamKeyHint');
+  static String get rtmpStreamInstruction => _t('rtmpStreamInstruction');
+  static String get copiedToClipboard => _t('copiedToClipboard');
+  static String get nothingToCopy => _t('nothingToCopy');
+  static String get youtubeStreamUrlInstruction => _t('youtubeStreamUrlInstruction');
+  static String get clickHereToKnowMore => _t('clickHereToKnowMore');
+  static String get scheduleStream => _t('scheduleStream');
+  static String get confirm => _t('confirm');
+  static String get streamSchedule => _t('streamSchedule');
+  static String get editScheduleStream => _t('editScheduleStream');
+  static String get scheduleUpdated => _t('scheduleUpdated');
+  static String get scheduleUpdatedDescription => _t('scheduleUpdatedDescription');
+  static String get editStream => _t('editStream');
+  static String get deleteStream => _t('deleteStream');
+  static String get liveStreamEnded => _t('liveStreamEnded');
+  static String get liveStream => _t('liveStream');
+  static String get hearts => _t('hearts');
+  static String get order => _t('order');
+  static String get viewers => _t('viewers');
+  static String get followers => _t('followers');
+  static String get earnings => _t('earnings');
+  static String get duration => _t('duration');
+  static String get viewer => _t('viewer');
+  static String get cancel => _t('cancel');
+  static String get stopStream => _t('stopStream');
+  static String get endStream => _t('endStream');
+  static String get leaveStream => _t('leaveStream');
+  static String get requestDeniedByHost => _t('requestDeniedByHost');
+  static String get requestedCopublishing => _t('requestedCopublishing');
+  static String get sendRequest => _t('sendRequest');
+  static String get startVideo => _t('startVideo');
+  static String get premiumStreamPayToJoinMessage => _t('premiumStreamPayToJoinMessage');
+  static String get payAndContinue => _t('payAndContinue');
+  static String get exit => _t('exit');
+  static String get unableToReconnectToYourStream => _t('unableToReconnectToYourStream');
+  static String get unableToReconnectToStreamRejoin => _t('unableToReconnectToStreamRejoin');
+  static String get unableToReconnectToStreamBrowseOther => _t('unableToReconnectToStreamBrowseOther');
+  static String get pkWithFriends => _t('pkWithFriends');
+  static String get search => _t('search');
+  static String get noDataFound => _t('noDataFound');
+  static String get invite => _t('invite');
+  static String get accept => _t('accept');
+  static String get reject => _t('reject');
+  static String get pkChallengeSettings => _t('pkChallengeSettings');
+  static String get pkChallengeSettingsDescription => _t('pkChallengeSettingsDescription');
+  static String get winnerTakesAll => _t('winnerTakesAll');
+  static String get winnerTakesAllDescription => _t('winnerTakesAllDescription');
+  static String get choosePkChallengeDuration => _t('choosePkChallengeDuration');
+  static String get confirmAndStart => _t('confirmAndStart');
+  static String get minShort => _t('minShort');
+  static String get recording => _t('recording');
+  static String get failedToLoadVideo => _t('failedToLoadVideo');
+  static String get retry => _t('retry');
+  static String get coinsWallet => _t('coinsWallet');
+  static String get totalCoins => _t('totalCoins');
+  static String get coins => _t('coins');
+  static String get transactions => _t('transactions');
+  static String get withdraw => _t('withdraw');
+  static String get totalMoney => _t('totalMoney');
+  static String get coinTransactions => _t('coinTransactions');
+  static String get noData => _t('noData');
+  static String get transactionId => _t('transactionId');
+  static String get breakdown => _t('breakdown');
+  static String get searchCopublisher => _t('searchCopublisher');
+  static String get okay => _t('okay');
+  static String get discountPercentage => _t('discountPercentage');
+  static String get enterDiscountPercentage => _t('enterDiscountPercentage');
+  static String get add => _t('add');
+  static String get addProducts => _t('addProducts');
+  static String get noProductsAvailable => _t('noProductsAvailable');
+  static String get selected => _t('selected');
+  static String get topViewers => _t('topViewers');
+  static String get noViewers => _t('noViewers');
+  static String get tagProducts => _t('tagProducts');
+  static String get pinItem => _t('pinItem');
+  static String get messageOptions => _t('messageOptions');
+  static String get reply => _t('reply');
+  static String get delete => _t('delete');
+  static String get myBalance => _t('myBalance');
+  static String get addCoins => _t('addCoins');
+  static String get yes => _t('yes');
+  static String get no => _t('no');
+  static String get camera => _t('camera');
+  static String get gallery => _t('gallery');
+  static String get video => _t('video');
+  static String get doc => _t('doc');
+  static String get turnOffVideo => _t('turnOffVideo');
+  static String get turnOnVideo => _t('turnOnVideo');
+  static String get mute => _t('mute');
+  static String get unmute => _t('unmute');
+  static String get singleMultiGuestLive => _t('singleMultiGuestLive');
+  static String get liveFromDevice => _t('liveFromDevice');
+  static String get today => _t('today');
+  static String get tomorrow => _t('tomorrow');
+  static String get free => _t('free');
+  static String get premium => _t('premium');
+  static String get facebook => _t('facebook');
+  static String get youtube => _t('youtube');
+  static String get instagram => _t('instagram');
+  static String get goLive => _t('goLive');
+  static String get update => _t('update');
+  static String get enterDescription => _t('enterDescription');
+  static String get hdBroadcast => _t('hdBroadcast');
+  static String get recordBroadcast => _t('recordBroadcast');
+  static String get restreamBroadcast => _t('restreamBroadcast');
+  static String get usePersistentRtmpStreamKey => _t('usePersistentRtmpStreamKey');
+  static String get scheduleLive => _t('scheduleLive');
+  static String coinsCountFormat(String count) =>
+      _t('coinsCountFormat').replaceFirst('%s', count);
+  static String get addCover => _t('addCover');
+  static String get addProductRequired => _t('addProductRequired');
+  static String get addPlus => _t('addPlus');
+  static String get addProductsAction => _t('addProductsAction');
+  static String get dateAndTimeRequired => _t('dateAndTimeRequired');
+  static String get persistentRtmpStreamInstruction =>
+      _t('persistentRtmpStreamInstruction');
+  static String get clickHere => _t('clickHere');
+  static String enterFieldFormat(String label) =>
+      _t('enterFieldFormat').replaceFirst('%s', label);
+  static String get errorInitializingCamera => _t('errorInitializingCamera');
+  static String get broadcastersUnder18NotPermitted =>
+      _t('broadcastersUnder18NotPermitted');
 }

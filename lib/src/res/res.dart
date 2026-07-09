@@ -7,3 +7,4 @@ export 'properties/properties.dart';
 export 'styles.dart';
 export 'theme/theme.dart';
 export 'translations/translation.dart';
+export 'localization/localization.dart';

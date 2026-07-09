@@ -62,6 +62,9 @@ class _MyAppState extends State<MyApp> {
               navigatorKey: kNavigatorKey,
               debugShowCheckedModeBanner: false,
               themeMode: ThemeMode.system, // Follow system theme
+              locale: Get.deviceLocale,
+              fallbackLocale: const Locale('en'),
+              supportedLocales: TranslationsFile.listOfLocales,
               theme: ThemeData(
                 primaryColor: Colors.black,
                 brightness: Brightness.light,
@@ -131,6 +134,7 @@ class _MyAppState extends State<MyApp> {
               // ),
               builder: (context, child) => Obx(
                 () => IsmLiveData(
+                  locale: Get.locale ?? Localizations.localeOf(context),
                   // Automatically uses light/dark theme based on system brightness
                   // Themes are provided via Material Theme extensions above
                   themeMode: ThemeMode.system,
