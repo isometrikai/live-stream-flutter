@@ -890,6 +890,7 @@ class IsmLiveStreamController extends GetxController
     if (value) {
       final context = IsmLiveUtility.navigatorKey.currentContext!;
       await IsmLiveUtility.openBottomSheet(
+        ignoreSafeArea: false,
         const IsmLiveScheduleTimeBottomSheet(),
         backgroundColor: context.liveTheme?.backgroundColor ??
             (Theme.of(context).brightness == Brightness.dark
