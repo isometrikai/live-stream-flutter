@@ -60,7 +60,15 @@ class IsmLiveScheduleTimeBottomSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(IsmLiveDimens.twelve),
+            padding: EdgeInsets.fromLTRB(
+              IsmLiveDimens.twelve,
+              IsmLiveDimens.twelve,
+              IsmLiveDimens.twelve,
+              ismLiveBottomSheetActionBottomInset(
+                context,
+                designBottom: IsmLiveDimens.twelve,
+              ),
+            ),
             child: IsmLiveButton(
               label: IsmLiveStrings.confirm,
               onTap: IsmLiveRoute.pop,
