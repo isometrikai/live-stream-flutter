@@ -487,8 +487,15 @@ class IsmLiveApp extends StatefulWidget {
   }
 
   static bool _initialized = false;
-  static bool _initializing = false; // To prevent re-entrancy
   static bool _mqttInitialized = false;
+
+  /// Shared so concurrent [initialize] calls await the same work instead of
+  /// returning early while the first call is still in flight.
+  static Future<void>? _initFuture;
+
+  /// Bumped on failure/dispose so a late success from abandoned work
+  /// cannot mark the SDK initialized.
+  static int _initEpoch = 0;
 
   static Future<void> initialize(
     IsmLiveConfigData config, {
@@ -505,12 +512,76 @@ class IsmLiveApp extends StatefulWidget {
     bool enableBackgroundVideo = false,
     Duration? backgroundTimeout,
   }) async {
-    if (_initialized || _initializing) {
-      IsmLiveLog.info(
-          'IsmLiveApp.initialize: Already initialized or initializing.');
+    if (_initialized && IsmLiveUtility.hasValidUserToken) {
+      IsmLiveLog.info('IsmLiveApp.initialize: Already initialized.');
       return;
     }
-    _initializing = true;
+
+    if (_initFuture != null) {
+      IsmLiveLog.info(
+          'IsmLiveApp.initialize: Awaiting in-flight initialization.');
+      return _initFuture!;
+    }
+
+    if (config.userConfig.userToken.trim().isEmpty) {
+      throw ArgumentError(
+        'IsmLiveApp.initialize: userToken must not be empty.',
+      );
+    }
+
+    final epoch = ++_initEpoch;
+    final future = _initializeInternal(
+      config,
+      navigatorKey: navigatorKey,
+      shouldInitializeMqtt: shouldInitializeMqtt,
+      mqttTopics: mqttTopics,
+      mqttTopicChannels: mqttTopicChannels,
+      onStreamEnd: onStreamEnd,
+      locale: locale,
+      translations: translations,
+      enableBackgroundLifecycle: enableBackgroundLifecycle,
+      enableBackgroundAudio: enableBackgroundAudio,
+      enableBackgroundVideo: enableBackgroundVideo,
+      backgroundTimeout: backgroundTimeout,
+      epoch: epoch,
+    );
+    _initFuture = future;
+
+    try {
+      await future;
+    } catch (_) {
+      if (epoch == _initEpoch) {
+        _initEpoch++;
+        _resetInitializeState();
+      }
+      rethrow;
+    } finally {
+      if (identical(_initFuture, future)) {
+        _initFuture = null;
+      }
+    }
+  }
+
+  static void _resetInitializeState() {
+    _initialized = false;
+    _mqttInitialized = false;
+  }
+
+  static Future<void> _initializeInternal(
+    IsmLiveConfigData config, {
+    required GlobalKey<NavigatorState> navigatorKey,
+    required bool shouldInitializeMqtt,
+    List<String>? mqttTopics,
+    List<String>? mqttTopicChannels,
+    VoidCallback? onStreamEnd,
+    Locale? locale,
+    IsmLiveTranslationsData? translations,
+    required bool enableBackgroundLifecycle,
+    required bool enableBackgroundAudio,
+    required bool enableBackgroundVideo,
+    Duration? backgroundTimeout,
+    required int epoch,
+  }) async {
     IsmLiveLog.info('IsmLiveApp.initialize: START');
 
     final sw = Stopwatch()..start();
@@ -579,6 +650,12 @@ class IsmLiveApp extends StatefulWidget {
         );
       }
 
+      if (epoch != _initEpoch) {
+        IsmLiveLog.info(
+            'IsmLiveApp.initialize: Ignoring stale init success (superseded).');
+        return;
+      }
+
       _initialized = true;
       IsmLiveLog.info('IsmLiveApp.initialize: SUCCESS');
 
@@ -595,7 +672,9 @@ class IsmLiveApp extends StatefulWidget {
         ],
       );
     } catch (e, stack) {
-      _initialized = false;
+      if (epoch == _initEpoch) {
+        _resetInitializeState();
+      }
       IsmLiveLog.error('IsmLiveApp.initialize: FAILED: $e\n$stack');
 
       sw.stop();
@@ -613,8 +692,6 @@ class IsmLiveApp extends StatefulWidget {
       );
 
       rethrow;
-    } finally {
-      _initializing = false;
     }
   }
 
@@ -1467,8 +1544,9 @@ class IsmLiveApp extends StatefulWidget {
     VoidCallback? logoutCallback,
     bool isLoading = true,
   }) {
-    _initialized = false;
-    _mqttInitialized = false;
+    _initEpoch++;
+    _resetInitializeState();
+    _initFuture = null;
     return IsmLiveHandler.dispose(
       isLoading: isLoading,
       isStreaming: isStreaming,
