@@ -21,7 +21,8 @@ class IsmLiveUtility {
     _initialized = true;
     debugPrint(
         'IsmLiveApp: set actual data initialize:  stated ${config.userConfig.userToken}');
-    _config ??= config;
+    // Always replace so a retry after empty/stale token can recover.
+    _config = config;
   }
 
   static void hideKeyboard() => FocusManager.instance.primaryFocus?.unfocus();

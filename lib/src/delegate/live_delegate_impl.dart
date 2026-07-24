@@ -248,12 +248,21 @@ class IsmLiveDelegate {
     VoidCallback? onEndStream,
   }) async {
     onStreamEnd = onEndStream;
-    await Future.wait([
-      LocalNotificationService().init(),
-      IsmLiveHandler.initialize(),
-      _dbWrapper.saveValueSecurely(
-          IsmLiveLocalKeys.configDetails, config.toJson()),
-    ]);
+
+    // Do not block SDK init on notification permission / plugin setup
+    // (same idea as MQTT — may wait on a system dialog or hang on some OEMs).
+    unawaited(
+      LocalNotificationService().init().catchError((Object e, StackTrace st) {
+        IsmLiveLog.error('LocalNotificationService.init failed: $e', st);
+      }),
+    );
+
+    await IsmLiveHandler.initialize();
+    await _dbWrapper.saveValueSecurely(
+      IsmLiveLocalKeys.configDetails,
+      config.toJson(),
+    );
+
     IsmLiveDelegate.trackEvent(
       IsmLiveAnalyticsEvent.sdkInitialize,
       properties: [
