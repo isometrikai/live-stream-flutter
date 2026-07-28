@@ -32,6 +32,7 @@ class IsmLiveGoLiveScreenConfigure {
     this.tabSelectedTextStyle,
     this.tabUnselectedTextStyle,
     this.titleTextStyle,
+    this.videoEffectsConfig = const IsmLiveVideoEffectsConfig(),
   });
 
   /// Custom header builder for the GoLive screen.
@@ -148,6 +149,12 @@ class IsmLiveGoLiveScreenConfigure {
   /// If not provided, the default text style will be used.
   final TextStyle? titleTextStyle;
 
+  /// Host-side video effects configuration for local host camera capture.
+  ///
+  /// Disabled by default. When enabled, the SDK uses the Effects SDK camera
+  /// pipeline for host video tracks during Go Live.
+  final IsmLiveVideoEffectsConfig videoEffectsConfig;
+
   IsmLiveGoLiveScreenConfigure copyWith({
     bool? isHdStreamFeatureEnabled,
     bool? isScheduleStreamFeatureEnabled,
@@ -173,6 +180,7 @@ class IsmLiveGoLiveScreenConfigure {
     TextStyle? tabSelectedTextStyle,
     TextStyle? tabUnselectedTextStyle,
     TextStyle? titleTextStyle,
+    IsmLiveVideoEffectsConfig? videoEffectsConfig,
   }) =>
       IsmLiveGoLiveScreenConfigure(
         isHdStreamFeatureEnabled:
@@ -215,5 +223,6 @@ class IsmLiveGoLiveScreenConfigure {
         tabUnselectedTextStyle:
             tabUnselectedTextStyle ?? this.tabUnselectedTextStyle,
         titleTextStyle: titleTextStyle ?? this.titleTextStyle,
+        videoEffectsConfig: videoEffectsConfig ?? this.videoEffectsConfig,
       );
 }

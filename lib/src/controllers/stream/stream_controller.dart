@@ -114,6 +114,16 @@ class IsmLiveStreamController extends GetxController
   /// native camera hardware swap.
   bool isCameraSwitching = false;
 
+  IsmLiveVideoEffectPreset selectedVideoEffectPreset =
+      StreamJoinCameraMixin._defaultVideoEffectPreset;
+
+  /// True while a video-effect transition is in flight. Blocks overlapping
+  /// native pipeline calls that can hang/crash CameraX.
+  bool isApplyingVideoEffect = false;
+
+  /// Auth is expensive and should run once per published camera track.
+  bool videoEffectsAuthenticated = false;
+
   bool isRecordingBroadcast = false;
 
   bool isRestreamBroadcast = false;
@@ -193,6 +203,13 @@ class IsmLiveStreamController extends GetxController
   final RxBool _audioOn = true.obs;
   bool get audioOn => _audioOn.value;
   set audioOn(bool value) => _audioOn.value = value;
+
+  bool get hasBuiltInVideoEffects =>
+      IsmLiveDelegate.goLiveScreenConfigure?.videoEffectsConfig.isEnabled ==
+      true;
+
+  String get currentVideoEffectLabel =>
+      labelForVideoEffectPreset(selectedVideoEffectPreset);
 
   final RxBool _showEmojiBoard = false.obs;
   bool get showEmojiBoard => _showEmojiBoard.value;
@@ -1071,6 +1088,9 @@ class IsmLiveStreamController extends GetxController
     isRecordingBroadcast = false;
     isSchedulingBroadcast = false;
     isRestreamBroadcast = false;
+    selectedVideoEffectPreset = StreamJoinCameraMixin._defaultVideoEffectPreset;
+    isApplyingVideoEffect = false;
+    videoEffectsAuthenticated = false;
     usePersistentStreamKey = false;
     isRtmp = false;
     restreamFacebook = false;

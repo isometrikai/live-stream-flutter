@@ -98,6 +98,8 @@ class IsmGoLiveView extends StatelessWidget {
                     ?.defaultRestreamBroadcastToggleValue ??
                 IsmLiveDelegate.defaultRestreamBroadcast ??
                 false;
+            controller.selectedVideoEffectPreset =
+                IsmLiveVideoEffectPreset.none;
           } else if (controller.streamDetails?.isScheduledStream ?? false) {
             controller.premiumStreamCoinsController.clear();
             controller.cameraFuture = null;
@@ -263,6 +265,23 @@ class IsmGoLiveView extends StatelessWidget {
                         ),
                       if (IsmLiveDelegate.restreamStream ?? true)
                         const _Restream(),
+                      if (controller.hasBuiltInVideoEffects) ...[
+                        IsmLiveRadioListTile(
+                          title: 'Video Effects',
+                          value: controller.selectedVideoEffectPreset !=
+                              IsmLiveVideoEffectPreset.none,
+                          onChange: (enabled) async {
+                            if (!enabled) {
+                              await controller.selectVideoEffectPreset(
+                                IsmLiveVideoEffectPreset.none,
+                              );
+                              return;
+                            }
+                            controller.videoEffectsSheet();
+                          },
+                        ),
+                        const _VideoEffectsDetails(),
+                      ],
                       if (controller.isRtmp) ...[
                         IsmLiveRadioListTile(
                           title: IsmLiveStrings.usePersistentRtmpStreamKey,
@@ -893,5 +912,44 @@ class _DefaultGoLiveHeader extends StatelessWidget {
             onPressed: null,
           ),
         ],
+      );
+}
+
+class _VideoEffectsDetails extends StatelessWidget {
+  const _VideoEffectsDetails();
+
+  @override
+  Widget build(BuildContext context) => GetBuilder<IsmLiveStreamController>(
+        id: IsmGoLiveView.updateId,
+        builder: (controller) {
+          if (controller.selectedVideoEffectPreset ==
+              IsmLiveVideoEffectPreset.none) {
+            return const SizedBox.shrink();
+          }
+          return Column(
+            children: [
+              const Divider(),
+              IsmLiveDimens.boxHeight5,
+              InkWell(
+                onTap: controller.videoEffectsSheet,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      controller.currentVideoEffectLabel,
+                      style: IsmGoLiveView.getTextStyle(context, true),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_right_rounded,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              IsmLiveDimens.boxHeight5,
+              const Divider(),
+            ],
+          );
+        },
       );
 }

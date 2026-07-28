@@ -449,9 +449,9 @@ mixin StreamJoinConnectionMixin on StreamJoinMixin, StreamJoinCameraMixin {
 
       lk.Room buildConfiguredRoom() => lk.Room(
             roomOptions: lk.RoomOptions(
-              defaultCameraCaptureOptions: lk.CameraCaptureOptions(
-                cameraPosition: resolvedCameraPosition,
-                params: resolvedVideoParams,
+              defaultCameraCaptureOptions: _buildCameraCaptureOptions(
+                resolvedVideoParams,
+                resolvedCameraPosition,
               ),
               defaultAudioCaptureOptions: const lk.AudioCaptureOptions(
                 noiseSuppression: true,

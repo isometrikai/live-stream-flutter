@@ -10,7 +10,7 @@ environment:
 dependencies:
   cached_network_image: ^3.4.1
   camera: ^0.11.3
-  connectivity_plus: ^7.0.0
+  connectivity_plus: ^6.1.5
   emoji_picker_flutter: ^4.3.0
   file_picker: ^10.3.10
   flutter:
@@ -35,7 +35,9 @@ dependencies:
   in_app_purchase_android: ^0.4.0+2
   in_app_purchase_storekit: ^0.4.2
   intl: ^0.20.2
-  livekit_client: ^2.11.0
+  livekit_client:
+    git:
+      url: https://github.com/EffectsSDK/livekit-client-sdk-flutter.git
   mqtt_client: ^10.11.11
   package_info_plus: ^9.0.0
   permission_handler: ^12.0.0+1
@@ -50,7 +52,10 @@ dependencies:
 dependency_overrides:
   collection: ^1.19.0
   device_info_plus: ^12.1.0
-  flutter_webrtc: ^1.4.1
+  flutter_webrtc:
+    git:
+      url: https://github.com/EffectsSDK/flutter-webrtc.git
+      ref: 8cd3fea7e7930aaf88c6ba30ca3c78a7112fb874
   # Flutter SDK's flutter_test pins `meta` to 1.16.0 in this SDK version.
   # livekit_client (>=2.6.5) requires meta ^1.17.0, so we override to make pub resolve.
   meta: ^1.17.0
@@ -73,5 +78,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icon/
+    - assets/images/effects/
     - assets/logo/
     - assets/placeholders/

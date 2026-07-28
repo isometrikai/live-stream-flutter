@@ -140,10 +140,10 @@ packages:
     dependency: transitive
     description:
       name: connectivity_plus
-      sha256: "762c99f890ca8bf87f7337236f99edd42793843bc6c3631da294a76653a54bd0"
+      sha256: b5e72753cf63becce2c61fd04dfe0f1c430cc5278b53a1342dc5ad839eab29ec
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.1"
+    version: "6.1.5"
   connectivity_plus_platform_interface:
     dependency: transitive
     description:
@@ -152,14 +152,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  convert:
-    dependency: transitive
-    description:
-      name: convert
-      sha256: b30acd5944035672bc15c6b7a8b47d773e41e2f17de064350988c5d02adb1c68
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
   cross_file:
     dependency: transitive
     description:
@@ -192,14 +184,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.9"
-  dart_jsonwebtoken:
-    dependency: transitive
-    description:
-      name: dart_jsonwebtoken
-      sha256: ad84e60181696513d04d5f2078e0bbc20365b911f46f647797317414bdc88fbe
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.4.1"
   dart_webrtc:
     dependency: transitive
     description:
@@ -487,11 +471,12 @@ packages:
   flutter_webrtc:
     dependency: transitive
     description:
-      name: flutter_webrtc
-      sha256: e997161d7da3adedd3d430691b20931b0b4d96fa48bb60938d9ba0bf6fca98be
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
+      path: "."
+      ref: "8cd3fea7e7930aaf88c6ba30ca3c78a7112fb874"
+      resolved-ref: "8cd3fea7e7930aaf88c6ba30ca3c78a7112fb874"
+      url: "https://github.com/EffectsSDK/flutter-webrtc.git"
+    source: git
+    version: "1.2.0"
   fluttertoast:
     dependency: transitive
     description:
@@ -761,11 +746,12 @@ packages:
   livekit_client:
     dependency: transitive
     description:
-      name: livekit_client
-      sha256: "165d04b06d1d828ae85dc7ef5ffcbebf8d50f2cc7b02f3b8955fbeed96828c04"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.11.0"
+      path: "."
+      ref: HEAD
+      resolved-ref: "5d078254a18ad00e921eaa0452d75ff2220bd9ff"
+      url: "https://github.com/EffectsSDK/livekit-client-sdk-flutter.git"
+    source: git
+    version: "2.5.3"
   logger:
     dependency: transitive
     description:
@@ -1022,14 +1008,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  pointycastle:
-    dependency: transitive
-    description:
-      name: pointycastle
-      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
   process:
     dependency: transitive
     description:
@@ -1042,10 +1020,10 @@ packages:
     dependency: transitive
     description:
       name: protobuf
-      sha256: "75ec242d22e950bdcc79ee38dd520ce4ee0bc491d7fadc4ea47694604d22bf06"
+      sha256: de9c9eb2c33f8e933a42932fe1dc504800ca45ebc3d673e6ed7f39754ee4053e
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "4.2.0"
   pub_semver:
     dependency: transitive
     description:

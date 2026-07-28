@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/mqtt/wrapper/models/event_model.dart';
@@ -168,7 +169,13 @@ class HomeController extends GetxController {
         //     return true;
         //   },
       ),
-      goLiveScreenConfigure: const IsmLiveGoLiveScreenConfigure(
+      goLiveScreenConfigure: IsmLiveGoLiveScreenConfigure(
+          videoEffectsConfig: IsmLiveVideoEffectsConfig(
+            isEnabled: true,
+            customerId: Platform.isAndroid
+                ? AppConstants.videoEffectsAndroidCustomerId
+                : AppConstants.videoEffectsIosCustomerId,
+          ),
           isProductStreamFeatureEnabled: false,
           isScheduleStreamFeatureEnabled: true,
           defaultBroadcastDescription: 'Hey!'
@@ -401,6 +408,7 @@ class HomeController extends GetxController {
           IsmLiveStreamOption.share,
           IsmLiveStreamOption.vs,
           IsmLiveStreamOption.rotateCamera,
+          IsmLiveStreamOption.videoEffects,
           IsmLiveStreamOption.settings,
           IsmLiveStreamOption.multiLive,
         ],

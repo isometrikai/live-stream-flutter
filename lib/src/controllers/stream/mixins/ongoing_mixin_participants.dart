@@ -54,8 +54,8 @@ mixin StreamOngoingParticipantsMixin
             showLoading: false,
             getMessageModel: IsmLiveGetMessageModel(
               streamId: streamId,
-              messageType:
-                  IsmLiveDelegate.streamScreenConfigure.resolvedChatMessageTypes,
+              messageType: IsmLiveDelegate
+                  .streamScreenConfigure.resolvedChatMessageTypes,
               sort: 1,
               skip: _controller.messagesCount < 10
                   ? 0
@@ -537,6 +537,7 @@ mixin StreamOngoingParticipantsMixin
       case IsmLiveStreamOption.pk:
       case IsmLiveStreamOption.heart:
       case IsmLiveStreamOption.rtmpDetails:
+      case IsmLiveStreamOption.videoEffects:
         return option.icon;
       case IsmLiveStreamOption.speaker:
         if (_controller.speakerOn) {

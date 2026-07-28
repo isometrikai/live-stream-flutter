@@ -332,6 +332,11 @@ enum IsmLiveStreamOption {
   pk(IsmLiveAssetConstants.pk),
   heart(IsmLiveAssetConstants.heartSvg),
   rtmpDetails(IsmLiveAssetConstants.infoSvg),
+
+  /// Cycles built-in host video effects (Blur / Beauty / Off).
+  ///
+  /// Only shown when [IsmLiveVideoEffectsConfig.isEnabled] is true.
+  videoEffects(IsmLiveAssetConstants.settings),
   ;
 
   const IsmLiveStreamOption(this.icon);
@@ -371,6 +376,7 @@ enum IsmLiveStreamOption {
               IsmLiveStreamOption.share,
               // IsmLiveStreamOption.favourite,
               IsmLiveStreamOption.rotateCamera,
+              IsmLiveStreamOption.videoEffects,
               IsmLiveStreamOption.settings,
             ]
           : IsmLiveDelegate.hostOptions;
@@ -412,6 +418,18 @@ enum IsmLiveStreamOption {
               IsmLiveStreamOption.settings,
             ]
           : IsmLiveDelegate.pkOptions;
+}
+
+/// Built-in host video effect presets applied by the SDK.
+enum IsmLiveVideoEffectPreset {
+  none,
+  blur,
+  backgroundReplace,
+  beautification,
+  sharpening,
+  lowLight,
+  colorCorrection,
+  smartZoom,
 }
 
 enum IsmLiveHostSettings {

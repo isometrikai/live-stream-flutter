@@ -16,6 +16,29 @@ typedef ProductSelectionCallback = Future<List<IsmLiveProductModel>> Function(
 /// If set, this widget will be used in place of the default _AddProduct widget in go_live_view.dart.
 typedef AddProductViewBuilder = Widget Function(BuildContext context);
 
+/// Host-side configuration for Video Effects SDK on the Go Live flow.
+///
+/// This is intentionally small for the first production integration:
+/// - disabled by default
+/// - only host local camera tracks use it
+/// - SDK applies a built-in default blur effect when enabled
+class IsmLiveVideoEffectsConfig {
+  const IsmLiveVideoEffectsConfig({
+    this.isEnabled = false,
+    this.customerId,
+  });
+
+  /// Enables the Effects SDK camera pipeline for host local video capture.
+  ///
+  /// When `false`, the SDK preserves the current camera path unchanged.
+  final bool isEnabled;
+
+  /// Customer ID used to authenticate Effects SDK on supported platforms.
+  ///
+  /// Required when [isEnabled] is `true`.
+  final String? customerId;
+}
+
 /// Data model containing all user-entered stream details for GoLive callback
 class IsmLiveGoLiveData {
   const IsmLiveGoLiveData({

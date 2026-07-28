@@ -83,10 +83,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
   /// flow when the host app omits it from [IsmLiveDelegate.viewersOption].
   ///
   /// Uses a mutable copy of the options list so the delegate list is never mutated.
-  static EdgeInsets _productStreamSideOptionsBottomMargin(BuildContext context) {
+  static EdgeInsets _productStreamSideOptionsBottomMargin(
+      BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final custom = IsmLiveDelegate.productStreamSideOptionsBottomMargin
-        ?.call(context);
+    final custom =
+        IsmLiveDelegate.productStreamSideOptionsBottomMargin?.call(context);
     final bottom = custom ?? screenHeight * 0.28;
     return EdgeInsets.only(bottom: bottom);
   }
@@ -113,6 +114,27 @@ class IsmLiveControlsWidget extends StatelessWidget {
       options.insert(heartIndex, IsmLiveStreamOption.multiLive);
     } else {
       options.add(IsmLiveStreamOption.multiLive);
+    }
+  }
+
+  /// Injects [IsmLiveStreamOption.videoEffects] for hosts when effects are
+  /// enabled and the host app omitted it from configured side icons.
+  static void _ensureVideoEffectsForHost(
+    List<IsmLiveStreamOption> options,
+    bool effectsEnabled,
+  ) {
+    if (!effectsEnabled) {
+      options.remove(IsmLiveStreamOption.videoEffects);
+      return;
+    }
+    if (options.contains(IsmLiveStreamOption.videoEffects)) {
+      return;
+    }
+    final settingsIndex = options.indexOf(IsmLiveStreamOption.settings);
+    if (settingsIndex >= 0) {
+      options.insert(settingsIndex, IsmLiveStreamOption.videoEffects);
+    } else {
+      options.add(IsmLiveStreamOption.videoEffects);
     }
   }
 
@@ -177,9 +199,11 @@ class IsmLiveControlsWidget extends StatelessWidget {
 
           if (isHost) {
             options = controller.isRtmp
-                ? IsmLiveStreamOption.rtmpOptions
+                ? List<IsmLiveStreamOption>.from(
+                    IsmLiveStreamOption.rtmpOptions)
                 : controller.isPk
-                    ? IsmLiveStreamOption.pkOptions
+                    ? List<IsmLiveStreamOption>.from(
+                        IsmLiveStreamOption.pkOptions)
                     : controller.isCopublisher
                         ? (() {
                             final hostCopublisherOptions =
@@ -190,8 +214,8 @@ class IsmLiveControlsWidget extends StatelessWidget {
                                     )
                                     .toList();
                             if (!hostCopublisherOptions.contains(
-                              IsmLiveStreamOption.speaker,
-                            ) &&
+                                  IsmLiveStreamOption.speaker,
+                                ) &&
                                 hasMultiplePublishers) {
                               hostCopublisherOptions.add(
                                 IsmLiveStreamOption.speaker,
@@ -199,12 +223,22 @@ class IsmLiveControlsWidget extends StatelessWidget {
                             }
                             return hostCopublisherOptions;
                           })()
-                        : IsmLiveStreamOption.hostOptions;
+                        : List<IsmLiveStreamOption>.from(
+                            IsmLiveStreamOption.hostOptions,
+                          );
+            _ensureVideoEffectsForHost(
+              options,
+              controller.hasBuiltInVideoEffects,
+            );
           } else {
             if (controller.userRole?.isPkGuest ?? false) {
-              options = IsmLiveStreamOption.pkOptions;
+              options = List<IsmLiveStreamOption>.from(
+                IsmLiveStreamOption.pkOptions,
+              );
             } else if (isCopublishing) {
-              options = IsmLiveStreamOption.copublisherOptions;
+              options = List<IsmLiveStreamOption>.from(
+                IsmLiveStreamOption.copublisherOptions,
+              );
             } else {
               options = List<IsmLiveStreamOption>.from(
                 IsmLiveStreamOption.viewersOptions,
@@ -218,7 +252,9 @@ class IsmLiveControlsWidget extends StatelessWidget {
           }
 
           if (isSchedule) {
-            options = IsmLiveStreamOption.scheduleOptions;
+            options = List<IsmLiveStreamOption>.from(
+              IsmLiveStreamOption.scheduleOptions,
+            );
           }
           return SingleChildScrollView(
             child: Column(
@@ -269,15 +305,25 @@ class IsmLiveControlsWidget extends StatelessWidget {
                           dimension: option == IsmLiveStreamOption.heart
                               ? IsmLiveDimens.fortyFive
                               : null,
-                          icon: IsmLiveImage.svg(
-                            height: option != IsmLiveStreamOption.heart
-                                ? IsmLiveDimens.forty
-                                : null,
-                            width: option != IsmLiveStreamOption.heart
-                                ? IsmLiveDimens.forty
-                                : null,
-                            controller.controlIcon(option),
-                          ),
+                          icon: option == IsmLiveStreamOption.videoEffects
+                              ? SizedBox(
+                                  height: IsmLiveDimens.forty,
+                                  width: IsmLiveDimens.forty,
+                                  child: Icon(
+                                    Icons.auto_fix_high,
+                                    color: Colors.white,
+                                    size: IsmLiveDimens.twentyFour,
+                                  ),
+                                )
+                              : IsmLiveImage.svg(
+                                  height: option != IsmLiveStreamOption.heart
+                                      ? IsmLiveDimens.forty
+                                      : null,
+                                  width: option != IsmLiveStreamOption.heart
+                                      ? IsmLiveDimens.forty
+                                      : null,
+                                  controller.controlIcon(option),
+                                ),
                           onTap: () async {
                             await _handleOptionTap(controller, option, context);
                           },
@@ -291,7 +337,14 @@ class IsmLiveControlsWidget extends StatelessWidget {
                                               ? Colors.blueGrey
                                               : null
                                       : null
-                                  : null,
+                                  : option ==
+                                              IsmLiveStreamOption
+                                                  .videoEffects &&
+                                          controller
+                                                  .selectedVideoEffectPreset !=
+                                              IsmLiveVideoEffectPreset.none
+                                      ? context.theme.primaryColor
+                                      : null,
                           gradient: IsmLiveDelegate
                               .sideIconsConfigure.controlOptionBgGradient,
                         ),

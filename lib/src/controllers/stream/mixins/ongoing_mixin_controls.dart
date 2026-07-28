@@ -1,6 +1,7 @@
 part of '../stream_controller.dart';
 
-mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin {
+mixin StreamOngoingControlsMixin
+    on StreamOngoingMixin, StreamOngoingSocialMixin {
   /// Remote publication enable/disable controls server/adaptive settings, not
   /// what you hear. Toggle each remote audio track's enable/disable so the
   /// underlying WebRTC track matches the speaker UI.
@@ -100,6 +101,9 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
         break;
       case IsmLiveStreamOption.rotateCamera:
         _controller.toggleCamera();
+        break;
+      case IsmLiveStreamOption.videoEffects:
+        _controller.videoEffectsSheet();
         break;
       case IsmLiveStreamOption.speaker:
         await toggleSpeaker();
@@ -258,5 +262,4 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
       IsmLiveUtility.closeLoader();
     }
   }
-
 }

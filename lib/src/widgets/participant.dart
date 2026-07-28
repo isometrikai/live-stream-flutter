@@ -224,94 +224,94 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget>
         widget.showStatsLayer && widget.isViewer && !widget.isFirstIndex;
 
     return Container(
-        // Blue border removed - was causing unwanted border around stream view
-        foregroundDecoration: null,
-        decoration: BoxDecoration(
-          color: context.liveTheme?.streamBackgroundColor ??
-              Theme.of(ctx).cardColor.withAlpha(80),
-        ),
-        child: Stack(
-          children: [
-            activeVideoTrack != null && !activeVideoTrack!.muted
-                ? buildVideoRenderer()
-                : NoVideoWidget(
-                    name: uiData.displayName,
-                    imageUrl: uiData.imageUrl,
-                    initials: IsmLiveInitials.fromNames(
-                      primary: uiData.displayName,
-                      secondary: widget.participant.name,
-                    ),
-                  ),
-            if (widget.isbattleFinish)
-              widget.isWinner
-                  ? const Align(
-                      alignment: Alignment.center,
-                      child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
-                    )
-                  : const Align(
-                      alignment: Alignment.center,
-                      child: IsmLiveImage.svg(IsmLiveAssetConstants.loser),
-                    ),
-            if (widget.showStatsLayer)
-              Align(
-                alignment: Alignment.topCenter,
-                child: IsmLivePkParticipantStatsOverlay(
-                  imageUrl: uiData.imageUrl,
+      // Blue border removed - was causing unwanted border around stream view
+      foregroundDecoration: null,
+      decoration: BoxDecoration(
+        color: context.liveTheme?.streamBackgroundColor ??
+            Theme.of(ctx).cardColor.withAlpha(80),
+      ),
+      child: Stack(
+        children: [
+          activeVideoTrack != null && !activeVideoTrack!.muted
+              ? buildVideoRenderer()
+              : NoVideoWidget(
                   name: uiData.displayName,
-                  isHost: widget.isHost,
-                  isFirstIndex: widget.isFirstIndex,
-                  title: uiData.displayName,
+                  imageUrl: uiData.imageUrl,
+                  initials: IsmLiveInitials.fromNames(
+                    primary: uiData.displayName,
+                    secondary: widget.participant.name,
+                  ),
                 ),
+          if (widget.isbattleFinish)
+            widget.isWinner
+                ? const Align(
+                    alignment: Alignment.center,
+                    child: IsmLiveImage.svg(IsmLiveAssetConstants.winner),
+                  )
+                : const Align(
+                    alignment: Alignment.center,
+                    child: IsmLiveImage.svg(IsmLiveAssetConstants.loser),
+                  ),
+          if (widget.showStatsLayer)
+            Align(
+              alignment: Alignment.topCenter,
+              child: IsmLivePkParticipantStatsOverlay(
+                imageUrl: uiData.imageUrl,
+                name: uiData.displayName,
+                isHost: widget.isHost,
+                isFirstIndex: widget.isFirstIndex,
+                title: uiData.displayName,
               ),
-            if (canShowMakeHostAction)
-              Align(
-                alignment: Alignment.bottomRight,
-                child: IsmLiveTapHandler(
-                  onTap: () {
-                    pkController.pkChangeHostSheet(
-                      userId: widget.participant.identity,
-                      name: uiData.displayName,
-                      image: uiData.imageUrl,
-                    );
-                  },
-                  child: Container(
-                    padding: IsmLiveDimens.edgeInsets5,
-                    margin: const EdgeInsets.only(right: 10, bottom: 72),
-                    decoration: BoxDecoration(
-                      color: Colors.black38,
-                      borderRadius: BorderRadius.circular(
-                        IsmLiveDimens.eight,
-                      ),
+            ),
+          if (canShowMakeHostAction)
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IsmLiveTapHandler(
+                onTap: () {
+                  pkController.pkChangeHostSheet(
+                    userId: widget.participant.identity,
+                    name: uiData.displayName,
+                    image: uiData.imageUrl,
+                  );
+                },
+                child: Container(
+                  padding: IsmLiveDimens.edgeInsets5,
+                  margin: const EdgeInsets.only(right: 10, bottom: 72),
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.circular(
+                      IsmLiveDimens.eight,
                     ),
-                    child: const Text(
-                      'Make Host',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  ),
+                  child: const Text(
+                    'Make Host',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
-            if (isAudioMuted)
-              Align(
-                alignment: Alignment.center,
-                child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      color: Colors.black54,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const IsmLiveImage.svg(
-                      IsmLiveAssetConstants.micro_phone_off,
-                      color: Colors.white,
-                      width: 20,
-                      height: 20,
-                    ),
+            ),
+          if (isAudioMuted)
+            Align(
+              alignment: Alignment.center,
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const IsmLiveImage.svg(
+                    IsmLiveAssetConstants.micro_phone_off,
+                    color: Colors.white,
+                    width: 20,
+                    height: 20,
                   ),
                 ),
               ),
-          ],
-        ),
-      );
+            ),
+        ],
+      ),
+    );
   }
 }
 
@@ -432,9 +432,8 @@ _ParticipantUiData _participantUiData(
   Participant participant,
   String? fallbackImageUrl,
 ) {
-  final fallbackName = participant.name.isNotEmpty
-      ? participant.name
-      : participant.identity;
+  final fallbackName =
+      participant.name.isNotEmpty ? participant.name : participant.identity;
   final fallbackImg = fallbackImageUrl ?? '';
 
   final map = _tryDecodeParticipantMetadata(participant.metadata);
@@ -449,11 +448,9 @@ _ParticipantUiData _participantUiData(
   final metaImg = _profileImageFromMetadataMap(map);
 
   return _ParticipantUiData(
-    displayName: (metaName != null && metaName.isNotEmpty)
-        ? metaName
-        : fallbackName,
-    imageUrl:
-        (metaImg != null && metaImg.isNotEmpty) ? metaImg : fallbackImg,
+    displayName:
+        (metaName != null && metaName.isNotEmpty) ? metaName : fallbackName,
+    imageUrl: (metaImg != null && metaImg.isNotEmpty) ? metaImg : fallbackImg,
   );
 }
 
@@ -476,8 +473,7 @@ String? _displayNameFromMetadataMap(Map<String, dynamic> map) {
   final last = map['lastName'];
   final firstStr = first is String ? first.trim() : '';
   final lastStr = last is String ? last.trim() : '';
-  final fullName =
-      [firstStr, lastStr].where((s) => s.isNotEmpty).join(' ');
+  final fullName = [firstStr, lastStr].where((s) => s.isNotEmpty).join(' ');
   if (fullName.isNotEmpty) {
     return fullName;
   }

@@ -96,6 +96,14 @@ mixin StreamSheetMixin {
     );
   }
 
+  void videoEffectsSheet() async {
+    final context = IsmLiveUtility.navigatorKey.currentContext!;
+    await IsmLiveUtility.openBottomSheet(
+      const IsmLiveVideoEffectsSheet(),
+      backgroundColor: _sheetBackgroundColor(context),
+    );
+  }
+
   void pkChallengeSheet() async {
     final context = IsmLiveUtility.navigatorKey.currentContext!;
     await IsmLiveUtility.openBottomSheet(
