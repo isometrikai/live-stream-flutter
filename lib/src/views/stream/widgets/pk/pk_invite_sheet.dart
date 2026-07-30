@@ -57,6 +57,10 @@ class IsmLivePkInviteSheet extends StatelessWidget {
       child: Padding(
         padding: IsmLiveDimens.edgeInsets16.copyWith(
           top: IsmLiveDimens.thirtyTwo,
+          bottom: ismLiveBottomSheetActionBottomInset(
+            context,
+            designBottom: IsmLiveDimens.sixteen,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
