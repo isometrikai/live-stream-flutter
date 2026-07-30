@@ -20,14 +20,26 @@ Path: `android` > `app` > `main` > `AndroidMenifest.xml`
    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
    <uses-permission android:name="android.permission.INTERNET" />
-   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-   <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-   <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
    ```
+
+   Do **not** add `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE`, or `MANAGE_EXTERNAL_STORAGE`
+   for Add Cover / gallery pick — `image_picker` uses the OS photo picker and does not need
+   broad gallery access. If Photos/Files still appear under App Settings, strip merged
+   permissions from dependencies:
+
+   ```xml
+   <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+   <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
+   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+   <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:node="remove" />
+   ```
+
+   (`xmlns:tools="http://schemas.android.com/tools"` must be on the `<manifest>` tag.)
 
 1. To define a foreground service
 
