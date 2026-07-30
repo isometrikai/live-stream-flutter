@@ -1,11 +1,14 @@
 package com.example.appscrip_live_stream_component
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.provider.Settings
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -29,12 +32,29 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
       "heartTapFeedback" -> {
         performHeartTapFeedback(result)
       }
+      "openAppSettings" -> {
+        openAppSettings(result)
+      }
       else -> result.notImplemented()
     }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  private fun openAppSettings(result: Result) {
+    try {
+      val intent =
+              Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", appContext.packageName, null)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+              }
+      appContext.startActivity(intent)
+      result.success(true)
+    } catch (_: Throwable) {
+      result.success(false)
+    }
   }
 
   @Suppress("DEPRECATION")

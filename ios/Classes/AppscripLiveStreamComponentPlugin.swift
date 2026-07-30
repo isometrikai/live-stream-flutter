@@ -23,8 +23,27 @@ public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
         DispatchQueue.main.async { self.playHeartTapFeedback() }
       }
       result(nil)
+    case "openAppSettings":
+      openAppSettings(result: result)
     default:
       result(FlutterMethodNotImplemented)
+    }
+  }
+
+  private func openAppSettings(result: @escaping FlutterResult) {
+    guard let url = URL(string: UIApplication.openSettingsURLString) else {
+      result(false)
+      return
+    }
+    let open: () -> Void = {
+      UIApplication.shared.open(url, options: [:]) { success in
+        result(success)
+      }
+    }
+    if Thread.isMainThread {
+      open()
+    } else {
+      DispatchQueue.main.async(execute: open)
     }
   }
 

@@ -249,6 +249,9 @@ const Map<String, String> ismLiveStringsPt = {
   'clickHere': 'clique aqui.',
   'enterFieldFormat': 'Inserir %s',
   'errorInitializingCamera': 'Erro ao inicializar a câmera',
+  'cameraPermissionTurnedOff':
+      'A permissão da câmera está desativada.\nAtive-a para continuar.',
+  'turnOn': 'Ativar',
   'broadcastersUnder18NotPermitted':
       'Transmitidores menores de 18 anos não são permitidos',
 };
