@@ -923,9 +923,19 @@ mixin StreamAPIMixin {
     if (res) {
       _controller.streamMembersList
           .removeWhere((element) => element.userId == memberId);
+      // Host keeps isCopublisher after group stream; clear when alone so PK/VS
+      // returns (mirrors memberRemoved / memberLeft MQTT handling).
+      final shouldRevertHostCopublisherRole = _controller.isHost &&
+          !_controller.isPk &&
+          _controller.isCopublisher &&
+          _controller.streamMembersList.length <= 1;
+      if (shouldRevertHostCopublisherRole) {
+        _controller.userRole?.leaveCopublishing();
+      }
       _controller.update([
         IsmLiveCopublishingHostSheet.updateId,
         IsmLiveMembersSheet.updateId,
+        if (shouldRevertHostCopublisherRole) IsmLiveControlsWidget.updateId,
       ]);
     }
 

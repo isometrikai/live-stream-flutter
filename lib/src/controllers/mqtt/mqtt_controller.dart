@@ -956,6 +956,7 @@ class IsmLiveMqttController extends GetxController {
           final memberId = payload['memberId'] as String? ?? '';
           final initiatorName = payload['initiatorName'] as String? ?? '';
           final initiatorId = payload['initiatorId'] as String? ?? '';
+          final membersCount = payload['membersCount'] as num?;
           if (streamId == _streamController.streamId) {
             _syncLiveViewersCountFromPayload(payload);
             final message = IsmLiveMessageModel(
@@ -974,6 +975,17 @@ class IsmLiveMqttController extends GetxController {
             unawaited(_streamController.handleMessage(message: message));
             _streamController.streamMembersList
                 .removeWhere((e) => e.userId == memberId);
+            // Same as memberLeft: host keeps isCopublisher after group stream,
+            // which hides PK/VS. Clear it once no other members remain.
+            final remainingMembers = membersCount?.toInt() ??
+                _streamController.streamMembersList.length;
+            final shouldRevertHostCopublisherRole = _streamController.isHost &&
+                !_streamController.isPk &&
+                _streamController.userRole?.isCopublisher == true &&
+                remainingMembers <= 1;
+            if (shouldRevertHostCopublisherRole) {
+              _streamController.userRole?.leaveCopublishing();
+            }
             if (userId != initiatorId && userId == memberId) {
               final rejoinAsViewer =
                   _streamController.isCopublisher && !_streamController.isHost;
@@ -994,7 +1006,11 @@ class IsmLiveMqttController extends GetxController {
               }
             }
             await Future.delayed(const Duration(milliseconds: 300));
-            _updateStream([IsmLiveMembersSheet.updateId]);
+            _updateStream([
+              IsmLiveMembersSheet.updateId,
+              if (shouldRevertHostCopublisherRole)
+                IsmLiveControlsWidget.updateId,
+            ]);
           }
           break;
         case IsmLiveActions.profileSwitched:
