@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// Camera View Screen
 
@@ -21,7 +22,8 @@ class CameraScreenView extends StatefulWidget {
   State<CameraScreenView> createState() => _CameraScreenViewState();
 }
 
-class _CameraScreenViewState extends State<CameraScreenView> {
+class _CameraScreenViewState extends State<CameraScreenView>
+    with WidgetsBindingObserver {
   CameraController? cameraControllerback;
   var isRecording = false;
   var flash = false;
@@ -30,11 +32,37 @@ class _CameraScreenViewState extends State<CameraScreenView> {
   var duration = const Duration();
   var _isInitializing = false;
   var _hasError = false;
+  var _isPermissionDenied = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     startInit();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || !_isPermissionDenied) {
+      return;
+    }
+    unawaited(_retryIfCameraPermissionGranted());
+  }
+
+  Future<void> _retryIfCameraPermissionGranted() async {
+    final status = await Permission.camera.status;
+    if (!status.isGranted || !mounted) return;
+    setState(() {
+      _isPermissionDenied = false;
+      _hasError = false;
+    });
+    await startInit();
+  }
+
+  bool _isCameraPermissionException(Object e) {
+    if (e is! CameraException) return false;
+    final code = e.code.toLowerCase();
+    return code.contains('accessdenied') || code.contains('permission');
   }
 
   Future<void> startInit() async {
@@ -42,8 +70,20 @@ class _CameraScreenViewState extends State<CameraScreenView> {
 
     _isInitializing = true;
     _hasError = false;
+    _isPermissionDenied = false;
 
     try {
+      final permissionStatus = await Permission.camera.request();
+      if (!permissionStatus.isGranted) {
+        if (mounted) {
+          setState(() {
+            _isPermissionDenied = true;
+            _isInitializing = false;
+          });
+        }
+        return;
+      }
+
       // Wait for cameras to be initialized if they're still loading
       if (IsmLiveUtility.camerasInitializationFuture != null) {
         await IsmLiveUtility.camerasInitializationFuture;
@@ -85,9 +125,12 @@ class _CameraScreenViewState extends State<CameraScreenView> {
       }
     } catch (e) {
       IsmLiveLog.error('Failed to initialize camera: $e');
+      final permissionDenied = _isCameraPermissionException(e) ||
+          !(await Permission.camera.status).isGranted;
       if (mounted) {
         setState(() {
-          _hasError = true;
+          _isPermissionDenied = permissionDenied;
+          _hasError = !permissionDenied;
           _isInitializing = false;
         });
       }
@@ -96,8 +139,35 @@ class _CameraScreenViewState extends State<CameraScreenView> {
     }
   }
 
+  Future<void> _onErrorActionPressed() async {
+    if (_isPermissionDenied) {
+      // Do not call Permission.camera.request() here — on Android it can hang
+      // forever after deny, so settings never open. Open app settings instead.
+      final status = await Permission.camera.status;
+      if (status.isGranted) {
+        if (!mounted) return;
+        setState(() {
+          _isPermissionDenied = false;
+          _hasError = false;
+        });
+        await startInit();
+        return;
+      }
+
+      await IsmLiveAppSettings.open();
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      _hasError = false;
+      _isPermissionDenied = false;
+    });
+    await startInit();
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     timer?.cancel();
     _disposeCamera();
     super.dispose();
@@ -133,64 +203,75 @@ class _CameraScreenViewState extends State<CameraScreenView> {
               width: MediaQuery.of(context).size.width,
               color: Colors.black,
             ),
-            _hasError
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Colors.white,
-                          size: 48,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Failed to initialize camera',
-                          style: IsmLiveStyles.white12.copyWith(
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _hasError = false;
-                            });
-                            startInit();
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
-                    ),
-                  )
-                : cameraControllerback?.value.isInitialized == true
-                    ? SafeArea(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: CameraPreview(cameraControllerback!),
-                        ),
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator.adaptive(),
+            if (!(_hasError || _isPermissionDenied))
+              cameraControllerback?.value.isInitialized == true
+                  ? SafeArea(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: CameraPreview(cameraControllerback!),
                       ),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    IsmLiveColors.black.withValues(alpha: .6),
-                    IsmLiveColors.black.withValues(alpha: .2),
-                    IsmLiveColors.black.withValues(alpha: .2),
-                    IsmLiveColors.black.withValues(alpha: .2),
-                    IsmLiveColors.black.withValues(alpha: .2),
-                    IsmLiveColors.black.withValues(alpha: .6),
-                  ],
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+            // Decorative only — must not block Turn On / Retry taps underneath.
+            IgnorePointer(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      IsmLiveColors.black.withValues(alpha: .6),
+                      IsmLiveColors.black.withValues(alpha: .2),
+                      IsmLiveColors.black.withValues(alpha: .2),
+                      IsmLiveColors.black.withValues(alpha: .2),
+                      IsmLiveColors.black.withValues(alpha: .2),
+                      IsmLiveColors.black.withValues(alpha: .6),
+                    ],
+                  ),
                 ),
               ),
             ),
+            if (_hasError || _isPermissionDenied)
+              Center(
+                child: Padding(
+                  padding: IsmLiveDimens.edgeInsets16,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _isPermissionDenied
+                            ? Icons.no_photography_outlined
+                            : Icons.error_outline,
+                        color: Colors.white,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _isPermissionDenied
+                            ? IsmLiveStrings.cameraPermissionTurnedOff
+                            : IsmLiveStrings.errorInitializingCamera,
+                        textAlign: TextAlign.center,
+                        style: IsmLiveStyles.white12.copyWith(
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: _onErrorActionPressed,
+                        child: Text(
+                          _isPermissionDenied
+                              ? IsmLiveStrings.turnOn
+                              : IsmLiveStrings.retry,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             SafeArea(
               child: Align(
                 alignment: Alignment.topCenter,
@@ -240,11 +321,15 @@ class _CameraScreenViewState extends State<CameraScreenView> {
                 ),
               ),
             ),
+            if (!(_hasError || _isPermissionDenied))
             Align(
               alignment: Alignment.bottomCenter,
-              child: SizedBox(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.viewPaddingOf(context).bottom,
+                ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     AnimatedOpacity(
                       opacity: isRecording ? 1 : 0,

@@ -222,6 +222,9 @@ class IsmLiveStrings {
   static String enterFieldFormat(String label) =>
       _t('enterFieldFormat').replaceFirst('%s', label);
   static String get errorInitializingCamera => _t('errorInitializingCamera');
+  static String get cameraPermissionTurnedOff =>
+      _t('cameraPermissionTurnedOff');
+  static String get turnOn => _t('turnOn');
   static String get broadcastersUnder18NotPermitted =>
       _t('broadcastersUnder18NotPermitted');
 }
