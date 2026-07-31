@@ -28,7 +28,7 @@ class IsmLiveSettingsSheet extends StatelessWidget {
           padding: IsmLiveDimens.edgeInsets16_0_16_20.copyWith(bottom: 0),
           child: IsmLiveScrollSheet(
             separatedWidgat: IsmLiveDimens.boxHeight24,
-            title: 'Settings',
+            title: IsmLiveStrings.settings,
             showHeader: false,
             showCancelIcon: true,
             cancelIconColor: textIconColor,

@@ -27,7 +27,7 @@ mixin StreamJoinScheduleMixin on StreamJoinMixin {
       streamDescription: _controller.streamDetails?.streamDescription,
       streamImage: _controller.streamDetails?.streamImage,
       streamTitle: (_controller.streamDetails?.streamTitle?.isEmpty ?? true)
-          ? 'My stream'
+          ? IsmLiveStrings.myStream
           : _controller.streamDetails?.streamTitle,
       userName: _controller.streamDetails?.userDetails?.userName,
     );

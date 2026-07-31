@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appscrip_live_stream_component/src/res/constants/string_contants.dart';
 import 'package:video_player/video_player.dart';
 
 /// Lightweight cache manager for recording playback.
@@ -255,7 +256,7 @@ class RecordingVideoCacheManager {
       if (value.hasError) {
         settled.completeError(
           _RecordingPlaybackException(
-            value.errorDescription ?? 'Video player error',
+            value.errorDescription ?? IsmLiveStrings.videoPlayerError,
           ),
         );
       }
@@ -287,7 +288,7 @@ class RecordingVideoCacheManager {
       }
       if (controller.value.hasError) {
         throw _RecordingPlaybackException(
-          controller.value.errorDescription ?? 'Video player error',
+          controller.value.errorDescription ?? IsmLiveStrings.videoPlayerError,
         );
       }
       controller.removeListener(onValueChanged);

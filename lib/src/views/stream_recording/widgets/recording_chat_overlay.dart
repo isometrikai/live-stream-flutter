@@ -352,7 +352,9 @@ class _RecordingChatMessageItem extends StatelessWidget {
                           ),
                           if (message.isDeleted)
                             Text(
-                              ' ${message.body} Deleted Message',
+                              IsmLiveStrings.deletedMessageFormat(
+                                ' ${message.body}',
+                              ),
                               style: Theme.of(context)
                                   .textTheme
                                   .labelSmall
@@ -365,7 +367,9 @@ class _RecordingChatMessageItem extends StatelessWidget {
                             if (message.isReply &&
                                 message.parentBody != null) ...[
                               Text(
-                                'Reply to ${message.parentBody}',
+                                IsmLiveStrings.replyToFormat(
+                                  message.parentBody ?? '',
+                                ),
                                 style: Theme.of(context)
                                     .textTheme
                                     .labelSmall

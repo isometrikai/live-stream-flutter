@@ -428,7 +428,9 @@ class _ChatMessageItem extends StatelessWidget {
                             ),
                             if (message.isDeleted)
                               Text(
-                                ' ${message.body} Deleted Message',
+                              IsmLiveStrings.deletedMessageFormat(
+                                ' ${message.body}',
+                              ),
                                 style: context.textTheme.labelSmall?.copyWith(
                                   color: Colors.white70,
                                   fontStyle: FontStyle.italic,
@@ -438,7 +440,9 @@ class _ChatMessageItem extends StatelessWidget {
                               if (message.isReply &&
                                   message.parentBody != null) ...[
                                 Text(
-                                  'Reply to ${message.parentBody}',
+                                  IsmLiveStrings.replyToFormat(
+                                    message.parentBody ?? '',
+                                  ),
                                   style: context.textTheme.labelSmall?.copyWith(
                                     color: Colors.white70,
                                     fontStyle: FontStyle.italic,
@@ -465,7 +469,7 @@ class _ChatMessageItem extends StatelessWidget {
                                             height: IsmLiveDimens.thirtyTwo +
                                                 IsmLiveDimens.two,
                                             child: IsmLiveButton(
-                                              label: 'accept',
+                                              label: IsmLiveStrings.accept,
                                               onTap: () {
                                                 final controller = Get.find<
                                                     IsmLiveStreamController>();
@@ -493,7 +497,7 @@ class _ChatMessageItem extends StatelessWidget {
                                             height: IsmLiveDimens.thirtyTwo +
                                                 IsmLiveDimens.two,
                                             child: IsmLiveButton(
-                                              label: 'deny',
+                                              label: IsmLiveStrings.deny,
                                               onTap: () {
                                                 final controller = Get.find<
                                                     IsmLiveStreamController>();

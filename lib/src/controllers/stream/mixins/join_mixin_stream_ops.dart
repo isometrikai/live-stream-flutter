@@ -237,8 +237,7 @@ mixin StreamJoinStreamOpsMixin on StreamJoinMixin, StreamJoinConnectionMixin, St
         } else {
           final shouldStopFromSheet =
               await IsmLiveUtility.openCustomBottomSheet<bool>(
-            title:
-                "It looks like you're already live from another device. Do you want to stop that stream?",
+            title: IsmLiveStrings.alreadyLiveOnAnotherDevice,
             leftLabel: IsmLiveStrings.no,
             rightLabel: IsmLiveStrings.yes,
             onLeft: () => IsmLiveRoute.pop(false),

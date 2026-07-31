@@ -40,7 +40,7 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.close),
               title: Text(
-                'More options',
+                IsmLiveStrings.moreOptions,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -51,7 +51,7 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
                 title: Text(
-                  'Delete',
+                  IsmLiveStrings.delete,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: Colors.red,
                     fontWeight: FontWeight.w500,
@@ -73,7 +73,7 @@ class IsmLiveStreamRecordingMoreOptionsSheet extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.flag_outlined, color: Colors.orange),
                 title: Text(
-                  'Report',
+                  IsmLiveStrings.report,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: Colors.orange,
                     fontWeight: FontWeight.w500,

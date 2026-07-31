@@ -204,9 +204,9 @@ class IsmLiveGiftsSheet extends StatelessWidget {
                                       (gift.virtualCurrency ?? 0) &&
                                   !IsmLiveDelegate.enableFreeGift) {
                                 IsmLiveUtility.showAlertDialog(
-                                    title: 'Coin Balance',
+                                    title: IsmLiveStrings.coinBalance,
                                     message:
-                                        'Balance is not sufficient to send gift\n Add coins to the wallet ',
+                                        IsmLiveStrings.insufficientGiftBalance,
                                     onPress: () {
                                       IsmLiveUtility.closeDialog();
                                       if (IsmLiveDelegate

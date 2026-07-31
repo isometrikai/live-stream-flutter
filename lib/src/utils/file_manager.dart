@@ -104,14 +104,14 @@ class FileManager {
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1.5),
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Cropper',
+          toolbarTitle: IsmLiveStrings.cropper,
           toolbarColor: IsmLiveColors.black,
           toolbarWidgetColor: IsmLiveColors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: true,
           cropStyle: CropStyle.rectangle,
         ),
-        IOSUiSettings(title: 'Cropper', // cropStyle: CropStyle.rectangle,
+        IOSUiSettings(title: IsmLiveStrings.cropper, // cropStyle: CropStyle.rectangle,
           aspectRatioPresets: [
             CropAspectRatioPreset.original,
             CropAspectRatioPreset.square,

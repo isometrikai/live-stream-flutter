@@ -155,8 +155,8 @@ class _StreamHeaderInfoSection extends StatelessWidget {
             height: IsmLiveDimens.twenty,
             child: Text(
               isBattleTie
-                  ? 'Congratulations to @$winnerName'
-                  : 'It\'s a Draw!',
+                  ? IsmLiveStrings.congratulationsTo(winnerName ?? '')
+                  : IsmLiveStrings.itsADraw,
               style: context.textTheme.bodySmall?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -579,7 +579,9 @@ class _ExpandableDescriptionState extends State<_ExpandableDescription> {
                     });
                   },
                   child: Text(
-                    _isExpanded ? 'View less' : 'View more',
+                    _isExpanded
+                        ? IsmLiveStrings.viewLess
+                        : IsmLiveStrings.viewMore,
                     style: widget.textStyle?.copyWith(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),

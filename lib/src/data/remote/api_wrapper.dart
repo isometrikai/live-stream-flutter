@@ -242,7 +242,7 @@ class IsmLiveApiWrapper {
         if (showDialog) {
           await IsmLiveUtility.showInfoDialog(
             res,
-            title: 'Timeout Error',
+            title: IsmLiveStrings.timeoutErrorTitle,
             onRetry: () => makeRequest(
               api,
               baseUrl: baseUrl,
@@ -270,7 +270,7 @@ class IsmLiveApiWrapper {
         if (showDialog) {
           await IsmLiveUtility.showInfoDialog(
             res,
-            title: 'Argument Error',
+            title: IsmLiveStrings.argumentErrorTitle,
           );
         }
         return res;
@@ -300,7 +300,7 @@ class IsmLiveApiWrapper {
       if (showDialog) {
         await IsmLiveUtility.showInfoDialog(
           res,
-          title: 'Internet Error',
+          title: IsmLiveStrings.internetErrorTitle,
           // onRetry: () => makeRequest(
           //   api,
           //   baseUrl: baseUrl,

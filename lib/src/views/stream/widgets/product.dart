@@ -85,9 +85,9 @@ class IsmLiveProduct extends StatelessWidget {
                     if (isSelected) ...[
                       const Spacer(),
                       IsmLiveTapHandler(
-                        child: const Text(
-                          'Add Discount',
-                          style: TextStyle(color: Colors.blue),
+                        child: Text(
+                          IsmLiveStrings.addDiscount,
+                          style: const TextStyle(color: Colors.blue),
                         ),
                         onTap: () => IsmLiveUtility.openBottomSheet(
                           const IsmLiveProductDiscountSheet(),

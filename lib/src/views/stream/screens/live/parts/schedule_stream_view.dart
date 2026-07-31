@@ -54,7 +54,7 @@ class ScheduleStreamView extends StatelessWidget {
     } else if (isTimePassed && isStreamCreator) {
       // Time has passed and current user created the stream
       buttonWidget = IsmLiveButton(
-        label: 'Go Live',
+        label: IsmLiveStrings.goLive,
         onTap: () {
           controller.startStream(context: context);
         },
@@ -63,7 +63,7 @@ class ScheduleStreamView extends StatelessWidget {
       // Future schedule time, or past time for non-creators
       final formattedTime = scheduleTime != null
           ? scheduleTime.formattedScheduleDate
-          : 'No time set';
+          : IsmLiveStrings.noTimeSet;
       buttonWidget = Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(

@@ -374,16 +374,16 @@ class IsmLiveUtility {
       context: IsmLiveUtility.navigatorKey.currentContext!,
       builder: (context) => CupertinoAlertDialog(
         title: Text(
-          title ?? (isSuccess ? 'Success' : 'Error'),
+          title ?? (isSuccess ? IsmLiveStrings.success : IsmLiveStrings.error),
         ),
         content: Text(
           _getErrorMessage(data.data),
         ),
         actions: [
-          const CupertinoDialogAction(
+          CupertinoDialogAction(
             onPressed: IsmLiveRoute.pop,
             isDefaultAction: true,
-            child: Text('Okay'),
+            child: Text(IsmLiveStrings.okay),
           ),
           if (onRetry != null)
             CupertinoDialogAction(
@@ -392,7 +392,7 @@ class IsmLiveUtility {
                 onRetry();
               },
               isDefaultAction: true,
-              child: const Text('Retry'),
+              child: Text(IsmLiveStrings.retry),
             ),
         ],
       ),

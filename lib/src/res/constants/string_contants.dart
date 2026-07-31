@@ -227,4 +227,99 @@ class IsmLiveStrings {
   static String get turnOn => _t('turnOn');
   static String get broadcastersUnder18NotPermitted =>
       _t('broadcastersUnder18NotPermitted');
+  static String get settings => _t('settings');
+  static String get saySomething => _t('saySomething');
+  static String get success => _t('success');
+  static String get error => _t('error');
+  static String get stop => _t('stop');
+  static String get end => _t('end');
+  static String get resend => _t('resend');
+  static String get report => _t('report');
+  static String get moreOptions => _t('moreOptions');
+  static String get kickOut => _t('kickOut');
+  static String get buyNow => _t('buyNow');
+  static String get addDiscount => _t('addDiscount');
+  static String get viewLess => _t('viewLess');
+  static String get viewMore => _t('viewMore');
+  static String get noTimeSet => _t('noTimeSet');
+  static String get itsADraw => _t('itsADraw');
+  static String congratulationsTo(String name) =>
+      _t('congratulationsTo').replaceFirst('%s', name);
+  static String get coinBalance => _t('coinBalance');
+  static String get insufficientGiftBalance => _t('insufficientGiftBalance');
+  static String get noPlayableRecordingUrl => _t('noPlayableRecordingUrl');
+  static String removeModeratorConfirm(String name) =>
+      _t('removeModeratorConfirm').replaceFirst('%s', name);
+  static String get timeoutErrorTitle => _t('timeoutErrorTitle');
+  static String get argumentErrorTitle => _t('argumentErrorTitle');
+  static String get internetErrorTitle => _t('internetErrorTitle');
+  static String get videoFailedToLoad => _t('videoFailedToLoad');
+  static String get tapToRetry => _t('tapToRetry');
+  static String get videoPlayerError => _t('videoPlayerError');
+  static String get unableToFetchAccountToken =>
+      _t('unableToFetchAccountToken');
+  static String get myStream => _t('myStream');
+  static String atTimeFormat(String time) =>
+      _t('atTimeFormat').replaceFirst('%s', time);
+  static String get cropper => _t('cropper');
+  static String get screenSharing => _t('screenSharing');
+  static String screenSharingNotificationText(String appName) =>
+      _t('screenSharingNotificationText').replaceFirst('%s', appName);
+  static String get shareStreamText => _t('shareStreamText');
+  static String replyingToFormat(String userName, String body) =>
+      _t('replyingToFormat')
+          .replaceFirst('%s', userName)
+          .replaceFirst('%s', body);
+  static String replyToFormat(String body) =>
+      _t('replyToFormat').replaceFirst('%s', body);
+  static String get hostFallback => _t('hostFallback');
+  static String get userFallback => _t('userFallback');
+  static String get changeHost => _t('changeHost');
+  static String get copublishingRequest => _t('copublishingRequest');
+  static String get copublishingRequested => _t('copublishingRequested');
+  static String get copublishingAdded => _t('copublishingAdded');
+  static String hostAcceptedYourCopublishRequest(String hostName) =>
+      _t('hostAcceptedYourCopublishRequest').replaceFirst('%s', hostName);
+  static String youAcceptedCopublishRequest(String userName) =>
+      _t('youAcceptedCopublishRequest').replaceFirst('%s', userName);
+  static String userRequestedCopublishing(String userName) =>
+      _t('userRequestedCopublishing').replaceFirst('%s', userName);
+  static String hostRejectedYourCopublishRequest(String hostName) =>
+      _t('hostRejectedYourCopublishRequest').replaceFirst('%s', hostName);
+  static String youRejectedCopublishRequest(String userName) =>
+      _t('youRejectedCopublishRequest').replaceFirst('%s', userName);
+  static String hostAddedYouAsCopublisher(String hostName) =>
+      _t('hostAddedYouAsCopublisher').replaceFirst('%s', hostName);
+  static String youAddedAsCopublisher(String memberName) =>
+      _t('youAddedAsCopublisher').replaceFirst('%s', memberName);
+  static String hostAddedMemberAsCopublisher(
+          String hostName, String memberName) =>
+      _t('hostAddedMemberAsCopublisher')
+          .replaceFirst('%s', hostName)
+          .replaceFirst('%s', memberName);
+  static String memberStoppedPublishing(String userName) =>
+      _t('memberStoppedPublishing').replaceFirst('%s', userName);
+  static String isModeratorNow(String userName) =>
+      _t('isModeratorNow').replaceFirst('%s', userName);
+  static String leftFromModerator(String userName) =>
+      _t('leftFromModerator').replaceFirst('%s', userName);
+  static String viewerHasJoined(String userName) =>
+      _t('viewerHasJoined').replaceFirst('%s', userName);
+  static String viewerHasLeft(String userName) =>
+      _t('viewerHasLeft').replaceFirst('%s', userName);
+  static String get pkRequestRejected => _t('pkRequestRejected');
+  static String get pkRequested => _t('pkRequested');
+  static String pkInviteYouToLink(String userName) =>
+      _t('pkInviteYouToLink').replaceFirst('%s', userName);
+  static String pkInvitationDescription(String userName) =>
+      _t('pkInvitationDescription').replaceFirst('%s', userName);
+  static String get stopPkBattle => _t('stopPkBattle');
+  static String get endPk => _t('endPk');
+  static String pkChallengeStartingSoon(String name) =>
+      _t('pkChallengeStartingSoon').replaceFirst('%s', name);
+  static String get linking => _t('linking');
+  static String deletedMessageFormat(String body) =>
+      _t('deletedMessageFormat').replaceFirst('%s', body);
+  static String get alreadyLiveOnAnotherDevice =>
+      _t('alreadyLiveOnAnotherDevice');
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/src/live_delegate.dart';
+import 'package:appscrip_live_stream_component/src/res/constants/string_contants.dart';
 import 'package:appscrip_live_stream_component/src/views/stream_recording/recording_video_cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -532,7 +533,7 @@ class _IsmLiveRecordingAutoVideoPlayerState
         controller.value.isInitialized &&
         !hasControllerError;
     final errorMessage = hasControllerError
-        ? (controller?.value.errorDescription ?? 'Failed to load video')
+        ? (controller?.value.errorDescription ?? IsmLiveStrings.failedToLoadVideo)
         : _loadFailureMessage;
     final hasLoadError = errorMessage != null && errorMessage.isNotEmpty;
     final showBufferingBar =
@@ -650,26 +651,26 @@ class _IsmLiveRecordingAutoVideoPlayerState
   Widget _buildRetryUi() => Center(
       child: GestureDetector(
         onTap: _retryLoad,
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.refresh,
                 color: Colors.white,
                 size: 32,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                'Video failed to load',
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                IsmLiveStrings.videoFailedToLoad,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                'Tap to retry',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
+                IsmLiveStrings.tapToRetry,
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ],
           ),

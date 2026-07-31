@@ -61,13 +61,13 @@ class CoinsPlansWalletViewMode {
       }
 
       IsmLiveUtility.showAlertDialog(
-        message: 'Unable to fetch Account token. Please try again.',
+        message: IsmLiveStrings.unableToFetchAccountToken,
       );
       return null;
     } catch (e, st) {
       IsmLiveLog.error(e, st);
       IsmLiveUtility.showAlertDialog(
-        message: 'Unable to fetch Account token. Please try again.',
+        message: IsmLiveStrings.unableToFetchAccountToken,
       );
       return null;
     }
