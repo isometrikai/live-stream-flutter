@@ -9,6 +9,18 @@ class MockAppscripLiveStreamComponentPlatform
     implements AppscripLiveStreamComponentPlatform {
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future<bool> isPictureInPictureSupported() => Future.value(false);
+
+  @override
+  Future<bool> startPictureInPicture({String? trackId}) => Future.value(false);
+
+  @override
+  Future<bool> stopPictureInPicture() => Future.value(false);
+
+  @override
+  Future<bool> reactivateAudioSession() => Future.value(false);
 }
 
 void main() {
