@@ -134,7 +134,10 @@ class IsmLiveMessageField extends StatelessWidget {
                           IsmLiveDimens.boxWidth4,
                           Expanded(
                             child: Text(
-                              'Replying to @${controller.parentMessage!.userName}: ${controller.parentMessage!.body}',
+                              IsmLiveStrings.replyingToFormat(
+                                controller.parentMessage!.userName,
+                                controller.parentMessage!.body,
+                              ),
                               style: context.textTheme.labelMedium,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -179,7 +182,7 @@ class IsmLiveMessageField extends StatelessWidget {
                           controller: controller.messageFieldController,
                           textInputType: TextInputType.text,
                           maxLines: 1,
-                          hintText: 'Say Something…',
+                          hintText: IsmLiveStrings.saySomething,
                           contentPadding: customContentPadding ??
                               const EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 12.0),

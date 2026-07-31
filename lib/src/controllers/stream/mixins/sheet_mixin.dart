@@ -289,7 +289,7 @@ mixin StreamSheetMixin {
   void shareStream() async {
     try {
       final result =
-          await Share.share('check out my website https://example.com');
+          await Share.share(IsmLiveStrings.shareStreamText);
 
       if (result.status == ShareResultStatus.success) {
         print('Thank you for sharing my website!');

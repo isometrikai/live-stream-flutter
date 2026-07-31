@@ -124,7 +124,7 @@ class _InputField extends StatelessWidget {
         IsmLiveDimens.boxHeight4,
         IsmLiveInputField(
           controller: controller,
-          hintText: hint ?? 'Enter $label',
+          hintText: hint ?? IsmLiveStrings.enterFieldFormat(label),
           hintStyle: context.textTheme.labelLarge?.copyWith(
             color: hintColor,
           ),

@@ -571,7 +571,7 @@ class _IsmLiveStreamViewState extends State<_IsmLiveStreamView> {
                                                                           ) ??
                                                                           IsmLiveButton(
                                                                             label:
-                                                                                'Buy now',
+                                                                                IsmLiveStrings.buyNow,
                                                                             onTap: () =>
                                                                                 _onBuyNowTap(context, controller),
                                                                           ),

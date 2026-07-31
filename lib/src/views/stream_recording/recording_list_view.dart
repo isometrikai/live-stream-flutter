@@ -87,9 +87,9 @@ class _IsmLiveRecordingListViewState extends State<IsmLiveRecordingListView> {
                                 IsmLiveStreamDataModelRecordingAdapter(e);
                             if (adapter.recordedUrls.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'No playable recording URL for this stream',
+                                    IsmLiveStrings.noPlayableRecordingUrl,
                                   ),
                                 ),
                               );

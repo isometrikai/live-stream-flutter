@@ -143,9 +143,9 @@ class _TopBadges extends StatelessWidget {
           spacing: IsmLiveDimens.four,
           runSpacing: IsmLiveDimens.four,
           children: [
-            const _BadgePill(
+            _BadgePill(
               backgroundColor: Colors.red,
-              label: 'LIVE',
+              label: IsmLiveStrings.live.toUpperCase(),
             ),
             _BadgePill(
               backgroundColor: _homeViewerBadgeBackground(primaryColor),

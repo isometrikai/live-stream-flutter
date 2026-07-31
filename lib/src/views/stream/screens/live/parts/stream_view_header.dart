@@ -141,7 +141,7 @@ class _StreamHeader extends StatelessWidget {
                                 : SizedBox(
                                     width: IsmLiveDimens.hundred,
                                     child: IsmLiveButton(
-                                      label: 'kick out',
+                                      label: IsmLiveStrings.kickOut,
                                       onTap: () {
                                         controller.kickoutViewer(
                                           streamId: streamId,
@@ -167,7 +167,7 @@ class _StreamHeader extends StatelessWidget {
                             ),
                             title: viewer.userName,
                             subTitle: null,
-                            buttonLable: 'View Profile',
+                            buttonLable: IsmLiveStrings.viewProfile,
                             onTap: () {
                               IsmLiveDelegate.openUserProfileView
                                   ?.call(viewer.identifier);

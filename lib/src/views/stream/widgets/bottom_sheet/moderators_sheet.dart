@@ -446,7 +446,7 @@ class _RemoveModeratorConfirmSheet extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Are you sure you want to remove $moderatorName as moderator?',
+            IsmLiveStrings.removeModeratorConfirm(moderatorName),
             style: TextStyle(
               color: titleColor,
               fontSize: 16,

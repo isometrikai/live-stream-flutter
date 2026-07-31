@@ -26,7 +26,7 @@ class IsmLiveScheduleDialog extends StatelessWidget {
         ),
         IsmLiveDimens.boxHeight8,
         Text(
-          'At ${message.formattedDate}',
+          IsmLiveStrings.atTimeFormat(message.formattedDate),
           style: context.textTheme.bodyMedium?.copyWith(color: textColor),
         ),
         IsmLiveDimens.boxHeight20,

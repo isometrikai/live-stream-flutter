@@ -60,7 +60,7 @@ class IsmLiveAddProduct extends StatelessWidget {
                         borderColor: Colors.transparent,
                         fillColor: IsmLiveColors.fieldColor,
                         controller: controller.searchProductFieldController,
-                        hintText: 'Search',
+                        hintText: IsmLiveStrings.search,
                         prefixIcon: Icon(Icons.search, color: iconColor),
                         onchange: (value) {
                           controller.productsList.clear();

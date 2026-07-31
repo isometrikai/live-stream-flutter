@@ -162,7 +162,7 @@ class _InputField extends StatelessWidget {
         ? IsmLiveStrings.enterRtmlUrl
         : label == IsmLiveStrings.streamKey
             ? IsmLiveStrings.enterStreamKey
-            : 'Enter $label';
+            : IsmLiveStrings.enterFieldFormat(label);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

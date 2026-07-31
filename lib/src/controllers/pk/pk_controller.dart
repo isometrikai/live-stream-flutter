@@ -274,9 +274,9 @@ class IsmLivePkController extends GetxController
       if (pkDetails.metaData?.status ==
           IsmLivePkResponceToSend.rejected.value) {
         IsmLiveUtility.openCustomBottomSheet(
-          title: 'Request for pk is rejected',
-          leftLabel: 'cancel',
-          rightLabel: 'ReSend',
+          title: IsmLiveStrings.pkRequestRejected,
+          leftLabel: IsmLiveStrings.cancel,
+          rightLabel: IsmLiveStrings.resend,
           onLeft: IsmLiveRoute.pop,
           onRight: () {
             sendInvitationToUserForPK(
@@ -294,8 +294,8 @@ class IsmLivePkController extends GetxController
         );
       } else {
         LocalNotificationService.showBasicNotification(
-            body: '@${pkDetails.userName} invite you to link',
-            title: 'pk requested',
+            body: IsmLiveStrings.pkInviteYouToLink(pkDetails.userName ?? ''),
+            title: IsmLiveStrings.pkRequested,
             payload: '');
         pkInviteSheet(
           images: [
@@ -305,8 +305,8 @@ class IsmLivePkController extends GetxController
           userName: pkDetails.userName ?? '',
           reciverName: streamController.user?.name ?? 'U',
           description:
-              'You have received an invitation from @${pkDetails.userName} for the PK challenge. Do you want to continue?',
-          title: '@${pkDetails.userName} invite you to link',
+              IsmLiveStrings.pkInvitationDescription(pkDetails.userName ?? ''),
+          title: IsmLiveStrings.pkInviteYouToLink(pkDetails.userName ?? ''),
           isInvite: true,
           inviteId: pkDetails.metaData?.inviteId ?? '',
           reciverStreamId: pkDetails.metaData?.streamId,
@@ -379,7 +379,7 @@ class IsmLivePkController extends GetxController
         coins: pkGustValue.formatWithKAndL(),
         description: 'New York, USA Female 34',
         image: image,
-        lable: 'Change host',
+        lable: IsmLiveStrings.changeHost,
         title: '$name',
         onTap: () {
           streamController.participantList =
@@ -432,11 +432,13 @@ class IsmLivePkController extends GetxController
   void stopPkBattleSheet() async {
     await IsmLiveUtility.openCustomBottomSheet(
       title: streamController.pkStages?.isPkStart ?? false
-          ? 'You want to stop pk battle'
-          : 'You want to end Pk',
-      leftLabel: 'cancel',
+          ? IsmLiveStrings.stopPkBattle
+          : IsmLiveStrings.endPk,
+      leftLabel: IsmLiveStrings.cancel,
       rightLabel:
-          streamController.pkStages?.isPkStart ?? false ? 'Stop' : 'End',
+          streamController.pkStages?.isPkStart ?? false
+              ? IsmLiveStrings.stop
+              : IsmLiveStrings.end,
       onLeft: IsmLiveRoute.pop,
       onRight: () async {
         IsmLiveRoute.pop();
@@ -543,15 +545,16 @@ class IsmLivePkController extends GetxController
       IsmLiveRoute.pop();
 
       pkInviteSheet(
-        description:
-            'The PK challenge between you and ${reciverDetails.name} will start soon. Please wait…',
+        description: IsmLiveStrings.pkChallengeStartingSoon(
+          reciverDetails.name,
+        ),
         images: [
           reciverDetails.profilePic ?? '',
           streamController.user?.profileUrl ?? ''
         ],
         userName: streamController.user?.name ?? '',
         reciverName: reciverDetails.name,
-        title: 'Linking...',
+        title: IsmLiveStrings.linking,
       );
     }
   }

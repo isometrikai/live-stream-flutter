@@ -189,10 +189,12 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
     try {
       var hasPermissions = await FlutterBackground.hasPermissions;
       if (!isRetry) {
-        const androidConfig = FlutterBackgroundAndroidConfig(
-          notificationTitle: 'Screen Sharing',
-          notificationText: '${IsmLiveConstants.name} is sharing the screen.',
-          notificationIcon: AndroidResource(
+        final androidConfig = FlutterBackgroundAndroidConfig(
+          notificationTitle: IsmLiveStrings.screenSharing,
+          notificationText: IsmLiveStrings.screenSharingNotificationText(
+            IsmLiveConstants.name,
+          ),
+          notificationIcon: const AndroidResource(
             name: 'ic_launcher',
             defType: 'mipmap',
           ),

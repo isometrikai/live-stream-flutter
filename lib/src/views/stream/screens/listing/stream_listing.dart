@@ -405,8 +405,8 @@ class _StreamListingState extends State<_StreamListing> {
     final adapter = IsmLiveStreamDataModelRecordingAdapter(streamModel);
     if (adapter.recordedUrls.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No playable recording URL for this stream'),
+        SnackBar(
+          content: Text(IsmLiveStrings.noPlayableRecordingUrl),
         ),
       );
       return;

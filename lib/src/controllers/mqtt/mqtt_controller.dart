@@ -795,13 +795,13 @@ class IsmLiveMqttController extends GetxController {
               messageType: IsmLiveMessageType.normal,
               messageId: '',
               body: memberId == userId
-                  ? '$hostName has accepted your Co-publisher Request'
-                  : 'You\'ve accepted $userName\'s Co-publisher Request',
+                  ? IsmLiveStrings.hostAcceptedYourCopublishRequest(hostName)
+                  : IsmLiveStrings.youAcceptedCopublishRequest(userName),
               isEvent: true,
             );
             LocalNotificationService.showBasicNotification(
               body: message.body,
-              title: 'Co-publishing request',
+              title: IsmLiveStrings.copublishingRequest,
               payload: '',
             );
 
@@ -822,14 +822,14 @@ class IsmLiveMqttController extends GetxController {
               // Unique per requester — empty id caused addMessages().toSet()
               // to drop all but the first co-publisher request in chat.
               messageId: 'copublish-request-${user.userId}',
-              body: '${user.userName} has requested for Co-publishing',
+              body: IsmLiveStrings.userRequestedCopublishing(user.userName),
               isEvent: true,
               isCopublisherRequest: true,
             );
 
             LocalNotificationService.showBasicNotification(
               body: message.body,
-              title: 'Co-publishing requested',
+              title: IsmLiveStrings.copublishingRequested,
               payload: '',
             );
             unawaited(_streamController.handleMessage(message: message));
@@ -841,8 +841,10 @@ class IsmLiveMqttController extends GetxController {
           final hostId = payload['initiatorId'] as String? ?? '';
           if (memberId == userId || hostId == userId) {
             _streamController.memberStatus = IsmLiveMemberStatus.requestDenied;
-            final hostName = payload['initiatorName'] as String? ?? 'Host';
-            final userName = payload['userName'] as String? ?? 'User';
+            final hostName = payload['initiatorName'] as String? ??
+                IsmLiveStrings.hostFallback;
+            final userName =
+                payload['userName'] as String? ?? IsmLiveStrings.userFallback;
             final message = IsmLiveMessageModel(
               streamId: streamId!,
               senderName: hostName,
@@ -852,13 +854,13 @@ class IsmLiveMqttController extends GetxController {
               messageType: IsmLiveMessageType.normal,
               messageId: '',
               body: memberId == userId
-                  ? '$hostName has rejected your Co-publisher Request'
-                  : 'You\'ve rejected $userName\'s Co-publisher Request',
+                  ? IsmLiveStrings.hostRejectedYourCopublishRequest(hostName)
+                  : IsmLiveStrings.youRejectedCopublishRequest(userName),
               isEvent: true,
             );
             LocalNotificationService.showBasicNotification(
               body: message.body,
-              title: 'Co-publishing request',
+              title: IsmLiveStrings.copublishingRequest,
               payload: '',
             );
             unawaited(_streamController.handleMessage(message: message));
@@ -872,7 +874,8 @@ class IsmLiveMqttController extends GetxController {
           final memberName = payload['memberName'] as String? ?? '';
           final memberIdentifier = payload['memberIdentifier'] as String? ?? '';
           final memberProfilePic = payload['memberProfilePic'] as String? ?? '';
-          final initiatorName = payload['initiatorName'] as String? ?? 'Host';
+          final initiatorName =
+              payload['initiatorName'] as String? ?? IsmLiveStrings.hostFallback;
           final hostId = payload['initiatorId'] as String? ?? '';
           final initiatorMetaData = (payload['initiatorMetaData'] ??
               payload['initiatorMetadata']) as Map<String, dynamic>?;
@@ -888,16 +891,19 @@ class IsmLiveMqttController extends GetxController {
           var body = '';
           if (memberId == userId) {
             _streamController.memberStatus = IsmLiveMemberStatus.gotRequest;
-            body = '$initiatorDisplayName has added you as a Co-publisher';
+            body = IsmLiveStrings.hostAddedYouAsCopublisher(
+                initiatorDisplayName);
             _streamController.update([
               IsmLiveStreamView.updateId,
               IsmLiveControlsWidget.updateId,
             ]);
           } else if (hostId == userId) {
-            body = 'You\'ve added $memberName as a Co-publisher';
+            body = IsmLiveStrings.youAddedAsCopublisher(memberName);
           } else {
-            body =
-                '$initiatorDisplayName has added $memberName as a Co-publisher';
+            body = IsmLiveStrings.hostAddedMemberAsCopublisher(
+              initiatorDisplayName,
+              memberName,
+            );
           }
           final message = IsmLiveMessageModel(
             streamId: streamId!,
@@ -912,7 +918,7 @@ class IsmLiveMqttController extends GetxController {
           );
           LocalNotificationService.showBasicNotification(
             body: message.body,
-            title: 'Co-publishing added',
+            title: IsmLiveStrings.copublishingAdded,
             payload: '',
           );
 
@@ -933,7 +939,7 @@ class IsmLiveMqttController extends GetxController {
             senderId: member.userId,
             messageType: IsmLiveMessageType.normal,
             messageId: '',
-            body: '${member.userName} has stopped publishing and left',
+            body: IsmLiveStrings.memberStoppedPublishing(member.userName),
             isEvent: true,
           );
           _streamController.pkStages = null;
@@ -1135,7 +1141,7 @@ class IsmLiveMqttController extends GetxController {
                 'moderator-added',
                 moderatorId,
               ),
-              body: '${moderator.displayUserName} is a moderator now',
+              body: IsmLiveStrings.isModeratorNow(moderator.displayUserName),
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message: message));
@@ -1174,7 +1180,7 @@ class IsmLiveMqttController extends GetxController {
                 'moderator-left',
                 moderatorId,
               ),
-              body: '${moderator.displayUserName} has left from moderator ',
+              body: IsmLiveStrings.leftFromModerator(moderator.displayUserName),
               isEvent: true,
             );
             unawaited(_streamController.handleMessage(message: message));
@@ -1298,7 +1304,7 @@ class IsmLiveMqttController extends GetxController {
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
               messageId: DateTime.now().toString(),
-              body: '${viewer.displayUserName} has joined',
+              body: IsmLiveStrings.viewerHasJoined(viewer.displayUserName),
               isEvent: true,
             );
 
@@ -1322,7 +1328,7 @@ class IsmLiveMqttController extends GetxController {
               senderId: viewer.userId,
               messageType: IsmLiveMessageType.normal,
               messageId: DateTime.now().toString(),
-              body: '${viewer.displayUserName} has left',
+              body: IsmLiveStrings.viewerHasLeft(viewer.displayUserName),
               isEvent: true,
             );
 
