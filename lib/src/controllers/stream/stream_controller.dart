@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
 import 'package:appscrip_live_stream_component/src/controllers/stream/mixins/background_lifecycle_probe_mixin.dart';
+import 'package:appscrip_live_stream_component/src/deepar/deepar_live_publisher.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -309,6 +310,15 @@ class IsmLiveStreamController extends GetxController
 
   CameraController? cameraController;
 
+  /// Active DeepAR → LiveKit publisher when [IsmLiveDelegate.deepArConfig] is on.
+  IsmLiveDeepArPublisher? deepArPublisher;
+
+  /// Selected DeepAR effect id for the filter sheet UI.
+  String selectedDeepArEffectId =
+      IsmLiveDelegate.deepArConfig.resolveDefaultEffect().id;
+
+  Future<void>? cameraFuture;
+
   final getStreamDebouncer = IsmLiveDebouncer();
   final AppscripLiveStreamComponent _liveStreamBridge =
       AppscripLiveStreamComponent();
@@ -324,8 +334,6 @@ class IsmLiveStreamController extends GetxController
   final RxBool _isViewerJoiningStream = false.obs;
   bool get isViewerJoiningStream => _isViewerJoiningStream.value;
   set isViewerJoiningStream(bool value) => _isViewerJoiningStream.value = value;
-
-  Future? cameraFuture;
 
   XFile? pickedImage;
 
@@ -1059,6 +1067,8 @@ class IsmLiveStreamController extends GetxController
     cameraController?.dispose();
     cameraController = null;
     cameraFuture = null;
+    unawaited(deepArPublisher?.stop() ?? Future<void>.value());
+    deepArPublisher = null;
 
     // Reset flags and selections
     if (callDispose) disposeAnimationController();
@@ -1177,6 +1187,27 @@ class IsmLiveStreamController extends GetxController
     if (participant == null) {
       return;
     }
+
+    // DeepAR owns the camera when active — flip via DeepAR, not WebRTC Helper.
+    final deepAr = deepArPublisher;
+    if (deepAr != null && deepAr.isStarted) {
+      final previousPosition = position;
+      final newPosition = position.switched();
+      isCameraSwitching = true;
+      update();
+      try {
+        await deepAr.switchCamera();
+        position = newPosition;
+      } catch (error) {
+        position = previousPosition;
+        IsmLiveLog('DeepAR camera switch failed: $error');
+      }
+      await Future.delayed(const Duration(milliseconds: 140));
+      isCameraSwitching = false;
+      update();
+      return;
+    }
+
     final track = participant.videoTrackPublications.firstOrNull?.track;
     if (track == null) return;
 

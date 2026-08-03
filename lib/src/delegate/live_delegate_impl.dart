@@ -108,6 +108,12 @@ class IsmLiveDelegate {
 
   static IsmLiveGoLiveScreenConfigure? goLiveScreenConfigure;
 
+  /// Optional DeepAR face filters for host / co-publisher publish.
+  ///
+  /// Default is disabled (`IsmLiveDeepArConfig()`). Set via
+  /// [IsmLiveApp.configureInterface].
+  static IsmLiveDeepArConfig deepArConfig = const IsmLiveDeepArConfig();
+
   /// Configuration for the live stream screen UI.
   static IsmLiveStreamScreenConfigure streamScreenConfigure =
       const IsmLiveStreamScreenConfigure();

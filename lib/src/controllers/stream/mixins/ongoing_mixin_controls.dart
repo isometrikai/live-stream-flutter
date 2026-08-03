@@ -95,6 +95,12 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
       case IsmLiveStreamOption.settings:
         _controller.settingSheet();
         break;
+      case IsmLiveStreamOption.filters:
+        final ctx = Get.context;
+        if (ctx != null) {
+          await IsmLiveVideoEffectsSheet.show(ctx);
+        }
+        break;
       case IsmLiveStreamOption.product:
         IsmLiveRouteManagement.goToTagProduct();
         break;

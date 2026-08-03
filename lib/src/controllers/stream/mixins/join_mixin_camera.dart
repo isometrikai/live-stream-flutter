@@ -99,7 +99,8 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
     }
 
     try {
-      // Ensure the Camera plugin controller is released before WebRTC opens camera
+      // Ensure the Camera plugin controller is released before WebRTC / DeepAR
+      // opens the camera.
       try {
         await _controller.cameraController?.dispose();
         _controller.cameraController = null;
@@ -113,33 +114,77 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
         restream: _controller.isRestreamBroadcast,
       );
 
-      // Match room / UI: `_connectRoomAndInitialize` sets `_controller.position`
-      // from the delegate on first join and preserves it on rejoin.
       final resolvedCameraPosition = _controller.position;
+      final useDeepAr = IsmLiveDeepArPublisher.shouldUse(
+        IsmLiveDelegate.deepArConfig,
+      );
 
-      final tracks = await Future.wait([
-        lk.LocalVideoTrack.createCameraTrack(
-          lk.CameraCaptureOptions(
-            cameraPosition: resolvedCameraPosition,
+      late final lk.LocalVideoTrack localVideo;
+      late final lk.LocalAudioTrack localAudio;
+
+      if (useDeepAr) {
+        try {
+          await _controller.deepArPublisher?.stop();
+          final publisher =
+              IsmLiveDeepArPublisher(IsmLiveDelegate.deepArConfig);
+          _controller.deepArPublisher = publisher;
+          localVideo = await publisher.start(
+            frontCamera:
+                resolvedCameraPosition == lk.CameraPosition.front,
             params: captureParams,
+          );
+          // Apply UI-selected effect if any.
+          IsmLiveDeepArEffect? selected;
+          for (final e in IsmLiveDelegate.deepArConfig.effects) {
+            if (e.id == _controller.selectedDeepArEffectId) {
+              selected = e;
+              break;
+            }
+          }
+          if (selected != null) {
+            await publisher.applyEffect(selected);
+          }
+          localAudio = await lk.LocalAudioTrack.create();
+        } catch (e) {
+          IsmLiveLog.error(
+            'DeepAR publish failed, falling back to LiveKit camera: $e',
+          );
+          await _controller.deepArPublisher?.stop();
+          _controller.deepArPublisher = null;
+          final tracks = await Future.wait([
+            lk.LocalVideoTrack.createCameraTrack(
+              lk.CameraCaptureOptions(
+                cameraPosition: resolvedCameraPosition,
+                params: captureParams,
+              ),
+            ),
+            lk.LocalAudioTrack.create(),
+          ]);
+          localVideo = tracks[0] as lk.LocalVideoTrack;
+          localAudio = tracks[1] as lk.LocalAudioTrack;
+        }
+      } else {
+        final tracks = await Future.wait([
+          lk.LocalVideoTrack.createCameraTrack(
+            lk.CameraCaptureOptions(
+              cameraPosition: resolvedCameraPosition,
+              params: captureParams,
+            ),
           ),
-        ),
-        lk.LocalAudioTrack.create(),
-      ]);
-      var localVideo = tracks[0] as lk.LocalVideoTrack;
-      var localAudio = tracks[1] as lk.LocalAudioTrack;
+          lk.LocalAudioTrack.create(),
+        ]);
+        localVideo = tracks[0] as lk.LocalVideoTrack;
+        localAudio = tracks[1] as lk.LocalAudioTrack;
+      }
 
       await Future.wait<dynamic>([
         _controller.room!.localParticipant!.publishVideoTrack(localVideo),
         _controller.room!.localParticipant!.publishAudioTrack(localAudio),
       ]);
-      // Keep UI flag in sync so settings / sync helpers donâ€™t think video is off
-      // while tracks are live (e.g. after foreground room rebuild).
       _controller.videoOn = true;
       _controller.audioOn = true;
     } catch (e) {
       IsmLiveLog.error('enableMyVideo error: $e');
-      // Don't rethrow - let the stream continue without video/audio if needed
     }
   }
 

@@ -74,6 +74,114 @@ class HomeController extends GetxController {
     IsmLiveApp.configureInterface(
       productionMode: true,
       excludeGuestUsers: true,
+      deepArConfig: const IsmLiveDeepArConfig(
+        enabled: true,
+        androidLicenseKey:
+            '2c6fd525a23f001b9c3500636fc6602b7d8aeda60859f60fc4b12acb1a6429b4581fbeed00050c1c',
+        iosLicenseKey:
+            '9322be902ee078097a47edafab16f0ebb8d8dfa7d74a32ff856a109e7020feea9c7b278cb66c37f7',
+        // Lower than 720p — RGBA frame bridge is heavy; keeps live UI responsive.
+        outputWidth: 540,
+        outputHeight: 960,
+        effects: [
+          IsmLiveDeepArEffect.none,
+          IsmLiveDeepArEffect(
+            id: 'aviators',
+            name: 'Aviators',
+            assetPath: 'effects/aviators.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'flower_face',
+            name: 'Flower Face',
+            assetPath: 'effects/flower_face.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'neon_horns',
+            name: 'Neon Horns',
+            assetPath: 'effects/Neon_Devil_Horns.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'hope',
+            name: 'Hope',
+            assetPath: 'effects/Hope.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'vendetta',
+            name: 'Vendetta',
+            assetPath: 'effects/Vendetta_Mask.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'stallone',
+            name: 'Stallone',
+            assetPath: 'effects/Stallone.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'viking',
+            name: 'Viking',
+            assetPath: 'effects/viking_helmet.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'elephant',
+            name: 'Elephant',
+            assetPath: 'effects/Elephant_Trunk.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'fire',
+            name: 'Fire',
+            assetPath: 'effects/Fire_Effect.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'burning',
+            name: 'Burning',
+            assetPath: 'effects/burning_effect.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'snail',
+            name: 'Snail',
+            assetPath: 'effects/Snail.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'humanoid',
+            name: 'Humanoid',
+            assetPath: 'effects/Humanoid.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'makeup',
+            name: 'Makeup',
+            assetPath: 'effects/MakeupLook.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'split_look',
+            name: 'Split Look',
+            assetPath: 'effects/Split_View_Look.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'emotions',
+            name: 'Emotions',
+            assetPath: 'effects/Emotions_Exaggerator.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'emotion_meter',
+            name: 'Emotion Meter',
+            assetPath: 'effects/Emotion_Meter.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'hearts',
+            name: 'Hearts',
+            assetPath: 'effects/8bitHearts.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'ping_pong',
+            name: 'Ping Pong',
+            assetPath: 'effects/Ping_Pong.deepar',
+          ),
+          IsmLiveDeepArEffect(
+            id: 'galaxy',
+            name: 'Galaxy',
+            assetPath: 'effects/galaxy_background.deepar',
+          ),
+        ],
+      ),
       streamScreenConfigure: IsmLiveStreamScreenConfigure(
         showGiftMessagesInChat: true,
         showStreamMemberCount: true,

@@ -3,6 +3,7 @@ import AVKit
 import UIKit
 
 public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
+  private let externalVideo = ExternalVideoTrackManager()
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "appscrip_live_stream_component", binaryMessenger: registrar.messenger())
@@ -25,6 +26,29 @@ public class AppscripLiveStreamComponentPlugin: NSObject, FlutterPlugin {
       result(nil)
     case "openAppSettings":
       openAppSettings(result: result)
+    case "createExternalVideoTrack":
+      let args = call.arguments as? [String: Any]
+      let width = args?["width"] as? Int ?? 720
+      let height = args?["height"] as? Int ?? 1280
+      externalVideo.createTrack(width: width, height: height, result: result)
+    case "pushExternalVideoFrame":
+      let args = call.arguments as? [String: Any]
+      guard let data = args?["data"] as? FlutterStandardTypedData else {
+        result(FlutterError(code: "pushExternalVideoFrame", message: "data is null", details: nil))
+        return
+      }
+      externalVideo.pushFrame(
+        data: data,
+        width: args?["width"] as? Int ?? 0,
+        height: args?["height"] as? Int ?? 0,
+        format: args?["format"] as? String ?? "bgra",
+        timestampMs: (args?["timestampMs"] as? NSNumber)?.int64Value ?? 0,
+        rotation: args?["rotation"] as? Int ?? 0,
+        mirror: args?["mirror"] as? Bool ?? false,
+        result: result
+      )
+    case "disposeExternalVideoTrack":
+      externalVideo.dispose(result: result)
     default:
       result(FlutterMethodNotImplemented)
     }

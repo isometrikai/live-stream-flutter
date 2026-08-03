@@ -11,6 +11,7 @@ dependencies:
   cached_network_image: ^3.4.1
   camera: ^0.11.3
   connectivity_plus: ^7.0.0
+  flutter_deepar: ^0.1.8
   emoji_picker_flutter: ^4.3.0
   file_picker: ^10.3.10
   flutter:

@@ -532,6 +532,7 @@ mixin StreamOngoingParticipantsMixin
       case IsmLiveStreamOption.bars:
       case IsmLiveStreamOption.vs:
       case IsmLiveStreamOption.settings:
+      case IsmLiveStreamOption.filters:
       case IsmLiveStreamOption.rotateCamera:
       case IsmLiveStreamOption.product:
       case IsmLiveStreamOption.pk:

@@ -769,6 +769,7 @@ class IsmLiveApp extends StatefulWidget {
     /// false if the host app wants the SDK to handle it with the default behavior.
     IsmLiveSideIconsConfigure? sideIconsConfigure,
     IsmLiveStreamRecordingPlayerConfig? streamRecordingPlayerConfig,
+    IsmLiveDeepArConfig? deepArConfig,
   }) {
     _applySideIconsConfigure(
         sideIconsConfigure ?? const IsmLiveSideIconsConfigure());
@@ -840,6 +841,10 @@ class IsmLiveApp extends StatefulWidget {
       IsmLiveDelegate.initialCameraPositionStream = initialCameraPositionStream;
     }
     IsmLiveDelegate.streamRecordingPlayerConfig = streamRecordingPlayerConfig;
+
+    if (deepArConfig != null) {
+      IsmLiveDelegate.deepArConfig = deepArConfig;
+    }
 
     // Chat polling fallback while MQTT disconnected (host can override).
     IsmLiveDelegate.mqttChatFallbackInterval =

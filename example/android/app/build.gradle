@@ -67,13 +67,20 @@ android {
         applicationId "com.dubly.androidapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 24
         // minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         // targetSdkVersion flutter.targetSdkVersion
         versionCode configProperties['VERSION_CODE'].toInteger()
         versionName configProperties['VERSION_NAME'].toString()
         multiDexEnabled true
+    }
+
+    // 16 KB page-size: uncompressed JNI libs (required for Play / Android 15+).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
 
     // signingConfigs {
@@ -101,4 +108,12 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.5.0')
     implementation 'com.google.firebase:firebase-analytics'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+}
+
+// flutter_deepar pins DeepAR 5.6.4 (4 KB–aligned natives). Force ≥5.6.20 so
+// libnative-lib / libxzimgSDK / libtensorflowlite_* pass Android 16 KB checks.
+configurations.configureEach {
+    resolutionStrategy {
+        force 'ai.deepar.ar:DeepAR:5.6.22'
+    }
 }

@@ -16,6 +16,28 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // DeepAR SDK only — flutter_deepar injects this repo without a content
+        // filter, which makes Gradle ask it for androidx.* and get HTTP 403.
+        exclusiveContent {
+            forRepository {
+                maven {
+                    url 'https://sdk.developer.deepar.ai/maven-android-repository/releases/'
+                }
+            }
+            filter {
+                includeGroup 'ai.deepar.ar'
+            }
+        }
+    }
+
+    // Clamp any unfiltered DeepAR repo added by flutter_deepar's build.gradle.
+    repositories.whenObjectAdded { repo ->
+        if (repo instanceof MavenArtifactRepository &&
+            repo.url.toString().contains('sdk.developer.deepar.ai')) {
+            repo.content {
+                includeGroup 'ai.deepar.ar'
+            }
+        }
     }
 }
 
@@ -23,6 +45,12 @@ rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
     project.evaluationDependsOn(':app')
+    // Force 16 KB–compatible DeepAR for every Android subproject (incl. flutter_deepar).
+    project.configurations.configureEach {
+        resolutionStrategy {
+            force 'ai.deepar.ar:DeepAR:5.6.22'
+        }
+    }
 }
 
 tasks.register("clean", Delete) {

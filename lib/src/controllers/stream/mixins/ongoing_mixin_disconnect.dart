@@ -194,6 +194,10 @@ mixin StreamOngoingDisconnectMixin on StreamOngoingMixin {
               await t.stop();
             } catch (_) {}
           }
+          try {
+            await _controller.deepArPublisher?.stop();
+          } catch (_) {}
+          _controller.deepArPublisher = null;
         }
 
         if (room.connectionState != lk.ConnectionState.disconnected) {

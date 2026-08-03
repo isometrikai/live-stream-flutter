@@ -329,9 +329,16 @@ class _LocalParticipantWidgetState
       return VideoViewMirrorMode.auto;
     }
     final controller = Get.find<IsmLiveStreamController>();
-    return controller.position == CameraPosition.front
-        ? VideoViewMirrorMode.mirror
-        : VideoViewMirrorMode.off;
+    if (controller.position != CameraPosition.front) {
+      return VideoViewMirrorMode.off;
+    }
+    // DeepAR output is already correctly oriented (watermark on the right,
+    // text readable). Do not mirror the local renderer — that flips the
+    // watermark backwards. Selfie "mirror feel" is traded for correct AR UI.
+    if (controller.deepArPublisher?.isStarted == true) {
+      return VideoViewMirrorMode.off;
+    }
+    return VideoViewMirrorMode.mirror;
   }
 
   @override

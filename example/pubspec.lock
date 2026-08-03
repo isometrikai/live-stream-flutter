@@ -341,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_deepar:
+    dependency: transitive
+    description:
+      name: flutter_deepar
+      sha256: ff9f7cb3683f35602cb81653045506bd545040c1a9cb55bff845b12200577c26
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.8"
   flutter_driver:
     dependency: transitive
     description: flutter

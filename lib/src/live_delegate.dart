@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appscrip_live_stream_component/appscrip_live_stream_component.dart';
+import 'package:appscrip_live_stream_component/src/deepar/deepar_config.dart';
 import 'package:appscrip_live_stream_component/src/live_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +11,8 @@ import 'package:video_player/video_player.dart';
 // For e-commerce related delegates, see IsmLiveECommerceDelegate.
 
 export 'analytics/live_analytics.dart';
+export 'deepar/deepar_config.dart';
+export 'deepar/deepar_effect.dart';
 
 part 'delegate/live_delegate_golive_types.dart';
 part 'delegate/live_delegate_control_types.dart';

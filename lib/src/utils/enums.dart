@@ -284,6 +284,7 @@ enum IsmLiveStreamOption {
   members(IsmLiveAssetConstants.analytics),
   scheduleModify(IsmLiveAssetConstants.more),
   settings(IsmLiveAssetConstants.settings),
+  filters(IsmLiveAssetConstants.favourite),
   rotateCamera(IsmLiveAssetConstants.rotateCamera),
   speaker(IsmLiveAssetConstants.speakerOn),
   product(IsmLiveAssetConstants.product),
@@ -321,18 +322,20 @@ enum IsmLiveStreamOption {
 
   ///host options
   static List<IsmLiveStreamOption> get hostOptions =>
-      IsmLiveDelegate.hostOptions.isEmpty
-          ? [
-              IsmLiveStreamOption.bars,
-              IsmLiveStreamOption.vs,
-              IsmLiveStreamOption.multiLive,
-              // IsmLiveStreamOption.product,
-              IsmLiveStreamOption.share,
-              // IsmLiveStreamOption.favourite,
-              IsmLiveStreamOption.rotateCamera,
-              IsmLiveStreamOption.settings,
-            ]
-          : IsmLiveDelegate.hostOptions;
+      _withDeepArFilters(
+        IsmLiveDelegate.hostOptions.isEmpty
+            ? [
+                IsmLiveStreamOption.bars,
+                IsmLiveStreamOption.vs,
+                IsmLiveStreamOption.multiLive,
+                // IsmLiveStreamOption.product,
+                IsmLiveStreamOption.share,
+                // IsmLiveStreamOption.favourite,
+                IsmLiveStreamOption.rotateCamera,
+                IsmLiveStreamOption.settings,
+              ]
+            : List<IsmLiveStreamOption>.from(IsmLiveDelegate.hostOptions),
+      );
 
   ///rtmp options
   static List<IsmLiveStreamOption> get rtmpOptions =>
@@ -348,29 +351,56 @@ enum IsmLiveStreamOption {
 
   ///copublisher options
   static List<IsmLiveStreamOption> get copublisherOptions =>
-      IsmLiveDelegate.copublisherOptions.isEmpty
-          ? [
-              // IsmLiveStreamOption.members,
-              // IsmLiveStreamOption.vs,
-              // IsmLiveStreamOption.multiLive,
-              IsmLiveStreamOption.speaker,
-              IsmLiveStreamOption.share,
-              IsmLiveStreamOption.rotateCamera,
-              IsmLiveStreamOption.settings,
-            ]
-          : IsmLiveDelegate.copublisherOptions;
+      _withDeepArFilters(
+        IsmLiveDelegate.copublisherOptions.isEmpty
+            ? [
+                // IsmLiveStreamOption.members,
+                // IsmLiveStreamOption.vs,
+                // IsmLiveStreamOption.multiLive,
+                IsmLiveStreamOption.speaker,
+                IsmLiveStreamOption.share,
+                IsmLiveStreamOption.rotateCamera,
+                IsmLiveStreamOption.settings,
+              ]
+            : List<IsmLiveStreamOption>.from(
+                IsmLiveDelegate.copublisherOptions,
+              ),
+      );
 
   ///pk options
   static List<IsmLiveStreamOption> get pkOptions =>
-      IsmLiveDelegate.pkOptions.isEmpty
-          ? [
-              IsmLiveStreamOption.pk,
-              IsmLiveStreamOption.bars,
-              IsmLiveStreamOption.share,
-              IsmLiveStreamOption.rotateCamera,
-              IsmLiveStreamOption.settings,
-            ]
-          : IsmLiveDelegate.pkOptions;
+      _withDeepArFilters(
+        IsmLiveDelegate.pkOptions.isEmpty
+            ? [
+                IsmLiveStreamOption.pk,
+                IsmLiveStreamOption.bars,
+                IsmLiveStreamOption.share,
+                IsmLiveStreamOption.rotateCamera,
+                IsmLiveStreamOption.settings,
+              ]
+            : List<IsmLiveStreamOption>.from(IsmLiveDelegate.pkOptions),
+      );
+
+  /// Ensures [filters] is present when DeepAR is active, even if the host app
+  /// supplies a custom [IsmLiveDelegate.hostOptions] list.
+  static List<IsmLiveStreamOption> _withDeepArFilters(
+    List<IsmLiveStreamOption> options,
+  ) {
+    if (!IsmLiveDelegate.deepArConfig.isActive) return options;
+    if (options.contains(IsmLiveStreamOption.filters)) return options;
+    final insertAt = options.indexOf(IsmLiveStreamOption.rotateCamera);
+    if (insertAt >= 0) {
+      options.insert(insertAt, IsmLiveStreamOption.filters);
+    } else {
+      final settingsAt = options.indexOf(IsmLiveStreamOption.settings);
+      if (settingsAt >= 0) {
+        options.insert(settingsAt, IsmLiveStreamOption.filters);
+      } else {
+        options.add(IsmLiveStreamOption.filters);
+      }
+    }
+    return options;
+  }
 }
 
 enum IsmLiveHostSettings {

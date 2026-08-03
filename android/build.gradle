@@ -46,10 +46,13 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        // flutter_deepar requires 24+; keep host apps aligned.
+        minSdkVersion 24
     }
 
     dependencies {
+        // Match flutter_webrtc's WebRTC so ExternalVideoTrackManager can push frames.
+        implementation 'io.github.webrtc-sdk:android:144.7559.09'
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
     }

@@ -9,6 +9,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.provider.Settings
+import com.example.appscrip_live_stream_component.deepar.ExternalVideoTrackManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -19,6 +20,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
   private lateinit var channel: MethodChannel
   private lateinit var appContext: Context
+  private val externalVideo = ExternalVideoTrackManager()
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     appContext = flutterPluginBinding.applicationContext
@@ -35,11 +37,39 @@ class AppscripLiveStreamComponentPlugin : FlutterPlugin, MethodCallHandler {
       "openAppSettings" -> {
         openAppSettings(result)
       }
+      "createExternalVideoTrack" -> {
+        val width = call.argument<Int>("width") ?: 720
+        val height = call.argument<Int>("height") ?: 1280
+        externalVideo.createTrack(width, height, result)
+      }
+      "pushExternalVideoFrame" -> {
+        val data = call.argument<ByteArray>("data")
+        if (data == null) {
+          result.error("pushExternalVideoFrame", "data is null", null)
+          return
+        }
+        externalVideo.pushFrame(
+          data = data,
+          width = call.argument<Int>("width") ?: 0,
+          height = call.argument<Int>("height") ?: 0,
+          format = call.argument<String>("format") ?: "rgba",
+          timestampMs = (call.argument<Number>("timestampMs")?.toLong()) ?: 0L,
+          rotation = call.argument<Int>("rotation") ?: 0,
+          mirror = call.argument<Boolean>("mirror") ?: false,
+          result = result,
+        )
+      }
+      "disposeExternalVideoTrack" -> externalVideo.dispose(result)
       else -> result.notImplemented()
     }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    externalVideo.dispose(object : Result {
+      override fun success(result: Any?) {}
+      override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {}
+      override fun notImplemented() {}
+    })
     channel.setMethodCallHandler(null)
   }
 
