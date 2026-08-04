@@ -9,12 +9,17 @@ class IsmLiveEndStreamContainer extends StatelessWidget {
     required this.points,
     required this.assetConstant,
     this.color,
+    this.fromPackage = true,
   });
 
   final String title;
   final String points;
   final String assetConstant;
   final Color? color;
+
+  /// Whether [assetConstant] is loaded from this package. Host overrides
+  /// typically pass `false`.
+  final bool fromPackage;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class IsmLiveEndStreamContainer extends StatelessWidget {
         IsmLiveImage.svg(
           assetConstant,
           color: iconColor,
+          fromPackage: fromPackage,
         ),
         Text(
           title,

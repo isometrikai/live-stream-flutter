@@ -274,6 +274,47 @@ enum IsmLiveAnalyticsOptions {
               IsmLiveAnalyticsOptions.duration,
             ]
           : IsmLiveDelegate.liveAnalyticsOptions;
+
+  IsmLiveAnalyticsOptionOverride? get _override =>
+      IsmLiveDelegate.analyticsOptionOverrides[this];
+
+  /// Host [IsmLiveAnalyticsOptionOverride.icon], else the built-in SVG path.
+  String get resolvedIcon => _override?.icon ?? icon;
+
+  /// Host title override, else [fallback] (typically an [IsmLiveStrings] value).
+  String resolveTitle(String fallback) => _override?.title ?? fallback;
+
+  /// `true` for package defaults; host icons default to the host app bundle.
+  bool get resolvedIconFromPackage {
+    final override = _override;
+    if (override?.icon == null) return true;
+    return override!.fromPackage;
+  }
+}
+
+/// Optional per-option label/icon override for analytics tiles
+/// (end-stream screen + analytics sheet).
+///
+/// Set via `IsmLiveApp.configureInterface(analyticsOptionOverrides: ...)`.
+/// Unset fields keep the SDK defaults — safe for partial overrides.
+class IsmLiveAnalyticsOptionOverride {
+  const IsmLiveAnalyticsOptionOverride({
+    this.title,
+    this.icon,
+    this.fromPackage = false,
+  });
+
+  /// Custom tile label. `null` keeps [IsmLiveStrings] (e.g. Hearts, Viewers).
+  final String? title;
+
+  /// Custom SVG asset path. `null` keeps the enum's built-in icon.
+  final String? icon;
+
+  /// Whether [icon] is loaded from this package.
+  ///
+  /// Defaults to `false` so host-app assets work without extra config.
+  /// Set `true` only when [icon] points at an SDK package asset.
+  final bool fromPackage;
 }
 
 enum IsmLiveStreamOption {
