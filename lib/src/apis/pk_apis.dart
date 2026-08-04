@@ -160,6 +160,7 @@ class IsmLivePkApis {
     required int skip,
     required int limit,
     String? searchTag,
+    bool showLoader = true,
   }) async {
     var params = {
       'skip': skip,
@@ -172,7 +173,7 @@ class IsmLivePkApis {
       baseUrl: IsmLiveApis.baseUrlAsPerMode,
       type: IsmLiveRequestType.get,
       showDialog: false,
-      showLoader: true,
+      showLoader: showLoader,
       headers: IsmLiveUtility.tokenHeader(),
     );
   }

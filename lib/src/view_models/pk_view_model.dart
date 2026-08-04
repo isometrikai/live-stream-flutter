@@ -203,12 +203,14 @@ class IsmLivePkViewModel {
     required int skip,
     required int limit,
     String? searchTag,
+    bool showLoader = true,
   }) async {
     try {
       var res = await _repository.getGiftCategories(
         limit: limit,
         skip: skip,
         searchTag: searchTag,
+        showLoader: showLoader,
       );
       if (res.hasError) {
         return [];

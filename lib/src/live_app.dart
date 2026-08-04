@@ -288,6 +288,7 @@ class IsmLiveApp extends StatefulWidget {
     int limit = 10,
     int skip = 0,
     String? searchTag,
+    bool showLoader = true,
   }) async {
     assert(
       _initialized,
@@ -310,6 +311,7 @@ class IsmLiveApp extends StatefulWidget {
         skip: skip,
         limit: limit,
         searchTag: searchTag,
+        showLoader: showLoader,
       );
     } catch (e, stack) {
       IsmLiveLog.error('IsmLiveApp.getGiftCategories failed: $e\n$stack');

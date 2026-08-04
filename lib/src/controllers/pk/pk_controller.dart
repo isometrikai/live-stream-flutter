@@ -742,6 +742,7 @@ class IsmLivePkController extends GetxController
     int limit = 15,
     int skip = 0,
     String? searchTag,
+    bool showLoader = true,
   }) async {
     giftList.clear();
     _giftCategoriesDebouncer.run(
@@ -750,6 +751,7 @@ class IsmLivePkController extends GetxController
           limit: limit,
           skip: skip,
           searchTag: searchTag,
+          showLoader: showLoader,
         );
       },
     );
@@ -759,11 +761,13 @@ class IsmLivePkController extends GetxController
     required int limit,
     required int skip,
     String? searchTag,
+    bool showLoader = true,
   }) async {
     var res = await _viewModel.getGiftCategories(
       limit: limit,
       skip: skip,
       searchTag: searchTag,
+      showLoader: showLoader,
     );
 
     giftCategoriesList.addAll(res);
