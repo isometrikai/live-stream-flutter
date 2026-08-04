@@ -93,11 +93,13 @@ class IsmLivePkRepository {
     required int skip,
     required int limit,
     String? searchTag,
+    bool showLoader = true,
   }) async =>
       await _api.getGiftCategories(
         limit: limit,
         skip: skip,
         searchTag: searchTag,
+        showLoader: showLoader,
       );
 
   Future<IsmLiveResponseModel> getGiftsForACategory({
