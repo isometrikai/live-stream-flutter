@@ -56,7 +56,7 @@ class IsmLiveVideoEffectsSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 96,
+                    height: 104,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: effects.length,
@@ -72,45 +72,33 @@ class IsmLiveVideoEffectsSheet extends StatelessWidget {
                             await controller.deepArPublisher
                                 ?.applyEffect(effect);
                           },
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 64,
-                                height: 64,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: selected
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Colors.white24,
-                                    width: selected ? 2.5 : 1,
-                                  ),
-                                  color: Colors.black26,
+                          child: SizedBox(
+                            width: 72,
+                            child: Column(
+                              children: [
+                                _EffectThumb(
+                                  effect: effect,
+                                  selected: selected,
+                                  primary:
+                                      Theme.of(context).colorScheme.primary,
                                 ),
-                                child: effect.isNone
-                                    ? const Icon(Icons.block, size: 28)
-                                    : Text(
-                                        effect.name.characters.first
-                                            .toUpperCase(),
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                              ),
-                              const SizedBox(height: 6),
-                              SizedBox(
-                                width: 72,
-                                child: Text(
+                                const SizedBox(height: 6),
+                                Text(
                                   effect.name,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: selected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                      ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -119,6 +107,72 @@ class IsmLiveVideoEffectsSheet extends StatelessWidget {
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EffectThumb extends StatelessWidget {
+  const _EffectThumb({
+    required this.effect,
+    required this.selected,
+    required this.primary,
+  });
+
+  final IsmLiveDeepArEffect effect;
+  final bool selected;
+  final Color primary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 64,
+      height: 64,
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: selected ? primary : Colors.white24,
+          width: selected ? 2.5 : 1,
+        ),
+      ),
+      child: ClipOval(
+        child: ColoredBox(
+          color: Colors.black26,
+          child: effect.isNone
+              ? const Icon(Icons.block, size: 28)
+              : _buildPreview(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPreview() {
+    final path = effect.thumbnailAssetPath;
+    if (path == null || path.isEmpty) {
+      return Center(
+        child: Text(
+          effect.name.characters.first.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
+    return Image.asset(
+      path,
+      fit: BoxFit.cover,
+      width: 64,
+      height: 64,
+      errorBuilder: (_, __, ___) => Center(
+        child: Text(
+          effect.name.characters.first.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

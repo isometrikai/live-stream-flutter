@@ -23,7 +23,12 @@ class IsmLiveDeepArEffect {
   /// so also place the file under `android/app/src/main/assets/`.
   final String? assetPath;
 
-  /// Optional local asset for the picker thumbnail.
+  /// Optional Flutter asset path for the filter picker thumbnail.
+  ///
+  /// Example: `assets/effects/thumbs/aviators.jpg`
+  ///
+  /// Declared in the host app `pubspec.yaml`. When null, the picker shows
+  /// the effect name initial instead.
   final String? thumbnailAssetPath;
 
   /// Built-in "no filter" option.
