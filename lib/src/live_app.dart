@@ -729,6 +729,8 @@ class IsmLiveApp extends StatefulWidget {
     Function(String id)? subscribStreamById,
     Function(String id)? unsubscribStreamById,
     List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = const [],
+    Map<IsmLiveAnalyticsOptions, IsmLiveAnalyticsOptionOverride>
+        analyticsOptionOverrides = const {},
     Widget? homeScreen,
     void Function(String userId)? openUserProfileView,
     String Function(String key)? getUserProfileUrl,
@@ -807,6 +809,7 @@ class IsmLiveApp extends StatefulWidget {
     IsmLiveDelegate.getUserProfileUrl = getUserProfileUrl;
     IsmLiveDelegate.buttonConfig = buttonConfig;
     IsmLiveDelegate.liveAnalyticsOptions = liveAnalyticsOptions;
+    IsmLiveDelegate.analyticsOptionOverrides = analyticsOptionOverrides;
     IsmLiveDelegate.streamDisconnectApiHandler = streamDisconnectApiHandler;
     IsmLiveDelegate.onGoLiveClick =
         resolvedGoLiveScreenConfigure.onGoLiveButtonTap;

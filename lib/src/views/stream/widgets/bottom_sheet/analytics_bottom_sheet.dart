@@ -89,33 +89,34 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                   switch (option) {
                     case IsmLiveAnalyticsOptions.hearts:
                       points = '${controller.realtimeStreamLikeCount}';
-                      title = IsmLiveStrings.hearts;
+                      title = option.resolveTitle(IsmLiveStrings.hearts);
                       color = textIconColor;
                       break;
                     case IsmLiveAnalyticsOptions.order:
                       points = '${controller.streamAnalytis?.soldCount ?? 0}';
-                      title = IsmLiveStrings.order;
+                      title = option.resolveTitle(IsmLiveStrings.order);
                       break;
                     case IsmLiveAnalyticsOptions.viewers:
                       points =
                           '${controller.streamAnalytis?.totalViewersCount ?? 0}';
-                      title = IsmLiveStrings.viewers;
+                      title = option.resolveTitle(IsmLiveStrings.viewers);
                       break;
                     case IsmLiveAnalyticsOptions.followers:
                       points = '${controller.streamAnalytis?.followers ?? 0}';
-                      title = IsmLiveStrings.followers;
+                      title = option.resolveTitle(IsmLiveStrings.followers);
                       break;
                     case IsmLiveAnalyticsOptions.earnings:
                       points =
                           '${controller.streamAnalytis?.totalEarning ?? 0}';
-                      title = IsmLiveStrings.earnings;
+                      title = option.resolveTitle(IsmLiveStrings.earnings);
                       break;
                     case IsmLiveAnalyticsOptions.duration:
                       return GetX<IsmLiveStreamController>(
                         builder: (controller) => IsmLiveEndStreamContainer(
                           points: controller.streamDuration.formattedTime,
-                          title: IsmLiveStrings.duration,
-                          assetConstant: option.icon,
+                          title: option.resolveTitle(IsmLiveStrings.duration),
+                          assetConstant: option.resolvedIcon,
+                          fromPackage: option.resolvedIconFromPackage,
                           color: textIconColor,
                         ),
                       );
@@ -124,7 +125,8 @@ class IsmliveAnalyticsSheet extends StatelessWidget {
                   return IsmLiveEndStreamContainer(
                     points: points,
                     title: title,
-                    assetConstant: option.icon,
+                    assetConstant: option.resolvedIcon,
+                    fromPackage: option.resolvedIconFromPackage,
                     color: color ?? textIconColor,
                   );
                 }).toList(),

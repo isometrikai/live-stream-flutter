@@ -35,6 +35,10 @@ class IsmLiveDelegate {
 
   static List<IsmLiveAnalyticsOptions> liveAnalyticsOptions = [];
 
+  /// Optional title/icon overrides for analytics tiles. Empty = SDK defaults.
+  static Map<IsmLiveAnalyticsOptions, IsmLiveAnalyticsOptionOverride>
+      analyticsOptionOverrides = const {};
+
   static Widget? homeScreen;
 
   static bool? hdStream;

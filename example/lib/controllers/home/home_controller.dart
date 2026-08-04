@@ -466,13 +466,28 @@ class HomeController extends GetxController {
       //           required secondary}) =>
       //       CustomButton(title: label, onPress: onTap, onlyBorder: true),
       // ),
-      // liveAnalyticsOptions: [
-      //   IsmLiveAnalyticsOptions.hearts,
-      //   IsmLiveAnalyticsOptions.viewers,
-      //   IsmLiveAnalyticsOptions.followers,
-      //   IsmLiveAnalyticsOptions.earnings,
-      //   IsmLiveAnalyticsOptions.duration,
-      // ]
+      // Which analytics tiles to show (order matters). Empty = all defaults.
+      liveAnalyticsOptions: const [
+        IsmLiveAnalyticsOptions.hearts,
+        IsmLiveAnalyticsOptions.viewers,
+        IsmLiveAnalyticsOptions.earnings,
+        IsmLiveAnalyticsOptions.duration,
+      ],
+      // Override tile titles / SVG icons (host-app assets by default).
+      // analyticsOptionOverrides: {
+      //   IsmLiveAnalyticsOptions.hearts: IsmLiveAnalyticsOptionOverride(
+      //     title: 'Likes',
+      //     icon: 'assets/icon/heart.svg',
+      //   ),
+      //   IsmLiveAnalyticsOptions.viewers: IsmLiveAnalyticsOptionOverride(
+      //     title: 'Audience',
+      //     icon: 'assets/icon/eye.svg',
+      //   ),
+      //   IsmLiveAnalyticsOptions.earnings: const IsmLiveAnalyticsOptionOverride(
+      //     title: 'Revenue',
+      //     icon: 'assets/icon/dollar-circle.svg',
+      //   ),
+      // },
       // tokenExpiredCallback: () async {
       //   IsmLiveLog.info('Token expired');
       //   return 'SFMyNTY.g2gDbQAAABg2NWVhZmY2NjgzN2QwNTAwMDE3MTJiZmJuBgCY7lV2nQFiAAFRgA.ZCN7AnyTUBMp2v3ctOt9N3FlgbYklOZLLo9aIAsd1hA';

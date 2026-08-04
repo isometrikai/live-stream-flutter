@@ -93,23 +93,24 @@ class IsmLiveEndStream extends StatelessWidget {
                           case IsmLiveAnalyticsOptions.hearts:
                             points =
                                 '${controller.streamAnalytis?.hearts ?? 0}';
-                            title = IsmLiveStrings.hearts;
+                            title = option.resolveTitle(IsmLiveStrings.hearts);
                             color = textIconColor;
                             break;
                           case IsmLiveAnalyticsOptions.order:
                             points =
                                 '${controller.streamAnalytis?.soldCount ?? 0}';
-                            title = IsmLiveStrings.order;
+                            title = option.resolveTitle(IsmLiveStrings.order);
                             break;
                           case IsmLiveAnalyticsOptions.viewers:
                             points =
                                 '${controller.streamAnalytis?.totalViewersCount ?? 0}';
-                            title = IsmLiveStrings.viewers;
+                            title = option.resolveTitle(IsmLiveStrings.viewers);
                             break;
                           case IsmLiveAnalyticsOptions.followers:
                             points =
                                 '${controller.streamAnalytis?.followers ?? 0}';
-                            title = IsmLiveStrings.followers;
+                            title =
+                                option.resolveTitle(IsmLiveStrings.followers);
                             break;
                           case IsmLiveAnalyticsOptions.earnings:
                             final totalEarning = num.tryParse(
@@ -117,7 +118,8 @@ class IsmLiveEndStream extends StatelessWidget {
                                 ) ??
                                 0;
                             points = totalEarning.toStringAsFixed(2);
-                            title = IsmLiveStrings.earnings;
+                            title =
+                                option.resolveTitle(IsmLiveStrings.earnings);
                             break;
                           case IsmLiveAnalyticsOptions.duration:
                             points = ((controller.streamAnalytis
@@ -130,14 +132,16 @@ class IsmLiveEndStream extends StatelessWidget {
                                             .toInt())
                                     .formattedTime
                                 : controller.streamDuration.formattedTime;
-                            title = IsmLiveStrings.duration;
+                            title =
+                                option.resolveTitle(IsmLiveStrings.duration);
                             break;
                         }
 
                         return IsmLiveEndStreamContainer(
                           points: points,
                           title: title,
-                          assetConstant: option.icon,
+                          assetConstant: option.resolvedIcon,
+                          fromPackage: option.resolvedIconFromPackage,
                           color: color ?? textIconColor,
                         );
                       }).toList(),
