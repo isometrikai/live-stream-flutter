@@ -45,6 +45,7 @@ class HomeController extends GetxController {
   }
 
   void setupStream() async {
+    AppConstants.ensureProjectConfig();
     user = UserDetailsModel.fromJson(dbWrapper.getStringValue(LocalKeys.user));
     debugPrint('IsmLiveApp: setupStream:  stated $user');
     configData = IsmLiveConfigData(

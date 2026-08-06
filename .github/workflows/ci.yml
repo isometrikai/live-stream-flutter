@@ -49,4 +49,6 @@ jobs:
 
       - name: Build debug APK
         working-directory: example
-        run: flutter build apk --debug
+        # secrets.json.example has empty placeholders; enough to compile.
+        # Real runs use --dart-define-from-file=secrets.json (gitignored).
+        run: flutter build apk --debug --dart-define-from-file=secrets.json.example

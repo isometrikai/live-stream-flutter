@@ -1,27 +1,46 @@
-import 'package:appscrip_live_stream_component_example/utils/utils.dart';
-
 /// `AppConstants` is a singleton class with all static variables.
 ///
 /// It contains all constants that are to be used within the project
 ///
-/// If need to check the translated strings that are used in UI (Views) of the app, check [TranslationKeys]
+/// Project credentials are injected at build time via `--dart-define` /
+/// `--dart-define-from-file` so they are not committed to source control.
+///
+/// Copy `example/secrets.json.example` → `example/secrets.json`, fill values,
+/// then run:
+/// `flutter run --dart-define-from-file=secrets.json`
 class AppConstants {
   const AppConstants._();
 
   static const String appName = 'Appscrip Live Stream Example';
 
   static const Duration timeOutDuration = Duration(seconds: 60);
-  static const String userSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDYxMDkyZDY3YzRmYWMzMDAwMTQwNWQ3Zm0AAAAIa2V5c2V0SWRtAAAAJDc2ZWNkZjEwLThlM2ItNGVmZS04NDZkLTU3NDJmODYxZjgzOG0AAAAJcHJvamVjdElkbQAAACQwMTEzYzQ0ZC04NmQzLTQyM2QtYjkyYS0xYmU2NTExZjdiOGZkAAZzaWduZWRuBgDRqeZ4hgE.DkR1H6BMWCQn1njtbaDc8WNBnIdALzjBAs_8Ks7AERE';
 
-  static const String appSecret =
-      'SFMyNTY.g3QAAAACZAAEZGF0YXQAAAADbQAAAAlhY2NvdW50SWRtAAAAGDYxMDkyZDY3YzRmYWMzMDAwMTQwNWQ3Zm0AAAAIa2V5c2V0SWRtAAAAJDc2ZWNkZjEwLThlM2ItNGVmZS04NDZkLTU3NDJmODYxZjgzOG0AAAAJcHJvamVjdElkbQAAACQwMTEzYzQ0ZC04NmQzLTQyM2QtYjkyYS0xYmU2NTExZjdiOGZkAAZzaWduZWRuBgDRqeZ4hgE.1GhE6fDbTPUWBbHNEptDylNxFHv67AMSH6nWq4OC8pY';
-
-  static const String accountId = '61092d67c4fac30001405d7f';
-  static const String keySetId = '76ecdf10-8e3b-4efe-846d-5742f861f838';
-  static const String projectId = '0113c44d-86d3-423d-b92a-1be6511f7b8f';
-  static const String licenseKey = 'lic-IMK/+mao5KikRmifcmkjavAZa4vGnIwiRTz';
+  static const String userSecret = String.fromEnvironment('ISM_USER_SECRET');
+  static const String appSecret = String.fromEnvironment('ISM_APP_SECRET');
+  static const String accountId = String.fromEnvironment('ISM_ACCOUNT_ID');
+  static const String keySetId = String.fromEnvironment('ISM_KEYSET_ID');
+  static const String projectId = String.fromEnvironment('ISM_PROJECT_ID');
+  static const String licenseKey = String.fromEnvironment('ISM_LICENSE_KEY');
 
   static const String mqttHost = 'connections.isometrik.ai';
   static const int mqttPort = 2086;
+
+  /// True when every required project credential was provided at compile time.
+  static bool get hasProjectConfig =>
+      userSecret.isNotEmpty &&
+      appSecret.isNotEmpty &&
+      accountId.isNotEmpty &&
+      keySetId.isNotEmpty &&
+      projectId.isNotEmpty &&
+      licenseKey.isNotEmpty;
+
+  /// Throws if dart-defines are missing. Call before building live config.
+  static void ensureProjectConfig() {
+    if (hasProjectConfig) return;
+    throw StateError(
+      'Missing Isometrik project config. Copy example/secrets.json.example '
+      'to example/secrets.json, fill in values, then run with '
+      '--dart-define-from-file=secrets.json',
+    );
+  }
 }
