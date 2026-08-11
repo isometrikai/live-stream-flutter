@@ -172,8 +172,9 @@ mixin StreamOngoingSocialMixin on StreamOngoingMixin {
     final key = ValueKey(message.messageId);
 
     final data = payload['metaData'];
+    final giftPath = data is Map ? data['message']?.toString() ?? '' : '';
 
-    final child = IsmLiveGif(path: data['message']);
+    final child = IsmLiveGif(path: giftPath);
     _controller.giftList.insert(
       0,
       IsmLiveGiftView(

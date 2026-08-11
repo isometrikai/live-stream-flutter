@@ -1,0 +1,51 @@
+---
+description: Flutter/Dart coding standards for appscrip_live_stream_component
+alwaysApply: true
+---
+
+# Flutter / Dart Standards
+
+## Naming
+
+- Public package types use the `IsmLive` prefix (`IsmLiveStreamController`, `IsmLiveEndStream`).
+- Private widgets/helpers use a leading `_`.
+- Files: `snake_case.dart`. Controllers/views match their type (`stream_controller.dart`, `end_stream_view.dart`).
+
+## Imports & exports
+
+- Prefer the package barrel: `package:appscrip_live_stream_component/appscrip_live_stream_component.dart`.
+- Export new public APIs through the existing barrel chain (`src/.../*.dart` → layer barrel → root export). Do not invent parallel entrypoints.
+- Avoid relative imports that skip barrels when a public export already exists.
+
+## UI
+
+- Prefer `StatelessWidget` + GetX rebuild (`GetBuilder` / `Obx`) over new `StatefulWidget` unless local animation/ticker state is required.
+- Spacing/sizing: use `IsmLiveDimens` (`edgeInsets*`, `boxHeight*`, `boxWidth*`) — avoid raw magic numbers.
+- Copy: use `IsmLiveStrings` (or translation keys), not hardcoded user-facing strings.
+- Theming: prefer `context.liveTheme` / `IsmLiveDelegate` overrides before hardcoding colors.
+- Respect host customization hooks (`IsmLiveDelegate.*.??` fallbacks) when adding screens/widgets.
+
+## State & rebuilds
+
+- Use `GetBuilder` with a stable `updateId` for scoped rebuilds; call `update([id])` from the controller.
+- Use `Obx` only for reactive (`Rx` / `.obs`) fields.
+- Guard `Get.find` with `Get.isRegistered` when the dependency may be absent.
+
+## Errors & logging
+
+```dart
+try {
+  // ...
+} catch (e, st) {
+  IsmLiveLog.error(e, st);
+  return /* safe fallback */;
+}
+```
+
+- Do not swallow errors silently. Prefer empty lists / `null` / `false` over throwing through UI layers unless the call site expects it.
+
+## Misc
+
+- Prefer `const` constructors and widgets where possible.
+- Do not add dependencies without a clear need; reuse existing packages (GetX, LiveKit, etc.).
+- Keep diffs small; match surrounding style (cascade `..`, trailing commas, existing formatting).

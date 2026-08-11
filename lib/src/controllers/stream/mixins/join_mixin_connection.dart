@@ -794,13 +794,6 @@ mixin StreamJoinConnectionMixin on StreamJoinMixin, StreamJoinCameraMixin {
 
       if (performNavigation) {
         try {
-          IsmLiveGifts.threeD.map((e) => IsmLiveGif.preCache(e.path, context));
-          IsmLiveGifts.animated
-              .map((e) => IsmLiveGif.preCache(e.path, context));
-        } catch (e) {
-          IsmLiveLog.error('Gift pre-cache error: $e');
-        }
-        try {
           // Check if listener is null before calling goToStreamView
           if (_controller.listener == null) {
             IsmLiveLog.error('Cannot join stream: listener is null');
