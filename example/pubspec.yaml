@@ -46,7 +46,6 @@ flutter:
   assets:
   - assets/
   - assets/images/
-  - assets/images/gifts/
   - assets/icon/
   fonts:
   - family: Satoshi

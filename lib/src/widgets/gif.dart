@@ -13,14 +13,22 @@ class IsmLiveGif extends StatefulWidget {
   final String path;
   final bool fromPackage;
 
-  static Future preCache(String file, BuildContext context) => precacheImage(
-      (file.isURL
-          ? NetworkImage(file)
-          : AssetImage(
-              file,
-              package: IsmLiveConstants.packageName,
-            )) as ImageProvider,
-      context);
+  static Future preCache(
+    String file,
+    BuildContext context, {
+    bool fromPackage = true,
+  }) =>
+      precacheImage(_provider(file, fromPackage: fromPackage), context);
+
+  static ImageProvider _provider(String path, {required bool fromPackage}) {
+    if (path.isURL) {
+      return NetworkImage(path);
+    }
+    return AssetImage(
+      path,
+      package: fromPackage ? IsmLiveConstants.packageName : null,
+    );
+  }
 
   @override
   State<IsmLiveGif> createState() => _IsmLiveGifState();
@@ -43,18 +51,21 @@ class _IsmLiveGifState extends State<IsmLiveGif>
   }
 
   @override
-  Widget build(BuildContext context) => Gif(
-        controller: controller,
-        image: (widget.path.isURL
-            ? NetworkImage(widget.path)
-            : AssetImage(
-                widget.path,
-                package: IsmLiveConstants.packageName,
-              )) as ImageProvider,
-        onFetchCompleted: () {
-          if (mounted) {
-            controller.repeat();
-          }
-        },
-      );
+  Widget build(BuildContext context) {
+    if (widget.path.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Gif(
+      controller: controller,
+      image: IsmLiveGif._provider(
+        widget.path,
+        fromPackage: widget.fromPackage,
+      ),
+      onFetchCompleted: () {
+        if (mounted) {
+          controller.repeat();
+        }
+      },
+    );
+  }
 }

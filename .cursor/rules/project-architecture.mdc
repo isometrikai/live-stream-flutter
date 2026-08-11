@@ -1,0 +1,62 @@
+---
+description: Layered architecture for views, controllers, view models, and repositories
+alwaysApply: true
+---
+
+# Project Architecture
+
+Package layout under `lib/src/`:
+
+```
+views/ → controllers/ → view_models/ → repositories/ → data/ (ApiWrapper, local)
+         mixins/         models/         apis/
+widgets/  bindings/      res/  utils/  delegate/
+```
+
+## Layer responsibilities
+
+| Layer | Role | Must not |
+| --- | --- | --- |
+| **View** (`views/`, `widgets/`) | Layout, navigation triggers, bind to controller | Call repositories/APIs directly; hold business logic |
+| **Controller** (`controllers/`) | UI state, GetX lifecycle, orchestrate view model | Parse raw HTTP; duplicate API URLs |
+| **ViewModel** (`view_models/`) | Map `IsmLiveResponseModel` → domain models; persistence via DB wrappers | Build widgets; own GetX UI state |
+| **Repository** (`repositories/`) | Call `IsmLiveApiWrapper.makeRequest` with `IsmLiveApis` + headers | Parse JSON into UI models beyond returning responses |
+| **Data** (`data/`) | HTTP/local storage wrappers | Feature-specific UI decisions |
+
+## GetX wiring
+
+- Register via `Bindings` (`*Binding implements Bindings`) using `Get.put` / `Get.lazyPut`.
+- Typical chain in bindings:
+
+```dart
+IsmLiveStreamController(
+  IsmLiveStreamViewModel(
+    IsmLiveStreamRepository(Get.find<IsmLiveApiWrapper>()),
+  ),
+);
+```
+
+- Large controllers: split behavior into `part` mixins under `controllers/.../mixins/` (e.g. `StreamJoinMixin`, `StreamOngoingChatMixin`). Add new stream behavior as a mixin + `part` directive, not a second god-controller.
+
+## Navigation & config
+
+- Routes/navigation: `IsmLiveRoute` / `IsmLiveRouteManagement` / `IsmLiveRoutes`.
+- Host overrides & analytics: `IsmLiveDelegate`.
+- Shared resources: `res/` (`dimens`, `strings`, `theme`, `navigation`).
+
+## When adding a feature
+
+1. Model in `models/` if needed.
+2. API path in `IsmLiveApis` + repository method.
+3. ViewModel method (parse + error handling).
+4. Controller/mixin method that updates observable state.
+5. View/widget wired with `GetBuilder`/`Obx`.
+6. Binding only if a new controller dependency is required.
+7. Export public types through existing barrels.
+
+## Boundaries
+
+- Do not put network calls in views.
+- Do not put `BuildContext`/widget trees in repositories or view models.
+- Prefer extending existing stream/PK/MQTT controllers over creating parallel state owners.
+- Example app (`example/`) may have its own controllers; package features belong under `lib/src/`.

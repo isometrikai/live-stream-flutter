@@ -71,12 +71,7 @@ flutter:
         pluginClass: AppscripLiveStreamComponentWeb
         fileName: appscrip_live_stream_component_web.dart
   assets:
-    - assets/
     - assets/images/
-    - assets/images/gifts/
-    - assets/images/gifts/normal/
-    - assets/images/gifts/animated/
-    - assets/images/gifts/3d/
     - assets/icon/
     - assets/logo/
     - assets/placeholders/

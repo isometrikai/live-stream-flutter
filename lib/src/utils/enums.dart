@@ -537,60 +537,60 @@ enum IsmLiveGiftType {
   }
 }
 
+/// Gift identifiers used for message `customType` parsing.
+///
+/// Gift media is served from the backend (CDN URLs), not bundled in the SDK.
 enum IsmLiveGifts {
-  bell(IsmLiveGiftType.normal, IsmLiveAssetConstants.bell),
-  cherry(IsmLiveGiftType.normal, IsmLiveAssetConstants.cherry),
-  giftImage(IsmLiveGiftType.normal, IsmLiveAssetConstants.giftImage),
-  icecream(IsmLiveGiftType.normal, IsmLiveAssetConstants.icecream),
-  kiss(IsmLiveGiftType.normal, IsmLiveAssetConstants.kiss),
-  lolipop(IsmLiveGiftType.normal, IsmLiveAssetConstants.lolipop),
-  paw(IsmLiveGiftType.normal, IsmLiveAssetConstants.paw),
-  cake(IsmLiveGiftType.animated, IsmLiveAssetConstants.cake),
-  cheers(IsmLiveGiftType.animated, IsmLiveAssetConstants.cheers),
-  chest(IsmLiveGiftType.animated, IsmLiveAssetConstants.chest),
-  clapping(IsmLiveGiftType.animated, IsmLiveAssetConstants.clapping),
-  coin(IsmLiveGiftType.animated, IsmLiveAssetConstants.coin),
-  crown(IsmLiveGiftType.animated, IsmLiveAssetConstants.crown),
-  cryingLaughter(
-      IsmLiveGiftType.animated, IsmLiveAssetConstants.cryingLaughter),
-  diamond(IsmLiveGiftType.animated, IsmLiveAssetConstants.diamond),
-  goodLife(IsmLiveGiftType.animated, IsmLiveAssetConstants.goodLife),
-  heartEyes(IsmLiveGiftType.animated, IsmLiveAssetConstants.heartEyes),
-  heart(IsmLiveGiftType.animated, IsmLiveAssetConstants.heart),
-  inLove(IsmLiveGiftType.animated, IsmLiveAssetConstants.inLove),
-  moneyFlying(IsmLiveGiftType.animated, IsmLiveAssetConstants.moneyFlying),
-  money(IsmLiveGiftType.animated, IsmLiveAssetConstants.money),
-  party(IsmLiveGiftType.animated, IsmLiveAssetConstants.party),
-  present(IsmLiveGiftType.animated, IsmLiveAssetConstants.present),
-  rocketLaunch(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketLaunch),
-  rocketSpin(IsmLiveGiftType.animated, IsmLiveAssetConstants.rocketSpin),
-  rollingLaughter(
-      IsmLiveGiftType.animated, IsmLiveAssetConstants.rollingLaughter),
-  star(IsmLiveGiftType.animated, IsmLiveAssetConstants.star),
-  thumb(IsmLiveGiftType.animated, IsmLiveAssetConstants.thumb),
-  trophy(IsmLiveGiftType.animated, IsmLiveAssetConstants.trophy),
-  verified(IsmLiveGiftType.animated, IsmLiveAssetConstants.verified),
-  wow(IsmLiveGiftType.animated, IsmLiveAssetConstants.wow),
-  yeah(IsmLiveGiftType.animated, IsmLiveAssetConstants.yeah),
-  cake3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.cake3d),
-  cheers3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.cheers3d),
-  clapping3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.clapping3d),
-  crown3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.crown3d),
-  fire(IsmLiveGiftType.threeD, IsmLiveAssetConstants.fire),
-  fish(IsmLiveGiftType.threeD, IsmLiveAssetConstants.fish),
-  happyBirthday(IsmLiveGiftType.threeD, IsmLiveAssetConstants.happyBirthday),
-  heartEyes3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.heartEyes3d),
-  love(IsmLiveGiftType.threeD, IsmLiveAssetConstants.love),
-  money3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.money3d),
-  partyPopper(IsmLiveGiftType.threeD, IsmLiveAssetConstants.partyPopper),
-  rocket(IsmLiveGiftType.threeD, IsmLiveAssetConstants.rocket),
-  trophy3d(IsmLiveGiftType.threeD, IsmLiveAssetConstants.trophy3d);
+  bell(IsmLiveGiftType.normal),
+  cherry(IsmLiveGiftType.normal),
+  giftImage(IsmLiveGiftType.normal),
+  icecream(IsmLiveGiftType.normal),
+  kiss(IsmLiveGiftType.normal),
+  lolipop(IsmLiveGiftType.normal),
+  paw(IsmLiveGiftType.normal),
+  cake(IsmLiveGiftType.animated),
+  cheers(IsmLiveGiftType.animated),
+  chest(IsmLiveGiftType.animated),
+  clapping(IsmLiveGiftType.animated),
+  coin(IsmLiveGiftType.animated),
+  crown(IsmLiveGiftType.animated),
+  cryingLaughter(IsmLiveGiftType.animated),
+  diamond(IsmLiveGiftType.animated),
+  goodLife(IsmLiveGiftType.animated),
+  heartEyes(IsmLiveGiftType.animated),
+  heart(IsmLiveGiftType.animated),
+  inLove(IsmLiveGiftType.animated),
+  moneyFlying(IsmLiveGiftType.animated),
+  money(IsmLiveGiftType.animated),
+  party(IsmLiveGiftType.animated),
+  present(IsmLiveGiftType.animated),
+  rocketLaunch(IsmLiveGiftType.animated),
+  rocketSpin(IsmLiveGiftType.animated),
+  rollingLaughter(IsmLiveGiftType.animated),
+  star(IsmLiveGiftType.animated),
+  thumb(IsmLiveGiftType.animated),
+  trophy(IsmLiveGiftType.animated),
+  verified(IsmLiveGiftType.animated),
+  wow(IsmLiveGiftType.animated),
+  yeah(IsmLiveGiftType.animated),
+  cake3d(IsmLiveGiftType.threeD),
+  cheers3d(IsmLiveGiftType.threeD),
+  clapping3d(IsmLiveGiftType.threeD),
+  crown3d(IsmLiveGiftType.threeD),
+  fire(IsmLiveGiftType.threeD),
+  fish(IsmLiveGiftType.threeD),
+  happyBirthday(IsmLiveGiftType.threeD),
+  heartEyes3d(IsmLiveGiftType.threeD),
+  love(IsmLiveGiftType.threeD),
+  money3d(IsmLiveGiftType.threeD),
+  partyPopper(IsmLiveGiftType.threeD),
+  rocket(IsmLiveGiftType.threeD),
+  trophy3d(IsmLiveGiftType.threeD);
 
   factory IsmLiveGifts.fromName(String data) => IsmLiveGifts.values
       .firstWhere((e) => e.name == data, orElse: () => IsmLiveGifts.bell);
 
-  const IsmLiveGifts(this.type, this.path);
-  final String path;
+  const IsmLiveGifts(this.type);
   final IsmLiveGiftType type;
 
   static List<IsmLiveGifts> get normal => IsmLiveGifts.values
