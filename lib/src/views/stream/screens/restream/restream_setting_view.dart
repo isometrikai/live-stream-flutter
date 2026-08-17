@@ -120,7 +120,12 @@ class IsmLiveRestreamSettingsView extends StatelessWidget {
       bottomNavigationBar: Container(
         color: context.liveTheme?.backgroundColor ??
             (isDarkMode ? const Color(0xFF121212) : Colors.white),
-        padding: IsmLiveDimens.edgeInsets16,
+        padding: IsmLiveDimens.edgeInsets16.copyWith(
+          bottom: ismLiveBottomSheetActionBottomInset(
+            context,
+            designBottom: 16,
+          ),
+        ),
         child: IsmLiveButton(
           label: IsmLiveStrings.save,
           onTap: () {
