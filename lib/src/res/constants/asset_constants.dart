@@ -19,6 +19,10 @@ class IsmLiveAssetConstants {
 
   static const String noImage = '$_images/noperson.png';
 
+  /// Default virtual background used by [IsmLiveVideoEffectPreset.backgroundReplace].
+  static const String videoEffectBackground =
+      '$_images/effects/demo_background.jpg';
+
   static const String backRounded = '$_icons/back_rounded.svg';
   static const String galerryRoundedSvg = '$_icons/gallery_rounded.svg';
   static const String switchCameraSvg = '$_icons/switch_camera.svg';

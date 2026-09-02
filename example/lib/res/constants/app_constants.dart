@@ -29,4 +29,24 @@ class AppConstants {
       'dbd344bfa2116a416703372a88eeeb2e8f012b9e';
   static const String videoEffectsIosCustomerId =
       '8927ba46e6cc19248889f9d2450f6163334fc754';
+
+
+  /// True when every required project credential was provided at compile time.
+  static bool get hasProjectConfig =>
+      userSecret.isNotEmpty &&
+          appSecret.isNotEmpty &&
+          accountId.isNotEmpty &&
+          keySetId.isNotEmpty &&
+          projectId.isNotEmpty &&
+          licenseKey.isNotEmpty;
+
+  /// Throws if dart-defines are missing. Call before building live config.
+  static void ensureProjectConfig() {
+    if (hasProjectConfig) return;
+    throw StateError(
+      'Missing Isometrik project config. Copy example/secrets.json.example '
+          'to example/secrets.json, fill in values, then run with '
+          '--dart-define-from-file=secrets.json',
+    );
+  }
 }
