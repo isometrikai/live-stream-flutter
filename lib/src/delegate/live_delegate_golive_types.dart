@@ -39,6 +39,128 @@ class IsmLiveVideoEffectsConfig {
   final String? customerId;
 }
 
+/// Resolved width, height, bitrate, and frame rate for one published layer.
+class IsmLiveVideoEncode {
+  const IsmLiveVideoEncode({
+    required this.maxBitrate,
+    required this.maxFramerate,
+    required this.width,
+    required this.height,
+  });
+
+  /// Peak bitrate in bits per second.
+  final int maxBitrate;
+
+  /// Peak frame rate.
+  final int maxFramerate;
+
+  final int width;
+  final int height;
+}
+
+/// One encode target a host app can override.
+///
+/// A null field keeps the SDK value for that field. A non-positive value is
+/// ignored the same way.
+class IsmLiveVideoPublishProfile {
+  const IsmLiveVideoPublishProfile({
+    this.maxBitrate,
+    this.maxFramerate,
+    this.width,
+    this.height,
+  });
+
+  /// Peak bitrate in bits per second.
+  final int? maxBitrate;
+
+  /// Peak frame rate.
+  final int? maxFramerate;
+
+  /// Capture width in pixels. Applied only together with [height].
+  final int? width;
+
+  /// Capture height in pixels. Applied only together with [width].
+  final int? height;
+
+  bool get hasDimensions =>
+      width != null && height != null && width! > 0 && height! > 0;
+
+  /// A simulcast layer needs its own size and bitrate. The top layer does not.
+  bool get isSimulcastLayer =>
+      hasDimensions && maxBitrate != null && maxBitrate! > 0;
+
+  IsmLiveVideoEncode applyOn(IsmLiveVideoEncode base) => IsmLiveVideoEncode(
+        maxBitrate: (maxBitrate != null && maxBitrate! > 0)
+            ? maxBitrate!
+            : base.maxBitrate,
+        maxFramerate: (maxFramerate != null && maxFramerate! > 0)
+            ? maxFramerate!
+            : base.maxFramerate,
+        width: hasDimensions ? width! : base.width,
+        height: hasDimensions ? height! : base.height,
+      );
+}
+
+/// Host-app override for the published video ladder.
+///
+/// Leave [IsmLiveGoLiveScreenConfigure.videoPublishConfig] unset and the SDK
+/// keeps its current presets: 720p at 2.5 Mbps, HD 1080p at 6 Mbps, restream
+/// 720p at 4 Mbps, and LiveKit's default lower layers.
+///
+/// Set this only in the app that needs a lighter stream. Other apps are unchanged.
+///
+/// ```dart
+/// videoPublishConfig: IsmLiveVideoPublishConfig(
+///   standard: IsmLiveVideoPublishProfile(maxBitrate: 1200 * 1000),
+///   hd: IsmLiveVideoPublishProfile(maxBitrate: 2500 * 1000),
+///   simulcastLayers: [
+///     IsmLiveVideoPublishProfile(
+///       width: 320,
+///       height: 180,
+///       maxBitrate: 200 * 1000,
+///       maxFramerate: 15,
+///     ),
+///   ],
+/// ),
+/// ```
+class IsmLiveVideoPublishConfig {
+  const IsmLiveVideoPublishConfig({
+    this.standard,
+    this.hd,
+    this.restream,
+    this.simulcastLayers = const [],
+  });
+
+  /// Used when HD and restream are both off.
+  final IsmLiveVideoPublishProfile? standard;
+
+  /// Used when the HD broadcast toggle is on. Takes priority over [restream].
+  final IsmLiveVideoPublishProfile? hd;
+
+  /// Used when restream is on and HD is off.
+  final IsmLiveVideoPublishProfile? restream;
+
+  /// Lower layers under the top encode.
+  ///
+  /// Each entry needs [IsmLiveVideoPublishProfile.width], [height], and
+  /// [maxBitrate]. Incomplete entries are skipped. An empty list keeps
+  /// LiveKit's default 180p and 360p layers. The top layer is still
+  /// [standard], [hd], or [restream].
+  final List<IsmLiveVideoPublishProfile> simulcastLayers;
+
+  IsmLiveVideoPublishProfile? profileFor({
+    required bool hdBroadcast,
+    required bool restream,
+  }) {
+    if (hdBroadcast) return hd;
+    if (restream) return this.restream;
+    return standard;
+  }
+
+  List<IsmLiveVideoPublishProfile> get usableSimulcastLayers =>
+      simulcastLayers.where((layer) => layer.isSimulcastLayer).toList();
+}
+
 /// Data model containing all user-entered stream details for GoLive callback
 class IsmLiveGoLiveData {
   const IsmLiveGoLiveData({

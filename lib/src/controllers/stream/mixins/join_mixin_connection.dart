@@ -462,6 +462,7 @@ mixin StreamJoinConnectionMixin on StreamJoinMixin, StreamJoinCameraMixin {
               ),
               defaultVideoPublishOptions: lk.VideoPublishOptions(
                 videoEncoding: resolvedVideoParams.encoding,
+                videoSimulcastLayers: _resolveLkSimulcastLayers(),
               ),
               defaultAudioPublishOptions: const lk.AudioPublishOptions(
                 dtx: true,

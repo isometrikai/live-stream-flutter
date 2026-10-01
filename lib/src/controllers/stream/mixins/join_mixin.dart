@@ -49,17 +49,68 @@ mixin StreamJoinMixin {
     ),
   );
 
+  IsmLiveVideoPublishConfig? get _videoPublishConfig =>
+      IsmLiveDelegate.goLiveScreenConfigure?.videoPublishConfig;
+
   lk.VideoParameters _resolveLkVideoParams({
     required bool hdBroadcast,
     required bool restream,
   }) {
-    if (hdBroadcast) return _lkHdVideoParams;
-    if (restream) return _lkRestreamVideoParams;
-    return _lkSdVideoParams;
+    final base = hdBroadcast
+        ? _lkHdVideoParams
+        : restream
+            ? _lkRestreamVideoParams
+            : _lkSdVideoParams;
+    final profile = _videoPublishConfig?.profileFor(
+      hdBroadcast: hdBroadcast,
+      restream: restream,
+    );
+    if (profile == null) return base;
+
+    final applied = profile.applyOn(
+      IsmLiveVideoEncode(
+        maxBitrate: base.encoding!.maxBitrate,
+        maxFramerate: base.encoding!.maxFramerate,
+        width: base.dimensions.width,
+        height: base.dimensions.height,
+      ),
+    );
+    return lk.VideoParameters(
+      dimensions: lk.VideoDimensions(applied.width, applied.height),
+      encoding: lk.VideoEncoding(
+        maxBitrate: applied.maxBitrate,
+        maxFramerate: applied.maxFramerate,
+      ),
+    );
   }
 
-  // Note: Simulcast layers are currently not used; keep the resolver ready
-  // for future multi-bitrate setups if needed.
+  /// Lower layers from the host app. Empty keeps LiveKit's default ladder.
+  List<lk.VideoParameters> _resolveLkSimulcastLayers() {
+    final config = _videoPublishConfig;
+    if (config == null || config.simulcastLayers.isEmpty) {
+      return const [];
+    }
+    final usable = config.usableSimulcastLayers;
+    if (usable.length != config.simulcastLayers.length) {
+      IsmLiveLog.error(
+        'Dropped ${config.simulcastLayers.length - usable.length} '
+        'video simulcast layer(s) missing width, height, or maxBitrate',
+      );
+    }
+    return [
+      for (final layer in usable)
+        lk.VideoParameters(
+          dimensions: lk.VideoDimensions(layer.width!, layer.height!),
+          encoding: lk.VideoEncoding(
+            maxBitrate: layer.maxBitrate!,
+            maxFramerate:
+                (layer.maxFramerate != null && layer.maxFramerate! > 0)
+                    ? layer.maxFramerate!
+                    : 15,
+          ),
+        ),
+    ];
+  }
 
   bool isScheduleStreamNotStartedYet(IsmLiveStreamDataModel stream) {
     if (stream.isScheduledStream == true &&

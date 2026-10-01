@@ -33,6 +33,7 @@ class IsmLiveGoLiveScreenConfigure {
     this.tabUnselectedTextStyle,
     this.titleTextStyle,
     this.videoEffectsConfig = const IsmLiveVideoEffectsConfig(),
+    this.videoPublishConfig,
   });
 
   /// Custom header builder for the GoLive screen.
@@ -155,6 +156,12 @@ class IsmLiveGoLiveScreenConfigure {
   /// pipeline for host video tracks during Go Live.
   final IsmLiveVideoEffectsConfig videoEffectsConfig;
 
+  /// Optional publish ladder for this host app.
+  ///
+  /// Null keeps the SDK bitrate and simulcast presets for every app that does
+  /// not set it. See [IsmLiveVideoPublishConfig].
+  final IsmLiveVideoPublishConfig? videoPublishConfig;
+
   IsmLiveGoLiveScreenConfigure copyWith({
     bool? isHdStreamFeatureEnabled,
     bool? isScheduleStreamFeatureEnabled,
@@ -181,6 +188,7 @@ class IsmLiveGoLiveScreenConfigure {
     TextStyle? tabUnselectedTextStyle,
     TextStyle? titleTextStyle,
     IsmLiveVideoEffectsConfig? videoEffectsConfig,
+    IsmLiveVideoPublishConfig? videoPublishConfig,
   }) =>
       IsmLiveGoLiveScreenConfigure(
         isHdStreamFeatureEnabled:
@@ -224,5 +232,6 @@ class IsmLiveGoLiveScreenConfigure {
             tabUnselectedTextStyle ?? this.tabUnselectedTextStyle,
         titleTextStyle: titleTextStyle ?? this.titleTextStyle,
         videoEffectsConfig: videoEffectsConfig ?? this.videoEffectsConfig,
+        videoPublishConfig: videoPublishConfig ?? this.videoPublishConfig,
       );
 }
