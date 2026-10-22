@@ -9,6 +9,30 @@ class IsmLiveVideoEffectsSheet extends StatelessWidget {
   static const String updateId = 'ism-live-video-effects-sheet';
 
   static Future<void> show(BuildContext context) {
+    final config = IsmLiveDelegate.deepArConfig;
+    final registered = Get.isRegistered<IsmLiveStreamController>();
+    final publisher = registered
+        ? Get.find<IsmLiveStreamController>().deepArPublisher
+        : null;
+    final licensePresent = config.licenseKeyForPlatform?.isNotEmpty == true;
+    IsmLiveLog.info(
+      'DeepAR effects sheet open controller=$registered '
+      'active=${config.isActive} enabled=${config.enabled} '
+      'licensePresent=$licensePresent effects=${config.effects.length} '
+      'publisher=${publisher == null ? 'null' : 'started=${publisher.isStarted}'}',
+    );
+    if (!config.isActive) {
+      IsmLiveLog.error(
+        'DeepAR effects sheet is empty: enabled=${config.enabled} '
+        'licensePresent=$licensePresent',
+      );
+    } else if (publisher == null || !publisher.isStarted) {
+      IsmLiveLog.error(
+        'DeepAR effects sheet opened but publisher is not running '
+        '(publisher=${publisher == null ? 'null' : 'started=false'}). '
+        'Taps will not change the live video.',
+      );
+    }
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -69,8 +93,26 @@ class IsmLiveVideoEffectsSheet extends StatelessWidget {
                           onTap: () async {
                             controller.selectedDeepArEffectId = effect.id;
                             controller.update([updateId]);
-                            await controller.deepArPublisher
-                                ?.applyEffect(effect);
+                            final publisher = controller.deepArPublisher;
+                            IsmLiveLog.info(
+                              'DeepAR effect tap id=${effect.id} '
+                              'path=${effect.assetPath ?? 'none'} '
+                              'publisher=${publisher == null ? 'null' : 'started=${publisher.isStarted}'}',
+                            );
+                            if (publisher == null) {
+                              IsmLiveLog.error(
+                                'DeepAR effect tap ignored: deepArPublisher is null',
+                              );
+                              return;
+                            }
+                            try {
+                              await publisher.applyEffect(effect);
+                            } catch (e, st) {
+                              IsmLiveLog.error(
+                                'DeepAR effect tap failed id=${effect.id}: $e',
+                                st,
+                              );
+                            }
                           },
                           child: SizedBox(
                             width: 72,

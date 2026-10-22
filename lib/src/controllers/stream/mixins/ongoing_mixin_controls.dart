@@ -96,9 +96,24 @@ mixin StreamOngoingControlsMixin on StreamOngoingMixin, StreamOngoingSocialMixin
         _controller.settingSheet();
         break;
       case IsmLiveStreamOption.filters:
-        final ctx = Get.context;
-        if (ctx != null) {
-          await IsmLiveVideoEffectsSheet.show(ctx);
+        // Use the control's own context. Get.context is null under
+        // MaterialApp.router, so the icon tap used to do nothing unless the
+        // host app opened the sheet itself.
+        final sheetContext = context.mounted
+            ? context
+            : IsmLiveUtility.navigatorKey.currentContext;
+        if (sheetContext == null || !sheetContext.mounted) {
+          IsmLiveLog.error(
+            'DeepAR filters tap: no context to open the sheet '
+            '(passed mounted=${context.mounted})',
+          );
+          break;
+        }
+        IsmLiveLog.info('DeepAR filters tap: opening effects sheet');
+        try {
+          await IsmLiveVideoEffectsSheet.show(sheetContext);
+        } catch (e, st) {
+          IsmLiveLog.error('DeepAR filters tap: sheet failed: $e', st);
         }
         break;
       case IsmLiveStreamOption.product:

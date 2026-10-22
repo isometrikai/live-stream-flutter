@@ -698,6 +698,13 @@ mixin StreamJoinConnectionMixin on StreamJoinMixin, StreamJoinCameraMixin {
       final shouldPublishFromDevice =
           isCopublisher || isPkGust || (!_controller.isRtmp && isHost);
       if (shouldPublishFromDevice) {
+        if (IsmLiveDelegate.deepArConfig.enabled) {
+          IsmLiveLog.info(
+            'DeepAR connect will publish from this device '
+            '(host=$isHost rtmp=${_controller.isRtmp} '
+            'copublisher=$isCopublisher pkGuest=$isPkGust)',
+          );
+        }
         try {
           await enableMyVideo();
           // Re-send after publish so co-publisher camera tracks are subscribable.
@@ -710,6 +717,12 @@ mixin StreamJoinConnectionMixin on StreamJoinMixin, StreamJoinCameraMixin {
         } catch (e) {
           IsmLiveLog.error('Video/Audio enable error: $e');
         }
+      } else if (IsmLiveDelegate.deepArConfig.enabled) {
+        IsmLiveLog.error(
+          'DeepAR not started: this participant does not publish from the device '
+          '(host=$isHost rtmp=${_controller.isRtmp} '
+          'copublisher=$isCopublisher pkGuest=$isPkGust)',
+        );
       }
 
       // iOS audio-session fix for viewer â†’ copublisher promotion:

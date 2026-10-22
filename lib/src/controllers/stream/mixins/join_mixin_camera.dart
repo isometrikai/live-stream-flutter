@@ -95,6 +95,9 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
 
   Future<void> enableMyVideo() async {
     if (_controller.room == null) {
+      if (IsmLiveDelegate.deepArConfig.enabled) {
+        IsmLiveLog.error('DeepAR enableMyVideo skipped: room is null');
+      }
       return;
     }
 
@@ -115,9 +118,23 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
       );
 
       final resolvedCameraPosition = _controller.position;
-      final useDeepAr = IsmLiveDeepArPublisher.shouldUse(
-        IsmLiveDelegate.deepArConfig,
-      );
+      final deepArConfig = IsmLiveDelegate.deepArConfig;
+      final useDeepAr = IsmLiveDeepArPublisher.shouldUse(deepArConfig);
+      final licensePresent =
+          deepArConfig.licenseKeyForPlatform?.isNotEmpty == true;
+      if (useDeepAr) {
+        IsmLiveLog.info(
+          'DeepAR enableMyVideo starting '
+          'selected=${_controller.selectedDeepArEffectId} '
+          'effects=${deepArConfig.effects.length} '
+          'front=${resolvedCameraPosition == lk.CameraPosition.front}',
+        );
+      } else if (deepArConfig.enabled) {
+        IsmLiveLog.error(
+          'DeepAR enableMyVideo not used: active=${deepArConfig.isActive} '
+          'licensePresent=$licensePresent',
+        );
+      }
 
       late final lk.LocalVideoTrack localVideo;
       late final lk.LocalAudioTrack localAudio;
@@ -125,8 +142,7 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
       if (useDeepAr) {
         try {
           await _controller.deepArPublisher?.stop();
-          final publisher =
-              IsmLiveDeepArPublisher(IsmLiveDelegate.deepArConfig);
+          final publisher = IsmLiveDeepArPublisher(deepArConfig);
           _controller.deepArPublisher = publisher;
           localVideo = await publisher.start(
             frontCamera:
@@ -135,19 +151,29 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
           );
           // Apply UI-selected effect if any.
           IsmLiveDeepArEffect? selected;
-          for (final e in IsmLiveDelegate.deepArConfig.effects) {
+          for (final e in deepArConfig.effects) {
             if (e.id == _controller.selectedDeepArEffectId) {
               selected = e;
               break;
             }
           }
           if (selected != null) {
+            IsmLiveLog.info(
+              'DeepAR enableMyVideo apply selected id=${selected.id} '
+              'path=${selected.assetPath ?? 'none'}',
+            );
             await publisher.applyEffect(selected);
+          } else {
+            IsmLiveLog.error(
+              'DeepAR selected id=${_controller.selectedDeepArEffectId} '
+              'is not in the configured effects (${deepArConfig.effects.length})',
+            );
           }
           localAudio = await lk.LocalAudioTrack.create();
-        } catch (e) {
+        } catch (e, st) {
           IsmLiveLog.error(
             'DeepAR publish failed, falling back to LiveKit camera: $e',
+            st,
           );
           await _controller.deepArPublisher?.stop();
           _controller.deepArPublisher = null;
@@ -181,6 +207,20 @@ mixin StreamJoinCameraMixin on StreamJoinMixin {
         _controller.room!.localParticipant!.publishVideoTrack(localVideo),
         _controller.room!.localParticipant!.publishAudioTrack(localAudio),
       ]);
+      if (deepArConfig.enabled) {
+        final started = _controller.deepArPublisher?.isStarted == true;
+        if (started) {
+          IsmLiveLog.success(
+            'DeepAR live track published '
+            'effect=${_controller.deepArPublisher?.currentEffect.id}',
+          );
+        } else {
+          IsmLiveLog.error(
+            'DeepAR live track published without a running publisher '
+            '(fell back to the normal camera)',
+          );
+        }
+      }
       _controller.videoOn = true;
       _controller.audioOn = true;
     } catch (e) {

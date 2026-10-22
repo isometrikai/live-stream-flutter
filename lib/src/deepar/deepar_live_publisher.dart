@@ -49,18 +49,25 @@ class IsmLiveDeepArPublisher {
     }
 
     final licenseKey = config.licenseKeyForPlatform;
+    final width = config.outputWidth;
+    final height = config.outputHeight;
+    final defaultEffect = config.resolveDefaultEffect();
+    IsmLiveLog.info(
+      'DeepAR publisher start begin ${width}x$height front=$frontCamera '
+      'licensePresent=${licenseKey != null && licenseKey.isNotEmpty} '
+      'effects=${config.effects.length} default=${defaultEffect.id} '
+      'defaultPath=${defaultEffect.assetPath ?? 'none'}',
+    );
     if (licenseKey == null || licenseKey.isEmpty) {
       throw StateError('DeepAR license key missing for this platform');
     }
-
-    final width = config.outputWidth;
-    final height = config.outputHeight;
 
     final initialized = await _deepAr.initialize(
       licenseKey: licenseKey,
       outputWidth: width,
       outputHeight: height,
     );
+    IsmLiveLog.info('DeepAR initialize result=$initialized');
     if (!initialized) {
       throw StateError('DeepAR initialize failed');
     }
@@ -78,6 +85,10 @@ class IsmLiveDeepArPublisher {
     _mediaStream = stream;
 
     final videoTracks = stream.getVideoTracks();
+    IsmLiveLog.info(
+      'DeepAR external track ready streamId=$streamId '
+      'videoTracks=${videoTracks.length}',
+    );
     if (videoTracks.isEmpty) {
       throw StateError('External video track missing');
     }
@@ -100,8 +111,9 @@ class IsmLiveDeepArPublisher {
 
     _isFrontCamera = frontCamera;
     await _deepAr.startCapture(front: frontCamera);
+    IsmLiveLog.info('DeepAR capture started front=$frontCamera');
 
-    _currentEffect = config.resolveDefaultEffect();
+    _currentEffect = defaultEffect;
     await applyEffect(_currentEffect);
 
     _started = true;
@@ -120,6 +132,11 @@ class IsmLiveDeepArPublisher {
     }
     _pushInFlight = true;
     _frameCount++;
+    if (_frameCount == 1) {
+      IsmLiveLog.info(
+        'DeepAR first frame ${frame.width}x${frame.height} format=${frame.format}',
+      );
+    }
     IsmLiveExternalVideoSource.pushFrame(
       data: frame.data,
       width: frame.width,
@@ -139,11 +156,31 @@ class IsmLiveDeepArPublisher {
 
   Future<void> applyEffect(IsmLiveDeepArEffect effect) async {
     _currentEffect = effect;
-    if (!_deepAr.isInitialized) return;
-    if (effect.isNone) {
-      await _deepAr.clearEffect();
-    } else {
-      await _deepAr.loadEffect(effect.assetPath);
+    if (!_deepAr.isInitialized) {
+      IsmLiveLog.error(
+        'DeepAR applyEffect skipped: not initialized '
+        '(id=${effect.id}, path=${effect.assetPath ?? 'none'}, started=$_started)',
+      );
+      return;
+    }
+    try {
+      if (effect.isNone) {
+        IsmLiveLog.info('DeepAR applyEffect clear id=${effect.id}');
+        await _deepAr.clearEffect();
+      } else {
+        IsmLiveLog.info(
+          'DeepAR applyEffect load id=${effect.id} path=${effect.assetPath}',
+        );
+        await _deepAr.loadEffect(effect.assetPath);
+      }
+      IsmLiveLog.success('DeepAR applyEffect done id=${effect.id}');
+    } catch (e, st) {
+      IsmLiveLog.error(
+        'DeepAR applyEffect failed id=${effect.id} '
+        'path=${effect.assetPath ?? 'none'}: $e',
+        st,
+      );
+      rethrow;
     }
   }
 
